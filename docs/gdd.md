@@ -143,7 +143,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 - **The contract board fills up and waits.** New contracts arrive over time, up to a cap. They never expire. **[JC: one new contract every 2 h, board cap of 6 in v0.2.]**
 - **Finished contracts wait to be collected.** Results sit there until you open the game. A finished contract never sits idle "wasting" a hunter; the hunter simply waits at the hold.
 - **Injuries heal on real time,** including while you're offline.
-- **No resource is lost to an overflow cap in v0.1** (D24, no storage caps). If caps arrive later, the UI warns well before you hit them.
+- **No resource is lost to an overflow cap in v0.1** (D24.3, no storage caps). If caps arrive later, the UI warns well before you hit them.
 - **Events** (v0.8) give enough attempts that skipping a day costs a little progress, never the reward itself. **[JC: event milestones are reachable with about 70% participation.]**
 
 ### 3.4 What exists when
@@ -171,7 +171,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Food** | Basic | Farms, fishery; peasants | Peasant growth and upkeep; hunter upkeep | No | v0.1 |
 | **Wood** | Basic | Woodcutter's camp; peasants | Buildings; bomb casings; arrow shafts | No | v0.1 |
 | **Iron** | Basic | Mine; peasants | Buildings; smithy gear | No | v0.1 |
-| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver mine (slow); **contract bounties (main source)** | Silvered gear; recruitment; Age-ups | No | v0.1 |
+| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.25/min each, no bonuses; G1); **contract bounties (main source)** | Silvered gear; recruitment; Age-ups | No | v0.1 |
 | **Peasants** | Population | Houses + food surplus | Assigned to gathering jobs | No | v0.1 |
 | **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**, the roster persists; rank and gear partly reset **[JC; detailed in v0.5]** | v0.2 |
 | **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.7); trophy-hall bonuses (v0.2) | Partly (a set conversion rate into Embers) | v0.2 |
@@ -297,7 +297,7 @@ Buckets that don't exist yet in a milestone count as 0. The in-game breakdown sh
 
 #### 5.1.1 Resources and peasants
 
-The four basic resources are **food, wood, iron, and silver**. There are no storage caps (D24).
+The four basic resources are **food, wood, iron, and silver**. There are no storage caps (D24.3).
 
 **Peasants** are the workforce.
 - **Housing** sets the maximum number of peasants. The Hearth Hall provides 3, and each Cottage adds 2.
@@ -312,7 +312,7 @@ The four basic resources are **food, wood, iron, and silver**. There are no stor
 | Farmer | Food | 6 / min | Farm (3 each) |
 | Woodcutter | Wood | 4 / min | Woodcutter's Camp (3 each) |
 | Miner | Iron | 2 / min | Mine (2 each) |
-| Silver-digger | Silver | 0.5 / min | Silver Seam (1 each) |
+| Silver-digger | Silver | 0.25 / min | Silver Seam (1 each; **at most 2 Seams**) |
 
 - **Idle peasants produce nothing.** The Hold screen shows an "idle hands" warning whenever any peasant is idle.
 - **New peasants** take the first open slot in a **job priority list** that the player sets. The default order is Farmer → Woodcutter → Miner → Silver-digger.
@@ -324,11 +324,13 @@ The four basic resources are **food, wood, iron, and silver**. There are no stor
 rate_R = workers_R × baseRate_R × (bucket multipliers, §5.0)
 ```
 
+**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.5). With at most 2 Seams, seam income can never exceed 2 × 0.25/min = **720 silver per day**. Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
+
 #### 5.1.2 Buildings
 
 There are two kinds of building:
 
-- **Count buildings** can be bought many times. The n-th copy (starting from 0) costs `base × r^n` with **r = 1.15**.
+- **Count buildings** can be bought many times. The next copy costs `base × r^n` with **r = 1.15**, where **n is the number already owned, including free starting buildings** *(⚑ revision A8)*. For example, the first Farm you buy is your 2nd, so it costs 40 × 1.15 = 46 wood.
 - **Level buildings** are unique and are upgraded. Level L (starting from 1) costs `base × r^(L−1)` with **r = 1.75**. Each Age sets a maximum level.
 
 **Bulk buy.** Count buildings support ×1, ×10, and Max.
@@ -336,6 +338,21 @@ There are two kinds of building:
 - For Max, the engine computes the affordable k for each resource as `k = floor(log(1 + funds·(r−1)/(base·r^n)) / log r)`, and takes the smallest k across resources.
 
 **All construction is instant** **[JC]**. Pacing comes from costs, not build timers. Waiting on a timer you can't affect is the kind of friction pillar 5 rules out.
+
+**Best payback: one valuation, used everywhere** *(⚑ revision B7 [JC])*. The ● best-buy hint (§9.2) and the simulator's greedy policy (§6.1) call the same function:
+
+```
+value(bundle) = Σ_r  w_r × amount_r     w = value.weights: food 1, wood 1.5, iron 3, silver 12
+payback(item) = value(cost) ÷ value(Δrate per min)        (lower is better)
+```
+
+- The weights are the inverse of each resource's base rate, normalized to food. They live in `balance.ts` so they can be retuned.
+- **Δrate** is the change in production the purchase causes right now:
+  - Production buildings and levels: the direct rate change.
+  - Housing (Cottage): extra peasants × the marginal rate of the best open job slot, or 0 if no slot is free.
+  - Slot buildings: 0 unless idle peasants are waiting to fill the new slots.
+- Items with Δrate = 0 (for example, the Bell Tower) never get the ●. The simulator buys them only through explicit policy rules.
+- Age-ups are excluded; the policy's saving rule handles them.
 
 **v0.1 buildings** (costs are base values):
 
@@ -346,7 +363,7 @@ There are two kinds of building:
 | Farm | Count | 40 wood | +3 Farmer slots | Hamlet (start with 1) |
 | Woodcutter's Camp | Count | 25 wood, 15 food | +3 Woodcutter slots | Hamlet (start with 1) |
 | Mine | Count | 80 wood, 40 food | +2 Miner slots | Hamlet |
-| Silver Seam | Count | 150 wood, 120 iron | +1 Silver-digger slot | Hamlet |
+| Silver Seam | Count (**max 2**) | 150 wood, 120 iron | +1 Silver-digger slot; never boosted (G1) | Hamlet |
 | Mill | Level (max 5 in Hamlet, 10 in Keep) | 120 wood, 40 iron | +25% food per level (building bucket) | Hamlet |
 | Sawpit | Level (max 5 / 10) | 100 wood, 60 iron | +25% wood per level | Hamlet |
 | Smithy | Level (max 3 / 10) | 200 wood, 150 iron | +20% iron per level. Unlocks gear tiers (v0.2) | Hamlet |
@@ -356,7 +373,7 @@ There are two kinds of building:
 
 The Age-up **Hamlet → Keep** requires:
 - **Prerequisites:** 10 peasants, Mill level 3, and a Smithy.
-- **Cost:** 12,000 food, 9,000 wood, 4,000 iron, and 600 silver.
+- **Cost:** 12,000 food, 9,000 wood, 4,000 iron, and **300 silver** *(⚑ revision: was 600; lowered to fit capped Seams, G1)*.
 
 **Keep grants:**
 - Higher maximum levels (see the table).
@@ -367,17 +384,17 @@ From v0.2 onward, Keep also unlocks the Barracks, the contract board, and the Tr
 
 In v0.1, the Keep is the end of content. The Age screen shows the next Age (Citadel) as "Coming in a later milestone," with no fake progress bar.
 
-**Pacing target:** Keep is reached after **8–14 hours of game time**, under the simulator's standard check-in policy: a check-in every 2.5 hours during waking hours, buying greedily by the best payback time. The simulator enforces this band (§6).
+**Pacing target:** Keep is reached after **8–14 hours of game time**, under the simulator's **Standard** policy (§6.1). The simulator enforces this band (§6.2). *(⚑ revision A9: the policy is defined only in §6.1.)*
 
 #### 5.1.4 Starting state
 
 - The Hearth Hall.
 - 1 Farm and 1 Woodcutter's Camp.
-- 3 peasants: 2 Farmers and 1 Woodcutter.
+- 3 peasants: **1 Farmer and 2 Woodcutters** *(⚑ revision A10 [JC]: was 2 Farmers and 1 Woodcutter)*.
 - 50 food and 50 wood.
 - Auto-settle on.
 
-**First-minute goal:** the player buys a Cottage within about 1 minute and a Mine within about 5 minutes.
+**Opening goal** (measured by the **Opening** policy, §6.1): a Cottage within 1 minute and a Mine within 5 minutes. A hand calculation gives about 4.3 minutes for the Mine (wood reaches 80 at about 3.75 min; food reaches 40 at about 4.3 min after auto-settle spends some). **If the simulator misses, raise starting wood to 70; don't move the target.**
 
 ---
 
@@ -392,8 +409,11 @@ elapsed = clamp(now − lastSeen, 0, offlineCap)
 - **Offline cap:** a base of 12 h (D08), plus the Bell Tower (up to +3 h), plus later sources (Embers in v0.5, Riftglass in v0.6). **Hard ceiling: 24 h** **[JC]**.
 - **Clock moved backward:** if `now < lastSeen`, then `elapsed = 0` and `lastSeen` is reset to `now` (D21). No penalty, no warning.
 
-**Simulation.** Offline time runs through **the same `advance(state, dt)` function** as live play, in chunks of 60 game-seconds. That is 720 chunks for 12 h.
-- Contracts, recovery timers, and auto-settle all resolve in time order inside the simulation.
+**Simulation.** Offline time runs through **the same `advance(state, dt)` function** as live play. **`advance` is event-driven** *(⚑ revision A11 [JC])*:
+- Inside any `dt`, it finds the next scheduled event (a peasant settle becoming due, a contract finishing, a recovery or brew ending, a board refill), moves resources forward linearly to that moment, applies the event, and repeats until `dt` is used up.
+- Rates are constant between events, so every event time is exact. For example, a settle becomes due at `(cost − food) ÷ foodRate`, but no sooner than 30 s after the previous settle.
+- **Chunk size therefore never changes the result.** Offline catch-up still runs in 60 s chunks, but only to drive the progress bar.
+- **Acceptance test:** 12 h of live play in 1 s ticks and a single 12 h offline catch-up, from the same starting state, must end in the same state (within floating-point tolerance).
 - **Offline efficiency is 100%** **[JC]**. Many idle games pay out offline time at a reduced rate. Here the cap is the only limit, because pillar 5 says offline progress should feel fair.
 
 **"While you were away" sheet:**
@@ -434,7 +454,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 - **XP per contract:** 20 × tier on a success, half that on a failure.
 - **XP to go from level L to L+1:** `50 × 1.5^(L−1)`.
 
-#### 5.3.3 Roles (D24 names)
+#### 5.3.3 Roles (D24.2 names)
 
 | Role | Identity | Combat rule |
 |---|---|---|
@@ -442,7 +462,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 | **Mender** | Healer | On their turn, if any ally is below 70% Health, heals the lowest ally for `1.5 × Might`. Otherwise attacks at 50% Might. |
 | **Striker** | Damage | 20% crit chance (others 10%). Crits deal ×1.5. |
 
-#### 5.3.4 Damage types (D24 names)
+#### 5.3.4 Damage types (D24.2 names)
 
 There are six types: **Steel, Silver, Fire, Frost, Rune, Venom**.
 - Each hunter has one innate damage type, from their weapon style.
@@ -512,7 +532,7 @@ Each contract has:
 | Location tag | Forest, river, field, barrow, or ruin. Interacts with traits. |
 | Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5 |
 | Duration | 30 min / 1 h / 2 h / 4 h / 8 h by tier |
-| Bounty | `40 × 1.6^(tier − 1)` silver, × the Age multiplier |
+| Bounty | `60 × 1.6^(tier − 1)` silver, × the Age multiplier *(⚑ revision: base was 40; raised with G1)* |
 | Trophies | Equal to the tier, of that monster's family |
 | Reagents | *(v0.3)* monster-specific drops |
 
@@ -542,7 +562,7 @@ The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation ID
 
 #### 5.4.4 How contracts feed the Hold
 
-- **Silver bounties** are the main silver source from v0.2 on. The Silver Seam stays as a slow trickle.
+- **Silver bounties** are the main silver source from v0.2 on. Silver Seams are capped at 720 silver per day for the whole game (G1), so bounties overtake them as higher tiers unlock.
 - **Trophy Hall** (Keep, one level, cost 500 wood, 200 iron): gives **+0.5% to all Hold production per trophy earned this cycle**, in the trophy bucket. "Earned" counts lifetime trophies, so spending trophies later (v0.7) never shrinks the bonus.
 - **Reagents** go to the Alchemist *(v0.3)*.
 
@@ -756,12 +776,13 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 | **Light** | 07:00, 12:30, 21:00 every day | None | "Still works for a busy week" checks |
 | **Heavy** | Every 2 h from 07:00 to 23:00 | One per day | "Can't be rushed too fast" checks |
 | **Idle-only** *(from v0.6)* | Same as Standard | Never Delves | Delve-optional check (D20) |
+| **Opening** *(⚑ revision A10)* | Acts every 10 s for the first 15 min of a fresh game, using the default job priority and greedy best-payback buys; then switches to Standard | — | Opening targets (first Cottage, first Mine) |
 
 - **Start time:** runs start Monday at 07:00. A second run starts Saturday at 09:00 to catch weekend-start problems **[JC]**.
 - **The overnight gap** (21:00 → 07:00) is 10 h, inside the 12 h cap. Standard play never loses time to the cap.
 
 **What the policy does at each check-in:**
-- **Spending:** greedy by **payback time** (cost ÷ production gained). It saves for the next Age-up once it's affordable within 2 check-ins.
+- **Spending:** greedy by **payback time**, using the valuation in §5.1.2 (the same function as the ● hint). It saves for the next Age-up once it's affordable within 2 check-ins.
 - **Contracts:** launches the highest expected-value contract with the suggested party.
 - **Preparation:** brews and equips matching consumables for identified monsters.
 - **Investigation:** keeps every Lodge slot busy.
@@ -773,8 +794,8 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 
 | Moment | Target | Enforced from |
 |---|---|---|
-| First Cottage bought | ≤ 1 min (live play) | v0.1 |
-| First Mine bought | ≤ 5 min (live play) | v0.1 |
+| First Cottage bought | ≤ 1 min (Opening policy) | v0.1 |
+| First Mine bought | ≤ 5 min (Opening policy) | v0.1 |
 | Mill reaches level 3 | 2–5 h | v0.1 |
 | 10 peasants | 3–6 h | v0.1 |
 | **Keep reached** | **8–14 h** (Standard); ≤ 24 h (Light); ≥ 6 h (Heavy) | v0.1 |
@@ -799,7 +820,7 @@ These catch dead zones and walls that pure time targets miss.
 3. **No walls:** no single purchase takes more than 3 check-ins of saving, except Age-ups, which may take up to 5.
 4. **Preparation matters** *(v0.3)*: on identified contracts at equal tier, matched preparation raises the odds by at least 15 percentage points over no preparation.
 5. **Odds are honest** *(v0.2)*: across 2,000 simulated contracts, the actual success rate in each 10-point odds bucket lands within ±5 points of the displayed odds.
-6. **Contracts own silver** *(v0.2)*: from Keep onward, at least 70% of silver income comes from bounties.
+6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days in v0.2–v0.4), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.*
 7. **No overflow:** every number stays below 1e300 through 3 simulated cycles *(from v0.5)*. Through v0.4, the same check runs over 14 simulated days.
 
 ### 6.4 Playtest-only checks
@@ -826,9 +847,11 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Bulk cost (k copies) | `base × r^n × (r^k − 1)/(r − 1)` | — | 5.1.2 |
 | Max affordable | `min over resources of floor(log(1 + f(r−1)/(base·r^n)) / log r)` | — | 5.1.2 |
 | Settle cost | `a × g^P` | `peasant.settleBase` = 20, `peasant.settleGrowth` = 1.15, `peasant.settleMinInterval` = 30 s | 5.1.1 |
-| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.5/min | 5.1.1 |
+| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.25/min | 5.1.1 |
+| Silver cap | Silver Seams limited; silver-digger output takes only relic and event buckets | `silverSeam.max` = 2 | 5.1.1 |
 | Building bonuses | per level | `mill.perLevel` = 0.25, `sawpit.perLevel` = 0.25, `smithy.ironPerLevel` = 0.20 | 5.1.2 |
-| Age multiplier | Keep adds to the age bucket | `age.keep.allProduction` = 0.50 | 5.1.3 |
+| Age multiplier | Keep adds to the age bucket (not silver, G1) | `age.keep.allProduction` = 0.50 | 5.1.3 |
+| Best payback | `value(cost) ÷ value(Δrate)`, `value = Σ w_r × amount_r` | `value.weights` = { food 1, wood 1.5, iron 3, silver 12 } | 5.1.2 |
 | Trophy Hall | `+x per trophy earned this cycle` | `trophyHall.perTrophy` = 0.005 | 5.4.4 |
 | Herb Garden | per garden | `herbGarden.interval` = 10 min per herb type | 5.7 |
 
@@ -838,7 +861,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 |---|---|---|---|
 | Elapsed | `clamp(now − lastSeen, 0, cap)`; if `now < lastSeen`, then 0 | — | 5.2 |
 | Cap | `base + Σ extensions`, capped at the ceiling | `offline.baseCap` = 12 h, `offline.ceiling` = 24 h, `bellTower.perLevel` = 1 h | 5.2 |
-| Simulation chunk | fixed step | `offline.chunk` = 60 s | 5.2 |
+| Simulation chunk | Drives the progress bar only; results don't depend on it (event-driven `advance`) | `offline.chunk` = 60 s | 5.2 |
 
 ### 7.3 Hunters
 
@@ -859,7 +882,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 |---|---|---|---|
 | Board refill | 1 per interval, up to the cap | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
-| Bounty | `b × g^(tier−1) × ageMult` | `bounty.base` = 40, `bounty.growth` = 1.6 | 5.4.1 |
+| Bounty | `b × g^(tier−1) × ageMult` | `bounty.base` = 60, `bounty.growth` = 1.6 | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
 | Duration | by tier | `contract.duration` = [30 min, 1 h, 2 h, 4 h, 8 h] | 5.4.1 |
 | Party size | by tier | `contract.partySize` = [3, 3, 3, 4, 4] | 5.4.1 |
@@ -1144,9 +1167,9 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 ├──────────────────────────────────┤
 │ BUILD                 ×1 ×10 Max  │
 │ ▣ Cottage ×3   +2 housing        │
-│   🪵52 🌾17          [Buy] ●     │
+│   🪵46 🌾15          [Buy] ●     │
 │ ▣ Farm ×2      +3 farmer slots   │
-│   🪵70               [Buy]       │
+│   🪵53               [Buy]       │
 │ ▣ Mill  Lv2/5  +25% food         │
 │   🪵367 ⛏️122         [Upgrade]   │
 │ ...                              │
@@ -1194,9 +1217,9 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 │ ▸ Dubno Ford · river · T2        │
 │   "Two drowned at the ford…"     │
 │   ? 3 candidates · 🔍 2/3 clues  │
-│   ⚪64 · 🏆2 · 1h                 │
+│   ⚪96 · 🏆2 · 1h                 │
 │ ▸ Ravenfell · barrow · T3        │
-│   Draugr (Studied) · ⚪102 · 2h   │
+│   Draugr (Studied) · ⚪154 · 2h   │
 └──────────────────────────────────┘
 ```
 
@@ -1238,7 +1261,7 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 ```
 ┌──────────────────────────────────┐
 │ ✔ Draugr slain · 11 rounds       │
-│ ⚪154 (×1.5 well prepared) 🏆4    │
+│ ⚪230 (×1.5 well prepared) 🏆4    │
 │ grave dust ×3 · rime salt ×1     │
 ├──────────────────────────────────┤
 │ R1 Fire Pot → Draugr 60 · 200/260│
@@ -1383,7 +1406,7 @@ The Hut opens from its building row on the Hold screen.
 | Anti-cheat and save validation beyond schema checks | D21 | The debug panel is a feature, not a cheat |
 | Mod support or a content editor | Content files are already plain TypeScript data | Edit content files directly |
 | Achievements | Not in the brief | **[JC: candidate for v1.0 polish]** |
-| The mystery's final act | Timing open (D24) | Decided when v0.9 starts |
+| The mystery's final act | Timing open (D24.10) | Decided when v0.9 starts |
 
 **Deferred, not cut.** Anything listed at outline level in §5.8–5.13 is in scope for its milestone and gets full detail just before that milestone starts.
 
