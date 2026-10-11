@@ -1,6 +1,6 @@
 # The Last Hold — Game Design Document
 
-**Status:** §1–5 approved (D26, D27). §6–8 are drafts for review. §9–10 pending.
+**Status:** §1–8 approved (D26–D28). §9–10 are drafts for review. With them, the document is complete for v0.1–v0.3.
 **Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something.
 **Related docs:** `lore-bible.md` (world truth and spoilers), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
@@ -1097,6 +1097,308 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 
 ---
 
-## 9–10. *(pending)*
+## 9. UI Screens (phone-first)
 
-Next up: §9 UI screens (phone-first wireframes) and §10 Out of scope. After those, the lore bible.
+### 9.1 Layout and interaction rules
+
+**Target size.** The layout is designed for a 360–430 px wide portrait phone and scales up (D02).
+- **≥ 900 px wide:** two columns. Navigation becomes a left sidebar, the main screen sits in the middle, and the detail panel (breakdowns, logs, hunter details) opens on the right instead of as a sheet.
+- **≥ 1300 px wide:** the right column stays open.
+
+**Shell.** Every screen shares the same frame:
+
+```
+┌──────────────────────────────────┐
+│ 🌾1.2K  🪵860  ⛏️310  ⚪42   ⚠️ │  ← resource bar (tap: rates)
+├──────────────────────────────────┤
+│                                  │
+│          (screen content)        │
+│                                  │
+├──────────────────────────────────┤
+│ Hold  Hunters Contracts Bestiary ⋯│ ← tab bar (badges show
+└──────────────────────────────────┘    "something to do")
+```
+
+- **Resource bar.** Always visible. Tapping it opens a sheet with per-minute rates and each rate's breakdown. A ⚠️ appears for idle peasants or finished contracts.
+- **Tabs.** Hold · Hunters · Contracts · Bestiary · More. **A tab appears only when its system unlocks** **[JC]**. v0.1 shows only Hold and More. Hidden tabs are better than greyed-out promises (pillar 5, and the "no fake progress bar" rule in §5.1.3).
+- **Breakdowns.** Long-press any number (or hover, on desktop) to open its breakdown sheet (§5.0). A small ⓘ next to key numbers shows that a breakdown exists, for anyone who forgets the gesture.
+- **Sheets, not pages.** Details open as bottom sheets that swipe down to close. The tab under them keeps its scroll position.
+- **Touch targets:** at least 44 × 44 px. Primary actions sit in the lower half of the screen, within thumb reach.
+- **Number formatting:** 3 significant digits plus a suffix (K, M, B, T, Qa, Qi), then scientific notation above 1e21. Exact values appear in breakdowns.
+- **Theme** **[JC]**: dark by default, a warm candlelit palette in keeping with "heroic with dark edges". A light theme is in Settings.
+  - Pixel font for headings and numbers in the resource bar only. Body text uses a readable system font, because pixel fonts are hard to read at body size on phones.
+  - Respects the system "reduce motion" and text-size settings.
+- **Art placement:** sprites appear in building rows, hunter cards, monster entries, and the hold header. Every image comes from the asset manifest with a placeholder fallback, so a missing sprite never breaks a screen.
+
+### 9.2 Hold (v0.1)
+
+```
+┌──────────────────────────────────┐
+│  [pixel hold scene · Hamlet]     │
+│  Stanholm — Hamlet     Age ▸     │
+├──────────────────────────────────┤
+│ PEASANTS 7/9   idle 1 ⚠️  Auto ✔ │
+│ Farmer      4/6   [−] [+] [fill]  │
+│ Woodcutter  2/3   [−] [+] [fill]  │
+│ Miner       0/2   [−] [+] [fill]  │
+├──────────────────────────────────┤
+│ BUILD                 ×1 ×10 Max  │
+│ ▣ Cottage ×3   +2 housing        │
+│   🪵52 🌾17          [Buy] ●     │
+│ ▣ Farm ×2      +3 farmer slots   │
+│   🪵70               [Buy]       │
+│ ▣ Mill  Lv2/5  +25% food         │
+│   🪵367 ⛏️122         [Upgrade]   │
+│ ...                              │
+└──────────────────────────────────┘
+```
+
+- ● marks the best payback among affordable options. It's a hint only, and it can be turned off in Settings.
+- Buildings group into **Housing · Gathering · Crafting · Hold**. In v0.1 there are few enough buildings to show them as one list.
+- **Age ▸** opens the Age screen: the next Age's requirements as a checklist, its costs, and what it unlocks. Unbuilt future content shows as "Coming in a later milestone" (§5.1.3).
+- Unaffordable rows show their cost in a muted color, plus a "ready in ~1 h 20 m" estimate at current rates.
+
+### 9.3 "While you were away" sheet (v0.1)
+
+```
+┌──────────────────────────────────┐
+│ While you were away              │
+│ 14h 20m away · 12h counted (cap) │
+├──────────────────────────────────┤
+│ +18.4K 🌾  +11.2K 🪵  +3.1K ⛏️    │
+│ +3 peasants settled              │
+│ ✔ Drowned at Dubno Ford — won ▸  │
+│ ✖ Barrow at Ravenfell — lost ▸   │
+│   Halvar wounded · 4h left       │
+│ 📖 Rusalka: Identified           │
+├──────────────────────────────────┤
+│            [ Onward ]            │
+└──────────────────────────────────┘
+```
+
+- Lines marked ▸ open the full log.
+- Contract, injury, and bestiary lines appear only once those systems exist.
+
+### 9.4 Contracts board (v0.2)
+
+```
+┌──────────────────────────────────┐
+│ BOARD 4/6     next in 1h 12m     │
+├──────────────────────────────────┤
+│ ⏱ Running                         │
+│  Hollow Wolf · T1 · 12m left     │
+├──────────────────────────────────┤
+│ ✔ Ready to collect (1)  [Collect]│
+├──────────────────────────────────┤
+│ Open                             │
+│ ▸ Dubno Ford · river · T2        │
+│   "Two drowned at the ford…"     │
+│   ? 3 candidates · 🔍 2/3 clues  │
+│   ⚪64 · 🏆2 · 1h                 │
+│ ▸ Ravenfell · barrow · T3        │
+│   Draugr (Studied) · ⚪102 · 2h   │
+└──────────────────────────────────┘
+```
+
+- The 🔍 clue progress shows only for unknown monsters (v0.3).
+- **Collect** gathers every finished contract at once and shows a summary like the away sheet.
+
+### 9.5 Contract launch sheet (v0.2–v0.3)
+
+```
+┌──────────────────────────────────┐
+│ Ravenfell · Draugr · T3 · 2h     │
+│ weak: Silver ×1.5, Fire ×1.5     │
+│ resists: Frost ×0.25, Venom ×0   │
+├──────────────────────────────────┤
+│ PARTY (3)        [Suggest best]  │
+│ [Halvar ▾] [Radek ▾] [Zora ▾]    │
+├──────────────────────────────────┤
+│ PREPARE                (v0.3)    │
+│ Oil    Grave Oil ×3 ✔ matched    │
+│ Potion Mending · Ironbark · —    │
+│ Bombs  Fire Pot ✔ weak · —       │
+├──────────────────────────────────┤
+│ ODDS  78% ±4                Why▸ │
+│ unprepared would be 52%          │
+│ Halvar: 18% wounded              │
+│ Zora:    9% wounded              │
+├──────────────────────────────────┤
+│        [ Send the hunters ]      │
+└──────────────────────────────────┘
+```
+
+- The odds update live as the party and preparation change. The "unprepared would be" line keeps the value of preparation visible.
+- **Why ▸** opens the odds breakdown: party damage per round against the monster's effective Health, the monster's damage per round against the party's effective Health, expected rounds, and every contributing modifier.
+- **Reckless contracts** (below 35%): the launch button turns red and reads "Send them anyway". It opens a confirmation listing each hunter's exact death chance (§5.3.7).
+- **Unknown monster:** the resistance lines read "? 3 candidates", and the odds show "assumes unidentified" (§5.6.3).
+
+### 9.6 Fight log (v0.2)
+
+```
+┌──────────────────────────────────┐
+│ ✔ Draugr slain · 11 rounds       │
+│ ⚪154 (×1.5 well prepared) 🏆4    │
+│ grave dust ×3 · rime salt ×1     │
+├──────────────────────────────────┤
+│ R1 Fire Pot → Draugr 60 · 200/260│
+│ R1 Zora hits Draugr 30 · 170/260 │
+│ R1 Draugr hits Halvar 10 ·150/170│
+│ R3 Barrow-Grip! Halvar is held   │
+│ ...                              │
+│ [Rounds ▾] [Show rolls ☐] [Seed] │
+└──────────────────────────────────┘
+```
+
+- **Show rolls** expands every line to its full roll detail (§5.5).
+- **Seed** shows the fight seed and offers "replay fight", which re-runs it to confirm the log matches. This is mostly a debugging aid, kept visible on purpose (D10).
+- Logs can be collapsed to one line per round.
+
+### 9.7 Hunters (v0.2)
+
+```
+Roster 6/8                      Hunter detail (sheet)
+┌──────────────────────────────┐ ┌──────────────────────────────┐
+│ [spr] Halvar Two-Smokes      │ │ [sprite]  Zora Sedlak        │
+│ Vanguard · Steel · Lv4       │ │ the Ferrywoman               │
+│ ● Ready                      │ │ Striker · Steel · Lv5 ▓▓░ XP  │
+│ [spr] Zora Sedlak            │ │ H 140  M 28  A 3  S 16 ⓘ      │
+│ Striker · Steel · Lv5        │ │ Fen-born: +15% Might (river)  │
+│ ⏱ On contract · 40m          │ │ Quick: +3 Speed               │
+│ [spr] Radek                  │ │ Weapon  Steel Blade [Upgrade] │
+│ Vanguard · Silver · Lv3      │ │ Armor   Mail                  │
+│ ✚ Wounded · 3h 10m           │ │ Record  14 won · 2 lost       │
+│ — Candidates —               │ │ Bio ▸                         │
+│ Bjarna Ice-Hand  ⚪1.1K [Hire]│ └──────────────────────────────┘
+└──────────────────────────────┘
+```
+
+- **Filters:** role, damage type, status.
+- **Locked hunters:** they appear at the bottom as silhouettes, with their unlock condition shown ("Defeat an Upyr"). Knowing what to chase is part of the collection feel.
+
+### 9.8 Bestiary (v0.3)
+
+```
+Grid (by family)                 Entry (sheet)
+┌──────────────────────────────┐ ┌──────────────────────────────┐
+│ RESTLESS DEAD          2/3   │ │ [sprite]   DRAUGR            │
+│ [Upyr] [Draugr] [?]          │ │ Restless Dead · Studied ▓▓▓░  │
+│ WATER SPIRITS          1/2   │ │ 4 kills · Mastered at 10      │
+│ [Rusalka] [·]                │ │ "Barrow-dead, swollen and     │
+│ FIELD & FOREST         2/4   │ │  heavy, who guard what was    │
+│ [Kikimora][Poludn.][·][·]    │ │  buried with them…"           │
+│ BEASTS & WILDS         1/2   │ │ Resistances  Steel ×0.75 …    │
+│ [Hollow Wolf] [·]            │ │ Barrow-Grip · Swell ⓘ         │
+└──────────────────────────────┘ │ +5% damage (Studied)          │
+  [?] = Sighted · [·] = Unknown  │ Encounters ▸ (last 5 logs)   │
+                                 └──────────────────────────────┘
+```
+
+### 9.9 Alchemist's Hut (v0.3)
+
+The Hut opens from its building row on the Hold screen.
+
+```
+┌──────────────────────────────────┐
+│ ALCHEMIST'S HUT Lv2 · 2 kettles  │
+│ ⏱ Grave Oil 4m · ⏱ Fire Pot 9m   │
+├──────────────────────────────────┤
+│ STORES  Grave Oil 3 · Fire Pot 1 │
+│ REAGENTS yarrow 12 · grave dust 5│
+├──────────────────────────────────┤
+│ Grave Oil   2 grave dust 1 juniper│
+│ +35% vs Restless Dead   [Brew ×1]│
+│ Saltburst   2 rime salt · 1 ⚪    │
+│ needs rime salt (have 1)  muted  │
+└──────────────────────────────────┘
+```
+
+### 9.10 More menu
+
+| Item | Contents | From |
+|---|---|---|
+| Reports | The last 3 away sheets; the last 50 fight logs | v0.1 / v0.2 |
+| Hall of the Fallen | Memorials to dead hunters (§5.3.7) | v0.2 |
+| Save & Data | See below | v0.1 |
+| Settings | Theme, best-buy hint on/off, rates per min/hour, reduce motion | v0.1 |
+| Debug | Only in dev builds or with `?debug` (see below) | v0.1 |
+| About & Credits | Version, `credits.md` contents (CC0 sources) | v0.1 |
+
+**Save & Data:**
+
+```
+┌──────────────────────────────────┐
+│ Last saved 12s ago (auto)        │
+│ [Save now]                       │
+│ [Copy save code]  [Paste code]   │
+│ [Download save file] [Load file] │
+│ Backup slot: 6m ago  [Restore]   │
+│ ─────────────────────────────    │
+│ [Reset everything…] (2 confirms) │
+└──────────────────────────────────┘
+```
+
+**Debug panel** (D17, v0.1):
+- Time skip: +1 m, +1 h, +12 h, or a custom amount. It runs the same offline code path.
+- Add resources.
+- Set the RNG seed.
+- Unlock an Age.
+- Show raw state as JSON.
+- Run the simulator's Standard policy for N hours.
+- Force a contract outcome *(v0.2)*.
+
+### 9.11 What exists when
+
+| Milestone | Screens |
+|---|---|
+| v0.1 | Shell, Hold, Age screen, away sheet, rates sheet, breakdown sheets, More (Reports, Save & Data, Settings, Debug, About) |
+| v0.2 | + Hunters (roster, detail, candidates), Contracts (board, launch sheet, fight log), Hall of the Fallen, gear upgrades |
+| v0.3 | + Bestiary (grid, entries), investigation on the board and launch sheet, preparation on the launch sheet, Alchemist's Hut |
+
+**Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
+- Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
+- A real art and UX pass is scheduled for v1.0.
+
+---
+
+## 10. Out of Scope
+
+**Out for this project (listed in the brief):**
+- Multiplayer of any kind.
+- Leaderboards.
+- Monetization and its patterns: ads, shops, premium currency, energy systems.
+- Gacha or randomized hunter pulls.
+- Audio: music and sound effects. **[JC: revisit after v1.0. The asset manifest reserves an `audio` section so sound can be added without restructuring.]**
+
+**Out because of the platform or audience (judgment calls):**
+
+| Item | Why it's out | Instead |
+|---|---|---|
+| Push notifications ("contract finished") | Web push needs a server; the game has none | An app-icon badge where the browser supports it (set while the app is open), and the "Ready to collect" list on open |
+| Cloud saves and sync | Needs a server | Save code and save file export/import (§9.10) |
+| Accounts and login | No server, single player | — |
+| Multiple save slots | Unneeded for one player | One save plus an automatic backup slot |
+| Tutorial and onboarding | D12: audience is just the owner | Help text, inspectable formulas, unlock hints |
+| Localization | English only | Text lives in content files, so translation stays possible later |
+| Anti-cheat and save validation beyond schema checks | D21 | The debug panel is a feature, not a cheat |
+| Mod support or a content editor | Content files are already plain TypeScript data | Edit content files directly |
+| Achievements | Not in the brief | **[JC: candidate for v1.0 polish]** |
+| The mystery's final act | Timing open (D24) | Decided when v0.9 starts |
+
+**Deferred, not cut.** Anything listed at outline level in §5.8–5.13 is in scope for its milestone and gets full detail just before that milestone starts.
+
+---
+
+## Judgment calls in §9–10
+
+1. **Tabs appear only when their system unlocks.** v0.1 shows just Hold and More.
+2. **Dark candlelit theme by default,** with a light theme in Settings. The pixel font is used only for headings and resource-bar numbers.
+3. **A ● best-payback hint on the Hold screen,** which can be turned off.
+4. **The launch sheet always shows "unprepared would be X%"** next to the real odds.
+5. **The fight log shows the seed and offers "replay fight"** to anyone, not just in debug.
+6. **Locked hunters show as silhouettes with their unlock condition.**
+7. **Two-column desktop layout at 900 px and wider,** three columns at 1300 px.
+8. **A screenshot-based "looks wrong on my phone" pass** in every milestone's playtest checklist.
+9. **No push notifications** (they need a server). An app-icon badge stands in where supported; support on iPhone home-screen apps is limited.
+10. **Audio is revisited after v1.0,** with a slot reserved in the asset manifest.
+11. **Achievements are a candidate for v1.0 polish.**
