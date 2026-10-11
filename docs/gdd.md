@@ -2,7 +2,7 @@
 
 **Status:** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑.
 **Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something.
-**Related docs:** `lore-bible.md` (world truth and spoilers), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
+**Related docs:** `setting-primer.md` (spoiler-free; readable from v0.1), `lore-secrets.md` (the full truth; read from v0.5), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
 ---
 
@@ -14,7 +14,7 @@ You are the warden of Stanholm, a ruined fortress on the edge of the Gloamreach,
 
 You rebuild the hold, recruit monster hunters, and send them on contracts for frightened villages. You learn what the dark is made of, and you push it back.
 
-The dark always returns. Each cycle ends in a Last Stand that you choose when to make. The next warden inherits what you remembered. Each cycle also uncovers another piece of the betrayal that broke the hold in the first place.
+The dark always returns. Each cycle ends in a Last Stand that you choose when to make. **Then a new warden, whom you name, arrives carrying the ember of the one who fell, and with it what they knew** *(⚑ revision, lore L4)*. Each cycle also uncovers another piece of the betrayal that broke the hold in the first place.
 
 ### 1.2 Experience goals
 
@@ -80,8 +80,9 @@ All content is original. The influences supply *feel*, never names, characters, 
 | Elder Scrolls / Skyrim | Dragonborn; shouts / Thu'um; Daedra; Dwemer; standing stones as skill signs; "jarl" **[JC: a real Norse title, but too strongly Skyrim-coded; use "thane" or "headman"]** |
 | Warcraft / WoW | Scourge; Lich King; Horde / Alliance; named classes (paladin, death knight) as hunter classes; WoW faction names |
 | Age of Empires | Named civilizations; age names beyond the generic Hamlet → Keep → Citadel → Bastion |
-| Warhammer 40K / Tacticus | Primarch; Astartes; Chapter; Heresy; Emperor; Salamanders / Vulkan or any named chapter, legion, or character; "promethium" |
+| Warhammer 40K / Tacticus | Primarch; Astartes; Chapter; Heresy; Emperor; Salamanders / Vulkan or any named chapter, legion, or character; "promethium"; **Forgefather; "tithe" for the taking of people; Black Ships** *(⚑ lore L7)* |
 | Hades | Boons; Mirror of Night; named gods' roles; "Darkness" as the reset currency |
+| **Dark Souls** *(not an influence; ⚑ lore L6)* | Souls feeding a fire that holds back the dark (as named imagery); kindle and kindled; ash, ashen, cinder; hollow and hollowing; a "keep the fire or let it go out" ending pair; bonfires as checkpoints. **Kept on purpose:** "Embers" (the prestige currency). |
 
 **Process rule:** Before any proper noun goes into a content file, it gets a quick web search against those games. Collisions are logged in `decisions.md`. Real historical or generic words (thane, warden, hold, contract, oil, bomb) are allowed.
 
@@ -106,14 +107,14 @@ All content is original. The influences supply *feel*, never names, characters, 
 | Lindworm | Nordic | Wingless serpent-dragon |
 | Domovoi | Slavic | Friendly household spirit; **not a monster**. A resident of the hold. |
 
-**Original creatures** are encouraged for the cursed ruins and the deep (the Unlit and its spawn). Those live in `lore-bible.md`.
+**Original creatures** are encouraged for the cursed ruins and the deep (the Unlit and its spawn). Those live in `lore-secrets.md`.
 
 ### 2.5 Naming style
 
 - **Places:** Compounds that mix the two roots: Slavic *-grad, -ov, -no, stan-, vel-* with Nordic *-holm, -fell, -mark, -vik*. Examples: Stanholm, Velkvik, Dubno Ford, Ravenfell.
 - **People:** Lowlanders use Slavic-style given names (Dobrava, Milosz, Vesna). Highlanders use Nordic-style names (Yrsa, Halvar, Bjarna). Many hunters carry an epithet earned in the field ("Halvar Two-Smokes").
-- **The Emberwrights:** Ranks and titles in plain English: Forge-Mother, Firstblade, Wright, Apprentice.
-- **Lore names in the outline are working names** (Gloamreach, Stanholm, Emberwrights, Hearthseal, the Unlit, Firstblade). They get collision-checked before v0.5. **[JC: the Firstblade's name changes from the outline's placeholder to "Yrsa Varn" to fit the Nordic naming style; the Forge-Mother is "Dobrava Halsten".]**
+- **The Emberwrights:** Ranks and titles in plain English: Keeper of the Forge, Firstblade, Wright, Apprentice *(⚑ lore L7: "Keeper" replaces Forge-Mother)*.
+- **Lore names in the outline are working names** (Gloamreach, Stanholm, Emberwrights, Hearthseal, the Unlit, Firstblade). They get collision-checked before v0.5. **[JC: the Firstblade's name changes from the outline's placeholder to "Yrsa Varn" to fit the Nordic naming style; the Keeper is "Dobrava Halsten".]**
 
 ---
 
@@ -263,7 +264,7 @@ Every layer has at least one input from another layer and one output to another 
 4. **Event participation:** event milestones are reachable with about 70% participation. *(Superseded by G7: absence can delay an event reward but never forfeit it.)*
 5. **Routine check-in target:** 15 taps or fewer.
 6. **Avoid "jarl"** as too Skyrim-coded; use "thane" or "headman" instead.
-7. **Character names:** Firstblade "Yrsa Varn", Forge-Mother "Dobrava Halsten".
+7. **Character names:** Firstblade "Yrsa Varn", Keeper "Dobrava Halsten" *(title renamed in lore L7)*.
 8. **Strzyga and Lady Midday are in the creature pool,** with designs drawn from folklore only and no reuse of the games' signature contract plots.
 9. **The domovoi is a friendly resident of the hold,** not a monster.
 10. **Prestige currency is named Embers; Delve currency is named Riftglass.**
@@ -408,6 +409,8 @@ The Age-up **Hamlet → Keep** requires:
 
 From v0.2 onward, Keep also unlocks contract tiers above 1, the Barracks, and the Trophy Hall. The contract board itself opens in Hamlet, when the first Mine is built *(⚑ revision G6)*.
 
+**Each Age-up restores part of old Stanholm**, with a short inscription *(⚑ revision, lore C7)*. Keep restores the gatehouse and the Roll of Honor (`setting-primer.md` §6.5); Citadel and Bastion are in `lore-secrets.md` §11.
+
 In v0.1, the Keep is the end of content. The Age screen shows the next Age (Citadel) as "Coming in a later milestone," with no fake progress bar.
 
 **Pacing target:** Keep is reached after **8–14 hours of game time**, under the simulator's **Standard** policy (§6.1). The simulator enforces this band (§6.2). *(⚑ revision A9: the policy is defined only in §6.1.)*
@@ -542,6 +545,7 @@ Runed weapons (Rune damage) arrive with the Emberwright lore in v0.5.
 - A contract is **Reckless** when its displayed success odds are **below 35%** **[JC]**. The odds already include preparation, so "reckless" and "badly prepared" are the same rule: poor preparation lowers the odds until the contract crosses the line.
 - Launching a Reckless contract requires a confirmation dialog that names each hunter and their exact death chance.
 - Recovering hunters can't take contracts. Recovery runs on real time, including offline.
+- **Story hunters never die** *(⚑ revision, lore C4)*: Sigrun, Ostap, Toma and Arvid can be wounded, but on a Reckless contract their death roll becomes Grievously Wounded instead. They persist through every Long Night and are always available before their act needs them (`lore-secrets.md` §10).
 - Dead hunters are gone for the cycle. Their memorial stays in the Hall of the Fallen (More menu). **[JC: a dead named hunter returns as a candidate after the next Long Night, with their lore tracked. Permanently losing a hand-authored character felt too punishing for a collection game.]** Before v0.5, when no Long Night exists yet, a dead hunter returns as a candidate **3 days** after their death *(⚑ revision A12 [JC])*.
 
 ---
@@ -778,6 +782,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 - **Remaining Ages:** Citadel and Bastion.
 - **What resets and what persists:** per §4. Embers buy permanent warden upgrades. Relics drop at payout milestones.
 - **Story:** mystery act 1 plus the first lore documents. Residents react to how the stand went.
+- **A new warden each cycle** *(⚑ lore L4)*: after each Long Night you name the next warden. The **Roll of Wardens** (L9) carves each warden's name, Ages reached, Last Stand band and relics into the Hearth Hall.
 - **Arriving at v0.5** *(⚑ revision G8)*: when a pre-v0.5 save first loads in v0.5, the story triggers the first Long Night: a scripted Last Stand with the normal payout, then §4.1's normal reset rules. **Trophy-to-Embers conversion at that moment is capped** at 120% of the median Embers a simulated Standard player earns in cycle 1 [JC]. Before v0.5, the Trophy Hall bonus is uncapped [JC].
 - **Open questions:** the payout curve; how hunter rank partly resets (gear resets fully, A4); whether buildings can be damaged by high Threat (leaning no, per pillar 5).
 
@@ -786,7 +791,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 - About 5-minute runs: 6 floors plus a guardian, with a party of 3. Auto-battle against groups of monsters.
 - **On each floor** *(⚑ revision D-1 [JC])*: two doors, each showing one patron. Pick a door, then pick 1 of 3 blessings from that patron. The patron roster is in §8.8.
 - **Rewards:** Riftglass (banked allowance, G7), a chance at relics, lore pages, and rare reagents.
-- **Open questions:** whether injuries carry back from Delves (leaning no: Delve injuries end the run but don't follow the hunter home); the size of the weekly Riftglass allowance; the patrons' identities (lore bible).
+- **Open questions:** whether injuries carry back from Delves (leaning no: Delve injuries end the run but don't follow the hunter home); the size of the weekly Riftglass allowance; how the Unlit patron's drawbacks are shown.
 
 ### 5.11 Hunter depth *(v0.7, outline)*
 
@@ -812,11 +817,14 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 
 ### 5.13 Orders *(v0.9, outline)*
 
-- 3–4 factions with reputation tiers and questlines, merging the Skyrim guild and WoW faction influences. Candidates:
-  - The remnant Emberwrights.
-  - The Thanes' League of the villages.
-  - The Grey Wives, a society of herbwives and midwives.
-  - A rift-watching order.
+*⚑ Revised to match the lore (lore C6, L2).*
+
+- Four factions with reputation tiers and questlines, merging the Skyrim guild and WoW faction influences:
+  - **Thanes' Moot:** the village heads. Trust and safety.
+  - **Grey Wives:** herbwives and midwives. Alchemy and old recipes.
+  - **Bell-Watchers:** families of the Sent, who ring bells "for the ones gone onward". They hold hints toward the true ending's names.
+  - **The Quenchers:** a present-day faction that **wants the fire put out**. They're partly right, which gives the final choice a stake in the present.
+- **Your hunters are the refounded Emberwrights** (L2). The surviving outpost Wrights, who never knew the order's secret, join you rather than forming a separate Order.
 - **Open questions:** whether Orders are mutually exclusive; whether reputation persists through the Long Night (leaning yes, per §4).
 
 ---
@@ -884,7 +892,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Bastion reached; Last Stand available | Day 3 | v0.5 |
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.5 |
 | **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.5 |
-| Later cycles | Each ≥ 15% faster than the one before, with a floor of 2 days **[JC]**. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) *(⚑ revision A15)* | v0.5 |
+| Later cycles | Each ≥ 15% faster than the one before, with a floor of 2 days **[JC]**. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.5 |
 | Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.6 |
 
 ### 6.3 Engagement checks (simulator)
@@ -1045,7 +1053,7 @@ A contract's location tag comes from its village. **Each success also gives one 
 
 | Monster | Family | Locations | Tiers | Health | Might | Armor | Speed | Atk |
 |---|---|---|---|---|---|---|---|---|
-| Hollow Wolf | Beasts & Wilds | forest, field, river, barrow | 1–2 | 120 | 10 | 2 | 14 | 2 |
+| Gloam Wolf | Beasts & Wilds | forest, field, river, barrow | 1–2 | 120 | 10 | 2 | 14 | 2 |
 | Kikimora | Field & Forest Spirits | forest, field, river | 1–2 | 110 | 12 | 3 | 13 | 1 |
 | Upyr | Restless Dead | field, barrow | 2–3 | 170 | 16 | 4 | 10 | 1 |
 | Rusalka | Water Spirits | river | 2–3 | 150 | 14 | 2 | 12 | 1 |
@@ -1062,7 +1070,7 @@ A contract's location tag comes from its village. **Each success also gives one 
 
 | Monster | Steel | Silver | Fire | Frost | Rune | Venom |
 |---|---|---|---|---|---|---|
-| Hollow Wolf | 1.0 | 1.0 | **1.25** | 1.0 | 1.0 | **1.25** |
+| Gloam Wolf | 1.0 | 1.0 | **1.25** | 1.0 | 1.0 | **1.25** |
 | Kikimora | 1.0 | **1.25** | **1.5** | 0.75 | 1.0 | 0.5 |
 | Upyr | 0.75 | **1.5** | **1.25** | 0.75 | **1.25** | 0 |
 | Rusalka | 1.0 | **1.5** | 0.75 | **1.25** | 1.0 | 0.5 |
@@ -1079,7 +1087,7 @@ A contract's location tag comes from its village. **Each success also gives one 
 
 | Monster | Ability (exact effect) | Clue tags | Drop (v0.3) | Folklore basis |
 |---|---|---|---|---|
-| Hollow Wolf | *Hamstring:* each hit has a 25% chance to cut the target's Speed by 30% for the target's next 3 actions | tracks, livestock, night | wolf fang | Wolves grown wrong in the Gloam: grey, gaunt, too quiet |
+| Gloam Wolf | *Hamstring:* each hit has a 25% chance to cut the target's Speed by 30% for the target's next 3 actions | tracks, livestock, night | wolf fang | Wolves grown wrong in the Gloam: grey, gaunt, too quiet |
 | Kikimora | *Spoil:* its first hit on each hunter ruins that hunter's unused potion | house, livestock, swamp | thornwood | Household/swamp spirit whose mischief turns to malice |
 | Upyr | *Bloodfeast:* heals 50% of the damage it deals | grave, bloodless, night | grave dust | Restless dead risen from an improper burial |
 | Rusalka | *Drowning Song:* on its 1st, 5th, 9th… action, instead of attacking, it charms the lowest-Armor hunter, who loses their next action | drowned, song, night | river pearl | Drowned maiden of rivers and fields |
@@ -1161,7 +1169,7 @@ Individual hunters vary by up to ±10% per stat.
 |---|---|---|---|---|---|---|---|
 | **Halvar Two-Smokes** | Vanguard | Steel | Highland | Shieldwall, Steady | Start (free) | 170/12/8/7 | Former charcoal-burner. Calm, enormous, smells permanently of smoke. |
 | **Zora Sedlak, the Ferrywoman** | Striker | Steel | Lowland | Fen-born, Quick | Start (free) | 100/20/3/13 | Ran the Dubno ferry until the river turned deadly. Fights with a boathook. |
-| **Old Ostap** | Mender | Steel | Lowland | Bonesetter, Hard to kill | First successful contract | 115/10/4/9 | Village bonesetter who has outlived three wardens and says so often. |
+| **Old Ostap** | Mender | Steel | Lowland | Bonesetter, Hard to kill | First successful contract | 115/10/4/9 | Village bonesetter, 58. Has buried two masters and a wife, and isn't done yet. *(From cycle 3, when it becomes true: "has outlived three wardens.")* |
 | **Bjarna Ice-Hand** | Striker | Frost | Highland | Cold-blooded, Fell-born | 3 successful contracts | 95/21/3/12 | Velkvik fisherwoman. Her rime-dipped spear never quite thaws. |
 | **Vesna of the Weir** | Mender | Venom | Lowland | Herbwise *(v0.3)*, Fen-born | Complete a river contract | 105/11/4/11 | Herbwife who knows which roots heal and which ones stop hearts. |
 | **Radek the Gravedigger** | Vanguard | Silver | Lowland | Grave-warden, Hard to kill | Defeat an Upyr | 165/11/9/7 | Has buried half of Mirograd. Lately his shovel has been silver-shod. |
@@ -1190,6 +1198,8 @@ Individual hunters vary by up to ±10% per stat.
 | Wolf-friend | +20% Might vs Beasts & Wilds | v0.3 *(reserved for a v0.3 hunter)* |
 | Tracker | While this hunter is idle at the hold, one Lodge slot reveals clues 25% faster | v0.3 *(reserved for a v0.3 hunter)* |
 
+**v0.5 adds Arvid Stonebrow** (story hunter, Vanguard; unlocks when Act III begins) *(⚑ lore C4)*.
+
 **v0.3 adds 2 hunters** (a Wolf-friend Striker with Venom damage and a Tracker Mender), to be defined at the start of v0.3. That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
 
 ### 8.6 Ingredients (v0.3)
@@ -1208,7 +1218,7 @@ Each ingredient also has **4 hidden effects**, defined in v0.4 for alchemy disco
 | Grave dust | Drop: Upyr, Draugr, Strzyga | Grave Oil |
 | River pearl | Drop: Rusalka, Vodyanoy, Nix | Drowned-Bane Oil |
 | Thornwood | Drop: Kikimora, Bies, Leshy, Huldra | Thornbane Oil, Ironbark Tonic |
-| Wolf fang | Drop: Hollow Wolf | — *(reserved for v0.4 discovery)* |
+| Wolf fang | Drop: Gloam Wolf | — *(reserved for v0.4 discovery)* |
 | Noon poppy | Drop: Poludnitsa | — *(reserved for v0.4 discovery)* |
 
 **Drop rate:** each success yields `tier` units of that monster's drop, plus 1 gift reagent from the village.
@@ -1217,16 +1227,18 @@ Each ingredient also has **4 hidden effects**, defined in v0.4 for alchemy disco
 
 See the table in §5.7 (9 items in v0.3).
 
-### 8.8 Patrons *(v0.6, outline only)*
+### 8.8 Patrons *(v0.6, outline only; six, per lore L8)*
 
 | Patron | Theme | Blessing direction |
 |---|---|---|
-| The Hearth-Crone | Warmth, mending | Healing, recovery, damage reduction |
+| The Hearth-Crone | Warmth, mending | Healing, recovery, sacrifice (spend Health for power) |
 | The Wolf Beneath the Hill | Hunger, fury | Crits, Might, damage that grows with each kill |
-| The Drowned Bell | Stillness, depth | Slows, stuns, control |
-| The Pale Smith | Craft, the old forge | Armor, gear effects, Rune damage |
+| The Drowned Bell | Stillness, depth | Control: turn-meter pushback, slows, stuns |
+| The Pale Smith | Craft, the old forge | Armor and gear: blessings scale with gear tier; Rune damage |
+| **The Weaver** *(⚑ lore L8)* | Kinship, the ribbon | Synergy: bonuses per distinct role or damage type in the party; linked healing |
+| **The Unlit** *(⚑ lore L8; after Act V)* | Cold, forgetting | The strongest blessings, each with a drawback (e.g., +50% damage, but no healing) |
 
-The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: the Pale Smith is a lore lead toward the Emberwrights.]**
+Each patron is one of the story's dead (`lore-secrets.md` §13). The Unlit becomes available only after Act V **[JC]**.
 
 ---
 
@@ -1307,7 +1319,7 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 
 - ● marks the best payback among affordable options. It's a hint only, and it can be turned off in Settings.
 - Buildings group into **Housing · Gathering · Crafting · Hold**. In v0.1 there are few enough buildings to show them as one list.
-- **Age ▸** opens the Age screen: the next Age's requirements as a checklist, its costs, and what it unlocks. Unbuilt future content shows as "Coming in a later milestone" (§5.1.3).
+- **Age ▸** opens the Age screen: the part of old Stanholm the next Age restores, its requirements as a checklist, its costs, and what it unlocks. Unbuilt future content shows as "Coming in a later milestone" (§5.1.3).
 - Unaffordable rows show their cost in a muted color, plus a "ready in ~1 h 20 m" estimate at current rates.
 
 ### 9.3 "While you were away" sheet (v0.1)
@@ -1338,7 +1350,7 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 │ BOARD 4/6     next in 1h 12m     │
 ├──────────────────────────────────┤
 │ ⏱ Running                         │
-│  Hollow Wolf · T1 · 12m left     │
+│  Gloam Wolf · T1 · 12m left      │
 ├──────────────────────────────────┤
 │ ✔ Ready to collect (1)  [Collect]│
 ├──────────────────────────────────┤
@@ -1442,7 +1454,7 @@ Grid (by family)                 Entry (sheet)
 │ FIELD & FOREST         2/4   │ │  heavy, who guard what was    │
 │ [Kikimora][Poludn.][·][·]    │ │  buried with them…"           │
 │ BEASTS & WILDS         1/2   │ │ Resistances  Steel ×0.75 …    │
-│ [Hollow Wolf] [·]            │ │ Barrow-Grip · Swell ⓘ         │
+│ [Gloam Wolf] [·]             │ │ Barrow-Grip · Swell ⓘ         │
 └──────────────────────────────┘ │ +5% damage (Studied)          │
   [?] = Sighted · [·] = Unknown  │ Encounters ▸ (last 5 logs)   │
                                  └──────────────────────────────┘
@@ -1603,3 +1615,12 @@ Each one is also marked **[JC]** where it appears.
 18. **Two patron doors per floor.** (§5.10)
 19. **Performance budgets and the two-stage Suggest search.** (§6.5)
 20. **Art direction:** one 32-color palette, 16/32/64 px sizes, generated portraits. (§9.12)
+
+## Judgment calls added from the lore revision (D32)
+
+1. **"Keeper" replaces Forge-Mother,** and **Gloam Wolf** replaces Hollow Wolf. (§2.5, §8.3)
+2. **Story hunters never die;** Arvid joins in v0.5. (§5.3.7, §8.5)
+3. **Four Orders, including the Quenchers;** the remnant Wrights join your order. (§5.13)
+4. **Six patrons;** the Unlit appears only after Act V. (§8.8)
+5. **Each Age-up restores part of old Stanholm.** (§5.1.3)
+6. **Ostap's bio changes in cycle 3.** (§8.5)

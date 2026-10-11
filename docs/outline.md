@@ -10,7 +10,7 @@ Markers: **[JC]** = judgment call you can override. *(v0.4+)* = outline-level on
 |---|---|
 | `CLAUDE.md` | Rules and context Claude Code reads every session |
 | `docs/gdd.md` | Game design document |
-| `docs/lore-bible.md` | World, central mystery (full truth), document catalog **[JC: split out of the GDD because the full mystery is long and spoiler-heavy]** |
+| `docs/setting-primer.md` + `docs/lore-secrets.md` | Spoiler-free setting (v0.1+) and the full truth (v0.5+). *Superseded the single `lore-bible.md` in the lore revision (D32).* |
 | `docs/technical-design.md` | Stack, architecture, save schema, simulator, art pipeline |
 | `docs/implementation-plan.md` | Milestone task lists, acceptance criteria, tests, simulator checks |
 | `docs/decisions.md` | Decisions log (seeded now) |
