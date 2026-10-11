@@ -1,6 +1,6 @@
 # The Last Hold — Game Design Document
 
-**Status:** §1–8 approved (D26–D28). §9–10 are drafts for review. With them, the document is complete for v0.1–v0.3.
+**Status:** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑.
 **Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something.
 **Related docs:** `lore-bible.md` (world truth and spoilers), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
@@ -125,7 +125,7 @@ All content is original. The influences supply *feel*, never names, characters, 
 |---|---|---|---|---|---|
 | **Check-in** | 2–3 min | Read "While you were away"; build and upgrade; reassign peasants; collect contract results; launch new contracts | What to build next; which contract, which party, which preparation | Resources, trophies, reagents, bestiary progress | v0.1 (hold), v0.2 (contracts) |
 | **Session** | 15–30 min | Delve runs; alchemy experiments; roster and gear planning; read lore | Blessing picks; ingredient combinations; long-term roster shape | Relics, rift currency, recipes, lore | v0.4 (alchemy), v0.6 (delves) |
-| **Daily** | Once per real day | World-boss attempts with different hunters each time | Who to spend on which attempt | Boss rewards, event points | v0.8 |
+| **Events** | Whenever tokens are banked *(⚑ revision G7: was daily)* | World-boss attempts and Legendary Hunt runs, with different hunters each time | Who to spend on which attempt | Boss rewards, event points | v0.8 |
 | **Cycle** | 3–5 days | Age up the hold; keep Threat in check; pick the moment for the Last Stand | When to make the Last Stand | Embers (permanent currency), relics, the next act of the mystery | v0.5 |
 | **Meta** | Weeks | Fill the bestiary and recipe book; raise hunter stars; finish Legendary Hunts; advance Orders | Long-term investment | Permanent power and knowledge; the full story | v0.3–v0.9 |
 
@@ -141,17 +141,18 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 ### 3.3 Anti-frustration rules for loops
 
 - **The contract board fills up and waits.** New contracts arrive over time, up to a cap. They never expire. **[JC: one new contract every 2 h, board cap of 6 in v0.2.]**
-- **Finished contracts wait to be collected.** Results sit there until you open the game. A finished contract never sits idle "wasting" a hunter; the hunter simply waits at the hold.
+- **Finished contracts apply at completion** *(⚑ revision B9)*. Rewards and returning hunters count the moment the timer ends, even offline. The results wait in a list for you to read (§5.4.3).
+- **Unwanted contracts can be declined for free** *(⚑ revision A2)*. A full board never costs anything (G2).
 - **Injuries heal on real time,** including while you're offline.
 - **No resource is lost to an overflow cap in v0.1** (D24.3, no storage caps). If caps arrive later, the UI warns well before you hit them.
-- **Events** (v0.8) give enough attempts that skipping a day costs a little progress, never the reward itself. **[JC: event milestones are reachable with about 70% participation.]**
+- **Events** (v0.8) never punish absence *(⚑ revision G7)*. Attempts are banked tokens, Legendary Hunts start when you start them, and absence can delay an event reward but never forfeit it.
 
 ### 3.4 What exists when
 
 | Milestone | Playable loops |
 |---|---|
 | v0.1 | Check-in (hold only): build, assign peasants, Age up to Keep |
-| v0.2 | Check-in with contracts, hunters, combat logs |
+| v0.2 | Check-in with contracts (tier 1 from Hamlet, G6), hunters, combat logs |
 | v0.3 | Contracts gain investigation, the bestiary, and preparation |
 | v0.4 | Session loop begins (alchemy experiments) |
 | v0.5 | Cycle loop: Threat, Last Stand, Long Night, Embers, mystery act 1 |
@@ -168,21 +169,21 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 
 | Resource | Kind | Produced by | Consumed by | Survives the Long Night? | From |
 |---|---|---|---|---|---|
-| **Food** | Basic | Farms, fishery; peasants | Peasant growth and upkeep; hunter upkeep | No | v0.1 |
+| **Food** | Basic | Farms, fishery; peasants | Settling peasants; **contract provisions** *(⚑ revision G3)* | No | v0.1 |
 | **Wood** | Basic | Woodcutter's camp; peasants | Buildings; bomb casings; arrow shafts | No | v0.1 |
 | **Iron** | Basic | Mine; peasants | Buildings; smithy gear | No | v0.1 |
 | **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.25/min each, no bonuses; G1); **contract bounties (main source)** | Silvered gear; recruitment; Age-ups | No | v0.1 |
 | **Peasants** | Population | Houses + food surplus | Assigned to gathering jobs | No | v0.1 |
-| **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**, the roster persists; rank and gear partly reset **[JC; detailed in v0.5]** | v0.2 |
-| **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.7); trophy-hall bonuses (v0.2) | Partly (a set conversion rate into Embers) | v0.2 |
+| **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; rank partly resets (detailed in v0.5); **gear resets** *(⚑ revision A4)* | v0.2 |
+| **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.7); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.5 arrival, G8) | v0.2 |
 | **Reagents** | Ingredients | Contracts; herb garden; Delves | Alchemy: oils, potions, bombs | No | v0.3 |
 | **Gear** | Items | Smithy (iron + silver + wood) | Equipped by hunters | No (relics are the persistent gear) | v0.2 |
 | **Oils / Potions / Bombs** | Consumables | Alchemist's hut, from reagents | Contract preparation | No | v0.3 |
 | **Knowledge** | Unlocks | Investigating and killing monsters; alchemy experiments | Never spent; reduces investigation time and raises odds | **Yes** | v0.3 |
-| **Threat** | Pressure meter | Rises with time and with failed or ignored contracts | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.5 |
+| **Threat** | Pressure meter | Rises with the Age's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.5 |
 | **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades | **Yes** | v0.5 |
 | **Relics** | Persistent items | Last Stand milestones; Delves | Equipped on the hold or on hunters | **Yes** | v0.5 / v0.6 |
-| **Riftglass** | Delve currency, **capped weekly** (D20) | Delve floors | Sidegrades, convenience upgrades (e.g., +1 h offline cap), cosmetic hold improvements | **Yes** | v0.6 |
+| **Riftglass** | Delve currency with a **banked allowance**: 1/7 of the weekly cap accrues per day, banking up to 2 weeks *(⚑ revision G7)* | Delve floors | Sidegrades, convenience upgrades (e.g., +1 h offline cap), cosmetic hold improvements | **Yes** | v0.6 |
 | **Lore documents** | Collectibles | Contracts, Delves, Long Night | Mystery progression; some give small hints or bonuses | **Yes** | v0.5 |
 | **Boss marks / Hunt points** | Event currencies | World bosses; Legendary Hunts | Event rewards; unlocking a legendary hunter | **Yes** | v0.8 |
 | **Reputation** | Per Order | Order questlines and aligned contracts | Order rewards and unlocks | **Yes** | v0.9 |
@@ -219,7 +220,7 @@ flowchart LR
     RIFT[Rift floors + patron blessings]
   end
   H --> RIFT
-  RIFT -- riftglass, capped weekly --> SIDE[Sidegrades & convenience]
+  RIFT -- riftglass, banked allowance --> SIDE[Sidegrades & convenience]
   RIFT -- relics · lore · reagents --> AL
   SIDE --> HOLD
 
@@ -259,7 +260,7 @@ Every layer has at least one input from another layer and one output to another 
 1. **Silver is both a material and the bounty currency.** One fewer resource to track; contracts become the main source of silver.
 2. **The hunter roster persists through the Long Night,** with rank and gear partly resetting. Details come with v0.5.
 3. **Contract board:** one new contract every 2 h, up to 6, never expiring.
-4. **Event participation:** event milestones are reachable with about 70% participation.
+4. **Event participation:** event milestones are reachable with about 70% participation. *(Superseded by G7: absence can delay an event reward but never forfeit it.)*
 5. **Routine check-in target:** 15 taps or fewer.
 6. **Avoid "jarl"** as too Skyrim-coded; use "thane" or "headman" instead.
 7. **Character names:** Firstblade "Yrsa Varn", Forge-Mother "Dobrava Halsten".
@@ -285,6 +286,31 @@ final = base × (1 + Σ building) × (1 + Σ age) × (1 + Σ trophy) × (1 + Σ 
 
 Buckets that don't exist yet in a milestone count as 0. The in-game breakdown shows each bucket and every contributor in it.
 
+**Combat modifiers** *(⚑ revision B1 [JC])*. Combat uses its own buckets, applied in this fixed order:
+
+```
+stat_eff   = (base × levelScale + Σ flat) × (1 + Σ stat%) × (1 + Σ status%)
+raw        = Might_eff × variance
+typed      = raw × resist[target][damageType]
+dealt      = typed × (1 + Σ outgoing%) × (1 + knowledge%) × (crit ? critMult : 1)
+afterArmor = max(0, dealt − Armor_eff)                         (direct attacks only)
+final      = 0                                                 if resist = 0 (immune)
+           = max(1, round(afterArmor × (1 − min(0.75, Σ taken%))))   otherwise
+```
+
+| Bucket | What goes in it | Examples |
+|---|---|---|
+| **flat** | Fixed additions to a stat, applied before any multiplier | Gear (+9 Might), Quick (+3 Speed) |
+| **stat%** | Percentage changes to a stat that last the whole fight | Quickfoot Tincture (+20% Speed), Swell (+50% Armor) |
+| **status%** | Temporary effects whose duration counts actions | Hamstring (−30% Speed), the Frost Pot slow, Ironbark Tonic, Malice (+5% Might per action) |
+| **outgoing%** | Bonuses to damage dealt | Traits vs a family or location (Grave-warden, Fen-born, Fire-touched), oils |
+| **knowledge%** | Studied / Mastered bonus vs a species | +5% / +10% |
+| **taken%** | Reductions to damage taken. They **add together**, are **capped at 75%**, and apply **after Armor** *(B2)* | Shieldwall −10%, Fire-touched −20% Fire, Emberwright Plate −10% Fire |
+
+- Every bucket is additive inside and multiplicative across buckets.
+- `round` rounds half up. Health is always a whole number.
+- A status with the same name refreshes rather than stacks, unless the ability says "stacking" (Malice).
+
 **Breakdown everywhere (D10).** Every derived number (a rate, a stat, an odds figure, a cost) can be long-pressed (or hovered, on desktop) to open a breakdown tree: base value, each contributor, and the formula. The breakdown is generated from the same data the engine uses, so it can never disagree with the actual result.
 
 **Time.** The engine runs in seconds. The UI shows rates per minute by default, with a per-hour toggle.
@@ -303,7 +329,7 @@ The four basic resources are **food, wood, iron, and silver**. There are no stor
 - **Housing** sets the maximum number of peasants. The Hearth Hall provides 3, and each Cottage adds 2.
 - **Settling** a new peasant costs food: `settleCost(P) = 20 × 1.15^P`, where P is the current number of peasants.
 - **Auto-settle** is on by default. While housing is free and food covers the cost, a new peasant settles automatically, at most one every 30 s. The player can turn auto-settle off to save food for something else.
-- **No food upkeep in v0.1** **[JC]**. Peasants cost food to settle, not to keep. This avoids starvation spirals, which play badly with offline time. Upkeep can be revisited at v0.5 if the economy needs a food sink.
+- **No food upkeep in v0.1** **[JC]**. Peasants cost food to settle, not to keep. This avoids starvation spirals, which play badly with offline time. From v0.2, food also pays **contract provisions** (§5.4.2, G3), which is the food sink after Keep.
 
 **Jobs.** Each peasant is either idle or assigned to a job. Job slots come from buildings.
 
@@ -380,7 +406,7 @@ The Age-up **Hamlet → Keep** requires:
 - +50% to all production (age bucket).
 - The Bell Tower.
 
-From v0.2 onward, Keep also unlocks the Barracks, the contract board, and the Trophy Hall.
+From v0.2 onward, Keep also unlocks contract tiers above 1, the Barracks, and the Trophy Hall. The contract board itself opens in Hamlet, when the first Mine is built *(⚑ revision G6)*.
 
 In v0.1, the Keep is the end of content. The Age screen shows the next Age (Citadel) as "Coming in a later milestone," with no fake progress bar.
 
@@ -437,9 +463,14 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 - Each hunter has unlock conditions (Age, bestiary progress, specific contracts, and later events or Orders). When the conditions are met, the hunter arrives at the hold as a **candidate**. Paying their recruitment silver adds them to the roster.
 - This keeps the Tacticus collection feel (every hunter matters) without any gacha.
 
-**Barracks** (Keep, level building, base cost 600 wood, 300 iron, 100 silver) sets the roster cap: 3 + 1 per level, up to level 5.
+**Active roster and reserve** *(⚑ revision G5)*:
+- **Active roster cap:** 3 in Hamlet (bunks in the Hearth Hall [JC]). In Keep, 3 + Barracks level, up to 8. Citadel adds 2 and Bastion adds 2, for 12 at most [JC].
+- **Reserve:** unlimited. Every hunter you own but haven't made active waits in the reserve. Reserve hunters can't take contracts or Delves and don't earn contract XP. They **can** join world bosses and Legendary Hunts (v0.8).
+- **Swapping** between active and reserve is free and instant, except for hunters who are on a contract or recovering.
+- **Letting a hunter go** means moving them to the reserve. Hunters are never deleted [JC].
+- **Barracks** (Keep, level building, max 5, base cost 600 wood, 300 iron, 100 silver) raises the active cap.
 
-**Recruitment cost:** `100 × 1.5^(rosterSize)` silver. The two starting hunters are free.
+**Recruitment cost** is a **fixed silver price per hunter**, set in the hunter's content file (§8.5) *(⚑ revision G5 [JC])*. The old `100 × 1.5^rosterSize` formula would reach absurd prices with a ~30-hunter collection, and moving hunters to the reserve would dodge it. The two starting hunters are free.
 
 #### 5.3.2 Stats and levels
 
@@ -448,9 +479,10 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 | Health | Hit points. At 0 the hunter is downed. |
 | Might | Damage per hit. For a Mender, Might also sets healing. |
 | Armor | Flat reduction to each incoming hit (minimum damage is 1). |
-| Speed | Turn order. Ties are broken by seed. |
+| Speed | How often the combatant acts (turn meter, §5.5). |
 
-- **Level 1–10 in Keep** (later Ages raise the cap): `stat = base × (1 + 0.10 × (level − 1))`.
+- **Level 1–10 in Keep** (later Ages raise the cap). **Health and Might** scale as `base × (1 + 0.10 × (level − 1))`. **Armor and Speed don't scale with level** *(⚑ revision [JC]: under the turn meter, Speed growth would compound into extra actions)*.
+- **Displayed stats include gear and traits** *(⚑ revision A14)*. The breakdown separates base, level, gear and traits.
 - **XP per contract:** 20 × tier on a success, half that on a failure.
 - **XP to go from level L to L+1:** `50 × 1.5^(L−1)`.
 
@@ -459,7 +491,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 | Role | Identity | Combat rule |
 |---|---|---|
 | **Vanguard** | Tank | Monsters target Vanguards with weight 3 (others weight 1). High Health and Armor. |
-| **Mender** | Healer | On their turn, if any ally is below 70% Health, heals the lowest ally for `1.5 × Might`. Otherwise attacks at 50% Might. |
+| **Mender** | Healer | On her action, if any standing hunter (herself included) is below 70% Health, she heals the one with the **lowest % Health** for `1.5 × Might` (ties: party slot order). Downed hunters can't be healed. Otherwise she attacks at 50% Might. *(⚑ revision B6)* |
 | **Striker** | Damage | 20% crit chance (others 10%). Crits deal ×1.5. |
 
 #### 5.3.4 Damage types (D24.2 names)
@@ -491,7 +523,7 @@ Gear is **upgraded in place** **[JC]**. Each hunter has a weapon slot and an arm
 |---|---|---|---|
 | Iron Blade | +4 Might | 60 iron | Smithy 1 |
 | Steel Blade | +9 Might | 250 iron, 50 wood | Smithy 3 |
-| Silvered Blade | +9 Might, and every hit adds 25% of its damage again as Silver damage | 250 iron, 120 silver | Smithy 5 |
+| Silvered Blade | +9 Might. Each hit also deals a separate **Silver sub-hit**: `0.25 × Might_eff × variance × crit` × the target's Silver resistance. Armor doesn't apply, and it's logged as its own line *(⚑ revision B3 [JC])* | 250 iron, 120 silver | Smithy 5 |
 | Hide Armor | +2 Armor | 40 wood, 30 food | Smithy 1 |
 | Mail | +5 Armor | 300 iron | Smithy 3 |
 | Emberwright Plate | +8 Armor, −10% Fire damage taken | 600 iron, 150 silver | Smithy 6 |
@@ -510,7 +542,7 @@ Runed weapons (Rune damage) arrive with the Emberwright lore in v0.5.
 - A contract is **Reckless** when its displayed success odds are **below 35%** **[JC]**. The odds already include preparation, so "reckless" and "badly prepared" are the same rule: poor preparation lowers the odds until the contract crosses the line.
 - Launching a Reckless contract requires a confirmation dialog that names each hunter and their exact death chance.
 - Recovering hunters can't take contracts. Recovery runs on real time, including offline.
-- Dead hunters are gone for the cycle. Their memorial stays in the Hall of the Fallen (More menu). **[JC: a dead named hunter returns as a candidate after the next Long Night, with their lore tracked. Permanently losing a hand-authored character felt too punishing for a collection game.]**
+- Dead hunters are gone for the cycle. Their memorial stays in the Hall of the Fallen (More menu). **[JC: a dead named hunter returns as a candidate after the next Long Night, with their lore tracked. Permanently losing a hand-authored character felt too punishing for a collection game.]** Before v0.5, when no Long Night exists yet, a dead hunter returns as a candidate **3 days** after their death *(⚑ revision A12 [JC])*.
 
 ---
 
@@ -519,7 +551,8 @@ Runed weapons (Rune damage) arrive with the Emberwright lore in v0.5.
 #### 5.4.1 The board
 
 - One new contract arrives every 2 h, up to a cap of 6. Contracts never expire.
-- The board unlocks at Keep.
+- **Decline** *(⚑ revision A2)*: any open contract can be declined for free. It's removed with no penalty and no Threat, and the slot refills on the normal 2 h schedule.
+- **The board opens in Hamlet, when the first Mine is built** *(⚑ revision G6 [JC]: was Keep)*. Hamlet contracts are tier 1 only, with a party of at most 2. Keep unlocks higher tiers (below), the Barracks, the Trophy Hall, the Hunter's Lodge and the Alchemist's Hut.
 - Each contract is generated from a seed when it arrives, and its content is fixed from then on.
 
 Each contract has:
@@ -529,26 +562,27 @@ Each contract has:
 | Village | The giver. Flavor in v0.2; ties into Reputation in v0.9. |
 | Monster | In v0.2, always a known species (identified for free). Unknown monsters arrive in v0.3. |
 | Tier | 1–5 within Keep. Each tier above the monster's base tier multiplies Health and Might by 1.35 and Armor by 1.15 (§7). |
-| Location tag | Forest, river, field, barrow, or ruin. Interacts with traits. |
-| Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5 |
+| Location tag | Forest, river, field or barrow; **ruin from v0.5** *(⚑ revision D-2)*. **Barrow contracts start at tier 2** *(⚑ revision A3 [JC])*. Interacts with traits. |
+| Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5; at most 2 in Hamlet (G6) |
 | Duration | 30 min / 1 h / 2 h / 4 h / 8 h by tier |
-| Bounty | `60 × 1.6^(tier − 1)` silver, × the Age multiplier *(⚑ revision: base was 40; raised with G1)* |
+| Bounty | `60 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.0; Citadel and Bastion set at v0.5). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6)* |
 | Trophies | Equal to the tier, of that monster's family |
 | Reagents | *(v0.3)* monster-specific drops |
 
-**Tier mix by Age:** 60% at the player's highest-unlocked tier or lower, 40% at the next tier up. Tiers unlock as the player completes contracts. **No rubber-banding** **[JC]**: difficulty never scales with roster strength, because hidden scaling would make the numbers lie.
+**Tier unlocks** *(⚑ revision B8 [JC])*: tier t+1 unlocks after **3 successes at tier t**, up to the Age's cap (Hamlet T1, Keep T5). **Tier mix:** 60% of new contracts at the highest unlocked tier, 40% spread evenly across the lower unlocked tiers (all at the highest while only one is unlocked). **No rubber-banding** **[JC]**: difficulty never scales with roster strength, because hidden scaling would make the numbers lie.
 
 #### 5.4.2 Launching
 
-1. Choose a party. A **Suggested party** button fills it with the highest-odds available combination, found by brute force over the roster (fine for rosters under about 30).
+1. Choose a party. A **Suggested party** button fills it with the highest-odds available combination, found by the two-stage search in §6.5 (it runs in a background worker).
 2. *(v0.3)* Choose preparation.
 3. Read the odds panel:
    - **Win chance** from 500 simulated fights, shown with a ±margin.
    - **Expected injuries** per hunter.
    - **Death chance** per hunter (Reckless contracts only).
    - **Expected rewards.**
-   - **"Why?"** opens the summary math: party damage per round vs monster Health, and monster damage per round vs the party's effective Health.
-4. Launch. The hunters are busy for the contract's duration.
+   - **"Why?"** opens the summary math: party damage per 100 ticks vs monster Health, and monster damage per 100 ticks vs the party's effective Health.
+4. **Pay provisions** *(⚑ revision G3)*: `30 × partySize × 2.2^(tier − 1)` food, paid at launch (tier 1 with 2 hunters: 60 food; tier 5 with 4: 2,811 food). Failures don't refund it; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
+5. Launch. The hunters are busy for the contract's duration.
 
 The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 500 preview simulations use different derived seeds, so the preview never reveals the real roll.
 
@@ -557,52 +591,90 @@ The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation ID
 | Result | Rewards |
 |---|---|
 | **Success** | Full bounty, trophies, XP, reagents (v0.3), lore chance (v0.5) |
-| **Failure** (the party is downed, or 30 rounds pass) | Half XP. In v0.3, any clues gathered are kept as bestiary progress. **No bounty.** |
+| **Failure** (the party is downed, or 400 ticks pass) | Half XP. In v0.3, any clues gathered are kept as bestiary progress. **No bounty.** |
 | **Well-prepared success** *(v0.3)* | Bounty × 1.5 and +1 trophy **[JC]** |
+
+**Rewards apply at completion** *(⚑ revision B9 [JC])*. When a contract's timer ends, including in simulated offline time, its rewards, injuries and XP apply and its hunters return to the hold at once. **Collect** only acknowledges results and shows the logs. Offline trophies therefore count toward the Trophy Hall from the moment they're earned.
 
 #### 5.4.4 How contracts feed the Hold
 
 - **Silver bounties** are the main silver source from v0.2 on. Silver Seams are capped at 720 silver per day for the whole game (G1), so bounties overtake them as higher tiers unlock.
-- **Trophy Hall** (Keep, one level, cost 500 wood, 200 iron): gives **+0.5% to all Hold production per trophy earned this cycle**, in the trophy bucket. "Earned" counts lifetime trophies, so spending trophies later (v0.7) never shrinks the bonus.
+- **Trophy Hall** (Keep, one level, cost 500 wood, 200 iron): gives **+0.5% to all Hold production per trophy earned this cycle**, in the trophy bucket. The count is the **cumulative trophies earned this cycle; spending trophies (v0.7) never reduces it** *(⚑ revision A7)*. Silver is excluded (G1).
 - **Reagents** go to the Alchemist *(v0.3)*.
 
 ---
 
 ### 5.5 Combat resolution (v0.2)
 
-Combat is a round-based auto-battle. The party fights one monster *(groups of monsters come in v0.6+ with Delves)*.
+*⚑ Revised: turn meter (G4), damage rules (B1–B5), exact worked example (A14).*
 
-**Each round:**
-1. All living combatants act in Speed order (ties broken by seed).
-2. **Hunter turn:** attack the monster, or, for a Mender below the healing threshold, heal.
-3. **Monster turn:** make its number of attacks. Each attack picks a target by weight (Vanguard 3, others 1, downed hunters excluded).
-4. Ability triggers (§8 monster table).
-5. **End checks:**
-   - Monster at 0 Health: **success**.
-   - All hunters downed: **failure**.
-   - Round 30 reached: **failure** (the party retreats).
+Combat is an auto-battle on a **turn meter**. The party fights one monster *(groups of monsters come in v0.6+ with Delves)*.
 
-**Hit resolution:**
+**Turn meter:**
+1. Every combatant starts the fight with an empty meter (0).
+2. Each **tick**, every standing combatant's meter rises by its current Speed (`Speed_eff`, §5.0).
+3. Every combatant whose meter is now **100 or more** takes **one action**, then loses 100 from its meter. Leftover meter carries over.
+4. When several act on the same tick, they go in this order: higher meter first, then higher Speed, then **hunters before the monster**, then party slot order. *[JC] A fixed rule rather than a seeded roll, so ties never consume randomness.*
+5. The fight ends at once when the monster reaches 0 Health (**success**) or every hunter is downed (**failure**). If neither has happened by **tick 400**, the party retreats (**failure**).
+
+**Actions:**
+- **Hunter:** attack the monster. A Mender heals instead when anyone is below her threshold (§5.3.3).
+- **Monster:** make its number of attacks (Atk). Each attack picks a target by weight (Vanguard 3, others 1; downed hunters excluded).
+- **Abilities** trigger as written in §8.3. Effects that once said "per round" now happen **on the monster's action**, and durations count **the affected combatant's own actions**. For example, the Frost Pot slows the monster's next 3 actions.
+
+**Attack resolution.** Each direct attack draws rolls from the fight's seeded stream **in this order**:
+1. **Target roll** (monster attacks only, when more than one hunter is standing): `roll × total weight`, walking the standing hunters in party slot order.
+2. **Hit roll:** hit if `roll < 0.90` (abilities can modify the chance). **On a miss, no further rolls are drawn for that attack.**
+3. **Variance roll:** `variance = 0.85 + 0.30 × roll` (Steady: `0.95 + 0.10 × roll`).
+4. **Crit roll:** crit if `roll < critChance`.
+5. **Ability rolls** (such as Hamstring's 25%), only if the attack hit.
+
+Damage then follows the combat formula in §5.0.
+
+**General damage rules:**
+- **Armor applies only to direct attacks** (hunter and monster weapon attacks). Bombs, damage over time, ability damage and Silver sub-hits ignore Armor. Resistances still apply to any typed damage *(⚑ revision B4 [JC])*.
+- **Immunity:** a resistance of 0 means **0 damage**, and the log says "immune". The 1-damage floor applies only when the resistance is above 0 *(⚑ revision B5 [JC])*.
+- **Hunters have no type resistances.** Their protection is Armor plus the taken% bucket.
+
+**Log format.** One line per action, stamped with its tick. Each line expands to show its rolls. *Illustrative example, not a test case:*
 
 ```
-hit        : roll < 0.90                    (base hit chance; abilities can modify it)
-raw        : Might × U(0.85, 1.15)          (variance roll)
-typed      : raw × resist[monster][damageType]
-crit       : roll < critChance → ×1.5
-final      : max(1, typed − targetArmor)
+t31 · Bjarna (Striker) hits the Draugr — Frost 21 ×0.25 resist −9 armor = 1 (floor) · Draugr 259/260
+t33 · Draugr's Barrow-Grip on Halvar — Steel 22 −8 armor = 14 · Halvar 156/170 · Halvar is held (loses his next action)
 ```
 
-Bonuses from traits, oils, and other sources apply to Might or `typed` through the buckets in §5.0. The breakdown lists them.
+Logs are kept for the last 50 contracts. Any listed contract's log can be regenerated from its seed at any time.
 
-**Log format.** One line per action. Each line expands to show its rolls:
+#### 5.5.1 Worked fight: required test case
 
-```
-R3 · Yrsa (Striker) hits the Draugr — Silver 24 ×1.5 weak −6 armor = 30 · Draugr 64/140
-     ↳ hit 0.41<0.90 · variance 1.07 · crit 0.77≥0.20
-R3 · Draugr's Barrow-Grip on Halvar — Steel 18 −8 armor = 10 · Halvar 92/160 · Halvar is held (skips next turn)
-```
+**This example is exact.** Claude Code must build a test that reproduces it **line for line** *(⚑ revision A14)*. It doesn't depend on the random-number generator: the test feeds in this **roll sequence** directly. A second, seed-based golden test gets recorded once the generator is chosen in v0.2.
 
-Logs are kept for the last 50 contracts. The log for any listed contract can be regenerated from its seed at any time.
+**Setup:**
+- **Zora Sedlak**, level 1, no gear: Health 100, Might 20, Armor 3, Speed 13 + 3 (Quick) = **16**, crit chance 0.20, Steel damage. A field contract, so Fen-born doesn't apply.
+- **Kikimora**, tier 1: Health 110, Might 12, Armor 3, Speed 13, 1 attack per action, crit chance 0.10, Steel resistance 1.0. Spoil has no effect (no potions carried).
+- One hunter, so no target rolls are drawn.
+
+**Roll sequence (34 rolls; the bars only separate attacks for reading):**
+
+`0.40 0.50 0.70 | 0.20 0.60 0.95 | 0.95 | 0.10 0.30 0.50 | 0.30 0.90 0.10 | 0.50 0.20 0.80 | 0.60 0.50 0.40 | 0.70 0.80 0.30 | 0.20 0.40 0.60 | 0.10 0.50 0.15 | 0.80 0.60 0.30 | 0.30 0.70 0.90`
+
+| Tick | Actor | Rolls (hit · variance · crit) | Dealt before Armor | Damage | Target Health after |
+|---|---|---|---|---|---|
+| 7 | Zora | 0.40 · 0.50 → 1.000 · 0.70 | 20.00 | 17 | Kikimora 93 |
+| 8 | Kikimora | 0.20 · 0.60 → 1.030 · 0.95 | 12.36 | 9 | Zora 91 |
+| 13 | Zora | 0.95 (miss) | — | 0 | Kikimora 93 |
+| 16 | Kikimora | 0.10 · 0.30 → 0.940 · 0.50 | 11.28 | 8 | Zora 83 |
+| 19 | Zora | 0.30 · 0.90 → 1.120 · 0.10 (**crit**) | 33.60 | 31 | Kikimora 62 |
+| 24 | Kikimora | 0.50 · 0.20 → 0.910 · 0.80 | 10.92 | 8 | Zora 75 |
+| 25 | Zora | 0.60 · 0.50 → 1.000 · 0.40 | 20.00 | 17 | Kikimora 45 |
+| 31 | Kikimora | 0.70 · 0.80 → 1.090 · 0.30 | 13.08 | 10 | Zora 65 |
+| 32 | Zora | 0.20 · 0.40 → 0.970 · 0.60 | 19.40 | 16 | Kikimora 29 |
+| 38 | Zora | 0.10 · 0.50 → 1.000 · 0.15 (**crit**) | 30.00 | 27 | Kikimora 2 |
+| 39 | Kikimora | 0.80 · 0.60 → 1.030 · 0.30 | 12.36 | 9 | Zora 56 |
+| 44 | Zora | 0.30 · 0.70 → 1.060 · 0.90 | 21.20 | 18 | Kikimora 0 |
+
+**Result:** success at tick 44. Zora ends at 56/100 Health, above 30%, so no injury.
+
 
 ---
 
@@ -667,9 +739,9 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 |---|---|---|
 | Oil | 1 per hunter | Coats the weapon for the whole fight |
 | Potion | 1 per hunter | Triggers automatically on its condition |
-| Bomb | Up to 2 per party | Thrown on round 1, or on its trigger |
+| Bomb | Up to 2 per party | Thrown at tick 1, or on its trigger |
 
-**v0.3 consumables:**
+**v0.3 consumables** *(⚑ durations restated in actions for the turn meter, G4)*:
 
 | Item | Type | Effect | Recipe (category) |
 |---|---|---|---|
@@ -677,11 +749,11 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 | Drowned-Bane Oil | Oil | +35% damage vs Water Spirits | 2 river pearl + 1 yarrow |
 | Thornbane Oil | Oil | +35% damage vs Field & Forest Spirits | 2 thornwood + 1 mugwort |
 | Mending Draught | Potion | Once, below 30% Health: heal 40% of max Health | 2 yarrow + 1 honeycomb |
-| Ironbark Tonic | Potion | +30% Armor for rounds 1–5 | 1 thornwood + 2 juniper |
+| Ironbark Tonic | Potion | +30% Armor until the holder's 5th action | 1 thornwood + 2 juniper |
 | Quickfoot Tincture | Potion | +20% Speed for the whole fight | 2 mugwort + 1 hare's foot |
-| Fire Pot | Bomb | Round 1: 40 Fire damage, then 10 Fire per round for 3 rounds | 1 pitch + 1 wood (resource) |
-| Frost Pot | Bomb | Round 1: 30 Frost damage, then −30% monster Speed for 3 rounds | 1 rime salt + 1 wood |
-| Saltburst | Bomb | Triggers on the monster's first ability: cancels it and blocks abilities for 3 rounds | 2 rime salt + 1 silver (resource) |
+| Fire Pot | Bomb | At tick 1: 40 Fire damage, then 10 Fire on each of the monster's next 3 actions | 1 pitch + 1 wood (resource) |
+| Frost Pot | Bomb | At tick 1: 30 Frost damage, then −30% Speed for the monster's next 3 actions | 1 rime salt + 1 wood |
+| Saltburst | Bomb | Triggers on the monster's first ability: cancels it and blocks abilities for the monster's next 3 actions | 2 rime salt + 1 silver (resource) |
 
 - **Mismatched oils do nothing.** The odds panel shows "Grave Oil: no effect (target is a Water Spirit)." Against an unidentified monster, it shows the oil's effect for each remaining candidate.
 - **Well prepared** means the contract succeeded with a matching oil on at least one hunter, plus at least one bomb whose damage type the monster is weak to *or* a Saltburst that cancelled an ability. A well-prepared success pays bounty × 1.5 and +1 trophy (§5.4.3).
@@ -699,21 +771,22 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 
 ### 5.9 The Long Night *(v0.5, outline)*
 
-- **Threat** rises over the cycle: a base rate per Age, plus spikes from failed contracts and contracts left on the board too long. Completed contracts and defensive buildings push it down.
+- **Threat** rises over the cycle: a base rate per Age, plus spikes from failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)*. Completed contracts and defensive buildings push it down.
 - **The Last Stand** is available from Bastion on (day 3). It is an auto-battle against escalating waves, using the hold's defenses plus up to 6 hunters.
   - The Embers payout depends on waves survived, the Age reached, Threat at the time of the stand, and trophies converted.
   - Making the stand later pays more Embers, but Threat raises the difficulty. The sweet spot should land around days 4–5 (§6).
 - **Remaining Ages:** Citadel and Bastion.
 - **What resets and what persists:** per §4. Embers buy permanent warden upgrades. Relics drop at payout milestones.
 - **Story:** mystery act 1 plus the first lore documents. Residents react to how the stand went.
-- **Open questions:** the payout curve; how hunter rank and gear partly reset; whether buildings can be damaged by high Threat (leaning no, per pillar 5).
+- **Arriving at v0.5** *(⚑ revision G8)*: when a pre-v0.5 save first loads in v0.5, the story triggers the first Long Night: a scripted Last Stand with the normal payout, then §4.1's normal reset rules. **Trophy-to-Embers conversion at that moment is capped** at 120% of the median Embers a simulated Standard player earns in cycle 1 [JC]. Before v0.5, the Trophy Hall bonus is uncapped [JC].
+- **Open questions:** the payout curve; how hunter rank partly resets (gear resets fully, A4); whether buildings can be damaged by high Threat (leaning no, per pillar 5).
 
 ### 5.10 Delves *(v0.6, outline)*
 
 - About 5-minute runs: 6 floors plus a guardian, with a party of 3. Auto-battle against groups of monsters.
-- **On each floor:** choose one blessing from one of 3 offered patrons (4 patrons in total, each with a theme and a small blessing pool). Some floors offer a fork in the path.
-- **Rewards:** Riftglass (capped weekly, per D20), a chance at relics, lore pages, and rare reagents.
-- **Open questions:** whether injuries carry back from Delves (leaning no: Delve injuries end the run but don't follow the hunter home); the weekly Riftglass cap; the patrons' identities (lore bible).
+- **On each floor** *(⚑ revision D-1 [JC])*: two doors, each showing one patron. Pick a door, then pick 1 of 3 blessings from that patron. The patron roster is in §8.8.
+- **Rewards:** Riftglass (banked allowance, G7), a chance at relics, lore pages, and rare reagents.
+- **Open questions:** whether injuries carry back from Delves (leaning no: Delve injuries end the run but don't follow the hunter home); the size of the weekly Riftglass allowance; the patrons' identities (lore bible).
 
 ### 5.11 Hunter depth *(v0.7, outline)*
 
@@ -724,15 +797,18 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 
 ### 5.12 Events *(v0.8, outline)*
 
+*⚑ Revised (G7): events wait for you.*
+
 - **World bosses:**
   - Persistent Health pool across attempts.
-  - 3 attempts per day, resetting at 4 a.m. local time (D19).
-  - A hunter used in an attempt can't be used again that day.
+  - **Attempt tokens:** 1 every 8 h, banking up to 6.
+  - A hunter who joins an attempt **rests for 24 h** before joining another [JC]. Reserve hunters can join (G5).
   - Rewards at damage milestones.
 - **Legendary Hunts:**
-  - Run on a real calendar, about every 2–3 weeks (D19).
-  - 3 tracks, each restricting which hunters you can bring (by role, family trait, or damage type).
-  - Points unlock a legendary hunter. The milestones are reachable with about 70% participation (§3.3).
+  - **You start each hunt yourself** from the available list. Attempt tokens regenerate the same way. No run timers.
+  - 3 tracks, each restricting which hunters you can bring (by role, family trait, or damage type). Reserve hunters can join.
+  - Points unlock a legendary hunter, and **points carry over to reruns** until it's unlocked.
+- **Absence can delay an event reward but never forfeit it.**
 
 ### 5.13 Orders *(v0.9, outline)*
 
@@ -757,7 +833,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 8. **No difficulty rubber-banding.** Contract tiers are fixed per Age and unlocked by progress.
 9. **Investigation uses Hunter's Lodge slots, not hunters.**
 10. **A well-prepared success pays bounty × 1.5 and +1 trophy.**
-11. **The Trophy Hall bonus counts lifetime trophies earned this cycle,** so spending trophies never shrinks it.
+11. **The Trophy Hall bonus counts cumulative trophies earned this cycle,** unaffected by spending. *(Reworded in revision A7.)*
 12. **Odds come from 500 simulated fights.** The real outcome uses a separate seed derived from the party and preparation, so it's reproducible but can't be read in advance.
 13. **Warden skills (v0.4) survive the Long Night.**
 14. **Rune damage and runed gear are held back until v0.5,** when the Emberwright lore arrives.
@@ -799,7 +875,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Mill reaches level 3 | 2–5 h | v0.1 |
 | 10 peasants | 3–6 h | v0.1 |
 | **Keep reached** | **8–14 h** (Standard); ≤ 24 h (Light); ≥ 6 h (Heavy) | v0.1 |
-| First contract launched | At the first check-in after Keep | v0.2 |
+| First contract launched | Within 15 min of the first Mine (Hamlet; ⚑ revision G6) | v0.2 |
 | Roster of 4 hunters | By the end of day 2 | v0.2 |
 | First tier-3 success | Day 2 | v0.2 |
 | First species Identified through investigation | ≤ 2 h after the Hunter's Lodge is built | v0.3 |
@@ -808,7 +884,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Bastion reached; Last Stand available | Day 3 | v0.5 |
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.5 |
 | **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.5 |
-| Later cycles | Each ≥ 15% faster than the one before, with a floor of 2 days **[JC]** | v0.5 |
+| Later cycles | Each ≥ 15% faster than the one before, with a floor of 2 days **[JC]**. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) *(⚑ revision A15)* | v0.5 |
 | Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.6 |
 
 ### 6.3 Engagement checks (simulator)
@@ -822,6 +898,7 @@ These catch dead zones and walls that pure time targets miss.
 5. **Odds are honest** *(v0.2)*: across 2,000 simulated contracts, the actual success rate in each 10-point odds bucket lands within ±5 points of the displayed odds.
 6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days in v0.2–v0.4), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.*
 7. **No overflow:** every number stays below 1e300 through 3 simulated cycles *(from v0.5)*. Through v0.4, the same check runs over 14 simulated days.
+8. **Provisions matter** *(v0.2; ⚑ revision G3)*: from Keep onward, contract provisions take 20–40% of food income.
 
 ### 6.4 Playtest-only checks
 
@@ -830,6 +907,17 @@ The simulator can't measure these. The owner checks them at the end of each mile
 - Fight logs are readable at a glance, and the "Why?" panel makes sense.
 - Nothing feels like a chore or a punishment for being away.
 - Overall: is it fun? Does the next goal always feel visible?
+
+### 6.5 Performance budgets *(⚑ revision C6 [JC])*
+
+| What | Budget | How |
+|---|---|---|
+| **Suggested party** | ≤ 300 ms on a mid-range phone | Runs in a Web Worker. Stage 1 ranks every legal party with **50 samples**, using the **same seeds for every party** so comparisons are fair. Stage 2 reruns the **top 5 at 500 samples**. Against an unidentified monster, stage 1 uses **20 samples per candidate**. |
+| **Live odds panel** | ≤ 100 ms per update | 500 samples, in the same worker |
+| **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
+| **Simulator: full suite** | ≤ 5 min in CI | All policies and checks |
+
+A benchmark test enforces the first two on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone.
 
 ---
 
@@ -867,33 +955,42 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Level scaling | `stat × (1 + s × (L − 1))` | `hunter.levelStatGrowth` = 0.10, `hunter.levelCap.keep` = 10 | 5.3.2 |
+| Level scaling | Health and Might: `stat × (1 + s × (L − 1))`; Armor and Speed don't scale | `hunter.levelStatGrowth` = 0.10, `hunter.levelCap.keep` = 10 | 5.3.2 |
 | XP to next level | `x × g^(L−1)` | `xp.base` = 50, `xp.growth` = 1.5 | 5.3.2 |
 | XP per contract | `per × tier` (half on failure) | `xp.perTier` = 20 | 5.3.2 |
-| Recruitment cost | `c × g^rosterSize` | `recruit.base` = 100, `recruit.growth` = 1.5 | 5.3.1 |
-| Roster cap | `3 + barracksLevel` | `barracks.maxLevel` = 5 | 5.3.1 |
+| Recruitment cost | Fixed price per hunter (G5) | `hunter.recruitPrice`, in each hunter's content entry (§8.5) | 5.3.1 |
+| Active roster cap | Hamlet 3; Keep `3 + barracksLevel`; +2 at Citadel, +2 at Bastion; reserve unlimited (G5) | `barracks.maxLevel` = 5, `roster.hamletCap` = 3, `roster.ageBonus` = { citadel 2, bastion 2 } | 5.3.1 |
 | Recovery | Bruised: fixed; Wounded: `per × tier`; Grievous: ×3 | `injury.bruised` = 30 min, `injury.woundedPerTier` = 2 h, `injury.grievousMult` = 3, `injury.bruisedBelow` = 0.30 | 5.3.7 |
 | Reckless line | odds < threshold | `contract.recklessBelow` = 0.35 | 5.3.7 |
 | Death roll | per downed hunter on a Reckless contract | `injury.deathChance` = 0.30 | 5.3.7 |
+| Dead hunter returns | Before v0.5: after N days; from v0.5: after the next Long Night | `death.returnDaysPreV05` = 3 | 5.3.7 |
 
 ### 7.4 Contracts & combat
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Board refill | 1 per interval, up to the cap | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
+| Board refill | 1 per interval, up to the cap; declining is free | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
+| Board opens | when the first Mine is built (G6) | — | 5.4.1 |
+| Tier unlocks | tier t+1 after k successes at tier t, up to the Age cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5 } | 5.4.1 |
+| Provisions | `p × partySize × g^(tier−1)` food at launch | `provisions.base` = 30, `provisions.growth` = 2.2 | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
-| Bounty | `b × g^(tier−1) × ageMult` | `bounty.base` = 60, `bounty.growth` = 1.6 | 5.4.1 |
+| Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 60, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.0 } | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
 | Duration | by tier | `contract.duration` = [30 min, 1 h, 2 h, 4 h, 8 h] | 5.4.1 |
-| Party size | by tier | `contract.partySize` = [3, 3, 3, 4, 4] | 5.4.1 |
+| Party size | by tier | `contract.partySize` = [3, 3, 3, 4, 4], `contract.hamletPartyMax` = 2 | 5.4.1 |
 | Hit | `roll < hitChance` | `combat.hitChance` = 0.90 | 5.5 |
-| Damage | `max(1, Might × U(lo, hi) × resist × buckets × crit − Armor)` | `combat.varianceLo` = 0.85, `combat.varianceHi` = 1.15, `combat.minDamage` = 1 | 5.5 |
+| Damage | Combat formula in §5.0 (bucket order, Armor on direct attacks only, taken% after Armor, immunity) | `combat.varianceLo` = 0.85, `combat.varianceHi` = 1.15, `combat.minDamage` = 1, `combat.takenCap` = 0.75 | 5.0, 5.5 |
+| Silvered sub-hit | `f × Might_eff × variance × crit × resist[Silver]`, no Armor | `gear.silveredFraction` = 0.25 | 5.3.6 |
 | Crit | `roll < critChance → ×critMult` | `combat.critChance` = 0.10, `striker.critChance` = 0.20, `combat.critMult` = 1.5 | 5.3.3 |
-| Healing | Mender: `m × Might` on the lowest ally if any ally is below the threshold | `mender.healMult` = 1.5, `mender.healBelow` = 0.70, `mender.attackMult` = 0.50 | 5.3.3 |
+| Healing | Mender: `m × Might` on the lowest-% standing hunter (herself included) if any is below the threshold | `mender.healMult` = 1.5, `mender.healBelow` = 0.70, `mender.attackMult` = 0.50 | 5.3.3 |
 | Targeting | weight by role | `target.vanguardWeight` = 3, `target.otherWeight` = 1 | 5.3.3 |
-| Round limit | failure at the limit | `combat.maxRounds` = 30 | 5.5 |
+| Turn meter | meter += Speed each tick; act at the threshold; fail at the tick limit | `combat.meterThreshold` = 100, `combat.maxTicks` = 400 | 5.5 |
 | Odds preview | `n` simulated fights; margin `±1.96 × √(p(1−p)/n)` | `odds.samples` = 500 **[JC: raised from 200; keeps the margin within ±4.4 points]** | 5.4.2 |
 | Well prepared | bounty multiplier | `prep.wellPreparedBounty` = 1.5 | 5.4.3 |
+| Suggested party | Stage 1: k samples per party (same seeds); stage 2: top N at full samples | `suggest.stage1Samples` = 50, `suggest.stage1PerCandidate` = 20, `suggest.finalists` = 5 | 6.5 |
+| World-boss tokens *(v0.8)* | 1 per interval, banking up to the max; hunters rest after an attempt | `boss.tokenInterval` = 8 h, `boss.tokenMax` = 6, `boss.hunterRest` = 24 h | 5.12 |
+| Riftglass allowance *(v0.6)* | weekly cap ÷ 7 accrues per day, banking up to N weeks | `riftglass.bankWeeks` = 2 | 5.10 |
+| v0.5 arrival cap *(v0.5)* | trophy-to-Embers conversion capped at a share of the simulated cycle-1 median | `v05.emberCapShare` = 1.2 | 5.9 |
 
 ### 7.5 Bestiary & preparation
 
@@ -920,8 +1017,8 @@ The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.3 (all Keep):
 
 | Building | Type | Base cost | Effect | From |
 |---|---|---|---|---|
-| Barracks | Level (max 5) | 600 wood, 300 iron, 100 silver | Roster cap = 3 + level | v0.2 |
-| Trophy Hall | Unique | 500 wood, 200 iron | +0.5% all production per trophy earned this cycle | v0.2 |
+| Barracks | Level (max 5) | 600 wood, 300 iron, 100 silver | Active roster cap = 3 + level (G5) | v0.2 |
+| Trophy Hall | Unique | 500 wood, 200 iron | +0.5% all production (except silver) per trophy earned this cycle (cumulative) | v0.2 |
 | Hunter's Lodge | Level (max 3) | 800 wood, 400 iron, 200 silver | 1 investigation slot per level | v0.3 |
 | Alchemist's Hut | Level (max 5) | 700 wood, 300 iron, 150 silver | Brews consumables; 1 brew at a time per level | v0.3 |
 | Herb Garden | Count | 300 wood, 100 food | +1 yarrow, mugwort and juniper every 10 min | v0.3 |
@@ -944,20 +1041,22 @@ A contract's location tag comes from its village. **Each success also gives one 
 - Stats are at the monster's **base tier** (the first tier in its range).
 - Each tier above that multiplies Health and Might by 1.35 and Armor by 1.15 (§7.4).
 - Speed doesn't scale.
-- "Atk" is attacks per round.
+- "Atk" is attacks per action (turn meter, §5.5).
 
 | Monster | Family | Locations | Tiers | Health | Might | Armor | Speed | Atk |
 |---|---|---|---|---|---|---|---|---|
-| Hollow Wolf | Beasts & Wilds | forest, field, barrow | 1–2 | 120 | 10 | 2 | 14 | 2 |
+| Hollow Wolf | Beasts & Wilds | forest, field, river, barrow | 1–2 | 120 | 10 | 2 | 14 | 2 |
 | Kikimora | Field & Forest Spirits | forest, field, river | 1–2 | 110 | 12 | 3 | 13 | 1 |
 | Upyr | Restless Dead | field, barrow | 2–3 | 170 | 16 | 4 | 10 | 1 |
 | Rusalka | Water Spirits | river | 2–3 | 150 | 14 | 2 | 12 | 1 |
 | Poludnitsa | Field & Forest Spirits | field | 2–4 | 160 | 15 | 3 | 11 | 1 |
-| Vodyanoy | Water Spirits | river | 3–4 | 230 | 20 | 7 | 7 | 1 |
+| Vodyanoy | Water Spirits | river | 3–5 | 230 | 20 | 7 | 7 | 1 |
 | Draugr | Restless Dead | barrow | 3–5 | 260 | 22 | 9 | 6 | 1 |
 | Bies | Beasts & Wilds | forest, field | 3–5 | 220 | 18 | 5 | 12 | 1 |
 | Leshy | Field & Forest Spirits | forest | 4–5 | 320 | 20 | 8 | 8 | 1 |
 | Strzyga | Restless Dead | barrow, field | 4–5 | 240 | 24 | 5 | 13 | 1 |
+| Huldra *(⚑ added, A3)* | Field & Forest Spirits | forest, field | 2–4 | 150 | 15 | 3 | 12 | 1 |
+| Nix *(⚑ added, A3)* | Water Spirits | river | 3–5 | 210 | 19 | 4 | 13 | 1 |
 
 **Resistances** (multiplier on incoming damage of each type; **bold** = weakness, ≥ 1.25):
 
@@ -973,23 +1072,47 @@ A contract's location tag comes from its village. **Each success also gives one 
 | Bies | 1.0 | 1.0 | **1.25** | 1.0 | **1.5** | 0.75 |
 | Leshy | 0.75 | 1.0 | **1.75** | 0.75 | **1.25** | 0.5 |
 | Strzyga | 0.75 | **1.5** | 1.0 | 1.0 | **1.5** | 0.5 |
+| Huldra | 1.0 | **1.25** | **1.25** | 1.0 | 1.0 | 0.75 |
+| Nix | 1.0 | **1.25** | 0.75 | **1.5** | 1.0 | 0.5 |
 
 **Abilities, clue tags, and drops:**
 
 | Monster | Ability (exact effect) | Clue tags | Drop (v0.3) | Folklore basis |
 |---|---|---|---|---|
-| Hollow Wolf | *Hamstring:* each hit has a 25% chance to cut the target's Speed by 30% for 3 rounds | tracks, livestock, night | wolf fang | Wolves grown wrong in the Gloam: grey, gaunt, too quiet |
+| Hollow Wolf | *Hamstring:* each hit has a 25% chance to cut the target's Speed by 30% for the target's next 3 actions | tracks, livestock, night | wolf fang | Wolves grown wrong in the Gloam: grey, gaunt, too quiet |
 | Kikimora | *Spoil:* its first hit on each hunter ruins that hunter's unused potion | house, livestock, swamp | thornwood | Household/swamp spirit whose mischief turns to malice |
 | Upyr | *Bloodfeast:* heals 50% of the damage it deals | grave, bloodless, night | grave dust | Restless dead risen from an improper burial |
-| Rusalka | *Drowning Song:* rounds 1, 5, 9…: the lowest-Armor hunter is charmed and skips a turn | drowned, song, night | river pearl | Drowned maiden of rivers and fields |
-| Poludnitsa | *Noon Heat:* each round, every hunter loses 3% of max Health (Fire; Armor doesn't apply). A Frost Pot suppresses it for 3 rounds | noon, fields, madness | noon poppy | Lady Midday, who strikes field workers at noon |
-| Vodyanoy | *Drag Under:* every 3rd round, grabs a target: they skip their next turn and take ×2 from the next hit | drowned, mill, swamp | river pearl | Old man of the water, lord of mill-ponds and weirs |
-| Draugr | *Barrow-Grip:* every 3rd round, its attack holds the target (skips next turn). *Swell:* below 50% Health, Armor +50% | grave, cold, treasure | grave dust, rime salt | Barrow-dead, swollen and heavy, guarding grave goods |
-| Bies | *Malice:* Might +5% per round, stacking | madness, livestock, tracks | thornwood | Malevolent spirit of the wild places |
-| Leshy | *Lead Astray:* each round, 15% chance one random hunter loses their turn. *Root-Wall:* regenerates 5% of max Health per round | lost, forest-shift, tracks | thornwood | Lord of the forest who misleads travelers and changes size with the trees |
+| Rusalka | *Drowning Song:* on its 1st, 5th, 9th… action, instead of attacking, it charms the lowest-Armor hunter, who loses their next action | drowned, song, night | river pearl | Drowned maiden of rivers and fields |
+| Poludnitsa | *Noon Heat:* on each of its actions, every hunter loses 3% of max Health (Fire; ignores Armor). A Frost Pot suppresses it for the monster's next 3 actions | noon, fields, madness | noon poppy | Lady Midday, who strikes field workers at noon |
+| Vodyanoy | *Drag Under:* every 3rd action, its attack grabs the target: they lose their next action and take ×2 from the next hit | drowned, mill, swamp | river pearl | Old man of the water, lord of mill-ponds and weirs |
+| Draugr | *Barrow-Grip:* every 3rd action, its attack holds the target (they lose their next action). *Swell:* below 50% Health, Armor +50% (stat%) | grave, cold, treasure | grave dust, rime salt | Barrow-dead, swollen and heavy, guarding grave goods |
+| Bies | *Malice:* +5% Might after each of its actions, stacking (status%) | madness, livestock, tracks | thornwood | Malevolent spirit of the wild places |
+| Leshy | *Lead Astray:* on each of its actions, 15% chance one random hunter loses their next action. *Root-Wall:* regenerates 5% of max Health on each of its actions | lost, forest-shift, tracks | thornwood | Lord of the forest who misleads travelers and changes size with the trees |
 | Strzyga | *Second Soul:* the first time it reaches 0 Health, it rises at 40% (once per fight) | grave, bloodless, strange-birth | grave dust | A person born with two souls; after death, one hunts the living |
+| Huldra | *Enthrall:* on its 1st action and every 4th after, the hunter with the highest Might is enthralled: they lose their next action, and the Huldra heals 10% of max Health | stranger, lost, livestock | thornwood | Forest woman with a hidden tail who lures and punishes; keeper of cattle in the deep woods |
+| Nix | *Riverhorse:* on its 1st action, it carries off the lowest-Health hunter, who can't act or be targeted until 3 of the Nix's actions have passed, then returns having lost 20% of max Health. A Saltburst cancels it | drowned, song, horse | river pearl | Shape-shifting water spirit, often a white horse that carries riders into the river |
 
-**Saltburst** cancels the first trigger of any ability marked above and blocks abilities for 3 rounds (§5.7).
+**Saltburst** cancels the first trigger of any ability marked above and blocks abilities for the monster's next 3 actions (§5.7).
+
+*⚑ Abilities restated for the turn meter (G4).*
+
+#### 8.3.1 Coverage: location × tier → candidates *(⚑ added, revision A3)*
+
+Barrow contracts start at tier 2; ruin contracts arrive in v0.5.
+
+| Location | T1 | T2 | T3 | T4 | T5 |
+|---|---|---|---|---|---|
+| Forest | Wolf, Kikimora | Wolf, Kikimora, Huldra | Bies, Huldra | Bies, Leshy, Huldra | Bies, Leshy |
+| Field | Wolf, Kikimora | Wolf, Kikimora, Upyr, Poludnitsa, Huldra | Upyr, Poludnitsa, Bies, Huldra | Poludnitsa, Bies, Strzyga, Huldra | Bies, Strzyga |
+| River | Wolf, Kikimora | Wolf, Kikimora, Rusalka | Rusalka, Vodyanoy, Nix | Vodyanoy, Nix | Vodyanoy, Nix |
+| Barrow | *(not generated)* | Wolf, Upyr | Upyr, Draugr | Draugr, Strzyga | Draugr, Strzyga |
+
+**Required content-validation test.** For every location × tier cell any village can generate, it checks that:
+1. at least 1 species qualifies;
+2. at least 2 qualify wherever investigation applies, or else contracts in that cell arrive pre-identified;
+3. every pair of species in a cell has different clue-tag sets, so 3 clues always identify exactly one.
+
+The test runs on every content change.
 
 ### 8.4 Clue library (v0.3)
 
@@ -1015,6 +1138,8 @@ Each clue tag has several in-world texts. A contract draws one text per revealed
 | lost | "Woodcutters walk for hours and come out where they started." |
 | forest-shift | "The old path is gone. The trees stand where it used to run." |
 | strange-birth | "The woman's son was born with two teeth, and he died last winter." |
+| stranger *(⚑ added)* | "A woman no one knew danced at the harvest feast. Three men followed her into the wood." |
+| horse *(⚑ added)* | "A white horse stood by the ford at dusk. The miller's boy climbed on, and it walked into the river." |
 
 **Generator rules:**
 1. A contract's candidate list is every species whose locations include the contract's tag and whose tier range covers the contract tier.
@@ -1042,6 +1167,8 @@ Individual hunters vary by up to ±10% per stat.
 | **Radek the Gravedigger** | Vanguard | Silver | Lowland | Grave-warden, Hard to kill | Defeat an Upyr | 165/11/9/7 | Has buried half of Mirograd. Lately his shovel has been silver-shod. |
 | **Sigrun Halfhand** | Striker | Fire | Highland | Fire-touched, Lantern-bearer | Smithy level 5 | 100/22/4/11 | Exiled Emberwright apprentice who won't say why she left. *(lore hook)* |
 | **Toma Kettle** | Vanguard | Steel | Wanderer | Haggler, Quick | Earn 2,000 silver in bounties | 150/12/7/10 | Tinker and talker. Has opinions about every price at the hold. |
+
+**Recruitment prices** *(⚑ revision G5)*: Halvar and Zora free; Ostap 150; Vesna 350; Bjarna 400; Radek 500; Toma 600; Sigrun 1,200 silver.
 
 **Traits:**
 
@@ -1079,8 +1206,8 @@ Each ingredient also has **4 hidden effects**, defined in v0.4 for alchemy disco
 | Pitch | Gift: Kozly Hollow, Mirograd, Velkvik | Fire Pot |
 | Rime salt | Gift: Velkvik, Ravenfell; drop: Draugr | Frost Pot, Saltburst |
 | Grave dust | Drop: Upyr, Draugr, Strzyga | Grave Oil |
-| River pearl | Drop: Rusalka, Vodyanoy | Drowned-Bane Oil |
-| Thornwood | Drop: Kikimora, Bies, Leshy | Thornbane Oil, Ironbark Tonic |
+| River pearl | Drop: Rusalka, Vodyanoy, Nix | Drowned-Bane Oil |
+| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra | Thornbane Oil, Ironbark Tonic |
 | Wolf fang | Drop: Hollow Wolf | — *(reserved for v0.4 discovery)* |
 | Noon poppy | Drop: Poludnitsa | — *(reserved for v0.4 discovery)* |
 
@@ -1123,6 +1250,8 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 ## 9. UI Screens (phone-first)
 
 ### 9.1 Layout and interaction rules
+
+**All mocks in §9 are illustrative.** Their numbers follow the formulas, but they aren't test cases; the only exact example is §5.5.1 *(⚑ revision A14)*.
 
 **Target size.** The layout is designed for a 360–430 px wide portrait phone and scales up (D02).
 - **≥ 900 px wide:** two columns. Navigation becomes a left sidebar, the main screen sits in the middle, and the detail panel (breakdowns, logs, hunter details) opens on the right instead of as a sheet.
@@ -1246,13 +1375,14 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 │ unprepared would be 52%          │
 │ Halvar: 18% wounded              │
 │ Zora:    9% wounded              │
+│ Provisions 🌾436 (paid at launch) │
 ├──────────────────────────────────┤
 │        [ Send the hunters ]      │
 └──────────────────────────────────┘
 ```
 
 - The odds update live as the party and preparation change. The "unprepared would be" line keeps the value of preparation visible.
-- **Why ▸** opens the odds breakdown: party damage per round against the monster's effective Health, the monster's damage per round against the party's effective Health, expected rounds, and every contributing modifier.
+- **Why ▸** opens the odds breakdown: party damage per 100 ticks against the monster's effective Health, the monster's damage per 100 ticks against the party's effective Health, expected ticks, and every contributing modifier.
 - **Reckless contracts** (below 35%): the launch button turns red and reads "Send them anyway". It opens a confirmation listing each hunter's exact death chance (§5.3.7).
 - **Unknown monster:** the resistance lines read "? 3 candidates", and the odds show "assumes unidentified" (§5.6.3).
 
@@ -1260,43 +1390,44 @@ The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: t
 
 ```
 ┌──────────────────────────────────┐
-│ ✔ Draugr slain · 11 rounds       │
+│ ✔ Draugr slain · tick 182        │
 │ ⚪230 (×1.5 well prepared) 🏆4    │
 │ grave dust ×3 · rime salt ×1     │
 ├──────────────────────────────────┤
-│ R1 Fire Pot → Draugr 60 · 200/260│
-│ R1 Zora hits Draugr 30 · 170/260 │
-│ R1 Draugr hits Halvar 10 ·150/170│
-│ R3 Barrow-Grip! Halvar is held   │
+│ t1 Fire Pot → Draugr 60 · 200/260│
+│ t7 Zora hits Draugr 19 · 181/260 │
+│ t17 Draugr hits Halvar 14 ·156/170│
+│ t50 Barrow-Grip! Halvar is held  │
 │ ...                              │
-│ [Rounds ▾] [Show rolls ☐] [Seed] │
+│ [Ticks ▾] [Show rolls ☐] [Seed]  │
 └──────────────────────────────────┘
 ```
 
 - **Show rolls** expands every line to its full roll detail (§5.5).
 - **Seed** shows the fight seed and offers "replay fight", which re-runs it to confirm the log matches. This is mostly a debugging aid, kept visible on purpose (D10).
-- Logs can be collapsed to one line per round.
+- Logs can be collapsed to one line per 50 ticks.
 
 ### 9.7 Hunters (v0.2)
 
 ```
-Roster 6/8                      Hunter detail (sheet)
+Active 6/8 · Reserve 2                      Hunter detail (sheet)
 ┌──────────────────────────────┐ ┌──────────────────────────────┐
 │ [spr] Halvar Two-Smokes      │ │ [sprite]  Zora Sedlak        │
 │ Vanguard · Steel · Lv4       │ │ the Ferrywoman               │
 │ ● Ready                      │ │ Striker · Steel · Lv5 ▓▓░ XP  │
-│ [spr] Zora Sedlak            │ │ H 140  M 28  A 3  S 16 ⓘ      │
+│ [spr] Zora Sedlak            │ │ H 140  M 37  A 8  S 16 ⓘ      │
 │ Striker · Steel · Lv5        │ │ Fen-born: +15% Might (river)  │
 │ ⏱ On contract · 40m          │ │ Quick: +3 Speed               │
 │ [spr] Radek                  │ │ Weapon  Steel Blade [Upgrade] │
 │ Vanguard · Silver · Lv3      │ │ Armor   Mail                  │
 │ ✚ Wounded · 3h 10m           │ │ Record  14 won · 2 lost       │
 │ — Candidates —               │ │ Bio ▸                         │
-│ Bjarna Ice-Hand  ⚪1.1K [Hire]│ └──────────────────────────────┘
+│ Bjarna Ice-Hand  ⚪400  [Hire]│ └──────────────────────────────┘
 └──────────────────────────────┘
 ```
 
 - **Filters:** role, damage type, status.
+- **Reserve** *(⚑ revision G5)*: reserve hunters are listed below the active roster. Swapping a hunter in or out is one tap.
 - **Locked hunters:** they appear at the bottom as silhouettes, with their unlock condition shown ("Defeat an Upyr"). Knowing what to chase is part of the collection feel.
 
 ### 9.8 Bestiary (v0.3)
@@ -1382,6 +1513,25 @@ The Hut opens from its building row on the Hold screen.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
 - A real art and UX pass is scheduled for v1.0.
 
+
+### 9.12 Art direction *(⚑ revision C7 [JC])*
+
+The full pipeline (manifest, generators, credits) belongs in `technical-design.md`. This is the look it has to produce.
+
+- **One palette:** a single limited palette of 32 colors, chosen in v0.1 from a palette published for free use and recorded in `credits.md`. Every asset, from a pack or generated, is recolored to it. That's what makes mixed sources look like one game.
+- **Sizes:** 16 px icons (resources, statuses, traits); 32 px buildings, items and battle sprites; 64 px hunter and monster portraits. Integer scaling only (2×, 3×, 4×), nearest-neighbor.
+- **Source plan:**
+
+| Asset | Source |
+|---|---|
+| Terrain, hold-scene tiles, UI frames | CC0 packs, recolored to the palette |
+| Resource and item icons | CC0 packs where they fit; code-generated for the rest |
+| **Hunter portraits** | **Code-generated** by a modular portrait generator: face, hair, beard, headgear, armor collar and weapon silhouette, each a layer, palette-swapped per hunter from a seed in their content entry |
+| **Monster portraits and battle sprites** | **Code-generated** from part templates (body shape, head, limbs, features), one template set per family |
+| Buildings | CC0 packs where they fit; otherwise generated from simple modular parts |
+
+**Honest note:** the generated monsters (especially the poludnitsa, vodyanoy, huldra and nix) will be the weakest art in the game. CC0 packs almost never include folklore creatures like these. The asset manifest lets you swap in better art later without touching code.
+
 ---
 
 ## 10. Out of Scope
@@ -1406,6 +1556,7 @@ The Hut opens from its building row on the Hold screen.
 | Anti-cheat and save validation beyond schema checks | D21 | The debug panel is a feature, not a cheat |
 | Mod support or a content editor | Content files are already plain TypeScript data | Edit content files directly |
 | Achievements | Not in the brief | **[JC: candidate for v1.0 polish]** |
+| Records screen; CSV/JSON export of history and logs | Declined in the GDD review (G9) | Reports keeps recent logs; the Roll of Wardens (v0.5) keeps per-cycle history in-world |
 | The mystery's final act | Timing open (D24.10) | Decided when v0.9 starts |
 
 **Deferred, not cut.** Anything listed at outline level in §5.8–5.13 is in scope for its milestone and gets full detail just before that milestone starts.
@@ -1425,3 +1576,30 @@ The Hut opens from its building row on the Hold screen.
 9. **No push notifications** (they need a server). An app-icon badge stands in where supported; support on iPhone home-screen apps is limited.
 10. **Audio is revisited after v1.0,** with a slot reserved in the asset manifest.
 11. **Achievements are a candidate for v1.0 polish.**
+
+---
+
+## Judgment calls added in the GDD review revision (D30–D31)
+
+Each one is also marked **[JC]** where it appears.
+
+1. **Start with 1 Farmer + 2 Woodcutters.** If the Mine misses 5 minutes, raise starting wood to 70 rather than moving the target. (§5.1.4)
+2. **`advance()` is event-driven,** so offline chunk size never changes results. (§5.2)
+3. **Best-payback weights:** food 1, wood 1.5, iron 3, silver 12. (§5.1.2)
+4. **Bounty base 60, and the silver-share check is cumulative over the Keep phase.** (§5.4.1, §6.3)
+5. **Combat bucket order;** taken% adds, is capped at 75%, and applies after Armor. (§5.0)
+6. **Silver sub-hits ignore Armor;** Armor applies only to direct attacks; resistance 0 means 0 damage. (§5.3.6, §5.5)
+7. **Turn-meter ties go to hunters before the monster** (no roll); the fight limit is 400 ticks. (§5.5)
+8. **Armor and Speed don't scale with level.** (§5.3.2)
+9. **A tier unlocks after 3 successes at the tier below;** the mix is 60% at the highest unlocked tier. (§5.4.1)
+10. **Contract rewards apply at completion,** not at collection. (§5.4.3)
+11. **Barrow contracts start at tier 2;** Huldra and Nix added to fill coverage gaps. (§8.3)
+12. **Hamlet active roster cap of 3; Citadel and Bastion each add 2;** hunters are never deleted. (§5.3.1)
+13. **Fixed recruitment prices per hunter.** (§5.3.1, §8.5)
+14. **The board opens when the first Mine is built.** (§5.4.1)
+15. **Before v0.5, dead hunters return after 3 days.** (§5.3.7)
+16. **World-boss hunters rest for 24 h after an attempt.** (§5.12)
+17. **The v0.5 Embers cap is 120% of the simulated cycle-1 median;** the Trophy Hall is uncapped before v0.5. (§5.9)
+18. **Two patron doors per floor.** (§5.10)
+19. **Performance budgets and the two-stage Suggest search.** (§6.5)
+20. **Art direction:** one 32-color palette, 16/32/64 px sizes, generated portraits. (§9.12)
