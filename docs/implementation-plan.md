@@ -441,7 +441,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 **Status:** not started *(needs a flesh-out)*
 
-- **Scope:** Act I, with retroactive unlock; documents and the Archivist (Ilse); warden naming; the Roll of Wardens; Arvid's content; hunter letters at levels 5 and 10; village trust displayed; cursed ruins (ruin tag, Ribbonshades, Anvil-wights); Rune damage and runed gear; Citadel and Bastion inscriptions.
+- **Scope:** Act I, with retroactive unlock; documents and the Archivist (Ilse); warden naming; the Roll of Wardens; Arvid's content; hunter letters at levels 5 and 10; village trust displayed; cursed ruins (the ruin tag and their creatures, per `lore-secrets.md`); Rune damage and runed gear; Citadel and Bastion inscriptions.
 - **Before you start 👤:**
   - **Add `docs/lore-secrets.md` back into the repo**, removing its `.gitignore` line and the deny rule (D36).
   - **Acts I and II are written in the flesh-out** (P4).

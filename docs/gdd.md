@@ -825,9 +825,9 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 - Four factions with reputation tiers and questlines, merging the Skyrim guild and WoW faction influences:
   - **Thanes' Moot:** the village heads. Trust and safety.
   - **Grey Wives:** herbwives and midwives. Alchemy and old recipes.
-  - **Bell-Watchers:** families of the Sent, who ring bells "for the ones gone onward". They hold hints toward the true ending's names.
-  - **The Quenchers:** a present-day faction that **wants the fire put out**. They're partly right, which gives the final choice a stake in the present.
-- **Your hunters are the refounded Emberwrights** (L2). The surviving outpost Wrights, who never knew the order's secret, join you rather than forming a separate Order.
+  - **Bell-Watchers:** families who ring bells for the ones who went away. Their role in the story is in `lore-secrets.md` (v0.5).
+  - **The Quenchers:** a present-day faction that **wants the hold's fire put out**. Their story role is in `lore-secrets.md` (v0.5).
+- **Your hunters are the refounded Emberwrights** (L2). Surviving Wrights from the old outposts join you rather than forming a separate Order.
 - **Open questions:** whether Orders are mutually exclusive; whether reputation persists through the Long Night (leaning yes, per §4).
 
 ---
@@ -1238,10 +1238,10 @@ See the table in §5.7 (9 items in v0.3).
 | The Wolf Beneath the Hill | Hunger, fury | Crits, Might, damage that grows with each kill |
 | The Drowned Bell | Stillness, depth | Control: turn-meter pushback, slows, stuns |
 | The Pale Smith | Craft, the old forge | Armor and gear: blessings scale with gear tier; Rune damage |
-| **The Weaver** *(⚑ lore L8)* | Kinship, the ribbon | Synergy: bonuses per distinct role or damage type in the party; linked healing |
+| **The Weaver** *(⚑ lore L8)* | Kinship, weaving | Synergy: bonuses per distinct role or damage type in the party; linked healing |
 | **The Unlit** *(⚑ lore L8; after Act V)* | Cold, forgetting | The strongest blessings, each with a drawback (e.g., +50% damage, but no healing) |
 
-Each patron is one of the story's dead (`lore-secrets.md` §13). The Unlit becomes available only after Act V **[JC]**.
+Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes available only after Act V **[JC]**.
 
 ---
 

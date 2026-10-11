@@ -1,7 +1,8 @@
 {
   "permissions": {
     "deny": [
-      "Read(./docs/lore-secrets.md)"
+      "Read(./docs/lore-secrets.md)",
+      "Read(./docs/outline.md)"
     ]
   }
 }

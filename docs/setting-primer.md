@@ -160,7 +160,7 @@ v0.4 ships the Long Night's mechanics before Act I exists. Its text stays neutra
 ## 7. Naming rules
 
 - Follow GDD §2.5 (Slavic and Nordic blend) and GDD §2.3 (the avoid list, including the Dark Souls and 40K clusters).
-- **Never in player-facing text before v0.5:** "the Sending," "the Sent," "the Keeper," "the Unlit," "dross."
+- **Before v0.5, don't invent names or explanations** for the order's secrets, for what happened to the apprentices who went onward, or for whatever lies beneath the hold. Those arrive with the story in v0.5. If a text seems to need one, ask.
 
 ---
 
