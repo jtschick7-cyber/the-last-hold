@@ -1,7 +1,7 @@
 # The Last Hold — Setting Primer
 
 **Spoiler-free.** Claude Code may read this from v0.1 on. It covers everything needed to write v0.1–v0.4 text without knowing the central mystery.
-**The full truth** lives in `lore-secrets.md`, read from v0.5 on.
+**The full truth** lives in `lore-secrets.md`, which is **kept outside the repo until v0.5** (D36).
 **Markers:** **[JC]** = judgment call. All proper nouns are working names until they pass the collision search (GDD §2.3).
 
 ---
