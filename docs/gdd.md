@@ -1,6 +1,6 @@
 # The Last Hold — Game Design Document
 
-**Status:** §1–4 approved (D26). §5 is a draft for review. §6–10 pending.
+**Status:** §1–5 approved (D26, D27). §6–8 are drafts for review. §9–10 pending.
 **Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something.
 **Related docs:** `lore-bible.md` (world truth and spoilers), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
@@ -508,7 +508,7 @@ Each contract has:
 |---|---|
 | Village | The giver. Flavor in v0.2; ties into Reputation in v0.9. |
 | Monster | In v0.2, always a known species (identified for free). Unknown monsters arrive in v0.3. |
-| Tier | 1–5 within Keep. Monster stats scale by `1.35^(tier − 1)`. |
+| Tier | 1–5 within Keep. Each tier above the monster's base tier multiplies Health and Might by 1.35 and Armor by 1.15 (§7). |
 | Location tag | Forest, river, field, barrow, or ruin. Interacts with traits. |
 | Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5 |
 | Duration | 30 min / 1 h / 2 h / 4 h / 8 h by tier |
@@ -523,14 +523,14 @@ Each contract has:
 1. Choose a party. A **Suggested party** button fills it with the highest-odds available combination, found by brute force over the roster (fine for rosters under about 30).
 2. *(v0.3)* Choose preparation.
 3. Read the odds panel:
-   - **Win chance** from 200 simulated fights, shown with a ±margin.
+   - **Win chance** from 500 simulated fights, shown with a ±margin.
    - **Expected injuries** per hunter.
    - **Death chance** per hunter (Reckless contracts only).
    - **Expected rewards.**
    - **"Why?"** opens the summary math: party damage per round vs monster Health, and monster damage per round vs the party's effective Health.
 4. Launch. The hunters are busy for the contract's duration.
 
-The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 200 preview simulations use different derived seeds, so the preview never reveals the real roll.
+The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 500 preview simulations use different derived seeds, so the preview never reveals the real roll.
 
 #### 5.4.3 Results
 
@@ -655,9 +655,9 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 |---|---|---|---|
 | Grave Oil | Oil | +35% damage vs Restless Dead | 2 grave dust + 1 juniper |
 | Drowned-Bane Oil | Oil | +35% damage vs Water Spirits | 2 river pearl + 1 yarrow |
-| Thornbane Oil | Oil | +35% damage vs Field & Forest Spirits | 2 leshy bark + 1 mugwort |
+| Thornbane Oil | Oil | +35% damage vs Field & Forest Spirits | 2 thornwood + 1 mugwort |
 | Mending Draught | Potion | Once, below 30% Health: heal 40% of max Health | 2 yarrow + 1 honeycomb |
-| Ironbark Tonic | Potion | +30% Armor for rounds 1–5 | 1 leshy bark + 2 juniper |
+| Ironbark Tonic | Potion | +30% Armor for rounds 1–5 | 1 thornwood + 2 juniper |
 | Quickfoot Tincture | Potion | +20% Speed for the whole fight | 2 mugwort + 1 hare's foot |
 | Fire Pot | Bomb | Round 1: 40 Fire damage, then 10 Fire per round for 3 rounds | 1 pitch + 1 wood (resource) |
 | Frost Pot | Bomb | Round 1: 30 Frost damage, then −30% monster Speed for 3 rounds | 1 rime salt + 1 wood |
@@ -738,12 +738,365 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 9. **Investigation uses Hunter's Lodge slots, not hunters.**
 10. **A well-prepared success pays bounty × 1.5 and +1 trophy.**
 11. **The Trophy Hall bonus counts lifetime trophies earned this cycle,** so spending trophies never shrinks it.
-12. **Odds come from 200 simulated fights.** The real outcome uses a separate seed derived from the party and preparation, so it's reproducible but can't be read in advance.
+12. **Odds come from 500 simulated fights.** The real outcome uses a separate seed derived from the party and preparation, so it's reproducible but can't be read in advance.
 13. **Warden skills (v0.4) survive the Long Night.**
 14. **Rune damage and runed gear are held back until v0.5,** when the Emberwright lore arrives.
 
 ---
 
-## 6–10. *(pending)*
+## 6. Progression & Pacing Targets
 
-Next up: §6 Pacing targets, §7 Economy & balance formula reference, §8 Starter content lists.
+### 6.1 Player model
+
+The balance simulator plays the game with scripted **policies**. Pacing targets are defined against these policies, not against real players.
+
+| Policy | Check-ins (local time) | Sessions | Used for |
+|---|---|---|---|
+| **Standard** (D16) | Weekdays: 07:00, 10:00, 12:30, 16:00, 21:00. Weekends: 09:00, 13:00, 17:00, 21:00 | One 20-min session at 15:00 on weekends, plus Wednesday at 19:00 *(Delves from v0.6)* | All main targets |
+| **Light** | 07:00, 12:30, 21:00 every day | None | "Still works for a busy week" checks |
+| **Heavy** | Every 2 h from 07:00 to 23:00 | One per day | "Can't be rushed too fast" checks |
+| **Idle-only** *(from v0.6)* | Same as Standard | Never Delves | Delve-optional check (D20) |
+
+- **Start time:** runs start Monday at 07:00. A second run starts Saturday at 09:00 to catch weekend-start problems **[JC]**.
+- **The overnight gap** (21:00 → 07:00) is 10 h, inside the 12 h cap. Standard play never loses time to the cap.
+
+**What the policy does at each check-in:**
+- **Spending:** greedy by **payback time** (cost ÷ production gained). It saves for the next Age-up once it's affordable within 2 check-ins.
+- **Contracts:** launches the highest expected-value contract with the suggested party.
+- **Preparation:** brews and equips matching consumables for identified monsters.
+- **Investigation:** keeps every Lodge slot busy.
+- **Never** launches Reckless contracts.
+
+### 6.2 Targets
+
+Times are elapsed real time from a fresh start under the Standard policy unless noted.
+
+| Moment | Target | Enforced from |
+|---|---|---|
+| First Cottage bought | ≤ 1 min (live play) | v0.1 |
+| First Mine bought | ≤ 5 min (live play) | v0.1 |
+| Mill reaches level 3 | 2–5 h | v0.1 |
+| 10 peasants | 3–6 h | v0.1 |
+| **Keep reached** | **8–14 h** (Standard); ≤ 24 h (Light); ≥ 6 h (Heavy) | v0.1 |
+| First contract launched | At the first check-in after Keep | v0.2 |
+| Roster of 4 hunters | By the end of day 2 | v0.2 |
+| First tier-3 success | Day 2 | v0.2 |
+| First species Identified through investigation | ≤ 2 h after the Hunter's Lodge is built | v0.3 |
+| First species Studied (3 kills) | Days 2–3 | v0.3 |
+| Citadel reached | Day 2 | v0.5 |
+| Bastion reached; Last Stand available | Day 3 | v0.5 |
+| Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.5 |
+| **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.5 |
+| Later cycles | Each ≥ 15% faster than the one before, with a floor of 2 days **[JC]** | v0.5 |
+| Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.6 |
+
+### 6.3 Engagement checks (simulator)
+
+These catch dead zones and walls that pure time targets miss.
+
+1. **Something to do:** at least 90% of Standard check-ins include a meaningful action (a purchase, a contract launch, or collecting a result).
+2. **No dry spells:** never 2 consecutive check-ins with nothing to do.
+3. **No walls:** no single purchase takes more than 3 check-ins of saving, except Age-ups, which may take up to 5.
+4. **Preparation matters** *(v0.3)*: on identified contracts at equal tier, matched preparation raises the odds by at least 15 percentage points over no preparation.
+5. **Odds are honest** *(v0.2)*: across 2,000 simulated contracts, the actual success rate in each 10-point odds bucket lands within ±5 points of the displayed odds.
+6. **Contracts own silver** *(v0.2)*: from Keep onward, at least 70% of silver income comes from bounties.
+7. **No overflow:** every number stays below 1e300 through 3 simulated cycles *(from v0.5)*. Through v0.4, the same check runs over 14 simulated days.
+
+### 6.4 Playtest-only checks
+
+The simulator can't measure these. The owner checks them at the end of each milestone, using a short checklist in the implementation plan:
+- A routine check-in takes 15 taps or fewer (§3.2).
+- Fight logs are readable at a glance, and the "Why?" panel makes sense.
+- Nothing feels like a chore or a punishment for being away.
+- Overall: is it fun? Does the next goal always feel visible?
+
+---
+
+## 7. Economy & Balance Formula Reference
+
+Every constant lives in **one data file**, `src/content/balance.ts`, under the key shown. The engine reads from it, and the in-game breakdown shows the key names. This is the master list. §5 explains the intent behind each formula.
+
+### 7.1 Hold
+
+| Formula | Expression | Constants (key = starting value) | § |
+|---|---|---|---|
+| Modifier buckets | `base × Π_b (1 + Σ bonuses in b)` | Bucket order: building, age, trophy, knowledge, ember, relic, event | 5.0 |
+| Count-building cost | `base × r^n` | `costGrowth.count` = 1.15 | 5.1.2 |
+| Level-building cost | `base × r^(L−1)` | `costGrowth.level` = 1.75 | 5.1.2 |
+| Bulk cost (k copies) | `base × r^n × (r^k − 1)/(r − 1)` | — | 5.1.2 |
+| Max affordable | `min over resources of floor(log(1 + f(r−1)/(base·r^n)) / log r)` | — | 5.1.2 |
+| Settle cost | `a × g^P` | `peasant.settleBase` = 20, `peasant.settleGrowth` = 1.15, `peasant.settleMinInterval` = 30 s | 5.1.1 |
+| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.5/min | 5.1.1 |
+| Building bonuses | per level | `mill.perLevel` = 0.25, `sawpit.perLevel` = 0.25, `smithy.ironPerLevel` = 0.20 | 5.1.2 |
+| Age multiplier | Keep adds to the age bucket | `age.keep.allProduction` = 0.50 | 5.1.3 |
+| Trophy Hall | `+x per trophy earned this cycle` | `trophyHall.perTrophy` = 0.005 | 5.4.4 |
+| Herb Garden | per garden | `herbGarden.interval` = 10 min per herb type | 5.7 |
+
+### 7.2 Offline
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Elapsed | `clamp(now − lastSeen, 0, cap)`; if `now < lastSeen`, then 0 | — | 5.2 |
+| Cap | `base + Σ extensions`, capped at the ceiling | `offline.baseCap` = 12 h, `offline.ceiling` = 24 h, `bellTower.perLevel` = 1 h | 5.2 |
+| Simulation chunk | fixed step | `offline.chunk` = 60 s | 5.2 |
+
+### 7.3 Hunters
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Level scaling | `stat × (1 + s × (L − 1))` | `hunter.levelStatGrowth` = 0.10, `hunter.levelCap.keep` = 10 | 5.3.2 |
+| XP to next level | `x × g^(L−1)` | `xp.base` = 50, `xp.growth` = 1.5 | 5.3.2 |
+| XP per contract | `per × tier` (half on failure) | `xp.perTier` = 20 | 5.3.2 |
+| Recruitment cost | `c × g^rosterSize` | `recruit.base` = 100, `recruit.growth` = 1.5 | 5.3.1 |
+| Roster cap | `3 + barracksLevel` | `barracks.maxLevel` = 5 | 5.3.1 |
+| Recovery | Bruised: fixed; Wounded: `per × tier`; Grievous: ×3 | `injury.bruised` = 30 min, `injury.woundedPerTier` = 2 h, `injury.grievousMult` = 3, `injury.bruisedBelow` = 0.30 | 5.3.7 |
+| Reckless line | odds < threshold | `contract.recklessBelow` = 0.35 | 5.3.7 |
+| Death roll | per downed hunter on a Reckless contract | `injury.deathChance` = 0.30 | 5.3.7 |
+
+### 7.4 Contracts & combat
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Board refill | 1 per interval, up to the cap | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
+| Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
+| Bounty | `b × g^(tier−1) × ageMult` | `bounty.base` = 40, `bounty.growth` = 1.6 | 5.4.1 |
+| Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
+| Duration | by tier | `contract.duration` = [30 min, 1 h, 2 h, 4 h, 8 h] | 5.4.1 |
+| Party size | by tier | `contract.partySize` = [3, 3, 3, 4, 4] | 5.4.1 |
+| Hit | `roll < hitChance` | `combat.hitChance` = 0.90 | 5.5 |
+| Damage | `max(1, Might × U(lo, hi) × resist × buckets × crit − Armor)` | `combat.varianceLo` = 0.85, `combat.varianceHi` = 1.15, `combat.minDamage` = 1 | 5.5 |
+| Crit | `roll < critChance → ×critMult` | `combat.critChance` = 0.10, `striker.critChance` = 0.20, `combat.critMult` = 1.5 | 5.3.3 |
+| Healing | Mender: `m × Might` on the lowest ally if any ally is below the threshold | `mender.healMult` = 1.5, `mender.healBelow` = 0.70, `mender.attackMult` = 0.50 | 5.3.3 |
+| Targeting | weight by role | `target.vanguardWeight` = 3, `target.otherWeight` = 1 | 5.3.3 |
+| Round limit | failure at the limit | `combat.maxRounds` = 30 | 5.5 |
+| Odds preview | `n` simulated fights; margin `±1.96 × √(p(1−p)/n)` | `odds.samples` = 500 **[JC: raised from 200; keeps the margin within ±4.4 points]** | 5.4.2 |
+| Well prepared | bounty multiplier | `prep.wellPreparedBounty` = 1.5 | 5.4.3 |
+
+### 7.5 Bestiary & preparation
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Knowledge thresholds | kills to reach Studied / Mastered | `knowledge.studiedKills` = 3, `knowledge.masteredKills` = 10 | 5.6.2 |
+| Knowledge damage | knowledge bucket | `knowledge.studiedDamage` = 0.05, `knowledge.masteredDamage` = 0.10 | 5.6.2 |
+| Clue time | per clue; × multiplier if Studied | `clue.time` = 30 min, `clue.studiedMult` = 0.5 | 5.6.3 |
+| Lodge slots | 1 per level | `lodge.maxLevel` = 3 | 5.6.3 |
+| Oil bonus | vs the matching family | `oil.familyBonus` = 0.35 | 5.7 |
+| Brew time | per item, one per Hut level at a time | `brew.time` = 10 min, `hut.maxLevel` = 5 | 5.7 |
+
+---
+
+## 8. Starter Content
+
+Content for v0.1–v0.3. Each table maps one-to-one to a content file in `src/content/` (see `technical-design.md`). Later milestones add rows, not new formats.
+
+**[JC]** Every proper noun below still needs the collision search from §2.3 before it ships. That's a task in the implementation plan.
+
+### 8.1 Buildings
+
+The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.3 (all Keep):
+
+| Building | Type | Base cost | Effect | From |
+|---|---|---|---|---|
+| Barracks | Level (max 5) | 600 wood, 300 iron, 100 silver | Roster cap = 3 + level | v0.2 |
+| Trophy Hall | Unique | 500 wood, 200 iron | +0.5% all production per trophy earned this cycle | v0.2 |
+| Hunter's Lodge | Level (max 3) | 800 wood, 400 iron, 200 silver | 1 investigation slot per level | v0.3 |
+| Alchemist's Hut | Level (max 5) | 700 wood, 300 iron, 150 silver | Brews consumables; 1 brew at a time per level | v0.3 |
+| Herb Garden | Count | 300 wood, 100 food | +1 yarrow, mugwort and juniper every 10 min | v0.3 |
+
+### 8.2 Villages (contract givers)
+
+| Village | Region | Location tags | Gift reagents |
+|---|---|---|---|
+| Dubno Ford | Lowland river crossing | river, field | honeycomb, hare's foot |
+| Kozly Hollow | Lowland goatherd village in the old wood | forest, field | honeycomb, pitch |
+| Mirograd | Lowland market town (the largest) | field, river | hare's foot, pitch |
+| Velkvik | Highland fjord village | river, barrow | rime salt, pitch |
+| Ravenfell | Highland hamlet among the barrow-hills | barrow, forest | rime salt |
+
+A contract's location tag comes from its village. **Each success also gives one gift reagent** from that village (v0.3+).
+
+### 8.3 Monsters
+
+**How to read this table:**
+- Stats are at the monster's **base tier** (the first tier in its range).
+- Each tier above that multiplies Health and Might by 1.35 and Armor by 1.15 (§7.4).
+- Speed doesn't scale.
+- "Atk" is attacks per round.
+
+| Monster | Family | Locations | Tiers | Health | Might | Armor | Speed | Atk |
+|---|---|---|---|---|---|---|---|---|
+| Hollow Wolf | Beasts & Wilds | forest, field, barrow | 1–2 | 120 | 10 | 2 | 14 | 2 |
+| Kikimora | Field & Forest Spirits | forest, field, river | 1–2 | 110 | 12 | 3 | 13 | 1 |
+| Upyr | Restless Dead | field, barrow | 2–3 | 170 | 16 | 4 | 10 | 1 |
+| Rusalka | Water Spirits | river | 2–3 | 150 | 14 | 2 | 12 | 1 |
+| Poludnitsa | Field & Forest Spirits | field | 2–4 | 160 | 15 | 3 | 11 | 1 |
+| Vodyanoy | Water Spirits | river | 3–4 | 230 | 20 | 7 | 7 | 1 |
+| Draugr | Restless Dead | barrow | 3–5 | 260 | 22 | 9 | 6 | 1 |
+| Bies | Beasts & Wilds | forest, field | 3–5 | 220 | 18 | 5 | 12 | 1 |
+| Leshy | Field & Forest Spirits | forest | 4–5 | 320 | 20 | 8 | 8 | 1 |
+| Strzyga | Restless Dead | barrow, field | 4–5 | 240 | 24 | 5 | 13 | 1 |
+
+**Resistances** (multiplier on incoming damage of each type; **bold** = weakness, ≥ 1.25):
+
+| Monster | Steel | Silver | Fire | Frost | Rune | Venom |
+|---|---|---|---|---|---|---|
+| Hollow Wolf | 1.0 | 1.0 | **1.25** | 1.0 | 1.0 | **1.25** |
+| Kikimora | 1.0 | **1.25** | **1.5** | 0.75 | 1.0 | 0.5 |
+| Upyr | 0.75 | **1.5** | **1.25** | 0.75 | **1.25** | 0 |
+| Rusalka | 1.0 | **1.5** | 0.75 | **1.25** | 1.0 | 0.5 |
+| Poludnitsa | 1.0 | **1.25** | 0.25 | **1.75** | 1.0 | 0.75 |
+| Vodyanoy | 0.75 | **1.25** | 0.5 | **1.5** | 1.0 | 1.0 |
+| Draugr | 0.75 | **1.5** | **1.5** | 0.25 | **1.25** | 0 |
+| Bies | 1.0 | 1.0 | **1.25** | 1.0 | **1.5** | 0.75 |
+| Leshy | 0.75 | 1.0 | **1.75** | 0.75 | **1.25** | 0.5 |
+| Strzyga | 0.75 | **1.5** | 1.0 | 1.0 | **1.5** | 0.5 |
+
+**Abilities, clue tags, and drops:**
+
+| Monster | Ability (exact effect) | Clue tags | Drop (v0.3) | Folklore basis |
+|---|---|---|---|---|
+| Hollow Wolf | *Hamstring:* each hit has a 25% chance to cut the target's Speed by 30% for 3 rounds | tracks, livestock, night | wolf fang | Wolves grown wrong in the Gloam: grey, gaunt, too quiet |
+| Kikimora | *Spoil:* its first hit on each hunter ruins that hunter's unused potion | house, livestock, swamp | thornwood | Household/swamp spirit whose mischief turns to malice |
+| Upyr | *Bloodfeast:* heals 50% of the damage it deals | grave, bloodless, night | grave dust | Restless dead risen from an improper burial |
+| Rusalka | *Drowning Song:* rounds 1, 5, 9…: the lowest-Armor hunter is charmed and skips a turn | drowned, song, night | river pearl | Drowned maiden of rivers and fields |
+| Poludnitsa | *Noon Heat:* each round, every hunter loses 3% of max Health (Fire; Armor doesn't apply). A Frost Pot suppresses it for 3 rounds | noon, fields, madness | noon poppy | Lady Midday, who strikes field workers at noon |
+| Vodyanoy | *Drag Under:* every 3rd round, grabs a target: they skip their next turn and take ×2 from the next hit | drowned, mill, swamp | river pearl | Old man of the water, lord of mill-ponds and weirs |
+| Draugr | *Barrow-Grip:* every 3rd round, its attack holds the target (skips next turn). *Swell:* below 50% Health, Armor +50% | grave, cold, treasure | grave dust, rime salt | Barrow-dead, swollen and heavy, guarding grave goods |
+| Bies | *Malice:* Might +5% per round, stacking | madness, livestock, tracks | thornwood | Malevolent spirit of the wild places |
+| Leshy | *Lead Astray:* each round, 15% chance one random hunter loses their turn. *Root-Wall:* regenerates 5% of max Health per round | lost, forest-shift, tracks | thornwood | Lord of the forest who misleads travelers and changes size with the trees |
+| Strzyga | *Second Soul:* the first time it reaches 0 Health, it rises at 40% (once per fight) | grave, bloodless, strange-birth | grave dust | A person born with two souls; after death, one hunts the living |
+
+**Saltburst** cancels the first trigger of any ability marked above and blocks abilities for 3 rounds (§5.7).
+
+### 8.4 Clue library (v0.3)
+
+Each clue tag has several in-world texts. A contract draws one text per revealed tag, picked by seed. One example per tag:
+
+| Tag | Example clue text |
+|---|---|
+| tracks | "Prints in the mud, too wide for any dog, sunk deep at the heel." |
+| livestock | "Three goats dead in the pen. The gate was latched from the inside." |
+| night | "It only comes after the last lamp is out." |
+| house | "Pots broken in the night, wool tangled into knots no one tied." |
+| swamp | "The reeds by the old peat-cut have gone black and stinking." |
+| grave | "The new grave's soil was turned over, from below." |
+| bloodless | "The body was pale as tallow, and there was no blood on the bed." |
+| cold | "Frost on the barrow stones in midsummer." |
+| treasure | "The tomb-robbers came back raving about gold, and only one came back." |
+| drowned | "Two drowned at the ford this month, both strong swimmers." |
+| song | "The fishermen hear a woman singing where no woman should be." |
+| mill | "The mill-wheel stops at night, as if something holds it." |
+| noon | "The reapers who fell sick all fell at midday." |
+| fields | "The barley is flattened in a ring, and nothing walked in." |
+| madness | "He came home talking to someone who wasn't there." |
+| lost | "Woodcutters walk for hours and come out where they started." |
+| forest-shift | "The old path is gone. The trees stand where it used to run." |
+| strange-birth | "The woman's son was born with two teeth, and he died last winter." |
+
+**Generator rules:**
+1. A contract's candidate list is every species whose locations include the contract's tag and whose tier range covers the contract tier.
+2. Its 3 clues must, taken together, narrow that list to exactly the true species. When the tag pool can't do that, the generator picks another species.
+
+### 8.5 Hunters (v0.2)
+
+**Role baselines at level 1:**
+
+| Role | Health | Might | Armor | Speed |
+|---|---|---|---|---|
+| Vanguard | 160 | 12 | 8 | 8 |
+| Striker | 100 | 20 | 3 | 12 |
+| Mender | 110 | 10 | 4 | 10 |
+
+Individual hunters vary by up to ±10% per stat.
+
+| Hunter | Role | Damage | Origin | Traits | Unlock | Stats (H/M/A/S) | Sketch |
+|---|---|---|---|---|---|---|---|
+| **Halvar Two-Smokes** | Vanguard | Steel | Highland | Shieldwall, Steady | Start (free) | 170/12/8/7 | Former charcoal-burner. Calm, enormous, smells permanently of smoke. |
+| **Zora Sedlak, the Ferrywoman** | Striker | Steel | Lowland | Fen-born, Quick | Start (free) | 100/20/3/13 | Ran the Dubno ferry until the river turned deadly. Fights with a boathook. |
+| **Old Ostap** | Mender | Steel | Lowland | Bonesetter, Hard to kill | First successful contract | 115/10/4/9 | Village bonesetter who has outlived three wardens and says so often. |
+| **Bjarna Ice-Hand** | Striker | Frost | Highland | Cold-blooded, Fell-born | 3 successful contracts | 95/21/3/12 | Velkvik fisherwoman. Her rime-dipped spear never quite thaws. |
+| **Vesna of the Weir** | Mender | Venom | Lowland | Herbwise *(v0.3)*, Fen-born | Complete a river contract | 105/11/4/11 | Herbwife who knows which roots heal and which ones stop hearts. |
+| **Radek the Gravedigger** | Vanguard | Silver | Lowland | Grave-warden, Hard to kill | Defeat an Upyr | 165/11/9/7 | Has buried half of Mirograd. Lately his shovel has been silver-shod. |
+| **Sigrun Halfhand** | Striker | Fire | Highland | Fire-touched, Lantern-bearer | Smithy level 5 | 100/22/4/11 | Exiled Emberwright apprentice who won't say why she left. *(lore hook)* |
+| **Toma Kettle** | Vanguard | Steel | Wanderer | Haggler, Quick | Earn 2,000 silver in bounties | 150/12/7/10 | Tinker and talker. Has opinions about every price at the hold. |
+
+**Traits:**
+
+| Trait | Exact effect | Active from |
+|---|---|---|
+| Shieldwall | While this Vanguard is standing, allies take −10% damage | v0.2 |
+| Steady | Damage variance narrowed to 0.95–1.05 | v0.2 |
+| Fen-born | +15% Might on river contracts | v0.2 |
+| Fell-born | +15% Might on barrow contracts | v0.2 |
+| Quick | +3 Speed | v0.2 |
+| Bonesetter | +25% healing done | v0.2 |
+| Hard to kill | Recovery times −30% | v0.2 |
+| Cold-blooded | Crits deal ×1.75 instead of ×1.5 | v0.2 |
+| Grave-warden | +20% Might vs Restless Dead | v0.2 |
+| Fire-touched | +20% Fire damage dealt; −20% Fire damage taken | v0.2 |
+| Lantern-bearer | Party hit chance +5% on barrow contracts | v0.2 |
+| Haggler | +10% bounty silver on contracts this hunter joins | v0.2 |
+| Herbwise | Potions carried by this hunter are 25% stronger | v0.3 |
+| Wolf-friend | +20% Might vs Beasts & Wilds | v0.3 *(reserved for a v0.3 hunter)* |
+| Tracker | While this hunter is idle at the hold, one Lodge slot reveals clues 25% faster | v0.3 *(reserved for a v0.3 hunter)* |
+
+**v0.3 adds 2 hunters** (a Wolf-friend Striker with Venom damage and a Tracker Mender), to be defined at the start of v0.3. That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
+
+### 8.6 Ingredients (v0.3)
+
+Each ingredient also has **4 hidden effects**, defined in v0.4 for alchemy discovery.
+
+| Ingredient | Source | Used in (v0.3 recipes) |
+|---|---|---|
+| Yarrow | Herb Garden | Drowned-Bane Oil, Mending Draught |
+| Mugwort | Herb Garden | Thornbane Oil, Quickfoot Tincture |
+| Juniper | Herb Garden | Grave Oil, Ironbark Tonic |
+| Honeycomb | Gift: Dubno Ford, Kozly Hollow | Mending Draught |
+| Hare's foot | Gift: Dubno Ford, Mirograd | Quickfoot Tincture |
+| Pitch | Gift: Kozly Hollow, Mirograd, Velkvik | Fire Pot |
+| Rime salt | Gift: Velkvik, Ravenfell; drop: Draugr | Frost Pot, Saltburst |
+| Grave dust | Drop: Upyr, Draugr, Strzyga | Grave Oil |
+| River pearl | Drop: Rusalka, Vodyanoy | Drowned-Bane Oil |
+| Thornwood | Drop: Kikimora, Bies, Leshy | Thornbane Oil, Ironbark Tonic |
+| Wolf fang | Drop: Hollow Wolf | — *(reserved for v0.4 discovery)* |
+| Noon poppy | Drop: Poludnitsa | — *(reserved for v0.4 discovery)* |
+
+**Drop rate:** each success yields `tier` units of that monster's drop, plus 1 gift reagent from the village.
+
+### 8.7 Consumables
+
+See the table in §5.7 (9 items in v0.3).
+
+### 8.8 Patrons *(v0.6, outline only)*
+
+| Patron | Theme | Blessing direction |
+|---|---|---|
+| The Hearth-Crone | Warmth, mending | Healing, recovery, damage reduction |
+| The Wolf Beneath the Hill | Hunger, fury | Crits, Might, damage that grows with each kill |
+| The Drowned Bell | Stillness, depth | Slows, stuns, control |
+| The Pale Smith | Craft, the old forge | Armor, gear effects, Rune damage |
+
+The patrons' identities tie into the central mystery (`lore-bible.md`). **[JC: the Pale Smith is a lore lead toward the Emberwrights.]**
+
+---
+
+## Judgment calls in §6–8
+
+1. **Simulated players start runs on Monday at 07:00,** with a second run starting Saturday at 09:00.
+2. **Later cycles must each be at least 15% faster than the one before,** with a floor of 2 days.
+3. **Odds preview raised from 200 to 500 simulated fights.** This keeps the displayed margin within ±4.4 points. *(Small edit to approved §5.4.2.)*
+4. **Monster tier scaling is relative to each monster's base tier,** and Armor scales more slowly (1.15 per tier) than Health and Might (1.35). *(Small edit to approved §5.4.1.)*
+5. **"Leshy bark" renamed to "thornwood"** and dropped by three monsters, so the forest oil is available from tier 1. *(Small edit to approved §5.7.)*
+6. **Village gifts:** each success also gives a village-specific reagent. This is how honeycomb, hare's foot, pitch, and rime salt enter the game.
+7. **Preparation-matters check:** matched preparation must raise the odds by at least 15 points. This is the main simulator guard on the Witcher influence.
+8. **Silver check:** at least 70% of silver income must come from bounties once contracts unlock.
+9. **The hunter roster and stats in §8.5,** including Sigrun Halfhand as an Emberwright lore hook.
+10. **v0.3 brings 2 more hunters (10 total) against a Barracks cap of 8,** so roster choice matters.
+11. **The Pale Smith patron points toward the Emberwrights** in the lore.
+12. **Every proper noun still needs a collision search** before it ships; that's a task in the implementation plan.
+
+---
+
+## 9–10. *(pending)*
+
+Next up: §9 UI screens (phone-first wireframes) and §10 Out of scope. After those, the lore bible.
