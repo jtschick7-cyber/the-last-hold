@@ -1,0 +1,10 @@
+# Docs are hand-written prose; never reformat them.
+*.md
+dist
+dist-preview
+coverage
+package-lock.json
+public
+sim/reports
+tests/lint/fixtures
+.claude
