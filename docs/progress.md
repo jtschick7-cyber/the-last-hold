@@ -17,3 +17,4 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Choices to review:** D39 (Proposed): Preact 10 rather than the brand-new 11, a hand-written service-worker registration, an in-repo numeric-literal rule, and placeholder icons.
 - **Skipped or deferred:** none.
 - **Update (same day):** the owner did owner tasks 1–2 and allowed the push of `milestone/v0.0`, which is now pushed. **Blocker:** GitHub ran no workflows at all, on either branch, after five minutes, and it lists zero workflows even though the four files are on both branches. Most likely GitHub Actions is turned off for the repo (Settings → Actions → General → "Allow all actions and reusable workflows"). T0.6 stays open until CI and the deploy have run.
+- **Update:** the owner turned Actions on; this push triggers the first runs.
