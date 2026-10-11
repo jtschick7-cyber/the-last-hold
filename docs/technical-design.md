@@ -1,6 +1,6 @@
 # The Last Hold — Technical Design
 
-**Status:** Draft for review.
+**Status:** Approved (D33). Revised after the plan review (D34); edits marked ⚑.
 **Reads with:** `gdd.md` (what to build), `decisions.md` (why), `implementation-plan.md` (in what order).
 **Markers:** **[JC]** = judgment call. **MUST** / **NEVER** = rules that also appear in `CLAUDE.md`.
 
@@ -59,7 +59,7 @@ the-last-hold/
 ├─ CLAUDE.md                     # rules for every session (read first)
 ├─ README.md
 ├─ docs/                         # design, lore, plan, decisions (source of truth)
-│  ├─ gdd.md · setting-primer.md · lore-secrets.md
+│  ├─ gdd.md · setting-primer.md · lore-secrets.md (added at v0.5, D36)
 │  ├─ technical-design.md · implementation-plan.md · decisions.md
 │  └─ credits.md                 # generated from the asset manifest (§12)
 ├─ src/
@@ -118,7 +118,7 @@ flowchart TB
 ### 4.2 Layer rules (enforced by ESLint `no-restricted-imports` and custom rules)
 
 - **`core/` MUST NOT import** `ui/`, `platform/`, or any browser global (`window`, `document`, `localStorage`).
-- **`core/` MUST NOT call `Math.random()` or `Date.now()` / `new Date()`.** Time arrives as a parameter, and randomness comes from `core/rng`. A custom lint rule fails the build if they appear.
+- **`core/` MUST NOT call `Math.random()`, `Date.now()`, `new Date()`, `performance.now()` or `crypto.getRandomValues()`, or any math function outside the portable set (§7.4).** Time arrives as a parameter, and randomness comes from `core/rng`. A custom lint rule fails the build if they appear *(⚑ ban list widened, plan review A8/B8)*.
 - **`content/` exports data only:** no functions except trivial constructors, and no imports from `core/` except types.
 - **`ui/` MUST NOT compute game rules.** It calls selectors and dispatches commands. Display formatting is allowed.
 - **`sim/` uses only `core/` and `content/`,** never `platform/` or `ui/`.
@@ -141,13 +141,16 @@ advance(state: GameState, toTime: number): AdvanceLog            // the passage 
 ### 5.1 Content (static)
 
 - **IDs** are kebab-case string literals, typed as unions (`type BuildingId = 'cottage' | 'farm' | …`), generated from the content arrays with `as const`. A typo in an ID is a compile error.
-- **`balance.ts`** is one `as const` object whose keys match GDD §7 exactly (`balance.costGrowth.count`, `balance.provisions.base`, …). **No numeric game constant may appear anywhere else.** A lint rule flags numeric literals in `core/systems/` other than 0, 1, and 100 **[JC]**.
+- **`balance.ts`** is one `as const` object whose keys match GDD §7 exactly (`balance.costGrowth.count`, `balance.provisions.base`, …). **No numeric game constant may appear anywhere else.** A lint rule flags numeric literals in `core/systems/` except an **allowlist: 0, 1, −1, 2, 100, and array indices**; test files are exempt *(⚑ allowlist widened, plan review A14)*.
+- **Each `balance.ts` entry is marked `tunable` or `locked`** *(⚑ plan review A15)*. The tuning pass may change only `tunable` entries. `locked` entries are design decisions (the list is in `implementation-plan.md` §0.6) and change only through a decisions row the owner approves.
 - **Content validation tests** (`tests/content/`) run on every change:
   - Every referenced ID exists.
   - The coverage rules from GDD §8.3.1, including that clue-tag sets are distinct within each cell.
   - Every recipe's ingredients exist.
   - Every asset ID referenced has a manifest entry.
   - Every proper noun appears in the collision-checked list (§14).
+  - *(⚑ plan review A12)* Every **text key** and **unlock reference** resolves.
+  - **The GDD §7 key list matches the `balance.ts` keys exactly.** A small script extracts the backticked keys from GDD §7, and the test compares the two sets in both directions.
 
 ### 5.2 Game state (saved)
 
@@ -235,6 +238,7 @@ while state.time < toTime:
 
 - **Ties at the same instant** apply in a fixed order: completions → recoveries → brews → clues → refills → settles **[JC]**.
 - **Floating-point drift.** Resources are doubles. Event times are computed, not stepped, so 12 h of 1-s ticks and one 12 h jump agree within `1e-9` relative error. That's the **equivalence test** (D30).
+- **How the equivalence test compares states** *(⚑ plan review A9)*: integer fields (counts, levels, IDs, booleans) must match **exactly**; float fields within **1e-9 relative or 1e-6 absolute**, whichever is looser; event timestamps within **1 ms**. The live tick is **1 s** (§6.3).
 
 ### 6.3 The live loop
 
@@ -289,6 +293,25 @@ interface RollSource { next(): number }   // [0, 1)
 - `scripted([0.40, 0.50, …])` returns rolls from a list and **throws if the list runs out or isn't fully consumed**. This powers the GDD §5.5.1 golden test.
 - **Combat code receives a `RollSource`** and never constructs one. Roll order is exactly as GDD §5.5 specifies.
 
+### 7.4 Portable math *(⚑ new, plan review A8)*
+
+**Why.** Tests run in Node (V8), but your phone may run WebKit. The JavaScript spec only requires *approximately* correct results for `Math.pow`, `Math.exp`, `Math.log` and the trigonometric functions, so engines can differ in the last bit. One differing bit in a cost or a damage roll would break determinism between your phone and CI.
+
+**Rule.** Anything in `src/core/` that feeds saved state, rolls, or displayed game values uses only operations the spec defines exactly:
+- `+ − × ÷`, `Math.sqrt`, `Math.floor/ceil/round/trunc/abs/min/max/sign`, `Math.imul`, bit operations, and comparisons;
+- `Number.prototype.toFixed` and `toPrecision` (exactly specified) for formatting.
+
+**Helpers in `core/math/`:**
+- `intPow(base, n)`: integer exponents by repeated squaring. Every exponent in the GDD is a whole number (`r^n`, `1.6^(tier−1)`, `2.2^(tier−1)`, `1.35^(t−t₀)`, `1.5^(L−1)`).
+- `maxAffordable(...)`: an exponential search followed by a binary search on k. **GDD §5.1.2's `log` formula stays as the definition**, and a test checks that the search matches it (computed in the test with `Math.log`) across a table of cases.
+- The formatter picks suffixes by comparing against thresholds, not `log10`.
+
+**Banned in `src/core/`** (lint): `Math.pow`, `**`, `Math.exp`, `Math.expm1`, `Math.log`, `Math.log1p`, `Math.log2`, `Math.log10`, `Math.sin/cos/tan/asin/acos/atan/atan2`, `Math.sinh/cosh/tanh`, `Math.cbrt`, `Math.hypot`, `Math.fround`.
+
+**`tools/` is exempt.** OKLab color math never feeds game state.
+
+**Proof:** the determinism and golden suites also run in **Playwright's WebKit and Chromium** (§14).
+
 ---
 
 ## 8. Numbers and formatting (D18)
@@ -306,6 +329,7 @@ interface RollSource { next(): number }   // [0, 1)
 | ≥ 1e21 | Scientific with 3 significant digits | `1.23e21` |
 
 - Breakdown sheets show exact values with thousands separators.
+- The formatter follows the portable-math rule (§7.4): thresholds, not logarithms.
 - **Time format:** `45s`, `12m`, `3h 10m`, `2d 4h`.
 - **Table-driven tests** cover every boundary (999.99, 1000, 999,500, …).
 
@@ -323,6 +347,8 @@ interface RollSource { next(): number }   // [0, 1)
 
 - **`localStorage` with JSON** **[JC]**. The expected save size is well under 1 MB, because logs are regenerated (§5.2). It's synchronous and simple, and plenty here.
 - **On first run** the game calls `navigator.storage.persist()` to request persistent storage.
+- **Namespacing** *(⚑ plan review A2)*: every key is prefixed by the build channel, `lasthold:` for live and `lasthold-preview:` for preview builds (§11.3). A preview build can never read, migrate, or overwrite the live save.
+- **On iPhone, the Home Screen app keeps its own storage, separate from Safari** *(⚑ plan review A3)*. The install tip says: install before you start playing, and use export and import to move a save between Safari and the app.
 - **Honest note about iPhone:** Safari can clear storage for websites that go unused for 7 days. Apps **added to the Home Screen** are counted separately, by their own days of use, so regular play keeps them safe. The game shows a one-time tip to install it, and **the export code is the real safety net.**
 
 ### 9.2 Envelope
@@ -387,11 +413,25 @@ interface RollSource { next(): number }   // [0, 1)
 
 | Workflow | Trigger | Steps |
 |---|---|---|
-| `ci.yml` | Every push and pull request | `npm ci` → typecheck → lint → unit and content tests → golden and determinism tests → `sim:check` (fast set) → build → *(from v0.2)* Playwright smoke |
-| `deploy.yml` | Push to `main` | Build → upload artifact → `actions/deploy-pages` |
+| `ci.yml` | Every push and pull request | `npm ci` → typecheck → lint → unit and content tests → golden and determinism tests → fast simulator checks → build → Playwright smoke plus the determinism and golden suites in WebKit and Chromium *(⚑ from v0.1)* |
+| `sim.yml` *(⚑)* | Pull requests to `main`, and on demand | The full 5-seed `sim:check` |
+| `bench.yml` *(⚑ plan review A10)* | Pull requests, and on demand | Benchmarks. **Warns** at the budget and **fails only at 2×** the budget. Not part of `npm run check`. |
+| `deploy.yml` | Push to `main` or `milestone/*` | Builds live and preview (§11.3) → deploys |
 
 - **Milestones end with a tag** (`v0.1.0`, …). The version string shows in About.
-- **Budgets:** CI should finish in **10 minutes or less**. The full simulator suite (5 minutes or less) runs in CI only on `main` and on pull requests labeled `balance`.
+- **Budgets** *(⚑ plan review A11)*: **`npm run check` must finish in 90 s or less** on a laptop-class machine. CI (`ci.yml`) should finish in 10 minutes or less. **"Fast" simulator checks** = the Opening policy plus the Standard policy, **1 seed**, run through the current milestone's last time target. The full suite runs in `sim.yml` and at milestone end.
+- **Pull request descriptions** use `.github/pull_request_template.md`, in plain language: what changed, what to playtest, known issues, deferred or skipped.
+
+### 11.3 Preview builds *(⚑ new, P1)*
+
+- **Every push to the active `milestone/*` branch** deploys a preview to **`/the-last-hold/preview/`**. `main` keeps deploying to the root.
+- **GitHub Pages serves one artifact per site,** so `deploy.yml` builds both on every push to `main` or `milestone/*`: the latest `main` into the root and the latest milestone branch into `preview/`. Then it uploads them together. **Only one preview exists at a time**, the most recently pushed milestone branch **[JC]**.
+- **Isolation:**
+  - Build channel `preview`, which sets the storage namespace `lasthold-preview:` (§9.1).
+  - The PWA manifest is named **"The Last Hold (Preview)"**, with `scope` and `start_url` of `/the-last-hold/preview/`, and its own service worker registered at that scope.
+  - **The live service worker's `navigateFallbackDenylist` excludes `/preview/`**, so the live app never serves or caches preview pages.
+  - A **"PREVIEW"** ribbon on every screen, plus the build's branch and commit in About.
+- **Install the preview separately** on your phone to playtest. Its saves never touch the live game.
 
 ---
 
@@ -468,7 +508,7 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 
 ### 13.4 Performance
 
-- **Budgets:** a 3-cycle run in **60 s or less**; the full suite in **5 min or less** (GDD §6.5).
+- **Budgets:** a 3-cycle run in **60 s or less**; the full suite in **5 min or less** (GDD §6.5); the fast set within `npm run check`'s 90 s (§11.2).
 - The simulator runs **without the worker**. Contract odds come from the core directly, at stage-1 sample counts **[JC]**. The engine is fast because `advance` is event-driven: nothing is simulated second by second.
 
 ---
@@ -489,13 +529,16 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 | **Golden fight** | GDD §5.5.1, line for line, via a scripted `RollSource` | v0.2 |
 | **Seeded golden fights** | A few fixed-seed fights recorded once, then frozen | v0.2 |
 | **Odds honesty** | Simulated success rates match displayed odds (GDD §6.3 #5) | v0.2 |
-| **Performance benchmarks** | Suggest and odds within budget (Vitest bench) | v0.2 |
-| **Playwright smoke** | Phone viewport: load → buy a Cottage → reload → state persists; offline reload works | v0.2 |
+| **Performance benchmarks** | Suggest and odds within budget (Vitest bench), in `bench.yml`, warn-only below 2× *(⚑)* | v0.2 |
+| **Playwright smoke** | Phone viewport: load → buy a Cottage → reload → state persists; offline reload works. v0.2 adds: launch a contract → skip time → collect. *(⚑ moved to v0.1)* | v0.1 |
+| **Cross-engine determinism** *(⚑ new)* | The determinism and golden suites, run in Playwright WebKit and Chromium | v0.1 (golden fight from v0.2) |
 | **Simulator checks** | GDD §6.2–6.3 | v0.1 onward, by milestone |
 
-**About the performance proxy [JC]:** CI can't run a real phone. The bench therefore requires **one-quarter of the phone budget** on the CI runner (Suggest ≤ 75 ms, odds ≤ 25 ms), as a proxy for a mid-range phone at about 4× slower. You can also check it by hand on your phone with the debug panel's timing readout.
+**About the performance proxy [JC]:** CI can't run a real phone. The bench therefore targets **one-quarter of the phone budget** on the CI runner (Suggest ≤ 75 ms, odds ≤ 25 ms), as a proxy for a mid-range phone at about 4× slower. Shared runners vary, so it **warns** at that target and **fails only at 2×** *(⚑)*. **Your phone is the real test**, using the debug timing readout during playtests.
 
-**Name collision list:** `tests/content/names.ts` lists every proper noun that has passed the GDD §2.3 search, with the date checked. The content test fails if a content file uses a name that's not on the list.
+**Name collision list:** `tests/content/names.ts` lists every proper noun that has passed the GDD §2.3 search, with the date checked.
+- **How names are found** *(⚑ plan review A13)*: every `name`, `title`, `epithet`, and `place` field in `src/content/`, plus each content file's `properNouns` array (for names that appear only inside text). The content test fails if any of them is missing from the list.
+- **If a session can't search the web,** it adds the unchecked names to `docs/questions.md` and marks the task `[?]`. The test stays red for those names; it is never skipped.
 
 ---
 
@@ -505,6 +548,13 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 - **Every debug action is a `debug.*` command** through `apply`: time skip (through the real offline path), add resources, set seed, unlock Age, force a contract outcome (v0.2), and run a simulator policy for N hours in the browser.
 - **Using any debug command sets `meta.debugUsed = true`.** It's shown in About, with no other effect (D21).
 - **Timing readout:** the last Suggest, odds, and catch-up durations, for checking performance on a real phone.
+
+### 15.1 Diagnostics *(⚑ new, plan review A18; available in every build, not just debug)*
+
+- `window.onerror`, `unhandledrejection`, and a Preact error boundary capture errors into a list of the **last 50** (message, stack, time, screen). It's stored under its own namespaced key, so a bad save can't erase it.
+- **More → Diagnostics** shows the list.
+- **"Copy diagnostics"** copies, as plain text you can paste into a session: build version, channel (live or preview), commit, `schemaVersion`, `rulesVersion`, the browser user-agent, the last 20 errors, and the current save code.
+- When an error-boundary crash happens, the screen shows a calm fallback with **"Copy diagnostics"** and **"Reload"**. The save isn't touched.
 
 ---
 
