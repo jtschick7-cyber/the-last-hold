@@ -130,13 +130,20 @@ Each Long Night opens a new act with a new **witness**. An act's documents unloc
 
 | Act | Cycle | Witness | What they believe | What the player learns | Closing reveal |
 |---|---|---|---|---|---|
-| **I. The Fall** | 1 (v0.5) | **Marta Dubska**, headwoman of Dubno Ford | "The Firstblade broke the seal. The order died defending us." | The official story. Small wrongnesses: apprentices never wrote home, and the Firstblade is cursed in some villages and blessed in others. | When warden 2 arrives, Pechko says: *"Welcome back. Different face. Same warmth."* **The ember remembers.** |
+| **I. The Fall** | First cycle after v0.5 ships | **Marta Dubska**, headwoman of Dubno Ford | "The Firstblade broke the seal. The order died defending us." | The official story. Small wrongnesses: apprentices never wrote home, and the Firstblade is cursed in some villages and blessed in others. | When warden 2 arrives, Pechko says: *"Welcome back. Different face. Same warmth."* **The ember remembers.** |
 | **II. The Sent** | 2 | **Tomek Lis**, an apprentice (his journal, left at the Kamenfell outpost) | "We are chosen." | The apprentice year. The bell rung for each one sent onward. The journal ends the night they ring it for him. If recruited, Sigrun confesses what she saw. | **The Sending was real.** The order sent the villages' children into the fire. |
 | **III. The Night** | 3 | **Arvid Stonebrow**, Yrsa's shield-companion, now a grey fisherman in Velkvik | "Yrsa was right." | Eirik's name. Yrsa's choice. The Night from below. | **The betrayal was a rebellion.** The order broke faith first. |
 | **IV. The Keeper** | 4 | **Dobrava Halsten** (her ledger and testament) | "Few to save many. I chose. I paid." | Why she kept the Sending. How she bound the seal to the warden. Her vigil. | **You are the seal.** Embers are the wardens before you. |
 | **V. The Firstblade** | 5 | **Yrsa Varn** (letters left in the Deep, **20 years old**) | "I freed them and doomed everyone. I went down to find another way." | Yrsa went into the Deep, learned about the dross, and died there. | **The seal feeds the dark.** |
 | **VI. The Unlit** | 6 | **The Unlit** | "I am what you burned and forgot." | It wants to be remembered, not fed. | The way out is **remembering**. |
 | **The Remembering** | 7+ **[JC: timing open, D24.10]** | The player | — | §6 | An ending |
+
+**Story pace (P4).** Acts I and II are written together when Act I ships (v0.5), and writing then stays **at least one act ahead** of where you are.
+- **Cycles in v0.4, before any act exists:** the Long Night uses neutral text (primer §6.8).
+- **If you finish a cycle whose act isn't written yet,** it closes with *"The story continues in a later version."* When that act ships, its documents unlock **in your current cycle** (a retroactive unlock), and acts then continue one per cycle. **[JC]**
+- **The v0.5 arrival:** if you're already several cycles in when v0.5 ships, Act I starts in your current cycle.
+
+*⚑ Milestones renumbered (P2, P3, D35): the Long Night's mechanics ship in v0.4; Act I in v0.5; Delves in v0.7; events in v0.9; Orders in v0.10.*
 
 **Length:** Acts I–VI take about **2–3 weeks of play** (GDD §6.2) and about **15 in-world years**.
 
@@ -301,9 +308,9 @@ Each Long Night opens a new act with a new **witness**. An act's documents unloc
 
 ## 14. Later-milestone lore (outline)
 
-- **World bosses (v0.8):** great beasts swollen with the Deep's dross: **the Lindworm of Velk Fjord**, **the Barrow-King**, and **the Mother of the River**. No mystery content, so nothing can be spoiled.
-- **Legendary Hunts (v0.8):** each legendary hunter is a figure from Gloamreach folk-history. None are central to the mystery, and none is Yrsa.
-- **Orders (v0.9)** **[JC]:**
+- **World bosses (v0.9):** great beasts swollen with the Deep's dross: **the Lindworm of Velk Fjord**, **the Barrow-King**, and **the Mother of the River**. No mystery content, so nothing can be spoiled.
+- **Legendary Hunts (v0.9):** each legendary hunter is a figure from Gloamreach folk-history. None are central to the mystery, and none is Yrsa.
+- **Orders (v0.10)** **[JC]:**
 
 | Order | Who | Stake |
 |---|---|---|
@@ -342,7 +349,7 @@ About 9–12 documents per act. **Texts are written just before each act's miles
 | D1-05 | I | Field note: Upyr | Field note | An unknown Wright | Upyr Mastered | A stray line about "the Deep Forge" |
 | D1-06 | I | "The night the sky went out" | Testament | Marta Dubska | First Last Stand | Act I closing account |
 | D1-07 | I | "Welcome back" | Resident scene | Pechko | Warden 2 arrives | The ember remembers |
-| D1-08 | I | Ember-echo: the Pale Smith | Ember-echo | Askel | Delve (v0.6) | "I lit the first fire. I thought it would be enough." |
+| D1-08 | I | Ember-echo: the Pale Smith | Ember-echo | Askel | Delve (v0.7) | "I lit the first fire. I thought it would be enough." |
 | D2-xx | II | Tomek's journal (5 pages) | Journal | Tomek | Kamenfell ruin contracts | The apprentice year; the bell |
 | D2-xx | II | Sigrun's confession | Resident scene | Sigrun | Sigrun recruited, in Act II | The 40th name |
 | D3-xx | III | Arvid's account (3 parts) | Testament | Arvid | Velkvik contracts; Last Stand | The Night from below |

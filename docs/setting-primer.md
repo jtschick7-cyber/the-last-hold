@@ -133,7 +133,7 @@ Each entry has:
 Each Age-up uncovers part of the old hold, with a short inscription.
 - **Keep** (v0.1): the gatehouse and the **Roll of Honor**, a wall of names cut in bronze.
   - Inscription: *"Here are cut the names of those who gave their warmth to the hearth, that the folk might sleep."*
-- Citadel and Bastion: defined in `lore-secrets.md` (v0.5).
+- **Citadel and Bastion** *(v0.4)*: neutral descriptions only, "the old Forge Hall" and "a sealed stair going down." Their inscriptions arrive with Act I in v0.5 (`lore-secrets.md`). **[JC]**
 
 ### 6.6 The vow *(v0.2+)*
 
@@ -146,6 +146,14 @@ At most **1 in 10** contract notices may carry one of these. Never more than one
 - Kozly Hollow notices sometimes end with *"…and may the Firstblade's name be kept warm."*
 - A Mirograd notice may mention *"my boy, who went onward with the order."*
 - Ravenfell notices never mention the Firstblade, whether blessing or curse.
+
+### 6.8 Long Night text, before the story (v0.4) **[JC]**
+
+v0.4 ships the Long Night's mechanics before Act I exists. Its text stays neutral:
+- **The Last Stand:** the hold's defenders against "the dark at the walls." No names for what's coming.
+- **After the stand:** Pechko, short: *"The walls fell. The hearth didn't. Someone will come."*
+- **A new warden arrives:** *"Seasons pass. Someone new walks up the road, hands warm in the cold."* No name yet; naming starts in v0.5.
+- **Embers:** "what the last warden left in the hearth." Nothing more.
 
 ---
 

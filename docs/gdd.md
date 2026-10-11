@@ -125,10 +125,10 @@ All content is original. The influences supply *feel*, never names, characters, 
 | Loop | Length | What you do | Key decisions | What you get | From |
 |---|---|---|---|---|---|
 | **Check-in** | 2–3 min | Read "While you were away"; build and upgrade; reassign peasants; collect contract results; launch new contracts | What to build next; which contract, which party, which preparation | Resources, trophies, reagents, bestiary progress | v0.1 (hold), v0.2 (contracts) |
-| **Session** | 15–30 min | Delve runs; alchemy experiments; roster and gear planning; read lore | Blessing picks; ingredient combinations; long-term roster shape | Relics, rift currency, recipes, lore | v0.4 (alchemy), v0.6 (delves) |
-| **Events** | Whenever tokens are banked *(⚑ revision G7: was daily)* | World-boss attempts and Legendary Hunt runs, with different hunters each time | Who to spend on which attempt | Boss rewards, event points | v0.8 |
-| **Cycle** | 3–5 days | Age up the hold; keep Threat in check; pick the moment for the Last Stand | When to make the Last Stand | Embers (permanent currency), relics, the next act of the mystery | v0.5 |
-| **Meta** | Weeks | Fill the bestiary and recipe book; raise hunter stars; finish Legendary Hunts; advance Orders | Long-term investment | Permanent power and knowledge; the full story | v0.3–v0.9 |
+| **Session** | 15–30 min | Delve runs; alchemy experiments; roster and gear planning; read lore | Blessing picks; ingredient combinations; long-term roster shape | Relics, rift currency, recipes, lore | v0.6 (alchemy), v0.7 (delves) |
+| **Events** | Whenever tokens are banked *(⚑ revision G7: was daily)* | World-boss attempts and Legendary Hunt runs, with different hunters each time | Who to spend on which attempt | Boss rewards, event points | v0.9 |
+| **Cycle** | 3–5 days | Age up the hold; keep Threat in check; pick the moment for the Last Stand | When to make the Last Stand | Embers (permanent currency), relics, the next act of the mystery | v0.4 |
+| **Meta** | Weeks | Fill the bestiary and recipe book; raise hunter stars; finish Legendary Hunts; advance Orders | Long-term investment | Permanent power and knowledge; the full story | v0.3–v0.10 |
 
 ### 3.2 The check-in, step by step
 
@@ -146,7 +146,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 - **Unwanted contracts can be declined for free** *(⚑ revision A2)*. A full board never costs anything (G2).
 - **Injuries heal on real time,** including while you're offline.
 - **No resource is lost to an overflow cap in v0.1** (D24.3, no storage caps). If caps arrive later, the UI warns well before you hit them.
-- **Events** (v0.8) never punish absence *(⚑ revision G7)*. Attempts are banked tokens, Legendary Hunts start when you start them, and absence can delay an event reward but never forfeit it.
+- **Events** (v0.9) never punish absence *(⚑ revision G7)*. Attempts are banked tokens, Legendary Hunts start when you start them, and absence can delay an event reward but never forfeit it.
 
 ### 3.4 What exists when
 
@@ -155,10 +155,11 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | v0.1 | Check-in (hold only): build, assign peasants, Age up to Keep |
 | v0.2 | Check-in with contracts (tier 1 from Hamlet, G6), hunters, combat logs |
 | v0.3 | Contracts gain investigation, the bestiary, and preparation |
-| v0.4 | Session loop begins (alchemy experiments) |
-| v0.5 | Cycle loop: Threat, Last Stand, Long Night, Embers, mystery act 1 |
-| v0.6 | Session loop gains Delves |
-| v0.7–v0.9 | Meta loop deepens: stars and talents, events, Orders |
+| v0.4 | Cycle loop: Threat, Last Stand, Long Night, Embers, relics, Citadel and Bastion *(⚑ P3: moved ahead of alchemy discovery)* |
+| v0.5 | Act I and the story systems: documents, the Archivist, warden naming, the Roll of Wardens, letters, village trust *(⚑ P2: split from the Long Night)* |
+| v0.6 | Session loop begins (alchemy experiments) |
+| v0.7 | Session loop gains Delves |
+| v0.8–v0.10 | Meta loop deepens: stars and talents (v0.8), events (v0.9), Orders (v0.10) |
 
 ---
 
@@ -175,19 +176,19 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Iron** | Basic | Mine; peasants | Buildings; smithy gear | No | v0.1 |
 | **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.25/min each, no bonuses; G1); **contract bounties (main source)** | Silvered gear; recruitment; Age-ups | No | v0.1 |
 | **Peasants** | Population | Houses + food surplus | Assigned to gathering jobs | No | v0.1 |
-| **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; rank partly resets (detailed in v0.5); **gear resets** *(⚑ revision A4)* | v0.2 |
-| **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.7); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.5 arrival, G8) | v0.2 |
+| **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; rank partly resets (detailed in v0.4); **gear resets** *(⚑ revision A4)* | v0.2 |
+| **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.8); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.4 arrival, G8) | v0.2 |
 | **Reagents** | Ingredients | Contracts; herb garden; Delves | Alchemy: oils, potions, bombs | No | v0.3 |
 | **Gear** | Items | Smithy (iron + silver + wood) | Equipped by hunters | No (relics are the persistent gear) | v0.2 |
 | **Oils / Potions / Bombs** | Consumables | Alchemist's hut, from reagents | Contract preparation | No | v0.3 |
 | **Knowledge** | Unlocks | Investigating and killing monsters; alchemy experiments | Never spent; reduces investigation time and raises odds | **Yes** | v0.3 |
-| **Threat** | Pressure meter | Rises with the Age's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.5 |
-| **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades | **Yes** | v0.5 |
-| **Relics** | Persistent items | Last Stand milestones; Delves | Equipped on the hold or on hunters | **Yes** | v0.5 / v0.6 |
-| **Riftglass** | Delve currency with a **banked allowance**: 1/7 of the weekly cap accrues per day, banking up to 2 weeks *(⚑ revision G7)* | Delve floors | Sidegrades, convenience upgrades (e.g., +1 h offline cap), cosmetic hold improvements | **Yes** | v0.6 |
+| **Threat** | Pressure meter | Rises with the Age's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.4 |
+| **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades | **Yes** | v0.4 |
+| **Relics** | Persistent items | Last Stand milestones; Delves | Equipped on the hold or on hunters | **Yes** | v0.6 / v0.8 |
+| **Riftglass** | Delve currency with a **banked allowance**: 1/7 of the weekly cap accrues per day, banking up to 2 weeks *(⚑ revision G7)* | Delve floors | Sidegrades, convenience upgrades (e.g., +1 h offline cap), cosmetic hold improvements | **Yes** | v0.7 |
 | **Lore documents** | Collectibles | Contracts, Delves, Long Night | Mystery progression; some give small hints or bonuses | **Yes** | v0.5 |
-| **Boss marks / Hunt points** | Event currencies | World bosses; Legendary Hunts | Event rewards; unlocking a legendary hunter | **Yes** | v0.8 |
-| **Reputation** | Per Order | Order questlines and aligned contracts | Order rewards and unlocks | **Yes** | v0.9 |
+| **Boss marks / Hunt points** | Event currencies | World bosses; Legendary Hunts | Event rewards; unlocking a legendary hunter | **Yes** | v0.9 |
+| **Reputation** | Per Order | Order questlines and aligned contracts | Order rewards and unlocks | **Yes** | v0.10 |
 
 ### 4.2 Flow diagram
 
@@ -214,10 +215,10 @@ flowchart LR
   FIGHT -- reagents --> AL
   FIGHT -- knowledge --> BEST[Bestiary · v0.3]
   BEST -- faster ID, better odds --> INV
-  AL -- recipes --> RB[Recipe book · v0.4]
+  AL -- recipes --> RB[Recipe book · v0.6]
   RB -- known effects --> AL
 
-  subgraph DEL["Delves (active, optional) · v0.6"]
+  subgraph DEL["Delves (active, optional) · v0.7"]
     RIFT[Rift floors + patron blessings]
   end
   H --> RIFT
@@ -225,7 +226,7 @@ flowchart LR
   RIFT -- relics · lore · reagents --> AL
   SIDE --> HOLD
 
-  subgraph NIGHT["The Long Night (prestige) · v0.5"]
+  subgraph NIGHT["The Long Night (prestige) · v0.4"]
     THR[Threat] --> LS[Last Stand]
     LS --> EMB[Embers & relics]
   end
@@ -236,7 +237,7 @@ flowchart LR
   LS -- next act --> LORE[Mystery & lore]
   RIFT -- lore pages --> LORE
 
-  EV["Events · v0.8: world bosses, Legendary Hunts"] --> H
+  EV["Events · v0.9: world bosses, Legendary Hunts"] --> H
   H --> EV
 ```
 
@@ -252,14 +253,14 @@ Every layer has at least one input from another layer and one output to another 
 | Long Night | Defenses (Hold); hunters; Threat state | Embers, relics, story progression |
 | Events | Roster depth | Legendary hunters, event rewards |
 
-**Delve-optional check (D20):** Every resource Delves give either has an idle-path source (reagents, lore, and relics also come from contracts and Last Stands) or is a sidegrade or convenience. Idle-only play reaches all content about 20–30% slower. The balance simulator will verify this from v0.6 on.
+**Delve-optional check (D20):** Every resource Delves give either has an idle-path source (reagents, lore, and relics also come from contracts and Last Stands) or is a sidegrade or convenience. Idle-only play reaches all content about 20–30% slower. The balance simulator will verify this from v0.7 on.
 
 ---
 
 ## Judgment calls in sections 1–4
 
 1. **Silver is both a material and the bounty currency.** One fewer resource to track; contracts become the main source of silver.
-2. **The hunter roster persists through the Long Night,** with rank and gear partly resetting. Details come with v0.5.
+2. **The hunter roster persists through the Long Night,** with rank and gear partly resetting. Details come with v0.4.
 3. **Contract board:** one new contract every 2 h, up to 6, never expiring.
 4. **Event participation:** event milestones are reachable with about 70% participation. *(Superseded by G7: absence can delay an event reward but never forfeit it.)*
 5. **Routine check-in target:** 15 taps or fewer.
@@ -351,7 +352,7 @@ The four basic resources are **food, wood, iron, and silver**. There are no stor
 rate_R = workers_R × baseRate_R × (bucket multipliers, §5.0)
 ```
 
-**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.5). With at most 2 Seams, seam income can never exceed 2 × 0.25/min = **720 silver per day**. Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
+**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.4). With at most 2 Seams, seam income can never exceed 2 × 0.25/min = **720 silver per day**. Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
 
 #### 5.1.2 Buildings
 
@@ -435,7 +436,7 @@ In v0.1, the Keep is the end of content. The Age screen shows the next Age (Cita
 elapsed = clamp(now − lastSeen, 0, offlineCap)
 ```
 
-- **Offline cap:** a base of 12 h (D08), plus the Bell Tower (up to +3 h), plus later sources (Embers in v0.5, Riftglass in v0.6). **Hard ceiling: 24 h** **[JC]**.
+- **Offline cap:** a base of 12 h (D08), plus the Bell Tower (up to +3 h), plus later sources (Embers in v0.4, Riftglass in v0.7). **Hard ceiling: 24 h** **[JC]**.
 - **Clock moved backward:** if `now < lastSeen`, then `elapsed = 0` and `lastSeen` is reset to `now` (D21). No penalty, no warning.
 
 **Simulation.** Offline time runs through **the same `advance(state, dt)` function** as live play. **`advance` is event-driven** *(⚑ revision A11 [JC])*:
@@ -468,7 +469,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 
 **Active roster and reserve** *(⚑ revision G5)*:
 - **Active roster cap:** 3 in Hamlet (bunks in the Hearth Hall [JC]). In Keep, 3 + Barracks level, up to 8. Citadel adds 2 and Bastion adds 2, for 12 at most [JC].
-- **Reserve:** unlimited. Every hunter you own but haven't made active waits in the reserve. Reserve hunters can't take contracts or Delves and don't earn contract XP. They **can** join world bosses and Legendary Hunts (v0.8).
+- **Reserve:** unlimited. Every hunter you own but haven't made active waits in the reserve. Reserve hunters can't take contracts or Delves and don't earn contract XP. They **can** join world bosses and Legendary Hunts (v0.9).
 - **Swapping** between active and reserve is free and instant, except for hunters who are on a contract or recovering.
 - **Letting a hunter go** means moving them to the reserve. Hunters are never deleted [JC].
 - **Barracks** (Keep, level building, max 5, base cost 600 wood, 300 iron, 100 silver) raises the active cap.
@@ -520,7 +521,7 @@ The full list goes in §8.
 
 #### 5.3.6 Gear (v0.2)
 
-Gear is **upgraded in place** **[JC]**. Each hunter has a weapon slot and an armor slot, and the Smithy upgrades the slot directly. There is no item inventory until loot arrives in v0.7.
+Gear is **upgraded in place** **[JC]**. Each hunter has a weapon slot and an armor slot, and the Smithy upgrades the slot directly. There is no item inventory until loot arrives in v0.8.
 
 | Slot tier | Effect | Cost | Requires |
 |---|---|---|---|
@@ -546,7 +547,7 @@ Runed weapons (Rune damage) arrive with the Emberwright lore in v0.5.
 - Launching a Reckless contract requires a confirmation dialog that names each hunter and their exact death chance.
 - Recovering hunters can't take contracts. Recovery runs on real time, including offline.
 - **Story hunters never die** *(⚑ revision, lore C4)*: Sigrun, Ostap, Toma and Arvid can be wounded, but on a Reckless contract their death roll becomes Grievously Wounded instead. They persist through every Long Night and are always available before their act needs them (`lore-secrets.md` §10).
-- Dead hunters are gone for the cycle. Their memorial stays in the Hall of the Fallen (More menu). **[JC: a dead named hunter returns as a candidate after the next Long Night, with their lore tracked. Permanently losing a hand-authored character felt too punishing for a collection game.]** Before v0.5, when no Long Night exists yet, a dead hunter returns as a candidate **3 days** after their death *(⚑ revision A12 [JC])*.
+- Dead hunters are gone for the cycle. Their memorial stays in the Hall of the Fallen (More menu). **[JC: a dead named hunter returns as a candidate after the next Long Night, with their lore tracked. Permanently losing a hand-authored character felt too punishing for a collection game.]** Before v0.4, when no Long Night exists yet, a dead hunter returns as a candidate **3 days** after their death *(⚑ revision A12 [JC])*.
 
 ---
 
@@ -563,13 +564,13 @@ Each contract has:
 
 | Field | Notes |
 |---|---|
-| Village | The giver. Flavor in v0.2; ties into Reputation in v0.9. |
+| Village | The giver. Flavor in v0.2; ties into Reputation in v0.10. |
 | Monster | In v0.2, always a known species (identified for free). Unknown monsters arrive in v0.3. |
 | Tier | 1–5 within Keep. Each tier above the monster's base tier multiplies Health and Might by 1.35 and Armor by 1.15 (§7). |
 | Location tag | Forest, river, field or barrow; **ruin from v0.5** *(⚑ revision D-2)*. **Barrow contracts start at tier 2** *(⚑ revision A3 [JC])*. Interacts with traits. |
 | Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5; at most 2 in Hamlet (G6) |
 | Duration | 30 min / 1 h / 2 h / 4 h / 8 h by tier |
-| Bounty | `60 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.0; Citadel and Bastion set at v0.5). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6)* |
+| Bounty | `60 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.0; Citadel and Bastion set at v0.4). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6)* |
 | Trophies | Equal to the tier, of that monster's family |
 | Reagents | *(v0.3)* monster-specific drops |
 
@@ -603,7 +604,7 @@ The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation ID
 #### 5.4.4 How contracts feed the Hold
 
 - **Silver bounties** are the main silver source from v0.2 on. Silver Seams are capped at 720 silver per day for the whole game (G1), so bounties overtake them as higher tiers unlock.
-- **Trophy Hall** (Keep, one level, cost 500 wood, 200 iron): gives **+0.5% to all Hold production per trophy earned this cycle**, in the trophy bucket. The count is the **cumulative trophies earned this cycle; spending trophies (v0.7) never reduces it** *(⚑ revision A7)*. Silver is excluded (G1).
+- **Trophy Hall** (Keep, one level, cost 500 wood, 200 iron): gives **+0.5% to all Hold production per trophy earned this cycle**, in the trophy bucket. The count is the **cumulative trophies earned this cycle; spending trophies (v0.8) never reduces it** *(⚑ revision A7)*. Silver is excluded (G1).
 - **Reagents** go to the Alchemist *(v0.3)*.
 
 ---
@@ -612,7 +613,7 @@ The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation ID
 
 *⚑ Revised: turn meter (G4), damage rules (B1–B5), exact worked example (A14).*
 
-Combat is an auto-battle on a **turn meter**. The party fights one monster *(groups of monsters come in v0.6+ with Delves)*.
+Combat is an auto-battle on a **turn meter**. The party fights one monster *(groups of monsters come in v0.7+ with Delves)*.
 
 **Turn meter:**
 1. Every combatant starts the fight with an empty meter (0).
@@ -733,7 +734,7 @@ From v0.3, a contract can post an **unknown monster**. The player sees:
 ### 5.7 Preparation (v0.3)
 
 The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from reagents.
-- v0.3 recipes are **fixed and known**. Discovery arrives in v0.4.
+- v0.3 recipes are **fixed and known**. Discovery arrives in v0.6.
 - Each brew takes 10 min, one at a time per Hut level. Several can be queued.
 - Finished consumables go into the hold's stores.
 
@@ -766,14 +767,16 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 
 ---
 
-### 5.8 Alchemy discovery & skills through use *(v0.4, outline)*
+### 5.8 Alchemy discovery & skills through use *(v0.6, outline)*
 
 - **Hidden effects.** Each ingredient has 4 hidden effects. Brewing 2–3 ingredients that share an effect produces a brew with that effect. The first discovery of an effect is logged, and the recipe book fills in.
 - **Experiments** cost ingredients and time. A failed combination still reveals one effect of each ingredient used, so experimenting is never wasted.
 - **Warden skills** improve through use: Alchemy, Smithing, Lore, and Command. Each grows from its activity, with a small permanent bonus per level that survives the Long Night **[JC]**.
 - **Open questions:** whether hunters also have use-based skills (per damage type); how many effects there are in total; whether the v0.3 fixed recipes become discovered recipes.
 
-### 5.9 The Long Night *(v0.5, outline)*
+### 5.9 The Long Night *(v0.4 mechanics, v0.5 story; outline)*
+
+*⚑ Milestones renumbered (P2, P3): the Long Night's mechanics ship in v0.4, ahead of alchemy discovery (now v0.6), and Act I with its story systems ships in v0.5. Mapping in `decisions.md` D35.*
 
 - **Threat** rises over the cycle: a base rate per Age, plus spikes from failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)*. Completed contracts and defensive buildings push it down.
 - **The Last Stand** is available from Bastion on (day 3). It is an auto-battle against escalating waves, using the hold's defenses plus up to 6 hunters.
@@ -781,26 +784,26 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
   - Making the stand later pays more Embers, but Threat raises the difficulty. The sweet spot should land around days 4–5 (§6).
 - **Remaining Ages:** Citadel and Bastion.
 - **What resets and what persists:** per §4. Embers buy permanent warden upgrades. Relics drop at payout milestones.
-- **Story:** mystery act 1 plus the first lore documents. Residents react to how the stand went.
-- **A new warden each cycle** *(⚑ lore L4)*: after each Long Night you name the next warden. The **Roll of Wardens** (L9) carves each warden's name, Ages reached, Last Stand band and relics into the Hearth Hall.
-- **Arriving at v0.5** *(⚑ revision G8)*: when a pre-v0.5 save first loads in v0.5, the story triggers the first Long Night: a scripted Last Stand with the normal payout, then §4.1's normal reset rules. **Trophy-to-Embers conversion at that moment is capped** at 120% of the median Embers a simulated Standard player earns in cycle 1 [JC]. Before v0.5, the Trophy Hall bonus is uncapped [JC].
+- **Story (v0.5):** mystery act 1 plus the first lore documents. Residents react to how the stand went. **Until an act is written, a finished cycle closes with "The story continues in a later version"; when the act ships, its documents unlock in your current cycle** *(⚑ P4 [JC])*.
+- **A new warden each cycle** *(⚑ lore L4)*: after each Long Night a new warden arrives; **from v0.5** you name them. The **Roll of Wardens** (L9) carves each warden's name, Ages reached, Last Stand band and relics into the Hearth Hall.
+- **Arriving at v0.4** *(⚑ revision G8)*: when a pre-v0.4 save first loads in v0.4, the game triggers the first Long Night (neutral text; the story arrives in v0.5): a scripted Last Stand with the normal payout, then §4.1's normal reset rules. **Trophy-to-Embers conversion at that moment is capped** at 120% of the median Embers a simulated Standard player earns in cycle 1 [JC]. Before v0.4, the Trophy Hall bonus is uncapped [JC].
 - **Open questions:** the payout curve; how hunter rank partly resets (gear resets fully, A4); whether buildings can be damaged by high Threat (leaning no, per pillar 5).
 
-### 5.10 Delves *(v0.6, outline)*
+### 5.10 Delves *(v0.7, outline)*
 
 - About 5-minute runs: 6 floors plus a guardian, with a party of 3. Auto-battle against groups of monsters.
 - **On each floor** *(⚑ revision D-1 [JC])*: two doors, each showing one patron. Pick a door, then pick 1 of 3 blessings from that patron. The patron roster is in §8.8.
 - **Rewards:** Riftglass (banked allowance, G7), a chance at relics, lore pages, and rare reagents.
 - **Open questions:** whether injuries carry back from Delves (leaning no: Delve injuries end the run but don't follow the hunter home); the size of the weekly Riftglass allowance; how the Unlit patron's drawbacks are shown.
 
-### 5.11 Hunter depth *(v0.7, outline)*
+### 5.11 Hunter depth *(v0.8, outline)*
 
 - **Ranks:** XP plus family trophies.
 - **Star tiers:** trophies plus rare drops. Stars raise stat growth and unlock talent tiers.
 - **Talent trees:** 3 branches per role.
 - **Loot rarity:** Common → Fine → Rare → Heroic → Legendary. This introduces an item inventory, replacing in-place gear upgrades.
 
-### 5.12 Events *(v0.8, outline)*
+### 5.12 Events *(v0.9, outline)*
 
 *⚑ Revised (G7): events wait for you.*
 
@@ -815,7 +818,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
   - Points unlock a legendary hunter, and **points carry over to reruns** until it's unlocked.
 - **Absence can delay an event reward but never forfeit it.**
 
-### 5.13 Orders *(v0.9, outline)*
+### 5.13 Orders *(v0.10, outline)*
 
 *⚑ Revised to match the lore (lore C6, L2).*
 
@@ -831,11 +834,11 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 
 ## Judgment calls in §5
 
-1. **No food upkeep in v0.1.** Peasants cost food to settle, not to maintain, which avoids starvation spirals during offline time. Revisit at v0.5.
+1. **No food upkeep in v0.1.** Peasants cost food to settle, not to maintain, which avoids starvation spirals during offline time. Revisit at v0.4.
 2. **All construction is instant.** Pacing comes from costs, not build timers.
 3. **Offline progress runs at 100% efficiency** up to the cap, with a hard ceiling of 24 h on cap extensions.
 4. **Hunters are all hand-authored named characters,** unlocked by conditions and recruited with silver. No random recruits.
-5. **Gear is upgraded in place** (weapon and armor slots) until loot arrives in v0.7.
+5. **Gear is upgraded in place** (weapon and armor slots) until loot arrives in v0.8.
 6. **Reckless means displayed odds below 35%.** That line covers "badly prepared" too, and death has a 30% chance per downed hunter.
 7. **A dead named hunter returns as a candidate after the next Long Night,** instead of being lost forever.
 8. **No difficulty rubber-banding.** Contract tiers are fixed per Age and unlocked by progress.
@@ -843,7 +846,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 10. **A well-prepared success pays bounty × 1.5 and +1 trophy.**
 11. **The Trophy Hall bonus counts cumulative trophies earned this cycle,** unaffected by spending. *(Reworded in revision A7.)*
 12. **Odds come from 500 simulated fights.** The real outcome uses a separate seed derived from the party and preparation, so it's reproducible but can't be read in advance.
-13. **Warden skills (v0.4) survive the Long Night.**
+13. **Warden skills (v0.6) survive the Long Night.**
 14. **Rune damage and runed gear are held back until v0.5,** when the Emberwright lore arrives.
 
 ---
@@ -856,10 +859,10 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 
 | Policy | Check-ins (local time) | Sessions | Used for |
 |---|---|---|---|
-| **Standard** (D16) | Weekdays: 07:00, 10:00, 12:30, 16:00, 21:00. Weekends: 09:00, 13:00, 17:00, 21:00 | One 20-min session at 15:00 on weekends, plus Wednesday at 19:00 *(Delves from v0.6)* | All main targets |
+| **Standard** (D16) | Weekdays: 07:00, 10:00, 12:30, 16:00, 21:00. Weekends: 09:00, 13:00, 17:00, 21:00 | One 20-min session at 15:00 on weekends, plus Wednesday at 19:00 *(Delves from v0.7)* | All main targets |
 | **Light** | 07:00, 12:30, 21:00 every day | None | "Still works for a busy week" checks |
 | **Heavy** | Every 2 h from 07:00 to 23:00 | One per day | "Can't be rushed too fast" checks |
-| **Idle-only** *(from v0.6)* | Same as Standard | Never Delves | Delve-optional check (D20) |
+| **Idle-only** *(from v0.7)* | Same as Standard | Never Delves | Delve-optional check (D20) |
 | **Opening** *(⚑ revision A10)* | Acts every 10 s for the first 15 min of a fresh game, using the default job priority and greedy best-payback buys; then switches to Standard | — | Opening targets (first Cottage, first Mine) |
 
 - **Start time:** runs start Monday at 07:00. A second run starts Saturday at 09:00 to catch weekend-start problems **[JC]**.
@@ -888,12 +891,12 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | First tier-3 success | Day 2 | v0.2 |
 | First species Identified through investigation | ≤ 2 h after the Hunter's Lodge is built | v0.3 |
 | First species Studied (3 kills) | Days 2–3 | v0.3 |
-| Citadel reached | Day 2 | v0.5 |
-| Bastion reached; Last Stand available | Day 3 | v0.5 |
-| Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.5 |
-| **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.5 |
-| Later cycles | Each ≥ 15% faster than the one before, with a floor of 2 days **[JC]**. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.5 |
-| Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.6 |
+| Citadel reached | Day 2 | v0.4 |
+| Bastion reached; Last Stand available | Day 3 | v0.4 |
+| Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.4 |
+| **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.4 |
+| Later cycles | Each ≥ 15% faster than the one before, with a floor of 2 days **[JC]**. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.4 |
+| Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.7 |
 
 ### 6.3 Engagement checks (simulator)
 
@@ -904,8 +907,8 @@ These catch dead zones and walls that pure time targets miss.
 3. **No walls:** no single purchase takes more than 3 check-ins of saving, except Age-ups, which may take up to 5.
 4. **Preparation matters** *(v0.3)*: on identified contracts at equal tier, matched preparation raises the odds by at least 15 percentage points over no preparation.
 5. **Odds are honest** *(v0.2)*: across 2,000 simulated contracts, the actual success rate in each 10-point odds bucket lands within ±5 points of the displayed odds.
-6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days in v0.2–v0.4), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.*
-7. **No overflow:** every number stays below 1e300 through 3 simulated cycles *(from v0.5)*. Through v0.4, the same check runs over 14 simulated days.
+6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days in v0.2–v0.3), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.*
+7. **No overflow:** every number stays below 1e300 through 3 simulated cycles *(from v0.4)*. Through v0.3, the same check runs over 14 simulated days.
 8. **Provisions matter** *(v0.2; ⚑ revision G3)*: from Keep onward, contract provisions take 20–40% of food income.
 
 ### 6.4 Playtest-only checks
@@ -971,7 +974,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Recovery | Bruised: fixed; Wounded: `per × tier`; Grievous: ×3 | `injury.bruised` = 30 min, `injury.woundedPerTier` = 2 h, `injury.grievousMult` = 3, `injury.bruisedBelow` = 0.30 | 5.3.7 |
 | Reckless line | odds < threshold | `contract.recklessBelow` = 0.35 | 5.3.7 |
 | Death roll | per downed hunter on a Reckless contract | `injury.deathChance` = 0.30 | 5.3.7 |
-| Dead hunter returns | Before v0.5: after N days; from v0.5: after the next Long Night | `death.returnDaysPreV05` = 3 | 5.3.7 |
+| Dead hunter returns | Before v0.4: after N days; from v0.4: after the next Long Night | `death.returnDaysBeforeLongNight` = 3 | 5.3.7 |
 
 ### 7.4 Contracts & combat
 
@@ -996,9 +999,9 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Odds preview | `n` simulated fights; margin `±1.96 × √(p(1−p)/n)` | `odds.samples` = 500 **[JC: raised from 200; keeps the margin within ±4.4 points]** | 5.4.2 |
 | Well prepared | bounty multiplier | `prep.wellPreparedBounty` = 1.5 | 5.4.3 |
 | Suggested party | Stage 1: k samples per party (same seeds); stage 2: top N at full samples | `suggest.stage1Samples` = 50, `suggest.stage1PerCandidate` = 20, `suggest.finalists` = 5 | 6.5 |
-| World-boss tokens *(v0.8)* | 1 per interval, banking up to the max; hunters rest after an attempt | `boss.tokenInterval` = 8 h, `boss.tokenMax` = 6, `boss.hunterRest` = 24 h | 5.12 |
-| Riftglass allowance *(v0.6)* | weekly cap ÷ 7 accrues per day, banking up to N weeks | `riftglass.bankWeeks` = 2 | 5.10 |
-| v0.5 arrival cap *(v0.5)* | trophy-to-Embers conversion capped at a share of the simulated cycle-1 median | `v05.emberCapShare` = 1.2 | 5.9 |
+| World-boss tokens *(v0.9)* | 1 per interval, banking up to the max; hunters rest after an attempt | `boss.tokenInterval` = 8 h, `boss.tokenMax` = 6, `boss.hunterRest` = 24 h | 5.12 |
+| Riftglass allowance *(v0.7)* | weekly cap ÷ 7 accrues per day, banking up to N weeks | `riftglass.bankWeeks` = 2 | 5.10 |
+| v0.4 arrival cap *(v0.4)* | trophy-to-Embers conversion capped at a share of the simulated cycle-1 median | `longNightArrival.emberCapShare` = 1.2 | 5.9 |
 
 ### 7.5 Bestiary & preparation
 
@@ -1204,7 +1207,7 @@ Individual hunters vary by up to ±10% per stat.
 
 ### 8.6 Ingredients (v0.3)
 
-Each ingredient also has **4 hidden effects**, defined in v0.4 for alchemy discovery.
+Each ingredient also has **4 hidden effects**, defined in v0.6 for alchemy discovery.
 
 | Ingredient | Source | Used in (v0.3 recipes) |
 |---|---|---|
@@ -1218,8 +1221,8 @@ Each ingredient also has **4 hidden effects**, defined in v0.4 for alchemy disco
 | Grave dust | Drop: Upyr, Draugr, Strzyga | Grave Oil |
 | River pearl | Drop: Rusalka, Vodyanoy, Nix | Drowned-Bane Oil |
 | Thornwood | Drop: Kikimora, Bies, Leshy, Huldra | Thornbane Oil, Ironbark Tonic |
-| Wolf fang | Drop: Gloam Wolf | — *(reserved for v0.4 discovery)* |
-| Noon poppy | Drop: Poludnitsa | — *(reserved for v0.4 discovery)* |
+| Wolf fang | Drop: Gloam Wolf | — *(reserved for v0.6 discovery)* |
+| Noon poppy | Drop: Poludnitsa | — *(reserved for v0.6 discovery)* |
 
 **Drop rate:** each success yields `tier` units of that monster's drop, plus 1 gift reagent from the village.
 
@@ -1227,7 +1230,7 @@ Each ingredient also has **4 hidden effects**, defined in v0.4 for alchemy disco
 
 See the table in §5.7 (9 items in v0.3).
 
-### 8.8 Patrons *(v0.6, outline only; six, per lore L8)*
+### 8.8 Patrons *(v0.7, outline only; six, per lore L8)*
 
 | Patron | Theme | Blessing direction |
 |---|---|---|
@@ -1569,7 +1572,7 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 | Mod support or a content editor | Content files are already plain TypeScript data | Edit content files directly |
 | Achievements | Not in the brief | **[JC: candidate for v1.0 polish]** |
 | Records screen; CSV/JSON export of history and logs | Declined in the GDD review (G9) | Reports keeps recent logs; the Roll of Wardens (v0.5) keeps per-cycle history in-world |
-| The mystery's final act | Timing open (D24.10) | Decided when v0.9 starts |
+| The mystery's final act | Timing open (D24.10) | Decided when v0.10 starts |
 
 **Deferred, not cut.** Anything listed at outline level in §5.8–5.13 is in scope for its milestone and gets full detail just before that milestone starts.
 
@@ -1609,9 +1612,9 @@ Each one is also marked **[JC]** where it appears.
 12. **Hamlet active roster cap of 3; Citadel and Bastion each add 2;** hunters are never deleted. (§5.3.1)
 13. **Fixed recruitment prices per hunter.** (§5.3.1, §8.5)
 14. **The board opens when the first Mine is built.** (§5.4.1)
-15. **Before v0.5, dead hunters return after 3 days.** (§5.3.7)
+15. **Before v0.4, dead hunters return after 3 days.** (§5.3.7)
 16. **World-boss hunters rest for 24 h after an attempt.** (§5.12)
-17. **The v0.5 Embers cap is 120% of the simulated cycle-1 median;** the Trophy Hall is uncapped before v0.5. (§5.9)
+17. **The v0.4 Embers cap is 120% of the simulated cycle-1 median;** the Trophy Hall is uncapped before v0.4. (§5.9)
 18. **Two patron doors per floor.** (§5.10)
 19. **Performance budgets and the two-stage Suggest search.** (§6.5)
 20. **Art direction:** one 32-color palette, 16/32/64 px sizes, generated portraits. (§9.12)
