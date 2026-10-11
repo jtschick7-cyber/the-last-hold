@@ -90,7 +90,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.0 — Bootstrap
 
-**Status:** not started
+**Status:** complete
 
 **Goal:** an empty, deployable, installable shell, with every guard-rail and the preview channel in place. No game logic.
 **Reads:** technical design §2–4, §7.4 (the ban list only), §9.1 (namespacing), §11.
@@ -101,30 +101,33 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 |---|---|
 | ~~Put the docs and `CLAUDE.md` in the repo~~ **Done.** `lore-secrets.md` stays out until v0.5 (D36). | T0.0 |
 | Enable GitHub Pages with Source = GitHub Actions (repo Settings → Pages) | T0.6 |
+| Let milestone branches deploy: repo Settings → Environments → `github-pages` → Deployment branches and tags → add the rule `milestone/*` (Pages only allows `main` by default) | T0.6 |
+| Create the branch `milestone/v0.0` from the v0.0 work branch, or allow Claude Code to push it (previews deploy only from `milestone/*`) | T0.6 |
 
 ### Tasks
 
 - [x] **T0.0 👤 Docs in the repo.** `gdd.md`, `technical-design.md`, `implementation-plan.md`, `decisions.md`, `setting-primer.md`, and `CLAUDE.md` are committed; `lore-secrets.md` is excluded (D36).
-- [ ] **T0.1 Scaffold.**
+- [x] **T0.1 Scaffold.**
   - Vite + TypeScript + Preact + signals.
   - Strict `tsconfig` with `noUncheckedIndexedAccess`.
   - The folder structure (technical design §3); Node 22 (`.nvmrc`); exact dependency versions.
-- [ ] **T0.2 Scripts.** `dev`, `build`, `preview`, `typecheck`, `lint`, `format`, `test`, `sim` (a stub that exits 0), `check`.
-- [ ] **T0.3 Lint guard-rails.**
+- [x] **T0.2 Scripts.** `dev`, `build`, `preview`, `typecheck`, `lint`, `format`, `test`, `sim` (a stub that exits 0), `check`.
+- [x] **T0.3 Lint guard-rails.**
   - Layer import rules.
   - The full `core/` ban list (technical design §4.2, §7.4).
   - The numeric-literal rule with its allowlist (0, 1, −1, 2, 100, array indices; test files exempt).
   - Named exports only.
   - **Test:** fixture files that break each rule must fail lint (checked through the ESLint Node API).
-- [ ] **T0.4 PWA shell.**
+- [x] **T0.4 PWA shell.**
   - vite-plugin-pwa with base `/the-last-hold/`.
   - A **build channel** (`live` or `preview`) that sets the storage namespace, the manifest name and scope, and a PREVIEW ribbon (technical design §11.3).
   - A version and commit screen; the update banner.
-- [ ] **T0.5 CI.** `ci.yml` (check + build). Empty stubs for `sim.yml` and `bench.yml`.
-- [ ] **T0.6 Deploy with preview.**
+- [x] **T0.5 CI.** `ci.yml` (check + build). Empty stubs for `sim.yml` and `bench.yml`.
+- [x] **T0.6 Deploy with preview.**
   - `deploy.yml` builds the latest `main` at the root and the latest `milestone/*` at `/preview/`, as one Pages artifact.
   - The live service worker's `navigateFallbackDenylist` excludes `/preview/`.
-- [ ] **T0.7 Repo hygiene.**
+  - *First deploy succeeded on 2026-10-11: a placeholder page at the root (main has no app until v0.0 merges) and `milestone/v0.0` at `/preview/`.*
+- [x] **T0.7 Repo hygiene.**
   - README.
   - `.github/pull_request_template.md`.
   - Check that `.claude/settings.json` (the lore deny rule) is in place.
@@ -138,9 +141,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 4. The lint guard-rail tests prove each banned pattern fails.
 
 **👤 Playtest checklist**
-- [ ] **On iPhone, install to the Home Screen before playing.** The installed app keeps its own storage, separate from Safari. Use export and import to move a save between them (from v0.1).
-- [ ] Install **both** live and preview. Each opens in airplane mode after its first load.
-- [ ] The version and the PREVIEW ribbon show correctly.
+- [x] **On iPhone, install to the Home Screen before playing.** The installed app keeps its own storage, separate from Safari. Use export and import to move a save between them (from v0.1).
+- [x] Install **both** live and preview. Each opens in airplane mode after its first load.
+- [x] The version and the PREVIEW ribbon show correctly.
 
 **Out of scope:** any game content or state.
 

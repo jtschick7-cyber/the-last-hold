@@ -153,3 +153,7 @@ vite.config.ts.timestamp-*
 docs/lore-secrets.md
 # Original outline (contains the premise twist); kept outside the repo too (D38).
 docs/outline.md
+
+# Simulator reports (regenerated)
+sim/reports/
+dist-preview/

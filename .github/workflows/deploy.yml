@@ -1,0 +1,55 @@
+# Technical design §11.3: GitHub Pages serves one artifact per site, so every
+# deploy builds both channels: the latest main at the root (live) and the most
+# recently pushed milestone/* branch at /preview/ (preview).
+name: Deploy
+
+on:
+  push:
+    branches: [main, 'milestone/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Pick the preview branch
+        id: refs
+        run: |
+          preview=$(git for-each-ref --sort=-committerdate --format='%(refname:lstrip=3)' \
+            'refs/remotes/origin/milestone/' | head -n 1)
+          echo "preview=${preview}" >> "$GITHUB_OUTPUT"
+          echo "Preview branch: ${preview:-none}"
+      - name: Build live from main
+        run: .github/scripts/build-channel.sh live main "$PWD/site"
+      - name: Build preview from ${{ steps.refs.outputs.preview }}
+        if: steps.refs.outputs.preview != ''
+        run: .github/scripts/build-channel.sh preview "${{ steps.refs.outputs.preview }}" "$PWD/site/preview"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
