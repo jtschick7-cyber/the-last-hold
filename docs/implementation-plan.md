@@ -123,10 +123,10 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
   - A **build channel** (`live` or `preview`) that sets the storage namespace, the manifest name and scope, and a PREVIEW ribbon (technical design §11.3).
   - A version and commit screen; the update banner.
 - [x] **T0.5 CI.** `ci.yml` (check + build). Empty stubs for `sim.yml` and `bench.yml`.
-- [ ] **T0.6 Deploy with preview.**
+- [x] **T0.6 Deploy with preview.**
   - `deploy.yml` builds the latest `main` at the root and the latest `milestone/*` at `/preview/`, as one Pages artifact.
   - The live service worker's `navigateFallbackDenylist` excludes `/preview/`.
-  - *Written and tested locally (2026-10-11). Not ticked until its first run on GitHub deploys both channels; that needs the two 👤 tasks above.*
+  - *First deploy succeeded on 2026-10-11: a placeholder page at the root (main has no app until v0.0 merges) and `milestone/v0.0` at `/preview/`.*
 - [x] **T0.7 Repo hygiene.**
   - README.
   - `.github/pull_request_template.md`.
