@@ -1,0 +1,14 @@
+# Technical design §11.2 and §14: performance benchmarks, warn-only below 2× the
+# budget. A stub until v0.2 (plan T0.5): there is nothing to benchmark yet.
+name: Benchmarks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - run: echo "No benchmarks yet (v0.0 stub)."
