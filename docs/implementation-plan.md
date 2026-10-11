@@ -90,7 +90,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.0 — Bootstrap
 
-**Status:** in progress
+**Status:** complete
 
 **Goal:** an empty, deployable, installable shell, with every guard-rail and the preview channel in place. No game logic.
 **Reads:** technical design §2–4, §7.4 (the ban list only), §9.1 (namespacing), §11.
@@ -141,9 +141,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 4. The lint guard-rail tests prove each banned pattern fails.
 
 **👤 Playtest checklist**
-- [ ] **On iPhone, install to the Home Screen before playing.** The installed app keeps its own storage, separate from Safari. Use export and import to move a save between them (from v0.1).
-- [ ] Install **both** live and preview. Each opens in airplane mode after its first load.
-- [ ] The version and the PREVIEW ribbon show correctly.
+- [x] **On iPhone, install to the Home Screen before playing.** The installed app keeps its own storage, separate from Safari. Use export and import to move a save between them (from v0.1).
+- [x] Install **both** live and preview. Each opens in airplane mode after its first load.
+- [x] The version and the PREVIEW ribbon show correctly.
 
 **Out of scope:** any game content or state.
 

@@ -21,3 +21,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Test:** this line was committed through the GitHub API, to check whether such commits start workflow runs when git pushes didn't.
 - **Update:** the owner committed GitHub's sample workflow (`blank.yml`) to main, and it ran. So Actions works on the account; only our pushes weren't starting runs. Draft PR #1 is open (not for merging yet). `blank.yml` should be removed from main once our own workflows run.
 - **Update:** our workflows now run. CI, Simulator and Benchmarks are green, and Deploy published the preview from `milestone/v0.0` plus the placeholder at the root. T0.6 is ticked. The PR's first CI run failed only because main's `blank.yml` broke the format check; this branch deletes it, so merging v0.0 removes it from main. This session can't reach github.io, so the owner checks acceptance 2–3 on the phone during the playtest. **Next:** the owner's v0.0 playtest. Note: GitHub warns that actions/checkout@v4 and setup-node@v4 run on a deprecated Node 20; harmless for now, worth bumping in a later milestone.
+
+## 2026-10-11 — v0.0 complete
+- **Done:** the owner's playtest passed. v0.0 merged to `main` via PR #1, tagged `v0.0.0`, and the plan status set to complete (D40). `sim:accept` was skipped because there's no simulator yet; it starts in v0.1.
+- **Next:** v0.1 The Hold, starting with T1.1 (RNG), on branch `milestone/v0.1`.
+- **Owner check after the merge:** install the live app from the main address and confirm its "Opened here" count is separate from the preview's.
+- **Open questions:** none. D39 (v0.0 implementation choices) is still Proposed, for the owner to review.
+- **Skipped or deferred:** `sim:accept` (nothing to accept yet). The deprecated Node 20 workflow actions can be bumped in a later milestone.
