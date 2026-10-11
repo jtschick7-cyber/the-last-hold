@@ -1,110 +1,146 @@
 # The Last Hold — Implementation Plan
 
-**Status:** Draft for review.
-**Reads with:** `CLAUDE.md` (rules), `gdd.md` (what), `technical-design.md` (how), `decisions.md` (why).
-**Depth:** v0.0–v0.3 are in full detail. v0.4–v1.0 are outlines; each gets a **flesh-out session** before it starts (§0.5).
-**Markers:** **[JC]** = judgment call. **👤** = a task only the owner can do.
+**Status:** Revised after the plan review (D34–D36). Awaiting owner approval.
+**Reads with:** `CLAUDE.md` (the workflow, definition of done, and owner gates live there, not here), `gdd.md` (what), `technical-design.md` (how), `decisions.md` (why).
+**Depth:** v0.0–v0.3 are in full detail. v0.4 and later are outlines; each gets a **flesh-out session** before it starts (§0.4).
+**Markers:** **[JC]** = judgment call. **👤** = owner task. **[?]** = task blocked on an owner question (see `docs/questions.md`).
 
 ---
 
 ## 0. How milestones run
 
-### 0.1 Workflow
+The per-session workflow, definition of done, and owner gates are in **`CLAUDE.md`**. This section covers only what's specific to milestones.
 
-1. **One branch per milestone:** `milestone/v0.X`. Pull requests target `main`.
-2. **Each session:**
-   - Read `CLAUDE.md`, then this file's section for the current milestone, then the GDD and technical-design sections that milestone cites.
-   - Pick the **first unchecked task** whose dependencies are done.
-   - Work it to **Done** (§0.3), tick its box in this file, and commit.
-3. **Tasks are sized for about one session each.** If one turns out bigger, split it here first (add sub-tasks), then continue.
-4. **Commit early and often,** using Conventional Commits (`feat:`, `fix:`, `test:`, `balance:`, `docs:`).
-5. **When a design question comes up that this plan and the GDD don't answer,** ask the owner. Don't guess. Record the answer in `decisions.md`.
+### 0.1 Milestone status
 
-### 0.2 Testing approach (all milestones)
+Every milestone heading is followed by a **`Status:`** line: `not started`, `in progress`, or `complete`.
+- The **current milestone** is the first one that isn't `complete`.
+- Claude Code sets a milestone to `in progress` when it starts the milestone's first task.
+- **Only the owner's go-ahead sets `complete`** (§0.3).
 
-- **Test-first for anything with a formula, a rule, or saved data.** Write the test from the GDD numbers, then make it pass.
-- **UI is tested by the Playwright smoke (from v0.2) and the owner's playtest,** not by unit tests of components.
-- **During work, run the narrowest relevant tests. Before every commit, run `npm run check`** (typecheck + lint + tests + fast simulator checks).
+### 0.2 Testing approach
 
-### 0.3 Definition of done (per task)
+- **Test-first** for formulas, rules, and saved data. Tests take their numbers from the GDD.
+- **UI** is covered by the Playwright smoke (from v0.1) and the owner's playtest, not by component unit tests.
+- **`npm run check`** (90 s or less; technical design §11.2) before every commit. The full simulator suite and the benchmarks run in their own CI jobs (technical design §11.2).
 
-- [ ] Acceptance items for the task are met.
-- [ ] Tests are added or updated, and `npm run check` is green.
-- [ ] No numeric game constants outside `balance.ts`; no content outside `src/content/`.
-- [ ] If the save schema changed: a migration, a fixture, and a round-trip test (technical design §9.4).
-- [ ] Any new proper noun is collision-checked and added to `tests/content/names.ts`.
-- [ ] Decisions made along the way are logged in `decisions.md`.
-- [ ] The box is ticked in this file.
+### 0.3 Ending a milestone
 
-### 0.4 Ending a milestone
+1. Every task is ticked (no `[?]` left). Every acceptance criterion is met. **All simulator checks pass on 5 seeds** (`sim.yml`).
+2. **The preview build** (technical design §11.3) holds the finished milestone. 👤 **The owner installs it and runs the playtest checklist.**
+3. Claude Code opens the pull request using the plain-language template: what changed, what to playtest, known issues, deferred or skipped.
+4. 👤 **The owner says the playtest passed.** Only then does Claude Code merge, tag `vX.Y.0`, set `Status: complete`, run `sim:accept`, and add a decisions row (owner gates, CLAUDE.md).
 
-1. Every task is ticked, and every **acceptance criterion** for the milestone is met.
-2. Every **simulator check** for the milestone passes on 5 seeds. `sim/baseline.json` is updated with `npm run sim:accept`.
-3. 👤 **The owner runs the playtest checklist** for the milestone. Issues found either get fixed now or get logged as follow-ups.
-4. Update the statuses in the GDD and this file, and add a decisions-log row ("vX.Y complete").
-5. Merge to `main`, then tag `vX.Y.0`. The deploy workflow publishes it.
+### 0.4 Flesh-out sessions (before v0.4 and every later milestone)
 
-### 0.5 Flesh-out sessions (before v0.4 and each later milestone)
+A planning session in chat (not in Claude Code), with the owner, before the milestone starts:
+1. Review what playtesting taught.
+2. Bring the milestone's GDD section to full detail, with owner approval.
+3. Expand this plan's section into tasks, a "Before you start" box, acceptance criteria, and simulator checks.
+4. Log the decisions.
 
-A **planning session** with the owner (in chat, not in Claude Code) does four things:
-1. Reviews what playtesting taught.
-2. Brings the milestone's GDD section to full detail.
-3. Expands its section here into tasks with acceptance criteria.
-4. Logs the decisions.
+Claude Code doesn't start an outline-level milestone until its flesh-out is done.
 
-Claude Code doesn't start an outline-level milestone until that has happened.
+### 0.5 Story pace (P4)
 
-### 0.6 Balance-tuning protocol
+- **Acts I and II** are written in the **v0.5 flesh-out**.
+- After that, writing stays **at least one act ahead** of the owner's current cycle. Each later flesh-out checks this.
+- **An unwritten act** closes the cycle with *"The story continues in a later version."* When it ships, it unlocks in the current cycle (`lore-secrets.md`, D34).
 
-- **When a simulator check fails, change constants in `balance.ts`, never formulas.** Commit with `balance:` and include the before/after report diff in the message.
-- **A constant moved by more than 2×** gets a decisions-log row (GDD §5).
-- **If no reasonable constant passes a check,** stop and raise it with the owner. That's a design problem, not a tuning problem.
+### 0.6 Balance tuning: locked and tunable constants (A15)
 
-### 0.7 Rough size **[JC]**
+- **Tuning changes only `tunable` constants in `balance.ts`, never formulas.** Commit with `balance:` and include the before-and-after report diff.
+- A tunable constant moved by more than 2× gets a "Proposed" decisions row.
+- If no reasonable tunable value passes a check, **stop and write it to `docs/questions.md`.** That's a design problem.
 
-| Milestone | Estimated Claude Code sessions |
+**`locked` constants** (design decisions; changed only through a decisions row the owner approves) **[JC]**:
+
+| Area | Locked keys |
 |---|---|
-| v0.0 | 1–2 |
-| v0.1 | 8–12 |
-| v0.2 | 10–14 |
-| v0.3 | 8–12 |
+| Offline | `offline.baseCap`, `offline.ceiling` |
+| Contracts | `contract.recklessBelow`, `injury.deathChance`, `board.interval`, `board.cap`, `contract.partySize`, `contract.hamletPartyMax`, `contract.unlockSuccesses`, `contract.ageTierCap`, `prep.wellPreparedBounty` |
+| Economy | `silverSeam.max` |
+| Combat | `combat.meterThreshold`, `combat.maxTicks`, `combat.takenCap`, `odds.samples`, `suggest.*` |
+| Roster | `roster.hamletCap`, `roster.ageBonus`, `barracks.maxLevel` |
+| Knowledge | `knowledge.studiedKills`, `knowledge.masteredKills` |
+| Death and Long Night | `death.returnDaysBeforeLongNight`, `longNightArrival.emberCapShare` |
+| Simulated player | `value.weights` (they define the simulated player, so tuning them would game the checks) |
+| Events | `boss.*`, `riftglass.bankWeeks` |
 
-These are planning guesses, not commitments.
+Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage rules**. Everything else in `balance.ts` is tunable.
+
+### 0.7 Size (A16)
+
+**A task must fit in one session; most sessions finish 2–4 tasks.**
+
+| Milestone | Tasks | Estimated sessions **[JC]** |
+|---|---|---|
+| v0.0 | 8 | 1–2 |
+| v0.1 | 38 | 12–16 |
+| v0.2 | 26 | 12–16 |
+| v0.3 | 12 | 8–12 |
+
+Estimates, not commitments. If a task proves bigger than a session, split it here first.
+
+### 0.8 Optional extras
+
+G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is scheduled for it.
 
 ---
 
 ## v0.0 — Bootstrap
 
-**Goal:** an empty, deployable, installable shell with every guard-rail in place. No game logic.
-**Reads:** technical design §2–4, §11, §16.
+**Status:** not started
+
+**Goal:** an empty, deployable, installable shell, with every guard-rail and the preview channel in place. No game logic.
+**Reads:** technical design §2–4, §7.4 (the ban list only), §9.1 (namespacing), §11.
+
+**Before you start 👤**
+
+| Owner task | Needed by |
+|---|---|
+| ~~Put the docs and `CLAUDE.md` in the repo~~ **Done.** `lore-secrets.md` stays out until v0.5 (D36). | T0.0 |
+| Enable GitHub Pages with Source = GitHub Actions (repo Settings → Pages) | T0.6 |
 
 ### Tasks
 
-- [ ] **T0.1 Scaffold.** Vite + TypeScript + Preact + signals. Strict `tsconfig` (with `noUncheckedIndexedAccess`). Create the folder structure from technical design §3, with `.gitkeep` files where folders are empty. Node 22 (`.nvmrc`). Pin exact dependency versions.
-- [ ] **T0.2 Scripts.** `dev`, `build`, `preview`, `typecheck`, `lint`, `format`, `test`, `sim` (stub that exits 0), `check` (typecheck + lint + test + sim:check).
-- [ ] **T0.3 Lint guard-rails.** ESLint flat config + Prettier.
-  - Layer import rules (technical design §4.2).
-  - A custom rule banning `Math.random`, `Date.now`, and `new Date` inside `src/core/`.
+- [x] **T0.0 👤 Docs in the repo.** `gdd.md`, `technical-design.md`, `implementation-plan.md`, `decisions.md`, `setting-primer.md`, and `CLAUDE.md` are committed; `lore-secrets.md` is excluded (D36).
+- [ ] **T0.1 Scaffold.**
+  - Vite + TypeScript + Preact + signals.
+  - Strict `tsconfig` with `noUncheckedIndexedAccess`.
+  - The folder structure (technical design §3); Node 22 (`.nvmrc`); exact dependency versions.
+- [ ] **T0.2 Scripts.** `dev`, `build`, `preview`, `typecheck`, `lint`, `format`, `test`, `sim` (a stub that exits 0), `check`.
+- [ ] **T0.3 Lint guard-rails.**
+  - Layer import rules.
+  - The full `core/` ban list (technical design §4.2, §7.4).
+  - The numeric-literal rule with its allowlist (0, 1, −1, 2, 100, array indices; test files exempt).
   - Named exports only.
-  - **Test:** fixture files that break each rule must fail lint (checked through the ESLint Node API in a Vitest test).
-- [ ] **T0.4 PWA shell.** vite-plugin-pwa (generateSW), the manifest, a placeholder icon, and base path `/the-last-hold/`. A "The Last Hold — v0.0.0" screen showing the build version. The update banner (technical design §11.1).
-- [ ] **T0.5 CI.** `.github/workflows/ci.yml` runs check + build on every push and pull request.
-- [ ] **T0.6 Deploy.** `.github/workflows/deploy.yml` deploys to GitHub Pages on push to `main`.
-- [ ] **T0.7 README.** What the project is, how to run it, and links into `docs/`.
+  - **Test:** fixture files that break each rule must fail lint (checked through the ESLint Node API).
+- [ ] **T0.4 PWA shell.**
+  - vite-plugin-pwa with base `/the-last-hold/`.
+  - A **build channel** (`live` or `preview`) that sets the storage namespace, the manifest name and scope, and a PREVIEW ribbon (technical design §11.3).
+  - A version and commit screen; the update banner.
+- [ ] **T0.5 CI.** `ci.yml` (check + build). Empty stubs for `sim.yml` and `bench.yml`.
+- [ ] **T0.6 Deploy with preview.**
+  - `deploy.yml` builds the latest `main` at the root and the latest `milestone/*` at `/preview/`, as one Pages artifact.
+  - The live service worker's `navigateFallbackDenylist` excludes `/preview/`.
+- [ ] **T0.7 Repo hygiene.**
+  - README.
+  - `.github/pull_request_template.md`.
+  - Check that `.claude/settings.json` (the lore deny rule) is in place.
+  - Initialize `docs/progress.md` and `docs/questions.md` if they're missing.
 
 ### Acceptance criteria
 
-1. CI is green on `main`.
-2. The Pages URL loads the shell.
-3. 👤 The owner installs it to their phone's Home Screen, and it opens offline (airplane mode) after the first load.
+1. CI is green.
+2. The live URL and `/preview/` both load; each shows its channel and version.
+3. **Isolation test:** a value saved in the preview is not visible in live, and vice versa. Each has its own install name.
 4. The lint guard-rail tests prove each banned pattern fails.
 
-**Simulator checks:** none.
-
-**👤 Playtest checklist:**
-- [ ] Installs on the phone.
-- [ ] Opens in airplane mode.
-- [ ] Version shows.
+**👤 Playtest checklist**
+- [ ] **On iPhone, install to the Home Screen before playing.** The installed app keeps its own storage, separate from Safari. Use export and import to move a save between them (from v0.1).
+- [ ] Install **both** live and preview. Each opens in airplane mode after its first load.
+- [ ] The version and the PREVIEW ribbon show correctly.
 
 **Out of scope:** any game content or state.
 
@@ -112,292 +148,352 @@ These are planning guesses, not commitments.
 
 ## v0.1 — The Hold
 
-**Goal:** the idle economy from Hamlet to Keep, playable on a phone, saving reliably, with offline progress, a debug panel, a working simulator, and the art pipeline.
-**Reads:** GDD §1–5.2, §6, §7.1–7.2, §9 (v0.1 screens), §10; technical design §5–9, §12–15; `setting-primer.md` §5–7.
+**Status:** not started
+
+**Goal:** the idle economy from Hamlet to Keep, playable on a phone, saving reliably, with offline progress, a debug panel, diagnostics, a working simulator, and the art pipeline.
+**Reads:** GDD §1–5.2, §6, §7.1–7.2, §9 (the v0.1 screens), §10; technical design §4–9, §11–15; `setting-primer.md` §5–7.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| Approve any replacement names | T1.6 | When T1.6 raises them in `questions.md` |
+| **Pick the palette** from the rendered candidates | T1.26 | When T1.26 posts the swatch page |
+| **Download the CC0 packs** from the exact list T1.27 gives you (pack names, links, licenses) into `art-src/packs/<pack>/` | T1.28 | **One session ahead:** T1.27 delivers the list a session before T1.28 needs the files |
 
 ### A. Foundations
 
-- [ ] **T1.1 RNG.** `core/rng`: sfc32, cyrb128 seeding, stream derivation (technical design §7.2), and `RollSource` with `seeded` and `scripted`. **Tests:** golden outputs for 3 seeds; `scripted` throws if it runs out of rolls or isn't fully consumed.
-- [ ] **T1.2 Formatting.** `core/format`: numbers and durations (technical design §8). **Tests:** a full boundary table.
-- [ ] **T1.3 Balance file.** `content/balance.ts` with every v0.1 key from GDD §7.1–7.2. Add the lint rule against numeric literals in `core/systems/`.
-- [ ] **T1.4 v0.1 content.** Resources, jobs, buildings (GDD §5.1.2, including the Silver Seam max of 2), Ages (Hamlet, Keep, plus the Roll of Honor restoration text), and the starting state (GDD §5.1.4).
-- [ ] **T1.5 v0.1 text.** Building blurbs; Brana and Pechko lines for every trigger in primer §6.2 (3–5 variants each); the Keep inscription (primer §6.5). Follow the primer's voice rules.
-- [ ] **T1.6 Name check.** Collision-search every v0.1 proper noun (Stanholm, Gloamreach, Hearth Hall, Pechko, Brana Kolar, Emberwrights, building names) and create `tests/content/names.ts`. Log any collision in `decisions.md` and **ask the owner** for replacements.
+- [ ] **T1.1 RNG.** `core/rng`: sfc32, cyrb128, streams, `RollSource` (`seeded`, `scripted`). **Tests:** goldens for 3 seeds; `scripted` throws if it runs out or isn't fully consumed.
+- [ ] **T1.2 Portable math.** `core/math`: `intPow` and `maxAffordable` (search). **Tests:** both match `Math.pow` and the GDD log formula over a table of cases (computed in the tests only) (technical design §7.4).
+- [ ] **T1.3 Formatting.** Numbers and durations (technical design §8), with suffixes chosen by thresholds. **Tests:** the full boundary table.
+- [ ] **T1.4 Balance file.** `content/balance.ts` with every v0.1 key, each marked `tunable` or `locked` per §0.6.
+- [ ] **T1.5 v0.1 content.** Resources, jobs, buildings (Silver Seam max 2), Ages (Hamlet, Keep, plus the restoration text), and the starting state (GDD §5.1.4).
+- [ ] **T1.6 Names.** Collision-search every v0.1 proper noun. Create `tests/content/names.ts` and the name-finding test (technical design §14). Any collision or unchecked name goes to `questions.md` as `[?]`.
+- [ ] **T1.7 v0.1 text.** Building blurbs; Brana and Pechko lines for every primer §6.2 trigger (3–5 variants each); the Keep inscription.
+- [ ] **T1.8 Content integrity test.** IDs, text keys and unlocks resolve; **the GDD §7 key list equals the `balance.ts` keys** (technical design §5.1).
 
 ### B. State, selectors, commands
 
-- [ ] **T1.7 State v1.** `GameState` with **only the v0.1 fields** (later fields arrive through migrations), plus `createNewGame(seed, now)`.
-- [ ] **T1.8 Breakdown and selectors.** The `Breakdown` type; selectors for rates, costs (n includes starting buildings, D30), housing, job slots, and the offline cap, each with its breakdown. **Tests:** every GDD §7.1 formula, with numbers taken from the GDD.
-- [ ] **T1.9 Silver rules.** Silver-digger output takes only the relic and event buckets; at most 2 Seams (D30). **Tests:** Keep's +50% does not change silver income.
-- [ ] **T1.10 Commands.**
-  - `build.buy` (×1, ×10, Max, using the bulk and max-affordable formulas), `build.upgrade`.
-  - `peasants.assign / unassign / fill`, `peasants.priority.set`, `peasants.autoSettle.set`.
-  - `age.up`, `settings.*`.
+- [ ] **T1.9 State v1.** `GameState` with only the v0.1 fields; `createNewGame(seed, now)`.
+- [ ] **T1.10 Breakdowns and selectors.** Rates, costs (n includes starting buildings), housing, slots, and the offline cap, each with a breakdown. **Tests:** every GDD §7.1 formula, using the GDD's numbers.
+- [ ] **T1.11 Silver rules.** Silver-digger output gets only the relic and event buckets. **Test:** Keep's +50% doesn't change silver.
+- [ ] **T1.12 Commands.**
+  - `build.buy` (×1, ×10, Max), `build.upgrade`.
+  - `peasants.*`, `age.up`, `settings.*`.
   - **Tests:** refused commands never change state.
-- [ ] **T1.11 Valuation.** `core/systems/valuation.ts`: best payback (GDD §5.1.2, D30) and the ● hint selector. **Tests:** worked examples with mixed costs; housing with and without free job slots.
+- [ ] **T1.13 Valuation.** Best payback and the ● selector (GDD §5.1.2). **Tests:** mixed-cost and housing cases.
 
 ### C. Time
 
-- [ ] **T1.12 Event-driven `advance`.** Linear integration plus settle events (technical design §6.2), with the fixed tie order.
-- [ ] **T1.13 Offline catch-up.** Cap, backward-clock guard, 60 s chunks with yields, and the away summary diff.
-- [ ] **T1.14 Required tests.**
-  - **Offline equivalence:** 12 h of live ticks equals one 12 h catch-up.
-  - **Backward clock.**
-  - **Determinism:** same seed and commands → identical state.
-  - **Cap reporting:** the "away / counted" text.
+- [ ] **T1.14 Event-driven `advance`.** Settle events and the tie order (technical design §6.2).
+- [ ] **T1.15 Offline catch-up.** Cap, backward clock, chunks with yields, the away summary.
+- [ ] **T1.16 Required tests.**
+  - **Offline equivalence**, with the comparison rule from technical design §6.2.
+  - Backward clock; determinism; cap reporting.
 
 ### D. Saves
 
-- [ ] **T1.15 Envelope and storage.** Main, backup (every 10 min), and quarantine slots; autosave every 30 s, after commands, and on hide or pagehide; the `persist()` request.
-- [ ] **T1.16 Export and import.** The `LH1.` code (deflate-raw + base64url + FNV checksum), with an `LH0.` fallback; download and load of the save file; clear errors.
-- [ ] **T1.17 Migrations framework.** An empty migration list, a v1 fixture, validation guards, and the newer-version refusal. **Tests:** round-trip, corrupted codes, unknown IDs dropped with a warning.
+- [ ] **T1.17 Envelope and storage.** Namespaced keys (live or preview); main, backup, and quarantine slots; autosave; the `persist()` request.
+- [ ] **T1.18 Export and import.** `LH1.` and `LH0.` codes, the save file, clear errors.
+- [ ] **T1.19 Migrations framework.** An empty list, the v1 fixture, validation, the newer-version refusal. **Tests:** round-trip; corrupted codes; unknown IDs.
 
-### E. UI (GDD §9, v0.1 screens)
+### E. UI
 
-- [ ] **T1.18 Shell.** Resource bar (tap for the rates sheet); tab bar showing only **Hold** and **More**; the sheet stack; tokens and themes (dark by default, light in Settings); the CC0 pixel font for headings and numbers.
-- [ ] **T1.19 Hold screen.** Hold scene header; peasants panel (assign, fill, priority, auto-settle, idle warning); build list (×1 / ×10 / Max, muted unaffordable rows with a "ready in" time, the ● hint).
-- [ ] **T1.20 Age screen.** Requirements checklist, costs, unlocks, and the restored part of the hold. Citadel shows "Coming in a later milestone" with no progress bar.
-- [ ] **T1.21 Away sheet and Reports.** Last 3 sheets kept.
-- [ ] **T1.22 Breakdown sheet.** Long-press (and hover on desktop) on any number with a breakdown; ⓘ markers.
-- [ ] **T1.23 More menu.** Save & Data, Settings, About & Credits (version, `debugUsed` flag, credits).
-- [ ] **T1.24 Debug panel** (`?debug`). Time skip through the real offline path; add resources; set seed; unlock an Age; raw state view; run a simulator policy for N hours; timing readout.
-- [ ] **T1.25 Install tip and update banner** (technical design §9.1, §11.1).
+- [ ] **T1.20 Shell.** Resource bar and rates sheet; tabs **Hold** and **More** only; sheet stack; themes; the CC0 pixel font.
+- [ ] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
+- [ ] **T1.22 Age screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
+- [ ] **T1.23 Away sheet and Reports** (the last 3 sheets).
+- [ ] **T1.24 Breakdown sheet.** Long-press and hover; ⓘ markers.
+- [ ] **T1.25 More menu.** Save & Data; Settings; About & Credits (version, channel, commit, `debugUsed`); and the **install tip, including the iPhone storage note** (technical design §9.1).
+- [ ] **T1.26 Debug panel** (`?debug`). Time skip through the offline path, add resources, seed, Age unlock, raw state, simulator run, timing readout.
+- [ ] **T1.27 Diagnostics** (technical design §15.1). The error capture list, **More → Diagnostics**, "Copy diagnostics", and the crash fallback screen.
 
-### F. Art pipeline (technical design §12)
+### F. Art pipeline
 
-- [ ] **T1.26 Palette.** Propose 2–3 candidate 32-color palettes published for free use, as a rendered swatch page. 👤 **The owner picks one.** Record it in `palette.ts` and `credits.md`.
-- [ ] **T1.27 Manifest and `<Sprite>`.** Placeholder fallback; `tools/gen-placeholders.ts`.
-- [ ] **T1.28 Recolor tool and the first packs.** `tools/recolor.ts` (OKLab nearest color).
-  - 👤 **Pack sourcing:** Claude Code sessions may not be able to download from asset sites, because network access is often limited to package registries. If downloads fail, **the owner downloads the chosen CC0 packs** into `art-src/packs/<pack>/`, together with their license file.
-  - v0.1 needs: hold-scene tiles, resource icons, building icons, UI frames.
-- [ ] **T1.29 Credits.** `tools/gen-credits.ts` generates `docs/credits.md`; a CI license test checks every pack asset.
-- [ ] **T1.30 Contact sheet tool** (technical design §12.3), for the owner's art review.
+- [ ] **T1.28 Palette.** Render 2–3 free-use 32-color candidates as a swatch page. 👤 **The owner picks one.** Record it in `palette.ts` and `credits.md`.
+- [ ] **T1.29 Manifest and `<Sprite>`.** Placeholder fallback; `gen-placeholders`.
+- [ ] **T1.30 Pack list for the owner.** Write `art-src/PACKS-NEEDED.md` with the exact CC0 packs, links, licenses, and target folders for v0.1 (hold-scene tiles, resource icons, building icons, UI frames). Post it to `questions.md` **one session before T1.31**.
+- [ ] **T1.31 Recolor tool and packs.** `tools/recolor.ts`, then process the packs the owner added. If the packs aren't there yet, mark it `[?]` and continue elsewhere.
+- [ ] **T1.32 Credits.** Generate `credits.md`; add the CI license test.
+- [ ] **T1.33 Contact sheet tool.**
 
-### G. Simulator (technical design §13)
+### G. Simulator
 
-- [ ] **T1.31 Simulator CLI and report.** Virtual clock, 5 seeds, JSON and Markdown reports, baseline diff, `sim:accept`.
-- [ ] **T1.32 Policies.** Opening, Standard, Light, Heavy (hold-only), using the shared valuation.
-- [ ] **T1.33 v0.1 checks** (listed below), with thresholds in `sim/targets.ts` that mirror GDD §6.2–6.3.
-- [ ] **T1.34 Tuning pass.** Adjust `balance.ts` until every v0.1 check passes (§0.6). Record moves of more than 2×.
+- [ ] **T1.34 Simulator CLI and report.** Virtual clock, seeds, JSON and Markdown, baseline diff, `sim:accept`, and the **fast set** for `check` (technical design §11.2).
+- [ ] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation.
+- [ ] **T1.36 v0.1 checks**, with `sim/targets.ts` locked.
+- [ ] **T1.37 Tuning pass.** `tunable` constants only (§0.6).
+
+### H. Browser tests
+
+- [ ] **T1.38 Playwright.**
+  - **Smoke** (phone viewport): load → buy a Cottage → reload → state persists → offline reload works.
+  - Run the **determinism suite in WebKit and Chromium** (technical design §14).
 
 ### v0.1 acceptance criteria
 
-1. From a fresh game, a player can reach Keep. The Age-up applies the Keep grants and shows the Roll of Honor.
-2. **Every number on screen with a formula** opens a breakdown that matches the engine.
-3. Closing the app for any time up to 12 h and reopening shows a correct away sheet. Time beyond the cap is reported.
-4. A save survives a reload, an export code moves a save to another browser, and a corrupted code is refused with a reason.
-5. The game works offline after installation.
-6. Every required test in T1.1–T1.17 passes, and `npm run check` is green.
-7. Every v0.1 simulator check passes.
+1. A fresh game can reach Keep. The Age-up applies the Keep grants and shows the Roll of Honor.
+2. Every on-screen number that has a formula opens a breakdown that matches the engine.
+3. Reopening after up to 12 h shows a correct away sheet; time beyond the cap is reported.
+4. A save survives a reload; an export code moves it between browsers; corrupted codes are refused with a reason; preview and live saves never mix.
+5. An error anywhere shows in Diagnostics, and "Copy diagnostics" works.
+6. The game works offline after installation.
+7. `npm run check` is green in 90 s or less. The Playwright smoke and the cross-engine determinism tests pass.
+8. Every v0.1 simulator check passes on 5 seeds.
 
 ### v0.1 simulator checks (GDD §6.2–6.3)
 
 | Check | Target |
 |---|---|
-| First Cottage (Opening policy) | ≤ 1 min |
-| First Mine (Opening policy) | ≤ 5 min. If missed, raise starting wood to 70 (D30). |
+| First Cottage (Opening) | ≤ 1 min |
+| First Mine (Opening) | ≤ 5 min. If missed, raise starting wood to 70 (D30); that's a tunable. |
 | Mill level 3 | 2–5 h |
 | 10 peasants | 3–6 h |
 | **Keep** | **8–14 h** (Standard, median); ≤ 24 h (Light); ≥ 6 h (Heavy) |
 | Something to do | ≥ 90% of Standard check-ins |
 | No dry spells | Never 2 empty check-ins in a row |
-| No walls | ≤ 3 check-ins of saving per purchase (≤ 5 for Age-ups) |
-| No overflow | All values < 1e300 over 14 days |
+| No walls | ≤ 3 check-ins of saving (≤ 5 for Age-ups) |
+| No overflow | < 1e300 over 14 days |
 
-### v0.1 owner playtest checklist 👤
+### v0.1 owner playtest checklist 👤 (on the preview build)
 
-- [ ] Play 2–3 real days on the phone, with normal check-ins.
+- [ ] **Play until Keep, plus one overnight.**
 - [ ] A routine check-in takes 15 taps or fewer.
-- [ ] Numbers are readable, and long-press breakdowns make sense.
-- [ ] The away sheet after a night is right.
-- [ ] Export the save code on the phone, import it on desktop, then continue on the phone.
-- [ ] Screenshot pass: anything that "looks wrong on my phone" (GDD §9.11).
-- [ ] Contact sheet review: palette and placeholders.
-- [ ] Gut check: does the next goal always feel visible?
+- [ ] Numbers are readable; long-press breakdowns make sense.
+- [ ] The away sheet after the overnight is right.
+- [ ] Export from the phone → import on desktop → back to the phone.
+- [ ] Screenshot pass ("looks wrong on my phone").
+- [ ] Contact sheet: palette and placeholders.
+- [ ] The next goal always feels visible.
 
-**Out of scope for v0.1:** hunters, contracts, combat, the bestiary, alchemy, Citadel and later Ages, the Long Night, and any `lore-secrets.md` content.
+**Out of scope:** hunters, contracts, combat, the bestiary, alchemy, Citadel and later, the Long Night, and any story secrets.
 
 ---
 
 ## v0.2 — Hunters & contracts
 
-**Goal:** contracts from Hamlet onward, a hunter roster with an active/reserve split, transparent turn-meter combat, rewards that feed the Hold, and odds you can trust.
-**Reads:** GDD §3.3, §4, §5.0 (combat), §5.3–5.5, §6 (v0.2 rows), §6.5, §7.3–7.4, §8.1–8.3, §8.5, §9.4–9.7; technical design §5.2–5.3, §7, §10.1, §14; `setting-primer.md` §3, §5, §6.3, §6.6–6.7.
+**Status:** not started
+
+**Goal:** contracts from Hamlet onward, an active and reserve roster, transparent turn-meter combat, rewards that feed the Hold, and honest odds.
+**Reads:** GDD §3.3, §4, §5.0, §5.3–5.5, §6 (v0.2 rows), §6.5, §7.3–7.4, §8.1–8.3, §8.5, §9.4–9.7; technical design §5.2–5.3, §7, §10.1, §14; `setting-primer.md` §3, §5, §6.3, §6.6–6.7.
+
+**Before you start 👤**
+
+| Owner task | Needed by |
+|---|---|
+| **Export your real v0.1 save** (Copy diagnostics or the save code) and paste it into a session | T2.4 (the migration fixture) |
+| Review the hunter portraits | T2.23 |
+| Review the monster portraits | T2.24 |
 
 ### A. Content and state
 
-- [ ] **T2.1 Content.**
-  - The 8 hunters (stats, traits, unlocks, recruit prices, story-hunter flags), plus v0.2 traits and gear tiers.
-  - All **12 monsters** (stats, resistances, abilities), each known and identified for free in v0.2.
-  - Villages with heads and trust (silent), Barracks, Trophy Hall, and every v0.2 balance key.
-- [ ] **T2.2 Text.**
-  - Village contract notices: **3+ per village × location**, with the primer §6.7 seeds at ≤ 1 in 10.
-  - The first-contract and vow scenes (primer §6.6).
-  - Hunter bios.
-- [ ] **T2.3 Name check** for the new proper nouns (hunters, village heads, Gloam Wolf).
-- [ ] **T2.4 Migration v1 → v2.** Hunters, roster, board, running contracts, results, stats, and fight refs. Includes a fixture from a real v0.1 save.
+- [ ] **T2.1 Content.** 8 hunters (prices, story-hunter flags), traits, gear tiers; all **12 monsters** (identified for free in v0.2); villages with heads (trust kept silent); Barracks, Trophy Hall; balance keys with `tunable` or `locked`.
+- [ ] **T2.2 Text.** Notices (3+ per village × location; seeds at most 1 in 10); the vow and first-contract scenes; hunter bios.
+- [ ] **T2.3 Names** for the new proper nouns.
+- [ ] **T2.4 Migration v1 → v2,** using the **owner's real v0.1 save** as the fixture. `[?]` until it's provided.
 
-### B. Combat (GDD §5.0, §5.5)
+### B. Combat
 
-- [ ] **T2.5 Turn meter.** Ticks, the act-at-100 rule, the tie order, and the 400-tick limit.
-- [ ] **T2.6 Attack resolution.** Roll order, the combat buckets, Armor on direct attacks only, taken% (capped at 75%, applied after Armor), immunity, rounding, crits, targeting weights, Mender healing (lowest %, self included), and Silver sub-hits.
-- [ ] **T2.7 Monster abilities.** All 12, as restated for the turn meter in GDD §8.3. Statuses refresh unless stacking.
-- [ ] **T2.8 Golden test, GDD §5.5.1.** Reproduce it **line for line** through a scripted `RollSource`. **This test is required, and it gates the milestone.**
-- [ ] **T2.9 More combat tests.** Seeded golden fights (record 5, then freeze them); a determinism test; one test per ability; a `rulesVersion` constant.
+- [ ] **T2.5 Turn meter.**
+- [ ] **T2.6 Attack resolution.** Buckets, Armor on direct attacks only, taken%, immunity, rounding, crits, targeting, Mender, Silver sub-hits (portable math only).
+- [ ] **T2.7 All 12 monster abilities.**
+- [ ] **T2.8 Golden test, GDD §5.5.1, line for line.** **This test gates the milestone.** It runs in Node, WebKit, and Chromium.
+- [ ] **T2.9 More combat tests.** Seeded goldens (record 5, then freeze them; they're locked), determinism, one test per ability, `rulesVersion`.
 
 ### C. Contracts and roster
 
-- [ ] **T2.10 Board.**
-  - Opens when the first Mine is built (G6); a refill every 2 h, up to 6.
-  - Tier unlocks (3 successes) and the tier mix; barrow contracts from T2; generation by location and tier, with **content tests that every generated cell has ≥ 1 species**.
-  - **Decline.**
-- [ ] **T2.11 Launch.** Party rules (at most 2 in Hamlet), provisions paid at launch, the Reckless rule with a per-hunter death-chance confirmation, and the fight seed.
-- [ ] **T2.12 Completion events in `advance`.** Rewards at completion: bounty × `ageMult`, trophies, and XP. Also injuries (Bruised, Wounded, Grievous), death (story hunters downgraded), recovery events, dead hunters returning after 3 days, and the results list.
-- [ ] **T2.13 Roster.** Active/reserve with caps (Hamlet 3, Keep 3 + Barracks), candidates from unlock conditions, fixed prices, swap rules, and level-ups (Health and Might only).
-- [ ] **T2.14 Gear.** In-place upgrades by Smithy level.
-- [ ] **T2.15 Trophy Hall.** Cumulative trophies this cycle, with silver excluded.
+- [ ] **T2.10 Board.** Opens at the first Mine; refill; tier unlocks and mix; barrow from T2; every generated cell has ≥ 1 species; Decline.
+- [ ] **T2.11 Launch.** Party rules, provisions, the Reckless confirmation with death chances, the fight seed.
+- [ ] **T2.12 Completion events.** Rewards at completion, injuries, death (story hunters downgraded), recovery, return after 3 days, results.
+- [ ] **T2.13 Roster.** Active and reserve, caps, candidates, prices, swaps, level-ups (Health and Might only).
+- [ ] **T2.14 Gear** upgrades in place.
+- [ ] **T2.15 Trophy Hall** (cumulative, silver excluded).
 
-### D. Odds and suggest (GDD §6.5)
+### D. Odds and suggest
 
-- [ ] **T2.16 Odds.** 500 samples with the margin, expected injuries, death chance, expected rewards, and the "Why?" summary (per 100 ticks).
-- [ ] **T2.17 Worker.** The odds and suggest worker, a debounced protocol, and the main-thread fallback labeled "quick estimate".
+- [ ] **T2.16 Odds.** 500 samples, margin, injuries, death chance, rewards, "Why?" per 100 ticks.
+- [ ] **T2.17 Worker.** Protocol, debounce, main-thread fallback labeled "quick estimate".
 - [ ] **T2.18 Suggest.** Two-stage search with common seeds.
-- [ ] **T2.19 Benchmarks.** Suggest ≤ 75 ms and odds ≤ 25 ms on CI (the one-quarter proxy), plus the debug timing readout.
+- [ ] **T2.19 Benchmarks** in `bench.yml`: warn at the budget, fail at 2×. The debug timing readout too.
 
-### E. UI
+### E. UI and tests
 
-- [ ] **T2.20 Contracts tab.** Board, running and ready-to-collect sections, Decline, the launch sheet (party pickers, Suggest, live odds, provisions, Reckless styling), and the fight log (tick stamps, show rolls, seed and replay, collapse by 50 ticks, and the "older rules" label).
-- [ ] **T2.21 Hunters tab.** Active roster, reserve, candidates, locked silhouettes with their unlock text, hunter detail (stats with breakdowns, traits, gear upgrades, record, bio), and the Hall of the Fallen.
-- [ ] **T2.22 Away sheet additions.** Contract results, injuries, recoveries.
-- [ ] **T2.23 Playwright smoke.** Phone viewport: load → buy a Cottage → reload → state persists → offline reload works.
+- [ ] **T2.20 Contracts tab.** Board, running and collect sections, Decline, the launch sheet, the fight log (ticks, rolls, seed and replay, collapse, the older-rules label).
+- [ ] **T2.21 Hunters tab.** Active, reserve, candidates, locked silhouettes, detail, gear, Hall of the Fallen.
+- [ ] **T2.22 Away sheet** additions; **extend the Playwright smoke:** launch a contract → skip time → collect.
 
 ### F. Art
 
-- [ ] **T2.24 Portrait generator.** Portraits for the 8 hunters, plus a contact sheet. 👤 **Owner review.**
-- [ ] **T2.25 Monster generator.** Portraits and battle sprites for the 12 species, plus a contact sheet. 👤 **Owner review.** Placeholders are acceptable wherever the owner rejects a result.
+- [ ] **T2.23 Portrait generator.** The 8 hunters plus a contact sheet. 👤 Review.
+- [ ] **T2.24 Monster portraits.** The 12 species plus a contact sheet. 👤 Review; placeholders where rejected. **No battle sprites** (built when a screen needs them, v0.7 Delves) *(A17)*.
 
 ### G. Simulator
 
-- [ ] **T2.26 Contract policy.** Launches the highest expected-value contract with the suggested party; never Reckless; pays provisions.
-- [ ] **T2.27 v0.2 checks and tuning** (listed below).
+- [ ] **T2.25 Contract policy.** Highest expected value, suggested party, never Reckless, pays provisions.
+- [ ] **T2.26 v0.2 checks and tuning** (tunables only).
 
 ### v0.2 acceptance criteria
 
-1. The §5.5.1 golden test passes **exactly**.
-2. A player can run contracts from Hamlet onward, build a roster with a reserve, and lose a non-story hunter only on a confirmed Reckless contract.
-3. Every fight log can be replayed from its seed and matches the original.
-4. The displayed odds are honest (simulator check 5).
-5. The Playwright smoke and every v0.1 check still pass.
-6. Performance benchmarks are within budget.
+1. The §5.5.1 golden test passes **exactly**, in all three engines.
+2. Contracts run from Hamlet. The roster has a reserve. A non-story hunter can die only on a confirmed Reckless contract.
+3. Every fight log replays from its seed and matches the original.
+4. The odds are honest (simulator check), and every v0.1 check still passes.
+5. The benchmarks are under 2× the budget (CI), and within budget on the owner's phone (debug readout).
 
 ### v0.2 simulator checks
 
 | Check | Target |
 |---|---|
-| All v0.1 checks | Still pass, with contracts enabled |
+| All v0.1 checks | Still pass |
 | First contract | Within 15 min of the first Mine |
 | Roster of 4 | By the end of day 2 |
 | First tier-3 success | Day 2 |
-| Odds honesty | Within ±5 points per 10-point bucket over 2,000 contracts |
+| Odds honesty | Within ±5 points per bucket over 2,000 contracts |
 | Silver share | ≥ 70% from bounties, cumulative over the Keep phase (14 days) |
 | Provisions | 20–40% of food income from Keep onward |
 
-### v0.2 owner playtest checklist 👤
+### v0.2 owner playtest checklist 👤 (on the preview build)
 
 - [ ] Launch a contract in under 5 taps with Suggest.
 - [ ] The odds feel believable, and "Why?" explains them.
-- [ ] Fight logs are readable at a glance; "show rolls" makes sense.
-- [ ] Injuries and recovery timers feel fair, not punishing.
-- [ ] Hunter portraits: keep, regenerate, or placeholder?
+- [ ] Fight logs read at a glance; "show rolls" makes sense.
+- [ ] Injuries feel fair.
+- [ ] Portraits: keep, regenerate, or placeholder.
+- [ ] Odds and Suggest feel instant (check the debug timing readout).
 - [ ] Screenshot pass.
 
-**Out of scope for v0.2:** investigation, unknown monsters, preparation, alchemy, the bestiary screen, Arvid, letters, and the Long Night.
+**Out of scope:** investigation, preparation, alchemy, the bestiary screen, Arvid, letters, the Long Night.
 
 ---
 
 ## v0.3 — Bestiary & preparation
 
-**Goal:** contracts against unknown monsters, clue-based investigation, a bestiary that makes later play faster, and preparation that clearly matters.
+**Status:** not started
+
+**Goal:** contracts against unknown monsters, clue-based investigation, a bestiary that speeds up later play, and preparation that clearly matters.
 **Reads:** GDD §5.6–5.7, §6 (v0.3 rows), §7.5, §8.3.1, §8.4, §8.6–8.7, §9.8–9.9; `setting-primer.md` §6.4.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| **Define the 2 new hunters** (a Wolf-friend Striker with Venom; a Tracker Mender) **in a chat session** | T3.1 | **Before v0.3 starts**, not mid-milestone |
+| **Export your real v0.2 save** | T3.4 | Before T3.4 |
+| Review the new portraits | T3.1 | — |
 
 ### Tasks
 
-- [ ] **T3.1 New hunters (flesh-out).** 👤 **Define the 2 new v0.3 hunters with the owner** (GDD §8.5: a Wolf-friend Striker with Venom; a Tracker Mender). Then add their content, recruit prices, and generated portraits.
-- [ ] **T3.2 Content.**
-  - Knowledge levels; the clue library (all **20 tags × 3+ texts**); 12 ingredients; 9 consumables with recipes.
-  - Hunter's Lodge, Alchemist's Hut, Herb Garden; village gift reagents; monster drops; v0.3 traits (Herbwise, Wolf-friend, Tracker).
-- [ ] **T3.3 Text.** A bestiary blurb plus a **"What it was" line** for all 12 species (primer §6.4).
-- [ ] **T3.4 Migration v2 → v3.** Bestiary, stores, queues. Includes a fixture from a real v0.2 save.
-- [ ] **T3.5 Full coverage test** (GDD §8.3.1): ≥ 2 species per cell where investigation applies, distinct tag sets, and the generator rejecting unsolvable picks.
-- [ ] **T3.6 Unknown-monster contracts.** Candidate lists, 3 clues, and reveal timers as `advance` events. Lodge slots; Studied halving; Mastered arriving pre-identified; the Tracker trait.
-- [ ] **T3.7 Knowledge.** Sighted, Identified, Studied, Mastered transitions; kill counts; knowledge bonuses.
-- [ ] **T3.8 Alchemy brewing.** A queue per Hut level, 10 min per brew, and the Herb Garden production event.
-- [ ] **T3.9 Preparation in combat.**
-  - Oil, potion, and bomb slots, consumed at launch.
-  - Potion triggers; bombs at tick 1 or on trigger (no Armor).
-  - Saltburst cancels; Spoil destroys unused potions; Herbwise.
-  - The well-prepared bonus (×1.5 bounty, +1 trophy).
-  - **Tests for each.**
-- [ ] **T3.10 Odds with uncertainty.** Averaging over the remaining candidates, labeled; oil effect shown per candidate; Suggest at 20 samples per candidate; benchmarks still in budget.
-- [ ] **T3.11 UI.**
-  - Bestiary grid and entry sheets (silhouette until Identified, "What it was", last 5 encounters).
-  - Investigation on the board and launch sheet; preparation pickers with "unprepared would be X%".
-  - The Alchemist's Hut screen; stores and reagents.
-- [ ] **T3.12 Simulator.** The policy brews, equips matching preparation, and investigates; v0.3 checks and tuning.
+- [ ] **T3.1 New hunters.** Add the 2 hunters from the owner's chat-session definitions: content, prices, generated portraits.
+- [ ] **T3.2 Content.** Knowledge levels; the clue library (20 tags × 3+ texts); 12 ingredients; 9 consumables; Lodge, Hut, Garden; gift reagents; drops; the v0.3 traits.
+- [ ] **T3.3 Text.** A bestiary blurb plus a "What it was" line for all 12 species.
+- [ ] **T3.4 Migration v2 → v3,** using the owner's real v0.2 save.
+- [ ] **T3.5 Full coverage test** (GDD §8.3.1; the rules are locked).
+- [ ] **T3.6 Unknown-monster contracts.** Candidates, clues as `advance` events, Lodge slots, Studied halving, Mastered auto-identify, Tracker.
+- [ ] **T3.7 Knowledge.** Level transitions, kills, bonuses.
+- [ ] **T3.8 Alchemy brewing.** Queues and the Herb Garden event.
+- [ ] **T3.9 Preparation in combat.** Slots, potions, bombs, Saltburst, Spoil, Herbwise, the well-prepared bonus, each with tests.
+- [ ] **T3.10 Odds with uncertainty.** Averaging over candidates; oil effects per candidate; Suggest at 20 samples per candidate; benchmarks.
+- [ ] **T3.11 UI.** The bestiary; investigation; preparation pickers with "unprepared would be X%"; the Alchemist's Hut.
+- [ ] **T3.12 Simulator.** The policy brews, prepares, and investigates; v0.3 checks; tuning.
 
 ### v0.3 acceptance criteria
 
-1. Every generated contract cell meets the coverage rules (the content test).
-2. Investigation always narrows to exactly one species once all 3 clues are revealed.
-3. Preparation visibly changes the odds ("unprepared would be"), and the simulator confirms the effect.
-4. The bestiary and knowledge levels persist and speed up later contracts.
-5. Every v0.1 and v0.2 check still passes.
+1. Every generated cell meets the coverage rules.
+2. Three clues always identify exactly one species.
+3. Preparation visibly changes the odds, and the simulator confirms it (≥ 15 points).
+4. Knowledge persists and speeds up later contracts.
+5. Every earlier check passes.
 
 ### v0.3 simulator checks
 
 | Check | Target |
 |---|---|
-| Preparation matters | Matched preparation raises the odds by **≥ 15 points** at equal tier |
-| First Identified via investigation | ≤ 2 h after the Hunter's Lodge is built |
+| Preparation matters | ≥ 15 points at equal tier |
+| First Identified via investigation | ≤ 2 h after the Lodge |
 | First Studied | Days 2–3 |
 | All earlier checks | Pass |
 
-### v0.3 owner playtest checklist 👤
+### v0.3 owner playtest checklist 👤 (on the preview build)
 
-- [ ] Investigating feels like studying a case, not waiting on a timer.
-- [ ] Choosing preparation is a real decision, and the odds swing makes sense.
+- [ ] Investigating feels like studying a case.
+- [ ] Preparation is a real decision.
 - [ ] The bestiary is pleasant to browse, and the "What it was" lines land.
-- [ ] Brewing doesn't feel like a chore.
-- [ ] Screenshot pass; monster art review.
+- [ ] Brewing isn't a chore.
+- [ ] Screenshot pass and monster art review.
 
-**Out of scope for v0.3:** alchemy discovery, skills through use, the Long Night, and any `lore-secrets.md` content.
-
----
-
-## v0.4 – v1.0 (outline: each needs a flesh-out session first, §0.5)
-
-| Milestone | Scope (from the GDD) | Depends on | Open questions to settle at flesh-out |
-|---|---|---|---|
-| **v0.4 Alchemy discovery & skills through use** | Hidden ingredient effects, experiments, recipe book; warden skills (Alchemy, Smithing, Lore, Command) | v0.3 | Hunter use-skills? How many effects? Do v0.3 fixed recipes become discovered? |
-| **v0.5 The Long Night** | Citadel and Bastion; Threat; Last Stand; Embers; relics; resets; the v0.5 arrival (G8); naming wardens; the Roll of Wardens; Act I; the Archivist; Ilse; Arvid's content; hunter letters at levels 5 and 10; village trust displayed; **from here Claude Code reads `lore-secrets.md`** | v0.4 | Payout curve; rank partial reset; Last Stand wave design; Act I document texts (written then) |
-| **v0.6 Delves** | ~5-minute runs, 6 floors plus a guardian, two patron doors per floor, 6 patrons (the Unlit after Act V), the Riftglass allowance, multi-monster combat | v0.5 | Do injuries carry back? Allowance size; blessing pools; group targeting rules |
-| **v0.7 Hunter depth** | Ranks, stars, talent trees, loot rarity, an item inventory replacing in-place gear | v0.5 | Talent trees per role; loot sources; the inventory UI on a phone |
-| **v0.8 Events** | World bosses (banked tokens, 24 h rest) and Legendary Hunts (self-started, carry-over), with reserve hunters | v0.7 | Boss roster (lore §14); hunt tracks; legendary hunters |
-| **v0.9 Orders** | Thanes' Moot, Grey Wives, Bell-Watchers, Quenchers; reputation; questlines; Acts continue | v0.8 | Exclusivity; persistence; quest structure; the final act's timing (D24.10) |
-| **v1.0 Polish** | Art and UX pass, full balance pass, achievements (candidate), endings if the final act is scheduled here | v0.9 | Which art to replace; what "done" means |
-
-**Story acts are content, not milestones.** Each act's documents get written in the flesh-out session of the milestone in which a typical player will reach that act.
+**Out of scope:** alchemy discovery, skills, the Long Night, story secrets.
 
 ---
 
-## Judgment calls in the implementation plan
+## v0.4 and later (outline: each needs a flesh-out session first, §0.4)
 
-1. **One branch per milestone;** the plan file doubles as the task checklist.
-2. **Tasks sized for about one session;** split them here before starting if they're bigger.
-3. **Test-first for formulas, rules, and saved data;** UI covered by the smoke test and the owner's playtest.
-4. **Tuning changes constants only;** if no reasonable constant passes a check, raise it as a design problem.
-5. **Session estimates:** v0.0 1–2, v0.1 8–12, v0.2 10–14, v0.3 8–12.
-6. **All 12 monsters exist from v0.2,** identified for free until v0.3.
-7. **Owner tasks:** palette choice, CC0 pack downloads if Claude Code can't fetch them, art reviews, defining the 2 v0.3 hunters, and playtests.
-8. **The coverage test is split:** ≥ 1 species per cell in v0.2, the full rules in v0.3.
-9. **Acts are scheduled by the flesh-out sessions,** not fixed to milestones.
+Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discovery**, and it's split into mechanics and story.
+
+### v0.4 — The Long Night: mechanics
+
+**Status:** not started *(needs a flesh-out)*
+
+- **Scope:** Citadel and Bastion (neutral restorations); Threat; the Last Stand; Embers and warden upgrades; relics; the reset rules (GDD §4.1); dead hunters returning after the Long Night; the **v0.4 arrival** (G8, renumbered; neutral text per primer §6.8); "the story continues" closing.
+- **Open questions:** the payout curve; the partial rank reset; Last Stand wave design; Embers upgrade tree.
+- **Before you start 👤:** a real v0.3 save.
+
+### v0.5 — The Long Night: Act I and the story systems
+
+**Status:** not started *(needs a flesh-out)*
+
+- **Scope:** Act I, with retroactive unlock; documents and the Archivist (Ilse); warden naming; the Roll of Wardens; Arvid's content; hunter letters at levels 5 and 10; village trust displayed; cursed ruins (ruin tag, Ribbonshades, Anvil-wights); Rune damage and runed gear; Citadel and Bastion inscriptions.
+- **Before you start 👤:**
+  - **Add `docs/lore-secrets.md` back into the repo**, removing its `.gitignore` line and the deny rule (D36).
+  - **Acts I and II are written in the flesh-out** (P4).
+  - A real v0.4 save.
+
+### v0.6 — Alchemy discovery & skills through use
+
+**Status:** not started *(needs a flesh-out)*
+
+- **Scope:** hidden ingredient effects, experiments, the recipe book; warden skills (Alchemy, Smithing, Lore, Command; they persist).
+- **Open questions:** hunter use-skills; how many effects; whether v0.3's fixed recipes become discovered recipes.
+
+### v0.7 — Delves
+
+**Status:** not started *(needs a flesh-out)*
+
+- **Scope:** about 5-minute runs, 6 floors plus a guardian, two patron doors per floor, six patrons (the Unlit after Act V), the Riftglass allowance, multi-monster combat, **battle sprites**.
+- **Open questions:** whether injuries carry back; allowance size; blessing pools; group targeting.
+
+### v0.8 — Hunter depth
+
+**Status:** not started *(needs a flesh-out)*
+
+- **Scope:** ranks, stars, talent trees, loot rarity, an item inventory.
+
+### v0.9 — Events
+
+**Status:** not started *(needs a flesh-out)*
+
+- **Scope:** world bosses (banked tokens, 24 h rest) and Legendary Hunts (self-started, with carry-over); reserve hunters take part.
+
+### v0.10 — Orders
+
+**Status:** not started *(needs a flesh-out)*
+
+- **Scope:** the Thanes' Moot, Grey Wives, Bell-Watchers, and Quenchers; reputation and questlines.
+- **Open question:** when the final act ships (D24.10).
+
+### v1.0 — Polish
+
+**Status:** not started *(needs a flesh-out)*
+
+- **Scope:** an art and UX pass; a full balance pass; achievements (a candidate); endings, if the final act lands here.
+
+---
+
+## Judgment calls in the implementation plan (revised)
+
+1. **One branch per milestone, played on the preview build;** merge and tag only after the owner's go-ahead.
+2. **The locked constants list** in §0.6, including the valuation weights.
+3. **Sizing:** a task fits one session, and most sessions finish 2–4 tasks. Estimates: v0.1 12–16, v0.2 12–16, v0.3 8–12 sessions.
+4. **The pack list** is delivered as `art-src/PACKS-NEEDED.md`, one session ahead.
+5. **The seeded golden fights** recorded in T2.9 become locked fixtures.
+6. **Only one preview exists at a time:** the most recently pushed milestone branch.
+7. **Citadel and Bastion ship in v0.4 with neutral text;** their inscriptions arrive in v0.5.
