@@ -55,11 +55,14 @@ describe('fixtures and migrations (CLAUDE.md "Saves")', () => {
 describe('validation (technical design §9.4)', () => {
   const env = (): { state: Record<string, Record<string, unknown>> } & Record<string, unknown> =>
     structuredClone(readFixture('v1.json')) as never;
+  /** One section of a fixture's state, for breaking it on purpose. */
+  const part = (e: ReturnType<typeof env>, name: string): Record<string, unknown> =>
+    e.state[name] as Record<string, unknown>;
 
   it('drops unknown IDs with a warning, never a crash', () => {
     const e = env();
-    e.state.buildings!['wizard-tower'] = 3;
-    e.state.resources!.mana = 10;
+    part(e, 'buildings')['wizard-tower'] = 3;
+    part(e, 'resources').mana = 10;
     const r = loadEnvelope(e);
     if (!r.ok) throw new Error(r.error);
     expect(r.value.warnings.join(' ')).toContain('wizard-tower');
@@ -84,15 +87,15 @@ describe('validation (technical design §9.4)', () => {
   });
 
   it.each([
-    ['a negative resource', (e: ReturnType<typeof env>) => void (e.state.resources!.food = -5)],
+    ['a negative resource', (e: ReturnType<typeof env>) => void (part(e, 'resources').food = -5)],
     [
       'a fractional building count',
-      (e: ReturnType<typeof env>) => void (e.state.buildings!.farm = 1.5),
+      (e: ReturnType<typeof env>) => void (part(e, 'buildings').farm = 1.5),
     ],
-    ['an unknown Age', (e: ReturnType<typeof env>) => void (e.state.cycle!.age = 'empire')],
+    ['an unknown Age', (e: ReturnType<typeof env>) => void (part(e, 'cycle').age = 'empire')],
     [
       'more workers than peasants',
-      (e: ReturnType<typeof env>) => void (e.state.peasants!.total = 1),
+      (e: ReturnType<typeof env>) => void (part(e, 'peasants').total = 1),
     ],
     ['a missing section', (e: ReturnType<typeof env>) => void delete e.state.meta],
     [
