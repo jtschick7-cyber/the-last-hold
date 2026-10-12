@@ -131,3 +131,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** answer Q4, then tune (T1.37) and turn enforcement on, then the milestone-end playtest.
 - **Choices to review:** D60, D61 (Proposed).
 - **Checked in CI:** WebKit can't run in this session; the CI run passed both the smoke test and the determinism suite in Chromium and WebKit.
+
+## 2026-10-12 — v0.1 section G finished: tuning
+- **Done:** D62 (owner answered Q4 and approved D60 and D61). The Standard targets are measured on the Opening run; time targets are judged on the Monday start. T1.37: starting wood 50 → 75 and the Keep's silver cost 300 → 250 (GDD updated). The policy's bottleneck rule now counts food that settling will take. Every v0.1 simulator check passes on 5 seeds: first Mine 4.5 min, Mill level 3 at 3 h, 10 peasants at 3 h, Keep at 14 h (Standard), 24 h (Light), 14 h (Heavy). T1.36a: `npm run check` now enforces the fast set. `npm run check` is green (642 tests); the browser tests pass.
+- **Watch:** the Standard and Light Keep times sit on the edges of their bands (the Keep can only happen at a check-in). Your playtest is the real test.
+- **Next:** milestone end (plan §0.3): every v0.1 task is ticked. You playtest the preview with the v0.1 checklist; when you say it passed, I open the pull request, merge, tag `v0.1.0`, and run `sim:accept`.
+- **Open questions:** none. **Choices to review:** D59 (still Proposed).
+- **Skipped or deferred:** none.
+

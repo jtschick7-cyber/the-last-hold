@@ -227,8 +227,8 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 - [x] **T1.34 Simulator CLI and report.** Virtual clock, seeds, JSON and Markdown, baseline diff, `sim:accept`, and the **fast set** for `check` (technical design §11.2).
 - [x] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation. Then add the debug panel's "run the Standard policy for N hours" button (moved from T1.26). *(Rules: D60.)*
 - [x] **T1.36 v0.1 checks**, with `sim/targets.ts` locked. *(Written and tested; they run in `sim:check` and `sim.yml`. Enforcing them inside `npm run check` is T1.36a.)*
-- [?] **T1.36a Enforce the fast set in `check`** (`sim:check -- --fast`), once T1.37 makes the checks pass. Waits on Q4.
-- [?] **T1.37 Tuning pass.** `tunable` constants only (§0.6). Waits on Q4: which run the Standard targets mean, which start times are judged, and how far to tune.
+- [x] **T1.36a Enforce the fast set in `check`** (`sim:check -- --fast`), once T1.37 makes the checks pass.
+- [x] **T1.37 Tuning pass.** `tunable` constants only (§0.6). *(D62: starting wood 75, Keep silver 250; every v0.1 check passes on 5 seeds.)*
 
 ### H. Browser tests
 
@@ -252,7 +252,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 | Check | Target |
 |---|---|
 | First Cottage (Opening) | ≤ 1 min |
-| First Mine (Opening) | ≤ 5 min. If missed, raise starting wood to 70 (D30); that's a tunable. |
+| First Mine (Opening) | ≤ 5 min. If missed, raise starting wood (D30); that's a tunable. Now 75 (D62). |
 | Mill level 3 | 2–5 h |
 | 10 peasants | 3–6 h |
 | **Keep** | **8–14 h** (Standard, median); ≤ 24 h (Light); ≥ 6 h (Heavy) |

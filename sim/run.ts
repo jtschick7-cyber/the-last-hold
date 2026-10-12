@@ -1,5 +1,6 @@
 import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
 import { play, type PolicyId } from '../src/core/policies';
+import { OPENING_LENGTH } from '../src/core/policies/schedules';
 import { createNewGame } from '../src/core/state/new-game';
 import { settleCost } from '../src/core/systems/settle';
 
@@ -32,6 +33,8 @@ export interface CheckInStat {
   readonly hadOption: boolean;
   readonly saving: boolean;
   readonly agedUp: boolean;
+  /** One of the Opening's 10-second steps, not a scheduled check-in. */
+  readonly opening: boolean;
 }
 
 export const MOMENTS = ['first-cottage', 'first-mine', 'mill-3', 'peasants-10', 'keep'] as const;
@@ -74,7 +77,9 @@ export const runOne = (spec: RunSpec): RunResult => {
   let largestNumber = largest(state);
 
   play(state, {
-    policy: spec.policy,
+    // D62 (Q4a): a fresh start under Standard begins with the Opening's 15
+    // active minutes, which then switches to Standard (GDD §6.1).
+    policy: spec.policy === 'standard' ? 'opening' : spec.policy,
     startedAt: start,
     until: start + spec.days * DAY,
     stop: (s) => spec.stopAtKeep === true && s.cycle.age === 'keep',
@@ -99,6 +104,9 @@ export const runOne = (spec: RunSpec): RunResult => {
         hadOption: rec.hadOption,
         saving: rec.saving,
         agedUp: rec.agedUp,
+        opening:
+          (spec.policy === 'opening' || spec.policy === 'standard') &&
+          rec.at <= start + OPENING_LENGTH,
       });
       for (const r of RESOURCE_IDS) peaks[r] = Math.max(peaks[r], s.resources[r]);
       peaks.peasants = Math.max(peaks.peasants, s.peasants.total);

@@ -41,7 +41,7 @@ export const ages: Readonly<Record<AgeId, AgeDef>> = {
     name: 'Keep',
     ageUp: {
       requires: { peasants: 10, buildings: { mill: 3, smithy: 1 } },
-      cost: { food: 12_000, wood: 9_000, iron: 4_000, silver: 300 },
+      cost: { food: 12_000, wood: 9_000, iron: 4_000, silver: 250 }, // silver 300 → 250 (D62)
       allProductionKey: 'age.keep.allProduction',
       restores: {
         summary: 'The gatehouse and the Roll of Honor',

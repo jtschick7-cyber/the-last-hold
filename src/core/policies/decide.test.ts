@@ -76,7 +76,7 @@ describe('decideCheckIn', () => {
     s.peasants.jobs = { farmer: 3, woodcutter: 5, miner: 2, 'silver-digger': 0 };
     s.buildings['silver-seam'] = 2;
     s.peasants.jobs['silver-digger'] = 0;
-    s.resources = { food: 11_000, wood: 9_000, iron: 4_000, silver: 300 };
+    s.resources = { food: 11_000, wood: 9_000, iron: 4_000, silver: 250 };
     const d = decideCheckIn(s, LONG);
     expect(d.saving).toBe(true);
     expect(d.purchases).toBe(0);

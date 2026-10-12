@@ -32,7 +32,7 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **What's needed:** four CC0 zip files from Kenney, uploaded to the repository. The exact list and step-by-step instructions are in `art-src/PACKS-NEEDED.md`.
 - **Answer (owner):** uploaded, 2026-10-12 (D58).
 
-### Q4 — The simulated player and the v0.1 pacing targets (blocks T1.36a, T1.37) — open
+### Q4 — The simulated player and the v0.1 pacing targets (blocks T1.36a, T1.37) — answered
 - **Where things stand:** the simulator plays the game through its real rules. With today's numbers (5 seeds, both start times; Monday / Saturday):
 
   | Target | Result |
@@ -64,5 +64,4 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - (b) Raise silver per Seam worker from 0.25 to 0.3 a minute instead of lowering the Keep's cost. This raises the 720-silver-a-day ceiling on Seams that G1 set for v0.2's bounties.
 - (c) Stop and rethink the targets or the economy in a planning chat.
 - **Recommendation:** (a). It touches only the start and the Keep's price, and keeps G1's silver ceiling.
-- **Answer (owner):**
-
+- **Answer (owner):** (a), (a), (a), and D60 approved, 2026-10-12 (D62).

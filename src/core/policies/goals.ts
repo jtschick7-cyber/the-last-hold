@@ -6,7 +6,9 @@ import { num } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import { ageUpStatus, isAvailable, maxLevelNow } from '../systems/ages';
 import { buildingCost, canAfford, timeToAfford } from '../systems/costs';
+import { housing } from '../systems/housing';
 import { productionRate } from '../systems/production';
+import { settleCost } from '../systems/settle';
 import { MS_PER_SECOND } from '../time';
 
 // What the simulated player knows about its goal, the next Age-up (GDD §6.1,
@@ -81,12 +83,22 @@ export const missingProducers = (state: GameState): BuildingId[] =>
     return id && state.buildings[id] === 0 ? [id] : [];
   });
 
+/** The food it costs to settle a peasant in every empty bed. */
+const settlingFood = (state: GameState): number => {
+  let food = 0;
+  for (let p = state.peasants.total; p < housing(state).value; p++) food += settleCost(p).value;
+  return food;
+};
+
 /**
- * The Age-up resource furthest from affordable at current rates. Silver is
- * left out: its Seams are capped (G1), so more slots can't speed it up.
+ * The Age-up resource furthest from affordable at current rates, counting the
+ * food that settling empty beds will take. Silver is left out: its Seams are capped (G1), so more slots can't speed it up.
  */
 export const bottleneck = (state: GameState): ResourceId | null => {
-  const cost = ageUpCost(state);
+  // Auto-settle will spend food on every empty bed first, so that food is
+  // still needed too (D62).
+  const cost = { ...ageUpCost(state) };
+  if (state.peasants.autoSettle) cost.food += settlingFood(state);
   let worst: ResourceId | null = null;
   let worstMinutes = 0;
   for (const r of RESOURCE_IDS) {

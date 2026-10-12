@@ -52,8 +52,9 @@ describe('production (GDD §5.1.1, §5.0 buckets)', () => {
     expect(productionRate(s, 'food').value).toBe(6);
     expect(productionRate(s, 'wood').value).toBe(8);
     expect(productionRate(s, 'iron').value).toBe(0);
-    // GDD §5.1.4: wood reaches 80 at 3.75 min.
-    expect((80 - s.resources.wood) / productionRate(s, 'wood').value).toBe(3.75);
+    // GDD §5.1.4 (D62): after the first Cottage's 30 wood, wood reaches the
+    // Mine's 80 at about 4.4 min.
+    expect((30 + 80 - s.resources.wood) / productionRate(s, 'wood').value).toBe(4.375);
   });
 
   it('Mill adds +25% food per level in the building bucket', () => {

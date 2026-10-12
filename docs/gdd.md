@@ -401,7 +401,7 @@ payback(item) = value(cost) ÷ value(Δrate per min)        (lower is better)
 
 The Age-up **Hamlet → Keep** requires:
 - **Prerequisites:** 10 peasants, Mill level 3, and a Smithy.
-- **Cost:** 12,000 food, 9,000 wood, 4,000 iron, and **300 silver** *(⚑ revision: was 600; lowered to fit capped Seams, G1)*.
+- **Cost:** 12,000 food, 9,000 wood, 4,000 iron, and **250 silver** *(⚑ revision: was 600; lowered to fit capped Seams, G1; then 300 → 250 in the v0.1 tuning pass, D62)*.
 
 **Keep grants:**
 - Higher maximum levels (see the table).
@@ -421,10 +421,10 @@ In v0.1, the Keep is the end of content. The Age screen shows the next Age (Cita
 - The Hearth Hall.
 - 1 Farm and 1 Woodcutter's Camp.
 - 3 peasants: **1 Farmer and 2 Woodcutters** *(⚑ revision A10 [JC]: was 2 Farmers and 1 Woodcutter)*.
-- 50 food and 50 wood.
+- 50 food and 75 wood *(⚑ v0.1 tuning: wood was 50, D62)*.
 - Auto-settle on.
 
-**Opening goal** (measured by the **Opening** policy, §6.1): a Cottage within 1 minute and a Mine within 5 minutes. A hand calculation gives about 4.3 minutes for the Mine (wood reaches 80 at about 3.75 min; food reaches 40 at about 4.3 min after auto-settle spends some). **If the simulator misses, raise starting wood to 70; don't move the target.**
+**Opening goal** (measured by the **Opening** policy, §6.1): a Cottage within 1 minute and a Mine within 5 minutes. A hand calculation gives about 4.4 minutes for the Mine (after the first Cottage's 30 wood, wood reaches 80 at about 4.4 min). **If the simulator misses, raise starting wood; don't move the target.** *(⚑ v0.1 tuning, D62: 70 wood gave 5.2 min in the simulator, so the start is 75 wood; the simulator measures 4.5 min.)*
 
 ---
 

@@ -14,6 +14,7 @@ const ci = (hours: number, purchases: number, extra: Partial<CheckInStat> = {}):
   hadOption: purchases > 0,
   saving: false,
   agedUp: false,
+  opening: false,
   ...extra,
 });
 
@@ -70,6 +71,22 @@ describe('engagement checks', () => {
     ]);
     expect(somethingToDoCheck.judge([r]).pass).toBe(true);
     expect(noDrySpellsCheck.judge([r]).pass).toBe(true);
+  });
+
+  it("skip the Opening's 10-second steps", () => {
+    const steps = Array.from({ length: 30 }, (_, i) => ci(i / 360, 0, { opening: true }));
+    const r = run('standard', { keep: 3 }, [...steps, ci(3, 1, { agedUp: true })]);
+    expect(somethingToDoCheck.judge([r]).pass).toBe(true);
+    expect(noWallsCheck.judge([r]).pass).toBe(true);
+  });
+
+  it('time targets judge the Monday start and only report Saturday', () => {
+    const r = keepCheck.judge([
+      run('standard', { keep: 10 }),
+      run('standard', { keep: 30 }, [], 'sat'),
+    ]);
+    expect(r.pass).toBe(true);
+    expect(r.lines).toContain('standard (sat, reported only): 30.00 h');
   });
 
   it('saving for the Age-up while something is affordable counts as something to do', () => {

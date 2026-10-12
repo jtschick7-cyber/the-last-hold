@@ -85,7 +85,7 @@ describe('peasants', () => {
 describe('age.up (GDD §5.1.3)', () => {
   const ready = (): GameState => {
     const s = game();
-    s.resources = { food: 12_000, wood: 9_000, iron: 4_000, silver: 300 };
+    s.resources = { food: 12_000, wood: 9_000, iron: 4_000, silver: 250 };
     s.peasants.total = 10;
     s.buildings.mill = 3;
     s.buildings.smithy = 1;

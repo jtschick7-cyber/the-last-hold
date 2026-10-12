@@ -4,7 +4,9 @@ import type { TimeTarget } from '../targets';
 import type { Check, CheckResult } from './types';
 
 // Technical design §13.3: time targets are judged on the median over seeds,
-// engagement checks on every seed. Each start time is judged on its own.
+// engagement checks on every seed.
+
+const JUDGED_START: StartId = 'mon';
 
 const median = (xs: readonly number[]): number => {
   const s = [...xs].sort((a, b) => a - b);
@@ -40,6 +42,13 @@ export const timeCheck = (target: TimeTarget, moment: Moment): Check => ({
       for (const [start, rs] of byStart) {
         const h = medianMoment(rs, moment);
         const ok = h >= (b.minHours ?? 0) && h <= (b.maxHours ?? Number.POSITIVE_INFINITY);
+        // D62 (Q4b): time targets are judged on the Monday start (GDD §6.1's
+        // start); the Saturday start is reported here and judged by the
+        // engagement checks.
+        if (start !== JUDGED_START) {
+          lines.push(`${b.policy} (${start}, reported only): ${hoursText(h)}`);
+          continue;
+        }
         pass = (pass ?? true) && ok;
         lines.push(
           `${b.policy} (${start}, median of ${rs.length}): ${hoursText(h)} ${ok ? '✓' : '✗'}`,
@@ -51,12 +60,14 @@ export const timeCheck = (target: TimeTarget, moment: Moment): Check => ({
 });
 
 /**
- * The check-ins an engagement check looks at: from the start until the Keep
- * (v0.1's end of content), or the whole run if the Keep was never reached.
+ * The check-ins an engagement check looks at: the scheduled ones (GDD §6.3
+ * judges Standard check-ins, not the Opening's 10-second steps), from the
+ * start until the Keep (v0.1's end of content), or the whole run if the Keep
+ * was never reached.
  */
 export const engagementWindow = (run: RunResult): readonly CheckInStat[] => {
-  const keep = run.moments.keep;
-  return keep === null ? run.checkIns : run.checkIns.filter((c) => c.hours <= keep);
+  const keep = run.moments.keep ?? Number.POSITIVE_INFINITY;
+  return run.checkIns.filter((c) => !c.opening && c.hours <= keep);
 };
 
 /**
