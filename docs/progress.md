@@ -56,3 +56,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** none.
 - **Choices to review:** D47 (Proposed).
 - **Skipped or deferred:** none.
+
+## 2026-10-12 — v0.1 section C: time
+- **Done:** D48 (owner approved D47). T1.14: event-driven `advance`. Resources move in straight lines between events; v0.1's one event is auto-settle (at most one per 30 s, at the moment food reaches the cost, into the first open job in priority order). T1.15: offline catch-up in 60 s chunks with progress steps, the 12 h cap (more with the Bell Tower), time past the cap reported not simulated, and the away summary (time away, time counted, resources, peasants settled). T1.16: the offline equivalence test passes (12 h of 1 s ticks equals one 12 h catch-up, including every settle, under the technical design §6.2 comparison rule), plus chunk-size independence, the backward clock, byte-identical determinism, and cap reporting. `npm run check` is green (542 tests, about 7 s).
+- **Next:** section D, saves: T1.17 (storage slots and autosave), T1.18 (export and import codes), T1.19 (migrations and validation).
+- **Open questions:** none.
+- **Choices to review:** D49 (Proposed).
+- **Skipped or deferred:** none.

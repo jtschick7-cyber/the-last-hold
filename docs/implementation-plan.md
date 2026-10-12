@@ -188,9 +188,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### C. Time
 
-- [ ] **T1.14 Event-driven `advance`.** Settle events and the tie order (technical design §6.2).
-- [ ] **T1.15 Offline catch-up.** Cap, backward clock, chunks with yields, the away summary.
-- [ ] **T1.16 Required tests.**
+- [x] **T1.14 Event-driven `advance`.** Settle events and the tie order (technical design §6.2).
+- [x] **T1.15 Offline catch-up.** Cap, backward clock, chunks with yields, the away summary.
+- [x] **T1.16 Required tests.**
   - **Offline equivalence**, with the comparison rule from technical design §6.2.
   - Backward clock; determinism; cap reporting.
 
