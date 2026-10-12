@@ -35,3 +35,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** none.
 - **Choices to review:** D42 (Proposed). Notably, silver's 0.25/min displays as "0.2/min", because every display floors.
 - **Skipped or deferred:** none.
+
+## 2026-10-12 — v0.1: balance file and content
+- **Done:** D43 (owner accepted D42). The owner answered two questions, logged as D44: the balance file holds every GDD §7 key now, and per-item numbers live in the content files and count as tunable. T1.4: `balance.ts` has all 86 §7 keys, each tunable or locked. Tests prove the keys match GDD §7 exactly and the locked ones match plan §0.6 exactly, both read straight from the docs. Every single value was checked against the GDD once by script, and the six compound values by eye. T1.5: resources, jobs, the ten v0.1 buildings, Hamlet and Keep (with the gatehouse restoration and its inscription from primer §6.5), and the starting state, with consistency tests. `npm run check` is green (442 tests).
+- **Next:** T1.6 (name collision search), T1.7 (v0.1 text), T1.8 (content integrity test).
+- **Open questions:** none.
+- **Notes:** the Keep inscription already in `ages.ts` covers that part of T1.7. Building and resource names are inline `name` fields, which T1.6's name check will pick up.
+- **Skipped or deferred:** none.
