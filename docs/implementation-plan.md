@@ -177,9 +177,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### B. State, selectors, commands
 
-- [ ] **T1.9 State v1.** `GameState` with only the v0.1 fields; `createNewGame(seed, now)`.
-- [ ] **T1.10 Breakdowns and selectors.** Rates, costs (n includes starting buildings), housing, slots, and the offline cap, each with a breakdown. **Tests:** every GDD §7.1 formula, using the GDD's numbers.
-- [ ] **T1.11 Silver rules.** Silver-digger output gets only the relic and event buckets. **Test:** Keep's +50% doesn't change silver.
+- [x] **T1.9 State v1.** `GameState` with only the v0.1 fields; `createNewGame(seed, now)`.
+- [x] **T1.10 Breakdowns and selectors.** Rates, costs (n includes starting buildings), housing, slots, and the offline cap, each with a breakdown. **Tests:** every GDD §7.1 formula, using the GDD's numbers.
+- [x] **T1.11 Silver rules.** Silver-digger output gets only the relic and event buckets. **Test:** Keep's +50% doesn't change silver.
 - [ ] **T1.12 Commands.**
   - `build.buy` (×1, ×10, Max), `build.upgrade`.
   - `peasants.*`, `age.up`, `settings.*`.
