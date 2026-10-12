@@ -4,6 +4,7 @@ import { num } from '../balance-access';
 import type { Breakdown } from '../breakdown/breakdown';
 import { geometricCost, intPow, maxAffordable } from '../math';
 import type { GameState } from '../state/game-state';
+import { SECONDS_PER_MINUTE } from '../time';
 
 // GDD §5.1.2 building costs. Count buildings: base × r^n per copy, where n
 // counts every copy owned, free starting ones included (A8); k copies cost
@@ -82,3 +83,24 @@ export const maxAffordableCount = (state: GameState, id: BuildingId): number => 
 /** True when every resource covers the cost. Uses exact values (technical design §8). */
 export const canAfford = (state: GameState, bundle: Record<ResourceId, number>): boolean =>
   RESOURCE_IDS.every((r) => state.resources[r] >= bundle[r]);
+
+/**
+ * GDD §9.2 "ready in ~1 h 20 m": seconds until every resource covers the cost at
+ * current rates (0 if affordable now, null if some resource isn't produced).
+ * An estimate only: it ignores what auto-settle will spend on the way.
+ */
+export const timeToAfford = (
+  state: GameState,
+  bundle: Record<ResourceId, number>,
+  perMinute: (r: ResourceId) => number,
+): number | null => {
+  let minutes = 0;
+  for (const r of RESOURCE_IDS) {
+    const short = bundle[r] - state.resources[r];
+    if (short <= 0) continue;
+    const rate = perMinute(r);
+    if (rate <= 0) return null;
+    minutes = Math.max(minutes, short / rate);
+  }
+  return minutes * SECONDS_PER_MINUTE;
+};

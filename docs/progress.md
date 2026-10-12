@@ -71,3 +71,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** none.
 - **Choices to review:** D51 (Proposed).
 - **Skipped or deferred:** none.
+
+## 2026-10-12 — v0.1 section E, part 1: the first playable screens
+- **Done:** D52 (owner accepted D51). T1.20: the shell, with the resource bar (tap for rates, per minute or hour), Hold and More tabs, a bottom-sheet stack (swipe down or ✕ to close), dark and light themes, catch-up progress, the update banner, and the PREVIEW ribbon. Numbers open their breakdowns on long-press or ⓘ. The runtime loads the save, catches up, ticks every second, and autosaves. T1.21: the Hold screen, with the header and Brana's and Pechko's lines, the peasants panel (−, +, fill, auto-settle, next settle cost) and the build list (×1, ×10, Max, costs muted when short, "ready in", ● best buy). T1.22: the Age screen (checklist, costs, unlocks, Become a Keep), and after it the restoration sheet with the Roll of Honor; Citadel shows "Coming in a later milestone". Checked in a phone-sized browser: buying, the first-building line, breakdowns, reload persistence, and a full Age-up (Keep header, inscription, Pechko's line, the Bell Tower appearing). No console errors. `npm run check` is green (581 tests).
+- **Blocked:** T1.20a (the pixel font) is split out and marked [?]; see `questions.md` Q1. A system monospace font stands in.
+- **Next:** T1.23 (Reports: the last three away sheets), T1.24 (breakdowns everywhere, hover on desktop), T1.25 (More: Save & Data, Settings, About & Credits, install tip), T1.26 (debug panel), T1.27 (diagnostics).
+- **Open questions:** Q1 (pixel font).
+- **Choices to review:** D53 (Proposed).
+- **Skipped or deferred:** the pixel hold scene waits for the art pipeline (T1.29).

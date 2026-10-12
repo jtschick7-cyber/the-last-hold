@@ -202,9 +202,10 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### E. UI
 
-- [ ] **T1.20 Shell.** Resource bar and rates sheet; tabs **Hold** and **More** only; sheet stack; themes; the CC0 pixel font.
-- [ ] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
-- [ ] **T1.22 Age screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
+- [x] **T1.20 Shell.** Resource bar and rates sheet; tabs **Hold** and **More** only; sheet stack; themes.
+- [?] **T1.20a Pixel font.** The CC0 pixel font for headings and the resource bar (split from T1.20: no CC0 font source is reachable from Claude Code's sessions; see `questions.md` Q1). A system monospace font stands in.
+- [x] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
+- [x] **T1.22 Age screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
 - [ ] **T1.23 Away sheet and Reports** (the last 3 sheets).
 - [ ] **T1.24 Breakdown sheet.** Long-press and hover; ⓘ markers.
 - [ ] **T1.25 More menu.** Save & Data; Settings; About & Credits (version, channel, commit, `debugUsed`); and the **install tip, including the iPhone storage note** (technical design §9.1).

@@ -2,7 +2,7 @@ import { ages } from '../../content/ages';
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { SILVER_BUCKETS } from '../../content/buckets';
 import { JOB_IDS, jobs } from '../../content/jobs';
-import type { ResourceId } from '../../content/resources';
+import { resources, type ResourceId } from '../../content/resources';
 import { num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
@@ -68,7 +68,7 @@ export const productionRate = (state: GameState, resource: ResourceId): Explaine
     value: result.value,
     breakdown: {
       ...result.breakdown,
-      label: `${def.produces} per minute`,
+      label: `${resources[def.produces].name} per minute`,
       ...(resource === 'silver'
         ? { formula: 'base × relic × event (no other bonuses apply to silver)' }
         : {}),

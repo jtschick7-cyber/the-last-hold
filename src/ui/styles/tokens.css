@@ -1,4 +1,5 @@
-/* Placeholder tokens until the palette is picked (plan T1.26). */
+/* Placeholder tokens until the palette is picked (plan T1.28). Dark by default,
+   a warm candlelit feel (GDD §9.1); light theme from Settings. */
 :root {
   --c-bg: #16120f;
   --c-surface: #211b17;
@@ -8,12 +9,30 @@
   --c-text-dim: #b3a593;
   --c-ember: #e08a3c;
   --c-on-ember: #1a120b;
+  --c-warn: #e0b13c;
+  --c-good: #8fbf6a;
   --c-preview: #f2c94c;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 1rem;
   --space-4: 1.5rem;
+  /* The CC0 pixel font is pending (docs/questions.md Q1); a system mono stands in. */
+  --font-pixel: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --c-bg: #f4ede2;
+  --c-surface: #fffaf2;
+  --c-surface-raised: #efe4d3;
+  --c-border: #d8c8b2;
+  --c-text: #2a211a;
+  --c-text-dim: #6b5a48;
+  --c-ember: #b4581a;
+  --c-on-ember: #fffaf2;
+  --c-warn: #9a6a00;
+  --c-good: #3f7a24;
+  color-scheme: light;
 }
 
 *,
@@ -37,6 +56,15 @@ body {
     Roboto,
     sans-serif;
   line-height: 1.5;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {

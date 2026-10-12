@@ -1,0 +1,146 @@
+/* Shared UI primitives. Colors come from tokens.css (placeholder palette until T1.28). */
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 0.5rem;
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.cardTitle {
+  font-family: var(--font-pixel);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-dim);
+  margin: 0 0 var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+}
+
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.dim {
+  color: var(--c-text-dim);
+}
+
+.small {
+  font-size: 0.8125rem;
+}
+
+.warn {
+  color: var(--c-warn);
+}
+
+.good {
+  color: var(--c-good);
+}
+
+.btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 var(--space-3);
+  border-radius: 0.375rem;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface-raised);
+  color: var(--c-text);
+  font: inherit;
+  font-weight: 600;
+  touch-action: manipulation;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+}
+
+.btnPrimary {
+  composes: btn;
+  background: var(--c-ember);
+  border-color: var(--c-ember);
+  color: var(--c-on-ember);
+}
+
+.btn:focus-visible,
+.btnPrimary:focus-visible,
+.num:focus-visible {
+  outline: 2px solid var(--c-text);
+  outline-offset: 2px;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--c-border);
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.segment {
+  composes: btn;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font-weight: 500;
+}
+
+.segmentOn {
+  composes: segment;
+  background: var(--c-surface-raised);
+  color: var(--c-ember);
+  font-weight: 700;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: help;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+}
+
+.info {
+  color: var(--c-text-dim);
+  font-size: 0.75em;
+  margin-left: 0.15em;
+}
+
+.cost {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.short {
+  color: var(--c-text-dim);
+}
+
+.hint {
+  color: var(--c-ember);
+  font-size: 1.1rem;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.divider {
+  border-top: 1px solid var(--c-border);
+}
