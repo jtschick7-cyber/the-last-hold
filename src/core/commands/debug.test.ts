@@ -17,6 +17,16 @@ describe('debug commands (technical design §15)', () => {
     expect(t.resources.food).toBeCloseTo(50 + 6 * 60 * 12, 6); // capped at 12 h
   });
 
+  it('runs a policy over the last hours through apply(), then catches up', () => {
+    const s = createNewGame('d', T0);
+    expect(apply(s, { type: 'debug.runPolicy', policy: 'standard', ms: 24 * HOUR }, T0).ok).toBe(
+      true,
+    );
+    expect(s.time).toBe(T0);
+    expect(s.stats.buildingsBought).toBeGreaterThan(5);
+    expect(s.peasants.total).toBeGreaterThan(3);
+  });
+
   it('adds resources, sets the seed, and unlocks an Age', () => {
     const s = createNewGame('d', T0);
     apply(s, { type: 'debug.addResources', bundle: { silver: 300 } }, T0);
@@ -29,6 +39,7 @@ describe('debug commands (technical design §15)', () => {
 
   it.each<Command>([
     { type: 'debug.skip', ms: 1 },
+    { type: 'debug.runPolicy', policy: 'heavy', ms: HOUR },
     { type: 'debug.addResources', bundle: { wood: 1 } },
     { type: 'debug.setSeed', seed: 'x' },
     { type: 'debug.unlockAge', age: 'hamlet' },
@@ -41,6 +52,8 @@ describe('debug commands (technical design §15)', () => {
   it.each<Command>([
     { type: 'debug.skip', ms: 0 },
     { type: 'debug.skip', ms: Number.NaN },
+    { type: 'debug.runPolicy', policy: 'standard', ms: 0 },
+    { type: 'debug.runPolicy', policy: 'lazy' as never, ms: HOUR },
     { type: 'debug.addResources', bundle: { wood: -5 } },
     { type: 'debug.addResources', bundle: { mana: 5 } as never },
     { type: 'debug.addResources', bundle: {} },

@@ -224,10 +224,11 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### G. Simulator
 
-- [ ] **T1.34 Simulator CLI and report.** Virtual clock, seeds, JSON and Markdown, baseline diff, `sim:accept`, and the **fast set** for `check` (technical design §11.2).
-- [ ] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation. Then add the debug panel's "run the Standard policy for N hours" button (moved from T1.26).
-- [ ] **T1.36 v0.1 checks**, with `sim/targets.ts` locked.
-- [ ] **T1.37 Tuning pass.** `tunable` constants only (§0.6).
+- [x] **T1.34 Simulator CLI and report.** Virtual clock, seeds, JSON and Markdown, baseline diff, `sim:accept`, and the **fast set** for `check` (technical design §11.2).
+- [x] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation. Then add the debug panel's "run the Standard policy for N hours" button (moved from T1.26). *(Rules: D60.)*
+- [x] **T1.36 v0.1 checks**, with `sim/targets.ts` locked. *(Written and tested; they run in `sim:check` and `sim.yml`. Enforcing them inside `npm run check` is T1.36a.)*
+- [?] **T1.36a Enforce the fast set in `check`** (`sim:check -- --fast`), once T1.37 makes the checks pass. Waits on Q4.
+- [?] **T1.37 Tuning pass.** `tunable` constants only (§0.6). Waits on Q4: which run the Standard targets mean, which start times are judged, and how far to tune.
 
 ### H. Browser tests
 

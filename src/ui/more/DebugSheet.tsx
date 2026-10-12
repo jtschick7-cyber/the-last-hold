@@ -7,10 +7,12 @@ import styles from '../styles/ui.module.css';
 // GDD §9.10 / technical design §15: every action here is a debug.* command.
 // Using any of them marks the save (About shows it); nothing else changes.
 const MINUTE = 60_000;
+const HOUR = 60 * MINUTE;
 
 export const DebugSheet = () => {
   void version.value;
   const [minutes, setMinutes] = useState('90');
+  const [hours, setHours] = useState('12');
   const [seed, setSeed] = useState(game().meta.gameSeed);
   const [note, setNote] = useState<string | null>(null);
   const run = (cmd: Command): void => {
@@ -50,6 +52,28 @@ export const DebugSheet = () => {
           Skip minutes
         </button>
       </div>
+      <h3 class={styles.cardTitle}>Simulator policy (GDD §6.1)</h3>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <input
+          aria-label="Hours to play"
+          inputMode="numeric"
+          size={4}
+          value={hours}
+          onInput={(e) => setHours(e.currentTarget.value)}
+        />
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() =>
+            run({ type: 'debug.runPolicy', policy: 'standard', ms: Number(hours) * HOUR })
+          }
+        >
+          Run Standard for {hours || '?'} h
+        </button>
+      </div>
+      <p class={`${styles.small} ${styles.dim}`}>
+        Plays the simulator's Standard player over the last hours, then catches up to now.
+      </p>
       <h3 class={styles.cardTitle}>Add resources</h3>
       <div class={styles.row} style={{ flexWrap: 'wrap' }}>
         {RESOURCE_IDS.map((r) => (
@@ -96,9 +120,6 @@ export const DebugSheet = () => {
         Last catch-up:{' '}
         {lastCatchUpMs.value === null ? 'none yet' : `${lastCatchUpMs.value.toFixed(0)} ms`}. Odds
         and Suggest timings arrive with contracts (v0.2).
-      </p>
-      <p class={`${styles.small} ${styles.dim}`}>
-        Running a simulator policy here arrives with the simulator (T1.34–T1.35).
       </p>
       <details>
         <summary>Raw state</summary>

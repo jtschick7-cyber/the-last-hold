@@ -2,6 +2,7 @@ import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
 import type { JobId } from '../../content/jobs';
 import type { ResourceBundle } from '../../content/resources';
+import type { PolicyId } from '../policies/schedules';
 import type { Settings } from '../state/game-state';
 
 // Technical design §4.3: every player action is a plain JSON Command, applied
@@ -21,6 +22,8 @@ export type Command =
   | { type: 'settings.set'; patch: Partial<Settings> }
   // Debug (technical design §15): only offered with ?debug or in dev builds.
   | { type: 'debug.skip'; ms: number }
+  /** Plays a simulator policy over the last `ms`, then catches up to now (technical design §15). */
+  | { type: 'debug.runPolicy'; policy: PolicyId; ms: number }
   | { type: 'debug.addResources'; bundle: ResourceBundle }
   | { type: 'debug.setSeed'; seed: string }
   | { type: 'debug.unlockAge'; age: AgeId };

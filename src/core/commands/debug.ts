@@ -1,5 +1,7 @@
 import { AGE_IDS, type AgeId } from '../../content/ages';
 import { RESOURCE_IDS, type ResourceBundle } from '../../content/resources';
+import { play } from '../policies/play';
+import { POLICY_IDS, type PolicyId } from '../policies/schedules';
 import { catchUpNow } from '../sim/offline';
 import type { GameState } from '../state/game-state';
 import { ok, refuse, type ApplyResult } from './types';
@@ -17,6 +19,32 @@ export const skip = (state: GameState, ms: number, now: number): ApplyResult => 
   state.meta.lastSeen -= ms;
   state.peasants.lastSettleAt -= ms;
   catchUpNow(state, Math.max(now, state.time + ms));
+  state.meta.debugUsed = true;
+  return ok;
+};
+
+/**
+ * Plays a simulator policy (GDD §6.1) over the last `ms`, as if the game had
+ * last run that long ago and the policy had been checking in since. Then
+ * catches up to now. Check-in times read the clock as UTC.
+ */
+export const runPolicy = (
+  state: GameState,
+  policy: PolicyId,
+  ms: number,
+  now: number,
+): ApplyResult => {
+  if (!(POLICY_IDS as readonly string[]).includes(policy)) return refuse('Unknown policy.');
+  if (!Number.isFinite(ms) || ms <= 0) return refuse('Run a policy for a positive time.');
+  state.time -= ms;
+  state.meta.lastSeen -= ms;
+  state.peasants.lastSettleAt -= ms;
+  // The replayed check-ins happen before the latest time seen, so move that
+  // back too, or catch-up would read them as a clock moved backward (D21).
+  state.meta.clockHighWater = Math.min(state.meta.clockHighWater, state.time);
+  const from = state.time;
+  play(state, { policy, startedAt: from, until: from + ms });
+  catchUpNow(state, Math.max(now, from + ms));
   state.meta.debugUsed = true;
   return ok;
 };

@@ -1,7 +1,7 @@
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { buy, upgrade } from './build';
-import { addResources, setSeed, skip, unlockAge } from './debug';
+import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
 import { add, fill, remove, setAutoSettle, setPriority } from './peasants';
 import { setSettings } from './settings';
 import { refuse, type ApplyResult, type Command } from './types';
@@ -34,6 +34,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setSettings(state, cmd.patch);
     case 'debug.skip':
       return skip(state, cmd.ms, now);
+    case 'debug.runPolicy':
+      return runPolicy(state, cmd.policy, cmd.ms, now);
     case 'debug.addResources':
       return addResources(state, cmd.bundle);
     case 'debug.setSeed':
