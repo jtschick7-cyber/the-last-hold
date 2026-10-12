@@ -4,6 +4,9 @@ import type { ResourceBundle } from './resources';
 
 // GDD §5.1.3. In v0.1 the Keep is the end of content; the Age screen shows
 // Citadel as "Coming in a later milestone" (plan T1.22).
+// Proper nouns used only inside text (technical design §14 name check).
+export const properNouns: readonly string[] = ['Roll of Honor'];
+
 export const AGE_IDS = ['hamlet', 'keep'] as const;
 export type AgeId = (typeof AGE_IDS)[number];
 
@@ -18,7 +21,7 @@ export interface AgeUp {
   readonly allProductionKey: BalanceKey;
   /** setting-primer §6.5: the part of old Stanholm this Age restores. */
   readonly restores: {
-    readonly place: string;
+    readonly summary: string;
     readonly description: string;
     readonly inscription: string;
   };
@@ -41,7 +44,7 @@ export const ages: Readonly<Record<AgeId, AgeDef>> = {
       cost: { food: 12_000, wood: 9_000, iron: 4_000, silver: 300 },
       allProductionKey: 'age.keep.allProduction',
       restores: {
-        place: 'The gatehouse and the Roll of Honor',
+        summary: 'The gatehouse and the Roll of Honor',
         description: 'A wall of names cut in bronze, under the arch of the old gatehouse.',
         inscription:
           'Here are cut the names of those who gave their warmth to the hearth, that the folk might sleep.',

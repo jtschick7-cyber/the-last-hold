@@ -42,3 +42,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** none.
 - **Notes:** the Keep inscription already in `ages.ts` covers that part of T1.7. Building and resource names are inline `name` fields, which T1.6's name check will pick up.
 - **Skipped or deferred:** none.
+
+## 2026-10-12 — v0.1: names, text, content integrity
+- **Done:** T1.6: every v0.1 name was searched against the influence games, with no collisions (D45). `tests/content/names.ts` lists the checked names with dates, and a test finds every name in the content and fails on any unchecked one. T1.7: descriptions for all ten buildings, Brana's and Pechko's lines for the five v0.1 triggers (4 variants each), and the residents. The Keep inscription was done in T1.5. T1.8: an integrity test that every ID, text key and unlock resolves. The §7 key match is already covered. Each new check was proved to fail on a deliberate break. `npm run check` is green (455 tests).
+- **Next:** section B: T1.9 (game state v1), T1.10 (rates, costs and their breakdowns), T1.11 (silver rules).
+- **Open questions:** none.
+- **Choices to review:** D45 (Proposed), plus the text itself: the building descriptions and lines are in `src/content/text/`.
+- **Skipped or deferred:** the "first contract success" lines wait for contracts in v0.2.
