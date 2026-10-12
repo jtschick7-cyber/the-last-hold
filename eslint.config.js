@@ -90,6 +90,7 @@ export default tseslint.config(
     plugins: { local },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-restricted-syntax': ['error', ...namedExportsOnly],
     },
   },

@@ -49,3 +49,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** none.
 - **Choices to review:** D45 (Proposed), plus the text itself: the building descriptions and lines are in `src/content/text/`.
 - **Skipped or deferred:** the "first contract success" lines wait for contracts in v0.2.
+
+## 2026-10-12 — v0.1 section B: state, rules, commands, valuation
+- **Done:** D46 (owner approved D45). T1.9: the v1 game state and new-game creation from the GDD starting state. T1.10: housing, job slots, production rates with the bonus buckets, building costs (×1, ×10 and Max), settle cost and the offline cap, each with a breakdown built by the same function. T1.11: silver gets no building or Age bonus; a test shows Keep's +50% leaves it unchanged. T1.12: commands for buying, upgrading, peasants, the Age-up and settings, with 26 refused cases each proven to leave the state untouched. T1.13: best payback and the ● pick, with mixed-cost and housing cases. Tests use the GDD's own numbers (first Farm 46 wood, wood reaches 80 at 3.75 min, Mill L2 210 wood). `npm run check` is green (528 tests).
+- **Next:** section C: T1.14 (event-driven `advance`), T1.15 (offline catch-up), T1.16 (offline equivalence and the other time tests).
+- **Open questions:** none.
+- **Choices to review:** D47 (Proposed).
+- **Skipped or deferred:** none.
