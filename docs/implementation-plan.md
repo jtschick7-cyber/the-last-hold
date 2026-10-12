@@ -151,7 +151,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.1 — The Hold
 
-**Status:** not started
+**Status:** in progress
 
 **Goal:** the idle economy from Hamlet to Keep, playable on a phone, saving reliably, with offline progress, a debug panel, diagnostics, a working simulator, and the art pipeline.
 **Reads:** GDD §1–5.2, §6, §7.1–7.2, §9 (the v0.1 screens), §10; technical design §4–9, §11–15; `setting-primer.md` §5–7.
@@ -166,9 +166,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### A. Foundations
 
-- [ ] **T1.1 RNG.** `core/rng`: sfc32, cyrb128, streams, `RollSource` (`seeded`, `scripted`). **Tests:** goldens for 3 seeds; `scripted` throws if it runs out or isn't fully consumed.
-- [ ] **T1.2 Portable math.** `core/math`: `intPow` and `maxAffordable` (search). **Tests:** both match `Math.pow` and the GDD log formula over a table of cases (computed in the tests only) (technical design §7.4).
-- [ ] **T1.3 Formatting.** Numbers and durations (technical design §8), with suffixes chosen by thresholds. **Tests:** the full boundary table.
+- [x] **T1.1 RNG.** `core/rng`: sfc32, cyrb128, streams, `RollSource` (`seeded`, `scripted`). **Tests:** goldens for 3 seeds; `scripted` throws if it runs out or isn't fully consumed.
+- [x] **T1.2 Portable math.** `core/math`: `intPow` and `maxAffordable` (search). **Tests:** both match `Math.pow` and the GDD log formula over a table of cases (computed in the tests only) (technical design §7.4).
+- [x] **T1.3 Formatting.** Numbers and durations (technical design §8), with suffixes chosen by thresholds. **Tests:** the full boundary table.
 - [ ] **T1.4 Balance file.** `content/balance.ts` with every v0.1 key, each marked `tunable` or `locked` per §0.6.
 - [ ] **T1.5 v0.1 content.** Resources, jobs, buildings (Silver Seam max 2), Ages (Hamlet, Keep, plus the restoration text), and the starting state (GDD §5.1.4).
 - [ ] **T1.6 Names.** Collision-search every v0.1 proper noun. Create `tests/content/names.ts` and the name-finding test (technical design §14). Any collision or unchecked name goes to `questions.md` as `[?]`.

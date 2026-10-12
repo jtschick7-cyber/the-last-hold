@@ -28,3 +28,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Owner check after the merge:** install the live app from the main address and confirm its "Opened here" count is separate from the preview's.
 - **Open questions:** none. D39 (v0.0 implementation choices) is still Proposed, for the owner to review.
 - **Skipped or deferred:** `sim:accept` (nothing to accept yet). The deprecated Node 20 workflow actions can be bumped in a later milestone.
+
+## 2026-10-12 — v0.1 started: foundations
+- **Done:** D41 logs the owner's approval of D39. v0.1 set to in progress. T1.1 (random numbers: sfc32, cyrb128, seeded streams, scripted rolls, with golden values for 3 seeds), T1.2 (exact powers and the "Max" affordability search, checked against the GDD's log formula over 168 cases), and T1.3 (number, rate, exact and duration formatting, with a full boundary table). `npm run check` is green.
+- **Next:** T1.4 (the balance file) and T1.5 (v0.1 content).
+- **Open questions:** none.
+- **Choices to review:** D42 (Proposed). Notably, silver's 0.25/min displays as "0.2/min", because every display floors.
+- **Skipped or deferred:** none.
