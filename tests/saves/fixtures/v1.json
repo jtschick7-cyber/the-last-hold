@@ -1,0 +1,61 @@
+{
+  "app": "the-last-hold",
+  "schemaVersion": 1,
+  "rulesVersion": 1,
+  "savedAt": 1791799200000,
+  "state": {
+    "meta": {
+      "schemaVersion": 1,
+      "gameSeed": "fixture-v1",
+      "createdAt": 1791788400000,
+      "lastSeen": 1791799200000,
+      "clockHighWater": 1791799200000,
+      "debugUsed": false
+    },
+    "time": 1791799200000,
+    "cycle": {
+      "number": 1,
+      "age": "hamlet"
+    },
+    "resources": {
+      "food": 3062.3093486328125,
+      "wood": 1223.825,
+      "iron": 556,
+      "silver": 0
+    },
+    "peasants": {
+      "total": 9,
+      "jobs": {
+        "farmer": 3,
+        "woodcutter": 2,
+        "miner": 2,
+        "silver-digger": 0
+      },
+      "autoSettle": true,
+      "priority": ["miner", "farmer", "woodcutter", "silver-digger"],
+      "lastSettleAt": 1791789308968.838
+    },
+    "buildings": {
+      "hearth-hall": 1,
+      "cottage": 3,
+      "farm": 2,
+      "woodcutters-camp": 1,
+      "mine": 1,
+      "silver-seam": 0,
+      "mill": 1,
+      "sawpit": 0,
+      "smithy": 0,
+      "bell-tower": 0
+    },
+    "stats": {
+      "buildingsBought": 6,
+      "peasantsSettled": 6
+    },
+    "settings": {
+      "theme": "dark",
+      "bestBuyHint": true,
+      "rateUnit": "hour",
+      "reduceMotion": "system"
+    }
+  }
+}

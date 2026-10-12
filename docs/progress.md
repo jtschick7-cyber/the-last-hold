@@ -63,3 +63,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** none.
 - **Choices to review:** D49 (Proposed).
 - **Skipped or deferred:** none.
+
+## 2026-10-12 — v0.1 section D: saves
+- **Done:** D50 (owner accepted D49). T1.17: the save envelope, and a channel-namespaced store with main, backup (every 10 min) and quarantine slots, plus autosave (every 30 s and when the page hides) and the persistent-storage request. T1.18: `LH1.` (compressed) and `LH0.` codes with checksums, and the plain JSON save file, with plain-language errors for each failure. T1.19: the migrations framework (empty list, current version 1), hand-written validation (unknown IDs dropped with warnings), the newer-version refusal, and a real v1 fixture. Tests cover the round trip, 10 kinds of corrupted code, unknown IDs, repairs, refusals, slot fallback, live/preview isolation and a full disk. `npm run check` is green (582 tests).
+- **Not yet wired in:** autosave, the persistence request and the file download are written but not connected to the app. They have no screen to run in until the shell (T1.20), and the Playwright smoke (T1.38) tests them in a real browser.
+- **Next:** section E, the UI: T1.20 (shell), T1.21 (Hold screen), T1.22 (Age screen).
+- **Open questions:** none.
+- **Choices to review:** D51 (Proposed).
+- **Skipped or deferred:** none.

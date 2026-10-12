@@ -196,9 +196,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### D. Saves
 
-- [ ] **T1.17 Envelope and storage.** Namespaced keys (live or preview); main, backup, and quarantine slots; autosave; the `persist()` request.
-- [ ] **T1.18 Export and import.** `LH1.` and `LH0.` codes, the save file, clear errors.
-- [ ] **T1.19 Migrations framework.** An empty list, the v1 fixture, validation, the newer-version refusal. **Tests:** round-trip; corrupted codes; unknown IDs.
+- [x] **T1.17 Envelope and storage.** Namespaced keys (live or preview); main, backup, and quarantine slots; autosave; the `persist()` request.
+- [x] **T1.18 Export and import.** `LH1.` and `LH0.` codes, the save file, clear errors.
+- [x] **T1.19 Migrations framework.** An empty list, the v1 fixture, validation, the newer-version refusal. **Tests:** round-trip; corrupted codes; unknown IDs.
 
 ### E. UI
 
