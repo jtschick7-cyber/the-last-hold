@@ -1,3 +1,4 @@
+import { buildCredits } from '../../core/credits';
 import { formatDuration } from '../../core/format';
 import { buildInfo } from '../../platform/build-info';
 import { About } from '../app/About';
@@ -56,10 +57,18 @@ export const AboutSheet = () => {
       </section>
       <section class={styles.card}>
         <h3 class={styles.cardTitle}>Credits</h3>
-        <p class={styles.small}>
-          An original game. All art is CC0 (public domain); the credits list is generated from the
-          asset manifest as art is added. So far every image is made in-house.
-        </p>
+        <pre
+          class={styles.small}
+          style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 }}
+        >
+          {buildCredits()
+            .split('\n')
+            .filter((l) => !l.startsWith('# ') && !l.startsWith('<!--'))
+            .join('\n')
+            .replaceAll('**', '')
+            .replaceAll('## ', '')
+            .trim()}
+        </pre>
       </section>
     </div>
   );

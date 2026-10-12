@@ -94,3 +94,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Waiting on the owner:** Q2 (pick a palette) and Q3 (upload the four zips).
 - **Next:** T1.31's recolor tool (the pack processing waits for the uploads), T1.32 (credits and the license test), T1.33 (contact sheet).
 - **Choices to review:** D56 (Proposed).
+
+## 2026-10-12 — v0.1 section F, part 2: art tools
+- **Done:** T1.31: the recolor tool (OKLab nearest color, faint pixels made transparent), with tests on generated images and a run on a real PNG. T1.32: `docs/credits.md` generated from the manifest and palette, shown in About & Credits, with CI checks: pack art must be CC0 with a URL and credit, every file in `public/assets/` must be in the manifest, and the credits file must be current. T1.33: the contact sheet at `/preview/contact-sheet.html` (16 assets, no broken images). `npm run check` is green (604 tests).
+- **Split:** T1.31a (processing the packs) waits on Q2 (palette) and Q3 (uploads), and also covers the font (T1.20a).
+- **Next:** section G, the simulator (T1.34–T1.37), while the art inputs are pending.
+- **Open questions:** Q2 (palette), Q3 (uploads).
+- **Choices to review:** D56 and D57 (Proposed).

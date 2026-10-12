@@ -217,9 +217,10 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 - [?] **T1.28 Palette.** Render 2–3 free-use 32-color candidates as a swatch page. 👤 **The owner picks one.** Record it in `palette.ts` and `credits.md`.
 - [x] **T1.29 Manifest and `<Sprite>`.** Placeholder fallback; `gen-placeholders`.
 - [x] **T1.30 Pack list for the owner.** Write `art-src/PACKS-NEEDED.md` with the exact CC0 packs, links, licenses, and target folders for v0.1 (hold-scene tiles, resource icons, building icons, UI frames). Post it to `questions.md` **one session before T1.31**.
-- [ ] **T1.31 Recolor tool and packs.** `tools/recolor.ts`, then process the packs the owner added. If the packs aren't there yet, mark it `[?]` and continue elsewhere.
-- [ ] **T1.32 Credits.** Generate `credits.md`; add the CI license test.
-- [ ] **T1.33 Contact sheet tool.**
+- [x] **T1.31 Recolor tool.** `tools/recolor.ts` (OKLab nearest color) and `tools/recolor-cli.ts`, tested on generated images.
+- [?] **T1.31a Process the packs.** Unpack the owner's uploads, check each `License.txt`, recolor to the chosen palette, add manifest rows, and add the Kenney font (T1.20a). Waiting on Q2 (palette) and Q3 (uploads).
+- [x] **T1.32 Credits.** Generate `credits.md`; add the CI license test.
+- [x] **T1.33 Contact sheet tool.**
 
 ### G. Simulator
 
