@@ -82,6 +82,8 @@ export default tseslint.config(
       'sim/reports/',
       'tests/lint/fixtures/',
       'art-src/',
+      'test-results/',
+      'playwright-report/',
     ],
   },
   js.configs.recommended,
@@ -97,7 +99,7 @@ export default tseslint.config(
   },
   // Tooling config files must default-export by their tools' convention.
   {
-    files: ['vite.config.ts', 'vitest.config.ts', 'eslint.config.js'],
+    files: ['vite.config.ts', 'vitest.config.ts', 'playwright.config.ts', 'eslint.config.js'],
     rules: { 'no-restricted-syntax': 'off' },
   },
   // ---- Layer rules (technical design §4.2) ----

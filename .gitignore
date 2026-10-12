@@ -160,3 +160,7 @@ dist-preview/
 
 # Unpacked art packs (reproducible from the zips in art-src/)
 art-src/packs/
+
+# Playwright output
+test-results/
+playwright-report/
