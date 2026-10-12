@@ -34,6 +34,17 @@ describe('payback', () => {
     expect(deltaRateValue(s, 'cottage')).toBeCloseTo(6, 12);
   });
 
+  it('empty beds claim open slots before a new Cottage does', () => {
+    // 1 Cottage built, nobody settled yet: housing 5, 3 peasants, 3 open slots.
+    // The 2 empty beds take 2 of them, so a second Cottage fills only 1.
+    const s = game();
+    s.buildings.cottage = 1;
+    expect(deltaRateValue(s, 'cottage')).toBeCloseTo(6, 12);
+    // 4 empty beds already cover all 3 open slots: another Cottage adds nothing.
+    s.buildings.cottage = 2;
+    expect(deltaRateValue(s, 'cottage')).toBe(0);
+  });
+
   it('housing with no open slot is worth nothing', () => {
     const s = game();
     s.peasants.total = 6;

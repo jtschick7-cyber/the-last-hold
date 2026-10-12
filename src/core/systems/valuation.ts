@@ -54,7 +54,8 @@ const placeBest = (state: GameState, n: number): void => {
 /**
  * The production one more copy or level adds right now, valued (GDD §5.1.2):
  * production levels add directly; housing adds peasants placed in the best open
- * slots (0 if none are free); slot buildings count only if idle peasants wait.
+ * slots left after idle peasants and empty beds take theirs (0 if none are
+ * free); slot buildings count only if idle peasants wait.
  */
 export const deltaRateValue = (state: GameState, id: BuildingId): number => {
   const before = rateValue(state);
@@ -65,6 +66,11 @@ export const deltaRateValue = (state: GameState, id: BuildingId): number => {
   const extraHousing = housing(after).value - housing(state).value;
   if (extraHousing > 0) {
     placeBest(after, alreadyIdle);
+    // Beds already standing empty will fill first and claim open slots too,
+    // so the new housing counts only the slots left after them (D60).
+    const vacant = Math.max(0, housing(state).value - state.peasants.total);
+    after.peasants.total += vacant;
+    placeBest(after, vacant);
     const base = rateValue(after);
     after.peasants.total += extraHousing;
     placeBest(after, extraHousing);
