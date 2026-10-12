@@ -139,3 +139,15 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** none. **Choices to review:** D59 (still Proposed).
 - **Skipped or deferred:** none.
 
+
+## 2026-10-12 — Session end: handoff
+- **Where things stand:** v0.1 is `in progress` with **every task ticked** (T1.1–T1.38, plus T1.20a, T1.31a and T1.36a). Every v0.1 simulator check passes on 5 seeds, `npm run check` is green (642 tests, about 18 s, now enforcing the fast simulator set), and CI is green, including the Playwright smoke and the determinism suite in Chromium and WebKit. The preview at https://jtschick7-cyber.github.io/the-last-hold/preview/ holds the finished milestone.
+- **Waiting on the owner:** the v0.1 playtest (plan v0.1 checklist: play until Keep plus one overnight; about a day of calendar time, an hour or two of play). Also D59 (art choices) is still Proposed.
+- **Next session, once the owner says the playtest passed (plan §0.3):** open the pull request from `milestone/v0.1` to `main` with the template (what changed, what to playtest, known issues, deferred: the Pixel UI Pack frames, D59); merge; tag `v0.1.0`; set v0.1 `Status: complete`; run `npm run sim:accept` and commit `sim/baseline.json`; add a decisions row. If the playtest finds problems, fix them on `milestone/v0.1` first; tuning changes `tunable` values only and needs the full `npm run sim:check` green.
+- **Practical notes:**
+  - A fresh container needs `npm ci` before `npm run check`.
+  - Full simulator: `npm run sim:check` (about 50 s). Reports land in `sim/reports/` (git-ignored). `sim/targets.ts` is locked.
+  - The simulated player's rules are in `src/core/policies/` (D60, refined in D62). The Standard targets are measured on the Opening run; time targets are judged on the Monday start (D62).
+  - Browser tests: `npm run e2e` (Chromium works locally with the preinstalled browsers; WebKit runs only in CI).
+  - Watch: the Standard Keep (14 h) and Light Keep (24 h) sit on the edges of their bands, because the Keep can only happen at a check-in. If the playtest says the pace is off, that's the first place to look.
+  - To check CI after a push: `curl -s "https://api.github.com/repos/jtschick7-cyber/the-last-hold/actions/runs?head_sha=<sha>"`.
