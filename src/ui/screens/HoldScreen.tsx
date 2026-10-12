@@ -1,4 +1,5 @@
 import { ages } from '../../content/ages';
+import { holdSceneId } from '../../content/assets';
 import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { spoken } from '../app/lines';
@@ -6,9 +7,10 @@ import { AgeSheet } from '../sheets/AgeSheet';
 import styles from '../styles/ui.module.css';
 import { BuildList } from './BuildList';
 import { PeasantsPanel } from './PeasantsPanel';
+import { Sprite } from '../widgets/Sprite';
 
-// GDD §9.2: the hold header, the peasants panel, and the build list. The pixel
-// hold scene arrives with the art pipeline (plan T1.29).
+// GDD §9.2: the hold header (pixel hold scene, via the asset manifest), the
+// peasants panel, and the build list.
 export const HoldScreen = () => {
   void version.value;
   const s = game();
@@ -16,6 +18,7 @@ export const HoldScreen = () => {
   return (
     <div>
       <header class={styles.card}>
+        <Sprite id={holdSceneId(s.cycle.age)} fill />
         <div class={styles.row}>
           <h1
             class={`${styles.grow} ${styles.cardTitle}`}

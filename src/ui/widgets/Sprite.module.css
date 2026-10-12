@@ -1,0 +1,24 @@
+.pixel {
+  image-rendering: pixelated;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Palette-tinted box with the kind's silhouette and the subject's initials. */
+.placeholder {
+  composes: pixel;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--c-surface-raised);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 0.25rem;
+  color: var(--c-text);
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 0 var(--c-bg);
+  overflow: hidden;
+}

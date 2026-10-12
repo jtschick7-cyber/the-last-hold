@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { buildingSpriteId } from '../../content/assets';
 import { BUILDING_IDS, buildings, type BuildingId } from '../../content/buildings';
 import { RESOURCE_IDS } from '../../content/resources';
 import { num } from '../../core/balance-access';
@@ -18,6 +19,7 @@ import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { RESOURCE_ICON } from '../widgets/icons';
 import { Num } from '../widgets/Num';
+import { Sprite } from '../widgets/Sprite';
 
 // GDD §9.2 build list: ×1 / ×10 / Max for count buildings, the cost (muted when
 // short), "ready in" at current rates, and the ● best-payback hint.
@@ -54,6 +56,7 @@ const Row = ({ id, mode, hinted }: { id: BuildingId; mode: Mode; hinted: boolean
   return (
     <li class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>
       <div class={styles.row}>
+        <Sprite id={buildingSpriteId(id)} />
         <span class={styles.grow}>
           <strong>{def.name}</strong> <span class={styles.dim}>{status}</span>
           <br />

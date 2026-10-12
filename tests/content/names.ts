@@ -50,6 +50,14 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'clear',
     note: 'Not an influence: a 2023 itch.io jam game "Death & Taxes: The Last Hold".',
   },
+  // Palette candidates (plan T1.28): credits for other people's work, not
+  // in-game names. Real published names, so there's nothing to collide with.
+  ...['DawnBringer 32', 'Endesga 32', 'Zughy 32'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-12',
+    result: 'clear',
+    note: 'Palette name (credit only).',
+  })),
   // Everyday words (GDD §2.3: generic words are allowed). Hamlet and Keep are
   // the generic Age names §2.3 explicitly permits.
   ...[

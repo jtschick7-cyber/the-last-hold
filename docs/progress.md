@@ -88,3 +88,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** Q1 (pixel font).
 - **Choices to review:** D53 and D54 (Proposed).
 - **Skipped or deferred:** T1.20a (pixel font) is waiting on Q1.
+
+## 2026-10-12 — v0.1 section F, part 1: palette candidates, manifest, pack list
+- **Done:** D55 (owner approved D53 and D54, and answered Q1: Kenney Fonts). T1.28 (first half): a swatch page with three free-use 32-color palettes and a Hold mock-up in each, at `/preview/palettes.html`; waiting on the pick (Q2). T1.29: the asset manifest (`src/content/assets.ts`) with a row for every resource icon, building and hold scene; `<Sprite>` with integer scaling and a silhouette placeholder; `tools/gen-placeholders.ts`; a test that every referenced asset has a row and every file exists. The Hold header and build rows now show sprites (placeholders for now). T1.30: `art-src/PACKS-NEEDED.md`, with the four Kenney downloads and step-by-step upload instructions (Q3). `npm run check` is green (597 tests).
+- **Waiting on the owner:** Q2 (pick a palette) and Q3 (upload the four zips).
+- **Next:** T1.31's recolor tool (the pack processing waits for the uploads), T1.32 (credits and the license test), T1.33 (contact sheet).
+- **Choices to review:** D56 (Proposed).
