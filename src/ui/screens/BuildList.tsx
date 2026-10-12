@@ -17,7 +17,7 @@ import { productionRate } from '../../core/systems/production';
 import { bestBuy, payback } from '../../core/systems/valuation';
 import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
-import { RESOURCE_ICON } from '../widgets/icons';
+import { ResourceIcon } from '../widgets/ResourceIcon';
 import { Num } from '../widgets/Num';
 import { Sprite } from '../widgets/Sprite';
 
@@ -80,7 +80,7 @@ const Row = ({ id, mode, hinted }: { id: BuildingId; mode: Mode; hinted: boolean
         <div class={`${styles.cost} ${styles.small}`}>
           {RESOURCE_IDS.filter((r) => cost.bundle[r] > 0).map((r) => (
             <span key={r} class={s.resources[r] >= cost.bundle[r] ? undefined : styles.short}>
-              {RESOURCE_ICON[r]}
+              <ResourceIcon r={r} />
               <Num text={formatNumber(cost.bundle[r])} breakdown={() => cost.breakdown} />
             </span>
           ))}

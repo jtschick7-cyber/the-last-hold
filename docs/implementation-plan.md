@@ -203,7 +203,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### E. UI
 
 - [x] **T1.20 Shell.** Resource bar and rates sheet; tabs **Hold** and **More** only; sheet stack; themes.
-- [?] **T1.20a Pixel font.** The CC0 pixel font for headings and the resource bar (split from T1.20: no CC0 font source is reachable from Claude Code's sessions; see `questions.md` Q1). A system monospace font stands in. Q1 is answered (Kenney Fonts); now waiting on the upload (Q3).
+- [x] **T1.20a Pixel font.** The CC0 pixel font for headings and the resource bar (split from T1.20: no CC0 font source is reachable from Claude Code's sessions; see `questions.md` Q1). Done 2026-10-12: Kenney Pixel (CC0), from the owner's upload.
 - [x] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
 - [x] **T1.22 Age screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
 - [x] **T1.23 Away sheet and Reports** (the last 3 sheets).
@@ -214,11 +214,11 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### F. Art pipeline
 
-- [?] **T1.28 Palette.** Render 2–3 free-use 32-color candidates as a swatch page. 👤 **The owner picks one.** Record it in `palette.ts` and `credits.md`.
+- [x] **T1.28 Palette.** Render 2–3 free-use 32-color candidates as a swatch page. 👤 **The owner picks one.** Record it in `palette.ts` and `credits.md`.
 - [x] **T1.29 Manifest and `<Sprite>`.** Placeholder fallback; `gen-placeholders`.
 - [x] **T1.30 Pack list for the owner.** Write `art-src/PACKS-NEEDED.md` with the exact CC0 packs, links, licenses, and target folders for v0.1 (hold-scene tiles, resource icons, building icons, UI frames). Post it to `questions.md` **one session before T1.31**.
 - [x] **T1.31 Recolor tool.** `tools/recolor.ts` (OKLab nearest color) and `tools/recolor-cli.ts`, tested on generated images.
-- [?] **T1.31a Process the packs.** Unpack the owner's uploads, check each `License.txt`, recolor to the chosen palette, add manifest rows, and add the Kenney font (T1.20a). Waiting on Q2 (palette) and Q3 (uploads).
+- [x] **T1.31a Process the packs.** Unpack the owner's uploads, check each `License.txt`, recolor to the chosen palette, add manifest rows, and add the Kenney font (T1.20a). Done 2026-10-12 with recipes in `tools/art-recipes.ts`; the Pixel UI Pack's frames are kept for the v1.0 art pass (D59).
 - [x] **T1.32 Credits.** Generate `credits.md`; add the CI license test.
 - [x] **T1.33 Contact sheet tool.**
 

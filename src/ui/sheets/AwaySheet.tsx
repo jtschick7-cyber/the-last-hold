@@ -4,7 +4,7 @@ import { residents } from '../../content/residents';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { AwaySummary } from '../../core/sim';
 import styles from '../styles/ui.module.css';
-import { RESOURCE_ICON } from '../widgets/icons';
+import { ResourceIcon } from '../widgets/ResourceIcon';
 
 const MS = 1000;
 
@@ -23,7 +23,7 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
         {RESOURCE_IDS.filter((r) => Math.abs(summary.resources[r]) >= 1).map((r) => (
           <span key={r}>
             {summary.resources[r] >= 0 ? '+' : '−'}
-            {formatNumber(Math.abs(summary.resources[r]))} {RESOURCE_ICON[r]}
+            {formatNumber(Math.abs(summary.resources[r]))} <ResourceIcon r={r} />
           </span>
         ))}
       </div>

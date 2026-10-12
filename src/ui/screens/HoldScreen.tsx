@@ -18,11 +18,13 @@ export const HoldScreen = () => {
   return (
     <div>
       <header class={styles.card}>
-        <Sprite id={holdSceneId(s.cycle.age)} fill />
+        <div style={{ textAlign: 'center' }}>
+          <Sprite id={holdSceneId(s.cycle.age)} scale={2} />
+        </div>
         <div class={styles.row}>
           <h1
             class={`${styles.grow} ${styles.cardTitle}`}
-            style={{ fontSize: '1.1rem', color: 'var(--c-ember)' }}
+            style={{ fontSize: '1.6rem', color: 'var(--c-ember)', textTransform: 'none' }}
           >
             Stanholm — {ages[s.cycle.age].name}
           </h1>

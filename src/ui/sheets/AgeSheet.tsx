@@ -6,7 +6,7 @@ import { ageUpStatus } from '../../core/systems/ages';
 import { dispatch, game, version } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
-import { RESOURCE_ICON } from '../widgets/icons';
+import { ResourceIcon } from '../widgets/ResourceIcon';
 
 // GDD §9.2 "Age ▸": what the next Age restores, its checklist, its costs, and
 // what it unlocks. Past the last built Age: "Coming in a later milestone" with
@@ -74,7 +74,7 @@ export const AgeSheet = () => {
       <div class={styles.cost}>
         {RESOURCE_IDS.filter((r) => cost[r] > 0).map((r) => (
           <span key={r} class={s.resources[r] >= cost[r] ? undefined : styles.short}>
-            {RESOURCE_ICON[r]} {formatNumber(s.resources[r])} / {formatNumber(cost[r])}
+            <ResourceIcon r={r} /> {formatNumber(s.resources[r])} / {formatNumber(cost[r])}
           </span>
         ))}
       </div>

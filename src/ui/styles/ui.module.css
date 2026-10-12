@@ -9,8 +9,9 @@
 
 .cardTitle {
   font-family: var(--font-pixel);
-  font-size: 0.875rem;
-  letter-spacing: 0.06em;
+  font-size: 1.3rem;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--c-text-dim);
   margin: 0 0 var(--space-2);

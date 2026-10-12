@@ -5,6 +5,7 @@ import { formatNumber } from '../../core/format';
 import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
+import { ResourceIcon } from '../widgets/ResourceIcon';
 
 // GDD §9.2 peasants panel: total/housing, idle warning, auto-settle, and a row
 // per job with − / + / fill (GDD §5.1.1: reassigning is free and instant).
@@ -32,8 +33,8 @@ export const PeasantsPanel = () => {
           Auto-settle
         </label>
         <span class={`${styles.small} ${styles.dim}`}>
-          next costs{' '}
-          <Num text={`${formatNumber(cost.value)} 🌾`} breakdown={() => cost.breakdown} />
+          next costs <Num text={formatNumber(cost.value)} breakdown={() => cost.breakdown} marked />{' '}
+          <ResourceIcon r="food" />
         </span>
       </div>
       {idle > 0 && (

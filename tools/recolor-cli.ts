@@ -4,17 +4,12 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { palette } from '../src/content/palette';
-import { paletteCandidates } from '../src/content/palette-candidates';
 import { recolorPng } from './recolor';
 
 const paletteFor = (id: string): readonly string[] => {
-  if (id === 'chosen') {
-    if (!palette) throw new Error('No palette chosen yet (src/content/palette.ts).');
-    return palette.colors;
-  }
-  const c = paletteCandidates.find((p) => p.id === id);
-  if (!c) throw new Error(`Unknown palette "${id}".`);
-  return c.colors;
+  if (id !== 'chosen') throw new Error('The palette id is "chosen" (src/content/palette.ts).');
+  if (!palette) throw new Error('No palette chosen yet (src/content/palette.ts).');
+  return palette.colors;
 };
 
 const main = (): void => {

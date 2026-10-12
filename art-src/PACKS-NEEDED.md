@@ -19,3 +19,7 @@ Everything here is **CC0** (public domain) by **Kenney** (kenney.nl). Credit is 
 6. Under "Commit changes", keep **"Commit directly to the `milestone/v0.1` branch"** selected and click **Commit changes**.
 
 If a download page has moved, the mirror link has the same pack. If Kenney has renamed a pack, pick the closest match and say which one you used.
+
+## Status
+
+Uploaded by the owner on 2026-10-12. Each zip's `License.txt` says CC0. To rebuild the art: unzip each `kenney_<pack>.zip` into `art-src/packs/<pack>/` (that folder is git-ignored), then run `npx vite-node tools/build-art.ts`.

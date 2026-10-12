@@ -81,6 +81,7 @@ export default tseslint.config(
       'node_modules/',
       'sim/reports/',
       'tests/lint/fixtures/',
+      'art-src/',
     ],
   },
   js.configs.recommended,

@@ -1,6 +1,6 @@
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
-import { paletteCandidates } from '../../src/content/palette-candidates';
+import { palette } from '../../src/content/palette';
 import { hexToRgb, nearestIn, rgbToOklab } from '../../tools/color/oklab';
 import { recolorPng } from '../../tools/recolor';
 
@@ -23,13 +23,10 @@ describe('OKLab nearest color (technical design §12.2)', () => {
     expect(near([230, 40, 30])).toEqual([255, 0, 0]);
   });
 
-  it('every candidate palette has 32 distinct valid colors', () => {
-    for (const p of paletteCandidates) {
-      expect(p.colors).toHaveLength(32);
-      expect(new Set(p.colors).size).toBe(32);
-      for (const c of p.colors) expect(c).toMatch(/^[0-9a-f]{6}$/);
-      for (const c of Object.values(p.ui)) expect(p.colors, `${p.id} ui ${c}`).toContain(c);
-    }
+  it('the chosen palette has 32 distinct valid colors', () => {
+    expect(palette?.colors).toHaveLength(32);
+    expect(new Set(palette?.colors).size).toBe(32);
+    for (const c of palette?.colors ?? []) expect(c).toMatch(/^[0-9a-f]{6}$/);
   });
 });
 

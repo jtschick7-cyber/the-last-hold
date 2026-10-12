@@ -3,8 +3,8 @@ import { BUILDING_IDS, type BuildingId } from './buildings';
 import { RESOURCE_IDS, type ResourceId } from './resources';
 
 // Technical design §12.1: every image the game shows has a manifest row.
-// Swapping art means replacing a file or changing a row, never code. Rows with
-// source 'placeholder' have no file yet; <Sprite> draws the fallback for them.
+// Swapping art means replacing a file or changing a row, never code. A row with
+// source 'placeholder' has no file yet; <Sprite> draws the fallback for it.
 // GDD §9.12 sizes: 16 px icons, 32 px buildings, 64 px portraits.
 export type AssetKind = 'icon' | 'building' | 'scene' | 'portrait';
 
@@ -45,29 +45,66 @@ export const resourceIconId = (r: ResourceId): string => `icon.resource.${r}`;
 export const buildingSpriteId = (b: BuildingId): string => `building.${b}`;
 export const holdSceneId = (a: AgeId): string => `scene.hold.${a}`;
 
+// Plan T1.31a: the v0.1 images, built from the owner's CC0 Kenney packs by
+// tools/build-art.ts (recipes in tools/art-recipes.ts) and recolored to the
+// palette. Rows here and recipes there must agree (tests/tools/art.test.ts).
+const KENNEY = 'Kenney (www.kenney.nl)';
+const TINY_TOWN = { pack: 'Tiny Town', url: 'https://kenney.nl/assets/tiny-town' } as const;
+const ONE_BIT = { pack: '1-Bit Pack', url: 'https://kenney.nl/assets/1-bit-pack' } as const;
+
+const fromPack = (
+  id: string,
+  kind: AssetKind,
+  size: readonly [number, number],
+  label: string,
+  file: string,
+  src: { pack: string; url: string },
+  glyph?: string,
+): AssetEntry => ({
+  id,
+  kind,
+  size,
+  label,
+  file,
+  ...src,
+  source: 'pack',
+  license: 'CC0',
+  credit: KENNEY,
+  ...(glyph ? { glyph } : {}),
+});
+
+const ICON_PACK: Record<ResourceId, { pack: string; url: string }> = {
+  food: ONE_BIT,
+  wood: TINY_TOWN,
+  iron: TINY_TOWN,
+  silver: ONE_BIT,
+};
+
 export const assets: readonly AssetEntry[] = [
-  ...RESOURCE_IDS.map((r): AssetEntry => ({
-    id: resourceIconId(r),
-    kind: 'icon',
-    size: [16, 16],
-    label: titled(r),
-    glyph: GLYPH[r],
-    source: 'placeholder',
-  })),
-  ...BUILDING_IDS.map((b): AssetEntry => ({
-    id: buildingSpriteId(b),
-    kind: 'building',
-    size: [32, 32],
-    label: titled(b),
-    source: 'placeholder',
-  })),
-  ...AGE_IDS.map((a): AssetEntry => ({
-    id: holdSceneId(a),
-    kind: 'scene',
-    size: [160, 64],
-    label: `The hold, ${titled(a)}`,
-    source: 'placeholder',
-  })),
+  ...RESOURCE_IDS.map((r) =>
+    fromPack(
+      resourceIconId(r),
+      'icon',
+      [16, 16],
+      titled(r),
+      `icons/${r}.png`,
+      ICON_PACK[r],
+      GLYPH[r],
+    ),
+  ),
+  ...BUILDING_IDS.map((b) =>
+    fromPack(buildingSpriteId(b), 'building', [32, 32], titled(b), `buildings/${b}.png`, TINY_TOWN),
+  ),
+  ...AGE_IDS.map((a) =>
+    fromPack(
+      holdSceneId(a),
+      'scene',
+      [160, 64],
+      `The hold, ${titled(a)}`,
+      `scenes/hold-${a}.png`,
+      TINY_TOWN,
+    ),
+  ),
 ];
 
 export const assetById: ReadonlyMap<string, AssetEntry> = new Map(assets.map((a) => [a.id, a]));

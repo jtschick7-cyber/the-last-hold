@@ -157,3 +157,6 @@ docs/outline.md
 # Simulator reports (regenerated)
 sim/reports/
 dist-preview/
+
+# Unpacked art packs (reproducible from the zips in art-src/)
+art-src/packs/

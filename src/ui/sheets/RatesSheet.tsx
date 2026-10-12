@@ -3,7 +3,7 @@ import { formatRate } from '../../core/format';
 import { productionRate } from '../../core/systems/production';
 import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
-import { RESOURCE_ICON } from '../widgets/icons';
+import { ResourceIcon } from '../widgets/ResourceIcon';
 import { Num } from '../widgets/Num';
 
 // GDD §9.1 / §5.0: per-minute rates by default, with a per-hour toggle.
@@ -34,7 +34,7 @@ export const RatesSheet = () => {
           const rate = productionRate(s, r);
           return (
             <li key={r} class={`${styles.row} ${styles.divider}`}>
-              <span aria-hidden="true">{RESOURCE_ICON[r]}</span>
+              <ResourceIcon r={r} />
               <span class={styles.grow}>{resources[r].name}</span>
               <Num
                 text={`${formatRate(rate.value * scale)}/${perHour ? 'h' : 'min'}`}

@@ -5,7 +5,7 @@ import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { RatesSheet } from '../sheets/RatesSheet';
 import css from './ResourceBar.module.css';
-import { RESOURCE_ICON } from './icons';
+import { ResourceIcon } from './ResourceIcon';
 
 // GDD §9.1: always visible; tapping it opens the rates sheet. ⚠️ for idle hands.
 export const ResourceBar = () => {
@@ -20,7 +20,7 @@ export const ResourceBar = () => {
           class={css.item}
           title={`${resources[r].name}: ${formatExact(s.resources[r])}`}
         >
-          <span aria-hidden="true">{RESOURCE_ICON[r]}</span>
+          <ResourceIcon r={r} />
           <span class={css.amount}>{formatNumber(s.resources[r])}</span>
           <span class="sr-only">{resources[r].name}</span>
         </span>

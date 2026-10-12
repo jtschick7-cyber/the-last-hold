@@ -101,3 +101,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** section G, the simulator (T1.34–T1.37), while the art inputs are pending.
 - **Open questions:** Q2 (palette), Q3 (uploads).
 - **Choices to review:** D56 and D57 (Proposed).
+
+## 2026-10-12 — v0.1 section F, part 3: palette and art in
+- **Done:** D58 (owner: Zughy 32, packs uploaded, D56 and D57 approved). T1.28: Zughy 32 is recorded in `palette.ts`, the UI is rethemed to it (dark and light), and the candidate page is gone. T1.31a: all four zips checked (each `License.txt` says CC0), with 16 images composed and recolored by recipe: 10 buildings, 4 resource icons, and the Hamlet and Keep hold scenes. They replace the placeholders everywhere, including the resource bar and costs. T1.20a: the Kenney Pixel font for headings and the resource bar. Credits now list the palette, the packs and the font. Checked in the browser: the font loads under the preview path, there are no broken images, and both themes read well. `npm run check` is green (608 tests).
+- **Deferred:** the Pixel UI Pack's frames, to the v1.0 art pass (D59). Say if you'd rather have them in v0.1.
+- **Next:** section G, the simulator (T1.34–T1.37), then H (T1.38, Playwright).
+- **Open questions:** none.
+- **Choices to review:** D59 (Proposed).

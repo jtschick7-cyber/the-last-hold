@@ -21,13 +21,13 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a). Kenney's fonts are made for exactly this and are CC0. I'd fold it into the T1.30 pack list so you download once.
 - **Answer (owner):**
 
-### Q2 — Which palette (blocks T1.28) — open
+### Q2 — Which palette (blocks T1.28) — answered
 - **Question:** every piece of art gets recolored to one 32-color palette (GDD §9.12). Which of the three candidates?
 - **Where to look:** https://jtschick7-cyber.github.io/the-last-hold/preview/palettes.html shows each palette's 32 colors and a small Hold mock-up in it.
 - **Options:** (a) DawnBringer 32: earthy and balanced, a classic for fantasy pixel art. (b) Endesga 32: brighter and more saturated, cooler darks. (c) Zughy 32: warm and muted, with plum-brown darks.
 - **Recommendation:** (c) Zughy 32. Its warm, muted darks fit "heroic with dark edges" and the candlelit theme best, and its greens and browns suit fields, timber and stone. (a) is a close second.
-- **Answer (owner):**
+- **Answer (owner):** Zughy 32, 2026-10-12 (D58).
 
-### Q3 — Download the art packs and the font (blocks T1.31 and T1.20a) — open
+### Q3 — Download the art packs and the font (blocks T1.31 and T1.20a) — answered
 - **What's needed:** four CC0 zip files from Kenney, uploaded to the repository. The exact list and step-by-step instructions are in `art-src/PACKS-NEEDED.md`.
-- **Answer (owner):** say "uploaded" when it's done.
+- **Answer (owner):** uploaded, 2026-10-12 (D58).
