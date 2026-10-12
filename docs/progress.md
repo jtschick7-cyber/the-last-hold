@@ -108,3 +108,17 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** section G, the simulator (T1.34–T1.37), then H (T1.38, Playwright).
 - **Open questions:** none.
 - **Choices to review:** D59 (Proposed).
+
+## 2026-10-12 — Session end: handoff
+- **Where things stand:** v0.1 is `in progress`. Sections A–F are done (T1.1–T1.33, plus T1.20a and T1.31a). What's left: **section G** (T1.34 simulator CLI and report, T1.35 policies plus the debug "run policy" button, T1.36 v0.1 checks with `sim/targets.ts` locked, T1.37 tuning pass) and **section H** (T1.38 Playwright smoke plus cross-engine determinism). Then the milestone-end steps (plan §0.3): owner playtest of the preview, then the PR, merge and `v0.1.0` tag.
+- **Decisions waiting on the owner:** D59 (Proposed). Everything else up to D58 is decided.
+- **Open questions:** none.
+- **Branches:** work goes to **`milestone/v0.1`** (owner-approved; every push redeploys the preview at https://jtschick7-cyber.github.io/the-last-hold/preview/). This session also mirrored each push to `claude/v0-0-init-g3mpvm`; a new session uses whatever branch it's assigned, plus `milestone/v0.1`. v0.0 is merged and tagged `v0.0.0`.
+- **Hint for the simulator:** while making the save fixture, a scripted Mine purchase at minute 5 was refused (40 food not yet reached after a Cottage and settles). GDD §5.1.4 expects a Mine within 5 minutes under the Opening policy; if T1.36 misses, the GDD's own fix is raising starting wood to 70 in `src/content/start.ts` (tunable, D44). Don't move the target.
+- **Practical notes for the next session:**
+  - Gate every commit on `npm run check` actually exiting 0 (one push went out red when a piped command hid the failure).
+  - Prettier reformats long lines, so scripted find-and-replace edits often silently miss. Assert that the match happened, or use the Edit tool.
+  - The session's network blocks kenney.nl, lospec.com, opengameart.org and github.io (the live preview can't be opened from here). GitHub's own API works for this repository, and public repos can be read with `git clone --filter=blob:none --sparse`.
+  - For browser checks: `npm run build`, copy `dist/` into a folder served at `/the-last-hold/` (`python3 -m http.server`), and drive it with the global Playwright (`$(npm root -g)/playwright`; browsers in `/opt/pw-browsers`). T1.38 makes this a proper test.
+  - To check CI after a push: `curl -s "https://api.github.com/repos/jtschick7-cyber/the-last-hold/actions/runs?head_sha=<sha>"`.
+  - Art is rebuilt from the zips in `art-src/`: unzip each into `art-src/packs/<pack>/` (git-ignored), then `npx vite-node tools/build-art.ts`, `tools/gen-credits.ts` and `tools/contact-sheet.ts`.
