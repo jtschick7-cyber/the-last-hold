@@ -232,7 +232,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### H. Browser tests
 
-- [ ] **T1.38 Playwright.**
+- [x] **T1.38 Playwright.** *(D61; WebKit runs in CI.)*
   - **Smoke** (phone viewport): load → buy a Cottage → reload → state persists → offline reload works.
   - Run the **determinism suite in WebKit and Chromium** (technical design §14).
 

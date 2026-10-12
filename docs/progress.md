@@ -122,3 +122,12 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
   - For browser checks: `npm run build`, copy `dist/` into a folder served at `/the-last-hold/` (`python3 -m http.server`), and drive it with the global Playwright (`$(npm root -g)/playwright`; browsers in `/opt/pw-browsers`). T1.38 makes this a proper test.
   - To check CI after a push: `curl -s "https://api.github.com/repos/jtschick7-cyber/the-last-hold/actions/runs?head_sha=<sha>"`.
   - Art is rebuilt from the zips in `art-src/`: unzip each into `art-src/packs/<pack>/` (git-ignored), then `npx vite-node tools/build-art.ts`, `tools/gen-credits.ts` and `tools/contact-sheet.ts`.
+
+## 2026-10-12 — v0.1 sections G and H: simulator and browser tests
+- **Done:** T1.34: the simulator (`npm run sim`, `sim:check`, `sim:accept`), playing the real game on a virtual clock from Monday 07:00 and Saturday 09:00, with JSON and Markdown reports and a baseline diff. The full suite (4 players × 5 seeds × 2 starts × 14 days) takes about 50 s. T1.35: the Opening, Standard, Light and Heavy players (D60), and a debug-panel button that plays the Standard player for N hours. T1.36: `sim/targets.ts` copies the GDD §6.2–6.3 tables row for row (now locked), with one check per v0.1 row. T1.38: a Playwright smoke test on the real build at phone size (buy, reload, reload offline), and the determinism scenario compared with Node in Chromium and WebKit (D61). `npm run check` is green (640 tests, about 18 s).
+- **Fixed:** the ● hint counted the same open job slot for every Cottage while beds already stood empty (D60 point 3).
+- **Results (today's numbers):** first Cottage 0 min ✓, 10 peasants 3 h ✓, Heavy Keep 14 h ✓, every engagement check ✓. Missed: first Mine 7.7 min (target 5), Mill level 3 at 5.5 h (target 2–5), Keep 24 h Standard (target 8–14) and 38 h Light (target ≤ 24). Silver is what holds the Keep back.
+- **Blocked:** T1.36a (enforcing the checks inside `npm run check`) and T1.37 (tuning) wait on **Q4**. Until then `check` runs the simulator and reports without enforcing; `sim:check` and `sim.yml` enforce and stay red.
+- **Next:** answer Q4, then tune (T1.37) and turn enforcement on, then the milestone-end playtest.
+- **Choices to review:** D60, D61 (Proposed).
+- **Checked in CI:** WebKit can't run in this session; the CI run passed both the smoke test and the determinism suite in Chromium and WebKit.
