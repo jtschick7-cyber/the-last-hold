@@ -60,3 +60,54 @@
   overflow-y: auto;
   padding: 0 var(--space-3) var(--space-4);
 }
+
+@media (min-width: 900px) {
+  .backdrop {
+    justify-content: flex-end;
+    align-items: stretch;
+    background: rgb(0 0 0 / 0.25);
+  }
+
+  .sheet {
+    max-width: 26rem;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid var(--c-border);
+  }
+
+  .handleArea {
+    display: none;
+  }
+}
+
+/* The right column stays open: no dimming, and the page behind stays usable. */
+@media (min-width: 1300px) {
+  .backdrop {
+    left: auto;
+    width: 26rem;
+    background: none;
+  }
+
+  .sheet {
+    max-width: none;
+  }
+
+  .placeholder {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 26rem;
+    border-left: 1px solid var(--c-border);
+    background: var(--c-surface);
+    color: var(--c-text-dim);
+    padding: var(--space-4) var(--space-3);
+  }
+}
+
+@media (max-width: 1299px) {
+  .placeholder {
+    display: none;
+  }
+}

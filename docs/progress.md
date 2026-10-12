@@ -79,3 +79,12 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** Q1 (pixel font).
 - **Choices to review:** D53 (Proposed).
 - **Skipped or deferred:** the pixel hold scene waits for the art pipeline (T1.29).
+
+## 2026-10-12 — v0.1 section E, part 2: More, debug, diagnostics
+- **Done:** T1.23: Reports keep the last three away sheets. T1.24: breakdowns everywhere, on long-press, ⓘ, Enter, or desktop hover; the 900 px sidebar layout and the 1300 px always-open details panel. T1.25: the More menu with Reports, Save & Data (save now, copy and import codes, download and load the file, restore the backup, reset behind two confirmations), Settings (theme, ● hint, rate unit, reduce motion), the install tip (plus a one-time banner) with the iPhone storage note, and About & Credits (build details, debug-used flag). T1.26: the debug panel (`?debug`): time skip through the offline path, add resources, set the seed, unlock Keep, raw state, catch-up timing. T1.27: diagnostics, with errors captured from anywhere, More → Diagnostics, "Copy diagnostics" (build, versions, browser, errors, save code), and a calm crash screen. Checked in a phone-sized and a desktop browser: a 3 h absence gives the away sheet and a report; a copied code imports back; a damaged code is refused with its reason; the debug skip works and marks the save; a thrown error shows in Diagnostics and copies; reset works; hover breakdowns and the desktop layout render. `npm run check` is green (594 tests).
+- **Moved:** the debug panel's "run the simulator" button now belongs to T1.35, since it needs the simulator.
+- **Fixed:** the plan's v0.1 "Before you start" table pointed at the wrong task numbers for the palette and the art packs (it said T1.26–T1.28; they are T1.28, T1.30 and T1.31).
+- **Next:** section F, the art pipeline: T1.28 (palette candidates for you to pick), T1.29 (manifest and `<Sprite>`), T1.30 (the pack list for you to download).
+- **Open questions:** Q1 (pixel font).
+- **Choices to review:** D53 and D54 (Proposed).
+- **Skipped or deferred:** T1.20a (pixel font) is waiting on Q1.

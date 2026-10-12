@@ -1,3 +1,4 @@
+import { useRef, useState } from 'preact/hooks';
 import type { Breakdown } from '../../core/breakdown/breakdown';
 import { openSheet } from '../app/sheets';
 import { BreakdownView } from '../sheets/BreakdownView';
@@ -12,15 +13,35 @@ export interface NumProps {
   marked?: boolean;
 }
 
-/** A number that opens its breakdown on long-press, ⓘ tap, or keyboard. */
+const HOVER_DELAY_MS = 350;
+
+/**
+ * GDD §9.1 / §5.0: a number whose breakdown opens on long-press, an ⓘ tap, or
+ * Enter; on desktop, hovering shows it in a popover.
+ */
 export const Num = ({ text, breakdown, marked }: NumProps) => {
+  const [hover, setHover] = useState<Breakdown | null>(null);
+  const timer = useRef<number | null>(null);
   const open = (): void => {
+    setHover(null);
     const b = breakdown();
     openSheet(b.label, () => <BreakdownView breakdown={b} />);
   };
   const press = useLongPress(open);
+  const endHover = (): void => {
+    if (timer.current !== null) window.clearTimeout(timer.current);
+    timer.current = null;
+    setHover(null);
+  };
   return (
-    <span>
+    <span
+      class={styles.numWrap}
+      onPointerEnter={(e) => {
+        if (e.pointerType !== 'mouse') return;
+        timer.current = window.setTimeout(() => setHover(breakdown()), HOVER_DELAY_MS);
+      }}
+      onPointerLeave={endHover}
+    >
       <button
         type="button"
         class={styles.num}
@@ -38,6 +59,11 @@ export const Num = ({ text, breakdown, marked }: NumProps) => {
         >
           ⓘ
         </button>
+      )}
+      {hover && (
+        <span class={styles.popover} role="tooltip">
+          <BreakdownView breakdown={hover} />
+        </span>
       )}
     </span>
   );

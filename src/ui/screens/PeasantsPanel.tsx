@@ -19,7 +19,7 @@ export const PeasantsPanel = () => {
     <section class={styles.card} aria-labelledby="peasants-title">
       <h2 id="peasants-title" class={styles.cardTitle}>
         Peasants{' '}
-        <Num text={`${s.peasants.total}/${house.value}`} breakdown={() => house.breakdown} />
+        <Num text={`${s.peasants.total}/${house.value}`} breakdown={() => house.breakdown} marked />
         {idle > 0 && <span class={styles.warn}>idle {idle} ⚠️</span>}
       </h2>
       <div class={styles.row}>

@@ -90,3 +90,48 @@
   padding: var(--space-2) var(--space-3);
   z-index: 30;
 }
+
+/* GDD §9.1: at 900 px and wider, navigation becomes a left sidebar and details
+   open in a right-hand panel; at 1300 px the right column stays open. */
+@media (min-width: 900px) {
+  .app {
+    padding-left: 11rem;
+  }
+
+  .tabs {
+    top: 0;
+    bottom: 0;
+    right: auto;
+    width: 11rem;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: calc(env(safe-area-inset-top) + 4rem);
+    border-top: none;
+    border-right: 1px solid var(--c-border);
+  }
+
+  .tab,
+  .tabOn {
+    flex: 0 0 auto;
+    text-align: left;
+    padding: 0 var(--space-4);
+  }
+
+  .tabOn {
+    box-shadow: inset 3px 0 0 var(--c-ember);
+  }
+
+  .main {
+    padding-bottom: var(--space-4);
+  }
+}
+
+@media (min-width: 1300px) {
+  .app {
+    padding-right: 26rem;
+  }
+
+  .main {
+    max-width: 40rem;
+  }
+}

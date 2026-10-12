@@ -144,3 +144,28 @@
 .divider {
   border-top: 1px solid var(--c-border);
 }
+
+.numWrap {
+  position: relative;
+  display: inline-block;
+}
+
+.popover {
+  position: absolute;
+  z-index: 15;
+  top: 100%;
+  right: 0;
+  width: min(22rem, 80vw);
+  padding: var(--space-2) var(--space-3);
+  background: var(--c-surface-raised);
+  border: 1px solid var(--c-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.35);
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--c-text);
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: system-ui, sans-serif;
+}

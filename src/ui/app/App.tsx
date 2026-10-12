@@ -4,6 +4,7 @@ import { buildInfo } from '../../platform/build-info';
 import type { UpdateHandle } from '../../platform/service-worker';
 import { HoldScreen } from '../screens/HoldScreen';
 import { MoreScreen } from '../screens/MoreScreen';
+import { InstallSheet } from '../more/InfoSheets';
 import { AwayView } from '../sheets/AwaySheet';
 import styles from '../styles/ui.module.css';
 import { ResourceBar } from '../widgets/ResourceBar';
@@ -13,12 +14,16 @@ import {
   awaySummary,
   blocked,
   catchUpProgress,
+  currentScreen,
+  dismissInstallTip,
   game,
+  installTipDue,
   loadNotes,
   saveNow,
   savingUnavailable,
   version,
 } from './runtime';
+import { ErrorBoundary } from './ErrorBoundary';
 import { openSheet } from './sheets';
 import { UpdateBanner } from './UpdateBanner';
 
@@ -39,6 +44,27 @@ const Ribbon = () =>
 
 const Notices = () => (
   <>
+    {installTipDue.value && (
+      <div class={css.notice}>
+        <p>
+          <strong>Tip:</strong> install the game before you play, so your save stays safe. On iPhone
+          the installed app keeps its own storage, separate from Safari.
+        </p>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
+            dismissInstallTip();
+            openSheet('Install the game', () => <InstallSheet />);
+          }}
+        >
+          How?
+        </button>{' '}
+        <button type="button" class={styles.btn} onClick={dismissInstallTip}>
+          Got it
+        </button>
+      </div>
+    )}
     {savingUnavailable.value && (
       <p class={css.notice}>Saving isn't working in this browser. Export a save code often.</p>
     )}
@@ -69,8 +95,15 @@ export const App = () => {
   }, [awaySummary.value]);
 
   useEffect(() => {
-    if (version.value > 0) document.documentElement.dataset.theme = game().settings.theme;
+    if (version.value === 0) return;
+    const { theme, reduceMotion } = game().settings;
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.motion = reduceMotion;
   }, [version.value]);
+
+  useEffect(() => {
+    currentScreen.value = tab.value;
+  }, [tab.value]);
 
   if (blocked.value) {
     return (
@@ -90,7 +123,7 @@ export const App = () => {
       <ResourceBar />
       <main class={css.main}>
         <Notices />
-        {tab.value === 'hold' ? <HoldScreen /> : <MoreScreen />}
+        <ErrorBoundary>{tab.value === 'hold' ? <HoldScreen /> : <MoreScreen />}</ErrorBoundary>
       </main>
       <nav class={css.tabs} aria-label="Screens">
         {TABS.map((t) => (
@@ -105,7 +138,9 @@ export const App = () => {
           </button>
         ))}
       </nav>
-      <SheetHost />
+      <ErrorBoundary>
+        <SheetHost />
+      </ErrorBoundary>
       {progress && (
         <div class={css.catchUp} role="status">
           Catching up… {Math.round((progress.done / progress.total) * 100)}%

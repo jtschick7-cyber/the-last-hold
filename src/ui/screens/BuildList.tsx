@@ -59,7 +59,11 @@ const Row = ({ id, mode, hinted }: { id: BuildingId; mode: Mode; hinted: boolean
           <br />
           <span class={`${styles.small} ${styles.dim}`}>{describeBuilding(id)}</span>
         </span>
-        {hinted && <Num text="●" breakdown={() => payback(s, id).breakdown} />}
+        {hinted && (
+          <span class={styles.hint}>
+            <Num text="●" breakdown={() => payback(s, id).breakdown} />
+          </span>
+        )}
         <button
           type="button"
           class={affordable && !atMax ? styles.btnPrimary : styles.btn}

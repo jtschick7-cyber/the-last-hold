@@ -18,6 +18,8 @@ export type LoadOutcome =
 
 export interface SaveStore {
   load(): LoadOutcome;
+  /** The backup slot's save time and contents, if it holds a loadable save. */
+  backup(): { savedAt: number; loaded: Validated } | null;
   /** Writes the main slot (and the backup when due). False if storage refused. */
   save(state: GameState): boolean;
 }
@@ -52,6 +54,13 @@ export const createSaveStore = (storage: ChannelStorage, now: () => number): Sav
   };
 
   return {
+    backup: () => {
+      const result = read(SAVE_KEYS.backup);
+      if (!result?.ok) return null;
+      const text = storage.get(SAVE_KEYS.backup) ?? '{}';
+      const savedAt = (JSON.parse(text) as { savedAt?: unknown }).savedAt;
+      return { savedAt: typeof savedAt === 'number' ? savedAt : 0, loaded: result.value };
+    },
     load: () => {
       const problems: string[] = [];
       for (const key of [SAVE_KEYS.main, SAVE_KEYS.backup]) {

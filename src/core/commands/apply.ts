@@ -1,6 +1,7 @@
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { buy, upgrade } from './build';
+import { addResources, setSeed, skip, unlockAge } from './debug';
 import { add, fill, remove, setAutoSettle, setPriority } from './peasants';
 import { setSettings } from './settings';
 import { refuse, type ApplyResult, type Command } from './types';
@@ -8,10 +9,10 @@ import { refuse, type ApplyResult, type Command } from './types';
 /**
  * Technical design §4.3: applies one player action. Validates first, so a
  * refused command never changes state. The caller has already advanced the
- * state to `_now`; no v0.1 command needs the time itself (contracts will, v0.2).
- * A clock moved backward is ignored, never refused (D21).
+ * state to `now`; only the debug time skip uses it in v0.1. A clock moved
+ * backward is ignored, never refused (D21).
  */
-export const apply = (state: GameState, cmd: Command, _now: number): ApplyResult => {
+export const apply = (state: GameState, cmd: Command, now: number): ApplyResult => {
   switch (cmd.type) {
     case 'build.buy':
       return buy(state, cmd.building, cmd.count);
@@ -31,6 +32,14 @@ export const apply = (state: GameState, cmd: Command, _now: number): ApplyResult
       return ageUp(state);
     case 'settings.set':
       return setSettings(state, cmd.patch);
+    case 'debug.skip':
+      return skip(state, cmd.ms, now);
+    case 'debug.addResources':
+      return addResources(state, cmd.bundle);
+    case 'debug.setSeed':
+      return setSeed(state, cmd.seed);
+    case 'debug.unlockAge':
+      return unlockAge(state, cmd.age);
     default:
       return refuse('Unknown command.');
   }

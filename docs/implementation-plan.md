@@ -161,8 +161,8 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 | Owner task | Needed by | When |
 |---|---|---|
 | Approve any replacement names | T1.6 | When T1.6 raises them in `questions.md` |
-| **Pick the palette** from the rendered candidates | T1.26 | When T1.26 posts the swatch page |
-| **Download the CC0 packs** from the exact list T1.27 gives you (pack names, links, licenses) into `art-src/packs/<pack>/` | T1.28 | **One session ahead:** T1.27 delivers the list a session before T1.28 needs the files |
+| **Pick the palette** from the rendered candidates | T1.28 | When T1.28 posts the swatch page |
+| **Download the CC0 packs** from the exact list T1.30 gives you (pack names, links, licenses) into `art-src/packs/<pack>/` | T1.31 | **One session ahead:** T1.30 delivers the list a session before T1.31 needs the files |
 
 ### A. Foundations
 
@@ -206,11 +206,11 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 - [?] **T1.20a Pixel font.** The CC0 pixel font for headings and the resource bar (split from T1.20: no CC0 font source is reachable from Claude Code's sessions; see `questions.md` Q1). A system monospace font stands in.
 - [x] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
 - [x] **T1.22 Age screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
-- [ ] **T1.23 Away sheet and Reports** (the last 3 sheets).
-- [ ] **T1.24 Breakdown sheet.** Long-press and hover; ⓘ markers.
-- [ ] **T1.25 More menu.** Save & Data; Settings; About & Credits (version, channel, commit, `debugUsed`); and the **install tip, including the iPhone storage note** (technical design §9.1).
-- [ ] **T1.26 Debug panel** (`?debug`). Time skip through the offline path, add resources, seed, Age unlock, raw state, simulator run, timing readout.
-- [ ] **T1.27 Diagnostics** (technical design §15.1). The error capture list, **More → Diagnostics**, "Copy diagnostics", and the crash fallback screen.
+- [x] **T1.23 Away sheet and Reports** (the last 3 sheets).
+- [x] **T1.24 Breakdown sheet.** Long-press and hover; ⓘ markers.
+- [x] **T1.25 More menu.** Save & Data; Settings; About & Credits (version, channel, commit, `debugUsed`); and the **install tip, including the iPhone storage note** (technical design §9.1).
+- [x] **T1.26 Debug panel** (`?debug`). Time skip through the offline path, add resources, seed, Age unlock, raw state, timing readout. *(The "simulator run" button moved to T1.35, since it needs the simulator.)*
+- [x] **T1.27 Diagnostics** (technical design §15.1). The error capture list, **More → Diagnostics**, "Copy diagnostics", and the crash fallback screen.
 
 ### F. Art pipeline
 
@@ -224,7 +224,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### G. Simulator
 
 - [ ] **T1.34 Simulator CLI and report.** Virtual clock, seeds, JSON and Markdown, baseline diff, `sim:accept`, and the **fast set** for `check` (technical design §11.2).
-- [ ] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation.
+- [ ] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation. Then add the debug panel's "run the Standard policy for N hours" button (moved from T1.26).
 - [ ] **T1.36 v0.1 checks**, with `sim/targets.ts` locked.
 - [ ] **T1.37 Tuning pass.** `tunable` constants only (§0.6).
 

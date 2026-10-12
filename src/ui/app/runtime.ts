@@ -7,10 +7,18 @@ import { idlePeasants } from '../../core/systems/housing';
 import { startAutosave } from '../../platform/autosave';
 import { buildInfo } from '../../platform/build-info';
 import { now } from '../../platform/clock';
+import { isInstalledApp } from '../../platform/install';
 import { requestPersistentStorage } from '../../platform/persist';
 import { randomSeed } from '../../platform/random-seed';
 import { createSaveStore, type SaveStore } from '../../platform/save-store';
-import { browserBackend, createChannelStorage, type KeyValueBackend } from '../../platform/storage';
+import {
+  browserBackend,
+  createChannelStorage,
+  type ChannelStorage,
+  type KeyValueBackend,
+} from '../../platform/storage';
+import { captureErrors, DIAGNOSTICS_KEEP, type CapturedError } from '../../platform/diagnostics';
+import { sideList, type SideList } from '../../platform/side-store';
 import { noticeChanges, type Watched } from './lines';
 
 // Technical design §6.3 and §10: one mutable game state, plus a `version` signal
@@ -32,10 +40,39 @@ export const blocked = signal<string | null>(null);
 export const loadNotes = signal<string[]>([]);
 export const savingUnavailable = signal(false);
 export const lastSavedAt = signal<number | null>(null);
+/** Technical design §15: the last catch-up's duration, for checking phones. */
+export const lastCatchUpMs = signal<number | null>(null);
+/** The screen name recorded with captured errors (technical design §15.1). */
+export const currentScreen = signal('hold');
+
+export interface Report {
+  at: number;
+  summary: AwaySummary;
+}
+const REPORTS_KEEP = 3;
 
 let state: GameState | null = null;
 let store: SaveStore | null = null;
+let channelStorage: ChannelStorage | null = null;
 let canSave = true;
+
+/** GDD §9.10 Reports: the last three away sheets, beside the save. */
+export const reports = (): SideList<Report> | null =>
+  channelStorage ? sideList<Report>(channelStorage, 'reports', REPORTS_KEEP) : null;
+export const diagnostics = (): SideList<CapturedError> | null =>
+  channelStorage ? sideList<CapturedError>(channelStorage, 'diagnostics', DIAGNOSTICS_KEEP) : null;
+export const saveStore = (): SaveStore | null => store;
+
+/** Technical design §9.1: the install tip shows once, outside the installed app. */
+export const installTipDue = signal(false);
+export const dismissInstallTip = (): void => {
+  installTipDue.value = false;
+  try {
+    channelStorage?.set('installTipSeen', '1');
+  } catch {
+    // Not fatal: the tip may simply show again next time.
+  }
+};
 
 let watched: Watched | null = null;
 
@@ -81,6 +118,7 @@ const nextFrame = (): Promise<void> => new Promise((resolve) => setTimeout(resol
 /** Catches up from the last moment the game ran, yielding so the bar paints. */
 const runCatchUp = async (): Promise<void> => {
   const s = game();
+  const started = performance.now();
   const gen = catchUp(s, now());
   let step = gen.next();
   while (!step.done) {
@@ -89,7 +127,11 @@ const runCatchUp = async (): Promise<void> => {
     step = gen.next();
   }
   catchUpProgress.value = null;
-  if (step.value.away >= AWAY_SHEET_FROM_MS) awaySummary.value = step.value;
+  lastCatchUpMs.value = performance.now() - started;
+  if (step.value.away >= AWAY_SHEET_FROM_MS) {
+    awaySummary.value = step.value;
+    reports()?.push({ at: now(), summary: step.value });
+  }
   bump();
   saveNow();
 };
@@ -110,10 +152,11 @@ const memoryFallback = (): KeyValueBackend => {
 export const startGame = async (): Promise<void> => {
   const backend = browserBackend();
   if (!backend) savingUnavailable.value = true;
-  store = createSaveStore(
-    createChannelStorage(buildInfo.channel, backend ?? memoryFallback()),
-    now,
-  );
+  channelStorage = createChannelStorage(buildInfo.channel, backend ?? memoryFallback());
+  store = createSaveStore(channelStorage, now);
+  installTipDue.value = !isInstalledApp() && channelStorage.get('installTipSeen') === null;
+  const errors = diagnostics();
+  if (errors) captureErrors(errors, () => currentScreen.value);
   const outcome = store.load();
   if (outcome.kind === 'newer') {
     canSave = false;
@@ -152,9 +195,19 @@ export const startGame = async (): Promise<void> => {
   });
 };
 
-/** Replaces the running game (import, reset), saving it straight away. */
-export const replaceGame = (next: GameState): void => {
+/** Replaces the running game (import, restore), then catches it up to now. */
+export const adoptGame = async (next: GameState): Promise<void> => {
   state = next;
+  watched = null;
+  awaySummary.value = null;
+  await runCatchUp();
+  bump();
+  saveNow();
+};
+
+/** GDD §9.10 "Reset everything": a fresh game. The backup slot still holds the old one. */
+export const resetGame = (): void => {
+  state = createNewGame(randomSeed(), now());
   watched = null;
   awaySummary.value = null;
   bump();

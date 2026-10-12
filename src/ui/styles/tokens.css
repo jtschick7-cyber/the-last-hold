@@ -73,3 +73,8 @@ body {
     transition: none !important;
   }
 }
+
+:root[data-motion='on'] * {
+  animation: none !important;
+  transition: none !important;
+}

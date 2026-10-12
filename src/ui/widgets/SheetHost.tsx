@@ -8,7 +8,13 @@ const SWIPE_CLOSE_PX = 80;
 export const SheetHost = () => {
   const top = sheets.value[sheets.value.length - 1];
   const startY = useRef<number | null>(null);
-  if (!top) return null;
+  if (!top) {
+    return (
+      <aside class={css.placeholder} aria-label="Details">
+        Details appear here. Hover or long-press a number to see how it's worked out.
+      </aside>
+    );
+  }
   return (
     <div class={css.backdrop} onClick={closeSheet}>
       <section
