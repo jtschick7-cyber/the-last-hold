@@ -4,6 +4,8 @@ import { threatMeter, threatRate } from '../../core/threat/threat';
 import { game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { Num } from './Num';
+import { Sprite } from './Sprite';
+import { THREAT_ICON } from '../../content/assets';
 
 // GDD §9.13 (D108): the Threat meter on the Hold screen, from the Keep: the value and
 // "+X per hour now"; long-press for the breakdown (the Rank's rate, what defenses take
@@ -20,7 +22,8 @@ export const ThreatMeter = () => {
   const rate = threatRate(s);
   return (
     <p class={styles.small}>
-      Threat <Num text={formatRate(s.threat)} breakdown={() => threatMeter(s).breakdown} marked />{' '}
+      <Sprite id={THREAT_ICON} /> Threat{' '}
+      <Num text={formatRate(s.threat)} breakdown={() => threatMeter(s).breakdown} marked />{' '}
       <span class={styles.dim}>
         · +<Num text={formatRate(rate.value)} breakdown={() => rate.breakdown} /> per hour now
       </span>

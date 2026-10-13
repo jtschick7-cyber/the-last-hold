@@ -12,6 +12,8 @@ import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
+import { Sprite } from '../widgets/Sprite';
+import { EMBERS_ICON, relicIconId } from '../../content/assets';
 import { HearthView } from './HearthView';
 
 // GDD §5.9.7 and §9.13 (D110, D115): the Long Night sheets, in order: the stand's
@@ -65,14 +67,15 @@ const Result = ({ stand }: { stand: StandRecord }) => {
         .
       </p>
       <p>
-        Embers:{' '}
+        <Sprite id={EMBERS_ICON} /> Embers:{' '}
         <Num text={formatNumber(stand.embers.total)} breakdown={() => payout.breakdown} marked />
       </p>
       {stand.relicsFound.length > 0 && (
         <ul class={styles.list}>
           {stand.relicsFound.map((id) => (
             <li key={id} class={styles.small}>
-              Found: <strong>{relics[id].name}</strong>, {describeRelic(id)}
+              <Sprite id={relicIconId(id)} /> Found: <strong>{relics[id].name}</strong>,{' '}
+              {describeRelic(id)}
             </li>
           ))}
         </ul>

@@ -6,6 +6,8 @@ import { upgradeCost } from '../../core/long-night/hearth';
 import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
+import { Sprite } from '../widgets/Sprite';
+import { EMBERS_ICON, relicIconId } from '../../content/assets';
 
 // GDD §9.13 (D111, D115): The Hearth, in the Hearth Hall: Embers on hand, the warden
 // upgrades, and the relics the hold owns. Open at any time; Embers carry over.
@@ -16,7 +18,7 @@ export const HearthView = () => {
     <div class={styles.card} style={{ marginTop: 'var(--space-3)' }}>
       <h3 class={styles.cardTitle}>The Hearth</h3>
       <p class={styles.small}>
-        <strong>{formatNumber(s.embers)} Embers</strong>{' '}
+        <Sprite id={EMBERS_ICON} /> <strong>{formatNumber(s.embers)} Embers</strong>{' '}
         <span class={styles.dim}>— what the last warden left in the hearth.</span>
       </p>
       <ul class={styles.list}>
@@ -62,8 +64,8 @@ export const HearthView = () => {
         <ul class={styles.list}>
           {s.relics.map((r) => (
             <li key={r.id} class={styles.small}>
-              <strong>{relics[r.id].name}</strong>: {describeRelic(r.id)}{' '}
-              <span class={styles.dim}>(found in cycle {r.cycle})</span>
+              <Sprite id={relicIconId(r.id)} /> <strong>{relics[r.id].name}</strong>:{' '}
+              {describeRelic(r.id)} <span class={styles.dim}>(found in cycle {r.cycle})</span>
             </li>
           ))}
         </ul>

@@ -205,6 +205,44 @@ export const recipes: readonly Recipe[] = [
     ],
   ),
 
+  // v0.4 (plan T4.12): Walls, a crenellated stretch of stone; the Watchtower, a narrow
+  // tower with a window beside a tree.
+  building('walls', [
+    [99, 101],
+    [120, 122],
+  ]),
+  building(
+    'watchtower',
+    [
+      [0, 1],
+      [0, 0],
+    ],
+    [
+      [102, _],
+      [125, 16],
+    ],
+  ),
+
+  // v0.4 icons, 16 px, from the 1-Bit Pack: Embers (a flame), Threat (a skull), and
+  // the six relics (a spade, a plumb bob, a stick, a bone, a copper pot, a barred shield).
+  { id: 'icon.embers', file: 'icons/embers.png', sheet: 'bit', layers: [[[505]]] },
+  { id: 'icon.threat', file: 'icons/threat.png', sheet: 'bit', layers: [[[577]]] },
+  ...(
+    [
+      ['plough-share', 287],
+      ['masons-plumb', 386],
+      ['tally-stick', 161],
+      ['bone-whistle', 620],
+      ['copper-still', 720],
+      ['iron-shutter', 186],
+    ] as const
+  ).map(([id, tile]): Recipe => ({
+    id: `icon.relic.${id}`,
+    file: `icons/relic-${id}.png`,
+    sheet: 'bit',
+    layers: [[[tile]]],
+  })),
+
   // Hold scenes, 160 × 64 (10 × 4 tiles): the hamlet among the ruins, then the
   // Keep with its restored wall and gatehouse (setting-primer §6.5).
   {
@@ -241,6 +279,47 @@ export const recipes: readonly Recipe[] = [
         [_, _, _, _, 60, 62, _, _, _, _],
         [16, 64, 66, 99, 111, 112, 101, 60, 62, 4],
         [5, 84, 85, 96, 113, 114, 98, 88, 90, 28],
+        [_, _, _, _, _, _, _, _, _, _],
+      ],
+    ],
+  },
+  // v0.4 (D106): the Citadel restores the old Forge Hall (blue roof, its forge mouth
+  // dark and cold) and raises a tower; the Bastion closes the wall between two towers,
+  // with the door to the stair going down at the foot of the left one.
+  {
+    id: 'scene.hold.citadel',
+    file: 'scenes/hold-citadel.png',
+    sheet: 'town',
+    layers: [
+      [
+        [_, _, _, _, _, _, _, _, _, _],
+        [_, _, _, _, _, _, _, _, _, _],
+        [_, _, _, _, _, _, _, _, _, _],
+        [0, 1, 0, 2, 13, 13, 0, 1, 0, 2],
+      ],
+      [
+        [_, _, _, _, 60, 62, _, _, _, 102],
+        [16, 64, 66, 99, 111, 112, 101, 60, 62, 125],
+        [5, 84, 85, 96, 113, 114, 98, 76, 78, 125],
+        [_, _, _, _, _, _, _, _, _, _],
+      ],
+    ],
+  },
+  {
+    id: 'scene.hold.bastion',
+    file: 'scenes/hold-bastion.png',
+    sheet: 'town',
+    layers: [
+      [
+        [_, _, _, _, _, _, _, _, _, _],
+        [_, _, _, _, _, _, _, _, _, _],
+        [_, _, _, _, _, _, _, _, _, _],
+        [0, 1, 0, 2, 13, 13, 0, 1, 0, 2],
+      ],
+      [
+        [102, _, 60, 62, 60, 62, 60, 62, _, 102],
+        [125, 99, 76, 78, 111, 112, 88, 90, 101, 125],
+        [103, 96, 97, 97, 113, 114, 97, 97, 98, 125],
         [_, _, _, _, _, _, _, _, _, _],
       ],
     ],

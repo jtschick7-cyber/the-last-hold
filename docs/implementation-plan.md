@@ -481,7 +481,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### F. Art
 
-- [ ] **T4.12 Art.** Icons for Walls, Watchtower, Embers, Threat and the 6 relics; the Citadel and Bastion hold scenes (Tiny Town tiles, the D59 method). 👤 Review.
+- [x] **T4.12 Art.** *(Built; the owner's review is in the playtest.)* Icons for Walls, Watchtower, Embers, Threat and the 6 relics; the Citadel and Bastion hold scenes (Tiny Town tiles, the D59 method). 👤 Review.
 
 ### G. Simulator
 

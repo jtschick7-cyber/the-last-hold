@@ -370,3 +370,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Screenshot pass:** the wave list ran together and empty kit rows left gaps; both fixed.
 - **Results:** `npm run check` green (1,126 tests); all 4 browser tests pass. The simulator wasn't rerun: no rule changed.
 - **Next:** T4.12, the art (icons for Walls, Watchtower, Embers, Threat and the 6 relics; the Citadel and Bastion hold scenes), then T4.13–T4.15 and T4.10.
+
+## 2026-10-13 — v0.4: T4.12 art
+- **Done (T4.12):** by the D59 method (recipes in `tools/art-recipes.ts`, recolored to the palette): the Walls and Watchtower building icons; the Citadel hold scene (the Keep plus the old Forge Hall, its forge mouth dark, and a new tower) and the Bastion scene (the wall closed between two towers, the stair door at the foot of the left one); 16 px icons for Embers (a flame), Threat (a skull) and the six relics. They show on the Hold screen (Threat), The Hearth (Embers and relics) and the Long Night result. Existing images are byte-identical after the rebuild. Choices in D128 (Proposed), for the owner's art review.
+- **Results:** `npm run check` green (1,126 tests); all 4 browser tests pass.
+- **Next:** T4.13, the simulated player's v0.4 rules (lifting the D118 hold at the Keep).
