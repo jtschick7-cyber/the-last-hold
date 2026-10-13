@@ -301,11 +301,11 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### B. Combat
 
-- [ ] **T2.5 Turn meter.**
-- [ ] **T2.6 Attack resolution.** Buckets, Armor on direct attacks only, taken%, immunity, rounding, crits, targeting, Mender, Silver sub-hits (portable math only).
-- [ ] **T2.7 All 12 monster abilities.**
-- [ ] **T2.8 Golden test, GDD §5.5.1, line for line.** **This test gates the milestone.** It runs in Node, WebKit, and Chromium.
-- [ ] **T2.9 More combat tests.** Seeded goldens (record 5, then freeze them; they're locked), determinism, one test per ability, `rulesVersion`.
+- [x] **T2.5 Turn meter.**
+- [x] **T2.6 Attack resolution.** Buckets, Armor on direct attacks only, taken%, immunity, rounding, crits, targeting, Mender, Silver sub-hits (portable math only).
+- [x] **T2.7 All 12 monster abilities.**
+- [x] **T2.8 Golden test, GDD §5.5.1, line for line.** **This test gates the milestone.** It runs in Node, WebKit, and Chromium.
+- [x] **T2.9 More combat tests.** Seeded goldens (record 5, then freeze them; they're locked), determinism, one test per ability, `rulesVersion`.
 
 ### C. Contracts and roster
 
