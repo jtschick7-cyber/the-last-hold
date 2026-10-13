@@ -149,11 +149,11 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a) for 1, and the others as built.
 - **Answer (owner):** 2026-10-13: (a) for Spoil, and Saltburst and spending as built. D92 is now Decided (D97).
 
-### Q15 — A useless item can nudge the displayed odds by a few points (blocks nothing) — open
+### Q15 — A useless item can nudge the displayed odds by a few points (blocks nothing) — answered
 - **What happens:** the odds preview seeds its 500 fights from the party **and the preparation** (technical design §7.2), so a preparation that does nothing (a Grave Oil against a Water Spirit) still draws different dice from "no preparation", and the panel can read, say, 61% against "unprepared would be 59%" for an item that changes nothing. It is inside the ±margin, but it looks like the item did something.
 - **Options:** (a) keep it as the technical design says; (b) seed the odds preview from the party only, so the prepared and unprepared previews share their dice and an item with no effect shows exactly the same number (needs a one-line change to technical design §7.2; the real fight's seed still includes the preparation, so nothing about the real outcome changes).
 - **Recommendation:** (b). It makes "unprepared would be X%" a clean comparison. I have built (a), as written, until you decide.
-- **Answer (owner):**
+- **Answer (owner):** 2026-10-13: option (b). The odds preview is seeded from the party only; technical design §7.2 updated (D98).
 
 ### Q16 — The first Studied species comes before day 2 (blocks the "first Studied" check; it is marked pending) — open
 - **What I measured** (the simulated Standard player, Monday start, tier-1 contracts from the Hamlet's first Mine): the first species reaches **Studied (3 kills) at about 14.5 hours**. The target (GDD §6.2) is **days 2–3** (24–72 h). It is early because the Hamlet only ever posts two species (Gaunt Wolf and Kikimora), the player sends a party on most contracts, and any win counts.

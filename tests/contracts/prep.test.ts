@@ -176,6 +176,26 @@ describe('seeds and odds (GDD §5.4.2)', () => {
     expect(ready.meanTicks).toBeLessThan(bare.meanTicks);
     expect(computeOdds({ ...base, prep: prep() }).winChance).toBe(bare.winChance);
   });
+
+  it('an item that does nothing shows exactly the unprepared odds (Q15, D98)', () => {
+    const s = stocked();
+    const party = ['halvar', 'zora', 'ostap'].map((h) => snapshotOf(s, h as 'halvar'));
+    const c = kikimora('k1', { tier: 2, monster: 'huldra', location: 'forest' });
+    const base = {
+      gameSeed: s.meta.gameSeed,
+      contractId: c.id,
+      party,
+      monster: monsterFor(s, c),
+      location: c.location,
+      rank: s.cycle.age,
+    };
+    const bare = computeOdds(base);
+    // Grave Oil does not match a Huldra, so the preview must draw the same dice.
+    const useless = computeOdds({ ...base, prep: prep({ oils: { halvar: 'grave-oil' } }) });
+    expect(useless.winChance).toBe(bare.winChance);
+    expect(useless.meanTicks).toBe(bare.meanTicks);
+    expect(useless.hunters).toEqual(bare.hunters);
+  });
 });
 
 describe('well prepared (GDD §5.7, §5.4.3)', () => {

@@ -9,7 +9,6 @@ import { explainFight } from '../combat/summary';
 import type { MonsterId } from '../../content/monsters';
 import { seeded } from '../rng';
 import type { Preparation } from '../state/game-state';
-import { prepIds } from './prep';
 import { oddsSeed } from './seeds';
 import { bounty, trophies, xpPerHunter } from './rewards';
 
@@ -76,7 +75,6 @@ export const computeOdds = (input: OddsInput): Odds => {
   const n = input.samples ?? num('odds.samples');
   const pool = asPool(input.monster);
   const ids = input.party.map((h) => h.id);
-  const seedPrep = input.prep ? prepIds(input.prep) : [];
   const bruised = ids.map(() => 0);
   const downed = ids.map(() => 0);
   // An unidentified monster: the same fights, split equally between the candidates, so each
@@ -90,7 +88,7 @@ export const computeOdds = (input: OddsInput): Odds => {
         party: input.party,
         monster,
         location: input.location,
-        rolls: seeded(oddsSeed(input.gameSeed, input.contractId, ids, seedPrep, k * per + j)),
+        rolls: seeded(oddsSeed(input.gameSeed, input.contractId, ids, k * per + j)),
         log: false,
         prep: input.prep,
       });

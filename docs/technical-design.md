@@ -278,7 +278,7 @@ Each kind of randomness gets its own derived seed. That way, adding a roll in on
 |---|---|
 | Board arrivals | `${gameSeed}:board:${arrivalIndex}` |
 | A real fight | `${gameSeed}:fight:${contractId}:${partyIds}:${prepIds}` (GDD §5.4.2) |
-| Odds preview, sample i | `${gameSeed}:odds:${contractId}:${partyIds}:${prepIds}:${i}`, a distinct prefix, so it never equals the real fight |
+| Odds preview, sample i | `${gameSeed}:odds:${contractId}:${partyIds}:${i}`, a distinct prefix, so it never equals the real fight; no preparation, so prepared and unprepared previews share their dice (D98) |
 | Suggest, stage 1 | `${gameSeed}:suggest:${contractId}:${i}`, **the same seeds for every party** (GDD §6.5) |
 | Clues and investigation | `${gameSeed}:clues:${contractId}` |
 | Simulator | `sim:${runSeed}` (the simulator also picks its own `gameSeed`) |

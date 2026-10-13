@@ -157,8 +157,7 @@ describe('seeds (technical design §7.2)', () => {
   it('the preview seed never equals the real fight seed', () => {
     const real = fightSeed('g', 'c1', ['halvar', 'zora'], []);
     expect(real).toBe('g:fight:c1:halvar,zora:');
-    for (let i = 0; i < 500; i++)
-      expect(oddsSeed('g', 'c1', ['halvar', 'zora'], [], i)).not.toBe(real);
+    for (let i = 0; i < 500; i++) expect(oddsSeed('g', 'c1', ['halvar', 'zora'], i)).not.toBe(real);
     expect(deathSeed('g', 'c1', 'zora')).toBe('g:death:c1:zora');
   });
 });

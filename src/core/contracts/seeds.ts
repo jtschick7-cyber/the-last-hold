@@ -13,14 +13,17 @@ export const fightSeed = (
   prep: readonly string[] = [],
 ): string => streamSeed(gameSeed, 'fight', contractId, ids(party), ids(prep));
 
-/** Sample i of the 500-fight preview: a distinct prefix, so it never equals the real fight. */
+/**
+ * Sample i of the 500-fight preview: a distinct prefix, so it never equals the real fight.
+ * The party only, not the preparation (Q15, D98): prepared and unprepared previews share
+ * their dice, so an item that does nothing shows exactly the unprepared number.
+ */
 export const oddsSeed = (
   gameSeed: string,
   contractId: string,
   party: readonly string[],
-  prep: readonly string[],
   i: number,
-): string => streamSeed(gameSeed, 'odds', contractId, ids(party), ids(prep), i);
+): string => streamSeed(gameSeed, 'odds', contractId, ids(party), i);
 
 /** The death roll for one downed hunter on a Reckless contract. */
 export const deathSeed = (gameSeed: string, contractId: string, hunterId: string): string =>
