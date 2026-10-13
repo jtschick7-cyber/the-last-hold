@@ -208,3 +208,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Not done:** Toma's Speed 8 and the re-record of seeded golden fight d (owner chose "re-record"); picking the Q9 numbers; un-pending the provisions check; PR, `sim:check`, `sim:accept`, merge, tag.
 - **Why paused:** with income-scaled provisions, three locked simulator checks pull against each other (provisions 20–40% of food, bounties ≥ 70% of silver, first tier-3 within 24–48 h). One tunable combination passed every check on one run (N = 1.5 minutes, growth 2.2, bounty base 78); the owner stopped me before I applied it and asked for a planning-chat prompt instead.
 
+## 2026-10-13 — v0.2 balance decision applied; PR open, waiting for the owner's OK
+- **Done (owner's balance decision, D81 and D82):** Toma's Speed is 8 and golden fight d is re-recorded (still a loss at tick 400; D80). Provisions now scale with the hold's food income from the Keep (1.5 minutes per hunter; Hamlet unchanged), the bounty base is 78, and the provisions check is enforced (no longer pending). GDD §5.4.1, §5.4.2, §6.3 #8, §7.4 and the Toma row updated. Q11 added (players can lower their food income for free right before launching; blocks nothing).
+- **Results (first full run, no further adjustment):** `sim:check` passes every check on 5 seeds, both starts. Provisions 27.1–34.3% of food income (was about 0.2%); bounties 72.8–74.6% of Keep-phase silver; first tier-3 success 35 h on the Monday median. `npm run check` is green (846 tests).
+- **Next:** the owner reads the pull request and says OK; then `sim:accept`, merge, mark v0.2 complete, add the accepted-decisions row, push the `v0.2.0` tag once (if refused with 403, the owner creates the tag on GitHub).
+- **Open questions:** Q11 (does not block v0.2). Q10's seed line stays out until the owner decides the name before v0.5.
+- **Measurement note:** the simulator measures provisions from the state at the end of each check-in, not at the instant of launch; a purchase made after a launch in the same check-in can nudge the share slightly. It is well inside the band, so I left the measurement as the owner approved it.
+
