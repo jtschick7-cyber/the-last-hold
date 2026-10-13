@@ -170,7 +170,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 - [x] **T1.2 Portable math.** `core/math`: `intPow` and `maxAffordable` (search). **Tests:** both match `Math.pow` and the GDD log formula over a table of cases (computed in the tests only) (technical design §7.4).
 - [x] **T1.3 Formatting.** Numbers and durations (technical design §8), with suffixes chosen by thresholds. **Tests:** the full boundary table.
 - [x] **T1.4 Balance file.** `content/balance.ts` with every v0.1 key, each marked `tunable` or `locked` per §0.6.
-- [x] **T1.5 v0.1 content.** Resources, jobs, buildings (Silver Seam max 2), Ages (Hamlet, Keep, plus the restoration text), and the starting state (GDD §5.1.4).
+- [x] **T1.5 v0.1 content.** Resources, jobs, buildings (Silver Seam max 2), Ranks (Hamlet, Keep, plus the restoration text), and the starting state (GDD §5.1.4).
 - [x] **T1.6 Names.** Collision-search every v0.1 proper noun. Create `tests/content/names.ts` and the name-finding test (technical design §14). Any collision or unchecked name goes to `questions.md` as `[?]`.
 - [x] **T1.7 v0.1 text.** Building blurbs; Brana and Pechko lines for every primer §6.2 trigger (3–5 variants each); the Keep inscription.
 - [x] **T1.8 Content integrity test.** IDs, text keys and unlocks resolve; **the GDD §7 key list equals the `balance.ts` keys** (technical design §5.1).
@@ -205,11 +205,11 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 - [x] **T1.20 Shell.** Resource bar and rates sheet; tabs **Hold** and **More** only; sheet stack; themes.
 - [x] **T1.20a Pixel font.** The CC0 pixel font for headings and the resource bar (split from T1.20: no CC0 font source is reachable from Claude Code's sessions; see `questions.md` Q1). Done 2026-10-12: Kenney Pixel (CC0), from the owner's upload.
 - [x] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
-- [x] **T1.22 Age screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
+- [x] **T1.22 Rank screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
 - [x] **T1.23 Away sheet and Reports** (the last 3 sheets).
 - [x] **T1.24 Breakdown sheet.** Long-press and hover; ⓘ markers.
 - [x] **T1.25 More menu.** Save & Data; Settings; About & Credits (version, channel, commit, `debugUsed`); and the **install tip, including the iPhone storage note** (technical design §9.1).
-- [x] **T1.26 Debug panel** (`?debug`). Time skip through the offline path, add resources, seed, Age unlock, raw state, timing readout. *(The "simulator run" button moved to T1.35, since it needs the simulator.)*
+- [x] **T1.26 Debug panel** (`?debug`). Time skip through the offline path, add resources, seed, Rank unlock, raw state, timing readout. *(The "simulator run" button moved to T1.35, since it needs the simulator.)*
 - [x] **T1.27 Diagnostics** (technical design §15.1). The error capture list, **More → Diagnostics**, "Copy diagnostics", and the crash fallback screen.
 
 ### F. Art pipeline
@@ -238,7 +238,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### v0.1 acceptance criteria
 
-1. A fresh game can reach Keep. The Age-up applies the Keep grants and shows the Roll of Honor.
+1. A fresh game can reach Keep. The Rank-up applies the Keep grants and shows the Roll of Honor.
 2. Every on-screen number that has a formula opens a breakdown that matches the engine.
 3. Reopening after up to 12 h shows a correct away sheet; time beyond the cap is reported.
 4. A save survives a reload; an export code moves it between browsers; corrupted codes are refused with a reason; preview and live saves never mix.
@@ -258,7 +258,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 | **Keep** | **8–14 h** (Standard, median); ≤ 24 h (Light); ≥ 6 h (Heavy) |
 | Something to do | ≥ 90% of Standard check-ins |
 | No dry spells | Never 2 empty check-ins in a row |
-| No walls | ≤ 3 check-ins of saving (≤ 5 for Age-ups) |
+| No walls | ≤ 3 check-ins of saving (≤ 5 for Rank-ups) |
 | No overflow | < 1e300 over 14 days |
 
 ### v0.1 owner playtest checklist 👤 (on the preview build)

@@ -127,7 +127,7 @@ All content is original. The influences supply *feel*, never names, characters, 
 | **Check-in** | 2–3 min | Read "While you were away"; build and upgrade; reassign peasants; collect contract results; launch new contracts | What to build next; which contract, which party, which preparation | Resources, trophies, reagents, bestiary progress | v0.1 (hold), v0.2 (contracts) |
 | **Session** | 15–30 min | Delve runs; alchemy experiments; roster and gear planning; read lore | Blessing picks; ingredient combinations; long-term roster shape | Relics, rift currency, recipes, lore | v0.6 (alchemy), v0.7 (delves) |
 | **Events** | Whenever tokens are banked *(⚑ revision G7: was daily)* | World-boss attempts and Legendary Hunt runs, with different hunters each time | Who to spend on which attempt | Boss rewards, event points | v0.9 |
-| **Cycle** | 3–5 days | Age up the hold; keep Threat in check; pick the moment for the Last Stand | When to make the Last Stand | Embers (permanent currency), relics, the next act of the mystery | v0.4 |
+| **Cycle** | 3–5 days | Rank up the hold; keep Threat in check; pick the moment for the Last Stand | When to make the Last Stand | Embers (permanent currency), relics, the next act of the mystery | v0.4 |
 | **Meta** | Weeks | Fill the bestiary and recipe book; raise hunter stars; finish Legendary Hunts; advance Orders | Long-term investment | Permanent power and knowledge; the full story | v0.3–v0.10 |
 
 ### 3.2 The check-in, step by step
@@ -152,7 +152,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 
 | Milestone | Playable loops |
 |---|---|
-| v0.1 | Check-in (hold only): build, assign peasants, Age up to Keep |
+| v0.1 | Check-in (hold only): build, assign peasants, Rank up to Keep |
 | v0.2 | Check-in with contracts (tier 1 from Hamlet, G6), hunters, combat logs |
 | v0.3 | Contracts gain investigation, the bestiary, and preparation |
 | v0.4 | Cycle loop: Threat, Last Stand, Long Night, Embers, relics, Citadel and Bastion *(⚑ P3: moved ahead of alchemy discovery)* |
@@ -174,7 +174,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Food** | Basic | Farms, fishery; peasants | Settling peasants; **contract provisions** *(⚑ revision G3)* | No | v0.1 |
 | **Wood** | Basic | Woodcutter's camp; peasants | Buildings; bomb casings; arrow shafts | No | v0.1 |
 | **Iron** | Basic | Mine; peasants | Buildings; smithy gear | No | v0.1 |
-| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.25/min each, no bonuses; G1); **contract bounties (main source)** | Silvered gear; recruitment; Age-ups | No | v0.1 |
+| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.25/min each, no bonuses; G1); **contract bounties (main source)** | Silvered gear; recruitment; Rank-ups | No | v0.1 |
 | **Peasants** | Population | Houses + food surplus | Assigned to gathering jobs | No | v0.1 |
 | **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; rank partly resets (detailed in v0.4); **gear resets** *(⚑ revision A4)* | v0.2 |
 | **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.8); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.4 arrival, G8) | v0.2 |
@@ -182,7 +182,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Gear** | Items | Smithy (iron + silver + wood) | Equipped by hunters | No (relics are the persistent gear) | v0.2 |
 | **Oils / Potions / Bombs** | Consumables | Alchemist's hut, from reagents | Contract preparation | No | v0.3 |
 | **Knowledge** | Unlocks | Investigating and killing monsters; alchemy experiments | Never spent; reduces investigation time and raises odds | **Yes** | v0.3 |
-| **Threat** | Pressure meter | Rises with the Age's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.4 |
+| **Threat** | Pressure meter | Rises with the Rank's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.4 |
 | **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades | **Yes** | v0.4 |
 | **Relics** | Persistent items | Last Stand milestones; Delves | Equipped on the hold or on hunters | **Yes** | v0.6 / v0.8 |
 | **Riftglass** | Delve currency with a **banked allowance**: 1/7 of the weekly cap accrues per day, banking up to 2 weeks *(⚑ revision G7)* | Delve floors | Sidegrades, convenience upgrades (e.g., +1 h offline cap), cosmetic hold improvements | **Yes** | v0.7 |
@@ -196,7 +196,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 flowchart LR
   subgraph HOLD["The Hold (idle) · v0.1"]
     P[Peasants] --> B((Food · Wood · Iron · Silver))
-    B --> BLD[Buildings & Ages]
+    B --> BLD[Buildings & Ranks]
     BLD --> P
     B --> SM[Smithy]
     B --> AL[Alchemist · v0.3]
@@ -359,7 +359,7 @@ rate_R = workers_R × baseRate_R × (bucket multipliers, §5.0)
 There are two kinds of building:
 
 - **Count buildings** can be bought many times. The next copy costs `base × r^n` with **r = 1.15**, where **n is the number already owned, including free starting buildings** *(⚑ revision A8)*. For example, the first Farm you buy is your 2nd, so it costs 40 × 1.15 = 46 wood.
-- **Level buildings** are unique and are upgraded. Level L (starting from 1) costs `base × r^(L−1)` with **r = 1.75**. Each Age sets a maximum level.
+- **Level buildings** are unique and are upgraded. Level L (starting from 1) costs `base × r^(L−1)` with **r = 1.75**. Each Rank sets a maximum level.
 
 **Bulk buy.** Count buildings support ×1, ×10, and Max.
 - Buying k copies costs `base × r^n × (r^k − 1)/(r − 1)` of each resource.
@@ -380,13 +380,13 @@ payback(item) = value(cost) ÷ value(Δrate per min)        (lower is better)
   - Housing (Cottage): extra peasants × the marginal rate of the best open job slot, or 0 if no slot is free.
   - Slot buildings: 0 unless idle peasants are waiting to fill the new slots.
 - Items with Δrate = 0 (for example, the Bell Tower) never get the ●. The simulator buys them only through explicit policy rules.
-- Age-ups are excluded; the policy's saving rule handles them.
+- Rank-ups are excluded; the policy's saving rule handles them.
 
 **v0.1 buildings** (costs are base values):
 
 | Building | Type | Base cost | Effect | Available |
 |---|---|---|---|---|
-| Hearth Hall | Unique | — (start) | Houses 3 peasants. The Age-up happens here. | Start |
+| Hearth Hall | Unique | — (start) | Houses 3 peasants. The Rank-up happens here. | Start |
 | Cottage | Count | 30 wood, 10 food | +2 housing | Hamlet |
 | Farm | Count | 40 wood | +3 Farmer slots | Hamlet (start with 1) |
 | Woodcutter's Camp | Count | 25 wood, 15 food | +3 Woodcutter slots | Hamlet (start with 1) |
@@ -397,9 +397,9 @@ payback(item) = value(cost) ÷ value(Δrate per min)        (lower is better)
 | Smithy | Level (max 3 / 10) | 200 wood, 150 iron | +20% iron per level. Unlocks gear tiers (v0.2) | Hamlet |
 | Bell Tower | Level (max 3) | 1,500 wood, 800 iron, 150 silver | +1 h offline cap per level | Keep |
 
-#### 5.1.3 Ages
+#### 5.1.3 Ranks
 
-The Age-up **Hamlet → Keep** requires:
+The Rank-up **Hamlet → Keep** requires:
 - **Prerequisites:** 10 peasants, Mill level 3, and a Smithy.
 - **Cost:** 12,000 food, 9,000 wood, 4,000 iron, and **250 silver** *(⚑ revision: was 600; lowered to fit capped Seams, G1; then 300 → 250 in the v0.1 tuning pass, D62)*.
 
@@ -410,9 +410,9 @@ The Age-up **Hamlet → Keep** requires:
 
 From v0.2 onward, Keep also unlocks contract tiers above 1, the Barracks, and the Trophy Hall. The contract board itself opens in Hamlet, when the first Mine is built *(⚑ revision G6)*.
 
-**Each Age-up restores part of old Stanholm**, with a short inscription *(⚑ revision, lore C7)*. Keep restores the gatehouse and the Roll of Honor (`setting-primer.md` §6.5); Citadel and Bastion are in `lore-secrets.md` §11.
+**Each Rank-up restores part of old Stanholm**, with a short inscription *(⚑ revision, lore C7)*. Keep restores the gatehouse and the Roll of Honor (`setting-primer.md` §6.5); Citadel and Bastion are in `lore-secrets.md` §11.
 
-In v0.1, the Keep is the end of content. The Age screen shows the next Age (Citadel) as "Coming in a later milestone," with no fake progress bar.
+In v0.1, the Keep is the end of content. The Rank screen shows the next Rank (Citadel) as "Coming in a later milestone," with no fake progress bar.
 
 **Pacing target:** Keep is reached after **8–14 hours of game time**, under the simulator's **Standard** policy (§6.1). The simulator enforces this band (§6.2). *(⚑ revision A9: the policy is defined only in §6.1.)*
 
@@ -464,7 +464,7 @@ The sheet is dismissed with one tap. The last three sheets are kept under More �
 
 Every hunter is a **hand-authored named character** **[JC]**. There are no procedurally generated recruits.
 - v0.2 ships with 8 hunters; v1.0 targets about 30.
-- Each hunter has unlock conditions (Age, bestiary progress, specific contracts, and later events or Orders). When the conditions are met, the hunter arrives at the hold as a **candidate**. Paying their recruitment silver adds them to the roster.
+- Each hunter has unlock conditions (Rank, bestiary progress, specific contracts, and later events or Orders). When the conditions are met, the hunter arrives at the hold as a **candidate**. Paying their recruitment silver adds them to the roster.
 - This keeps the Tacticus collection feel (every hunter matters) without any gacha.
 
 **Active roster and reserve** *(⚑ revision G5)*:
@@ -485,7 +485,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 | Armor | Flat reduction to each incoming hit (minimum damage is 1). |
 | Speed | How often the combatant acts (turn meter, §5.5). |
 
-- **Level 1–10 in Keep** (later Ages raise the cap). **Health and Might** scale as `base × (1 + 0.10 × (level − 1))`. **Armor and Speed don't scale with level** *(⚑ revision [JC]: under the turn meter, Speed growth would compound into extra actions)*.
+- **Level 1–10 in Keep** (later Ranks raise the cap). **Health and Might** scale as `base × (1 + 0.10 × (level − 1))`. **Armor and Speed don't scale with level** *(⚑ revision [JC]: under the turn meter, Speed growth would compound into extra actions)*.
 - **Displayed stats include gear and traits** *(⚑ revision A14)*. The breakdown separates base, level, gear and traits.
 - **XP per contract:** 20 × tier on a success, half that on a failure.
 - **XP to go from level L to L+1:** `50 × 1.5^(L−1)`.
@@ -574,7 +574,7 @@ Each contract has:
 | Trophies | Equal to the tier, of that monster's family |
 | Reagents | *(v0.3)* monster-specific drops |
 
-**Tier unlocks** *(⚑ revision B8 [JC])*: tier t+1 unlocks after **3 successes at tier t**, up to the Age's cap (Hamlet T1, Keep T5). **Tier mix:** 60% of new contracts at the highest unlocked tier, 40% spread evenly across the lower unlocked tiers (all at the highest while only one is unlocked). **No rubber-banding** **[JC]**: difficulty never scales with roster strength, because hidden scaling would make the numbers lie.
+**Tier unlocks** *(⚑ revision B8 [JC])*: tier t+1 unlocks after **3 successes at tier t**, up to the Rank's cap (Hamlet T1, Keep T5). **Tier mix:** 60% of new contracts at the highest unlocked tier, 40% spread evenly across the lower unlocked tiers (all at the highest while only one is unlocked). **No rubber-banding** **[JC]**: difficulty never scales with roster strength, because hidden scaling would make the numbers lie.
 
 #### 5.4.2 Launching
 
@@ -778,14 +778,14 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 
 *⚑ Milestones renumbered (P2, P3): the Long Night's mechanics ship in v0.4, ahead of alchemy discovery (now v0.6), and Act I with its story systems ships in v0.5. Mapping in `decisions.md` D35.*
 
-- **Threat** rises over the cycle: a base rate per Age, plus spikes from failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)*. Completed contracts and defensive buildings push it down.
+- **Threat** rises over the cycle: a base rate per Rank, plus spikes from failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)*. Completed contracts and defensive buildings push it down.
 - **The Last Stand** is available from Bastion on (day 3). It is an auto-battle against escalating waves, using the hold's defenses plus up to 6 hunters.
-  - The Embers payout depends on waves survived, the Age reached, Threat at the time of the stand, and trophies converted.
+  - The Embers payout depends on waves survived, the Rank reached, Threat at the time of the stand, and trophies converted.
   - Making the stand later pays more Embers, but Threat raises the difficulty. The sweet spot should land around days 4–5 (§6).
-- **Remaining Ages:** Citadel and Bastion.
+- **Remaining Ranks:** Citadel and Bastion.
 - **What resets and what persists:** per §4. Embers buy permanent warden upgrades. Relics drop at payout milestones.
 - **Story (v0.5):** mystery act 1 plus the first lore documents. Residents react to how the stand went. **Until an act is written, a finished cycle closes with "The story continues in a later version"; when the act ships, its documents unlock in your current cycle** *(⚑ P4 [JC])*.
-- **A new warden each cycle** *(⚑ lore L4)*: after each Long Night a new warden arrives; **from v0.5** you name them. The **Roll of Wardens** (L9) carves each warden's name, Ages reached, Last Stand band and relics into the Hearth Hall.
+- **A new warden each cycle** *(⚑ lore L4)*: after each Long Night a new warden arrives; **from v0.5** you name them. The **Roll of Wardens** (L9) carves each warden's name, Ranks reached, Last Stand band and relics into the Hearth Hall.
 - **Arriving at v0.4** *(⚑ revision G8)*: when a pre-v0.4 save first loads in v0.4, the game triggers the first Long Night (neutral text; the story arrives in v0.5): a scripted Last Stand with the normal payout, then §4.1's normal reset rules. **Trophy-to-Embers conversion at that moment is capped** at 120% of the median Embers a simulated Standard player earns in cycle 1 [JC]. Before v0.4, the Trophy Hall bonus is uncapped [JC].
 - **Open questions:** the payout curve; how hunter rank partly resets (gear resets fully, A4); whether buildings can be damaged by high Threat (leaning no, per pillar 5).
 
@@ -841,7 +841,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 5. **Gear is upgraded in place** (weapon and armor slots) until loot arrives in v0.8.
 6. **Reckless means displayed odds below 35%.** That line covers "badly prepared" too, and death has a 30% chance per downed hunter.
 7. **A dead named hunter returns as a candidate after the next Long Night,** instead of being lost forever.
-8. **No difficulty rubber-banding.** Contract tiers are fixed per Age and unlocked by progress.
+8. **No difficulty rubber-banding.** Contract tiers are fixed per Rank and unlocked by progress.
 9. **Investigation uses Hunter's Lodge slots, not hunters.**
 10. **A well-prepared success pays bounty × 1.5 and +1 trophy.**
 11. **The Trophy Hall bonus counts cumulative trophies earned this cycle,** unaffected by spending. *(Reworded in revision A7.)*
@@ -869,7 +869,7 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **The overnight gap** (21:00 → 07:00) is 10 h, inside the 12 h cap. Standard play never loses time to the cap.
 
 **What the policy does at each check-in:**
-- **Spending:** greedy by **payback time**, using the valuation in §5.1.2 (the same function as the ● hint). It saves for the next Age-up once it's affordable within 2 check-ins.
+- **Spending:** greedy by **payback time**, using the valuation in §5.1.2 (the same function as the ● hint). It saves for the next Rank-up once it's affordable within 2 check-ins.
 - **Contracts:** launches the highest expected-value contract with the suggested party.
 - **Preparation:** brews and equips matching consumables for identified monsters.
 - **Investigation:** keeps every Lodge slot busy.
@@ -904,7 +904,7 @@ These catch dead zones and walls that pure time targets miss.
 
 1. **Something to do:** at least 90% of Standard check-ins include a meaningful action (a purchase, a contract launch, or collecting a result).
 2. **No dry spells:** never 2 consecutive check-ins with nothing to do.
-3. **No walls:** no single purchase takes more than 3 check-ins of saving, except Age-ups, which may take up to 5.
+3. **No walls:** no single purchase takes more than 3 check-ins of saving, except Rank-ups, which may take up to 5.
 4. **Preparation matters** *(v0.3)*: on identified contracts at equal tier, matched preparation raises the odds by at least 15 percentage points over no preparation.
 5. **Odds are honest** *(v0.2)*: across 2,000 simulated contracts, the actual success rate in each 10-point odds bucket lands within ±5 points of the displayed odds.
 6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days in v0.2–v0.3), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.*
@@ -949,7 +949,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.25/min | 5.1.1 |
 | Silver cap | Silver Seams limited; silver-digger output takes only relic and event buckets | `silverSeam.max` = 2 | 5.1.1 |
 | Building bonuses | per level | `mill.perLevel` = 0.25, `sawpit.perLevel` = 0.25, `smithy.ironPerLevel` = 0.20 | 5.1.2 |
-| Age multiplier | Keep adds to the age bucket (not silver, G1) | `age.keep.allProduction` = 0.50 | 5.1.3 |
+| Rank multiplier | Keep adds to the age bucket (not silver, G1) | `age.keep.allProduction` = 0.50 | 5.1.3 |
 | Best payback | `value(cost) ÷ value(Δrate)`, `value = Σ w_r × amount_r` | `value.weights` = { food 1, wood 1.5, iron 3, silver 12 } | 5.1.2 |
 | Trophy Hall | `+x per trophy earned this cycle` | `trophyHall.perTrophy` = 0.005 | 5.4.4 |
 | Herb Garden | per garden | `herbGarden.interval` = 10 min per herb type | 5.7 |
@@ -982,7 +982,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 |---|---|---|---|
 | Board refill | 1 per interval, up to the cap; declining is free | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
 | Board opens | when the first Mine is built (G6) | — | 5.4.1 |
-| Tier unlocks | tier t+1 after k successes at tier t, up to the Age cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5 } | 5.4.1 |
+| Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5 } | 5.4.1 |
 | Provisions | `p × partySize × g^(tier−1)` food at launch | `provisions.base` = 30, `provisions.growth` = 2.2 | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
 | Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 60, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.0 } | 5.4.1 |
@@ -1302,7 +1302,7 @@ Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes ava
 ```
 ┌──────────────────────────────────┐
 │  [pixel hold scene · Hamlet]     │
-│  Stanholm — Hamlet     Age ▸     │
+│  Stanholm — Hamlet    Rank ▸     │
 ├──────────────────────────────────┤
 │ PEASANTS 7 · 9 beds  idle 1 ⚠️   │
 │ [Settle one]   Auto ✔            │
@@ -1324,7 +1324,7 @@ Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes ava
 - The Peasants heading shows the peasant count and the beds (housing); a line under the Settle button says why settling is blocked (no free beds, or not enough food) (D63).
 - ● marks the best payback among affordable options. It's a hint only, and it can be turned off in Settings.
 - Buildings group into **Housing · Gathering · Crafting · Hold**. In v0.1 there are few enough buildings to show them as one list.
-- **Age ▸** opens the Age screen: the part of old Stanholm the next Age restores, its requirements as a checklist, its costs, and what it unlocks. Unbuilt future content shows as "Coming in a later milestone" (§5.1.3).
+- **Rank ▸** opens the Rank screen: the part of old Stanholm the next Rank restores, its requirements as a checklist, its costs, and what it unlocks. Unbuilt future content shows as "Coming in a later milestone" (§5.1.3).
 - Unaffordable rows show their cost in a muted color, plus a "ready in ~1 h 20 m" estimate at current rates.
 
 ### 9.3 "While you were away" sheet (v0.1)
@@ -1513,7 +1513,7 @@ The Hut opens from its building row on the Hold screen.
 - Time skip: +1 m, +1 h, +12 h, or a custom amount. It runs the same offline code path.
 - Add resources.
 - Set the RNG seed.
-- Unlock an Age.
+- Unlock a Rank.
 - Show raw state as JSON.
 - Run the simulator's Standard policy for N hours.
 - Force a contract outcome *(v0.2)*.
@@ -1522,7 +1522,7 @@ The Hut opens from its building row on the Hold screen.
 
 | Milestone | Screens |
 |---|---|
-| v0.1 | Shell, Hold, Age screen, away sheet, rates sheet, breakdown sheets, More (Reports, Save & Data, Settings, Debug, About) |
+| v0.1 | Shell, Hold, Rank screen, away sheet, rates sheet, breakdown sheets, More (Reports, Save & Data, Settings, Debug, About) |
 | v0.2 | + Hunters (roster, detail, candidates), Contracts (board, launch sheet, fight log), Hall of the Fallen, gear upgrades |
 | v0.3 | + Bestiary (grid, entries), investigation on the board and launch sheet, preparation on the launch sheet, Alchemist's Hut |
 
@@ -1627,5 +1627,5 @@ Each one is also marked **[JC]** where it appears.
 2. **Story hunters never die;** Arvid joins in v0.5. (§5.3.7, §8.5)
 3. **Four Orders, including the Quenchers;** the remnant Wrights join your order. (§5.13)
 4. **Six patrons;** the Unlit appears only after Act V. (§8.8)
-5. **Each Age-up restores part of old Stanholm.** (§5.1.3)
+5. **Each Rank-up restores part of old Stanholm.** (§5.1.3)
 6. **Ostap's bio changes in cycle 3.** (§8.5)

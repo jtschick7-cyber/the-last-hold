@@ -109,7 +109,7 @@ Short, at most one sentence, one per trigger, each with 3–5 variants.
 | Idle peasants | Brana | "I've got hands sitting on their hands, warden." |
 | Long absence (≥ 8 h) | Pechko | "You were gone. The stove wasn't. Sit." |
 | Peasant milestone (10, 25, 50…) | Brana | "Ten souls. Ten mouths. I'll manage." |
-| Age-up | Pechko | "The old stones remember being a fortress. Let them." |
+| Rank-up | Pechko | "The old stones remember being a fortress. Let them." |
 | First contract success *(v0.2)* | Brana | "Silver. Real silver. Say it again so I believe it." |
 
 ### 6.3 Village contract notices *(v0.2+)*
@@ -128,9 +128,9 @@ Each entry has:
   - *Upyr* — "What it was: a miller buried in a hurry in the plague year, with no one left to watch the grave."
   - *Rusalka* — "What it was: a girl from Dubno Ford who walked into the river the spring her betrothed didn't come home."
 
-### 6.5 Ages restore Stanholm
+### 6.5 Ranks restore Stanholm
 
-Each Age-up uncovers part of the old hold, with a short inscription.
+Each Rank-up uncovers part of the old hold, with a short inscription.
 - **Keep** (v0.1): the gatehouse and the **Roll of Honor**, a wall of names cut in bronze.
   - Inscription: *"Here are cut the names of those who gave their warmth to the hearth, that the folk might sleep."*
 - **Citadel and Bastion** *(v0.4)*: neutral descriptions only, "the old Forge Hall" and "a sealed stair going down." Their inscriptions arrive with Act I in v0.5 (`lore-secrets.md`). **[JC]**

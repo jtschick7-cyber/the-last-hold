@@ -545,7 +545,7 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 ## 15. Debug panel (GDD §9.10)
 
 - **Enabled** in dev builds, or with `?debug` in the URL. Hidden otherwise.
-- **Every debug action is a `debug.*` command** through `apply`: time skip (through the real offline path), add resources, set seed, unlock Age, force a contract outcome (v0.2), and run a simulator policy for N hours in the browser.
+- **Every debug action is a `debug.*` command** through `apply`: time skip (through the real offline path), add resources, set seed, unlock Rank, force a contract outcome (v0.2), and run a simulator policy for N hours in the browser.
 - **Using any debug command sets `meta.debugUsed = true`.** It's shown in About, with no other effect (D21).
 - **Timing readout:** the last Suggest, odds, and catch-up durations, for checking performance on a real phone.
 
