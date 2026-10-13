@@ -421,7 +421,7 @@ In v0.1, the Keep is the end of content. The Rank screen shows the next Rank (Ci
 - The Hearth Hall.
 - 1 Farm and 1 Woodcutter's Camp.
 - 3 peasants: **1 Farmer and 2 Woodcutters** *(⚑ revision A10 [JC]: was 2 Farmers and 1 Woodcutter)*.
-- 50 food and 75 wood *(⚑ v0.1 tuning: wood was 50, D62)*.
+- 80 food and 75 wood *(⚑ v0.1 tuning: wood was 50, D62; v0.2 tuning: food was 50, so the first contract's provisions are affordable soon after the first Mine, D76)*.
 - Auto-settle on.
 
 **Opening goal** (measured by the **Opening** policy, §6.1): a Cottage within 1 minute and a Mine within 5 minutes. A hand calculation gives about 4.4 minutes for the Mine (after the first Cottage's 30 wood, wood reaches 80 at about 4.4 min). **If the simulator misses, raise starting wood; don't move the target.** *(⚑ v0.1 tuning, D62: 70 wood gave 5.2 min in the simulator, so the start is 75 wood; the simulator measures 4.5 min.)*
@@ -570,7 +570,7 @@ Each contract has:
 | Location tag | Forest, river, field or barrow; **ruin from v0.5** *(⚑ revision D-2)*. **Barrow contracts start at tier 2** *(⚑ revision A3 [JC])*. Interacts with traits. |
 | Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5; at most 2 in Hamlet (G6) |
 | Duration | 30 min / 1 h / 2 h / 4 h / 8 h by tier |
-| Bounty | `60 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.0; Citadel and Bastion set at v0.4). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6)* |
+| Bounty | `72 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.0; Citadel and Bastion set at v0.4). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6)* |
 | Trophies | Equal to the tier, of that monster's family |
 | Reagents | *(v0.3)* monster-specific drops |
 
@@ -985,7 +985,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5 } | 5.4.1 |
 | Provisions | `p × partySize × g^(tier−1)` food at launch | `provisions.base` = 30, `provisions.growth` = 2.2 | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
-| Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 60, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.0 } | 5.4.1 |
+| Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 72 *(⚑ v0.2 tuning, was 60: bounties must be 70% of silver from the Keep on, D76)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.0 } | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
 | Duration | by tier | `contract.duration` = [30 min, 1 h, 2 h, 4 h, 8 h] | 5.4.1 |
 | Party size | by tier | `contract.partySize` = [3, 3, 3, 4, 4], `contract.hamletPartyMax` = 2 | 5.4.1 |

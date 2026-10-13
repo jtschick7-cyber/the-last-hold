@@ -32,6 +32,9 @@ const run = (
     'mill-3': null,
     'peasants-10': null,
     keep: null,
+    'first-contract': null,
+    'roster-4': null,
+    'first-tier-3': null,
     ...moments,
   },
   checkIns,
@@ -39,6 +42,8 @@ const run = (
   peaks: { food: 0, wood: 0, iron: 0, silver: 0, peasants: 0 },
   largestNumber: 1,
   final: { age: 'keep', peasants: 10 },
+  contracts: [],
+  keepPhase: { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 0 },
 });
 
 describe('time targets', () => {
@@ -135,5 +140,101 @@ describe('no overflow', () => {
       false,
     );
     expect(noOverflowCheck.judge([run('standard', {})]).pass).toBe(true);
+  });
+});
+
+// v0.2 checks, on made-up runs.
+import { contractsOwnSilverCheck } from './contracts-own-silver';
+import { firstContractCheck } from './first-contract';
+import { firstTier3Check } from './first-tier-3';
+import { makeOddsHonestCheck } from './odds-honest';
+import { provisionsMatterCheck } from './provisions-matter';
+import { roster4Check } from './roster-4';
+import type { ContractRecord } from '../run';
+
+describe('v0.2 time targets', () => {
+  it('first contract: within 15 minutes of the first Mine, on the Monday median', () => {
+    const fast = [1, 2, 3].map((i) =>
+      run('standard', { 'first-mine': 0.075, 'first-contract': 0.2 }, [], 'mon', `s${i}`),
+    );
+    expect(firstContractCheck.judge(fast).pass).toBe(true); // 7.5 min after the Mine
+    const slow = [1, 2, 3].map((i) =>
+      run('standard', { 'first-mine': 0.075, 'first-contract': 3 }, [], 'mon', `s${i}`),
+    );
+    expect(firstContractCheck.judge(slow).pass).toBe(false);
+    expect(firstContractCheck.judge([run('standard', { 'first-mine': 0.07 })]).pass).toBe(false); // never launched
+  });
+
+  it('roster of four by 48 h, and the first tier-3 success on day 2', () => {
+    const ok = run('standard', { 'roster-4': 40, 'first-tier-3': 36 });
+    expect(roster4Check.judge([ok]).pass).toBe(true);
+    expect(firstTier3Check.judge([ok]).pass).toBe(true);
+    expect(roster4Check.judge([run('standard', { 'roster-4': 60 })]).pass).toBe(false);
+    expect(firstTier3Check.judge([run('standard', { 'first-tier-3': 20 })]).pass).toBe(false); // too early
+    expect(firstTier3Check.judge([run('standard', { 'first-tier-3': 60 })]).pass).toBe(false); // too late
+  });
+});
+
+describe('v0.2 economy checks', () => {
+  const withKeep = (
+    phase: Partial<RunResult['keepPhase']>,
+    keep: number | null = 14,
+  ): RunResult => ({
+    ...run('standard', keep === null ? {} : { keep }),
+    keepPhase: { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 1, ...phase },
+  });
+
+  it('bounties must be at least 70% of the silver since the Keep', () => {
+    expect(
+      contractsOwnSilverCheck.judge([withKeep({ bountySilver: 71, jobSilver: 29 })]).pass,
+    ).toBe(true);
+    expect(
+      contractsOwnSilverCheck.judge([withKeep({ bountySilver: 69, jobSilver: 31 })]).pass,
+    ).toBe(false);
+    expect(contractsOwnSilverCheck.judge([withKeep({}, null)]).pass).toBe(false); // never reached the Keep
+  });
+
+  it('provisions are judged against 20–40% of food income, and the check is marked pending Q9', () => {
+    const r = provisionsMatterCheck.judge([withKeep({ provisionsFood: 30, jobFood: 100 })]);
+    expect(r.pass).toBe(true);
+    expect(provisionsMatterCheck.judge([withKeep({ provisionsFood: 1, jobFood: 100 })]).pass).toBe(
+      false,
+    );
+    expect(provisionsMatterCheck.judge([withKeep({ provisionsFood: 90, jobFood: 100 })]).pass).toBe(
+      false,
+    );
+    expect(r.pending).toBe('Q9');
+  });
+});
+
+describe('odds honesty', () => {
+  const rec = (winChance: number, wins: number, n: number): ContractRecord[] =>
+    Array.from({ length: n }, (_, i) => ({ hours: 0, tier: 1, winChance, success: i < wins }));
+  const judge = (probe: ContractRecord[]) =>
+    makeOddsHonestCheck(() => probe).judge([
+      { ...run('standard', {}), contracts: rec(0.99, 1881, 1900) },
+    ]);
+
+  it('passes when every crowded bucket lands within 5 points of what the odds said', () => {
+    const r = judge([...rec(0.55, 55, 100), ...rec(0.25, 24, 100)]);
+    expect(r.pass).toBe(true);
+    expect(r.lines.join('\n')).toContain('50–60%');
+  });
+
+  it('fails when a crowded bucket is off by more than 5 points', () => {
+    expect(judge(rec(0.55, 40, 100)).pass).toBe(false); // said 55%, got 40%
+  });
+
+  it('does not judge a bucket with too few contracts', () => {
+    const r = judge([...rec(0.55, 10, 10), ...rec(0.25, 25, 100)]); // 10 contracts at 55%, far off, but too few
+    expect(r.pass).toBe(true);
+    expect(r.lines.join('\n')).toContain('too few');
+  });
+
+  it('cannot judge with fewer than 2,000 contracts', () => {
+    const few = makeOddsHonestCheck(() => []).judge([
+      { ...run('standard', {}), contracts: rec(0.9, 9, 100) },
+    ]);
+    expect(few.pass).toBe(null);
   });
 });

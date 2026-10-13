@@ -135,6 +135,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     bounty: pay,
     trophies: earned,
     xp,
+    winChance: run.winChance,
     injuries,
     levelUps,
   };

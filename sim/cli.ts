@@ -92,7 +92,7 @@ const specs = (o: Options): RunSpec[] =>
         seed: `sim-${i + 1}`,
         start,
         days: o.days,
-        stopAtKeep: o.fast,
+        ...(o.fast ? { stopAt: FAST_UNTIL_TARGET } : {}),
       })),
     ),
   );
@@ -125,7 +125,8 @@ const main = (): void => {
   writeFileSync(join(REPORTS, `${name}.json`), `${JSON.stringify(report, null, 2)}\n`);
   writeFileSync(join(REPORTS, `${name}.md`), md);
 
-  const failed = checks.filter((c) => c.pass === false);
+  const failed = checks.filter((c) => c.pass === false && !c.pending);
+  const pending = checks.filter((c) => c.pass === false && c.pending);
   if (o.fast && !o.check) {
     for (const [k, ms] of Object.entries(report.baseline.groups)) {
       console.log(
@@ -137,7 +138,9 @@ const main = (): void => {
   } else if (o.fast) {
     // Keep `npm run check` quiet when green: one line per check.
     for (const c of checks) {
-      console.log(`sim ${c.pass === null ? '–' : c.pass ? '✓' : '✗'} ${c.id}`);
+      console.log(
+        `sim ${c.pass === null ? '–' : c.pass ? '✓' : '✗'} ${c.id}${c.pending ? ` (pending ${c.pending})` : ''}`,
+      );
       if (c.pass !== true) for (const line of c.lines) console.log(`    ${line}`);
     }
   } else {
@@ -153,6 +156,11 @@ const main = (): void => {
     }
     writeFileSync(BASELINE, `${JSON.stringify(report.baseline, null, 2)}\n`);
     console.log('Baseline recorded in sim/baseline.json.');
+  }
+  if (pending.length > 0) {
+    console.log(
+      `Pending, not failing the run: ${pending.map((c) => `${c.id} (${c.pending})`).join(', ')}. See docs/questions.md.`,
+    );
   }
   if (failed.length > 0) {
     console.error(

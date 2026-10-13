@@ -2,10 +2,9 @@ import { ages } from '../../content/ages';
 import { BUILDING_IDS, buildings, type BuildingId } from '../../content/buildings';
 import { JOB_IDS, jobs } from '../../content/jobs';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
-import { num } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import { ageUpStatus, isAvailable, maxLevelNow } from '../systems/ages';
-import { buildingCost, canAfford, timeToAfford } from '../systems/costs';
+import { buildingCost, canAfford, copyLimit, timeToAfford } from '../systems/costs';
 import { housing } from '../systems/housing';
 import { productionRate } from '../systems/production';
 import { settleCost } from '../systems/settle';
@@ -29,7 +28,8 @@ export const buildable = (state: GameState, id: BuildingId): boolean => {
   const def = buildings[id];
   if (def.kind === 'unique' || !isAvailable(state, def)) return false;
   if (def.kind === 'level') return state.buildings[id] < maxLevelNow(state, id);
-  return !def.maxCountKey || state.buildings[id] < num(def.maxCountKey);
+  const limit = copyLimit(id);
+  return limit === null || state.buildings[id] < limit;
 };
 
 /** Affordable while leaving `reserve` untouched in every resource the cost uses. */
@@ -50,6 +50,9 @@ const ageUpCost = (state: GameState): Bundle => {
 /** The next Age-up still needs silver the hold doesn't have. */
 export const silverWanted = (state: GameState): boolean =>
   ageUpCost(state).silver > state.resources.silver;
+
+/** The silver the next Age-up costs (0 when there is none), which other spending must leave alone. */
+export const rankUpSilver = (state: GameState): number => ageUpCost(state).silver;
 
 /** Buildings (or levels) the next Age-up requires that the hold lacks. */
 export const missingRequirements = (state: GameState): BuildingId[] => {

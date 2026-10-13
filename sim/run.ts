@@ -2,6 +2,7 @@ import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
 import { play, type PolicyId } from '../src/core/policies';
 import { OPENING_LENGTH } from '../src/core/policies/schedules';
 import { createNewGame } from '../src/core/state/new-game';
+import { provisions } from '../src/core/contracts/rewards';
 import { settleCost } from '../src/core/systems/settle';
 
 // Technical design §13.1: one simulated game, played by a policy on a virtual
@@ -22,8 +23,8 @@ export interface RunSpec {
   readonly seed: string;
   readonly start: StartId;
   readonly days: number;
-  /** Stop once the Keep is reached (the fast set needs nothing after it). */
-  readonly stopAtKeep?: boolean;
+  /** Stop once this moment is reached (the fast set needs nothing after its last target). */
+  readonly stopAt?: Moment;
 }
 
 export interface CheckInStat {
@@ -37,8 +38,35 @@ export interface CheckInStat {
   readonly opening: boolean;
 }
 
-export const MOMENTS = ['first-cottage', 'first-mine', 'mill-3', 'peasants-10', 'keep'] as const;
+export const MOMENTS = [
+  'first-cottage',
+  'first-mine',
+  'mill-3',
+  'peasants-10',
+  'keep',
+  // v0.2 (GDD §6.2):
+  'first-contract',
+  'roster-4',
+  'first-tier-3',
+] as const;
 export type Moment = (typeof MOMENTS)[number];
+
+/** One finished contract, for the odds-honesty check (GDD §6.3). */
+export interface ContractRecord {
+  readonly hours: number;
+  readonly tier: number;
+  /** The win chance the launch panel showed. */
+  readonly winChance: number;
+  readonly success: boolean;
+}
+
+/** What the Keep phase (from the Rank-up on) earned and spent, for the v0.2 economy checks. */
+export interface KeepPhase {
+  readonly bountySilver: number;
+  readonly jobSilver: number;
+  readonly provisionsFood: number;
+  readonly jobFood: number;
+}
 
 export interface RunResult {
   readonly spec: RunSpec;
@@ -51,6 +79,8 @@ export interface RunResult {
   /** The largest number anywhere in the state over the run (GDD §6.3 #7). */
   readonly largestNumber: number;
   readonly final: { readonly age: string; readonly peasants: number };
+  readonly contracts: readonly ContractRecord[];
+  readonly keepPhase: KeepPhase;
 }
 
 const largest = (value: unknown): number => {
@@ -75,6 +105,9 @@ export const runOne = (spec: RunSpec): RunResult => {
   const income = Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<ResourceId, number>;
   const peaks = { ...income, peasants: state.peasants.total };
   let largestNumber = largest(state);
+  const contracts: ContractRecord[] = [];
+  const keepPhase = { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 0 };
+  let inKeep = false;
 
   play(state, {
     // D62 (Q4a): a fresh start under Standard begins with the Opening's 15
@@ -82,7 +115,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     policy: spec.policy === 'standard' ? 'opening' : spec.policy,
     startedAt: start,
     until: start + spec.days * DAY,
-    stop: (s) => spec.stopAtKeep === true && s.cycle.age === 'keep',
+    stop: () => spec.stopAt !== undefined && moments[spec.stopAt] !== null,
     onCheckIn: (rec, s) => {
       // Income: the net change while away, plus the food that settling spent.
       const settles = rec.away.events.filter((e) => e.type === 'settle');
@@ -98,6 +131,32 @@ export const runOne = (spec: RunSpec): RunResult => {
       if (s.buildings.mill >= 3) mark('mill-3', rec.at);
       if (s.peasants.total >= 10) mark('peasants-10', rec.at);
       if (rec.agedUp) mark('keep', rec.at);
+      for (const c of rec.commands) {
+        if (c.type === 'contract.launch') mark('first-contract', rec.at);
+      }
+      if (Object.keys(s.hunters).length >= 4) mark('roster-4', rec.at);
+      for (const r of rec.away.contracts) {
+        contracts.push({
+          hours: (r.at - start) / HOUR,
+          tier: r.tier,
+          winChance: r.winChance,
+          success: r.success,
+        });
+        if (r.success && r.tier >= 3) mark('first-tier-3', r.at);
+      }
+      // The Keep phase runs from the Rank-up check-in on (GDD §6.3 #5 and #8).
+      if (rec.agedUp) inKeep = true;
+      if (inKeep) {
+        keepPhase.jobSilver += rec.away.produced.silver;
+        keepPhase.jobFood += rec.away.produced.food;
+        for (const r of rec.away.contracts) keepPhase.bountySilver += r.bounty;
+        for (const c of rec.commands) {
+          if (c.type !== 'contract.launch') continue;
+          const run = s.running.find((x) => x.contract.id === c.contract);
+          if (run)
+            keepPhase.provisionsFood += provisions(run.party.length, run.contract.tier).value;
+        }
+      }
       checkIns.push({
         hours: (rec.at - start) / HOUR,
         purchases: rec.purchases,
@@ -121,5 +180,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     peaks,
     largestNumber,
     final: { age: state.cycle.age, peasants: state.peasants.total },
+    contracts,
+    keepPhase,
   };
 };

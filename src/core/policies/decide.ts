@@ -6,6 +6,7 @@ import { ageUpStatus } from '../systems/ages';
 import { buildingCost } from '../systems/costs';
 import { idlePeasants, jobSlots } from '../systems/housing';
 import { bundleValue, deltaRateValue, payback, rateValue } from '../systems/valuation';
+import { contractMoves, firstContractFood } from './contracts';
 import {
   addBundles,
   affordable,
@@ -168,31 +169,41 @@ export const decideCheckIn = (
     purchases += 1;
     agedUp = true;
   }
+  // v0.2 (D75): contracts and hunters, before the building rules, so launches start their timers.
+  purchases += contractMoves(s, act, reserveFor(s));
+  // The first contract's provisions are held back from everything else, and settling
+  // pauses so it doesn't spend that food (D75).
+  const hold = firstContractFood(s);
+  const reserve = (): Bundle => {
+    const r = reserveFor(s);
+    return hold > 0 ? { ...r, food: r.food + hold } : r;
+  };
   const saving = !agedUp && shouldSave(s, horizonMs);
+  const pause = saving || hold > 0;
   // GDD §5.1.1: auto-settle can be turned off to save food. The policy does
   // that while it saves for the Age-up, and turns it back on afterwards.
-  if (s.peasants.autoSettle === saving) act({ type: 'peasants.autoSettle', on: !saving });
+  if (s.peasants.autoSettle === pause) act({ type: 'peasants.autoSettle', on: !pause });
   if (saving) return { commands, purchases, agedUp, hadOption, saving };
 
   for (const id of missingProducers(s)) buy(id);
   if (silverWanted(s)) while (buy('silver-seam'));
   // The reserve changes as purchases land, so it's read afresh each time.
   for (const id of missingRequirements(s)) {
-    while (missingRequirements(s).includes(id) && buy(id, reserveFor(s)));
+    while (missingRequirements(s).includes(id) && buy(id, reserve()));
   }
   for (;;) {
     const r = bottleneck(s);
     const id = r ? slotBuildingFor(r) : undefined;
-    if (!id || !buildable(s, id) || !buyPair(id, reserveFor(s))) break;
+    if (!id || !buildable(s, id) || !buyPair(id, reserve())) break;
   }
   for (;;) {
-    const reserve = reserveFor(s);
-    const single = bestSingle(s, reserve);
-    const pair = bestPair(s, reserve);
+    const held = reserve();
+    const single = bestSingle(s, held);
+    const pair = bestPair(s, held);
     const bought =
       pair && better(single, pair) === pair
-        ? buyPair(pair.id, reserve)
-        : single && buy(single.id, reserve);
+        ? buyPair(pair.id, held)
+        : single && buy(single.id, held);
     if (!bought) break;
   }
   return { commands, purchases, agedUp, hadOption, saving };

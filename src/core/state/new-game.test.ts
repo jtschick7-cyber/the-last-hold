@@ -5,7 +5,7 @@ describe('createNewGame (GDD §5.1.4)', () => {
   const s = createNewGame('seed-1', 1_760_000_000_000);
 
   it('starts with the GDD starting state', () => {
-    expect(s.resources).toEqual({ food: 50, wood: 75, iron: 0, silver: 0 });
+    expect(s.resources).toEqual({ food: 80, wood: 75, iron: 0, silver: 0 });
     expect(s.peasants.total).toBe(3);
     expect(s.peasants.jobs).toEqual({ farmer: 1, woodcutter: 2, miner: 0, 'silver-digger': 0 });
     expect(s.peasants.autoSettle).toBe(true);

@@ -45,6 +45,8 @@ export interface RunningContract {
   endsAt: number;
   /** The Reckless confirmation was given (GDD §5.3.7). */
   reckless: boolean;
+  /** The odds shown at launch (500 fights), kept so results can say how likely they were. */
+  winChance: number;
 }
 
 export interface ContractResult {
@@ -59,6 +61,8 @@ export interface ContractResult {
   bounty: number;
   trophies: number;
   xp: number;
+  /** The win chance shown when it was sent. */
+  winChance: number;
   injuries: { hunter: HunterId; kind: InjuryKind; until: number }[];
   levelUps: { hunter: HunterId; level: number }[];
   /** Unread until the player collects. */

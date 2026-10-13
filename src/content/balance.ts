@@ -102,7 +102,7 @@ export const balance = {
     armorGrowth: tunable(1.15),
   },
   bounty: {
-    base: tunable(60),
+    base: tunable(72),
     growth: tunable(1.6),
     ageMult: tunable({ hamlet: 1.0, keep: 1.0 }),
   },

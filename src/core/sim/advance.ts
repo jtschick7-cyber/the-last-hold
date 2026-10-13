@@ -29,23 +29,38 @@ export interface AdvanceLog {
   from: number;
   to: number;
   events: AdvanceEvent[];
+  /** What the jobs made over this advance, by resource (the simulator tells income from spending). */
+  produced: Record<ResourceId, number>;
 }
 
 // Settles are bounded by housing, so this only stops a runaway bug.
 const MAX_EVENTS_PER_ADVANCE = 100_000;
 
-const integrate = (state: GameState, until: number): void => {
+const integrate = (state: GameState, until: number, produced: Record<ResourceId, number>): void => {
   const dt = until - state.time;
   if (dt <= 0) return;
   const perMs: Partial<Record<ResourceId, number>> = {};
   for (const r of RESOURCE_IDS) perMs[r] = productionRate(state, r).value / MS_PER_MINUTE;
-  for (const r of RESOURCE_IDS) state.resources[r] += (perMs[r] ?? 0) * dt;
+  for (const r of RESOURCE_IDS) {
+    const made = (perMs[r] ?? 0) * dt;
+    state.resources[r] += made;
+    produced[r] += made;
+  }
   state.time = until;
 };
 
 /** Moves the game forward to `toTime` (epoch ms). Never moves backward. */
 export const advance = (state: GameState, toTime: number): AdvanceLog => {
-  const log: AdvanceLog = { from: state.time, to: Math.max(state.time, toTime), events: [] };
+  const produced = Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<
+    ResourceId,
+    number
+  >;
+  const log: AdvanceLog = {
+    from: state.time,
+    to: Math.max(state.time, toTime),
+    events: [],
+    produced,
+  };
   for (let i = 0; i < MAX_EVENTS_PER_ADVANCE; i++) {
     // Technical design §6.2: the next event of any kind. Ties at the same instant go
     // completions, recoveries, board arrivals, then settles [JC].
@@ -65,7 +80,7 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
       }
     }
     if (at === null || at > toTime) break;
-    integrate(state, Math.max(at, state.time));
+    integrate(state, Math.max(at, state.time), produced);
     if (kind === 0) {
       const r = applyCompletion(state);
       if (r) log.events.push({ type: 'contract', at: r.at, result: r });
@@ -80,7 +95,7 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
       log.events.push({ type: 'settle', at: state.time, job });
     }
   }
-  integrate(state, toTime);
+  integrate(state, toTime, produced);
   // The game was running up to here (technical design §6.4 bookkeeping).
   state.meta.lastSeen = state.time;
   state.meta.clockHighWater = Math.max(state.meta.clockHighWater, state.time);

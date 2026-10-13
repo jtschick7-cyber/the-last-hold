@@ -57,6 +57,7 @@ export const launch = (
     launchedAt: state.time,
     endsAt: state.time + duration(contract.tier),
     reckless: odds.reckless,
+    winChance: odds.winChance,
   });
   return ok;
 };

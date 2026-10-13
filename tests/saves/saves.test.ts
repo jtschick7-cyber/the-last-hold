@@ -231,11 +231,11 @@ describe('save store (technical design §9.1)', () => {
     expect(backend.getItem('lasthold:backup')).toBeNull();
     s.resources.food = 111;
     store.save(s); // first backup of the session: the previous main
-    expect(backend.getItem('lasthold:backup')).toContain('"food":50');
+    expect(backend.getItem('lasthold:backup')).toContain('"food":80');
     s.resources.food = 222;
     tick(5 * 60 * 1000);
     store.save(s); // too soon for another backup
-    expect(backend.getItem('lasthold:backup')).toContain('"food":50');
+    expect(backend.getItem('lasthold:backup')).toContain('"food":80');
     tick(5 * 60 * 1000);
     store.save(s); // 10 minutes since the last backup
     expect(backend.getItem('lasthold:backup')).toContain('"food":222');

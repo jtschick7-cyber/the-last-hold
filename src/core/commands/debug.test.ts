@@ -10,11 +10,11 @@ describe('debug commands (technical design §15)', () => {
   it('time skip runs the offline path and respects the cap', () => {
     const s = createNewGame('d', T0);
     expect(apply(s, { type: 'debug.skip', ms: HOUR }, T0).ok).toBe(true);
-    expect(s.resources.food).toBeCloseTo(50 + 6 * 60, 6);
+    expect(s.resources.food).toBeCloseTo(80 + 6 * 60, 6);
     expect(s.time).toBe(T0);
     const t = createNewGame('d', T0);
     apply(t, { type: 'debug.skip', ms: 20 * HOUR }, T0);
-    expect(t.resources.food).toBeCloseTo(50 + 6 * 60 * 12, 6); // capped at 12 h
+    expect(t.resources.food).toBeCloseTo(80 + 6 * 60 * 12, 6); // capped at 12 h
   });
 
   it('runs a policy over the last hours through apply(), then catches up', () => {

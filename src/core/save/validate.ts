@@ -54,6 +54,11 @@ const count = (v: unknown, where: string): number => {
   if (!Number.isInteger(n)) throw new Invalid(`${where} isn't a whole number.`);
   return n;
 };
+const unit = (v: unknown, where: string): number => {
+  const n = nonNegative(v, where);
+  if (n > 1) throw new Invalid(`${where} is above 1.`);
+  return n;
+};
 const bool = (v: unknown, where: string): boolean => {
   if (typeof v !== 'boolean') throw new Invalid(`${where} isn't true or false.`);
   return v;
@@ -189,6 +194,7 @@ const running = (v: unknown, where: string): RunningContract => {
     launchedAt: finite(o.launchedAt, `${where}.launchedAt`),
     endsAt: finite(o.endsAt, `${where}.endsAt`),
     reckless: bool(o.reckless, `${where}.reckless`),
+    winChance: unit(o.winChance, `${where}.winChance`),
   };
 };
 
@@ -206,6 +212,7 @@ const result = (v: unknown, where: string): ContractResult => {
     bounty: nonNegative(o.bounty, `${where}.bounty`),
     trophies: count(o.trophies, `${where}.trophies`),
     xp: nonNegative(o.xp, `${where}.xp`),
+    winChance: unit(o.winChance, `${where}.winChance`),
     injuries: arr(o.injuries, `${where}.injuries`).map((x, i) => {
       const r = obj(x, `${where}.injuries[${i}]`);
       return {
