@@ -330,7 +330,7 @@ The four basic resources are **food, wood, iron, and silver**. There are no stor
 **Peasants** are the workforce.
 - **Housing** sets the maximum number of peasants. The Hearth Hall provides 3, and each Cottage adds 2.
 - **Settling** a new peasant costs food: `settleCost(P) = 20 × 1.15^P`, where P is the current number of peasants.
-- **Auto-settle** is on by default. While housing is free and food covers the cost, a new peasant settles automatically, at most one every 30 s. The player can turn auto-settle off to save food for something else.
+- **Auto-settle** is on by default. While housing is free and food covers the cost, a new peasant settles automatically, at most one every 30 s. The player can turn auto-settle off to save food for something else. With auto-settle off, a **Settle one** button settles a peasant by hand: the same food cost and housing limit, no 30 s wait, and it doesn't delay the next automatic settle (D63).
 - **No food upkeep in v0.1** **[JC]**. Peasants cost food to settle, not to keep. This avoids starvation spirals, which play badly with offline time. From v0.2, food also pays **contract provisions** (§5.4.2, G3), which is the food sink after Keep.
 
 **Jobs.** Each peasant is either idle or assigned to a job. Job slots come from buildings.
@@ -1304,7 +1304,8 @@ Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes ava
 │  [pixel hold scene · Hamlet]     │
 │  Stanholm — Hamlet     Age ▸     │
 ├──────────────────────────────────┤
-│ PEASANTS 7/9   idle 1 ⚠️  Auto ✔ │
+│ PEASANTS 7 · 9 beds  idle 1 ⚠️   │
+│ [Settle one]   Auto ✔            │
 │ Farmer      4/6   [−] [+] [fill]  │
 │ Woodcutter  2/3   [−] [+] [fill]  │
 │ Miner       0/2   [−] [+] [fill]  │
@@ -1320,6 +1321,7 @@ Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes ava
 └──────────────────────────────────┘
 ```
 
+- The Peasants heading shows the peasant count and the beds (housing); a line under the Settle button says why settling is blocked (no free beds, or not enough food) (D63).
 - ● marks the best payback among affordable options. It's a hint only, and it can be turned off in Settings.
 - Buildings group into **Housing · Gathering · Crafting · Hold**. In v0.1 there are few enough buildings to show them as one list.
 - **Age ▸** opens the Age screen: the part of old Stanholm the next Age restores, its requirements as a checklist, its costs, and what it unlocks. Unbuilt future content shows as "Coming in a later milestone" (§5.1.3).

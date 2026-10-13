@@ -159,3 +159,4 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Skipped or deferred:** the Age rename and the icon swap, both waiting on the owner's choice. GDD not edited (owner gate).
 - **Update (same day):** the owner chose **Rank** and **rank up** (D64, Decided). Every screen, button and refusal message now says Rank; code names and the docs still say Age until a docs pass (D64 gives the mapping). Still open: approve D63, and the iron and silver icons.
 - **Update:** the owner chose the icons (D65): iron unchanged, silver is now the Tiny Town coin in grey. Open: approve D63.
+- **Update:** D63 approved (D66); GDD §5.1.1 and §9.2 updated. Playtest fixes merged into `milestone/v0.1`.
