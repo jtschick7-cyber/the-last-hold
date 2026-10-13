@@ -1,19 +1,44 @@
-/* Placeholder tokens until the palette is picked (plan T1.26). */
+/* Zughy 32 (D58). Every token is one of the palette's 32 colors. Dark by default,
+   a warm candlelit feel (GDD §9.1); light theme from Settings. */
+@font-face {
+  font-family: 'Kenney Pixel';
+  src: url('/fonts/kenney-pixel.ttf') format('truetype');
+  font-display: swap;
+}
+
 :root {
-  --c-bg: #16120f;
-  --c-surface: #211b17;
-  --c-surface-raised: #2c241e;
-  --c-border: #3a3029;
-  --c-text: #ece3d6;
-  --c-text-dim: #b3a593;
-  --c-ember: #e08a3c;
-  --c-on-ember: #1a120b;
-  --c-preview: #f2c94c;
+  --c-bg: #302c2e;
+  --c-surface: #39314b;
+  --c-surface-raised: #564064;
+  --c-border: #5a5353;
+  --c-text: #f4cca1;
+  --c-text-dim: #a0938e;
+  --c-ember: #f47e1b;
+  --c-on-ember: #302c2e;
+  --c-warn: #f4b41b;
+  --c-good: #71aa34;
+  --c-preview: #f4b41b;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 1rem;
   --space-4: 1.5rem;
+  /* Kenney Pixel (CC0), for headings and resource-bar numbers only (GDD §9.1). */
+  --font-pixel: 'Kenney Pixel', ui-monospace, monospace;
   color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --c-bg: #cfc6b8;
+  --c-surface: #dff6f5;
+  --c-surface-raised: #f4cca1;
+  --c-border: #a0938e;
+  --c-text: #302c2e;
+  --c-text-dim: #5a5353;
+  --c-ember: #a93b3b;
+  --c-on-ember: #dff6f5;
+  --c-warn: #7a444a;
+  --c-good: #397b44;
+  color-scheme: light;
 }
 
 *,
@@ -39,9 +64,23 @@ body {
   line-height: 1.5;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
     transition: none !important;
   }
+}
+
+:root[data-motion='on'] * {
+  animation: none !important;
+  transition: none !important;
 }

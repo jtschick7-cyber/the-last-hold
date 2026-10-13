@@ -1,5 +1,6 @@
-# Technical design §11.2: every push and pull request runs the check and a build.
-# Playwright smoke and cross-engine determinism join from v0.1.
+# Technical design §11.2: every push and pull request runs the check and a build,
+# plus (from v0.1, plan T1.38) the Playwright phone smoke test and the
+# determinism scenario in Chromium and WebKit.
 name: CI
 
 on:
@@ -22,3 +23,16 @@ jobs:
       - run: npm run build -- --outDir dist-preview
         env:
           LH_CHANNEL: preview
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run e2e

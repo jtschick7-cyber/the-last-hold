@@ -1,0 +1,170 @@
+// Every numeric game constant from GDD §7, under its §7 key (technical design
+// §5.1, D44). Each is `tunable` or `locked` (plan §0.6). The tuning pass may
+// change only tunable values; locked values change only through an
+// owner-approved decisions row. Keys for later milestones sit unused until then.
+//
+// Units: durations are stored in seconds (the engine's unit, GDD §5.0), with the
+// GDD's own wording alongside; production rates are per minute, as the GDD
+// writes them. Everything else is a plain number, ratio, or count.
+
+export type Unit = 'seconds' | 'perMinute';
+
+export interface Constant<T> {
+  readonly value: T;
+  readonly locked: boolean;
+  readonly unit?: Unit;
+}
+
+const tunable = <const T>(value: T, unit?: Unit): Constant<T> => ({ value, locked: false, unit });
+const locked = <const T>(value: T, unit?: Unit): Constant<T> => ({ value, locked: true, unit });
+
+const MIN = 60;
+const HOUR = 3600;
+
+export const balance = {
+  // ---- GDD §7.1 Hold ----
+  costGrowth: {
+    count: tunable(1.15),
+    level: tunable(1.75),
+  },
+  peasant: {
+    settleBase: tunable(20),
+    settleGrowth: tunable(1.15),
+    settleMinInterval: tunable(30, 'seconds'), // 30 s
+  },
+  rate: {
+    food: tunable(6, 'perMinute'),
+    wood: tunable(4, 'perMinute'),
+    iron: tunable(2, 'perMinute'),
+    silver: tunable(0.25, 'perMinute'),
+  },
+  silverSeam: { max: locked(2) },
+  mill: { perLevel: tunable(0.25) },
+  sawpit: { perLevel: tunable(0.25) },
+  smithy: { ironPerLevel: tunable(0.2) },
+  age: { keep: { allProduction: tunable(0.5) } },
+  // The simulated player's valuation: locked so tuning can't game the checks (plan §0.6).
+  value: { weights: locked({ food: 1, wood: 1.5, iron: 3, silver: 12 }) },
+  trophyHall: { perTrophy: tunable(0.005) },
+  herbGarden: { interval: tunable(10 * MIN, 'seconds') }, // 10 min per herb type
+
+  // ---- GDD §7.2 Offline ----
+  offline: {
+    baseCap: locked(12 * HOUR, 'seconds'), // 12 h
+    ceiling: locked(24 * HOUR, 'seconds'), // 24 h
+    chunk: tunable(60, 'seconds'), // 60 s
+  },
+  bellTower: { perLevel: tunable(1 * HOUR, 'seconds') }, // 1 h
+
+  // ---- GDD §7.3 Hunters ----
+  hunter: {
+    levelStatGrowth: tunable(0.1),
+    levelCap: { keep: tunable(10) },
+  },
+  xp: {
+    base: tunable(50),
+    growth: tunable(1.5),
+    perTier: tunable(20),
+  },
+  barracks: { maxLevel: locked(5) },
+  roster: {
+    hamletCap: locked(3),
+    ageBonus: locked({ citadel: 2, bastion: 2 }),
+  },
+  injury: {
+    bruised: tunable(30 * MIN, 'seconds'), // 30 min
+    woundedPerTier: tunable(2 * HOUR, 'seconds'), // 2 h
+    grievousMult: tunable(3),
+    bruisedBelow: tunable(0.3),
+    deathChance: locked(0.3),
+  },
+  death: { returnDaysBeforeLongNight: locked(3) },
+
+  // ---- GDD §7.4 Contracts & combat ----
+  board: {
+    interval: locked(2 * HOUR, 'seconds'), // 2 h
+    cap: locked(6),
+  },
+  contract: {
+    recklessBelow: locked(0.35),
+    unlockSuccesses: locked(3),
+    ageTierCap: locked({ hamlet: 1, keep: 5 }),
+    duration: tunable([30 * MIN, 1 * HOUR, 2 * HOUR, 4 * HOUR, 8 * HOUR], 'seconds'), // 30 min … 8 h
+    partySize: locked([3, 3, 3, 4, 4]),
+    hamletPartyMax: locked(2),
+  },
+  provisions: {
+    base: tunable(30),
+    growth: tunable(2.2),
+  },
+  monster: {
+    statGrowth: tunable(1.35),
+    armorGrowth: tunable(1.15),
+  },
+  bounty: {
+    base: tunable(60),
+    growth: tunable(1.6),
+    ageMult: tunable({ hamlet: 1.0, keep: 1.0 }),
+  },
+  combat: {
+    hitChance: tunable(0.9),
+    varianceLo: tunable(0.85),
+    varianceHi: tunable(1.15),
+    minDamage: tunable(1),
+    takenCap: locked(0.75),
+    critChance: tunable(0.1),
+    critMult: tunable(1.5),
+    meterThreshold: locked(100),
+    maxTicks: locked(400),
+  },
+  gear: { silveredFraction: tunable(0.25) },
+  striker: { critChance: tunable(0.2) },
+  mender: {
+    healMult: tunable(1.5),
+    healBelow: tunable(0.7),
+    attackMult: tunable(0.5),
+  },
+  target: {
+    vanguardWeight: tunable(3),
+    otherWeight: tunable(1),
+  },
+  odds: { samples: locked(500) },
+  prep: { wellPreparedBounty: locked(1.5) },
+  suggest: {
+    stage1Samples: locked(50),
+    stage1PerCandidate: locked(20),
+    finalists: locked(5),
+  },
+  boss: {
+    tokenInterval: locked(8 * HOUR, 'seconds'), // 8 h
+    tokenMax: locked(6),
+    hunterRest: locked(24 * HOUR, 'seconds'), // 24 h
+  },
+  riftglass: { bankWeeks: locked(2) },
+  longNightArrival: { emberCapShare: locked(1.2) },
+
+  // ---- GDD §7.5 Bestiary & preparation ----
+  knowledge: {
+    studiedKills: locked(3),
+    masteredKills: locked(10),
+    studiedDamage: tunable(0.05),
+    masteredDamage: tunable(0.1),
+  },
+  clue: {
+    time: tunable(30 * MIN, 'seconds'), // 30 min
+    studiedMult: tunable(0.5),
+  },
+  lodge: { maxLevel: tunable(3) },
+  oil: { familyBonus: tunable(0.35) },
+  brew: { time: tunable(10 * MIN, 'seconds') }, // 10 min
+  hut: { maxLevel: tunable(5) },
+} as const;
+
+export type Balance = typeof balance;
+
+type KeysOf<T, P extends string> = {
+  [K in keyof T & string]: T[K] extends Constant<unknown> ? `${P}${K}` : KeysOf<T[K], `${P}${K}.`>;
+}[keyof T & string];
+
+/** A dotted GDD §7 key such as 'rate.food'. Content refers to constants by key. */
+export type BalanceKey = KeysOf<Balance, ''>;

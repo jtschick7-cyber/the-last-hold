@@ -15,8 +15,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "e2e": "playwright test",
     "sim": "vite-node sim/cli.ts --",
     "sim:check": "vite-node sim/cli.ts -- --check",
+    "sim:accept": "vite-node sim/cli.ts -- --check --accept",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run sim:check -- --fast"
   },
   "dependencies": {
@@ -25,10 +27,13 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.56.1",
     "@preact/preset-vite": "2.10.6",
     "@types/node": "22.20.5",
+    "@types/pngjs": "6.0.5",
     "eslint": "10.12.0",
     "globals": "17.13.0",
+    "pngjs": "7.0.0",
     "prettier": "3.9.10",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.1",

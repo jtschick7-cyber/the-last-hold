@@ -151,7 +151,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.1 — The Hold
 
-**Status:** not started
+**Status:** in progress
 
 **Goal:** the idle economy from Hamlet to Keep, playable on a phone, saving reliably, with offline progress, a debug panel, diagnostics, a working simulator, and the art pipeline.
 **Reads:** GDD §1–5.2, §6, §7.1–7.2, §9 (the v0.1 screens), §10; technical design §4–9, §11–15; `setting-primer.md` §5–7.
@@ -161,81 +161,84 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 | Owner task | Needed by | When |
 |---|---|---|
 | Approve any replacement names | T1.6 | When T1.6 raises them in `questions.md` |
-| **Pick the palette** from the rendered candidates | T1.26 | When T1.26 posts the swatch page |
-| **Download the CC0 packs** from the exact list T1.27 gives you (pack names, links, licenses) into `art-src/packs/<pack>/` | T1.28 | **One session ahead:** T1.27 delivers the list a session before T1.28 needs the files |
+| **Pick the palette** from the rendered candidates | T1.28 | When T1.28 posts the swatch page |
+| **Download the CC0 packs** from the exact list T1.30 gives you (pack names, links, licenses) into `art-src/packs/<pack>/` | T1.31 | **One session ahead:** T1.30 delivers the list a session before T1.31 needs the files |
 
 ### A. Foundations
 
-- [ ] **T1.1 RNG.** `core/rng`: sfc32, cyrb128, streams, `RollSource` (`seeded`, `scripted`). **Tests:** goldens for 3 seeds; `scripted` throws if it runs out or isn't fully consumed.
-- [ ] **T1.2 Portable math.** `core/math`: `intPow` and `maxAffordable` (search). **Tests:** both match `Math.pow` and the GDD log formula over a table of cases (computed in the tests only) (technical design §7.4).
-- [ ] **T1.3 Formatting.** Numbers and durations (technical design §8), with suffixes chosen by thresholds. **Tests:** the full boundary table.
-- [ ] **T1.4 Balance file.** `content/balance.ts` with every v0.1 key, each marked `tunable` or `locked` per §0.6.
-- [ ] **T1.5 v0.1 content.** Resources, jobs, buildings (Silver Seam max 2), Ages (Hamlet, Keep, plus the restoration text), and the starting state (GDD §5.1.4).
-- [ ] **T1.6 Names.** Collision-search every v0.1 proper noun. Create `tests/content/names.ts` and the name-finding test (technical design §14). Any collision or unchecked name goes to `questions.md` as `[?]`.
-- [ ] **T1.7 v0.1 text.** Building blurbs; Brana and Pechko lines for every primer §6.2 trigger (3–5 variants each); the Keep inscription.
-- [ ] **T1.8 Content integrity test.** IDs, text keys and unlocks resolve; **the GDD §7 key list equals the `balance.ts` keys** (technical design §5.1).
+- [x] **T1.1 RNG.** `core/rng`: sfc32, cyrb128, streams, `RollSource` (`seeded`, `scripted`). **Tests:** goldens for 3 seeds; `scripted` throws if it runs out or isn't fully consumed.
+- [x] **T1.2 Portable math.** `core/math`: `intPow` and `maxAffordable` (search). **Tests:** both match `Math.pow` and the GDD log formula over a table of cases (computed in the tests only) (technical design §7.4).
+- [x] **T1.3 Formatting.** Numbers and durations (technical design §8), with suffixes chosen by thresholds. **Tests:** the full boundary table.
+- [x] **T1.4 Balance file.** `content/balance.ts` with every v0.1 key, each marked `tunable` or `locked` per §0.6.
+- [x] **T1.5 v0.1 content.** Resources, jobs, buildings (Silver Seam max 2), Ranks (Hamlet, Keep, plus the restoration text), and the starting state (GDD §5.1.4).
+- [x] **T1.6 Names.** Collision-search every v0.1 proper noun. Create `tests/content/names.ts` and the name-finding test (technical design §14). Any collision or unchecked name goes to `questions.md` as `[?]`.
+- [x] **T1.7 v0.1 text.** Building blurbs; Brana and Pechko lines for every primer §6.2 trigger (3–5 variants each); the Keep inscription.
+- [x] **T1.8 Content integrity test.** IDs, text keys and unlocks resolve; **the GDD §7 key list equals the `balance.ts` keys** (technical design §5.1).
 
 ### B. State, selectors, commands
 
-- [ ] **T1.9 State v1.** `GameState` with only the v0.1 fields; `createNewGame(seed, now)`.
-- [ ] **T1.10 Breakdowns and selectors.** Rates, costs (n includes starting buildings), housing, slots, and the offline cap, each with a breakdown. **Tests:** every GDD §7.1 formula, using the GDD's numbers.
-- [ ] **T1.11 Silver rules.** Silver-digger output gets only the relic and event buckets. **Test:** Keep's +50% doesn't change silver.
-- [ ] **T1.12 Commands.**
+- [x] **T1.9 State v1.** `GameState` with only the v0.1 fields; `createNewGame(seed, now)`.
+- [x] **T1.10 Breakdowns and selectors.** Rates, costs (n includes starting buildings), housing, slots, and the offline cap, each with a breakdown. **Tests:** every GDD §7.1 formula, using the GDD's numbers.
+- [x] **T1.11 Silver rules.** Silver-digger output gets only the relic and event buckets. **Test:** Keep's +50% doesn't change silver.
+- [x] **T1.12 Commands.**
   - `build.buy` (×1, ×10, Max), `build.upgrade`.
   - `peasants.*`, `age.up`, `settings.*`.
   - **Tests:** refused commands never change state.
-- [ ] **T1.13 Valuation.** Best payback and the ● selector (GDD §5.1.2). **Tests:** mixed-cost and housing cases.
+- [x] **T1.13 Valuation.** Best payback and the ● selector (GDD §5.1.2). **Tests:** mixed-cost and housing cases.
 
 ### C. Time
 
-- [ ] **T1.14 Event-driven `advance`.** Settle events and the tie order (technical design §6.2).
-- [ ] **T1.15 Offline catch-up.** Cap, backward clock, chunks with yields, the away summary.
-- [ ] **T1.16 Required tests.**
+- [x] **T1.14 Event-driven `advance`.** Settle events and the tie order (technical design §6.2).
+- [x] **T1.15 Offline catch-up.** Cap, backward clock, chunks with yields, the away summary.
+- [x] **T1.16 Required tests.**
   - **Offline equivalence**, with the comparison rule from technical design §6.2.
   - Backward clock; determinism; cap reporting.
 
 ### D. Saves
 
-- [ ] **T1.17 Envelope and storage.** Namespaced keys (live or preview); main, backup, and quarantine slots; autosave; the `persist()` request.
-- [ ] **T1.18 Export and import.** `LH1.` and `LH0.` codes, the save file, clear errors.
-- [ ] **T1.19 Migrations framework.** An empty list, the v1 fixture, validation, the newer-version refusal. **Tests:** round-trip; corrupted codes; unknown IDs.
+- [x] **T1.17 Envelope and storage.** Namespaced keys (live or preview); main, backup, and quarantine slots; autosave; the `persist()` request.
+- [x] **T1.18 Export and import.** `LH1.` and `LH0.` codes, the save file, clear errors.
+- [x] **T1.19 Migrations framework.** An empty list, the v1 fixture, validation, the newer-version refusal. **Tests:** round-trip; corrupted codes; unknown IDs.
 
 ### E. UI
 
-- [ ] **T1.20 Shell.** Resource bar and rates sheet; tabs **Hold** and **More** only; sheet stack; themes; the CC0 pixel font.
-- [ ] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
-- [ ] **T1.22 Age screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
-- [ ] **T1.23 Away sheet and Reports** (the last 3 sheets).
-- [ ] **T1.24 Breakdown sheet.** Long-press and hover; ⓘ markers.
-- [ ] **T1.25 More menu.** Save & Data; Settings; About & Credits (version, channel, commit, `debugUsed`); and the **install tip, including the iPhone storage note** (technical design §9.1).
-- [ ] **T1.26 Debug panel** (`?debug`). Time skip through the offline path, add resources, seed, Age unlock, raw state, simulator run, timing readout.
-- [ ] **T1.27 Diagnostics** (technical design §15.1). The error capture list, **More → Diagnostics**, "Copy diagnostics", and the crash fallback screen.
+- [x] **T1.20 Shell.** Resource bar and rates sheet; tabs **Hold** and **More** only; sheet stack; themes.
+- [x] **T1.20a Pixel font.** The CC0 pixel font for headings and the resource bar (split from T1.20: no CC0 font source is reachable from Claude Code's sessions; see `questions.md` Q1). Done 2026-10-12: Kenney Pixel (CC0), from the owner's upload.
+- [x] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
+- [x] **T1.22 Rank screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
+- [x] **T1.23 Away sheet and Reports** (the last 3 sheets).
+- [x] **T1.24 Breakdown sheet.** Long-press and hover; ⓘ markers.
+- [x] **T1.25 More menu.** Save & Data; Settings; About & Credits (version, channel, commit, `debugUsed`); and the **install tip, including the iPhone storage note** (technical design §9.1).
+- [x] **T1.26 Debug panel** (`?debug`). Time skip through the offline path, add resources, seed, Rank unlock, raw state, timing readout. *(The "simulator run" button moved to T1.35, since it needs the simulator.)*
+- [x] **T1.27 Diagnostics** (technical design §15.1). The error capture list, **More → Diagnostics**, "Copy diagnostics", and the crash fallback screen.
 
 ### F. Art pipeline
 
-- [ ] **T1.28 Palette.** Render 2–3 free-use 32-color candidates as a swatch page. 👤 **The owner picks one.** Record it in `palette.ts` and `credits.md`.
-- [ ] **T1.29 Manifest and `<Sprite>`.** Placeholder fallback; `gen-placeholders`.
-- [ ] **T1.30 Pack list for the owner.** Write `art-src/PACKS-NEEDED.md` with the exact CC0 packs, links, licenses, and target folders for v0.1 (hold-scene tiles, resource icons, building icons, UI frames). Post it to `questions.md` **one session before T1.31**.
-- [ ] **T1.31 Recolor tool and packs.** `tools/recolor.ts`, then process the packs the owner added. If the packs aren't there yet, mark it `[?]` and continue elsewhere.
-- [ ] **T1.32 Credits.** Generate `credits.md`; add the CI license test.
-- [ ] **T1.33 Contact sheet tool.**
+- [x] **T1.28 Palette.** Render 2–3 free-use 32-color candidates as a swatch page. 👤 **The owner picks one.** Record it in `palette.ts` and `credits.md`.
+- [x] **T1.29 Manifest and `<Sprite>`.** Placeholder fallback; `gen-placeholders`.
+- [x] **T1.30 Pack list for the owner.** Write `art-src/PACKS-NEEDED.md` with the exact CC0 packs, links, licenses, and target folders for v0.1 (hold-scene tiles, resource icons, building icons, UI frames). Post it to `questions.md` **one session before T1.31**.
+- [x] **T1.31 Recolor tool.** `tools/recolor.ts` (OKLab nearest color) and `tools/recolor-cli.ts`, tested on generated images.
+- [x] **T1.31a Process the packs.** Unpack the owner's uploads, check each `License.txt`, recolor to the chosen palette, add manifest rows, and add the Kenney font (T1.20a). Done 2026-10-12 with recipes in `tools/art-recipes.ts`; the Pixel UI Pack's frames are kept for the v1.0 art pass (D59).
+- [x] **T1.32 Credits.** Generate `credits.md`; add the CI license test.
+- [x] **T1.33 Contact sheet tool.**
 
 ### G. Simulator
 
-- [ ] **T1.34 Simulator CLI and report.** Virtual clock, seeds, JSON and Markdown, baseline diff, `sim:accept`, and the **fast set** for `check` (technical design §11.2).
-- [ ] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation.
-- [ ] **T1.36 v0.1 checks**, with `sim/targets.ts` locked.
-- [ ] **T1.37 Tuning pass.** `tunable` constants only (§0.6).
+- [x] **T1.34 Simulator CLI and report.** Virtual clock, seeds, JSON and Markdown, baseline diff, `sim:accept`, and the **fast set** for `check` (technical design §11.2).
+- [x] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation. Then add the debug panel's "run the Standard policy for N hours" button (moved from T1.26). *(Rules: D60.)*
+- [x] **T1.36 v0.1 checks**, with `sim/targets.ts` locked. *(Written and tested; they run in `sim:check` and `sim.yml`. Enforcing them inside `npm run check` is T1.36a.)*
+- [x] **T1.36a Enforce the fast set in `check`** (`sim:check -- --fast`), once T1.37 makes the checks pass.
+- [x] **T1.37 Tuning pass.** `tunable` constants only (§0.6). *(D62: starting wood 75, Keep silver 250; every v0.1 check passes on 5 seeds.)*
 
 ### H. Browser tests
 
-- [ ] **T1.38 Playwright.**
+- [x] **T1.38 Playwright.** *(D61; WebKit runs in CI.)*
   - **Smoke** (phone viewport): load → buy a Cottage → reload → state persists → offline reload works.
   - Run the **determinism suite in WebKit and Chromium** (technical design §14).
 
 ### v0.1 acceptance criteria
 
-1. A fresh game can reach Keep. The Age-up applies the Keep grants and shows the Roll of Honor.
+1. A fresh game can reach Keep. The Rank-up applies the Keep grants and shows the Roll of Honor.
 2. Every on-screen number that has a formula opens a breakdown that matches the engine.
 3. Reopening after up to 12 h shows a correct away sheet; time beyond the cap is reported.
 4. A save survives a reload; an export code moves it between browsers; corrupted codes are refused with a reason; preview and live saves never mix.
@@ -249,13 +252,13 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 | Check | Target |
 |---|---|
 | First Cottage (Opening) | ≤ 1 min |
-| First Mine (Opening) | ≤ 5 min. If missed, raise starting wood to 70 (D30); that's a tunable. |
+| First Mine (Opening) | ≤ 5 min. If missed, raise starting wood (D30); that's a tunable. Now 75 (D62). |
 | Mill level 3 | 2–5 h |
 | 10 peasants | 3–6 h |
 | **Keep** | **8–14 h** (Standard, median); ≤ 24 h (Light); ≥ 6 h (Heavy) |
 | Something to do | ≥ 90% of Standard check-ins |
 | No dry spells | Never 2 empty check-ins in a row |
-| No walls | ≤ 3 check-ins of saving (≤ 5 for Age-ups) |
+| No walls | ≤ 3 check-ins of saving (≤ 5 for Rank-ups) |
 | No overflow | < 1e300 over 14 days |
 
 ### v0.1 owner playtest checklist 👤 (on the preview build)

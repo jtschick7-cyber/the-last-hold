@@ -1,6 +1,6 @@
 // Generates the placeholder PWA icons (technical design §11.1: "icons generated
 // from one source"). The source is the 16×16 pixel grid below, original work made
-// for this project. Replaced when the palette and art land (plan T1.26–T1.28).
+// for this project, in the Zughy 32 palette (D58).
 // Run: npx vite-node tools/make-icons.ts
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
@@ -26,11 +26,11 @@ const GRID = [
 ];
 
 type Rgb = readonly [number, number, number];
-const BACKGROUND: Rgb = [0x16, 0x12, 0x0f];
+const BACKGROUND: Rgb = [0x30, 0x2c, 0x2e]; // Zughy 32 (D58)
 const COLORS: Record<string, Rgb> = {
   '.': BACKGROUND,
-  '#': [0x8a, 0x7c, 0x6c],
-  o: [0xe0, 0x8a, 0x3c],
+  '#': [0xa0, 0x93, 0x8e],
+  o: [0xf4, 0x7e, 0x1b],
 };
 
 const crcTable = Array.from({ length: 256 }, (_, n) => {

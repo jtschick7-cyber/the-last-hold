@@ -1,0 +1,82 @@
+import { AGE_IDS, type AgeId } from '../../content/ages';
+import { RESOURCE_IDS, type ResourceBundle } from '../../content/resources';
+import { play } from '../policies/play';
+import { POLICY_IDS, type PolicyId } from '../policies/schedules';
+import { catchUpNow } from '../sim/offline';
+import type { GameState } from '../state/game-state';
+import { ok, refuse, type ApplyResult } from './types';
+
+// Technical design §15 / GDD §9.10: every debug action is a command, and any of
+// them sets meta.debugUsed (shown in About, no other effect; D21).
+
+/**
+ * Time skip through the real offline path: the game behaves as if it had last
+ * run `ms` earlier, then catches up to now (so the offline cap applies).
+ */
+export const skip = (state: GameState, ms: number, now: number): ApplyResult => {
+  if (!Number.isFinite(ms) || ms <= 0) return refuse('Skip a positive amount of time.');
+  state.time -= ms;
+  state.meta.lastSeen -= ms;
+  state.peasants.lastSettleAt -= ms;
+  catchUpNow(state, Math.max(now, state.time + ms));
+  state.meta.debugUsed = true;
+  return ok;
+};
+
+/**
+ * Plays a simulator policy (GDD §6.1) over the last `ms`, as if the game had
+ * last run that long ago and the policy had been checking in since. Then
+ * catches up to now. Check-in times read the clock as UTC.
+ */
+export const runPolicy = (
+  state: GameState,
+  policy: PolicyId,
+  ms: number,
+  now: number,
+): ApplyResult => {
+  if (!(POLICY_IDS as readonly string[]).includes(policy)) return refuse('Unknown policy.');
+  if (!Number.isFinite(ms) || ms <= 0) return refuse('Run a policy for a positive time.');
+  state.time -= ms;
+  state.meta.lastSeen -= ms;
+  state.peasants.lastSettleAt -= ms;
+  // The replayed check-ins happen before the latest time seen, so move that
+  // back too, or catch-up would read them as a clock moved backward (D21).
+  state.meta.clockHighWater = Math.min(state.meta.clockHighWater, state.time);
+  const from = state.time;
+  play(state, { policy, startedAt: from, until: from + ms });
+  catchUpNow(state, Math.max(now, from + ms));
+  state.meta.debugUsed = true;
+  return ok;
+};
+
+export const addResources = (state: GameState, bundle: ResourceBundle): ApplyResult => {
+  const entries = Object.entries(bundle ?? {});
+  const valid =
+    entries.length > 0 &&
+    entries.every(
+      ([r, v]) =>
+        (RESOURCE_IDS as readonly string[]).includes(r) &&
+        typeof v === 'number' &&
+        Number.isFinite(v) &&
+        v > 0,
+    );
+  if (!valid) return refuse('Add positive amounts of known resources.');
+  for (const [r, v] of entries) state.resources[r as keyof typeof state.resources] += v as number;
+  state.meta.debugUsed = true;
+  return ok;
+};
+
+export const setSeed = (state: GameState, seed: string): ApplyResult => {
+  if (typeof seed !== 'string' || seed.trim() === '') return refuse('The seed needs some text.');
+  state.meta.gameSeed = seed.trim();
+  state.meta.debugUsed = true;
+  return ok;
+};
+
+/** Jumps to an Age without its requirements or cost. */
+export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
+  if (!(AGE_IDS as readonly string[]).includes(age)) return refuse('That Rank does not exist.');
+  state.cycle.age = age;
+  state.meta.debugUsed = true;
+  return ok;
+};

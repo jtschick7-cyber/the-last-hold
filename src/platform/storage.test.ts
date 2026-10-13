@@ -1,20 +1,8 @@
 // Plan v0.0 acceptance 3: a value saved in the preview is not visible in live, and
 // vice versa. Both share one origin on GitHub Pages, so this is the whole guarantee.
 import { describe, expect, it } from 'vitest';
-import { createChannelStorage, storagePrefix, type KeyValueBackend } from './storage';
-
-const memoryBackend = (): KeyValueBackend => {
-  const map = new Map<string, string>();
-  return {
-    get length() {
-      return map.size;
-    },
-    key: (i) => [...map.keys()][i] ?? null,
-    getItem: (k) => map.get(k) ?? null,
-    setItem: (k, v) => void map.set(k, v),
-    removeItem: (k) => void map.delete(k),
-  };
-};
+import { memoryBackend } from '../../tests/helpers/memory-storage';
+import { createChannelStorage, storagePrefix } from './storage';
 
 describe('channel storage', () => {
   it('uses the technical design §9.1 prefixes', () => {

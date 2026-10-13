@@ -1,0 +1,44 @@
+.tree,
+.children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.children {
+  margin-left: var(--space-3);
+  border-left: 1px solid var(--c-border);
+  padding-left: var(--space-2);
+}
+
+.node {
+  padding: var(--space-1) 0;
+}
+
+.line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.label {
+  min-width: 0;
+}
+
+.value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  color: var(--c-text-dim);
+}
+
+.key {
+  font-size: 0.75rem;
+  color: var(--c-ember);
+}

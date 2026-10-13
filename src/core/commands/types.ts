@@ -1,0 +1,36 @@
+import type { AgeId } from '../../content/ages';
+import type { BuildingId } from '../../content/buildings';
+import type { JobId } from '../../content/jobs';
+import type { ResourceBundle } from '../../content/resources';
+import type { PolicyId } from '../policies/schedules';
+import type { Settings } from '../state/game-state';
+
+// Technical design §4.3: every player action is a plain JSON Command, applied
+// through apply(). The UI, the simulator and the debug panel all use these.
+export type Command =
+  /** Count buildings: a number of copies, or the most affordable ("Max"). */
+  | { type: 'build.buy'; building: BuildingId; count: number | 'max' }
+  /** Level buildings: the next level. */
+  | { type: 'build.upgrade'; building: BuildingId }
+  | { type: 'peasants.add'; job: JobId }
+  | { type: 'peasants.remove'; job: JobId }
+  /** Moves as many idle peasants into the job as its free slots allow. */
+  | { type: 'peasants.fill'; job: JobId }
+  /** Settles one peasant for food, whether or not auto-settle is on. */
+  | { type: 'peasants.settle' }
+  | { type: 'peasants.autoSettle'; on: boolean }
+  | { type: 'peasants.priority'; order: JobId[] }
+  | { type: 'age.up' }
+  | { type: 'settings.set'; patch: Partial<Settings> }
+  // Debug (technical design §15): only offered with ?debug or in dev builds.
+  | { type: 'debug.skip'; ms: number }
+  /** Plays a simulator policy over the last `ms`, then catches up to now (technical design §15). */
+  | { type: 'debug.runPolicy'; policy: PolicyId; ms: number }
+  | { type: 'debug.addResources'; bundle: ResourceBundle }
+  | { type: 'debug.setSeed'; seed: string }
+  | { type: 'debug.unlockAge'; age: AgeId };
+
+export type ApplyResult = { ok: true } | { ok: false; reason: string };
+
+export const ok: ApplyResult = { ok: true };
+export const refuse = (reason: string): ApplyResult => ({ ok: false, reason });

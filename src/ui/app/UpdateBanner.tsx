@@ -1,11 +1,25 @@
 import type { UpdateHandle } from '../../platform/service-worker';
-import styles from './App.module.css';
+import styles from '../styles/ui.module.css';
+import css from './App.module.css';
 
-// Technical design §11.1: offer the reload; never force it.
-export const UpdateBanner = ({ update }: { update: UpdateHandle }) => (
-  <div class={styles.banner} role="status">
+// Technical design §11.1: offer the reload; never force it. Saves first.
+export const UpdateBanner = ({
+  update,
+  beforeReload,
+}: {
+  update: UpdateHandle;
+  beforeReload: () => void;
+}) => (
+  <div class={css.banner} role="status">
     <span>New version: reload when ready.</span>
-    <button type="button" class={styles.button} onClick={() => update.apply()}>
+    <button
+      type="button"
+      class={styles.btnPrimary}
+      onClick={() => {
+        beforeReload();
+        update.apply();
+      }}
+    >
       Reload
     </button>
   </div>
