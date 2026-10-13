@@ -58,6 +58,19 @@ describe('the simulated player in v0.4 (GDD §6.1)', () => {
     expect(recruitHold(s, DAY)).toBe(1_000); // no Seam rate reaches 1,000 silver in time
   });
 
+  it('while saving, gear and the Lodge, Hut and Garden leave the Rank-up silver alone too (D132)', () => {
+    const moves = (hold: number) => {
+      const s = keepRich('gearhold');
+      Object.assign(s.buildings, { 'hunters-lodge': 1, 'alchemists-hut': 1, 'herb-garden': 1 });
+      s.resources = { food: 1e9, wood: 1e9, iron: 1e9, silver: 1_000 };
+      const a = actor(s);
+      contractMoves(s, a.act, none(), hold);
+      return 1_000 - s.resources.silver; // silver spent
+    };
+    expect(moves(0)).toBeGreaterThan(0);
+    expect(moves(1_000)).toBe(0);
+  });
+
   it('the shortest resource counts required levels, and settling food only while peasants are needed (D132)', () => {
     const s = keepRich('short');
     Object.assign(s.buildings, { mill: 10, smithy: 1, barracks: 1 });

@@ -121,7 +121,7 @@ export const contractMoves = (
   s: GameState,
   act: Act,
   reserve: Bundle,
-  /** Silver hires leave alone while the policy saves for the Rank-up (goals.recruitHold). */
+  /** Silver hires, gear and the Lodge, Hut and Garden leave alone while the policy saves for the Rank-up (goals.recruitHold, D132). */
   silverHold = 0,
 ): number => {
   if (!s.board.opened) return 0;
@@ -130,9 +130,10 @@ export const contractMoves = (
   // recruit or gear upgrade; after that the v0.3 order (D95): hires and gear, then the
   // rest of the Lodge, Hut and Garden steps, the clues and the kettles, before the launches.
   let actions = 0;
-  if (!labFirstSetBuilt(s)) actions += labBuildings(s, act, reserve);
+  const held = { ...reserve, silver: reserve.silver + silverHold };
+  if (!labFirstSetBuilt(s)) actions += labBuildings(s, act, held);
   if (labFirstSetBuilt(s))
-    actions += recruit(s, act, silverHold) + equip(s, act, reserve) + labBuildings(s, act, reserve);
+    actions += recruit(s, act, silverHold) + equip(s, act, held) + labBuildings(s, act, held);
   actions += brewMoves(s, act);
   for (const c of [...s.board.open].sort(byValue)) {
     const free = availableHunters(s);
