@@ -333,3 +333,12 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Benchmark:** odds 147 ms, Suggest 447 ms at 4× slowdown here; the same code before this change measured 167 ms and 465 ms on this machine, so the stand inputs cost nothing. This machine runs about twice as slow as the one that recorded v0.3's 73 ms. Within the 2× fail line; the odds panel is above its 100 ms budget on this machine (a warning).
 - **Results:** `npm run check` green (1,080 tests); full `npm run sim:check` passes and matches the baseline.
 - **Next:** T4.7, the preview (100 practice stands in the worker), the Embers payout and relic milestones.
+
+## 2026-10-13 — v0.4: T4.7 preview, payout and relics
+- **Owner:** accepted D120 (D121).
+- **Done (T4.7):** the Embers payout (`src/core/stand/embers.ts`) with its breakdown and the arrival's trophies cap; relic milestones (first stand ever to hold 6, 9, 12, 15, 18, 21; a relic not owned, by the stand seed); the preview (`preview.ts`): 100 practice stands with their own dice on the real wave list, median and 10th–90th range, Embers now and per day of the cycle, Threat by tomorrow, tomorrow's Embers as an estimate; the stand read from the hold (`from-state.ts`: stores' bombs, defenses, relics, bestiary, Threat 0 at the arrival); the worker answers `stand` requests; the preview-honesty test; the benchmark.
+- **Benchmark (4× slowdown, this machine):** Last Stand preview 351 ms (budget 1 s).
+- **Readings:** D122 (Proposed), notably: tomorrow's estimate keeps today's expected waves (a second batch would double the preview time).
+- **Seen, for tuning (T4.15):** the waves a stand holds hardly depend on the dice: in most setups all 100 practice stands hold the same number of waves. The stand ends where a wave can't be won in 400 ticks, so it behaves like a wall, not a gamble. The "stand now or wait" choice still moves with Threat, levels and defenses.
+- **Results:** `npm run check` green (1,092 tests, 18 s of tests); full `npm run sim:check` passes and matches the baseline.
+- **Next:** T4.8, the Long Night reset.

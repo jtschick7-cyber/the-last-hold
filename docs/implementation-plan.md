@@ -466,7 +466,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### C. The Last Stand
 
 - [x] **T4.6 Stand engine.** The seeded wave list, fixed at Bastion; escalation past tier 5; strength from Threat; one wave at a time through the fight engine with Health carried over, **with contract fights and every golden fight unchanged** (`rulesVersion` stays 1; if a golden changes, stop and ask); recovery between waves; the Watchtower volley and bombs at tick 1; Walls and Iron Shutter as taken%; potions once per stand; location traits off; the tick limit ends the stand; no injuries or deaths; wave logs rebuilt from the saved inputs.
-- [ ] **T4.7 Preview, payout and relics.** 100 practice stands in the worker (range, Embers now and per day, Threat and Embers tomorrow as an estimate); the payout formula with its breakdown; relic milestones; the preview-honesty test (D114); the benchmark (≤ 1 s at 4× slowdown; warn at the budget, fail at 2×).
+- [x] **T4.7 Preview, payout and relics.** 100 practice stands in the worker (range, Embers now and per day, Threat and Embers tomorrow as an estimate); the payout formula with its breakdown; relic milestones; the preview-honesty test (D114); the benchmark (≤ 1 s at 4× slowdown; warn at the budget, fail at 2×).
 
 ### D. The Long Night
 

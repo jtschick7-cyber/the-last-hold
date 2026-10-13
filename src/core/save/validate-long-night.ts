@@ -65,8 +65,8 @@ const stand = (v: unknown, where: string, warnings: string[]): StandRecord => {
     rulesVersion: count(o.rulesVersion, `${where}.rulesVersion`),
     wavesHeld: count(o.wavesHeld, `${where}.wavesHeld`),
     embers: {
-      waves: count(embers.waves, `${where}.embers.waves`),
-      trophies: count(embers.trophies, `${where}.embers.trophies`),
+      waves: nonNegative(embers.waves, `${where}.embers.waves`),
+      trophies: nonNegative(embers.trophies, `${where}.embers.trophies`),
       total: count(embers.total, `${where}.embers.total`),
     },
     relicsFound: relicList(o.relicsFound, `${where}.relicsFound`),

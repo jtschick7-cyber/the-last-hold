@@ -19,7 +19,10 @@ import { waveAt, type Wave } from './waves';
 // be rebuilt by running it again (technical design §5.3).
 
 export interface StandInput {
+  /** The stand seed: it fixes the wave list (and, unless `rolls` is set, the dice). */
   readonly seed: string;
+  /** Practice stands (the preview) roll their own dice from this prefix; the wave list stays the seed's. */
+  readonly rolls?: string;
   readonly threat: number;
   readonly party: readonly HunterSnapshot[];
   /** One oil and one potion per hunter for the whole stand; `bombs` is ignored. */
@@ -141,7 +144,7 @@ export const runStand = (input: StandInput): StandResult => {
         knowledge: input.knowledge[wave.monster] ?? 0,
       },
       location: null,
-      rolls: seeded(`${input.seed}:wave:${n}`),
+      rolls: seeded(`${input.rolls ?? input.seed}:wave:${n}`),
       log: input.log === true,
       prep: { oils: input.prep.oils, potions, bombs },
       stand: { health, monsterStrength: strength, partyTaken, volley },

@@ -1,5 +1,6 @@
 import { computeOdds } from '../../core/contracts/odds';
 import { suggestParty } from '../../core/contracts/suggest';
+import { previewStand } from '../../core/stand/preview';
 import type { WorkerRequest, WorkerResponse } from './protocol';
 
 // Runs the same core functions the main thread would; nothing here knows a rule.
@@ -17,6 +18,13 @@ scope.onmessage = (e) => {
         id: req.id,
         kind: 'odds',
         result: computeOdds(req.input),
+        ms: performance.now() - started,
+      });
+    } else if (req.kind === 'stand') {
+      scope.postMessage({
+        id: req.id,
+        kind: 'stand',
+        result: previewStand(req.input),
         ms: performance.now() - started,
       });
     } else {
