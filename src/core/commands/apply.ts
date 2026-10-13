@@ -1,6 +1,7 @@
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { collect, decline, launch, markSeen } from './contracts';
+import { assign, stop } from './investigate';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
 import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
@@ -38,6 +39,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return launch(state, cmd.contract, cmd.party, cmd.confirmReckless === true);
     case 'contract.decline':
       return decline(state, cmd.contract);
+    case 'investigate.assign':
+      return assign(state, cmd.contract);
+    case 'investigate.stop':
+      return stop(state, cmd.contract);
     case 'results.collect':
       return collect(state);
     case 'scene.seen':

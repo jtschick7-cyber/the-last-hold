@@ -3,6 +3,7 @@ import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { constantAt } from '../balance-access';
 import { slotFreed } from '../contracts/board';
 import { computeOdds } from '../contracts/odds';
+import { releaseSlot } from '../investigation/lodge';
 import { maxPartySize } from '../contracts/party';
 import { provisions } from '../contracts/rewards';
 import { noPreparation, type GameState } from '../state/game-state';
@@ -50,6 +51,7 @@ export const launch = (
   }
   state.resources.food -= food;
   state.board.open = state.board.open.filter((c) => c.id !== contractId);
+  releaseSlot(state, contractId);
   slotFreed(state);
   state.running.push({
     contract,
@@ -68,6 +70,7 @@ export const decline = (state: GameState, contractId: string): ApplyResult => {
   const before = state.board.open.length;
   state.board.open = state.board.open.filter((c) => c.id !== contractId);
   if (state.board.open.length === before) return refuse('That contract is no longer on the board.');
+  releaseSlot(state, contractId);
   slotFreed(state);
   return ok;
 };

@@ -27,6 +27,10 @@ export type Command =
   /** Sends a party on a board contract; `confirmReckless` is the dialog's answer (GDD §5.3.7). */
   | { type: 'contract.launch'; contract: string; party: HunterId[]; confirmReckless?: boolean }
   | { type: 'contract.decline'; contract: string }
+  /** Puts a board contract in a free Lodge slot (GDD §5.6.3). */
+  | { type: 'investigate.assign'; contract: string }
+  /** Takes a contract off its Lodge slot; the clues shown stay. */
+  | { type: 'investigate.stop'; contract: string }
   /** Acknowledges finished contracts; rewards were applied at completion (B9). */
   | { type: 'results.collect' }
   /** Remembers that a scene has been shown (setting-primer §6.6). */
