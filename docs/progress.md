@@ -298,3 +298,16 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Known risk:** the "later cycles ≥ 15% faster" check (D111): if tuning can't pass it, stop and ask.
 - **Check status:** with these docs and no code yet, `npm run check` fails two assertions in `tests/content/balance.test.ts` (the GDD §7 keys and the plan §0.6 locked keys must match `balance.ts`). That's expected: the docs now name the v0.4 keys, and T4.1 adds them to `balance.ts`, which turns it green. Everything else passes (1,021 tests).
 - **Still open:** Q10 ("Firstblade", before v0.5); the slow "only a confirmed Reckless contract can kill a hunter" test (owner's choice pending).
+
+## 2026-10-13 — v0.4: content, names and save schema v4 (T4.1–T4.3)
+- **Start:** `npm run check` failed only the two expected balance-key tests (1,021 of 1,023 passed).
+- **Done:**
+  - Slow test: the owner chose fewer sample games, so "only a confirmed Reckless contract can kill a hunter" plays 20 games instead of 40 (1.8 s, was 3.5 s; same check).
+  - **T4.1:** every v0.4 balance key; the Citadel and Bastion entries in the locked `contract.ageTierCap`, in their own commit (D106); content for Citadel and Bastion, Walls and Watchtower, the higher caps, the 8 warden upgrades and the 6 relics, with a test against the GDD tables.
+  - **T4.2:** name search on the influences' wikis. Three collided and the owner renamed them: Warm Hearth → **Kept Coals** (Warcraft buff), Seasoned Hunters → **Old Hands** (Skyrim and Warcraft characters), Long Watch → **Late Lantern** (the Deathwatch in 40K). The Hearth stays (D116).
+  - **T4.3:** save schema v4 and the v3 → v4 migration, tested on the owner's real v0.3 save (`tests/saves/fixtures/v3-owner.json`); `v4.json` is that save played 72 h by the simulated player. Citadel, Bastion, Walls and Watchtower are in the game now (placeholder art). Shape details are in D117 (Proposed).
+- **Found and settled with the owner (D118):** once Citadel and Bastion existed, the simulated player climbed to both in the 14-day runs, where provisions took 32–48% of food income, and keeping the Citadel's 1,000 silver aside stopped all recruiting. Until T4.13 the simulated player stops at the Keep; the full simulator suite matches the v0.3 baseline exactly.
+- **Results:** `npm run check` green (1,049 tests); full `npm run sim:check` passes every check.
+- **Next:** T4.4 (Citadel and Bastion: hunter level caps and the roster bonus by Rank, the restoration sheets without an inscription). T4.10 needs no new save: the fixture is in.
+- **Open:** D117 is Proposed (save-shape details). Q10 ("Firstblade") before v0.5. `longNightArrival.cycle1MedianEmbers` waits for T4.15.
+- **Noticed, not changed:** in the game right now, a hunter's level cap is still 10 in Citadel and Bastion, and the roster bonus isn't applied yet (both T4.4).
