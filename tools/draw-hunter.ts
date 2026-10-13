@@ -93,15 +93,6 @@ const weapon = (c: Canvas, w: PortraitSpec['weapon']): void => {
     case 'satchel':
       pole(53, 16, 49, 62, C.pine);
       break;
-    case 'knife':
-      // The blade only; the fist that holds it is drawn over the torso (knifeHand).
-      c.line(52, 24, 51, 41, C.ink, 5);
-      c.line(52, 25, 51, 40, C.ash, 3);
-      c.set(52, 28, C.frost);
-      c.set(52, 32, C.frost);
-      c.line(46, 42, 56, 42, C.ink, 3);
-      c.line(47, 42, 55, 42, C.stone, 1);
-      break;
   }
 };
 
@@ -148,16 +139,26 @@ const torso = (c: Canvas, s: PortraitSpec): void => {
   }
 };
 
-/** Stanko's raised forearm and fist around the knife's grip, in front of the torso. */
-const knifeHand = (c: Canvas, s: PortraitSpec): void => {
-  const [lite, mid, dark] = SKIN[s.skin];
-  const cloth = CLOTH[s.clothColor];
-  c.line(46, 62, 50, 49, C.ink, 7);
-  c.line(47, 61, 50, 50, cloth[1], 5);
-  c.line(49, 61, 51, 51, cloth[2], 2);
-  c.ellipse(51, 46, 5, 4.5, C.ink);
-  c.ellipse(51, 46, 4, 3.5, (x, y) => (x > 53 || y > 48 ? dark : x < 49 && y < 45 ? lite : mid));
-  for (const y of [45, 47]) c.line(48, y, 53, y, dark, 1);
+/** Stanko's knife, sheathed on a strap across his chest, handle up (owner's review, D104). */
+const knifeStrap = (c: Canvas): void => {
+  // The strap, from the left shoulder down to the right hip, in light leather.
+  c.line(19, 46, 45, 64, C.ink, 6);
+  c.line(20, 46, 45, 63, C.clay, 4);
+  c.line(21, 48, 45, 65, C.rust, 1);
+  for (const [x, y] of [
+    [25, 50],
+    [39, 59],
+  ] as const)
+    c.set(x, y, C.gold);
+  // The sheath crosses the strap, point down-left; the steel guard and grip stick up.
+  c.line(26, 62, 33, 54, C.ink, 5);
+  c.line(27, 61, 33, 55, C.coal, 3);
+  c.line(31, 53, 37, 56, C.ink, 4);
+  c.line(32, 54, 36, 55, C.frost, 2);
+  c.line(35, 52, 38, 48, C.ink, 4);
+  c.line(35, 51, 37, 49, C.bone, 2);
+  c.ellipse(39, 47, 1.6, 1.6, C.ink);
+  c.set(39, 47, C.ash);
 };
 
 /**
@@ -323,9 +324,10 @@ export const drawHunter = (s: PortraitSpec): Canvas => {
   c.fill(C.plum);
   c.ellipse(CX, 30, 27, 29, C.violet);
   c.ellipse(CX, 30, 21, 23, C.slate);
-  if (s.weapon !== 'satchel') weapon(c, s.weapon);
+  if (s.weapon !== 'satchel' && s.weapon !== 'knife') weapon(c, s.weapon);
   torso(c, s);
-  if (s.weapon === 'knife') knifeHand(c, s);
   head(c, s);
+  // Over the hair and collar: the strap crosses the shoulder in front.
+  if (s.weapon === 'knife') knifeStrap(c);
   return c;
 };
