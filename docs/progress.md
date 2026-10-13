@@ -357,3 +357,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Readings:** D126 (Proposed).
 - **Results:** `npm run check` green (1,122 tests); full `npm run sim:check` passes and matches the baseline; benchmark unchanged (stand preview 369 ms at 4×).
 - **Next:** T4.10, the v0.4 arrival. It needs `longNightArrival.cycle1MedianEmbers`, which T4.15 sets from the tuned simulator; see the question in the report.
+
+## 2026-10-13 — v0.4: T4.11a hold-side screens; T4.10 moved last
+- **Owner (D127):** T4.10, the v0.4 arrival, is now done after T4.15, so its trophies cap uses the real tuned value and nothing provisional reaches the owner's save in the preview.
+- **Done (T4.11a):** the Threat meter on the Hold screen from the Keep ("Threat 1.0 · +1.0 per hour now", long-press for the breakdown; "counts after your first Long Night" for a save still facing it); The Hearth on the Rank screen (Embers on hand, each upgrade's level, per-level effect and cost with its breakdown, Buy; the relics owned with their effect and cycle); Walls and Watchtower appear in the build list from the Citadel. Debug panel: Unlock Keep / Citadel / Bastion and +100 Embers. Effect text in `src/core/describe-long-night.ts`.
+- **Screenshot pass (phone size):** the Hold screen at Keep and Citadel and the Rank sheet at Keep and Bastion look right. The Citadel and Bastion scenes and the Walls and Watchtower icons are placeholders until T4.12.
+- **Results:** `npm run check` green (1,123 tests); the browser smoke tests pass. The simulator suite wasn't rerun: nothing it plays changed.
+- **Next:** T4.11b, the stand screen and the Long Night sheets.

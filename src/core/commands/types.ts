@@ -70,6 +70,7 @@ export type Command =
   | { type: 'debug.runPolicy'; policy: PolicyId; ms: number }
   | { type: 'debug.addResources'; bundle: ResourceBundle }
   | { type: 'debug.setSeed'; seed: string }
+  | { type: 'debug.addEmbers'; amount: number }
   | { type: 'debug.unlockAge'; age: AgeId };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };

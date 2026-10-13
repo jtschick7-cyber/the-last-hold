@@ -472,11 +472,11 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 - [x] **T4.8 Reset.** Everything in GDD §5.9.7, in this order: running contracts finish, the stand, conversion, the reset, the new cycle. Levels kept; dead hunters as candidates; the cycle history entry. Tested row by row against the "resets / kept" table.
 - [x] **T4.9 Warden upgrades and relic effects.** The Hearth (buying, costs, max levels, no re-spending); each upgrade's effect (ember bucket, starting state, levels kept, XP, bounties, durations, offline cap within the 24 h ceiling); each relic's effect (relic bucket; none touches silver).
-- [ ] **T4.10 The v0.4 arrival.** The arrival flag, sheet and stand (Threat 0, no defenses, the save's Rank multiplier, the capped trophies part); the debug action; a test that takes the owner's save through migration, arrival and reset. `[?]` until the save is provided.
+- [ ] **T4.10 The v0.4 arrival** *(done last, after T4.15, D127)*. The arrival flag, sheet and stand (Threat 0, no defenses, the save's Rank multiplier, the capped trophies part); the debug action; a test that takes the owner's save through migration, arrival and reset. `[?]` until the save is provided.
 
 ### E. UI
 
-- [ ] **T4.11a Hold-side screens.** The Threat meter and breakdown; Citadel and Bastion on the Rank screen; Walls and Watchtower; The Hearth, with upgrades and relics.
+- [x] **T4.11a Hold-side screens.** The Threat meter and breakdown; Citadel and Bastion on the Rank screen; Walls and Watchtower; The Hearth, with upgrades and relics.
 - [ ] **T4.11b The stand and the Long Night.** The stand screen (wave list with "?", six slots and the suggestion, preparation pickers, preview, confirmation); the four Long Night sheets; wave logs; the arrival sheet. **Extend the Playwright smoke:** debug to Bastion → stand → new cycle.
 
 ### F. Art

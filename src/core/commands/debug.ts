@@ -79,3 +79,11 @@ export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
   state.meta.debugUsed = true;
   return ok;
 };
+
+/** Adds Embers, to try The Hearth (technical design §15). */
+export const addEmbers = (state: GameState, amount: number): ApplyResult => {
+  if (!Number.isInteger(amount) || amount <= 0) return refuse('A whole number of Embers, please.');
+  state.embers += amount;
+  state.meta.debugUsed = true;
+  return ok;
+};

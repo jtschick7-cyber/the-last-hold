@@ -7,6 +7,7 @@ import { dispatch, game, version } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { HearthView } from './HearthView';
 
 // GDD §9.2 "Rank ▸" (D64: the player-facing word for an Age is Rank): what the next Rank restores, its checklist, its costs, and
 // what it unlocks. At Bastion, the last Rank, the sheet shows what the hold has
@@ -40,6 +41,7 @@ export const AgeSheet = () => {
           The hold is a <strong>{ages[s.cycle.age].name}</strong>.
         </p>
         <RestorationView age={s.cycle.age} />
+        <HearthView />
       </div>
     );
   }
@@ -94,6 +96,7 @@ export const AgeSheet = () => {
       >
         Rank up to {ages[status.to].name}
       </button>
+      <HearthView />
     </div>
   );
 };

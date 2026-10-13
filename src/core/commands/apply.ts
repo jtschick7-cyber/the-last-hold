@@ -5,7 +5,7 @@ import { cancelBrew, queueBrew } from './brew';
 import { assign, stop } from './investigate';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
-import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
+import { addEmbers, addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
 import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasants';
 import { setSettings } from './settings';
 import { makeStand, markStandSeen } from './stand';
@@ -76,6 +76,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return addResources(state, cmd.bundle);
     case 'debug.setSeed':
       return setSeed(state, cmd.seed);
+    case 'debug.addEmbers':
+      return addEmbers(state, cmd.amount);
     case 'debug.unlockAge':
       return unlockAge(state, cmd.age);
     default:
