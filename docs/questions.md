@@ -19,7 +19,7 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
   (b) I draw an original pixel font in-repo (digits, A–Z, a few symbols): CC0 by authorship, no download, but plainer.
   (c) Keep the system monospace stand-in until the v1.0 art pass.
 - **Recommendation:** (a). Kenney's fonts are made for exactly this and are CC0. I'd fold it into the T1.30 pack list so you download once.
-- **Answer (owner):**
+- **Answer (owner):** option (a), 2026-10-13 (D84): provisions read food capacity. One reading of mine, logged as Proposed in D84: capacity is limited by the number of peasants, so a hold with empty farmer slots is not charged for farmers it doesn't have.
 
 ### Q2 — Which palette (blocks T1.28) — answered
 - **Question:** every piece of art gets recolored to one 32-color palette (GDD §9.12). Which of the three candidates?
@@ -113,8 +113,23 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (b): nothing in v0.2 needs her name, and the title belongs to the story you're keeping for v0.5. When you choose, I'll rename it in the docs in one pass.
 - **Answer (owner):** option (b), 2026-10-13 (D80): keep the name for now, decide before v0.5; the seed line stays out until then.
 
-### Q11 — Provisions read the current food income, which a player can lower for free (blocks nothing in v0.2) — open
+### Q11 — Provisions read the current food income, which a player can lower for free (blocks nothing in v0.2) — answered
 - **What happens:** from the Keep, provisions use the hold's food income at the moment of launch. Moving peasants between jobs is free and instant, so a player can take every farmer off, launch at the 30-food minimum, and put them back. That rewards a fiddly chore (pillar 5, §6.4) and makes food a cost only for players who don't do it. The simulated player never does this, so no check sees it.
 - **Options:** (a) base the income term on food capacity, what the food jobs would make with every food slot filled (no save change); (b) base it on the highest food income reached this cycle (needs a saved number and a migration); (c) accept it.
 - **Recommendation:** (a), at the start of v0.3, then re-check the provisions share.
+- **Answer (owner):** option (a), 2026-10-13 (D84): provisions read food capacity. One reading of mine, logged as Proposed in D84: capacity is limited by the number of peasants, so a hold with empty farmer slots is not charged for farmers it doesn't have.
+
+### Q12 — The two new hunters (blocks T3.1, and the parts of T3.2, T3.3 and T3.6 that need them) — open
+- **Question:** the GDD (§8.5) reserves two hunters for v0.3: a **Wolf-friend Striker with Venom damage** and a **Tracker Mender**. Their definitions come from the owner's separate chat session. I have not invented them.
+- **What each hunter needs** (the same fields as the eight we have, GDD §8.5):
+  - name (I search it against the influences, GDD §2.3, and add it to `tests/content/names.ts`);
+  - role, level-1 Health / Might / Armor / Speed (within ±10% of the role baseline);
+  - damage type (the Striker is Venom; the Mender's is yours to say);
+  - origin (Highland, Lowland or Wanderer) and the two traits (Wolf-friend and Tracker are reserved for them; the second trait of each is open);
+  - how they unlock (a condition) and their silver price (G5 prices run 150–1,200);
+  - a one-or-two-line sketch and public bio (setting primer style);
+  - a portrait look (skin, face, hair, beard, headgear, collar, one mark), which I can draft for your review if you leave it out.
+- **Options:** (a) you bring the full definitions from your chat session and I enter them as written; (b) you bring names and a line each, and I **propose** the numbers, unlocks and prices for you to approve one by one; (c) skip the two hunters for v0.3 and ship it with eight (the roster stays at 8, and the Barracks cap of 8 matters less).
+- **Recommendation:** (a). It is what the plan expects, and it keeps the design in your hands.
+- **What waits:** T3.1 is marked `[?]`. Everything else goes ahead: the Tracker trait's rule (T3.6) and the Wolf-friend trait's rule (T3.9) are built and tested with test hunters, and nothing ships to players until the hunters exist.
 - **Answer (owner):**

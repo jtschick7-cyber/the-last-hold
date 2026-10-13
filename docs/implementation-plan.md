@@ -376,7 +376,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.3 — Bestiary & preparation
 
-**Status:** not started
+**Status:** in progress
 
 **Goal:** contracts against unknown monsters, clue-based investigation, a bestiary that speeds up later play, and preparation that clearly matters.
 **Reads:** GDD §5.6–5.7, §6 (v0.3 rows), §7.5, §8.3.1, §8.4, §8.6–8.7, §9.8–9.9; `setting-primer.md` §6.4.
@@ -391,7 +391,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### Tasks
 
-- [ ] **T3.1 New hunters.** Add the 2 hunters from the owner's chat-session definitions: content, prices, generated portraits.
+- [?] **T3.1 New hunters** (blocked on Q12: the owner's definitions). Add the 2 hunters from the owner's chat-session definitions: content, prices, generated portraits.
 - [ ] **T3.2 Content.** Knowledge levels; the clue library (20 tags × 3+ texts); 12 ingredients; 9 consumables; Lodge, Hut, Garden; gift reagents; drops; the v0.3 traits.
 - [ ] **T3.3 Text.** A bestiary blurb plus a "What it was" line for all 12 species.
 - [ ] **T3.4 Migration v2 → v3,** using the owner's real v0.2 save.
