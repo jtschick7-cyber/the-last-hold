@@ -8,6 +8,8 @@ import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { HearthView } from './HearthView';
+import { StandView } from './StandSheet';
+import { standProblem } from '../../core/commands/stand';
 
 // GDD §9.2 "Rank ▸" (D64: the player-facing word for an Age is Rank): what the next Rank restores, its checklist, its costs, and
 // what it unlocks. At Bastion, the last Rank, the sheet shows what the hold has
@@ -41,6 +43,16 @@ export const AgeSheet = () => {
           The hold is a <strong>{ages[s.cycle.age].name}</strong>.
         </p>
         <RestorationView age={s.cycle.age} />
+        {s.cycle.age === 'bastion' && !standProblem(s) && (
+          <button
+            type="button"
+            class={styles.btnPrimary}
+            style={{ width: '100%', marginTop: 'var(--space-3)' }}
+            onClick={() => openSheet('The Last Stand', () => <StandView />)}
+          >
+            Make the Last Stand
+          </button>
+        )}
         <HearthView />
       </div>
     );

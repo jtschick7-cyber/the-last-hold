@@ -85,3 +85,46 @@ test('send hunters on a contract, skip time, and collect', async ({ page }) => {
 
   expect(errors).toEqual([]);
 });
+
+// Plan T4.11b: debug to Bastion → the Last Stand → the Long Night sheets → a new cycle.
+test('make the Last Stand at Bastion and start a new cycle', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('./?debug');
+  const tab = (name: string) =>
+    page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
+  const onward = async () => {
+    const o = page.getByRole('button', { name: 'Onward' });
+    if (await o.isVisible().catch(() => false)) await o.click();
+  };
+  await tab('More').click();
+  await page.getByRole('button', { name: /^Debug/ }).click();
+  await page.getByRole('button', { name: 'Unlock Bastion', exact: true }).click();
+  await page.getByRole('button', { name: 'Close' }).first().click();
+  await onward();
+
+  await tab('Hold').click();
+  await expect(page.getByText(/Stanholm — Bastion/)).toBeVisible();
+  await page.getByRole('button', { name: 'Rank ▸' }).click();
+  await page.getByRole('button', { name: 'Make the Last Stand' }).click();
+  // The preview comes from the worker: 100 practice stands, not the quick estimate.
+  await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText(/quick estimate/)).toHaveCount(0);
+  await expect(page.getByText(/from 100 practice stands/)).toBeVisible();
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.getByRole('button', { name: 'Go up to the walls' }).click();
+
+  const night = page.getByRole('dialog', { name: 'The Long Night' });
+  await expect(night.getByText(/The walls held/)).toBeVisible();
+  await night.getByRole('button', { name: '1', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Wave 1' })).toBeVisible();
+  await page.getByRole('dialog', { name: 'Wave 1' }).getByRole('button', { name: 'Close' }).click();
+  for (let i = 0; i < 3; i++) await night.getByRole('button', { name: 'Next' }).click();
+  await expect(night.getByText(/Someone new walks up the road/)).toBeVisible();
+  await night.getByRole('button', { name: 'Begin cycle 2' }).click();
+  await onward();
+
+  await expect(page.getByText(/Stanholm — Hamlet/)).toBeVisible();
+  await expect(page.getByText(/The Long Night: what happened/)).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

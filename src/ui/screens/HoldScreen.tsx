@@ -9,6 +9,7 @@ import { BuildList } from './BuildList';
 import { PeasantsPanel } from './PeasantsPanel';
 import { Sprite } from '../widgets/Sprite';
 import { ThreatMeter } from '../widgets/ThreatMeter';
+import { LongNightView, lastStand } from '../sheets/LongNightSheets';
 
 // GDD §9.2: the hold header (pixel hold scene, via the asset manifest), the
 // peasants panel, and the build list.
@@ -38,6 +39,18 @@ export const HoldScreen = () => {
           </button>
         </div>
         <ThreatMeter />
+        {(() => {
+          const last = lastStand(s);
+          return last && !last.stand.seen ? (
+            <button
+              type="button"
+              class={styles.btnPrimary}
+              onClick={() => openSheet('The Long Night', () => <LongNightView />)}
+            >
+              The Long Night: what happened ▸
+            </button>
+          ) : null;
+        })()}
         {line && (
           <p class={styles.small} key={line.id} aria-live="polite">
             <strong>{line.speaker}:</strong> “{line.text}”

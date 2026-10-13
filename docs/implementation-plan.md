@@ -477,7 +477,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### E. UI
 
 - [x] **T4.11a Hold-side screens.** The Threat meter and breakdown; Citadel and Bastion on the Rank screen; Walls and Watchtower; The Hearth, with upgrades and relics.
-- [ ] **T4.11b The stand and the Long Night.** The stand screen (wave list with "?", six slots and the suggestion, preparation pickers, preview, confirmation); the four Long Night sheets; wave logs; the arrival sheet. **Extend the Playwright smoke:** debug to Bastion → stand → new cycle.
+- [x] **T4.11b The stand and the Long Night.** The stand screen (wave list with "?", six slots and the suggestion, preparation pickers, preview, confirmation); the four Long Night sheets; wave logs; the arrival sheet. **Extend the Playwright smoke:** debug to Bastion → stand → new cycle.
 
 ### F. Art
 
