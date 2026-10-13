@@ -66,28 +66,28 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a). It touches only the start and the Keep's price, and keeps G1's silver ceiling.
 - **Answer (owner):** (a), (a), (a), and D60 approved, 2026-10-12 (D62).
 
-### Q5 — Your real v0.1 save (blocks T2.4) — open
+### Q5 — Your real v0.1 save (blocks T2.4) — answered
 - **Question:** the v1 → v2 save migration needs a fixture of a real old save (CLAUDE.md: never change the save schema without a migration, a fixture of a real old save, and a round-trip test). Can you export the save you played v0.1 with?
 - **How:** in the live or preview app, More → Save & Data → copy the save code (or Copy diagnostics) and paste it into a session. It holds only game numbers, no personal data.
 - **Options:** (a) you paste the save code; (b) you say "use a generated one", and I build the fixture from a fresh v0.1 game played by the simulator (not a real save, so it breaks the rule, and you would have to approve the exception).
 - **Recommendation:** (a). Everything else in v0.2 goes ahead meanwhile; only T2.4 waits.
-- **Answer (owner):**
+- **Answer (owner):** the owner pasted a save code (a Keep-rank game, 29 peasants), 2026-10-13. It is now the fixture `tests/saves/fixtures/v1-owner.json`.
 
-### Q6 — Two small content problems found while writing v0.2 content (blocks nothing yet) — open
+### Q6 — Two small content problems found while writing v0.2 content (blocks nothing yet) — 6a answered, 6b open
 - **6a. "Gloam Wolf" is an existing creature.** The name search (GDD §2.3 process rule) found a "Gloam Wolf" in *The Elder Scrolls Online* (shadowy dire wolves from Nocturnal's realm). Nothing else in the content collided.
   - **Options:** (a) **Gaunt Wolf** (the GDD describes them as "grey, gaunt, too quiet"); (b) Fell Wolf; (c) Pale Wolf; (d) keep "Gloam Wolf" and accept the overlap (not recommended: §2.3 forbids it).
   - **Recommendation:** (a). I searched "Gaunt Wolf" against the influences and found nothing. I've used it in the content for now as a Proposed name (D69); the internal id is just `wolf`, so renaming later touches no saves.
 - **6b. Toma Kettle's Speed breaks the GDD's own rule.** §8.5 says hunters vary "by up to ±10%" from their role baseline, but Toma's row has Speed 10 on a Vanguard baseline of 8 (+25%), before his Quick trait adds 3 more (so 13 in a fight, faster than the Mender and Striker baselines).
   - **Options:** (a) keep the table as written (Toma is the fast Vanguard, on purpose); (b) change his Speed to 8 or 9 (and keep Quick); (c) drop the "±10%" sentence and let the table rule.
   - **Recommendation:** (b) Speed 8: Quick already makes him fast, and a 13-Speed Vanguard acts nearly twice as often as Halvar (7). The content follows the table as written until you answer; the test names Toma as the one exception.
-- **Answer (owner):**
+- **Answer (owner):** 6a: **Gaunt Wolf** accepted, 2026-10-13 (D71). 6b: not answered yet; the content follows the GDD table as written (Speed 10) and the test names Toma as the one exception.
 
-### Q7 — A log line shows the wrong Armor on one hit (blocks nothing; a small fix needs your OK) — open
+### Q7 — A log line shows the wrong Armor on one hit (blocks nothing; a small fix needs your OK) — answered
 - **Question:** when a hit takes the Draugr under half Health, its Swell ability raises its Armor by 50% *after* that hit. The fight log shows the Armor *after* the hit, so on that one line it shows the swollen number even though the hit itself met the lower one. The damage is right; only the printed Armor on that single line is off.
 - **Why it's a question:** the seeded golden fights recorded for v0.2 (`tests/golden/seeded-fights.test.ts`, locked) include that text for one fight (fight c). Fixing the line changes that fight's recorded text fingerprint (not its result, ticks or Health), and golden fixtures need your approval to change.
 - **Options:** (a) fix the display and re-record fight c's fingerprint (recommended: "every visible number is honest"); (b) leave it and note it as a known quirk.
 - **Recommendation:** (a). Nothing in play changes; only one printed number.
-- **Answer (owner):**
+- **Answer (owner):** make the fix, approved, 2026-10-13 (D71). Done: the log prints the Armor the hit met, and fight c's fingerprint was re-recorded.
 
 ### Q8 — The Suggested-party speed budget can't be met as written (blocks T2.19) — open
 - **What I measured** (Node on a fast desktop CPU, unthrottled; a phone is several times slower, and the GDD's benchmark uses a 4× slowdown as the stand-in):

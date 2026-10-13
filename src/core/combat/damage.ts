@@ -59,12 +59,11 @@ export const directAttack = (
   const taken = takenReduction(target, attacker.damage, party);
   const hitMult = target.nextHitTakenMult;
   target.nextHitTakenMult = 1;
+  // The Armor this hit actually met, read before the hit lands (Swell can change it after; Q7).
+  const armor = armorEff(target);
   const amount = finalDamage(dealt, target, resistance, true, taken, hitMult);
   hurt(target, amount);
   const notes = afterOwnHit(f, attacker, target, amount, draw);
-  // Known quirk (Q7): this is the Armor after the hit, so the one hit that crosses
-  // Draugr's Swell line shows the Swollen value. The locked golden records it.
-  const armor = armorEff(target);
   const floored = resistance > 0 && amount === 1 && dealt - armor < 1;
   const bits = (): string => {
     const out = [`${cap(attacker.damage)} ${fmt2(dealt)}`];

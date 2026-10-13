@@ -1,6 +1,8 @@
 // Plan T2.9: five seeded fights, recorded once from the v0.2 combat code and then
 // frozen. They are locked (CLAUDE.md): a mismatch means the combat math changed,
 // which needs a `rulesVersion` bump and the owner's approval, never an edit here.
+// Fight c's fingerprint was re-recorded once, with the owner's approval (Q7, D71): the log
+// now prints the Armor a hit actually met. Its result, ticks and Health did not change.
 // Each fingerprint hashes every log line, so any change to a single line shows.
 import { describe, expect, it } from 'vitest';
 import { runFight } from '../../src/core/combat';
@@ -52,7 +54,7 @@ const CASES = [
       health: [136, 146, 95],
       monster: 0,
       lines: 99,
-      hash: '25b97589',
+      hash: 'd3a686c3',
     },
   },
   {
