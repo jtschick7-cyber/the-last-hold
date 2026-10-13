@@ -27,13 +27,13 @@ export const directAttack = (
   target: Combatant,
   opts: AttackOptions = {},
 ): boolean => {
-  const used: number[] = [...(opts.pre ?? [])];
+  const used: number[] = f.logging ? [...(opts.pre ?? [])] : [];
   const draw = (): number => {
     const r = f.rolls.next();
-    used.push(r);
+    if (f.logging) used.push(r);
     return r;
   };
-  const who = `${attacker.name}${roleTag(attacker)}`;
+  const who = (): string => `${attacker.name}${roleTag(attacker)}`;
   const party = f.hunters;
   const chance = hitChance(attacker, party, f.ctx);
   if (!(draw() < chance)) {
@@ -41,7 +41,7 @@ export const directAttack = (
       actor: attacker.id,
       kind: 'miss',
       target: target.id,
-      text: `${who} misses ${the(target)}`,
+      text: () => `${who()} misses ${the(target)}`,
       rolls: used,
       amount: 0,
       targetHealth: target.health,
@@ -62,16 +62,22 @@ export const directAttack = (
   const amount = finalDamage(dealt, target, resistance, true, taken, hitMult);
   hurt(target, amount);
   const notes = afterOwnHit(f, attacker, target, amount, draw);
-  const bits = [`${cap(attacker.damage)} ${fmt2(dealt)}`];
-  if (resistance !== 1) bits.push(resistance === 0 ? 'immune' : `(×${resistance} resist)`);
-  bits.push(`−${fmt2(armorEff(target))} armor`);
-  const floored = resistance > 0 && amount === 1 && dealt - armorEff(target) < 1;
+  // Known quirk (Q7): this is the Armor after the hit, so the one hit that crosses
+  // Draugr's Swell line shows the Swollen value. The locked golden records it.
+  const armor = armorEff(target);
+  const floored = resistance > 0 && amount === 1 && dealt - armor < 1;
+  const bits = (): string => {
+    const out = [`${cap(attacker.damage)} ${fmt2(dealt)}`];
+    if (resistance !== 1) out.push(resistance === 0 ? 'immune' : `(×${resistance} resist)`);
+    out.push(`−${fmt2(armor)} armor`);
+    return out.join(' ');
+  };
   emit(f, {
     actor: attacker.id,
     kind: crit ? 'crit' : 'hit',
     target: target.id,
-    text:
-      `${who} ${crit ? 'crits' : 'hits'} ${the(target)} — ${bits.join(' ')} = ${amount}` +
+    text: () =>
+      `${who()} ${crit ? 'crits' : 'hits'} ${the(target)} — ${bits()} = ${amount}` +
       `${floored ? ' (floor)' : ''} · ${target.name} ${target.health}/${target.maxHealth}` +
       notes.map((n) => ` · ${n}`).join(''),
     rolls: used,
@@ -104,7 +110,7 @@ const silverSubHit = (
     actor: attacker.id,
     kind: 'sub-hit',
     target: target.id,
-    text:
+    text: () =>
       `${attacker.name}'s silver also hits ${the(target)} — Silver ${fmt2(dealt)} ` +
       `${resistance === 0 ? 'immune' : ''}= ${amount} · ${target.name} ${target.health}/${target.maxHealth}`,
     rolls: [],

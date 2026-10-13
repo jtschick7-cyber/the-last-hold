@@ -81,3 +81,10 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
   - **Options:** (a) keep the table as written (Toma is the fast Vanguard, on purpose); (b) change his Speed to 8 or 9 (and keep Quick); (c) drop the "±10%" sentence and let the table rule.
   - **Recommendation:** (b) Speed 8: Quick already makes him fast, and a 13-Speed Vanguard acts nearly twice as often as Halvar (7). The content follows the table as written until you answer; the test names Toma as the one exception.
 - **Answer (owner):**
+
+### Q7 — A log line shows the wrong Armor on one hit (blocks nothing; a small fix needs your OK) — open
+- **Question:** when a hit takes the Draugr under half Health, its Swell ability raises its Armor by 50% *after* that hit. The fight log shows the Armor *after* the hit, so on that one line it shows the swollen number even though the hit itself met the lower one. The damage is right; only the printed Armor on that single line is off.
+- **Why it's a question:** the seeded golden fights recorded for v0.2 (`tests/golden/seeded-fights.test.ts`, locked) include that text for one fight (fight c). Fixing the line changes that fight's recorded text fingerprint (not its result, ticks or Health), and golden fixtures need your approval to change.
+- **Options:** (a) fix the display and re-record fight c's fingerprint (recommended: "every visible number is honest"); (b) leave it and note it as a known quirk.
+- **Recommendation:** (a). Nothing in play changes; only one printed number.
+- **Answer (owner):**

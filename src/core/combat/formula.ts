@@ -1,4 +1,4 @@
-import { num } from '../balance-access';
+import { K } from './constants';
 import { roundHalfUp } from './build';
 import { armorEff } from './stats';
 import type { Combatant } from './types';
@@ -25,6 +25,6 @@ export const finalDamage = (
   if (resistance === 0) return 0;
   const afterArmor = armorApplies ? Math.max(0, dealt - armorEff(target)) : dealt;
   const rounded = roundHalfUp(afterArmor * (1 - taken) * hitMult);
-  const floor = num('combat.minDamage');
+  const floor = K.minDamage;
   return rounded < floor ? floor : rounded;
 };

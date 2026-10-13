@@ -10,11 +10,17 @@ export interface Fight {
   readonly rolls: RollSource;
   readonly ctx: FightContext;
   readonly log: LogEntry[];
+  /** False for odds previews: nothing is written, and no log text is built. */
+  readonly logging: boolean;
   over: 'monster-down' | 'party-down' | null;
 }
 
-export const emit = (f: Fight, entry: Omit<LogEntry, 'tick'>): void => {
-  f.log.push({ tick: f.tick, ...entry });
+/** A log line whose text is built only if the fight is being logged. */
+export type Entry = Omit<LogEntry, 'tick' | 'text'> & { readonly text: () => string };
+
+export const emit = (f: Fight, entry: Entry): void => {
+  if (!f.logging) return;
+  f.log.push({ tick: f.tick, ...entry, text: entry.text() });
 };
 
 /** Draws one roll and records it, so every log line can show the rolls it used. */

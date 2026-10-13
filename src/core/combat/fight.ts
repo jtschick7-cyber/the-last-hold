@@ -1,5 +1,5 @@
 import { monsters } from '../../content/monsters';
-import { num } from '../balance-access';
+import { K } from './constants';
 import { buildHunter, buildMonster, roundHalfUp } from './build';
 import { endOfMonsterAction, heal, startOfMonsterAction } from './abilities';
 import { directAttack } from './damage';
@@ -37,7 +37,8 @@ const resolveEnds = (f: Fight): void => {
       emit(f, {
         actor: m.id,
         kind: 'ability',
-        text: `${m.name} rises again with its second soul · ${m.name} ${m.health}/${m.maxHealth}`,
+        text: () =>
+          `${m.name} rises again with its second soul · ${m.name} ${m.health}/${m.maxHealth}`,
         rolls: [],
         targetHealth: m.health,
       });
@@ -51,13 +52,13 @@ const resolveEnds = (f: Fight): void => {
 
 const loseAction = (f: Fight, c: Combatant): void => {
   c.lostActions -= 1;
-  emit(f, { actor: c.id, kind: 'skip', text: `${c.name} loses their action`, rolls: [] });
+  emit(f, { actor: c.id, kind: 'skip', text: () => `${c.name} loses their action`, rolls: [] });
 };
 
 const hunterAct = (f: Fight, c: Combatant): void => {
   const mender = c.role === 'mender';
   if (mender) {
-    const threshold = num('mender.healBelow');
+    const threshold = K.healBelow;
     let patient: Combatant | null = null;
     for (const h of f.hunters) {
       if (!present(h) || healthPct(h) >= threshold) continue;
@@ -66,13 +67,14 @@ const hunterAct = (f: Fight, c: Combatant): void => {
     if (patient) {
       let bonus = 0;
       for (const e of c.traits) if (e.kind === 'healingDone') bonus += e.amount;
-      const base = num('mender.healMult') * (c.base.might + c.flat.might);
+      const base = K.healMult * (c.base.might + c.flat.might);
       const healed = heal(patient, roundHalfUp(base * (1 + bonus)));
       emit(f, {
         actor: c.id,
         kind: 'heal',
         target: patient.id,
-        text: `${c.name} (Mender) heals ${patient.name} for ${healed} · ${patient.name} ${patient.health}/${patient.maxHealth}`,
+        text: () =>
+          `${c.name} (Mender) heals ${patient.name} for ${healed} · ${patient.name} ${patient.health}/${patient.maxHealth}`,
         rolls: [],
         amount: healed,
         targetHealth: patient.health,
@@ -80,7 +82,7 @@ const hunterAct = (f: Fight, c: Combatant): void => {
       return;
     }
   }
-  directAttack(f, c, f.monster, mender ? { mightMult: num('mender.attackMult') } : {});
+  directAttack(f, c, f.monster, mender ? { mightMult: K.menderAttack } : {});
   resolveEnds(f);
 };
 
@@ -93,7 +95,7 @@ const pickTarget = (
   if (!first) return null;
   if (candidates.length === 1) return { target: first, pre: [] };
   const weight = (h: Combatant): number =>
-    h.role === 'vanguard' ? num('target.vanguardWeight') : num('target.otherWeight');
+    h.role === 'vanguard' ? K.vanguardWeight : K.otherWeight;
   const total = candidates.reduce((s, h) => s + weight(h), 0);
   const roll = f.rolls.next();
   const point = roll * total;
@@ -138,17 +140,27 @@ export const runFight = (input: FightInput): FightResult => {
     rolls: input.rolls,
     ctx,
     log: [],
+    logging: input.log !== false,
     over: null,
   };
-  const threshold = num('combat.meterThreshold');
-  const maxTicks = num('combat.maxTicks');
+  const threshold = K.meterThreshold;
+  const maxTicks = K.maxTicks;
   let tick = 0;
+  const everyone = [...hunters, monster];
   while (tick < maxTicks && !f.over) {
     tick += 1;
     f.tick = tick;
-    const all = [...hunters, monster].filter((c) => standing(c) && c.awayLeft === 0);
-    for (const c of all) c.meter += speedEff(c);
-    const acting = all.filter((c) => c.meter >= threshold).sort(actsBefore);
+    // Most ticks nobody acts, so only build the acting list when someone reached the threshold.
+    let anyReady = false;
+    for (const c of everyone) {
+      if (!standing(c) || c.awayLeft > 0) continue;
+      c.meter += speedEff(c);
+      if (c.meter >= threshold) anyReady = true;
+    }
+    if (!anyReady) continue;
+    const acting = everyone
+      .filter((c) => standing(c) && c.awayLeft === 0 && c.meter >= threshold)
+      .sort(actsBefore);
     for (const c of acting) {
       if (f.over) break;
       if (!standing(c) || c.awayLeft > 0) continue; // downed or carried off earlier this tick
@@ -165,7 +177,7 @@ export const runFight = (input: FightInput): FightResult => {
   emit(f, {
     actor: monster.id,
     kind: 'end',
-    text:
+    text: () =>
       endedBy === 'monster-down'
         ? `Success at tick ${f.tick}`
         : endedBy === 'party-down'

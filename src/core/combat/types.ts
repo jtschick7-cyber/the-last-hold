@@ -31,6 +31,8 @@ export interface FightInput {
   readonly monster: MonsterInstance;
   readonly location: LocationId;
   readonly rolls: RollSource;
+  /** Default true. Odds previews pass false: same fight, no log. */
+  readonly log?: boolean;
 }
 
 export type Side = 'hunter' | 'monster';

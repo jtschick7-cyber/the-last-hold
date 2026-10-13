@@ -1,6 +1,6 @@
 import type { DamageType, FamilyId, LocationId } from '../../content/damage';
 import { monsters, type MonsterId } from '../../content/monsters';
-import { num } from '../balance-access';
+import { K } from './constants';
 import type { Combatant } from './types';
 
 // GDD §5.0 combat modifiers: stat_eff = (base × levelScale + Σ flat) × (1 + Σ stat%)
@@ -54,7 +54,7 @@ export const hitChance = (
   party: readonly Combatant[],
   ctx: FightContext,
 ): number => {
-  let chance = num('combat.hitChance');
+  let chance = K.hitChance;
   if (attacker.side === 'hunter') {
     for (const h of party) {
       for (const e of h.traits) {
@@ -89,7 +89,7 @@ export const takenReduction = (
     }
     sum += defender.fireTakenReduction;
   }
-  const cap = num('combat.takenCap');
+  const cap = K.takenCap;
   return sum > cap ? cap : sum;
 };
 

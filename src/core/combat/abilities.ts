@@ -99,7 +99,8 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
           actor: m.id,
           kind: 'ability',
           target: h.id,
-          text: `${h.name} is returned by the river, having lost ${lost} Health · ${h.name} ${h.health}/${h.maxHealth}`,
+          text: () =>
+            `${h.name} is returned by the river, having lost ${lost} Health · ${h.name} ${h.health}/${h.maxHealth}`,
           rolls: [],
           amount: lost,
           targetHealth: h.health,
@@ -115,7 +116,8 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
           emit(f, {
             actor: m.id,
             kind: 'ability',
-            text: `${m.name}'s Root-Wall mends it, +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+            text: () =>
+              `${m.name}'s Root-Wall mends it, +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
             rolls: [],
             amount: healed,
             targetHealth: m.health,
@@ -141,7 +143,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
-              text: `${m.name} leads ${victim.name} astray (loses their next action)`,
+              text: () => `${m.name} leads ${victim.name} astray (loses their next action)`,
               rolls: used,
             });
             break;
@@ -150,7 +152,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         emit(f, {
           actor: m.id,
           kind: 'ability-roll',
-          text: `${m.name}'s Lead Astray fails`,
+          text: () => `${m.name}'s Lead Astray fails`,
           rolls: used,
         });
         break;
@@ -165,7 +167,8 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
-              text: `${m.name} sings, and ${victim.name} is charmed (loses their next action)`,
+              text: () =>
+                `${m.name} sings, and ${victim.name} is charmed (loses their next action)`,
               rolls: [],
             });
           }
@@ -181,7 +184,8 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
-              text: `${m.name} enthralls ${victim.name} (loses their next action), +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+              text: () =>
+                `${m.name} enthralls ${victim.name} (loses their next action), +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
               rolls: [],
               amount: healed,
               targetHealth: m.health,
@@ -198,7 +202,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
-              text: `${m.name} carries ${victim.name} off into the river`,
+              text: () => `${m.name} carries ${victim.name} off into the river`,
               rolls: [],
             });
           }
@@ -234,7 +238,8 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
           actor: m.id,
           kind: 'ability',
           target: h.id,
-          text: `Noon Heat burns ${h.name}: Fire ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
+          text: () =>
+            `Noon Heat burns ${h.name}: Fire ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
           rolls: [],
           amount,
           targetHealth: h.health,
