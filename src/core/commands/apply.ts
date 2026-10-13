@@ -1,6 +1,7 @@
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { collect, decline, launch, markSeen } from './contracts';
+import { cancelBrew, queueBrew } from './brew';
 import { assign, stop } from './investigate';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
@@ -43,6 +44,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return assign(state, cmd.contract);
     case 'investigate.stop':
       return stop(state, cmd.contract);
+    case 'brew.queue':
+      return queueBrew(state, cmd.item);
+    case 'brew.cancel':
+      return cancelBrew(state, cmd.index);
     case 'results.collect':
       return collect(state);
     case 'scene.seen':

@@ -1,6 +1,7 @@
 import { HUNTER_IDS, hunters as hunterContent, type HunterId } from '../../content/hunters';
 import { runFight } from '../combat';
 import { recordFight } from '../investigation/knowledge';
+import { reagentsFor } from './reagents';
 import { seeded } from '../rng';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
@@ -60,6 +61,10 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   const pay = success ? bounty(contract.tier, state.cycle.age, partyTraits).value : 0;
   const earned = success ? trophies(contract.tier) : 0;
   const xp = xpPerHunter(contract.tier, success);
+  // GDD §5.4.3: a success brings reagents (the drops and a gift); a failure brings none.
+  const reagents = success ? reagentsFor(state.meta.gameSeed, contract) : {};
+  for (const [id, n] of Object.entries(reagents))
+    state.stores[id as keyof typeof state.stores] += n ?? 0;
 
   const injuries: ContractResult['injuries'] = [];
   const levelUps: ContractResult['levelUps'] = [];
@@ -145,7 +150,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     winChance: run.winChance,
     injuries,
     levelUps,
-    reagents: {},
+    reagents,
     wellPrepared: false,
   };
   state.results.push(result);

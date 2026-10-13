@@ -4,6 +4,7 @@ import type { GearSlot } from '../../content/gear';
 import type { SceneId } from '../../content/text/scenes';
 import type { HunterId } from '../../content/hunters';
 import type { JobId } from '../../content/jobs';
+import type { ConsumableId } from '../../content/consumables';
 import type { ResourceBundle } from '../../content/resources';
 import type { PolicyId } from '../policies/schedules';
 import type { Settings } from '../state/game-state';
@@ -31,6 +32,10 @@ export type Command =
   | { type: 'investigate.assign'; contract: string }
   /** Takes a contract off its Lodge slot; the clues shown stay. */
   | { type: 'investigate.stop'; contract: string }
+  /** Queues a brew in the Alchemist's Hut; the recipe is paid now (GDD §5.7). */
+  | { type: 'brew.queue'; item: ConsumableId }
+  /** Cancels a queued brew and refunds it. */
+  | { type: 'brew.cancel'; index: number }
   /** Acknowledges finished contracts; rewards were applied at completion (B9). */
   | { type: 'results.collect' }
   /** Remembers that a scene has been shown (setting-primer §6.6). */

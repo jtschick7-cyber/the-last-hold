@@ -399,7 +399,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 - [x] **T3.5 Full coverage test** (GDD §8.3.1; the rules are locked).
 - [x] **T3.6 Unknown-monster contracts.** Candidates, clues as `advance` events, Lodge slots, Studied halving, Mastered auto-identify, Tracker.
 - [x] **T3.7 Knowledge.** Level transitions, kills, bonuses.
-- [ ] **T3.8 Alchemy brewing.** Queues and the Herb Garden event.
+- [x] **T3.8 Alchemy brewing.** Queues and the Herb Garden event.
 - [ ] **T3.9 Preparation in combat.** Slots, potions, bombs, Saltburst, Spoil, Herbwise, the well-prepared bonus, each with tests.
 - [ ] **T3.10 Odds with uncertainty.** (Also switches contract generation to post unknown monsters, D89 point 7; until then every contract arrives identified.) Averaging over candidates; oil effects per candidate; Suggest at 20 samples per candidate; benchmarks.
 - [ ] **T3.11 UI.** The bestiary; investigation; preparation pickers with "unprepared would be X%"; the Alchemist's Hut.
