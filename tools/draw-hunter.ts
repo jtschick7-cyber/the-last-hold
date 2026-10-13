@@ -94,13 +94,13 @@ const weapon = (c: Canvas, w: PortraitSpec['weapon']): void => {
       pole(53, 16, 49, 62, C.pine);
       break;
     case 'knife':
-      // A short blade held up at the shoulder (Stanko): grip, crossguard, blade.
-      pole(51, 44, 50, 56, C.brownDark);
-      c.line(46, 43, 55, 43, C.ink, 3);
-      c.line(52, 26, 51, 42, C.ink, 5);
-      c.line(52, 27, 51, 41, C.ash, 3);
-      c.set(52, 30, C.frost);
-      c.set(52, 34, C.frost);
+      // The blade only; the fist that holds it is drawn over the torso (knifeHand).
+      c.line(52, 24, 51, 41, C.ink, 5);
+      c.line(52, 25, 51, 40, C.ash, 3);
+      c.set(52, 28, C.frost);
+      c.set(52, 32, C.frost);
+      c.line(46, 42, 56, 42, C.ink, 3);
+      c.line(47, 42, 55, 42, C.stone, 1);
       break;
   }
 };
@@ -148,6 +148,39 @@ const torso = (c: Canvas, s: PortraitSpec): void => {
   }
 };
 
+/** Stanko's raised forearm and fist around the knife's grip, in front of the torso. */
+const knifeHand = (c: Canvas, s: PortraitSpec): void => {
+  const [lite, mid, dark] = SKIN[s.skin];
+  const cloth = CLOTH[s.clothColor];
+  c.line(46, 62, 50, 49, C.ink, 7);
+  c.line(47, 61, 50, 50, cloth[1], 5);
+  c.line(49, 61, 51, 51, cloth[2], 2);
+  c.ellipse(51, 46, 5, 4.5, C.ink);
+  c.ellipse(51, 46, 4, 3.5, (x, y) => (x > 53 || y > 48 ? dark : x < 49 && y < 45 ? lite : mid));
+  for (const y of [45, 47]) c.line(48, y, 53, y, dark, 1);
+};
+
+/**
+ * Long hair falls behind the shoulders as two locks, clear of the jaw and neck, so it
+ * never reads as a beard (the owner's portrait review, v0.3).
+ */
+const longHair = (c: Canvas, s: PortraitSpec, rx: number, ry: number): void => {
+  const hair = HAIR[s.hairColor];
+  const cutY = CY + ry - 8;
+  const fill = (ex: number, ey: number, gap: number, color: string): void => {
+    for (let y = Math.floor(CY + 10 - ey); y <= CY + 10 + ey; y++)
+      for (let x = Math.floor(CX - ex); x <= CX + ex; x++) {
+        const dx = (x - CX) / ex;
+        const dy = (y - CY - 10) / ey;
+        if (dx * dx + dy * dy > 1) continue;
+        if (y > cutY && Math.abs(x - CX) < gap) continue;
+        c.set(x, y, color);
+      }
+  };
+  fill(rx + 5, 22, rx - 2, C.ink);
+  fill(rx + 3.5, 20.5, rx, hair[1]);
+};
+
 const head = (c: Canvas, s: PortraitSpec): void => {
   const { rx, ry } = FACE[s.face];
   const [lite, mid, dark] = SKIN[s.skin];
@@ -160,10 +193,7 @@ const head = (c: Canvas, s: PortraitSpec): void => {
     c.ellipse(CX, CY - 1, rx + 5.5, ry + 4.5, gear[1]);
     c.ellipse(CX + 4, CY + 2, rx + 3, ry + 3, gear[2]);
   }
-  if (s.hair === 'long') {
-    c.ellipse(CX, CY + 10, rx + 5, 22, C.ink);
-    c.ellipse(CX, CY + 10, rx + 3.5, 20.5, hair[1]);
-  }
+  if (s.hair === 'long') longHair(c, s, rx, ry);
   // Neck, then the head.
   c.rect(CX - 5, CY + ry - 4, 10, 14, C.ink);
   c.rect(CX - 4, CY + ry - 4, 8, 14, dark);
@@ -295,6 +325,7 @@ export const drawHunter = (s: PortraitSpec): Canvas => {
   c.ellipse(CX, 30, 21, 23, C.slate);
   if (s.weapon !== 'satchel') weapon(c, s.weapon);
   torso(c, s);
+  if (s.weapon === 'knife') knifeHand(c, s);
   head(c, s);
   return c;
 };
