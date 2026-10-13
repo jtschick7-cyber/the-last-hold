@@ -221,6 +221,28 @@ describe('v0.2 economy checks', () => {
     expect(contractsOwnSilverCheck.judge([withKeep({}, null)]).pass).toBe(false); // never reached the Keep
   });
 
+  it('both shares are judged on cycle 1 only; later cycles are reported (D135)', () => {
+    const c = (cycle: number, bountySilver: number, provisionsFood: number) => ({
+      cycle,
+      bountySilver,
+      jobSilver: 100 - bountySilver,
+      provisionsFood,
+      jobFood: 100,
+    });
+    const r = withKeep({
+      bountySilver: 120,
+      jobSilver: 80,
+      provisionsFood: 40,
+      jobFood: 200,
+      byCycle: [c(1, 75, 30), c(2, 45, 10)],
+    });
+    expect(contractsOwnSilverCheck.judge([r]).pass).toBe(true); // 60% over both, 75% in cycle 1
+    expect(provisionsMatterCheck.judge([r]).pass).toBe(true); // 20% over both, 30% in cycle 1
+    const low = withKeep({ byCycle: [c(1, 65, 15), c(2, 90, 30)] });
+    expect(contractsOwnSilverCheck.judge([low]).pass).toBe(false);
+    expect(provisionsMatterCheck.judge([low]).pass).toBe(false);
+  });
+
   it('provisions are judged against 20–40% of food income, and the check is enforced (no longer pending)', () => {
     const r = provisionsMatterCheck.judge([withKeep({ provisionsFood: 30, jobFood: 100 })]);
     expect(r.pass).toBe(true);
@@ -317,9 +339,11 @@ import { laterCyclesCheck } from './later-cycles';
 
 describe('later cycles (GDD §6.2, D111)', () => {
   const cycles = (...hours: number[]): RunResult => ({ ...run('standard', {}), cycleHours: hours });
-  it('each cycle at least 15% faster than the one before', () => {
+  it('each later cycle at least 15% faster than the first (D134)', () => {
     expect(laterCyclesCheck.judge([cycles(100, 85, 72)]).pass).toBe(true);
+    expect(laterCyclesCheck.judge([cycles(100, 80, 82)]).pass).toBe(true); // a plateau is fine
     expect(laterCyclesCheck.judge([cycles(100, 90)]).pass).toBe(false);
+    expect(laterCyclesCheck.judge([cycles(100, 80, 86)]).pass).toBe(false);
   });
   it('a cycle at the 2-day floor passes; one below it fails', () => {
     expect(laterCyclesCheck.judge([cycles(56, 48, 48)]).pass).toBe(true);

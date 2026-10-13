@@ -2,9 +2,9 @@ import { TIME_TARGETS } from '../targets';
 import { groups, hoursText, stoppedBefore } from './helpers';
 import type { Check, CheckResult } from './types';
 
-// GDD §6.2 (v0.4, D111): later cycles are each at least 15% faster than the one before,
+// GDD §6.2 (v0.4, D111, D134): every later cycle is at least 15% faster than the first,
 // with a floor of 2 days. Judged on the median length of each cycle over the Monday
-// Standard seeds; a cycle may be slower than 85% of the one before only if it is at the
+// Standard seeds; a cycle may be slower than 85% of the first only if it is at the
 // floor, and none may be shorter than the floor (D130).
 const target = TIME_TARGETS.find((t) => t.id === 'later-cycles');
 if (!target) throw new Error('targets.ts has no "later-cycles" row');
@@ -41,14 +41,15 @@ export const laterCyclesCheck: Check = {
         continue;
       }
       let ok = true;
+      const first = lengths[0] ?? NaN;
       for (let i = 1; i < n; i++) {
-        const prev = lengths[i - 1] ?? NaN;
+        const prev = first;
         const now = lengths[i] ?? NaN;
         const fast = now <= Math.max(prev * FASTER, FLOOR_HOURS);
         const floor = now >= FLOOR_HOURS;
         ok = ok && fast && floor;
         lines.push(
-          `cycle ${i + 1} vs ${i}: ${hoursText(now)} vs ${hoursText(prev)} (${((1 - now / prev) * 100).toFixed(0)}% faster)` +
+          `cycle ${i + 1} vs 1: ${hoursText(now)} vs ${hoursText(prev)} (${((1 - now / prev) * 100).toFixed(0)}% faster)` +
             `${floor ? '' : ', below the 2-day floor'} ${fast && floor ? '✓' : '✗'}`,
         );
       }

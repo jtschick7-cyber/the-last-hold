@@ -123,7 +123,9 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
   },
   {
     id: 'later-cycles',
-    text: 'Later cycles: each ≥ 15% faster than the one before, with a floor of 2 days',
+    // Owner-approved change (D134): against cycle 1, not the one before; cycles settle at
+    // about 3 days after cycle 2 (the schedule and the locked board pace).
+    text: 'Later cycles: each ≥ 15% faster than the first, with a floor of 2 days',
     // Compares cycles with each other: judged by its own check from v0.4.
     bounds: [],
     enforcedFrom: 'v0.4',
