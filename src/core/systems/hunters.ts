@@ -10,7 +10,7 @@ import {
 import { knowledgeLevels } from '../../content/knowledge';
 import { monsters } from '../../content/monsters';
 import { traits } from '../../content/traits';
-import { num } from '../balance-access';
+import { constantAt, num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import type { HunterSnapshot } from '../combat';
 import { roundHalfUp } from '../combat/build';
@@ -52,7 +52,9 @@ export const rosterCap = (state: GameState): Explained => {
 export const xpToNext = (level: number): number =>
   num('xp.base') * intPow(num('xp.growth'), level - 1);
 
-export const levelCap = (): number => num('hunter.levelCap.keep');
+/** The Keep's hunter level cap (Hamlet uses it too, D72); per-Rank caps arrive with T4.4. */
+export const levelCap = (): number =>
+  (constantAt('hunter.levelCap').value as { readonly keep: number }).keep;
 
 const inRecovery = (h: HunterState, now: number): boolean =>
   h.recovery !== null && h.recovery.until > now;
