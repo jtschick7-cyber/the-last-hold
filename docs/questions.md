@@ -72,3 +72,12 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options:** (a) you paste the save code; (b) you say "use a generated one", and I build the fixture from a fresh v0.1 game played by the simulator (not a real save, so it breaks the rule, and you would have to approve the exception).
 - **Recommendation:** (a). Everything else in v0.2 goes ahead meanwhile; only T2.4 waits.
 - **Answer (owner):**
+
+### Q6 — Two small content problems found while writing v0.2 content (blocks nothing yet) — open
+- **6a. "Gloam Wolf" is an existing creature.** The name search (GDD §2.3 process rule) found a "Gloam Wolf" in *The Elder Scrolls Online* (shadowy dire wolves from Nocturnal's realm). Nothing else in the content collided.
+  - **Options:** (a) **Gaunt Wolf** (the GDD describes them as "grey, gaunt, too quiet"); (b) Fell Wolf; (c) Pale Wolf; (d) keep "Gloam Wolf" and accept the overlap (not recommended: §2.3 forbids it).
+  - **Recommendation:** (a). I searched "Gaunt Wolf" against the influences and found nothing. I've used it in the content for now as a Proposed name (D69); the internal id is just `wolf`, so renaming later touches no saves.
+- **6b. Toma Kettle's Speed breaks the GDD's own rule.** §8.5 says hunters vary "by up to ±10%" from their role baseline, but Toma's row has Speed 10 on a Vanguard baseline of 8 (+25%), before his Quick trait adds 3 more (so 13 in a fight, faster than the Mender and Striker baselines).
+  - **Options:** (a) keep the table as written (Toma is the fast Vanguard, on purpose); (b) change his Speed to 8 or 9 (and keep Quick); (c) drop the "±10%" sentence and let the table rule.
+  - **Recommendation:** (b) Speed 8: Quick already makes him fast, and a 13-Speed Vanguard acts nearly twice as often as Halvar (7). The content follows the table as written until you answer; the test names Toma as the one exception.
+- **Answer (owner):**

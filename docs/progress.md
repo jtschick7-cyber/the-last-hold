@@ -166,3 +166,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** v0.2, on branch `milestone/v0.2`. Read the plan's v0.2 section first.
 - **Open questions:** none. D59 (art choices) is still Proposed.
 - **Skipped or deferred:** Pixel UI Pack frames (D59); the deprecated Node 20 workflow actions can be bumped in a later milestone.
+
+## 2026-10-13 — v0.2 started
+- **Done:** `milestone/v0.2` created and the plan set to in progress. T2.1a (the v0.2 content: 8 hunters, 12 monsters with their ability numbers, 15 traits, 6 gear tiers, 5 villages with heads) and T2.3 (name checks, searched on the web). A content test checks everything against the GDD tables, including the location × tier coverage table (§8.3.1).
+- **Found:** "Gloam Wolf" is an existing Elder Scrolls Online creature, so the content says "Gaunt Wolf" for now (D69, Proposed). Toma's Speed in the GDD table breaks the GDD's own ±10% rule. Both are in Q6.
+- **Waiting on the owner:** Q5 (your real v0.1 save, for T2.4) and Q6. 👤 Hunter and monster portrait reviews come later (T2.23, T2.24).
+- **Blocked:** T2.4 (needs the real save) and T2.1b (Barracks and Trophy Hall add building ids, so they wait for the migration).
+- **Next:** T2.2 (notices, vow and first-contract scenes, hunter bios), then combat (T2.5–T2.9), which doesn't depend on the save.
+- **Skipped or deferred:** clue tags and drops for monsters (v0.3 bestiary); gift reagents for villages (v0.3).
