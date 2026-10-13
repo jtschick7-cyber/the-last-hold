@@ -1,5 +1,6 @@
 import { HUNTER_IDS, hunters as hunterContent, type HunterId } from '../../content/hunters';
 import { runFight } from '../combat';
+import { recordFight } from '../investigation/knowledge';
 import { seeded } from '../rng';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
@@ -36,7 +37,11 @@ const earliest = (state: GameState): number => {
 export const fightOf = (state: GameState, run: RunningContract) =>
   runFight({
     party: run.snapshots,
-    monster: { monster: run.contract.monster, tier: run.contract.tier },
+    monster: {
+      monster: run.contract.monster,
+      tier: run.contract.tier,
+      knowledge: run.knowledge,
+    },
     location: run.contract.location,
     rolls: seeded(fightSeed(state.meta.gameSeed, run.contract.id, run.party)),
   });
@@ -50,6 +55,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   const at = run.endsAt;
   const fight = fightOf(state, run);
   const success = fight.result === 'win';
+  recordFight(state, contract.monster, success);
   const partyTraits = run.snapshots.map((s) => s.traits);
   const pay = success ? bounty(contract.tier, state.cycle.age, partyTraits).value : 0;
   const earned = success ? trophies(contract.tier) : 0;
@@ -115,7 +121,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     contractId: contract.id,
     seed: fightSeed(state.meta.gameSeed, contract.id, run.party),
     party: run.snapshots,
-    monster: { monster: contract.monster, tier: contract.tier },
+    monster: { monster: contract.monster, tier: contract.tier, knowledge: run.knowledge },
     location: contract.location,
     result: fight.result,
     rulesVersion: RULES_VERSION,

@@ -420,10 +420,13 @@ describe('the v2 → v3 migration (plan T3.4)', () => {
     for (const r of after.running) {
       expect(r.contract.revealed).toBe(3);
       expect(r.prep).toEqual({ oils: {}, potions: {}, bombs: [] });
+      expect(r.knowledge).toBe(2);
     }
     for (const r of after.results) expect(r.wellPrepared).toBe(false);
-    for (const f of after.log.recentFights)
+    for (const f of after.log.recentFights) {
       expect(f.prep).toEqual({ oils: {}, potions: {}, bombs: [] });
+      expect(f.monster.knowledge).toBe(2);
+    }
   });
 
   it('starts with empty stores and queues, and no garden clock', () => {

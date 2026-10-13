@@ -24,6 +24,11 @@ export interface HunterSnapshot {
 export interface MonsterInstance {
   readonly monster: MonsterId;
   readonly tier: number;
+  /**
+   * The species' knowledge level when the party set out, 0–4 (GDD §5.6.2): Studied and
+   * Mastered add to the damage the hunters deal. Frozen at launch; absent means 0.
+   */
+  readonly knowledge?: number;
 }
 
 export interface FightInput {

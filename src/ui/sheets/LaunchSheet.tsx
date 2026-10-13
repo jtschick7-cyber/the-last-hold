@@ -7,6 +7,7 @@ import { constantAt } from '../../core/balance-access';
 import { formatDuration, formatNumber } from '../../core/format';
 import { maxPartySize } from '../../core/contracts/party';
 import { provisions } from '../../core/contracts/rewards';
+import { monsterFor } from '../../core/investigation/knowledge';
 import type { ContractInstance } from '../../core/state/game-state';
 import { timeToAfford } from '../../core/systems/costs';
 import { availableHunters, snapshotOf } from '../../core/systems/hunters';
@@ -96,7 +97,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
       gameSeed: s.meta.gameSeed,
       contractId: contract.id,
       party: chosen.map((h) => snapshotOf(s, h)),
-      monster: { monster: contract.monster, tier: contract.tier },
+      monster: monsterFor(s, contract),
       location: contract.location,
       rank: s.cycle.age,
     }).then((a) => {
@@ -135,7 +136,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
       gameSeed: s.meta.gameSeed,
       contractId: contract.id,
       available: free.map((h) => snapshotOf(s, h)),
-      monster: { monster: contract.monster, tier: contract.tier },
+      monster: monsterFor(s, contract),
       location: contract.location,
       rank: s.cycle.age,
       maxParty: max,

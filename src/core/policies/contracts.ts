@@ -1,6 +1,7 @@
 import type { HunterId } from '../../content/hunters';
 import type { Command } from '../commands';
 import { computeOdds } from '../contracts/odds';
+import { monsterFor } from '../investigation/knowledge';
 import { maxPartySize } from '../contracts/party';
 import { provisions } from '../contracts/rewards';
 import type { ContractInstance, GameState } from '../state/game-state';
@@ -27,7 +28,7 @@ const sendable = (s: GameState, c: ContractInstance, party: HunterId[]): boolean
     gameSeed: s.meta.gameSeed,
     contractId: c.id,
     party: party.map((h) => snapshotOf(s, h)),
-    monster: { monster: c.monster, tier: c.tier },
+    monster: monsterFor(s, c),
     location: c.location,
     rank: s.cycle.age,
     samples: PROBE_SAMPLES,

@@ -3,6 +3,7 @@ import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { constantAt } from '../balance-access';
 import { slotFreed } from '../contracts/board';
 import { computeOdds } from '../contracts/odds';
+import { monsterFor } from '../investigation/knowledge';
 import { releaseSlot } from '../investigation/lodge';
 import { maxPartySize } from '../contracts/party';
 import { provisions } from '../contracts/rewards';
@@ -42,7 +43,7 @@ export const launch = (
     gameSeed: state.meta.gameSeed,
     contractId: contract.id,
     party: snapshots,
-    monster: { monster: contract.monster, tier: contract.tier },
+    monster: monsterFor(state, contract),
     location: contract.location,
     rank: state.cycle.age,
   });
@@ -61,6 +62,7 @@ export const launch = (
     endsAt: state.time + duration(contract.tier),
     reckless: odds.reckless,
     prep: noPreparation(),
+    knowledge: monsterFor(state, contract).knowledge,
     winChance: odds.winChance,
   });
   return ok;

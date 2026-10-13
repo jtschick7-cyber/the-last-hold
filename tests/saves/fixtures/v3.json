@@ -173,7 +173,8 @@
           ],
           "monster": {
             "monster": "kikimora",
-            "tier": 1
+            "tier": 1,
+            "knowledge": 2
           },
           "location": "river",
           "result": "win",
@@ -224,7 +225,8 @@
           ],
           "monster": {
             "monster": "wolf",
-            "tier": 1
+            "tier": 1,
+            "knowledge": 2
           },
           "location": "forest",
           "result": "win",

@@ -9,6 +9,10 @@ export interface Fight {
   readonly monster: Combatant;
   readonly rolls: RollSource;
   readonly ctx: FightContext;
+  /** knowledge% bucket: what the hunters' damage gains against this species (GDD §5.0). */
+  readonly knowledgePct: number;
+  /** The monster's knowledge level, for the log. */
+  readonly knowledge: number;
   readonly log: LogEntry[];
   /** False for odds previews: nothing is written, and no log text is built. */
   readonly logging: boolean;

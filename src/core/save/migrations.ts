@@ -120,11 +120,17 @@ export const migrations: Readonly<Record<number, Migration>> = {
         ...r,
         contract: { ...asPlain(r.contract), revealed: 3 },
         prep: noPrep(),
+        // v2 contracts were all identified, and no species had a knowledge bonus yet.
+        knowledge: 2,
       })),
       results: list(s.results).map((r) => ({ ...r, reagents: {}, wellPrepared: false })),
       log: {
         ...asPlain(s.log),
-        recentFights: list(asPlain(s.log).recentFights).map((f) => ({ ...f, prep: noPrep() })),
+        recentFights: list(asPlain(s.log).recentFights).map((f) => ({
+          ...f,
+          monster: { ...asPlain(f.monster), knowledge: 2 },
+          prep: noPrep(),
+        })),
       },
     };
   },

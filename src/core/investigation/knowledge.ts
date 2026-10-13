@@ -1,4 +1,6 @@
 import { type MonsterId } from '../../content/monsters';
+import { num } from '../balance-access';
+import type { MonsterInstance } from '../combat';
 import { candidatesFor } from '../contracts/candidates';
 import type { ContractInstance, GameState } from '../state/game-state';
 import { isIdentified } from './clues';
@@ -29,3 +31,31 @@ export const noteArrival = (state: GameState, contract: ContractInstance): void 
 /** Clues a contract arrives with: all three for a Mastered species, else none (GDD §5.6.2). */
 export const arrivalClues = (state: GameState, monster: MonsterId): number =>
   levelOf(state, monster) >= 4 ? 3 : 0;
+
+/** The species as a fight sees it now: its tier and what the hunters know of it. */
+export const monsterFor = (
+  state: GameState,
+  contract: Pick<ContractInstance, 'monster' | 'tier'>,
+): Required<MonsterInstance> => ({
+  monster: contract.monster,
+  tier: contract.tier,
+  knowledge: levelOf(state, contract.monster),
+});
+
+/**
+ * A fight against this species has finished (GDD §5.6.2): fighting it Identifies it, a win
+ * is a kill, 3 kills make it Studied and 10 Mastered. A level is never lowered.
+ */
+export const recordFight = (state: GameState, monster: MonsterId, won: boolean): void => {
+  raiseTo(state, monster, 2);
+  const entry = state.bestiary[monster];
+  if (!entry) return;
+  if (won) entry.kills += 1;
+  const level =
+    entry.kills >= num('knowledge.masteredKills')
+      ? 4
+      : entry.kills >= num('knowledge.studiedKills')
+        ? 3
+        : 2;
+  if (level > entry.level) entry.level = level;
+};

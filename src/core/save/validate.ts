@@ -160,6 +160,12 @@ const snapshot = (v: unknown, where: string): HunterSnapshot => {
   };
 };
 
+const knowledgeLevel = (v: unknown, where: string): number => {
+  const n = count(v, where);
+  if (n > 4) throw new Invalid(`${where} is above 4.`);
+  return n;
+};
+
 const consumableId = (v: unknown, where: string): ConsumableId =>
   oneOf<ConsumableId>(v, CONSUMABLE_IDS, where);
 
@@ -265,6 +271,7 @@ const running = (v: unknown, where: string): RunningContract => {
     reckless: bool(o.reckless, `${where}.reckless`),
     winChance: unit(o.winChance, `${where}.winChance`),
     prep: preparation(o.prep, `${where}.prep`),
+    knowledge: knowledgeLevel(o.knowledge, `${where}.knowledge`),
   };
 };
 
@@ -317,6 +324,7 @@ const fightRef = (v: unknown, where: string): FightRef => {
     monster: {
       monster: oneOf<MonsterId>(m.monster, MONSTER_IDS, `${where}.monster.monster`),
       tier: count(m.tier, `${where}.monster.tier`),
+      knowledge: knowledgeLevel(m.knowledge, `${where}.monster.knowledge`),
     },
     location: oneOf<LocationId>(o.location, LOCATION_IDS, `${where}.location`),
     result: oneOf(o.result, ['win', 'loss'] as const, `${where}.result`),

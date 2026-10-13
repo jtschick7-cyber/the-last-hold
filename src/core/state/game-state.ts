@@ -70,6 +70,8 @@ export interface RunningContract {
   /** The odds shown at launch (500 fights), kept so results can say how likely they were. */
   winChance: number;
   prep: Preparation;
+  /** The species' knowledge level when the party set out, frozen so a replay never changes (GDD §5.6.2). */
+  knowledge: number;
 }
 
 export interface ContractResult {
@@ -99,7 +101,7 @@ export interface FightRef {
   contractId: string;
   seed: string;
   party: HunterSnapshot[];
-  monster: { monster: MonsterId; tier: number };
+  monster: { monster: MonsterId; tier: number; knowledge: number };
   location: LocationId;
   result: 'win' | 'loss';
   rulesVersion: number;

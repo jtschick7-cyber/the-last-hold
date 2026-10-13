@@ -80,7 +80,9 @@ export const directAttack = (
   const resistance = target.resist ? target.resist[attacker.damage] : 1;
   const typed = raw * resistance;
   const outgoing = outgoingPct(attacker, attacker.damage, f.ctx);
-  const dealt = typed * (1 + outgoing) * (crit ? attacker.critMult : 1);
+  // knowledge% (GDD §5.0): only the hunters' damage, and 0 unless the species is Studied or better.
+  const knowledge = attacker.side === 'hunter' ? f.knowledgePct : 0;
+  const dealt = typed * (1 + outgoing) * (1 + knowledge) * (crit ? attacker.critMult : 1);
   const taken = takenReduction(target, attacker.damage, party);
   const hitMult = target.nextHitTakenMult;
   target.nextHitTakenMult = 1;
@@ -93,6 +95,8 @@ export const directAttack = (
   const bits = (): string => {
     const out = [`${cap(attacker.damage)} ${fmt2(dealt)}`];
     if (resistance !== 1) out.push(resistance === 0 ? 'immune' : `(×${resistance} resist)`);
+    if (knowledge > 0)
+      out.push(`(+${pct(knowledge)} ${f.knowledge >= 4 ? 'Mastered' : 'Studied'})`);
     out.push(`−${fmt2(armor)} armor`);
     return out.join(' ');
   };

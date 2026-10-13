@@ -4,7 +4,15 @@ import { buildHunter, buildMonster, roundHalfUp } from './build';
 import { endOfMonsterAction, heal, startOfMonsterAction } from './abilities';
 import { directAttack } from './damage';
 import { emit, type Fight } from './fight-state';
-import { healthPct, monsterFamily, present, speedEff, standing, type FightContext } from './stats';
+import {
+  healthPct,
+  knowledgeBonus,
+  monsterFamily,
+  present,
+  speedEff,
+  standing,
+  type FightContext,
+} from './stats';
 import type { Combatant, FightInput, FightResult } from './types';
 
 // GDD §5.5: an auto-battle on a turn meter. Each tick every standing combatant's
@@ -146,6 +154,8 @@ export const runFight = (input: FightInput): FightResult => {
     monster,
     rolls: input.rolls,
     ctx,
+    knowledgePct: knowledgeBonus(input.monster.knowledge ?? 0),
+    knowledge: input.monster.knowledge ?? 0,
     log: [],
     logging: input.log !== false,
     over: null,
