@@ -18,7 +18,13 @@ export interface AttackOptions {
   readonly mightMult?: number;
   /** Rolls already drawn for this attack (the target roll). */
   readonly pre?: readonly number[];
+  /** Their labels, same length as `pre`. */
+  readonly preNotes?: readonly string[];
 }
+
+/** A roll as the log shows it: three decimals. */
+export const fmt3 = (x: number): string => x.toFixed(3);
+export const pct = (x: number): string => `${Math.round(x * 1000) / 10}%`;
 
 /** One direct attack by `attacker` on `target`. Returns whether it hit. */
 export const directAttack = (
@@ -28,28 +34,47 @@ export const directAttack = (
   opts: AttackOptions = {},
 ): boolean => {
   const used: number[] = f.logging ? [...(opts.pre ?? [])] : [];
-  const draw = (): number => {
+  const labels: string[] = f.logging ? [...(opts.preNotes ?? [])] : [];
+  // `label` runs only when the fight is logged (odds previews build no text).
+  const draw = (label: (r: number) => string): number => {
     const r = f.rolls.next();
-    if (f.logging) used.push(r);
+    if (f.logging) {
+      used.push(r);
+      labels.push(label(r));
+    }
     return r;
   };
   const who = (): string => `${attacker.name}${roleTag(attacker)}`;
   const party = f.hunters;
   const chance = hitChance(attacker, party, f.ctx);
-  if (!(draw() < chance)) {
+  const hitRoll = draw((r) =>
+    r < chance ? `Hit ${fmt3(r)} < ${pct(chance)} → hit` : `Hit ${fmt3(r)} ≥ ${pct(chance)} → miss`,
+  );
+  if (!(hitRoll < chance)) {
     emit(f, {
       actor: attacker.id,
       kind: 'miss',
       target: target.id,
       text: () => `${who()} misses ${the(target)}`,
       rolls: used,
+      rollNotes: labels,
       amount: 0,
       targetHealth: target.health,
     });
     return false;
   }
-  const variance = attacker.varianceLo + (attacker.varianceHi - attacker.varianceLo) * draw();
-  const crit = draw() < attacker.critChance;
+  const spread = draw((r) => {
+    const v = attacker.varianceLo + (attacker.varianceHi - attacker.varianceLo) * r;
+    return `Damage spread ${fmt3(r)} → ×${fmt2(v)}`;
+  });
+  const variance = attacker.varianceLo + (attacker.varianceHi - attacker.varianceLo) * spread;
+  const critChance = attacker.critChance;
+  const crit =
+    draw((r) =>
+      r < critChance
+        ? `Crit ${fmt3(r)} < ${pct(critChance)} → crit`
+        : `Crit ${fmt3(r)} ≥ ${pct(critChance)} → no crit`,
+    ) < critChance;
   const mult = opts.mightMult ?? 1;
   const raw = mightEff(attacker) * mult * variance;
   const resistance = target.resist ? target.resist[attacker.damage] : 1;
@@ -80,6 +105,7 @@ export const directAttack = (
       `${floored ? ' (floor)' : ''} · ${target.name} ${target.health}/${target.maxHealth}` +
       notes.map((n) => ` · ${n}`).join(''),
     rolls: used,
+    rollNotes: labels,
     dealt,
     amount,
     targetHealth: target.health,

@@ -7,7 +7,7 @@ import type { FightRef } from '../../core/state/game-state';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.6: a fight log, one line per action stamped with its tick. "Show rolls"
-// expands each line to the rolls it used. "Seed" shows the fight seed and a replay
+// expands each line to the rolls it used, each with a plain label from the combat code. "Seed" shows the fight seed and a replay
 // that re-runs the fight to prove the log matches (D10). Logs are never stored:
 // they are regenerated from the seed (technical design §5.3).
 const replay = (ref: FightRef) =>
@@ -59,7 +59,9 @@ export const FightLogView = ({ fight }: { fight: FightRef }) => {
                 <span class={styles.dim}>t{l.tick}</span> · {l.text}
                 {rolls && l.rolls.length > 0 && (
                   <div class={`${styles.small} ${styles.dim}`}>
-                    rolls: {l.rolls.map((r) => r.toFixed(3)).join(', ')}
+                    {(l.rollNotes ?? l.rolls.map((r) => r.toFixed(3))).map((note, j) => (
+                      <div key={j}>{note}</div>
+                    ))}
                   </div>
                 )}
               </li>

@@ -60,6 +60,26 @@ describe('attack resolution (GDD §5.5, §5.0)', () => {
     expect(monsterHit?.rolls).toHaveLength(4); // target, hit, variance, crit
   });
 
+  it('labels every roll in plain words, one label per roll, in the order drawn', () => {
+    const miss = fightOf([sponge('zora')], 'kikimora', 1, cyclic([0.95, 0.4, 0.5, 0.5]));
+    expect(miss.log[0]?.rollNotes).toHaveLength(1);
+    expect(miss.log[0]?.rollNotes?.[0]).toMatch(/^Hit 0\.950 ≥ \d+(\.\d+)?% → miss$/);
+    const both = fightOf([sponge('halvar'), sponge('zora')], 'kikimora', 1, cyclic([0.5]));
+    const hit = lines(both, 'hit', 'kikimora')[0];
+    expect(hit?.rollNotes).toHaveLength(4);
+    expect(hit?.rollNotes?.[0]).toMatch(/^Target 0\.500 → /);
+    expect(hit?.rollNotes?.[1]).toMatch(/^Hit 0\.500 < .* → hit$/);
+    expect(hit?.rollNotes?.[2]).toMatch(/^Damage spread 0\.500 → ×/);
+    expect(hit?.rollNotes?.[3]).toMatch(/^Crit 0\.500 /);
+  });
+
+  it('every logged entry that used rolls has exactly one label per roll', () => {
+    const r = fightOf([sponge('halvar'), sponge('zora')], 'kikimora', 1, cyclic([0.3, 0.7, 0.1]));
+    for (const l of r.log) {
+      if (l.rolls.length > 0) expect(l.rollNotes).toHaveLength(l.rolls.length);
+    }
+  });
+
   it('weights Vanguards 3 to 1: a roll under 0.75 picks the Vanguard, over it the other', () => {
     // Slots: Halvar (Vanguard, weight 3), Zora (weight 1). total 4. 0.74 × 4 = 2.96 < 3 → Halvar.
     const a = fightOf([sponge('halvar'), sponge('zora')], 'kikimora', 1, cyclic([0.74]));

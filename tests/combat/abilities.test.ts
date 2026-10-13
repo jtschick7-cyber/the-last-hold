@@ -27,6 +27,9 @@ describe('Gaunt Wolf: Hamstring', () => {
     const slow = fightOf([z], 'wolf', 1, cyclic([0.1]));
     const none = fightOf([z], 'wolf', 1, cyclic([0.5]));
     expect(lines(slow, 'hit', 'wolf').some((e) => e.text.includes('hamstrung'))).toBe(true);
+    const gnash = lines(slow, 'hit', 'wolf').find((e) => e.text.includes('hamstrung'));
+    expect(gnash?.rollNotes?.[3]).toMatch(/^Hamstring 0\.100 < 25% → hamstrung$/);
+    expect(gnash?.rollNotes).toHaveLength(gnash?.rolls.length ?? -1);
     expect(lines(none, 'hit', 'wolf').some((e) => e.text.includes('hamstrung'))).toBe(false);
     // Speed 13 acts on ticks 8, 16, 24…; hamstrung, it slips behind.
     const normal = lines(none, 'hit', 'zora')
@@ -182,6 +185,8 @@ describe('Leshy: Lead Astray and Root-Wall', () => {
     const astray = lines(hit, 'ability', 'leshy').find((e) => e.text.includes('astray'));
     expect(astray?.rolls).toEqual([0.1, 0.1]); // the chance, then the pick
     expect(astray?.target).toBe('halvar'); // floor(0.1 × 2) = 0
+    expect(astray?.rollNotes?.[0]).toMatch(/^Lead Astray 0\.100 < .*% → works$/);
+    expect(astray?.rollNotes?.[1]).toBe('Pick 0.100 → Halvar Two-Smokes');
     const miss = fightOf(party, 'leshy', 4, cyclic([0.5]), 'forest');
     expect(lines(miss, 'ability-roll', 'leshy')[0]?.rolls).toEqual([0.5]);
   });

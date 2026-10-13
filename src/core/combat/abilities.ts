@@ -40,14 +40,18 @@ export const afterOwnHit = (
   attacker: Combatant,
   target: Combatant,
   amount: number,
-  draw: () => number,
+  draw: (label: (r: number) => string) => number,
 ): string[] => {
   const notes: string[] = [];
   for (const a of attacker.abilities) {
     switch (a.kind) {
-      case 'hamstring':
+      case 'hamstring': {
         // The ability roll is drawn only when the attack hit (GDD §5.5).
-        if (draw() < a.chance) {
+        const hamstrung = draw(
+          (r) =>
+            `Hamstring ${r.toFixed(3)} ${r < a.chance ? '<' : '≥'} ${Math.round(a.chance * 1000) / 10}% → ${r < a.chance ? 'hamstrung' : 'no effect'}`,
+        );
+        if (hamstrung < a.chance) {
           target.hamstringLeft = a.actions;
           target.statusPct.speed = -a.speedCut;
           target.speed = speedEff(target);
@@ -56,6 +60,7 @@ export const afterOwnHit = (
           );
         }
         break;
+      }
       case 'bloodfeast': {
         const healed = heal(attacker, roundHalfUp(amount * a.healFraction));
         if (healed > 0) notes.push(`${attacker.name} drinks, +${healed}`);
@@ -128,8 +133,14 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
       }
       case 'leadAstray': {
         const used: number[] = [];
+        const notes: string[] = [];
         const r = f.rolls.next();
         used.push(r);
+        if (f.logging) {
+          notes.push(
+            `Lead Astray ${r.toFixed(3)} ${r < a.chance ? '<' : '≥'} ${Math.round(a.chance * 1000) / 10}% → ${r < a.chance ? 'works' : 'fails'}`,
+          );
+        }
         if (r < a.chance && standingHunters.length > 0) {
           const pick = f.rolls.next();
           used.push(pick);
@@ -138,6 +149,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
             Math.floor(pick * standingHunters.length),
           );
           const victim = standingHunters[idx];
+          if (f.logging) notes.push(`Pick ${pick.toFixed(3)} → ${victim?.name ?? 'nobody'}`);
           if (victim) {
             lose(victim);
             emit(f, {
@@ -146,6 +158,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               target: victim.id,
               text: () => `${m.name} leads ${victim.name} astray (loses their next action)`,
               rolls: used,
+              rollNotes: notes,
             });
             break;
           }
@@ -155,6 +168,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
           kind: 'ability-roll',
           text: () => `${m.name}'s Lead Astray fails`,
           rolls: used,
+          rollNotes: notes,
         });
         break;
       }

@@ -90,6 +90,8 @@ export interface LogEntry {
   readonly text: string;
   /** Every roll this entry used, in the order drawn (shown on "show rolls"). */
   readonly rolls: readonly number[];
+  /** One plain-language label per roll, same order and length as `rolls`; built by the code that draws the roll, so it cannot disagree with the fight. */
+  readonly rollNotes?: readonly string[];
   readonly target?: string;
   /** Damage after resist and crit, before Armor (the golden table's "dealt before Armor"). */
   readonly dealt?: number;

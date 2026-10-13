@@ -196,3 +196,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next session, if the owner says the playtest passed:** follow plan §0.3: open the PR to `main` using the template, run `npm run sim:check` then `npm run sim:accept`, merge, mark v0.2 complete, add the decisions row. Tag pushes returned 403 last time, so the owner may need to tag `v0.2.0`.
 - **If the owner asks for fixes:** make them on `milestone/v0.2`. Portrait changes: edit the `portrait` data in `src/content/hunters.ts` or the species recipes in `tools/draw-monster.ts`, then run `npx vite-node tools/gen-portraits.ts` and `tools/gen-monsters.ts` (a test fails if the files are stale).
 - **Skipped or deferred:** clue tags and drops (v0.3 bestiary); provisions-share check stays pending until Q9 is answered; WebKit e2e only runs in CI.
+
+## 2026-10-13 — v0.2: labelled rolls
+- **Done:** at the owner's request, "show rolls" in the fight log now labels every roll (hit, damage spread, crit, target, Hamstring, Lead Astray) in plain words (D79, Proposed). Tests added; `npm run check` is green (845 tests). Fight math and `rulesVersion` are unchanged.
+- **Still waiting on the owner:** the v0.2 playtest; Q6b, Q9, Q10; approvals of D72, D74–D79.
+- **Note:** the local WebKit run of the determinism e2e fails in this session (WebKit only runs in CI, as before); Chromium passes.
+

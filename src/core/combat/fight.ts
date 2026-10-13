@@ -89,14 +89,16 @@ const hunterAct = (f: Fight, c: Combatant): void => {
   resolveEnds(f);
 };
 
+const targetNote = (roll: number, h: Combatant): string => `Target ${roll.toFixed(3)} → ${h.name}`;
+
 /** Picks the target by weight, walking standing hunters in slot order (GDD §5.5 rule 1). */
 const pickTarget = (
   f: Fight,
   candidates: readonly Combatant[],
-): { target: Combatant; pre: number[] } | null => {
+): { target: Combatant; pre: number[]; preNotes: string[] } | null => {
   const first = candidates[0];
   if (!first) return null;
-  if (candidates.length === 1) return { target: first, pre: [] };
+  if (candidates.length === 1) return { target: first, pre: [], preNotes: [] };
   const weight = (h: Combatant): number =>
     h.role === 'vanguard' ? K.vanguardWeight : K.otherWeight;
   const total = candidates.reduce((s, h) => s + weight(h), 0);
@@ -105,9 +107,11 @@ const pickTarget = (
   let walked = 0;
   for (const h of candidates) {
     walked += weight(h);
-    if (point < walked) return { target: h, pre: [roll] };
+    if (point < walked)
+      return { target: h, pre: [roll], preNotes: f.logging ? [targetNote(roll, h)] : [] };
   }
-  return { target: candidates[candidates.length - 1] ?? first, pre: [roll] };
+  const last = candidates[candidates.length - 1] ?? first;
+  return { target: last, pre: [roll], preNotes: f.logging ? [targetNote(roll, last)] : [] };
 };
 
 const monsterAct = (f: Fight, m: Combatant): void => {
@@ -117,7 +121,7 @@ const monsterAct = (f: Fight, m: Combatant): void => {
     for (let i = 0; i < f.ctx.attacks && !f.over; i++) {
       const picked = pickTarget(f, f.hunters.filter(present));
       if (!picked) break;
-      directAttack(f, m, picked.target, { pre: picked.pre });
+      directAttack(f, m, picked.target, { pre: picked.pre, preNotes: picked.preNotes });
       resolveEnds(f);
     }
   }
