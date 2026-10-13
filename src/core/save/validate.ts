@@ -94,7 +94,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
   const stats = obj(s.stats, 'stats');
 
   const age = str(cycle.age, 'cycle.age');
-  if (!(AGE_IDS as readonly string[]).includes(age)) throw new Invalid(`Unknown Age "${age}".`);
+  if (!(AGE_IDS as readonly string[]).includes(age)) throw new Invalid(`Unknown Rank "${age}".`);
 
   const jobs = idRecord(peasants.jobs, JOB_IDS, 'peasants.jobs', count, warnings);
   const total = count(peasants.total, 'peasants.total');

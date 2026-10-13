@@ -89,7 +89,7 @@ export const DebugSheet = () => {
           </button>
         ))}
       </div>
-      <h3 class={styles.cardTitle}>Seed and Age</h3>
+      <h3 class={styles.cardTitle}>Seed and Rank</h3>
       <div class={styles.row}>
         <input
           aria-label="Game seed"

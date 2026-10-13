@@ -31,9 +31,9 @@ export const HoldScreen = () => {
           <button
             type="button"
             class={styles.btn}
-            onClick={() => openSheet('Age', () => <AgeSheet />)}
+            onClick={() => openSheet('Rank', () => <AgeSheet />)}
           >
-            Age ▸
+            Rank ▸
           </button>
         </div>
         {line && (

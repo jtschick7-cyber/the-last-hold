@@ -19,7 +19,7 @@ export const buy = (state: GameState, id: BuildingId, count: number | 'max'): Ap
   if (!known(id)) return refuse('That building does not exist.');
   const def = buildings[id];
   if (def.kind !== 'count') return refuse(`${def.name} is upgraded, not bought.`);
-  if (!isAvailable(state, def)) return refuse(`${def.name} isn't available in this Age.`);
+  if (!isAvailable(state, def)) return refuse(`${def.name} isn't available at this Rank.`);
   const k = count === 'max' ? maxAffordableCount(state, id) : count;
   if (!Number.isInteger(k) || k < 1) {
     return count === 'max'
@@ -41,9 +41,9 @@ export const upgrade = (state: GameState, id: BuildingId): ApplyResult => {
   if (!known(id)) return refuse('That building does not exist.');
   const def = buildings[id];
   if (def.kind !== 'level') return refuse(`${def.name} can't be upgraded.`);
-  if (!isAvailable(state, def)) return refuse(`${def.name} isn't available in this Age.`);
+  if (!isAvailable(state, def)) return refuse(`${def.name} isn't available at this Rank.`);
   if (state.buildings[id] >= maxLevelNow(state, id)) {
-    return refuse(`${def.name} is at its highest level for this Age.`);
+    return refuse(`${def.name} is at its highest level for this Rank.`);
   }
   const cost = buildingCost(state, id).bundle;
   if (!canAfford(state, cost)) return refuse(`Not enough resources for ${def.name}.`);

@@ -75,7 +75,7 @@ export const setSeed = (state: GameState, seed: string): ApplyResult => {
 
 /** Jumps to an Age without its requirements or cost. */
 export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
-  if (!(AGE_IDS as readonly string[]).includes(age)) return refuse('That Age does not exist.');
+  if (!(AGE_IDS as readonly string[]).includes(age)) return refuse('That Rank does not exist.');
   state.cycle.age = age;
   state.meta.debugUsed = true;
   return ok;

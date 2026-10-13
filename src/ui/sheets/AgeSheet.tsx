@@ -8,7 +8,7 @@ import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 
-// GDD §9.2 "Age ▸": what the next Age restores, its checklist, its costs, and
+// GDD §9.2 "Rank ▸" (D64: the player-facing word for an Age is Rank): what the next Rank restores, its checklist, its costs, and
 // what it unlocks. Past the last built Age: "Coming in a later milestone" with
 // no fake progress bar (GDD §5.1.3).
 
@@ -93,7 +93,7 @@ export const AgeSheet = () => {
         disabled={!status.ready}
         onClick={become}
       >
-        Become a {ages[status.to].name}
+        Rank up to {ages[status.to].name}
       </button>
     </div>
   );
