@@ -10,7 +10,8 @@ import { gainXp, recoveryFactor } from '../systems/hunters';
 import { applyContractThreat } from '../threat/threat';
 import { MS_PER_SECOND } from '../time';
 import { injuryOutcome, needsDeathRoll, type InjuryOutcome } from './injury';
-import { bounty, trophies, xpPerHunter } from './rewards';
+import { holdBounty, trophies, xpPerHunter } from './rewards';
+import { contractXpBonus } from '../long-night/bonuses';
 import { deathSeed, fightSeed } from './seeds';
 
 // GDD §5.4.3 (B9): rewards, injuries and XP apply the moment a contract's timer
@@ -64,9 +65,9 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   // GDD §5.7: a success with a matching oil and a weak-type bomb (or a cancelling Saltburst).
   const wellPrepared =
     success && isWellPrepared(contract.monster, run.prep, fight.saltburstCancelled);
-  const pay = success ? bounty(contract.tier, state.cycle.age, partyTraits, wellPrepared).value : 0;
+  const pay = success ? holdBounty(state, contract.tier, partyTraits, wellPrepared).value : 0;
   const earned = success ? trophies(contract.tier, wellPrepared) : 0;
-  const xp = xpPerHunter(contract.tier, success);
+  const xp = xpPerHunter(contract.tier, success, contractXpBonus(state).value);
   // GDD §5.4.3: a success brings reagents (the drops and a gift); a failure brings none.
   const reagents = success ? reagentsFor(state.meta.gameSeed, contract) : {};
   for (const [id, n] of Object.entries(reagents))

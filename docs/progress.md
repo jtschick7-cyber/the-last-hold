@@ -350,3 +350,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Readings:** D124 (Proposed).
 - **Results:** `npm run check` green (1,111 tests); full `npm run sim:check` passes and matches the baseline.
 - **Next:** T4.9, buying warden upgrades on The Hearth and the remaining upgrade and relic effects.
+
+## 2026-10-13 — v0.4: T4.9 warden upgrades and relic effects
+- **Owner:** accepted D124 (D125).
+- **Done (T4.9):** The Hearth: `upgrade.buy` (level L costs cost × growth^(L − 1) Embers, rounded; stops at each maximum; no selling back). Effects, each in its formula's breakdown (`src/core/long-night/bonuses.ts`): Kept Coals (+10% all production per level, ember bucket, not silver); Plough-Share and Mason's Plumb (relic bucket, not silver); Drill Yard and the Tally Stick (contract XP); Village Goodwill (bounties only); Swift Roads (shorter contract timers, also on the board and launch sheet); Late Lantern (+1 h offline cap, within the 24 h ceiling); Bone Whistle (clues) and Copper Still (brewing). Starting-state upgrades, Old Hands and the Iron Shutter were done in T4.6 and T4.8. Tests in `tests/long-night/upgrades.test.ts`.
+- **Readings:** D126 (Proposed).
+- **Results:** `npm run check` green (1,122 tests); full `npm run sim:check` passes and matches the baseline; benchmark unchanged (stand preview 369 ms at 4×).
+- **Next:** T4.10, the v0.4 arrival. It needs `longNightArrival.cycle1MedianEmbers`, which T4.15 sets from the tuned simulator; see the question in the report.

@@ -8,6 +8,7 @@ import type { ConsumableId } from '../../content/consumables';
 import type { ResourceBundle } from '../../content/resources';
 import type { PolicyId } from '../policies/schedules';
 import type { Preparation, Settings } from '../state/game-state';
+import type { UpgradeId } from '../../content/warden-upgrades';
 
 // Technical design §4.3: every player action is a plain JSON Command, applied
 // through apply(). The UI, the simulator and the debug panel all use these.
@@ -61,6 +62,8 @@ export type Command =
     }
   /** The stand's result sheet has been read. */
   | { type: 'stand.seen' }
+  /** GDD §5.9.5: one more level of a warden upgrade, for Embers. */
+  | { type: 'upgrade.buy'; upgrade: UpgradeId }
   // Debug (technical design §15): only offered with ?debug or in dev builds.
   | { type: 'debug.skip'; ms: number }
   /** Plays a simulator policy over the last `ms`, then catches up to now (technical design §15). */

@@ -8,6 +8,7 @@ import type { Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
 import { jobSlots } from './housing';
 import { applyBuckets, type Bonus } from './buckets';
+import { emberBonuses, relicBonuses } from '../long-night/bonuses';
 
 // GDD §5.1.1: rate_R = workers_R × baseRate_R × buckets. Rates are per minute,
 // as the GDD writes them; advance() converts.
@@ -88,6 +89,9 @@ export const productionRate = (
     ...buildingBonuses(state, resource),
     ...ageBonuses(state),
     ...trophyBonuses(state),
+    // GDD §5.9.5–5.9.6: Kept Coals (ember) and the production relics (relic); never silver.
+    ...emberBonuses(state),
+    ...relicBonuses(state, resource),
   ];
   // G1 (D30): silver-digger output takes only the relic and event buckets.
   const result =

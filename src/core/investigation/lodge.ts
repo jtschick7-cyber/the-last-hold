@@ -8,6 +8,7 @@ import { hunterStatus } from '../systems/hunters';
 import { MS_PER_SECOND } from '../time';
 import { isIdentified } from './clues';
 import { levelOf, raiseTo } from './knowledge';
+import { clueCut } from '../long-night/bonuses';
 
 // GDD §5.6.3: the Hunter's Lodge gives one investigation slot per level. A slot
 // reveals a contract's clues one at a time. Investigation takes no hunters [JC].
@@ -50,13 +51,15 @@ export const clueDuration = (
   const studiedMult = studied ? num('clue.studiedMult') : 1;
   const tracked = slotIndex < idleTrackers(state);
   const trackerMult = tracked ? 1 - trackerCut() : 1;
-  const value = Math.round(base * studiedMult * trackerMult);
+  const whistle = clueCut(state);
+  const relicMult = 1 - whistle.value;
+  const value = Math.round(base * studiedMult * trackerMult * relicMult);
   return {
     value,
     breakdown: {
       label: 'Time per clue',
       value,
-      formula: `${base / MS_PER_SECOND / 60} min × ${studiedMult} × ${trackerMult}`,
+      formula: `${base / MS_PER_SECOND / 60} min × ${studiedMult} × ${trackerMult} × ${relicMult}`,
       children: [
         { label: 'Base time', value: base, key: 'clue.time' },
         {
@@ -65,6 +68,7 @@ export const clueDuration = (
           ...(studied ? { key: 'clue.studiedMult' as const } : {}),
         },
         { label: 'Tracker idle at the hold', value: trackerMult },
+        whistle.breakdown,
       ],
     },
   };

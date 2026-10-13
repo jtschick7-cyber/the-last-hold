@@ -3,6 +3,7 @@ import { consumables, type ConsumableId } from '../../content/consumables';
 import { num } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import { MS_PER_SECOND } from '../time';
+import { brewCut } from '../long-night/bonuses';
 
 // GDD §5.7: the Alchemist's Hut brews consumables from reagents. A brew takes 10
 // minutes, one at a time per Hut level; the rest of the queue waits. The recipe is paid
@@ -21,7 +22,9 @@ export const brewSlots = (state: GameState): number => {
 export const kettlesBusy = (state: GameState): number =>
   state.queues.brewing.filter((j) => j.doneAt !== null).length;
 
-const brewMs = (): number => num('brew.time') * MS_PER_SECOND;
+/** One brew's time, less the Copper Still (GDD §8.10). */
+export const brewMs = (state: GameState): number =>
+  num('brew.time') * MS_PER_SECOND * (1 - brewCut(state).value);
 
 /** Starts waiting brews, in queue order, on every free kettle, from the current time. */
 export const startBrews = (state: GameState): void => {
@@ -30,7 +33,7 @@ export const startBrews = (state: GameState): void => {
   for (const job of state.queues.brewing) {
     if (busy >= slots) break;
     if (job.doneAt === null) {
-      job.doneAt = state.time + brewMs();
+      job.doneAt = state.time + brewMs(state);
       busy += 1;
     }
   }

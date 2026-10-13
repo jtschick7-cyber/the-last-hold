@@ -5,6 +5,8 @@ import type { Explained } from '../breakdown/breakdown';
 import { intPow } from '../math';
 import type { GameState } from '../state/game-state';
 import { foodCapacity } from '../systems/production';
+import { bountyBonus as goodwill, durationCut } from '../long-night/bonuses';
+import { MS_PER_SECOND } from '../time';
 
 // GDD §5.4: what a contract pays and costs. Each number comes with its breakdown,
 // built by the same function (GDD §5.0).
@@ -15,6 +17,8 @@ export const bounty = (
   rank: AgeId,
   party: readonly (readonly TraitId[])[],
   wellPrepared = false,
+  /** Village Goodwill (GDD §8.9): bounties only, never seams. */
+  bonus = 0,
 ): Explained => {
   const base = num('bounty.base');
   const growth = num('bounty.growth');
@@ -33,13 +37,13 @@ export const bounty = (
   }
   const tiered = base * intPow(growth, tier - 1);
   const prepMult = wellPrepared ? num('prep.wellPreparedBounty') : 1;
-  const value = tiered * rankMult * (1 + hagglePct) * prepMult;
+  const value = tiered * rankMult * (1 + hagglePct) * prepMult * (1 + bonus);
   return {
     value,
     breakdown: {
       label: 'Bounty (silver)',
       value,
-      formula: `${base} × ${growth}^${tier - 1} × ${rankMult} × (1 + ${hagglePct}) × ${prepMult}`,
+      formula: `${base} × ${growth}^${tier - 1} × ${rankMult} × (1 + ${hagglePct}) × ${prepMult} × (1 + ${bonus})`,
       children: [
         { label: 'Base', value: base, key: 'bounty.base' },
         { label: 'Growth per tier', value: growth, key: 'bounty.growth' },
@@ -47,6 +51,7 @@ export const bounty = (
         { label: `Rank multiplier (${rank})`, value: rankMult, key: 'bounty.ageMult' },
         { label: `Haggler ×${hagglers}`, value: hagglePct },
         { label: 'Well prepared', value: prepMult, key: 'prep.wellPreparedBounty' },
+        { label: 'Village Goodwill', value: bonus },
       ],
     },
   };
@@ -94,8 +99,39 @@ export const provisions = (state: GameState, partySize: number, tier: number): E
 export const trophies = (tier: number, wellPrepared = false): number =>
   tier + (wellPrepared ? 1 : 0);
 
-/** XP to each hunter: `20 × tier` on a success, half that on a failure (GDD §5.3.2). */
-export const xpPerHunter = (tier: number, success: boolean): number => {
-  const full = num('xp.perTier') * tier;
+/**
+ * XP to each hunter: `20 × tier` on a success, half that on a failure (GDD §5.3.2),
+ * × (1 + bonus) for Drill Yard and the Tally Stick (GDD §8.9–8.10).
+ */
+export const xpPerHunter = (tier: number, success: boolean, bonus = 0): number => {
+  const full = num('xp.perTier') * tier * (1 + bonus);
   return success ? full : full / 2;
 };
+
+/** Bounty silver for a contract in this hold, with Village Goodwill. */
+export const holdBounty = (
+  state: GameState,
+  tier: number,
+  party: readonly (readonly TraitId[])[],
+  wellPrepared = false,
+): Explained => bounty(tier, state.cycle.age, party, wellPrepared, goodwill(state).value);
+
+/** How long a contract takes, in seconds: by tier, less Swift Roads (GDD §5.4.1, §8.9). */
+export const contractDuration = (state: GameState, tier: number): Explained => {
+  const base = (constantAt('contract.duration').value as readonly number[])[tier - 1] ?? 0;
+  const cut = durationCut(state);
+  const value = base * (1 - cut.value);
+  return {
+    value,
+    breakdown: {
+      label: 'Duration (seconds)',
+      value,
+      formula: `${base} × (1 − ${cut.value})`,
+      children: [{ label: `Tier ${tier}`, value: base, key: 'contract.duration' }, cut.breakdown],
+    },
+  };
+};
+
+/** The same, in milliseconds, for timers. */
+export const contractDurationMs = (state: GameState, tier: number): number =>
+  contractDuration(state, tier).value * MS_PER_SECOND;
