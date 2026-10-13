@@ -10,6 +10,7 @@ import type { MonsterAbility } from '../content/monsters';
 import { resources } from '../content/resources';
 import { num } from './balance-access';
 import { formatDuration } from './format';
+import { levelCapIn } from './systems/ages';
 
 // Plain-language descriptions built from content and balance, so the UI shows
 // what the engine uses and never restates a number by hand.
@@ -58,8 +59,8 @@ export const ageUnlocks = (to: AgeId): string[] => {
   for (const id of BUILDING_IDS) {
     const b = buildings[id];
     if (b.availableFrom === to) lines.push(`New: ${b.name}`);
-    else if (b.kind === 'level' && prev && (b.maxLevel[to] ?? 0) > (b.maxLevel[prev] ?? 0)) {
-      lines.push(`${b.name} up to level ${b.maxLevel[to] ?? 0}`);
+    else if (b.kind === 'level' && prev && levelCapIn(b, to) > levelCapIn(b, prev)) {
+      lines.push(`${b.name} up to level ${levelCapIn(b, to)}`);
     }
   }
   return lines;

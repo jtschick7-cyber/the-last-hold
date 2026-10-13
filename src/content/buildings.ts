@@ -1,4 +1,4 @@
-import type { AgeId, V04AgeId } from './ages';
+import type { AgeId } from './ages';
 import type { BalanceKey } from './balance';
 import type { JobId } from './jobs';
 import type { ResourceBundle, ResourceId } from './resources';
@@ -22,6 +22,8 @@ export const BUILDING_IDS = [
   'hunters-lodge',
   'alchemists-hut',
   'herb-garden',
+  'walls',
+  'watchtower',
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -74,7 +76,11 @@ export interface CountBuilding extends BuildingBase {
 export interface LevelBuilding extends BuildingBase {
   readonly kind: 'level';
   readonly baseCost: ResourceBundle;
-  /** Highest level allowed in each Age; missing Ages mean "not available". */
+  /**
+   * Highest level allowed in each Age. An Age with no entry keeps the cap of the
+   * latest earlier Age that has one (Barracks max 5 in every Rank, GDD §8.1); before
+   * the first entry the building isn't available.
+   */
   readonly maxLevel: Readonly<Partial<Record<AgeId, number>>>;
 }
 
@@ -136,7 +142,7 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     baseCost: { wood: 120, iron: 40 },
     effects: [{ kind: 'production', resource: 'food', perLevelKey: 'mill.perLevel' }],
     availableFrom: 'hamlet',
-    maxLevel: { hamlet: 5, keep: 10 },
+    maxLevel: { hamlet: 5, keep: 10, citadel: 15, bastion: 20 }, // Citadel, Bastion: D106
   },
   sawpit: {
     id: 'sawpit',
@@ -145,7 +151,7 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     baseCost: { wood: 100, iron: 60 },
     effects: [{ kind: 'production', resource: 'wood', perLevelKey: 'sawpit.perLevel' }],
     availableFrom: 'hamlet',
-    maxLevel: { hamlet: 5, keep: 10 },
+    maxLevel: { hamlet: 5, keep: 10, citadel: 15, bastion: 20 }, // Citadel, Bastion: D106
   },
   smithy: {
     id: 'smithy',
@@ -155,7 +161,7 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     // GDD §5.1.2: also unlocks gear tiers, from v0.2.
     effects: [{ kind: 'production', resource: 'iron', perLevelKey: 'smithy.ironPerLevel' }],
     availableFrom: 'hamlet',
-    maxLevel: { hamlet: 3, keep: 10 },
+    maxLevel: { hamlet: 3, keep: 10, citadel: 15, bastion: 20 }, // Citadel, Bastion: D106
   },
   'bell-tower': {
     id: 'bell-tower',
@@ -212,22 +218,7 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     effects: [{ kind: 'herbGrowth', intervalKey: 'herbGarden.interval' }],
     availableFrom: 'keep',
   },
-};
-
-// ---- v0.4: defenses and the higher caps (GDD §5.1.2, §5.9.2, §8.1; D106, D107) ----
-// Content only (plan T4.1). New building ids and Ranks change the saved state, so
-// these join BUILDING_IDS, `buildings` and each `maxLevel` with the v3 → v4
-// migration (T4.3); T4.4 and T4.5 wire them in.
-export const DEFENSE_IDS = ['walls', 'watchtower'] as const;
-export type DefenseId = (typeof DEFENSE_IDS)[number];
-
-export interface DefenseBuilding extends Omit<LevelBuilding, 'id' | 'availableFrom' | 'maxLevel'> {
-  readonly id: DefenseId;
-  readonly availableFrom: V04AgeId;
-  readonly maxLevel: Readonly<Partial<Record<V04AgeId, number>>>;
-}
-
-export const defenses: Readonly<Record<DefenseId, DefenseBuilding>> = {
+  // GDD §5.9.2, §8.1 (v0.4, D107): both Citadel; Bastion requires Walls 1.
   walls: {
     id: 'walls',
     name: 'Walls',
@@ -254,11 +245,5 @@ export const defenses: Readonly<Record<DefenseId, DefenseBuilding>> = {
   },
 };
 
-/** GDD §5.1.2: the Mill, Sawpit and Smithy level caps in Citadel and Bastion (D106). */
-export const v04MaxLevels: Readonly<
-  Partial<Record<BuildingId, Readonly<Record<V04AgeId, number>>>>
-> = {
-  mill: { citadel: 15, bastion: 20 },
-  sawpit: { citadel: 15, bastion: 20 },
-  smithy: { citadel: 15, bastion: 20 },
-};
+/** The two defenses (GDD §5.9.2): they slow Threat and fight in the Last Stand. */
+export const DEFENSE_IDS = ['walls', 'watchtower'] as const satisfies readonly BuildingId[];

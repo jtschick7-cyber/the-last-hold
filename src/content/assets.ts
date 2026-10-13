@@ -103,6 +103,15 @@ const generated = (
   credit: 'The Last Hold',
 });
 
+// v0.4: art for these arrives in plan T4.12; until then <Sprite> draws the placeholder.
+const NO_ART_YET: ReadonlySet<string> = new Set(['walls', 'watchtower', 'citadel', 'bastion']);
+const placeholder = (
+  id: string,
+  kind: AssetKind,
+  size: readonly [number, number],
+  label: string,
+): AssetEntry => ({ id, kind, size, label, source: 'placeholder' });
+
 export const assets: readonly AssetEntry[] = [
   ...RESOURCE_IDS.map((r) =>
     fromPack(
@@ -116,17 +125,28 @@ export const assets: readonly AssetEntry[] = [
     ),
   ),
   ...BUILDING_IDS.map((b) =>
-    fromPack(buildingSpriteId(b), 'building', [32, 32], titled(b), `buildings/${b}.png`, TINY_TOWN),
+    NO_ART_YET.has(b)
+      ? placeholder(buildingSpriteId(b), 'building', [32, 32], titled(b))
+      : fromPack(
+          buildingSpriteId(b),
+          'building',
+          [32, 32],
+          titled(b),
+          `buildings/${b}.png`,
+          TINY_TOWN,
+        ),
   ),
   ...AGE_IDS.map((a) =>
-    fromPack(
-      holdSceneId(a),
-      'scene',
-      [160, 64],
-      `The hold, ${titled(a)}`,
-      `scenes/hold-${a}.png`,
-      TINY_TOWN,
-    ),
+    NO_ART_YET.has(a)
+      ? placeholder(holdSceneId(a), 'scene', [160, 64], `The hold, ${titled(a)}`)
+      : fromPack(
+          holdSceneId(a),
+          'scene',
+          [160, 64],
+          `The hold, ${titled(a)}`,
+          `scenes/hold-${a}.png`,
+          TINY_TOWN,
+        ),
   ),
   ...HUNTER_IDS.map((h) =>
     generated(

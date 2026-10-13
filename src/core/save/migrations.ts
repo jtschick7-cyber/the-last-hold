@@ -11,6 +11,46 @@ type Plain = Record<string, unknown>;
 
 const asPlain = (v: unknown): Plain => (typeof v === 'object' && v !== null ? (v as Plain) : {});
 
+// v3 → v4 (plan T4.3, D113): Citadel and Bastion, Walls and Watchtower, Threat,
+// Embers, warden upgrades, relics and the cycle history. A save from before v0.4
+// still faces its first Long Night (GDD §5.9.8), so `arrivalDue` is set. Its cycle
+// began when the game was created; Rank times before v0.4 weren't recorded.
+const v3ToV4: Migration = (state) => {
+  const s: Plain = structuredClone(state);
+  const meta = asPlain(s.meta);
+  const cycle = asPlain(s.cycle);
+  const createdAt = typeof meta.createdAt === 'number' ? meta.createdAt : s.time;
+  return {
+    ...s,
+    buildings: { ...asPlain(s.buildings), walls: 0, watchtower: 0 },
+    threat: 0,
+    embers: 0,
+    upgrades: Object.fromEntries(
+      [
+        'kept-coals',
+        'full-larder',
+        'young-families',
+        'old-hands',
+        'drill-yard',
+        'village-goodwill',
+        'swift-roads',
+        'late-lantern',
+      ].map((id) => [id, 0]),
+    ),
+    relics: [],
+    arrivalDue: true,
+    cycles: [
+      {
+        number: cycle.number,
+        startedAt: createdAt,
+        ranks: { hamlet: createdAt },
+        contractThreat: { added: 0, removed: 0 },
+        stand: null,
+      },
+    ],
+  };
+};
+
 export const migrations: Readonly<Record<number, Migration>> = {
   // v1 → v2 (plan T2.4): hunters, the board, running and unread contracts, fights.
   // The two starting hunters (free, GDD §8.5) join the roster. If a Mine already
@@ -134,6 +174,8 @@ export const migrations: Readonly<Record<number, Migration>> = {
       },
     };
   },
+
+  3: v3ToV4,
 };
 
 export const NEWER_VERSION = 'This save is from a newer version of the game.';

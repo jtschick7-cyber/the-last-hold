@@ -2,7 +2,6 @@ import { BUILDING_IDS, buildings, type BuildingId } from '../../content/building
 import { JOB_IDS, jobs, type JobId } from '../../content/jobs';
 import { apply, type Command } from '../commands';
 import type { GameState } from '../state/game-state';
-import { ageUpStatus } from '../systems/ages';
 import { buildingCost } from '../systems/costs';
 import { idlePeasants, jobSlots } from '../systems/housing';
 import { bundleValue, deltaRateValue, payback, rateValue } from '../systems/valuation';
@@ -17,6 +16,7 @@ import {
   missingRequirements,
   reserveFor,
   shouldSave,
+  policyAgeUp,
   silverWanted,
   slotBuildingFor,
   unproduced,
@@ -163,9 +163,9 @@ export const decideCheckIn = (
   const buyPair = (slots: BuildingId, reserve: Bundle): boolean =>
     affordableWith(s, pairCost(s, slots), reserve) && buy(HOUSING) && buy(slots);
 
-  const hadOption = ageUpStatus(s)?.ready === true || BUILDING_IDS.some((id) => affordable(s, id));
+  const hadOption = policyAgeUp(s)?.ready === true || BUILDING_IDS.some((id) => affordable(s, id));
   staff();
-  if (ageUpStatus(s)?.ready && act({ type: 'age.up' })) {
+  if (policyAgeUp(s)?.ready && act({ type: 'age.up' })) {
     purchases += 1;
     agedUp = true;
   }

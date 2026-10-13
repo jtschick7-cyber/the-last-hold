@@ -10,6 +10,7 @@ import { RESOURCE_IDS, type ResourceBundle } from '../../src/content/resources';
 import { start } from '../../src/content/start';
 import { buildingBlurbs } from '../../src/content/text/blurbs';
 import { LINE_TRIGGERS, lineTriggerRules, residentLines } from '../../src/content/text/lines';
+import { levelCapIn } from '../../src/core/systems/ages';
 
 const has = (list: readonly string[], id: string): boolean => list.includes(id);
 const ageIndex = (id: string): number => (AGE_IDS as readonly string[]).indexOf(id);
@@ -67,8 +68,9 @@ describe('unlocks resolve', () => {
       const before = AGE_IDS[ageIndex(age.id) - 1];
       for (const [id, need] of Object.entries(age.ageUp.requires.buildings)) {
         const b = buildings[id as keyof typeof buildings];
+        // A Rank with no cap entry keeps the latest earlier cap (GDD §8.1, levelCapIn).
         if (b.kind === 'level' && before)
-          expect(b.maxLevel[before] ?? 0, id).toBeGreaterThanOrEqual(need ?? 0);
+          expect(levelCapIn(b, before), id).toBeGreaterThanOrEqual(need ?? 0);
       }
     }
   });

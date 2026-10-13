@@ -454,7 +454,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 - [x] **T4.1 Content.** Citadel and Bastion (requirements, costs, grants, restoration text, no inscription); Walls and Watchtower; the 8 warden upgrades (GDD §8.9) and the 6 relics (§8.10); every new balance key from GDD §7.1, §7.3, §7.4 and §7.6, marked tunable or locked (locked: `laststand.partyMax`, and the new `contract.ageTierCap` entries, D106). New Rank and building ids change the saved state, so wiring them in waits for T4.3, as in v0.2 and v0.3.
 - [x] **T4.2 Names.** Collision search (GDD §2.3) for Warm Hearth, Full Larder, Young Families, Seasoned Hunters, Drill Yard, Village Goodwill, Swift Roads, Long Watch, The Hearth, Plough-Share, Mason's Plumb, Tally Stick, Bone Whistle, Copper Still, Iron Shutter and Forge Hall; add them to `tests/content/names.ts`. Citadel, Bastion, Walls, Watchtower, Threat, Last Stand, Long Night and Embers go in as generic or already checked. Any collision: stop and ask, with alternatives. *Done: three collided and were renamed Kept Coals, Old Hands and Late Lantern; The Hearth kept (D116).*
-- [ ] **T4.3 Migration v3 → v4** (D113), using the **owner's real v0.3 save** as the fixture, with a round-trip test; the parts in technical design §5.2. `[?]` until the save is provided.
+- [x] **T4.3 Migration v3 → v4** (D113), using the **owner's real v0.3 save** as the fixture, with a round-trip test; the parts in technical design §5.2. *(Split, D117:)*
+  - [x] **T4.3a** Citadel, Bastion, Walls and Watchtower join the Rank and building lists (placeholder art until T4.12; Walls and Watchtower blurbs). A level cap missing for a Rank carries the last earlier one (Barracks 5 in every Rank, GDD §8.1). Until T4.13 the simulated player stops at the Keep (D118), so the v0.3 checks measure what they did before.
+  - [x] **T4.3b** Schema v4: Threat, Embers, upgrades, relics, the arrival flag and the cycle history; the migration; `v3-owner.json` (the owner's save code of 2026-10-13) and `v4.json` (that save played 72 h by the simulated player); tests in `tests/saves/v4-migration.test.ts`.
 
 ### B. Ranks, Threat and defenses
 
@@ -483,7 +485,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### G. Simulator
 
-- [ ] **T4.13 Policy rules** (GDD §6.1, D114): Rank-ups to Citadel and Bastion; v0.3 buildings first; a Tracker kept home; defenses; the stand rule (Standard, Light and Heavy); Embers cheapest first; the default three each cycle.
+- [ ] **T4.13 Policy rules** (GDD §6.1, D114; first lift the D118 hold at the Keep in `src/core/policies/goals.ts`, and keep the Rank-up silver aside only once the Rank-up's requirements are met, or the Citadel's 1,000 silver stops all recruiting): Rank-ups to Citadel and Bastion; v0.3 buildings first; a Tracker kept home; defenses; the stand rule (Standard, Light and Heavy); Embers cheapest first; the default three each cycle.
 - [ ] **T4.14 Checks.** Citadel; Bastion; best Last Stand (practice stands to day 7); first Long Night (Standard, Light, Heavy); later cycles (≥ 15% faster, 2-day floor); overflow through 3 cycles (the `sim/targets.ts` row change the owner approved in D114); engagement checks over all of cycle 1; the economy checks over every stretch from the Keep in every cycle. Citadel and Bastion join the fast set; runs are 14 days.
 - [ ] **T4.15 Tuning** (tunables only) against every check, then set `longNightArrival.cycle1MedianEmbers` from the tuned simulator (decisions row with the value). If no reasonable values pass (the "later cycles" check is the known risk, GDD §5.9.5), stop and ask.
 

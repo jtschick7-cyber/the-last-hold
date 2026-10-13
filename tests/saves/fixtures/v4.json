@@ -1,0 +1,1125 @@
+{
+  "app": "the-last-hold",
+  "schemaVersion": 4,
+  "rulesVersion": 1,
+  "savedAt": 1792166400000,
+  "state": {
+    "meta": {
+      "schemaVersion": 4,
+      "gameSeed": "843a6124181b0108",
+      "createdAt": 1791795157444,
+      "lastSeen": 1792166400000,
+      "clockHighWater": 1792166400000,
+      "debugUsed": false
+    },
+    "time": 1792166400000,
+    "cycle": {
+      "number": 1,
+      "age": "citadel"
+    },
+    "resources": {
+      "food": 719453.440504456,
+      "wood": 4292.926689395463,
+      "iron": 88058.28088083962,
+      "silver": 917.4973456705757
+    },
+    "peasants": {
+      "total": 77,
+      "jobs": {
+        "farmer": 57,
+        "woodcutter": 10,
+        "miner": 8,
+        "silver-digger": 2
+      },
+      "autoSettle": true,
+      "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
+      "lastSettleAt": 1792145947158.7087
+    },
+    "buildings": {
+      "hearth-hall": 1,
+      "cottage": 56,
+      "farm": 34,
+      "woodcutters-camp": 11,
+      "mine": 8,
+      "silver-seam": 2,
+      "mill": 12,
+      "sawpit": 12,
+      "smithy": 11,
+      "bell-tower": 0,
+      "barracks": 3,
+      "trophy-hall": 1,
+      "hunters-lodge": 3,
+      "alchemists-hut": 3,
+      "herb-garden": 2,
+      "walls": 1,
+      "watchtower": 0
+    },
+    "hunters": {
+      "halvar": {
+        "level": 5,
+        "xp": 213.75,
+        "weapon": "silvered-blade",
+        "armor": "emberwright-plate",
+        "recovery": null,
+        "record": {
+          "won": 15,
+          "lost": 0
+        }
+      },
+      "zora": {
+        "level": 5,
+        "xp": 193.75,
+        "weapon": "silvered-blade",
+        "armor": "emberwright-plate",
+        "recovery": null,
+        "record": {
+          "won": 14,
+          "lost": 0
+        }
+      }
+    },
+    "roster": {
+      "active": ["halvar", "zora"]
+    },
+    "board": {
+      "opened": true,
+      "open": [
+        {
+          "id": "c9",
+          "village": "kozly-hollow",
+          "monster": "kikimora",
+          "tier": 1,
+          "location": "field",
+          "arrivedAt": 1791952359611,
+          "revealed": 1
+        },
+        {
+          "id": "c10",
+          "village": "dubno-ford",
+          "monster": "kikimora",
+          "tier": 1,
+          "location": "field",
+          "arrivedAt": 1791968400000,
+          "revealed": 1
+        },
+        {
+          "id": "c15",
+          "village": "kozly-hollow",
+          "monster": "wolf",
+          "tier": 1,
+          "location": "field",
+          "arrivedAt": 1792054800000,
+          "revealed": 2
+        },
+        {
+          "id": "c17",
+          "village": "dubno-ford",
+          "monster": "wolf",
+          "tier": 1,
+          "location": "river",
+          "arrivedAt": 1792074600000,
+          "revealed": 1
+        },
+        {
+          "id": "c18",
+          "village": "ravenfell",
+          "monster": "kikimora",
+          "tier": 1,
+          "location": "forest",
+          "arrivedAt": 1792087200000,
+          "revealed": 1
+        },
+        {
+          "id": "c21",
+          "village": "velkvik",
+          "monster": "vodyanoy",
+          "tier": 4,
+          "location": "river",
+          "arrivedAt": 1792161000000,
+          "revealed": 0
+        }
+      ],
+      "nextArrivalAt": null,
+      "arrivals": 22,
+      "tierWins": [5, 5, 4, 1, 0]
+    },
+    "bestiary": {
+      "kikimora": {
+        "level": 2,
+        "kills": 2
+      },
+      "wolf": {
+        "level": 3,
+        "kills": 5
+      },
+      "rusalka": {
+        "level": 2,
+        "kills": 2
+      },
+      "upyr": {
+        "level": 2,
+        "kills": 1
+      },
+      "bies": {
+        "level": 2,
+        "kills": 1
+      },
+      "huldra": {
+        "level": 2,
+        "kills": 1
+      },
+      "poludnitsa": {
+        "level": 1,
+        "kills": 0
+      },
+      "draugr": {
+        "level": 2,
+        "kills": 2
+      },
+      "vodyanoy": {
+        "level": 2,
+        "kills": 1
+      },
+      "nix": {
+        "level": 2,
+        "kills": 0
+      }
+    },
+    "stores": {
+      "grave-oil": 3,
+      "drowned-bane-oil": 2,
+      "thornbane-oil": 3,
+      "mending-draught": 0,
+      "hardwood-tonic": 0,
+      "quickfoot-tincture": 1,
+      "fire-pot": 1,
+      "frost-pot": 1,
+      "saltburst": 1,
+      "yarrow": 742,
+      "mugwort": 745,
+      "juniper": 747,
+      "honeycomb": 0,
+      "hares-foot": 2,
+      "pitch": 0,
+      "rime-salt": 0,
+      "grave-dust": 2,
+      "river-pearl": 0,
+      "thornwood": 2,
+      "wolf-fang": 5,
+      "noon-poppy": 0
+    },
+    "queues": {
+      "brewing": [
+        {
+          "item": "frost-pot",
+          "doneAt": 1792167000000
+        }
+      ],
+      "investigation": [
+        {
+          "contractId": "c21",
+          "nextClueAt": 1792168200000
+        }
+      ]
+    },
+    "garden": {
+      "nextAt": 1792166464325
+    },
+    "running": [
+      {
+        "contract": {
+          "id": "c20",
+          "village": "dubno-ford",
+          "monster": "nix",
+          "tier": 4,
+          "location": "river",
+          "arrivedAt": 1792141200000,
+          "revealed": 1
+        },
+        "party": ["halvar", "zora"],
+        "snapshots": [
+          {
+            "id": "halvar",
+            "name": "Halvar Two-Smokes",
+            "role": "vanguard",
+            "damage": "steel",
+            "level": 5,
+            "base": {
+              "health": 170,
+              "might": 12,
+              "armor": 8,
+              "speed": 7
+            },
+            "traits": ["shieldwall", "steady"],
+            "weapon": "silvered-blade",
+            "armorGear": "emberwright-plate"
+          },
+          {
+            "id": "zora",
+            "name": "Zora Sedlak",
+            "role": "striker",
+            "damage": "steel",
+            "level": 5,
+            "base": {
+              "health": 100,
+              "might": 20,
+              "armor": 3,
+              "speed": 13
+            },
+            "traits": ["fen-born", "quick"],
+            "weapon": "silvered-blade",
+            "armorGear": "emberwright-plate"
+          }
+        ],
+        "launchedAt": 1792153800000,
+        "endsAt": 1792168200000,
+        "reckless": false,
+        "prep": {
+          "oils": {
+            "halvar": "drowned-bane-oil"
+          },
+          "potions": {},
+          "bombs": ["frost-pot"]
+        },
+        "knowledge": 2,
+        "winChance": 1
+      }
+    ],
+    "results": [],
+    "fallen": [],
+    "scenes": ["vow", "first-contract"],
+    "log": {
+      "recentFights": [
+        {
+          "contractId": "c0",
+          "seed": "843a6124181b0108:fight:c0:halvar:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": null,
+              "armorGear": null
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 1,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791889401331,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c1",
+          "seed": "843a6124181b0108:fight:c1:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": null,
+              "armorGear": null
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": null,
+              "armorGear": null
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 2
+          },
+          "location": "forest",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791897712819,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c2",
+          "seed": "843a6124181b0108:fight:c2:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "iron-blade",
+              "armorGear": "hide-armor"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "iron-blade",
+              "armorGear": "hide-armor"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791912064325,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c4",
+          "seed": "843a6124181b0108:fight:c4:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 2,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791928800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c5",
+          "seed": "843a6124181b0108:fight:c5:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "rusalka",
+            "tier": 2,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791964800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c7",
+          "seed": "843a6124181b0108:fight:c7:halvar,zora:bomb:fire-pot",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 2,
+            "knowledge": 2
+          },
+          "location": "barrow",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791975600000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": ["fire-pot"]
+          }
+        },
+        {
+          "contractId": "c11",
+          "seed": "843a6124181b0108:fight:c11:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "bies",
+            "tier": 3,
+            "knowledge": 1
+          },
+          "location": "forest",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791988200000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c12",
+          "seed": "843a6124181b0108:fight:c12:halvar,zora:halvar:potion:mending-draught",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "huldra",
+            "tier": 3,
+            "knowledge": 1
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792000800000,
+          "prep": {
+            "oils": {},
+            "potions": {
+              "halvar": "mending-draught"
+            },
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c13",
+          "seed": "843a6124181b0108:fight:c13:halvar,zora:halvar:potion:mending-draught",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "draugr",
+            "tier": 3,
+            "knowledge": 1
+          },
+          "location": "barrow",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792018800000,
+          "prep": {
+            "oils": {},
+            "potions": {
+              "halvar": "mending-draught"
+            },
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c8",
+          "seed": "843a6124181b0108:fight:c8:halvar,zora:bomb:fire-pot",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "upyr",
+            "tier": 2,
+            "knowledge": 2
+          },
+          "location": "barrow",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792051200000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": ["fire-pot"]
+          }
+        },
+        {
+          "contractId": "c14",
+          "seed": "843a6124181b0108:fight:c14:halvar,zora:halvar:oil:drowned-bane-oil,bomb:frost-pot",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "rusalka",
+            "tier": 2,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792062000000,
+          "prep": {
+            "oils": {
+              "halvar": "drowned-bane-oil"
+            },
+            "potions": {},
+            "bombs": ["frost-pot"]
+          }
+        },
+        {
+          "contractId": "c16",
+          "seed": "843a6124181b0108:fight:c16:halvar,zora:bomb:saltburst",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "draugr",
+            "tier": 3,
+            "knowledge": 2
+          },
+          "location": "barrow",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792074600000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": ["saltburst"]
+          }
+        },
+        {
+          "contractId": "c3",
+          "seed": "843a6124181b0108:fight:c3:halvar,zora:bomb:fire-pot",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 2
+          },
+          "location": "forest",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792081800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": ["fire-pot"]
+          }
+        },
+        {
+          "contractId": "c6",
+          "seed": "843a6124181b0108:fight:c6:halvar,zora:bomb:saltburst",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 3
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792099800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": ["saltburst"]
+          }
+        },
+        {
+          "contractId": "c19",
+          "seed": "843a6124181b0108:fight:c19:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "vodyanoy",
+            "tier": 4,
+            "knowledge": 1
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792148400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        }
+      ]
+    },
+    "stats": {
+      "buildingsBought": 157,
+      "peasantsSettled": 74,
+      "contractsWon": 15,
+      "contractsLost": 0,
+      "trophies": 32,
+      "bountySilver": 2287.9800000000005,
+      "kills": {
+        "kikimora": 2,
+        "wolf": 5,
+        "rusalka": 2,
+        "bies": 1,
+        "huldra": 1,
+        "draugr": 2,
+        "upyr": 1,
+        "vodyanoy": 1
+      },
+      "winsByLocation": {
+        "river": 6,
+        "forest": 3,
+        "barrow": 4,
+        "field": 2
+      }
+    },
+    "threat": 0,
+    "embers": 0,
+    "upgrades": {
+      "kept-coals": 0,
+      "full-larder": 0,
+      "young-families": 0,
+      "old-hands": 0,
+      "drill-yard": 0,
+      "village-goodwill": 0,
+      "swift-roads": 0,
+      "late-lantern": 0
+    },
+    "relics": [],
+    "arrivalDue": true,
+    "cycles": [
+      {
+        "number": 1,
+        "startedAt": 1791795157444,
+        "ranks": {
+          "hamlet": 1791795157444,
+          "citadel": 1792098000000
+        },
+        "contractThreat": {
+          "added": 0,
+          "removed": 0
+        },
+        "stand": null
+      }
+    ],
+    "settings": {
+      "theme": "dark",
+      "bestBuyHint": true,
+      "rateUnit": "hour",
+      "reduceMotion": "system"
+    }
+  }
+}

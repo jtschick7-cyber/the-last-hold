@@ -3,7 +3,8 @@ import { CONSUMABLE_IDS, type ConsumableId } from '../../content/consumables';
 import { INGREDIENT_IDS, type IngredientId } from '../../content/ingredients';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { start } from '../../content/start';
-import { SCHEMA_VERSION, type GameState, type Settings } from './game-state';
+import { UPGRADE_IDS, type UpgradeId } from '../../content/warden-upgrades';
+import { SCHEMA_VERSION, type CycleRecord, type GameState, type Settings } from './game-state';
 import { freshHunter, startingHunters } from './hunters-state';
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -18,6 +19,15 @@ const fill = <K extends string>(
   from: Partial<Record<K, number>>,
 ): Record<K, number> =>
   Object.fromEntries(ids.map((id) => [id, from[id] ?? 0])) as Record<K, number>;
+
+/** A cycle's history entry as it begins (D113). */
+export const freshCycleRecord = (number: number, now: number): CycleRecord => ({
+  number,
+  startedAt: now,
+  ranks: { [start.age]: now },
+  contractThreat: { added: 0, removed: 0 },
+  stand: null,
+});
 
 /** A fresh game in the GDD §5.1.4 starting state. */
 export const createNewGame = (seed: string, now: number): GameState => {
@@ -55,6 +65,12 @@ export const createNewGame = (seed: string, now: number): GameState => {
     fallen: [],
     scenes: [],
     log: { recentFights: [] },
+    threat: 0,
+    embers: 0,
+    upgrades: fill<UpgradeId>(UPGRADE_IDS, {}),
+    relics: [],
+    arrivalDue: false, // new games never face the v0.4 arrival (GDD §5.9.8)
+    cycles: [freshCycleRecord(1, now)],
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,

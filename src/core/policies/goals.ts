@@ -3,12 +3,21 @@ import { BUILDING_IDS, buildings, type BuildingId } from '../../content/building
 import { JOB_IDS, jobs } from '../../content/jobs';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import type { GameState } from '../state/game-state';
-import { ageUpStatus, isAvailable, maxLevelNow } from '../systems/ages';
+import { ageIndex, ageUpStatus, isAvailable, maxLevelNow, type AgeUpStatus } from '../systems/ages';
 import { buildingCost, canAfford, copyLimit, timeToAfford } from '../systems/costs';
 import { housing } from '../systems/housing';
 import { productionRate } from '../systems/production';
 import { settleCost } from '../systems/settle';
 import { MS_PER_SECOND } from '../time';
+
+/**
+ * The Rank-up the simulated player works toward. Until its v0.4 rules (plan T4.13),
+ * it stops at the Keep, so every v0.3 check measures what it did before Citadel and
+ * Bastion existed (owner's choice, D118). The game itself has no such limit.
+ */
+const POLICY_LAST_RANK = 'keep';
+export const policyAgeUp = (state: GameState): AgeUpStatus | null =>
+  ageIndex(state.cycle.age) >= ageIndex(POLICY_LAST_RANK) ? null : ageUpStatus(state);
 
 // What the simulated player knows about its goal, the next Age-up (GDD §6.1,
 // D60). Payback alone can't see it: under the locked weights every job is
@@ -42,7 +51,7 @@ export const affordable = (state: GameState, id: BuildingId, reserve = emptyBund
   buildable(state, id) && affordableWith(state, buildingCost(state, id).bundle, reserve);
 
 const ageUpCost = (state: GameState): Bundle => {
-  const status = ageUpStatus(state);
+  const status = policyAgeUp(state);
   const cost = status ? (ages[status.to].ageUp?.cost ?? {}) : {};
   return Object.fromEntries(RESOURCE_IDS.map((r) => [r, cost[r] ?? 0])) as Bundle;
 };
@@ -56,7 +65,7 @@ export const rankUpSilver = (state: GameState): number => ageUpCost(state).silve
 
 /** Buildings (or levels) the next Age-up requires that the hold lacks. */
 export const missingRequirements = (state: GameState): BuildingId[] => {
-  const status = ageUpStatus(state);
+  const status = policyAgeUp(state);
   const req = status ? (ages[status.to].ageUp?.requires.buildings ?? {}) : {};
   return BUILDING_IDS.filter((id) => state.buildings[id] < (req[id] ?? 0));
 };
@@ -122,7 +131,7 @@ export const bottleneck = (state: GameState): ResourceId | null => {
  * by the check-in after next, the policy saves for it.
  */
 export const shouldSave = (state: GameState, horizonMs: number): boolean => {
-  const status = ageUpStatus(state);
+  const status = policyAgeUp(state);
   if (!status || !status.requirements.every((r) => r.met)) return false;
   const seconds = timeToAfford(state, ageUpCost(state), (r) => productionRate(state, r).value);
   return seconds !== null && seconds * MS_PER_SECOND <= horizonMs;

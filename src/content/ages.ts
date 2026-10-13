@@ -1,13 +1,14 @@
 import type { BalanceKey } from './balance';
-import type { BuildingId, DefenseId } from './buildings';
+import type { BuildingId } from './buildings';
 import type { ResourceBundle } from './resources';
 
-// GDD §5.1.3. In v0.1 the Keep is the end of content; the Age screen shows
-// Citadel as "Coming in a later milestone" (plan T1.22).
+// GDD §5.1.3. v0.4 adds Citadel and Bastion (D106). Every number is a tunable
+// starting value (D44), tuned to the day-2 and day-3 targets; the roster bonus
+// and the tier cap are locked and live in balance.ts.
 // Proper nouns used only inside text (technical design §14 name check).
 export const properNouns: readonly string[] = ['Roll of Honor', 'Forge Hall'];
 
-export const AGE_IDS = ['hamlet', 'keep'] as const;
+export const AGE_IDS = ['hamlet', 'keep', 'citadel', 'bastion'] as const;
 export type AgeId = (typeof AGE_IDS)[number];
 
 export interface AgeUp {
@@ -23,7 +24,8 @@ export interface AgeUp {
   readonly restores: {
     readonly summary: string;
     readonly description: string;
-    readonly inscription: string;
+    /** Citadel and Bastion have none until v0.5 (setting-primer §6.5). */
+    readonly inscription?: string;
   };
 }
 
@@ -51,34 +53,6 @@ export const ages: Readonly<Record<AgeId, AgeDef>> = {
       },
     },
   },
-};
-
-// ---- v0.4: Citadel and Bastion (GDD §5.1.3, D106) ----
-// Content only (plan T4.1). A new Rank id changes the saved state, so these join
-// AGE_IDS and `ages` with the v3 → v4 migration (T4.3) and are wired in by T4.4.
-// Every number is a tunable starting value (D44), tuned to the day-2 and day-3
-// targets; the roster bonus and the tier cap are locked and live in balance.ts.
-export const V04_AGE_IDS = ['citadel', 'bastion'] as const;
-export type V04AgeId = (typeof V04_AGE_IDS)[number];
-
-export interface V04AgeUp {
-  readonly requires: {
-    readonly peasants: number;
-    readonly buildings: Readonly<Partial<Record<BuildingId | DefenseId, number>>>;
-  };
-  readonly cost: ResourceBundle;
-  readonly allProductionKey: BalanceKey;
-  /** setting-primer §6.5: neutral text only; no inscription until v0.5. */
-  readonly restores: { readonly summary: string; readonly description: string };
-}
-
-export interface V04AgeDef {
-  readonly id: V04AgeId;
-  readonly name: string;
-  readonly ageUp: V04AgeUp;
-}
-
-export const v04Ages: Readonly<Record<V04AgeId, V04AgeDef>> = {
   citadel: {
     id: 'citadel',
     name: 'Citadel',

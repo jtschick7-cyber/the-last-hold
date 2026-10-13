@@ -1,0 +1,285 @@
+{
+  "app": "the-last-hold",
+  "schemaVersion": 3,
+  "rulesVersion": 1,
+  "savedAt": 1791910264409,
+  "state": {
+    "meta": {
+      "schemaVersion": 3,
+      "gameSeed": "843a6124181b0108",
+      "createdAt": 1791795157444,
+      "lastSeen": 1791910264325,
+      "clockHighWater": 1791910264325,
+      "debugUsed": false
+    },
+    "time": 1791910264325,
+    "cycle": {
+      "number": 1,
+      "age": "keep"
+    },
+    "resources": {
+      "food": 246577.29763604695,
+      "wood": 157604.30320168476,
+      "iron": 55683.523094592914,
+      "silver": 803.6783873372419
+    },
+    "peasants": {
+      "total": 29,
+      "jobs": {
+        "farmer": 9,
+        "woodcutter": 10,
+        "miner": 8,
+        "silver-digger": 2
+      },
+      "autoSettle": true,
+      "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
+      "lastSettleAt": 1791806222908
+    },
+    "buildings": {
+      "hearth-hall": 1,
+      "cottage": 13,
+      "farm": 3,
+      "woodcutters-camp": 4,
+      "mine": 4,
+      "silver-seam": 2,
+      "mill": 4,
+      "sawpit": 3,
+      "smithy": 3,
+      "bell-tower": 0,
+      "barracks": 0,
+      "trophy-hall": 0,
+      "hunters-lodge": 0,
+      "alchemists-hut": 0,
+      "herb-garden": 0
+    },
+    "hunters": {
+      "halvar": {
+        "level": 1,
+        "xp": 40,
+        "weapon": null,
+        "armor": null,
+        "recovery": null,
+        "record": {
+          "won": 2,
+          "lost": 0
+        }
+      },
+      "zora": {
+        "level": 1,
+        "xp": 20,
+        "weapon": null,
+        "armor": null,
+        "recovery": null,
+        "record": {
+          "won": 1,
+          "lost": 0
+        }
+      }
+    },
+    "roster": {
+      "active": ["halvar", "zora"]
+    },
+    "board": {
+      "opened": true,
+      "open": [
+        {
+          "id": "c2",
+          "village": "velkvik",
+          "monster": "wolf",
+          "tier": 1,
+          "location": "river",
+          "arrivedAt": 1791901959611,
+          "revealed": 3
+        },
+        {
+          "id": "c3",
+          "village": "ravenfell",
+          "monster": "wolf",
+          "tier": 1,
+          "location": "forest",
+          "arrivedAt": 1791909159611,
+          "revealed": 0
+        }
+      ],
+      "nextArrivalAt": 1791916359611,
+      "arrivals": 4,
+      "tierWins": [2, 0, 0, 0, 0]
+    },
+    "bestiary": {
+      "kikimora": {
+        "level": 2,
+        "kills": 1
+      },
+      "wolf": {
+        "level": 2,
+        "kills": 1
+      }
+    },
+    "stores": {
+      "grave-oil": 0,
+      "drowned-bane-oil": 0,
+      "thornbane-oil": 0,
+      "mending-draught": 0,
+      "hardwood-tonic": 0,
+      "quickfoot-tincture": 0,
+      "fire-pot": 0,
+      "frost-pot": 0,
+      "saltburst": 0,
+      "yarrow": 0,
+      "mugwort": 0,
+      "juniper": 0,
+      "honeycomb": 0,
+      "hares-foot": 0,
+      "pitch": 0,
+      "rime-salt": 0,
+      "grave-dust": 0,
+      "river-pearl": 0,
+      "thornwood": 0,
+      "wolf-fang": 0,
+      "noon-poppy": 0
+    },
+    "queues": {
+      "brewing": [],
+      "investigation": []
+    },
+    "garden": {
+      "nextAt": null
+    },
+    "running": [],
+    "results": [
+      {
+        "contractId": "c1",
+        "village": "ravenfell",
+        "monster": "wolf",
+        "tier": 1,
+        "location": "forest",
+        "success": true,
+        "at": 1791897712819,
+        "bounty": 78,
+        "trophies": 1,
+        "xp": 20,
+        "winChance": 1,
+        "injuries": [],
+        "levelUps": [],
+        "reagents": {},
+        "wellPrepared": false
+      }
+    ],
+    "fallen": [],
+    "scenes": ["vow", "first-contract"],
+    "log": {
+      "recentFights": [
+        {
+          "contractId": "c0",
+          "seed": "843a6124181b0108:fight:c0:halvar:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": null,
+              "armorGear": null
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 1,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791889401331,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c1",
+          "seed": "843a6124181b0108:fight:c1:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": null,
+              "armorGear": null
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": null,
+              "armorGear": null
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 2
+          },
+          "location": "forest",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791897712819,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        }
+      ]
+    },
+    "stats": {
+      "buildingsBought": 34,
+      "peasantsSettled": 26,
+      "contractsWon": 2,
+      "contractsLost": 0,
+      "trophies": 2,
+      "bountySilver": 150,
+      "kills": {
+        "kikimora": 1,
+        "wolf": 1
+      },
+      "winsByLocation": {
+        "river": 1,
+        "forest": 1
+      }
+    },
+    "settings": {
+      "theme": "dark",
+      "bestBuyHint": true,
+      "rateUnit": "hour",
+      "reduceMotion": "system"
+    }
+  }
+}

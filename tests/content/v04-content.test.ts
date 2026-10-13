@@ -1,37 +1,46 @@
 // Plan T4.1: the v0.4 content matches GDD §5.1.2–5.1.3, §5.9.2, §8.1, §8.9 and
-// §8.10, and is internally consistent. Wiring into the saved state is T4.3 on.
+// §8.10, and is internally consistent.
 import { describe, expect, it } from 'vitest';
-import { ages, V04_AGE_IDS, v04Ages } from '../../src/content/ages';
-import {
-  BUILDING_IDS,
-  buildings,
-  DEFENSE_IDS,
-  defenses,
-  v04MaxLevels,
-} from '../../src/content/buildings';
+import { AGE_IDS, ages, type AgeId } from '../../src/content/ages';
+import { buildings, DEFENSE_IDS, type BuildingId } from '../../src/content/buildings';
 import { RELIC_IDS, relics } from '../../src/content/relics';
 import { UPGRADE_IDS, upgrades } from '../../src/content/warden-upgrades';
 import { constantAt, num } from '../../src/core/balance-access';
 
-const has = (list: readonly string[], id: string): boolean => list.includes(id);
+const V04_AGES = ['citadel', 'bastion'] as const;
+const up = (id: (typeof V04_AGES)[number]) => {
+  const a = ages[id].ageUp;
+  if (!a) throw new Error(`${id} has no Rank-up`);
+  return a;
+};
+/** A level building's cap in an Age: its entry, else the latest earlier one (GDD §8.1). */
+const capIn = (id: BuildingId, age: AgeId): number => {
+  const b = buildings[id];
+  if (b.kind !== 'level') return Infinity;
+  for (let i = AGE_IDS.indexOf(age); i >= 0; i--) {
+    const cap = b.maxLevel[AGE_IDS[i] as AgeId];
+    if (cap !== undefined) return cap;
+  }
+  return 0;
+};
 
 describe('Citadel and Bastion (GDD §5.1.3, D106)', () => {
   it('have the GDD requirements and costs', () => {
-    expect(v04Ages.citadel.ageUp.requires).toEqual({
+    expect(up('citadel').requires).toEqual({
       peasants: 50,
       buildings: { mill: 10, smithy: 8, barracks: 1 },
     });
-    expect(v04Ages.citadel.ageUp.cost).toEqual({
+    expect(up('citadel').cost).toEqual({
       food: 300_000,
       wood: 150_000,
       iron: 60_000,
       silver: 1_000,
     });
-    expect(v04Ages.bastion.ageUp.requires).toEqual({
+    expect(up('bastion').requires).toEqual({
       peasants: 65,
       buildings: { mill: 15, smithy: 12, barracks: 3, walls: 1 },
     });
-    expect(v04Ages.bastion.ageUp.cost).toEqual({
+    expect(up('bastion').cost).toEqual({
       food: 1_500_000,
       wood: 600_000,
       iron: 250_000,
@@ -40,33 +49,26 @@ describe('Citadel and Bastion (GDD §5.1.3, D106)', () => {
   });
 
   it('their requirements can be met under the Rank they are bought from', () => {
-    // Citadel is bought in the Keep, Bastion in the Citadel. A building with no
-    // entry for a later Rank keeps its Keep cap (Barracks max 5, GDD §8.1).
-    const capIn = (id: string, age: 'keep' | 'citadel'): number => {
-      if (has(DEFENSE_IDS, id)) return defenses[id as 'walls'].maxLevel[age as 'citadel'] ?? 0;
-      const extra = age === 'citadel' ? v04MaxLevels[id as 'mill']?.citadel : undefined;
-      const b = buildings[id as 'mill'];
-      return extra ?? (b.kind === 'level' ? (b.maxLevel.keep ?? 0) : Infinity);
-    };
-    for (const [id, level] of Object.entries(v04Ages.citadel.ageUp.requires.buildings))
-      expect(capIn(id, 'keep'), id).toBeGreaterThanOrEqual(level);
-    for (const [id, level] of Object.entries(v04Ages.bastion.ageUp.requires.buildings))
-      expect(capIn(id, 'citadel'), id).toBeGreaterThanOrEqual(level);
+    // Citadel is bought in the Keep, Bastion in the Citadel.
+    for (const [id, level] of Object.entries(up('citadel').requires.buildings))
+      expect(capIn(id as BuildingId, 'keep'), id).toBeGreaterThanOrEqual(level ?? 0);
+    for (const [id, level] of Object.entries(up('bastion').requires.buildings))
+      expect(capIn(id as BuildingId, 'citadel'), id).toBeGreaterThanOrEqual(level ?? 0);
   });
 
   it('restore neutral text and carry no inscription (setting-primer §6.5)', () => {
-    expect(v04Ages.citadel.ageUp.restores.description).toBe(
+    expect(up('citadel').restores.description).toBe(
       'The roof is back on the old Forge Hall. Its forges are cold.',
     );
-    expect(v04Ages.bastion.ageUp.restores.description).toBe(
+    expect(up('bastion').restores.description).toBe(
       'Under the Bastion floor, a stair goes down to a sealed door.',
     );
-    for (const id of V04_AGE_IDS) expect('inscription' in v04Ages[id].ageUp.restores).toBe(false);
+    for (const id of V04_AGES) expect(up(id).restores.inscription).toBeUndefined();
   });
 
-  it('are new ids, and every Rank has its balance entries', () => {
-    for (const id of V04_AGE_IDS) expect(id in ages, id).toBe(false);
-    for (const id of [...Object.keys(ages), ...V04_AGE_IDS]) {
+  it('follow the Keep in Rank order, and every Rank has its balance entries', () => {
+    expect(AGE_IDS).toEqual(['hamlet', 'keep', 'citadel', 'bastion']);
+    for (const id of AGE_IDS) {
       for (const key of [
         'contract.ageTierCap',
         'bounty.ageMult',
@@ -86,27 +88,37 @@ describe('Citadel and Bastion (GDD §5.1.3, D106)', () => {
 
 describe('the higher level caps and the defenses (GDD §5.1.2, §5.9.2, §8.1)', () => {
   it('Mill, Sawpit and Smithy reach 15 in Citadel and 20 in Bastion', () => {
-    for (const id of ['mill', 'sawpit', 'smithy'] as const)
-      expect(v04MaxLevels[id]).toEqual({ citadel: 15, bastion: 20 });
+    for (const id of ['mill', 'sawpit', 'smithy'] as const) {
+      expect(capIn(id, 'citadel'), id).toBe(15);
+      expect(capIn(id, 'bastion'), id).toBe(20);
+    }
+    // The rest keep their one cap in every Rank (GDD §8.1).
+    expect(capIn('barracks', 'bastion')).toBe(5);
+    expect(capIn('bell-tower', 'bastion')).toBe(3);
+    expect(capIn('hunters-lodge', 'bastion')).toBe(3);
+    expect(capIn('alchemists-hut', 'bastion')).toBe(5);
   });
 
   it('Walls and Watchtower have the GDD costs and caps, from Citadel', () => {
-    expect(defenses.walls.baseCost).toEqual({ wood: 20_000, iron: 10_000 });
-    expect(defenses.watchtower.baseCost).toEqual({ wood: 15_000, iron: 8_000, silver: 100 });
+    const def = (id: (typeof DEFENSE_IDS)[number]) => {
+      const b = buildings[id];
+      if (b.kind !== 'level') throw new Error(`${id} is not a level building`);
+      return b;
+    };
+    expect(def('walls').baseCost).toEqual({ wood: 20_000, iron: 10_000 });
+    expect(def('watchtower').baseCost).toEqual({ wood: 15_000, iron: 8_000, silver: 100 });
     for (const id of DEFENSE_IDS) {
-      expect(defenses[id].kind).toBe('level');
-      expect(defenses[id].availableFrom).toBe('citadel');
-      expect(defenses[id].maxLevel).toEqual({ citadel: 10, bastion: 15 });
-      expect(defenses[id].effects).toContainEqual({
+      expect(def(id).availableFrom).toBe('citadel');
+      expect(def(id).maxLevel).toEqual({ citadel: 10, bastion: 15 });
+      expect(def(id).effects).toContainEqual({
         kind: 'threatSlow',
         perLevelKey: 'threat.defenseSlowPerLevel',
       });
-      expect(has(BUILDING_IDS, id), id).toBe(false); // joins with the migration (T4.3)
     }
     // At the Bastion caps, defenses slow Threat by at most 60% (GDD §5.9.1).
     const slow =
       num('threat.defenseSlowPerLevel') *
-      DEFENSE_IDS.reduce((n, id) => n + (defenses[id].maxLevel.bastion ?? 0), 0);
+      DEFENSE_IDS.reduce((n, id) => n + capIn(id, 'bastion'), 0);
     expect(slow).toBeCloseTo(0.6);
   });
 });
