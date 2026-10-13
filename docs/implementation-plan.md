@@ -461,7 +461,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### B. Ranks, Threat and defenses
 
 - [x] **T4.4 Citadel and Bastion.** Requirements and costs; the age-bucket bonuses; level caps for buildings and hunters (a carried level above the cap is kept); the roster bonus; bounty multipliers; provisions minutes; tier cap 5; the restoration sheets.
-- [ ] **T4.5 Threat and defenses.** Rates by Rank inside `advance()` (the offline cap applies); contract spikes and reductions; the floor at 0; Walls and Watchtower as buildings, slowing the rate; breakdowns. Threat counts only once any arrival is done.
+- [x] **T4.5 Threat and defenses.** Rates by Rank inside `advance()` (the offline cap applies); contract spikes and reductions; the floor at 0; Walls and Watchtower as buildings, slowing the rate; breakdowns. Threat counts only once any arrival is done.
 
 ### C. The Last Stand
 

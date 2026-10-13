@@ -318,3 +318,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Results:** `npm run check` green (1,059 tests); full `npm run sim:check` passes and matches the baseline (the simulated player still stops at the Keep, D118).
 - **Not done:** no screenshot of the new Rank sheet yet; it comes with the T4.11 screen pass. The "Make the Last Stand" button at Bastion is T4.11b.
 - **Next:** T4.5, Threat and defenses.
+
+## 2026-10-13 — v0.4: T4.5 Threat and defenses
+- **Done (T4.5):** Threat rises inside `advance()` at the Rank's rate (Hamlet 0, Keep 0.5, Citadel 1, Bastion 2 per hour), so time away counts like production and the offline cap applies; each Walls or Watchtower level slows it by 2% (60% at the Bastion caps); a failed contract adds 3 × tier and a completed one takes off 1 × tier at the moment it finishes; never below 0; nothing counts while a pre-v0.4 save still faces its first Long Night. Breakdowns: the rate (the Rank's rate, each defense) and the meter (the rate, failed and completed contracts this cycle). Code in `src/core/threat/threat.ts`, tests in `tests/threat/threat.test.ts`.
+- **One test-helper change, for the owner to know:** the "live ticks equal one jump" comparison lets resource amounts differ by rounding (1 part in a billion) and requires every other number to match exactly. Threat rises with time like a resource and differed by 0.0000000000003 between ticking and jumping, so it now uses the resource rule. No tolerance was loosened; contracts' Threat tallies still match exactly.
+- **Results:** `npm run check` green (1,067 tests); full `npm run sim:check` passes and matches the baseline.
+- **Next:** T4.6, the Last Stand engine (stop and ask if any golden fight or the combat rules version would change).

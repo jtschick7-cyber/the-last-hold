@@ -7,6 +7,7 @@ import { seeded } from '../rng';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
 import { gainXp, recoveryFactor } from '../systems/hunters';
+import { applyContractThreat } from '../threat/threat';
 import { MS_PER_SECOND } from '../time';
 import { injuryOutcome, needsDeathRoll, type InjuryOutcome } from './injury';
 import { bounty, trophies, xpPerHunter } from './rewards';
@@ -120,6 +121,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   } else {
     state.stats.contractsLost += 1;
   }
+  applyContractThreat(state, contract.tier, success); // GDD §5.9.1
 
   const ref: FightRef = {
     contractId: contract.id,
