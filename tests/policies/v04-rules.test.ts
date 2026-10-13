@@ -15,7 +15,8 @@ import {
   standKit,
   standMove,
 } from '../../src/core/policies/long-night';
-import { policyAgeUp, recruitHold } from '../../src/core/policies/goals';
+import { bottleneck, policyAgeUp, recruitHold } from '../../src/core/policies/goals';
+import { decideCheckIn } from '../../src/core/policies/decide';
 import { standSeed, waveList } from '../../src/core/stand/waves';
 import type { GameState } from '../../src/core/state/game-state';
 import { keepRich } from '../contracts/helpers';
@@ -46,6 +47,37 @@ describe('the simulated player in v0.4 (GDD §6.1)', () => {
     expect(recruitHold(s, DAY)).toBe(0); // requirements met, but far from affordable
     s.resources = { food: 1e7, wood: 1e7, iron: 1e7, silver: 1e6 };
     expect(recruitHold(s, DAY)).toBe(1_000); // affordable within 2 check-ins: saving
+  });
+
+  it('from the Keep, holds the Rank-up silver once the rest is in reach: bounties bring it (D132)', () => {
+    const s = keepRich('silver');
+    const DAY = 86_400_000;
+    Object.assign(s.buildings, { mill: 10, smithy: 8, barracks: 1 });
+    s.peasants.total = 50;
+    s.resources = { food: 1e7, wood: 1e7, iron: 1e7, silver: 0 };
+    expect(recruitHold(s, DAY)).toBe(1_000); // no Seam rate reaches 1,000 silver in time
+  });
+
+  it('the shortest resource counts required levels, and settling food only while peasants are needed (D132)', () => {
+    const s = keepRich('short');
+    Object.assign(s.buildings, { mill: 10, smithy: 1, barracks: 1 });
+    s.peasants.total = 50;
+    s.peasants.autoSettle = true;
+    s.resources = { food: 1e9, wood: 1e9, iron: 60_000, silver: 0 };
+    expect(bottleneck(s)).toBe('iron'); // the Citadel's own iron is there; Smithy levels 2–8 cost more
+    s.resources.iron = 1e9;
+    expect(bottleneck(s)).toBeNull();
+  });
+
+  it("from the Keep, auto-settle puts the shortest resource's job first (D132)", () => {
+    const s = keepRich('prio');
+    Object.assign(s.buildings, { mill: 10, smithy: 8, barracks: 1 });
+    s.peasants.total = 50;
+    s.resources = { food: 1e9, wood: 1e9, iron: 0, silver: 0 };
+    const d = decideCheckIn(s, 3_600_000);
+    expect(d.commands).toContainEqual(expect.objectContaining({ type: 'peasants.priority' }));
+    const cmd = d.commands.find((c) => c.type === 'peasants.priority');
+    expect(cmd && 'order' in cmd ? cmd.order[0] : null).toBe('miner');
   });
 
   it('from the Keep, the Lodge, Hut and one Garden come before recruits and gear', () => {

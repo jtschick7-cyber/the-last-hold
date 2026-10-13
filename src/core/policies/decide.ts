@@ -200,6 +200,16 @@ export const decideCheckIn = (
   }
   // v0.4: Walls and the Watchtower in turn, from the Citadel.
   purchases += defenseMoves(s, act, reserve);
+  // From the Keep, auto-settle sends new peasants to the bottleneck's job first, so the
+  // slots bought for it fill (D132).
+  const short = bottleneck(s);
+  const shortJob = short ? JOB_IDS.find((j) => jobs[j].produces === short) : undefined;
+  if (shortJob && s.cycle.age !== 'hamlet' && s.peasants.priority[0] !== shortJob) {
+    act({
+      type: 'peasants.priority',
+      order: [shortJob, ...s.peasants.priority.filter((j) => j !== shortJob)],
+    });
+  }
   for (;;) {
     const r = bottleneck(s);
     const id = r ? slotBuildingFor(r) : undefined;

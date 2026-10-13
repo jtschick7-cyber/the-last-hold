@@ -47,7 +47,7 @@ export const affordableWith = (state: GameState, cost: Bundle, reserve = emptyBu
 export const affordable = (state: GameState, id: BuildingId, reserve = emptyBundle()): boolean =>
   buildable(state, id) && affordableWith(state, buildingCost(state, id).bundle, reserve);
 
-const ageUpCost = (state: GameState): Bundle => {
+export const ageUpCost = (state: GameState): Bundle => {
   const status = policyAgeUp(state);
   const cost = status ? (ages[status.to].ageUp?.cost ?? {}) : {};
   return Object.fromEntries(RESOURCE_IDS.map((r) => [r, cost[r] ?? 0])) as Bundle;
@@ -97,6 +97,13 @@ export const missingProducers = (state: GameState): BuildingId[] =>
     return id && state.buildings[id] === 0 ? [id] : [];
   });
 
+/** The next Age-up still requires more peasants. */
+const peasantsShort = (state: GameState): boolean => {
+  const status = policyAgeUp(state);
+  const need = status ? (ages[status.to].ageUp?.requires.peasants ?? 0) : 0;
+  return state.peasants.total < need;
+};
+
 /** The food it costs to settle a peasant in every empty bed. */
 const settlingFood = (state: GameState): number => {
   let food = 0;
@@ -110,9 +117,17 @@ const settlingFood = (state: GameState): number => {
  */
 export const bottleneck = (state: GameState): ResourceId | null => {
   // Auto-settle will spend food on every empty bed first, so that food is
-  // still needed too (D62).
+  // still needed too (D62), but from the Keep only while the Rank-up needs more peasants:
+  // late in a cycle each settler costs millions, and food would always look shortest (D132).
   const cost = { ...ageUpCost(state) };
-  if (state.peasants.autoSettle) cost.food += settlingFood(state);
+  if (state.peasants.autoSettle && (state.cycle.age === 'hamlet' || peasantsShort(state)))
+    cost.food += settlingFood(state);
+  // The levels and buildings the Age-up still requires cost resources too (D132).
+  if (state.cycle.age !== 'hamlet')
+    for (const id of missingRequirements(state)) {
+      const c = buildingCost(state, id).bundle;
+      for (const r of RESOURCE_IDS) cost[r] += c[r];
+    }
   let worst: ResourceId | null = null;
   let worstMinutes = 0;
   for (const r of RESOURCE_IDS) {
@@ -135,7 +150,11 @@ export const bottleneck = (state: GameState): ResourceId | null => {
 export const shouldSave = (state: GameState, horizonMs: number): boolean => {
   const status = policyAgeUp(state);
   if (!status || !status.requirements.every((r) => r.met)) return false;
-  const seconds = timeToAfford(state, ageUpCost(state), (r) => productionRate(state, r).value);
+  // From the Keep, silver mostly comes from bounties, which no rate shows: once the rest is
+  // within reach, the policy saves (and holds its silver) for the Rank-up (D132).
+  const cost = ageUpCost(state);
+  if (state.cycle.age !== 'hamlet') cost.silver = Math.min(cost.silver, state.resources.silver);
+  const seconds = timeToAfford(state, cost, (r) => productionRate(state, r).value);
   return seconds !== null && seconds * MS_PER_SECOND <= horizonMs;
 };
 
