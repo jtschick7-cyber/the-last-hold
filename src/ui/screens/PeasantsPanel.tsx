@@ -1,6 +1,6 @@
 import { JOB_IDS, jobs } from '../../content/jobs';
 import { housing, idlePeasants, jobSlots } from '../../core/systems/housing';
-import { settleCost } from '../../core/systems/settle';
+import { settleBlocker, settleCost } from '../../core/systems/settle';
 import { formatNumber } from '../../core/format';
 import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
@@ -15,12 +15,13 @@ export const PeasantsPanel = () => {
   const house = housing(s);
   const idle = idlePeasants(s);
   const cost = settleCost(s.peasants.total);
+  const blocker = settleBlocker(s);
   const shown = JOB_IDS.filter((j) => jobSlots(s, j).value > 0 || s.peasants.jobs[j] > 0);
   return (
     <section class={styles.card} aria-labelledby="peasants-title">
       <h2 id="peasants-title" class={styles.cardTitle}>
-        Peasants{' '}
-        <Num text={`${s.peasants.total}/${house.value}`} breakdown={() => house.breakdown} marked />
+        Peasants {s.peasants.total}{' '}
+        <Num text={`· ${house.value} beds`} breakdown={() => house.breakdown} marked />
         {idle > 0 && <span class={styles.warn}>idle {idle} ⚠️</span>}
       </h2>
       <div class={styles.row}>
@@ -35,6 +36,19 @@ export const PeasantsPanel = () => {
         <span class={`${styles.small} ${styles.dim}`}>
           next costs <Num text={formatNumber(cost.value)} breakdown={() => cost.breakdown} marked />{' '}
           <ResourceIcon r="food" />
+        </span>
+      </div>
+      <div class={styles.row}>
+        <button
+          type="button"
+          class={styles.btn}
+          disabled={blocker !== null}
+          onClick={() => dispatch({ type: 'peasants.settle' })}
+        >
+          Settle one
+        </button>
+        <span class={`${styles.small} ${styles.dim} ${styles.grow}`}>
+          {blocker ?? (s.peasants.autoSettle ? 'Settling shortly.' : 'Ready to settle.')}
         </span>
       </div>
       {idle > 0 && (

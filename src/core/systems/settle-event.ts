@@ -24,12 +24,13 @@ export const nextSettleTime = (state: GameState): number | null => {
 };
 
 /** Settles one peasant now; they take the first open slot in priority order. */
-export const settleOne = (state: GameState): { job: string | null } => {
+export const settleOne = (state: GameState, manual = false): { job: string | null } => {
   const cost = settleCost(state.peasants.total).value;
   // Never below zero: `reached` may accept food a few ulps short of the cost.
   state.resources.food = Math.max(0, state.resources.food - cost);
   state.peasants.total += 1;
-  state.peasants.lastSettleAt = state.time;
+  // A player's own settle doesn't hold up the automatic one.
+  if (!manual) state.peasants.lastSettleAt = state.time;
   state.stats.peasantsSettled += 1;
   for (const job of state.peasants.priority) {
     if (state.peasants.jobs[job] < jobSlots(state, job).value) {

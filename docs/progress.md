@@ -151,3 +151,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
   - Browser tests: `npm run e2e` (Chromium works locally with the preinstalled browsers; WebKit runs only in CI).
   - Watch: the Standard Keep (14 h) and Light Keep (24 h) sit on the edges of their bands, because the Keep can only happen at a check-in. If the playtest says the pace is off, that's the first place to look.
   - To check CI after a push: `curl -s "https://api.github.com/repos/jtschick7-cyber/the-last-hold/actions/runs?head_sha=<sha>"`.
+
+## 2026-10-13 — v0.1 playtest fixes (round 1)
+- **Done:** two playtest problems fixed on the v0.1 code. (1) With Auto-settle off there was no way to settle a peasant; there is now a "Settle one" button (D63, Proposed). (2) The "8/9" in the Peasants heading looked like jobs filled; it now shows the peasant count and "· 9 beds", with a line saying why settling is blocked (no free beds, or not enough food). `npm run check` is green; the Chromium browser smoke test passes.
+- **Could not reproduce:** the engine settles correctly with Auto-settle on (tested the 8-of-9 case). The owner's screenshots showed Auto-settle off in the 8/9 case, and Auto-settle on at 10/11 with the next peasant costing 80 food, which most likely just meant food was still short.
+- **Waiting on the owner:** (a) approve D63, after which I update GDD §5.1.1 and §9.2; (b) the word "Age" (recommendation: "Rank", screens only or everywhere; runner-up "Stage"); (c) iron and silver icons (options picture shared in chat; recommendation: hammer for iron, Tiny Town coin for silver).
+- **Skipped or deferred:** the Age rename and the icon swap, both waiting on the owner's choice. GDD not edited (owner gate).

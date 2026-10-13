@@ -1,6 +1,8 @@
 import { JOB_IDS, jobs, type JobId } from '../../content/jobs';
 import type { GameState } from '../state/game-state';
 import { idlePeasants, jobSlots } from '../systems/housing';
+import { settleBlocker } from '../systems/settle';
+import { settleOne } from '../systems/settle-event';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.1.1: reassigning is free and instant.
@@ -34,6 +36,15 @@ export const fill = (state: GameState, job: JobId): ApplyResult => {
       idlePeasants(state) < 1 ? 'No idle peasants.' : `No free ${jobs[job].name} slots.`,
     );
   state.peasants.jobs[job] += n;
+  return ok;
+};
+
+// GDD §5.1.1: with auto-settle off, the player can still settle one peasant at
+// a time. Same food cost and housing limit; the 30 s spacing is for auto only.
+export const settle = (state: GameState): ApplyResult => {
+  const blocker = settleBlocker(state);
+  if (blocker) return refuse(blocker);
+  settleOne(state, true);
   return ok;
 };
 

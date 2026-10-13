@@ -16,6 +16,8 @@ export type Command =
   | { type: 'peasants.remove'; job: JobId }
   /** Moves as many idle peasants into the job as its free slots allow. */
   | { type: 'peasants.fill'; job: JobId }
+  /** Settles one peasant for food, whether or not auto-settle is on. */
+  | { type: 'peasants.settle' }
   | { type: 'peasants.autoSettle'; on: boolean }
   | { type: 'peasants.priority'; order: JobId[] }
   | { type: 'age.up' }

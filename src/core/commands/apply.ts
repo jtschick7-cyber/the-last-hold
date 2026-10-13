@@ -2,7 +2,7 @@ import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { buy, upgrade } from './build';
 import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
-import { add, fill, remove, setAutoSettle, setPriority } from './peasants';
+import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasants';
 import { setSettings } from './settings';
 import { refuse, type ApplyResult, type Command } from './types';
 
@@ -24,6 +24,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return remove(state, cmd.job);
     case 'peasants.fill':
       return fill(state, cmd.job);
+    case 'peasants.settle':
+      return settle(state);
     case 'peasants.autoSettle':
       return setAutoSettle(state, cmd.on);
     case 'peasants.priority':

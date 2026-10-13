@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import type { GameState } from '../state/game-state';
 import { createNewGame } from '../state/new-game';
+import { settleCost } from '../systems/settle';
 import { apply } from './apply';
 import type { Command } from './types';
 
@@ -55,6 +56,33 @@ describe('build.upgrade', () => {
     expect(run(s, { type: 'build.upgrade', building: 'mill' }).ok).toBe(false);
     s.cycle.age = 'keep';
     expect(run(s, { type: 'build.upgrade', building: 'mill' }).ok).toBe(true);
+  });
+});
+
+describe('peasants.settle', () => {
+  const room = (): GameState => {
+    const s = game();
+    s.peasants.autoSettle = false;
+    s.buildings.cottage = 3;
+    s.resources.food = 500;
+    return s;
+  };
+
+  it('settles one peasant for food while auto-settle is off, into the first open slot', () => {
+    const s = room();
+    const before = s.peasants.total;
+    const cost = settleCost(before).value;
+    expect(run(s, { type: 'peasants.settle' })).toEqual({ ok: true });
+    expect(s.peasants.total).toBe(before + 1);
+    expect(s.resources.food).toBeCloseTo(500 - cost, 6);
+    expect(s.stats.peasantsSettled).toBe(1);
+    expect(s.peasants.jobs.farmer + s.peasants.jobs.woodcutter).toBe(before + 1);
+  });
+
+  it('does not hold up the next automatic settle', () => {
+    const s = room();
+    run(s, { type: 'peasants.settle' });
+    expect(s.peasants.lastSettleAt).toBe(0);
   });
 });
 
@@ -169,6 +197,25 @@ describe('refused commands never change state', () => {
         return s;
       },
       { type: 'peasants.add', job: 'miner' },
+    ],
+    [
+      'settle with no free beds',
+      () => {
+        const s = rich();
+        s.peasants.total = 99;
+        return s;
+      },
+      { type: 'peasants.settle' },
+    ],
+    [
+      'settle without enough food',
+      () => {
+        const s = game();
+        s.buildings.cottage = 3;
+        s.resources.food = 1;
+        return s;
+      },
+      { type: 'peasants.settle' },
     ],
     ['remove from an empty job', game, { type: 'peasants.remove', job: 'miner' }],
     ['fill with nothing to move', game, { type: 'peasants.fill', job: 'farmer' }],
