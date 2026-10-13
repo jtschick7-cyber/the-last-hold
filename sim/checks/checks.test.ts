@@ -45,6 +45,7 @@ const run = (
   peaks: { food: 0, wood: 0, iron: 0, silver: 0, peasants: 0 },
   largestNumber: 1,
   final: { age: 'keep', peasants: 10 },
+  cyclesDone: 3,
   contracts: [],
   keepPhase: { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 0 },
 });
@@ -132,17 +133,17 @@ describe('engagement checks', () => {
   });
 });
 
-describe('no overflow', () => {
-  it('needs 14-day runs and fails at 1e300', () => {
-    expect(
-      noOverflowCheck.judge([
-        { ...run('standard', {}), spec: { policy: 'standard', seed: 'a', start: 'mon', days: 3 } },
-      ]).pass,
-    ).toBeNull();
-    expect(noOverflowCheck.judge([{ ...run('standard', {}), largestNumber: 1e301 }]).pass).toBe(
-      false,
-    );
-    expect(noOverflowCheck.judge([run('standard', {})]).pass).toBe(true);
+describe('no overflow (through 3 cycles, D114)', () => {
+  const long = (over: Partial<RunResult> = {}): RunResult => ({
+    ...run('standard', {}),
+    spec: { policy: 'standard', seed: 'a', start: 'mon', days: 14, minCycles: 3, maxDays: 42 },
+    ...over,
+  });
+  it('needs runs through 3 cycles, fails at 1e300, and fails a run that never got there', () => {
+    expect(noOverflowCheck.judge([run('standard', {})]).pass).toBeNull();
+    expect(noOverflowCheck.judge([long({ largestNumber: 1e301 })]).pass).toBe(false);
+    expect(noOverflowCheck.judge([long({ cyclesDone: 2 })]).pass).toBe(false);
+    expect(noOverflowCheck.judge([long()]).pass).toBe(true);
   });
 });
 

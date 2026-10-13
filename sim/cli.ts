@@ -7,7 +7,9 @@ import { hoursText } from './checks/helpers';
 import { CURRENT_MILESTONE, FAST_UNTIL_TARGETS } from './milestone';
 import { markdown, summarize, type Baseline, type Report } from './report';
 import { runOne, STARTS, type RunResult, type RunSpec, type StartId } from './run';
-import { enforced } from './targets';
+import { ENGAGEMENT, enforced } from './targets';
+
+const OVERFLOW_CYCLES = ENGAGEMENT.noOverflow.cycles;
 
 // Balance simulator (technical design §13). Examples:
 //   npm run sim -- --policy standard --days 14 --seeds 5
@@ -93,6 +95,8 @@ const specs = (o: Options): RunSpec[] =>
         start,
         days: o.days,
         ...(o.fast ? { stopAt: FAST_UNTIL_TARGETS } : {}),
+        // GDD §6.3 #7 (D114): the Standard runs go on through 3 Long Nights, up to 6 weeks.
+        ...(!o.fast && policy === 'standard' ? { minCycles: OVERFLOW_CYCLES, maxDays: 42 } : {}),
       })),
     ),
   );

@@ -25,6 +25,12 @@ export interface RunSpec {
   readonly days: number;
   /** Stop once every one of these moments is reached (the fast set needs nothing after its last target). */
   readonly stopAt?: readonly Moment[];
+  /**
+   * Keep playing past `days` until this many Long Nights have happened, up to `maxDays`
+   * (GDD §6.3 #7, D114: every number below 1e300 through 3 cycles).
+   */
+  readonly minCycles?: number;
+  readonly maxDays?: number;
 }
 
 export interface CheckInStat {
@@ -83,6 +89,8 @@ export interface RunResult {
   /** The largest number anywhere in the state over the run (GDD §6.3 #7). */
   readonly largestNumber: number;
   readonly final: { readonly age: string; readonly peasants: number };
+  /** Long Nights that happened in the run. */
+  readonly cyclesDone: number;
   readonly contracts: readonly ContractRecord[];
   readonly keepPhase: KeepPhase;
 }
@@ -118,8 +126,12 @@ export const runOne = (spec: RunSpec): RunResult => {
     // active minutes, which then switches to Standard (GDD §6.1).
     policy: spec.policy === 'standard' ? 'opening' : spec.policy,
     startedAt: start,
-    until: start + spec.days * DAY,
-    stop: () => spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null),
+    until: start + Math.max(spec.days, spec.minCycles ? (spec.maxDays ?? spec.days) : 0) * DAY,
+    stop: (st) =>
+      (spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null)) ||
+      (spec.minCycles !== undefined &&
+        st.time >= start + spec.days * DAY &&
+        st.cycle.number > spec.minCycles),
     onCheckIn: (rec, s) => {
       // Income: the net change while away, plus the food that settling spent.
       const settles = rec.away.events.filter((e) => e.type === 'settle');
@@ -189,6 +201,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     peaks,
     largestNumber,
     final: { age: state.cycle.age, peasants: state.peasants.total },
+    cyclesDone: state.cycle.number - 1,
     contracts,
     keepPhase,
   };

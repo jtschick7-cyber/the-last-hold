@@ -171,10 +171,11 @@ export const ENGAGEMENT = {
     minDays: 14,
     enforcedFrom: 'v0.2',
   },
+  // D114 (owner-approved): through v0.3 this was 14 simulated days; from v0.4, 3 cycles.
   noOverflow: {
-    text: 'Every number stays below 1e300 (14 simulated days through v0.3)',
+    text: 'Every number stays below 1e300 through 3 simulated cycles',
     limit: 1e300,
-    days: 14,
+    cycles: 3,
     enforcedFrom: 'v0.1',
   },
   provisionsMatter: {
