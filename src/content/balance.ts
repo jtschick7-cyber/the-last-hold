@@ -97,8 +97,8 @@ export const balance = {
     base: tunable(30),
     growth: tunable(2.2),
     // Q9 (D81): from the Keep, each hunter's provisions are at least this many minutes
-    // of the hold's food income. Hamlet 0: the first contracts stay at the flat base.
-    incomeMinutes: tunable({ hamlet: 0, keep: 1.5 }),
+    // of the hold's food capacity (Q11). Hamlet 0: the first contracts stay at the flat base.
+    incomeMinutes: tunable({ hamlet: 0, keep: 1 }),
   },
   monster: {
     statGrowth: tunable(1.35),
