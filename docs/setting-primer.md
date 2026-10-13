@@ -135,7 +135,9 @@ Each entry has:
 Each Rank-up uncovers part of the old hold, with a short inscription.
 - **Keep** (v0.1): the gatehouse and the **Roll of Honor**, a wall of names cut in bronze.
   - Inscription: *"Here are cut the names of those who gave their warmth to the hearth, that the folk might sleep."*
-- **Citadel and Bastion** *(v0.4)*: neutral descriptions only, "the old Forge Hall" and "a sealed stair going down." Their inscriptions arrive with Act I in v0.5 (`lore-secrets.md`). **[JC]**
+- **Citadel and Bastion** *(v0.4)*: neutral descriptions only, "the old Forge Hall" and "a sealed stair going down." Their inscriptions arrive with Act I in v0.5 (`lore-secrets.md`). **[JC]** The v0.4 text (D106), kept bare so v0.5 can replace or extend it:
+  - *Citadel:* "The roof is back on the old Forge Hall. Its forges are cold."
+  - *Bastion:* "Under the Bastion floor, a stair goes down to a sealed door."
 
 ### 6.6 The vow *(v0.2+)*
 
@@ -156,6 +158,7 @@ v0.4 ships the Long Night's mechanics before Act I exists. Its text stays neutra
 - **After the stand:** Pechko, short: *"The walls fell. The hearth didn't. Someone will come."*
 - **A new warden arrives:** *"Seasons pass. Someone new walks up the road, hands warm in the cold."* No name yet; naming starts in v0.5.
 - **Embers:** "what the last warden left in the hearth." Nothing more.
+- **Arriving at v0.4** (old saves only, GDD §5.9.8, D112): title "The Long Night"; *"The dark is at the walls tonight. Everyone who can hold a spear goes up."*, followed by a plain out-of-world note on what the first Long Night does to the save.
 
 ---
 

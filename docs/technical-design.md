@@ -163,7 +163,7 @@ interface GameState {
     clockHighWater: number           // latest time ever seen (backward-clock guard, D21)
     debugUsed: boolean               // informational only
   }
-  cycle: { number: number; age: AgeId; wardenName?: string /* v0.5 */ }
+  cycle: { number: number; age: AgeId; wardenName?: string /* v0.5 */ }   // AgeId gains citadel, bastion (v0.4)
   resources: Record<ResourceId, number>          // food, wood, iron, silver
   peasants: { total: number; jobs: Record<JobId, number>; autoSettle: boolean;
               priority: JobId[]; lastSettleAt: number }
@@ -176,12 +176,19 @@ interface GameState {
   bestiary: Record<MonsterId, { level: 0|1|2|3|4; kills: number }>   // v0.3
   stores: Record<ConsumableId | IngredientId, number>                // v0.3
   queues: { brewing: BrewJob[]; investigation: InvestigationSlot[] } // v0.3
+  threat: number                                 // v0.4; counts only once arrivalDue is false
+  embers: number                                 // v0.4; unspent
+  upgrades: Record<UpgradeId, number>            // v0.4; warden upgrade levels
+  relics: { id: RelicId; cycle: number }[]       // v0.4; owned, with the cycle found
+  arrivalDue: boolean                            // v0.4; a pre-v0.4 save still faces its first Long Night
+  cycles: CycleRecord[]                          // v0.4; one short entry per cycle
   stats: LifetimeStats                           // trophies this cycle, totals
   log: { recentFights: FightRef[] }              // seeds + inputs, not full logs (§5.3)
   settings: Settings
 }
 ```
 
+- **Cycle history** *(v0.4, D113)*: each `CycleRecord` holds when the cycle started, when each Rank was reached, when the stand was made, waves held, the Embers breakdown, the relics found, and the stand's inputs (party snapshots, preparation, defense levels, Threat, seed), so its wave logs can be rebuilt like contract fights (§5.3). About 200 bytes per cycle; v0.5's Roll of Wardens reads it. The stand's wave list is not stored: it comes from the stand seed. Walls and Watchtower are ordinary entries in `buildings`.
 - **Derived values are never stored:** rates, the active-roster cap, odds. They come from **selectors** (`core/state/selectors.ts`). Each selector that feeds a visible number also returns a `Breakdown` tree (§5.4).
 - **Fight logs are not stored.** A `FightRef` holds the seed and the inputs (party, preparation, monster instance), and the log is **regenerated on demand** by re-running the fight. This keeps saves small and proves determinism every time a log opens.
 

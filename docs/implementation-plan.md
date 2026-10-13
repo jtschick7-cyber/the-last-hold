@@ -2,7 +2,7 @@
 
 **Status:** Revised after the plan review (D34–D36). Awaiting owner approval.
 **Reads with:** `CLAUDE.md` (the workflow, definition of done, and owner gates live there, not here), `gdd.md` (what), `technical-design.md` (how), `decisions.md` (why).
-**Depth:** v0.0–v0.3 are in full detail. v0.4 and later are outlines; each gets a **flesh-out session** before it starts (§0.4).
+**Depth:** v0.0–v0.4 are in full detail. v0.5 and later are outlines; each gets a **flesh-out session** before it starts (§0.4).
 **Markers:** **[JC]** = judgment call. **👤** = owner task. **[?]** = task blocked on an owner question (see `docs/questions.md`).
 
 ---
@@ -63,7 +63,7 @@ Claude Code doesn't start an outline-level milestone until its flesh-out is done
 | Combat | `combat.meterThreshold`, `combat.maxTicks`, `combat.takenCap`, `odds.samples`, `suggest.*` |
 | Roster | `roster.hamletCap`, `roster.ageBonus`, `barracks.maxLevel` |
 | Knowledge | `knowledge.studiedKills`, `knowledge.masteredKills` |
-| Death and Long Night | `death.returnDaysBeforeLongNight`, `longNightArrival.emberCapShare` |
+| Death and Long Night | `death.returnDaysBeforeLongNight`, `longNightArrival.emberCapShare`, `laststand.partyMax` (D107) |
 | Simulated player | `value.weights` (they define the simulated player, so tuning them would game the checks) |
 | Events | `boss.*`, `riftglass.bankWeeks` |
 
@@ -79,6 +79,7 @@ Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage r
 | v0.1 | 38 | 12–16 |
 | v0.2 | 26 | 12–16 |
 | v0.3 | 12 | 8–12 |
+| v0.4 | 16 | 10–14 |
 
 Estimates, not commitments. If a task proves bigger than a session, split it here first.
 
@@ -434,17 +435,101 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ---
 
-## v0.4 and later (outline: each needs a flesh-out session first, §0.4)
+## v0.4 — The Long Night: mechanics
+
+**Status:** not started *(fleshed out 2026-10-13, D106–D115)*
+
+**Goal:** the cycle loop. Citadel and Bastion, Threat, a Last Stand you choose the moment for, Embers and warden upgrades, relics, and a Long Night that resets the hold and keeps what matters, plus the first Long Night for saves from before v0.4. Mechanics only: the text stays neutral (`setting-primer.md` §6.8).
+**Reads:** GDD §4.1, §5.1.2–5.1.3, §5.3.7, §5.4.1–5.4.2, §5.9, §6 (v0.4 rows, §6.1 policy, §6.3, §6.5), §7.1, §7.3–7.4, §7.6, §8.1, §8.9–8.10, §9.11, §9.13; technical design §5.2–5.3, §7.2, §9.4, §10.1, §13; `setting-primer.md` §6.5, §6.8.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| **Export your real v0.3 save** (More → Save & Data → Copy save code) and paste it into a session | T4.3 (the migration fixture) and T4.10 (the arrival test) | Before T4.3 |
+| Decide any name collisions the search finds | T4.2 | When asked |
+| Review the new art (Walls, Watchtower, the Citadel and Bastion scenes, Embers, Threat and relic icons) | T4.12 | — |
+
+### A. Content and state
+
+- [ ] **T4.1 Content.** Citadel and Bastion (requirements, costs, grants, restoration text, no inscription); Walls and Watchtower; the 8 warden upgrades (GDD §8.9) and the 6 relics (§8.10); every new balance key from GDD §7.1, §7.3, §7.4 and §7.6, marked tunable or locked (locked: `laststand.partyMax`, and the new `contract.ageTierCap` entries, D106). New Rank and building ids change the saved state, so wiring them in waits for T4.3, as in v0.2 and v0.3.
+- [ ] **T4.2 Names.** Collision search (GDD §2.3) for Warm Hearth, Full Larder, Young Families, Seasoned Hunters, Drill Yard, Village Goodwill, Swift Roads, Long Watch, The Hearth, Plough-Share, Mason's Plumb, Tally Stick, Bone Whistle, Copper Still, Iron Shutter and Forge Hall; add them to `tests/content/names.ts`. Citadel, Bastion, Walls, Watchtower, Threat, Last Stand, Long Night and Embers go in as generic or already checked. Any collision: stop and ask, with alternatives.
+- [ ] **T4.3 Migration v3 → v4** (D113), using the **owner's real v0.3 save** as the fixture, with a round-trip test; the parts in technical design §5.2. `[?]` until the save is provided.
+
+### B. Ranks, Threat and defenses
+
+- [ ] **T4.4 Citadel and Bastion.** Requirements and costs; the age-bucket bonuses; level caps for buildings and hunters (a carried level above the cap is kept); the roster bonus; bounty multipliers; provisions minutes; tier cap 5; the restoration sheets.
+- [ ] **T4.5 Threat and defenses.** Rates by Rank inside `advance()` (the offline cap applies); contract spikes and reductions; the floor at 0; Walls and Watchtower as buildings, slowing the rate; breakdowns. Threat counts only once any arrival is done.
+
+### C. The Last Stand
+
+- [ ] **T4.6 Stand engine.** The seeded wave list, fixed at Bastion; escalation past tier 5; strength from Threat; one wave at a time through the fight engine with Health carried over, **with contract fights and every golden fight unchanged** (`rulesVersion` stays 1; if a golden changes, stop and ask); recovery between waves; the Watchtower volley and bombs at tick 1; Walls and Iron Shutter as taken%; potions once per stand; location traits off; the tick limit ends the stand; no injuries or deaths; wave logs rebuilt from the saved inputs.
+- [ ] **T4.7 Preview, payout and relics.** 100 practice stands in the worker (range, Embers now and per day, Threat and Embers tomorrow as an estimate); the payout formula with its breakdown; relic milestones; the preview-honesty test (D114); the benchmark (≤ 1 s at 4× slowdown; warn at the budget, fail at 2×).
+
+### D. The Long Night
+
+- [ ] **T4.8 Reset.** Everything in GDD §5.9.7, in this order: running contracts finish, the stand, conversion, the reset, the new cycle. Levels kept; dead hunters as candidates; the cycle history entry. Tested row by row against the "resets / kept" table.
+- [ ] **T4.9 Warden upgrades and relic effects.** The Hearth (buying, costs, max levels, no re-spending); each upgrade's effect (ember bucket, starting state, levels kept, XP, bounties, durations, offline cap within the 24 h ceiling); each relic's effect (relic bucket; none touches silver).
+- [ ] **T4.10 The v0.4 arrival.** The arrival flag, sheet and stand (Threat 0, no defenses, the save's Rank multiplier, the capped trophies part); the debug action; a test that takes the owner's save through migration, arrival and reset. `[?]` until the save is provided.
+
+### E. UI
+
+- [ ] **T4.11a Hold-side screens.** The Threat meter and breakdown; Citadel and Bastion on the Rank screen; Walls and Watchtower; The Hearth, with upgrades and relics.
+- [ ] **T4.11b The stand and the Long Night.** The stand screen (wave list with "?", six slots and the suggestion, preparation pickers, preview, confirmation); the four Long Night sheets; wave logs; the arrival sheet. **Extend the Playwright smoke:** debug to Bastion → stand → new cycle.
+
+### F. Art
+
+- [ ] **T4.12 Art.** Icons for Walls, Watchtower, Embers, Threat and the 6 relics; the Citadel and Bastion hold scenes (Tiny Town tiles, the D59 method). 👤 Review.
+
+### G. Simulator
+
+- [ ] **T4.13 Policy rules** (GDD §6.1, D114): Rank-ups to Citadel and Bastion; v0.3 buildings first; a Tracker kept home; defenses; the stand rule (Standard, Light and Heavy); Embers cheapest first; the default three each cycle.
+- [ ] **T4.14 Checks.** Citadel; Bastion; best Last Stand (practice stands to day 7); first Long Night (Standard, Light, Heavy); later cycles (≥ 15% faster, 2-day floor); overflow through 3 cycles (the `sim/targets.ts` row change the owner approved in D114); engagement checks over all of cycle 1; the economy checks over every stretch from the Keep in every cycle. Citadel and Bastion join the fast set; runs are 14 days.
+- [ ] **T4.15 Tuning** (tunables only) against every check, then set `longNightArrival.cycle1MedianEmbers` from the tuned simulator (decisions row with the value). If no reasonable values pass (the "later cycles" check is the known risk, GDD §5.9.5), stop and ask.
+
+### v0.4 acceptance criteria
+
+1. Citadel and Bastion arrive on their targets, with neutral restorations and no inscriptions.
+2. Threat rises, falls and explains itself; only the stand and the payout read it.
+3. The Last Stand runs wave by wave with readable logs; its preview is honest (test) and within budget.
+4. The Long Night resets and keeps exactly what GDD §5.9.7 says, tested on the owner's save.
+5. Warden upgrades and relics work and persist, and later cycles are faster.
+6. An old save gets the arrival exactly once, with the capped trophies part.
+7. Contract fights and every golden fight are unchanged (`rulesVersion` 1).
+8. Every earlier check passes.
+
+### v0.4 simulator checks
+
+| Check | Target |
+|---|---|
+| Citadel reached | Day 2 (24–48 h) |
+| Bastion reached; Last Stand available | Day 3 (48–72 h) |
+| Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 |
+| First Long Night | Days 3–5 (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) |
+| Later cycles | Each ≥ 15% faster than the one before, floor 2 days |
+| No overflow | Through 3 cycles |
+| Engagement checks 1–3 | Over all of cycle 1, up to the stand |
+| Bounty and provisions shares | Every stretch from the Keep, in every cycle |
+| All earlier checks | Pass |
+
+### v0.4 owner playtest checklist 👤 (on the preview build)
+
+- [ ] Citadel and Bastion feel like new chapters, not just bigger numbers.
+- [ ] Threat is easy to read, and the pressure feels fair rather than punishing.
+- [ ] The stand screen makes "stand now or wait a day" a real, readable choice.
+- [ ] The stand's wave logs make sense.
+- [ ] The Long Night sheets are clear and short.
+- [ ] Cycle 2 feels faster, and the upgrades feel worth buying.
+- [ ] Your old save's arrival went smoothly.
+- [ ] Screenshot pass and new art review.
+
+**Out of scope:** the story (Act I, documents, inscriptions); warden naming and the Roll of Wardens display; relics for hunters and relic slots; re-spending Embers; contract tiers above 5; paying resources to lower Threat.
+
+---
+
+## v0.5 and later (outline: each needs a flesh-out session first, §0.4)
 
 Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discovery**, and it's split into mechanics and story.
-
-### v0.4 — The Long Night: mechanics
-
-**Status:** not started *(needs a flesh-out)*
-
-- **Scope:** Citadel and Bastion (neutral restorations); Threat; the Last Stand; Embers and warden upgrades; relics; the reset rules (GDD §4.1); dead hunters returning after the Long Night; the **v0.4 arrival** (G8, renumbered; neutral text per primer §6.8); "the story continues" closing.
-- **Open questions:** the payout curve; the partial rank reset; Last Stand wave design; Embers upgrade tree.
-- **Before you start 👤:** a real v0.3 save.
 
 ### v0.5 — The Long Night: Act I and the story systems
 
