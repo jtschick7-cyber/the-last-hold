@@ -94,7 +94,7 @@ export const balance = {
   contract: {
     recklessBelow: locked(0.35),
     unlockSuccesses: locked(3),
-    ageTierCap: locked({ hamlet: 1, keep: 5 }),
+    ageTierCap: locked({ hamlet: 1, keep: 5, citadel: 5, bastion: 5 }), // citadel, bastion: D106 (owner-approved)
     duration: tunable([30 * MIN, 1 * HOUR, 2 * HOUR, 4 * HOUR, 8 * HOUR], 'seconds'), // 30 min … 8 h
     partySize: locked([3, 3, 3, 4, 4]),
     hamletPartyMax: locked(2),
