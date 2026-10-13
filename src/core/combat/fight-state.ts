@@ -24,6 +24,8 @@ export interface Fight {
   /** True while the monster is taking its action (a Saltburst then does not count that action). */
   monsterActing: boolean;
   readonly bombs: readonly ConsumableId[];
+  /** Watchtower volley at tick 1 (Last Stand only); 0 in contract fights. */
+  readonly volley: number;
 }
 
 /** A log line whose text is built only if the fight is being logged. */
