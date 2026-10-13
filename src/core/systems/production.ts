@@ -42,6 +42,25 @@ const ageBonuses = (state: GameState): Bonus[] => {
     : [];
 };
 
+/** GDD §5.4.4: +0.5% to all production per trophy earned this cycle, once the Trophy Hall stands. */
+const trophyBonuses = (state: GameState): Bonus[] => {
+  const trophies = state.stats.trophies;
+  return BUILDING_IDS.flatMap((id) =>
+    buildings[id].effects.flatMap((e) =>
+      e.kind === 'trophyBonus' && state.buildings[id] > 0 && trophies > 0
+        ? [
+            {
+              bucket: 'trophy' as const,
+              label: `${buildings[id].name}: ${trophies} trophies`,
+              value: trophies * num(e.perTrophyKey),
+              key: e.perTrophyKey,
+            },
+          ]
+        : [],
+    ),
+  );
+};
+
 /** Production of one resource per minute, with its breakdown. */
 export const productionRate = (state: GameState, resource: ResourceId): Explained => {
   const job = JOB_IDS.find((j) => jobs[j].produces === resource);
@@ -58,7 +77,11 @@ export const productionRate = (state: GameState, resource: ResourceId): Explaine
       { label: 'Base rate per worker', value: perWorker, key: def.rateKey },
     ],
   };
-  const bonuses = [...buildingBonuses(state, resource), ...ageBonuses(state)];
+  const bonuses = [
+    ...buildingBonuses(state, resource),
+    ...ageBonuses(state),
+    ...trophyBonuses(state),
+  ];
   // G1 (D30): silver-digger output takes only the relic and event buckets.
   const result =
     resource === 'silver'

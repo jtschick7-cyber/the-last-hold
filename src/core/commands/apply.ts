@@ -1,5 +1,7 @@
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
+import { collect, decline, launch } from './contracts';
+import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
 import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
 import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasants';
@@ -32,6 +34,18 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setPriority(state, cmd.order);
     case 'age.up':
       return ageUp(state);
+    case 'contract.launch':
+      return launch(state, cmd.contract, cmd.party, cmd.confirmReckless === true);
+    case 'contract.decline':
+      return decline(state, cmd.contract);
+    case 'results.collect':
+      return collect(state);
+    case 'hunter.recruit':
+      return recruit(state, cmd.hunter);
+    case 'roster.set':
+      return setActive(state, cmd.hunter, cmd.active);
+    case 'gear.upgrade':
+      return upgradeGear(state, cmd.hunter, cmd.slot);
     case 'settings.set':
       return setSettings(state, cmd.patch);
     case 'debug.skip':

@@ -17,6 +17,8 @@ export const BUILDING_IDS = [
   'sawpit',
   'smithy',
   'bell-tower',
+  'barracks',
+  'trophy-hall',
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -26,7 +28,11 @@ export type BuildingEffect =
   /** +perLevel production of a resource per level, in the building bucket. */
   | { readonly kind: 'production'; readonly resource: ResourceId; readonly perLevelKey: BalanceKey }
   /** Extends the offline cap per level (GDD §5.2). */
-  | { readonly kind: 'offlineCap'; readonly perLevelKey: BalanceKey };
+  | { readonly kind: 'offlineCap'; readonly perLevelKey: BalanceKey }
+  /** Raises the active-roster cap by this much per level (GDD §5.3.1, G5). */
+  | { readonly kind: 'rosterCap'; readonly perLevel: number }
+  /** +this much to all production except silver per trophy earned this cycle (GDD §5.4.4). */
+  | { readonly kind: 'trophyBonus'; readonly perTrophyKey: BalanceKey };
 
 interface BuildingBase {
   readonly id: BuildingId;
@@ -46,6 +52,8 @@ export interface CountBuilding extends BuildingBase {
   readonly baseCost: ResourceBundle;
   /** A locked cap on copies, when there is one (Silver Seam, G1). */
   readonly maxCountKey?: BalanceKey;
+  /** A cap that belongs to the building itself: 1 for the Trophy Hall (GDD §8.1 "Unique"). */
+  readonly maxCount?: number;
 }
 
 export interface LevelBuilding extends BuildingBase {
@@ -142,5 +150,24 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     effects: [{ kind: 'offlineCap', perLevelKey: 'bellTower.perLevel' }],
     availableFrom: 'keep',
     maxLevel: { keep: 3 },
+  },
+  // GDD §8.1 (v0.2): both Keep.
+  barracks: {
+    id: 'barracks',
+    name: 'Barracks',
+    kind: 'level',
+    baseCost: { wood: 600, iron: 300, silver: 100 },
+    effects: [{ kind: 'rosterCap', perLevel: 1 }],
+    availableFrom: 'keep',
+    maxLevel: { keep: 5 },
+  },
+  'trophy-hall': {
+    id: 'trophy-hall',
+    name: 'Trophy Hall',
+    kind: 'count',
+    baseCost: { wood: 500, iron: 200 },
+    effects: [{ kind: 'trophyBonus', perTrophyKey: 'trophyHall.perTrophy' }],
+    availableFrom: 'keep',
+    maxCount: 1,
   },
 };

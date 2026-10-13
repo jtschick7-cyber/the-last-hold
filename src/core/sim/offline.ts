@@ -1,6 +1,6 @@
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { num } from '../balance-access';
-import type { GameState } from '../state/game-state';
+import type { ContractResult, GameState } from '../state/game-state';
 import { offlineCap } from '../systems/offline-cap';
 import { MS_PER_SECOND } from '../time';
 import { advance, type AdvanceEvent } from './advance';
@@ -22,6 +22,12 @@ export interface AwaySummary {
   /** Net change per resource over the counted time (spending included). */
   resources: Record<ResourceId, number>;
   peasantsSettled: number;
+  /** Contracts that finished while away, with their outcomes (GDD §5.2, v0.2). */
+  contracts: ContractResult[];
+  /** Hunters whose injury healed while away. */
+  recovered: string[];
+  /** Contracts that arrived on the board while away. */
+  arrivals: number;
   events: AdvanceEvent[];
 }
 
@@ -75,6 +81,9 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
     backwardClock,
     resources,
     peasantsSettled: state.stats.peasantsSettled - settledBefore,
+    contracts: events.flatMap((e) => (e.type === 'contract' ? [e.result] : [])),
+    recovered: events.flatMap((e) => (e.type === 'recovered' ? [e.hunter] : [])),
+    arrivals: events.filter((e) => e.type === 'arrival').length,
     events,
   };
 }

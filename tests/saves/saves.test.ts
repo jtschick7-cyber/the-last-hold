@@ -22,7 +22,7 @@ import { createChannelStorage } from '../../src/platform/storage';
 import { memoryBackend } from '../helpers/memory-storage';
 
 const FIXTURES = new URL('./fixtures/', import.meta.url);
-const fixtures = readdirSync(FIXTURES).filter((f) => /^v\d+\.json$/.test(f));
+const fixtures = readdirSync(FIXTURES).filter((f) => /^v\d+(-[a-z]+)?\.json$/.test(f));
 const readFixture = (f: string): unknown => JSON.parse(readFileSync(new URL(f, FIXTURES), 'utf8'));
 const codec = browserCodec();
 
@@ -275,5 +275,74 @@ describe('save store (technical design §9.1)', () => {
     const { backend, store } = setup();
     backend.failWrites = true;
     expect(store.save(createNewGame('x', 0))).toBe(false);
+  });
+});
+
+describe('the v1 → v2 migration (plan T2.4)', () => {
+  const load = (f: string) => {
+    const r = loadEnvelope(readFixture(f));
+    if (!r.ok) throw new Error(r.error);
+    return r.value.state;
+  };
+
+  it("upgrades the owner's real v0.1 save without losing anything the player had", () => {
+    const before = readFixture('v1-owner.json') as { state: Record<string, unknown> };
+    const after = load('v1-owner.json');
+    const old = before.state as {
+      resources: unknown;
+      peasants: unknown;
+      buildings: Record<string, number>;
+      stats: { buildingsBought: number; peasantsSettled: number };
+      time: number;
+      cycle: unknown;
+    };
+    expect(after.resources).toEqual(old.resources);
+    expect(after.peasants).toEqual(old.peasants);
+    expect(after.cycle).toEqual(old.cycle);
+    expect(after.time).toBe(old.time);
+    for (const [id, n] of Object.entries(old.buildings)) {
+      expect(after.buildings[id as keyof typeof after.buildings]).toBe(n);
+    }
+    expect(after.stats.buildingsBought).toBe(old.stats.buildingsBought);
+    expect(after.stats.peasantsSettled).toBe(old.stats.peasantsSettled);
+  });
+
+  it('gives the two free starting hunters, new buildings at 0, and an empty contract state', () => {
+    const s = load('v1-owner.json');
+    expect(Object.keys(s.hunters).sort()).toEqual(['halvar', 'zora']);
+    expect(s.roster.active).toEqual(['halvar', 'zora']);
+    expect(s.hunters.halvar).toMatchObject({ level: 1, xp: 0, weapon: null, recovery: null });
+    expect(s.buildings.barracks).toBe(0);
+    expect(s.buildings['trophy-hall']).toBe(0);
+    expect(s.running).toEqual([]);
+    expect(s.results).toEqual([]);
+    expect(s.fallen).toEqual([]);
+    expect(s.log.recentFights).toEqual([]);
+    expect(s.stats).toMatchObject({
+      contractsWon: 0,
+      contractsLost: 0,
+      trophies: 0,
+      bountySilver: 0,
+    });
+  });
+
+  it('opens the board at once when a Mine already stands, and leaves it closed otherwise', () => {
+    const owner = load('v1-owner.json'); // four Mines
+    expect(owner.board).toEqual({
+      opened: true,
+      open: [],
+      nextArrivalAt: owner.time,
+      arrivals: 0,
+      tierWins: [0, 0, 0, 0, 0],
+    });
+    const plain = readFixture('v1.json') as { state: { buildings: Record<string, number> } };
+    const mines = plain.state.buildings.mine ?? 0;
+    expect(load('v1.json').board.opened).toBe(mines > 0);
+  });
+
+  it('a new game starts with the same two hunters and a closed board', () => {
+    const g = createNewGame('seed', 0);
+    expect(Object.keys(g.hunters).sort()).toEqual(['halvar', 'zora']);
+    expect(g.board.opened).toBe(false);
   });
 });

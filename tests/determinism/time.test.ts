@@ -64,7 +64,7 @@ describe('auto-settle (GDD §5.1.1)', () => {
     s.resources.food = 1e6;
     const { events } = advance(s, T0 + 95 * SECOND);
     expect(events.map((e) => e.at - T0)).toEqual([0, 30_000, 60_000, 90_000]);
-    expect(events.every((e) => e.job === 'farmer')).toBe(true);
+    expect(events.every((e) => e.type === 'settle' && e.job === 'farmer')).toBe(true);
     expect(s.peasants.total).toBe(7);
   });
 

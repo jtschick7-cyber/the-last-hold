@@ -1,0 +1,171 @@
+import { buildings, BUILDING_IDS } from '../../content/buildings';
+import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
+import {
+  HUNTER_IDS,
+  hunters,
+  type HunterDef,
+  type HunterId,
+  type HunterUnlock,
+} from '../../content/hunters';
+import { num } from '../balance-access';
+import type { Explained } from '../breakdown/breakdown';
+import type { HunterSnapshot } from '../combat';
+import { recoveryMult } from '../contracts/injury';
+import { intPow } from '../math';
+import type { GameState, HunterState } from '../state/game-state';
+import { MS_PER_DAY, MS_PER_SECOND } from '../time';
+
+// GDD §5.3: the roster, each hunter's level and gear, who is free to go, and who
+// can be recruited. Derived values come from here, never stored (technical design §5.2).
+
+export const isOwned = (state: GameState, id: HunterId): boolean => state.hunters[id] !== undefined;
+
+/** Active roster cap: 3 in Hamlet, plus Barracks levels in the Keep (GDD §5.3.1, G5). */
+export const rosterCap = (state: GameState): Explained => {
+  const base = num('roster.hamletCap');
+  let barracks = 0;
+  for (const id of BUILDING_IDS) {
+    for (const e of buildings[id].effects) {
+      if (e.kind === 'rosterCap') barracks += state.buildings[id] * e.perLevel;
+    }
+  }
+  const value = base + barracks;
+  return {
+    value,
+    breakdown: {
+      label: 'Active roster',
+      value,
+      formula: `${base} + ${barracks}`,
+      children: [
+        { label: 'Hearth Hall bunks', value: base, key: 'roster.hamletCap' },
+        { label: 'Barracks levels', value: barracks },
+      ],
+    },
+  };
+};
+
+/** XP to go from level L to L+1: `50 × 1.5^(L−1)` (GDD §5.3.2). */
+export const xpToNext = (level: number): number =>
+  num('xp.base') * intPow(num('xp.growth'), level - 1);
+
+export const levelCap = (): number => num('hunter.levelCap.keep');
+
+const inRecovery = (h: HunterState, now: number): boolean =>
+  h.recovery !== null && h.recovery.until > now;
+
+export type HunterStatus = 'ready' | 'on-contract' | 'recovering' | 'reserve';
+
+/** Reserve hunters can't take contracts; active ones are ready unless busy or recovering. */
+export const hunterStatus = (state: GameState, id: HunterId): HunterStatus | null => {
+  const h = state.hunters[id];
+  if (!h) return null;
+  if (state.running.some((r) => r.party.includes(id))) return 'on-contract';
+  if (inRecovery(h, state.time)) return 'recovering';
+  return state.roster.active.includes(id) ? 'ready' : 'reserve';
+};
+
+/** Hunters free to take a contract right now, in roster order (the party slot order). */
+export const availableHunters = (state: GameState): HunterId[] =>
+  state.roster.active.filter((id) => hunterStatus(state, id) === 'ready');
+
+/** The weapon or armor slot's current gear tier, if any. */
+export const slotGear = (h: HunterState, slot: GearSlot): GearDef | null => {
+  const id = slot === 'weapon' ? h.weapon : h.armor;
+  return id ? gear[id] : null;
+};
+
+/** The next upgrade for a slot: the lowest tier above the current one. */
+export const nextGear = (h: HunterState, slot: GearSlot): GearDef | null => {
+  const current = slotGear(h, slot)?.tier ?? 0;
+  return (
+    GEAR_IDS.map((g) => gear[g])
+      .filter((g) => g.slot === slot && g.tier > current)
+      .sort((a, b) => a.tier - b.tier)[0] ?? null
+  );
+};
+
+/** A hunter frozen for a fight (technical design §5.3). */
+export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
+  const def = hunters[id];
+  const h = state.hunters[id];
+  if (!h) throw new Error(`${id} is not on the roster.`);
+  return {
+    id,
+    name: def.name,
+    role: def.role,
+    damage: def.damage,
+    level: h.level,
+    base: def.stats,
+    traits: def.traits,
+    weapon: h.weapon,
+    armorGear: h.armor,
+  };
+};
+
+export const recoveryFactor = (id: HunterId): number => recoveryMult(hunters[id].traits);
+
+/** Whether a hunter's unlock condition is met (GDD §8.5 "Unlock"). */
+export const unlockMet = (state: GameState, unlock: HunterUnlock): boolean => {
+  switch (unlock.kind) {
+    case 'start':
+      return true;
+    case 'contractSuccesses':
+      return state.stats.contractsWon >= unlock.count;
+    case 'successAtLocation':
+      return (state.stats.winsByLocation[unlock.location] ?? 0) >= 1;
+    case 'defeatMonster':
+      return (state.stats.kills[unlock.monster] ?? 0) >= 1;
+    case 'buildingLevel':
+      return state.buildings[unlock.building] >= unlock.level;
+    case 'bountySilverEarned':
+      return state.stats.bountySilver >= unlock.amount;
+  }
+};
+
+/** A readable form of the condition, for locked silhouettes (GDD §9.7). */
+export const describeUnlock = (unlock: HunterUnlock): string => {
+  switch (unlock.kind) {
+    case 'start':
+      return 'Starts with you';
+    case 'contractSuccesses':
+      return unlock.count === 1 ? 'Win your first contract' : `Win ${unlock.count} contracts`;
+    case 'successAtLocation':
+      return `Win a ${unlock.location} contract`;
+    case 'defeatMonster':
+      return `Defeat an ${unlock.monster === 'upyr' ? 'Upyr' : unlock.monster}`;
+    case 'buildingLevel':
+      return `Smithy level ${unlock.level}`;
+    case 'bountySilverEarned':
+      return `Earn ${unlock.amount.toLocaleString('en-US')} silver in bounties`;
+  }
+};
+
+/** A fallen hunter returns as a candidate this long after dying (before the Long Night, A12). */
+const returnDelayMs = (): number => num('death.returnDaysBeforeLongNight') * MS_PER_DAY;
+
+/** Fallen hunters who are not back yet. */
+export const stillFallen = (state: GameState, id: HunterId): boolean =>
+  state.fallen.some((f) => f.hunter === id && state.time < f.diedAt + returnDelayMs());
+
+/** Candidates: unlocked, not owned, and not still mourned (GDD §5.3.1, §5.3.7). */
+export const candidates = (state: GameState): HunterDef[] =>
+  HUNTER_IDS.filter(
+    (id) =>
+      !isOwned(state, id) &&
+      hunters[id].unlock.kind !== 'start' &&
+      unlockMet(state, hunters[id].unlock) &&
+      !stillFallen(state, id),
+  ).map((id) => hunters[id]);
+
+/** Hunters not yet unlocked (or still fallen), for the silhouettes at the bottom (GDD §9.7). */
+export const lockedHunters = (state: GameState): HunterDef[] =>
+  HUNTER_IDS.filter(
+    (id) =>
+      !isOwned(state, id) &&
+      !candidates(state).some((c) => c.id === id) &&
+      hunters[id].unlock.kind !== 'start',
+  ).map((id) => hunters[id]);
+
+export const recoveryMs = (seconds: number): number => seconds * MS_PER_SECOND;
+
+export type { GearId };

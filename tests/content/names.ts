@@ -182,6 +182,12 @@ export const checkedNames: readonly CheckedName[] = [
     note: 'Uses the working lore name Emberwright, which gets its own check before v0.5.',
   },
   {
+    name: 'Trophy Hall',
+    checked: '2026-10-13',
+    result: 'clear',
+    note: 'Searched together with the gear names: no match in any influence.',
+  },
+  {
     name: 'Silvered Blade',
     checked: '2026-10-13',
     result: 'clear',
@@ -229,6 +235,7 @@ export const checkedNames: readonly CheckedName[] = [
     'Iron Blade',
     'Steel Blade',
     'Hide Armor',
+    'Barracks',
     'Mail',
     'Beasts & Wilds',
     'Field & Forest Spirits',

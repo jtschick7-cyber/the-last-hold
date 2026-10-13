@@ -156,6 +156,30 @@ export const recipes: readonly Recipe[] = [
     [60, 62],
     [125, 126],
   ]),
+  // v0.2: a long stone barracks under a red roof, with an axe by the door; and the
+  // Trophy Hall, a blue roof over stone with a target on the wall.
+  building(
+    'barracks',
+    [
+      [52, 54],
+      [88, 90],
+    ],
+    [
+      [_, _],
+      [127, _],
+    ],
+  ),
+  building(
+    'trophy-hall',
+    [
+      [60, 62],
+      [88, 90],
+    ],
+    [
+      [_, _],
+      [_, 95],
+    ],
+  ),
 
   // Hold scenes, 160 × 64 (10 × 4 tiles): the hamlet among the ruins, then the
   // Keep with its restored wall and gatehouse (setting-primer §6.5).

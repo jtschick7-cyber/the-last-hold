@@ -1,5 +1,7 @@
 import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
+import type { GearSlot } from '../../content/gear';
+import type { HunterId } from '../../content/hunters';
 import type { JobId } from '../../content/jobs';
 import type { ResourceBundle } from '../../content/resources';
 import type { PolicyId } from '../policies/schedules';
@@ -21,6 +23,15 @@ export type Command =
   | { type: 'peasants.autoSettle'; on: boolean }
   | { type: 'peasants.priority'; order: JobId[] }
   | { type: 'age.up' }
+  /** Sends a party on a board contract; `confirmReckless` is the dialog's answer (GDD §5.3.7). */
+  | { type: 'contract.launch'; contract: string; party: HunterId[]; confirmReckless?: boolean }
+  | { type: 'contract.decline'; contract: string }
+  /** Acknowledges finished contracts; rewards were applied at completion (B9). */
+  | { type: 'results.collect' }
+  | { type: 'hunter.recruit'; hunter: HunterId }
+  /** Moves a hunter between the active roster and the reserve. */
+  | { type: 'roster.set'; hunter: HunterId; active: boolean }
+  | { type: 'gear.upgrade'; hunter: HunterId; slot: GearSlot }
   | { type: 'settings.set'; patch: Partial<Settings> }
   // Debug (technical design §15): only offered with ?debug or in dev builds.
   | { type: 'debug.skip'; ms: number }

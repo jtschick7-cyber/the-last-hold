@@ -62,6 +62,14 @@ export const buildingCost = (state: GameState, id: BuildingId, count = 1): Cost 
   };
 };
 
+/** The most copies of a count building that may exist, or null for no limit. */
+export const copyLimit = (id: BuildingId): number | null => {
+  const def = buildings[id];
+  if (def.kind !== 'count') return null;
+  if (def.maxCountKey) return num(def.maxCountKey);
+  return def.maxCount ?? null;
+};
+
 /**
  * GDD §5.1.2 "Max": the most copies of a count building affordable now, the
  * smallest k across its cost resources, and never past a locked copy limit.
@@ -76,7 +84,8 @@ export const maxAffordableCount = (state: GameState, id: BuildingId): number => 
     const next = (def.baseCost[r] ?? 0) * intPow(growth, owned);
     k = Math.min(k, maxAffordable(next, growth, state.resources[r]));
   }
-  if (def.maxCountKey) k = Math.min(k, Math.max(0, num(def.maxCountKey) - owned));
+  const limit = copyLimit(id);
+  if (limit !== null) k = Math.min(k, Math.max(0, limit - owned));
   return k === Number.POSITIVE_INFINITY ? 0 : k;
 };
 

@@ -294,10 +294,10 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### A. Content and state
 
 - [x] **T2.1a Content.** 8 hunters (prices, story-hunter flags), traits, gear tiers; all **12 monsters** (identified for free in v0.2); villages with heads (trust kept silent). The balance keys this needs were already in `balance.ts` from v0.1; per-item numbers live in the content files (D44).
-- [?] **T2.1b Barracks and Trophy Hall** as buildings. They add building ids, which changes the saved state, so they go in together with the migration (T2.4, Q5).
+- [x] **T2.1b Barracks and Trophy Hall** as buildings. They add building ids, which changes the saved state, so they go in together with the migration (T2.4, Q5).
 - [ ] **T2.2 Text.** Notices (3+ per village × location; seeds at most 1 in 10); the vow and first-contract scenes; hunter bios.
 - [x] **T2.3 Names** for the new proper nouns (hunters, villages and heads, monsters, abilities, traits, gear). Searched 2026-10-13; one collision found (Gloam Wolf, Q6). Names for the notices and scenes (T2.2) get checked when that text is written.
-- [?] **T2.4 Migration v1 → v2,** using the **owner's real v0.1 save** as the fixture. `[?]` until it's provided (Q5).
+- [x] **T2.4 Migration v1 → v2,** using the **owner's real v0.1 save** as the fixture. `[?]` until it's provided (Q5).
 
 ### B. Combat
 
@@ -309,13 +309,13 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### C. Contracts and roster
 
-- [ ] **T2.10 Board.** Opens at the first Mine; refill; tier unlocks and mix; barrow from T2; every generated cell has ≥ 1 species; Decline.
-- [ ] **T2.11 Launch.** Party rules, provisions, the Reckless confirmation with death chances, the fight seed.
+- [x] **T2.10 Board.** Opens at the first Mine; refill; tier unlocks and mix; barrow from T2; every generated cell has ≥ 1 species; Decline.
+- [x] **T2.11 Launch.** Party rules, provisions, the Reckless confirmation with death chances, the fight seed.
 - [x] **T2.12a Reward and injury rules** (pure, in `core/contracts/`): bounty, provisions, trophies, XP, injury outcomes and recovery times, the death roll, seeds.
-- [ ] **T2.12b Completion events.** Rewards at completion, injuries, death (story hunters downgraded), recovery, return after 3 days, results. Needs the saved state (T2.4).
-- [ ] **T2.13 Roster.** Active and reserve, caps, candidates, prices, swaps, level-ups (Health and Might only).
-- [ ] **T2.14 Gear** upgrades in place.
-- [ ] **T2.15 Trophy Hall** (cumulative, silver excluded).
+- [x] **T2.12b Completion events.** Rewards at completion, injuries, death (story hunters downgraded), recovery, return after 3 days, results. Needs the saved state (T2.4).
+- [x] **T2.13 Roster.** Active and reserve, caps, candidates, prices, swaps, level-ups (Health and Might only).
+- [x] **T2.14 Gear** upgrades in place.
+- [x] **T2.15 Trophy Hall** (cumulative, silver excluded).
 
 ### D. Odds and suggest
 
