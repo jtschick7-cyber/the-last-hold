@@ -11,7 +11,7 @@ The Last Hold is an original game. Every image and font is CC0 (public domain): 
 ## Art packs (CC0)
 
 - **1-Bit Pack** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/1-bit-pack. 1 image.
-- **Tiny Town** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/tiny-town. 17 images.
+- **Tiny Town** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/tiny-town. 20 images.
 
 ## Fonts (CC0)
 

@@ -1,4 +1,6 @@
 import { BUILDING_IDS, type BuildingId } from '../../content/buildings';
+import { CONSUMABLE_IDS, type ConsumableId } from '../../content/consumables';
+import { INGREDIENT_IDS, type IngredientId } from '../../content/ingredients';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { start } from '../../content/start';
 import { SCHEMA_VERSION, type GameState, type Settings } from './game-state';
@@ -44,6 +46,10 @@ export const createNewGame = (seed: string, now: number): GameState => {
     hunters: Object.fromEntries(startingHunters().map((h) => [h, freshHunter()])),
     roster: { active: startingHunters() },
     board: { opened: false, open: [], nextArrivalAt: null, arrivals: 0, tierWins: [0, 0, 0, 0, 0] },
+    bestiary: {},
+    stores: fill<ConsumableId | IngredientId>([...CONSUMABLE_IDS, ...INGREDIENT_IDS], {}),
+    queues: { brewing: [], investigation: [] },
+    garden: { nextAt: null },
     running: [],
     results: [],
     fallen: [],

@@ -23,6 +23,10 @@ describe('descriptions for the UI', () => {
       // v0.2 (GDD §8.1): both arrive at the Keep.
       'New: Barracks',
       'New: Trophy Hall',
+      // v0.3 (GDD §8.1): the Lodge, the Hut and the Garden.
+      "New: Hunter's Lodge",
+      "New: Alchemist's Hut",
+      'New: Herb Garden',
     ]);
     expect(ageUnlocks('hamlet')).toEqual([]);
   });

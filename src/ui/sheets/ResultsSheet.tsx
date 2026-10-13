@@ -32,8 +32,7 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
             {r.success ? '✔' : '✘'} {monsters[r.monster].name} · T{r.tier}
           </strong>
           <div class={`${styles.small} ${styles.dim}`}>
-            {placeName({ ...r, id: r.contractId, arrivedAt: 0 })} · finished{' '}
-            {formatDuration((now - r.at) / 1000)} ago
+            {placeName(r)} · finished {formatDuration((now - r.at) / 1000)} ago
           </div>
         </div>
       </div>

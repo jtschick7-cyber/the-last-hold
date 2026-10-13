@@ -19,6 +19,9 @@ export const BUILDING_IDS = [
   'bell-tower',
   'barracks',
   'trophy-hall',
+  'hunters-lodge',
+  'alchemists-hut',
+  'herb-garden',
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -32,7 +35,13 @@ export type BuildingEffect =
   /** Raises the active-roster cap by this much per level (GDD §5.3.1, G5). */
   | { readonly kind: 'rosterCap'; readonly perLevel: number }
   /** +this much to all production except silver per trophy earned this cycle (GDD §5.4.4). */
-  | { readonly kind: 'trophyBonus'; readonly perTrophyKey: BalanceKey };
+  | { readonly kind: 'trophyBonus'; readonly perTrophyKey: BalanceKey }
+  /** Investigation slots: this many per level (GDD §5.6.3, v0.3). */
+  | { readonly kind: 'investigationSlots'; readonly perLevel: number }
+  /** Kettles: this many brews at a time per level (GDD §5.7, v0.3). */
+  | { readonly kind: 'brewSlots'; readonly perLevel: number }
+  /** Grows one of each herb per copy every `intervalKey` seconds (GDD §5.7, v0.3). */
+  | { readonly kind: 'herbGrowth'; readonly intervalKey: BalanceKey };
 
 interface BuildingBase {
   readonly id: BuildingId;
@@ -169,5 +178,32 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     effects: [{ kind: 'trophyBonus', perTrophyKey: 'trophyHall.perTrophy' }],
     availableFrom: 'keep',
     maxCount: 1,
+  },
+  // GDD §8.1 (v0.3): all Keep.
+  'hunters-lodge': {
+    id: 'hunters-lodge',
+    name: "Hunter's Lodge",
+    kind: 'level',
+    baseCost: { wood: 800, iron: 400, silver: 200 },
+    effects: [{ kind: 'investigationSlots', perLevel: 1 }],
+    availableFrom: 'keep',
+    maxLevel: { keep: 3 },
+  },
+  'alchemists-hut': {
+    id: 'alchemists-hut',
+    name: "Alchemist's Hut",
+    kind: 'level',
+    baseCost: { wood: 700, iron: 300, silver: 150 },
+    effects: [{ kind: 'brewSlots', perLevel: 1 }],
+    availableFrom: 'keep',
+    maxLevel: { keep: 5 },
+  },
+  'herb-garden': {
+    id: 'herb-garden',
+    name: 'Herb Garden',
+    kind: 'count',
+    baseCost: { wood: 300, food: 100 },
+    effects: [{ kind: 'herbGrowth', intervalKey: 'herbGarden.interval' }],
+    availableFrom: 'keep',
   },
 };

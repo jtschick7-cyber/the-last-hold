@@ -11,7 +11,15 @@ const scenario = (seed: string) => {
   const s = keepRich(seed);
   s.board.open = [];
   s.board.open.push(
-    { id: 'a', village: 'velkvik', monster: 'nix', tier: 5, location: 'river', arrivedAt: T0 },
+    {
+      id: 'a',
+      village: 'velkvik',
+      monster: 'nix',
+      tier: 5,
+      location: 'river',
+      arrivedAt: T0,
+      revealed: 3,
+    },
     {
       id: 'b',
       village: 'dubno-ford',
@@ -19,6 +27,7 @@ const scenario = (seed: string) => {
       tier: 1,
       location: 'field',
       arrivedAt: T0,
+      revealed: 3,
     },
   );
   expect(

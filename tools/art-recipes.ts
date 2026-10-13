@@ -181,6 +181,43 @@ export const recipes: readonly Recipe[] = [
     ],
   ),
 
+  // v0.3: the Hunter's Lodge (a red roof over a plank hall, a bow by the door), the
+  // Alchemist's Hut (a blue-grey roof, a jar by the door) and the Herb Garden (beds
+  // of bushes and sprouts on grass).
+  building(
+    'hunters-lodge',
+    [
+      [52, 54],
+      [76, 78],
+    ],
+    [
+      [_, _],
+      [_, 118],
+    ],
+  ),
+  building(
+    'alchemists-hut',
+    [
+      [48, 50],
+      [76, 78],
+    ],
+    [
+      [_, _],
+      [_, 131],
+    ],
+  ),
+  building(
+    'herb-garden',
+    [
+      [0, 1],
+      [0, 0],
+    ],
+    [
+      [5, 17],
+      [17, 5],
+    ],
+  ),
+
   // Hold scenes, 160 × 64 (10 × 4 tiles): the hamlet among the ruins, then the
   // Keep with its restored wall and gatehouse (setting-primer §6.5).
   {

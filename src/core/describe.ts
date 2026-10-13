@@ -29,6 +29,12 @@ const describeEffect = (e: BuildingEffect): string => {
       return `+${e.perLevel} active hunter${e.perLevel === 1 ? '' : 's'}`;
     case 'trophyBonus':
       return `+${percent(num(e.perTrophyKey))} production per trophy`;
+    case 'investigationSlots':
+      return `+${e.perLevel} investigation slot${e.perLevel === 1 ? '' : 's'}`;
+    case 'brewSlots':
+      return `+${e.perLevel} kettle${e.perLevel === 1 ? '' : 's'}`;
+    case 'herbGrowth':
+      return `grows yarrow, mugwort and juniper, one each every ${formatDuration(num(e.intervalKey))}`;
   }
 };
 

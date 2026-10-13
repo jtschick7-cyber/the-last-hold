@@ -5,7 +5,7 @@ import { slotFreed } from '../contracts/board';
 import { computeOdds } from '../contracts/odds';
 import { maxPartySize } from '../contracts/party';
 import { provisions } from '../contracts/rewards';
-import type { GameState } from '../state/game-state';
+import { noPreparation, type GameState } from '../state/game-state';
 import { availableHunters, snapshotOf } from '../systems/hunters';
 import { MS_PER_SECOND } from '../time';
 import { ok, refuse, type ApplyResult } from './types';
@@ -58,6 +58,7 @@ export const launch = (
     launchedAt: state.time,
     endsAt: state.time + duration(contract.tier),
     reckless: odds.reckless,
+    prep: noPreparation(),
     winChance: odds.winChance,
   });
   return ok;

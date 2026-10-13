@@ -63,7 +63,8 @@ export const generateContract = (
   const species = candidatesFor(location, tier);
   const monster = species[Math.min(species.length - 1, Math.floor(rolls.next() * species.length))];
   if (!monster) throw new Error(`No monster for ${location} at tier ${tier}.`);
-  return { id: `c${index}`, village: village.id, monster, tier, location, arrivedAt };
+  // Every contract names its species until investigation arrives (plan T3.6).
+  return { id: `c${index}`, village: village.id, monster, tier, location, arrivedAt, revealed: 3 };
 };
 
 /** The first Mine opens the board, with its first contract due at once. */

@@ -11,6 +11,9 @@ export const shiftClock = (state: GameState, delta: number): void => {
   state.meta.lastSeen += delta;
   state.peasants.lastSettleAt += delta;
   if (state.board.nextArrivalAt !== null) state.board.nextArrivalAt += delta;
+  if (state.garden.nextAt !== null) state.garden.nextAt += delta;
+  for (const j of state.queues.brewing) if (j.doneAt !== null) j.doneAt += delta;
+  for (const slot of state.queues.investigation) slot.nextClueAt += delta;
   for (const c of state.board.open) c.arrivedAt += delta;
   for (const r of state.running) {
     r.launchedAt += delta;

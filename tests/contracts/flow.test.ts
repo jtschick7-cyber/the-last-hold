@@ -24,6 +24,7 @@ const put = (s: GameState, over: Partial<ContractInstance> = {}): ContractInstan
     tier: 1,
     location: 'field',
     arrivedAt: s.time,
+    revealed: 3,
     ...over,
   };
   s.board.open.push(c);

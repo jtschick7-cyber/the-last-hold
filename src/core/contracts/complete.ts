@@ -120,6 +120,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     result: fight.result,
     rulesVersion: RULES_VERSION,
     at,
+    prep: run.prep,
   };
   state.log.recentFights.push(ref);
   if (state.log.recentFights.length > FIGHTS_KEPT) state.log.recentFights.shift();
@@ -138,6 +139,8 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     winChance: run.winChance,
     injuries,
     levelUps,
+    reagents: {},
+    wellPrepared: false,
   };
   state.results.push(result);
   return result;

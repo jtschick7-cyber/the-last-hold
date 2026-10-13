@@ -10,7 +10,7 @@ const times = (x: number): string => `×${x}`;
 
 export const pct = (p: number): string => `${Math.round(p * 100)}%`;
 
-export const placeName = (c: ContractInstance): string =>
+export const placeName = (c: Pick<ContractInstance, 'village' | 'location'>): string =>
   `${villages[c.village].name} · ${c.location}`;
 
 /** "weak: Silver ×1.5, Fire ×1.25" and "resists: Frost ×0.25, Venom ×0" (GDD §9.5). */
