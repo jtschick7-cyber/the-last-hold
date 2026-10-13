@@ -6,7 +6,7 @@ import { reagentsFor } from './reagents';
 import { seeded } from '../rng';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
-import { levelCap, recoveryFactor, xpToNext } from '../systems/hunters';
+import { gainXp, recoveryFactor } from '../systems/hunters';
 import { MS_PER_SECOND } from '../time';
 import { injuryOutcome, needsDeathRoll, type InjuryOutcome } from './injury';
 import { bounty, trophies, xpPerHunter } from './rewards';
@@ -105,13 +105,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
       h.recovery = { kind: outcome.kind, until: at + outcome.recoverySeconds * MS_PER_SECOND };
       injuries.push({ hunter: id, kind: outcome.kind, until: h.recovery.until });
     }
-    h.xp += xp;
-    while (h.level < levelCap() && h.xp >= xpToNext(h.level)) {
-      h.xp -= xpToNext(h.level);
-      h.level += 1;
-      levelUps.push({ hunter: id, level: h.level });
-    }
-    if (h.level >= levelCap()) h.xp = 0;
+    for (const level of gainXp(state, h, xp)) levelUps.push({ hunter: id, level });
   });
 
   state.resources.silver += pay;

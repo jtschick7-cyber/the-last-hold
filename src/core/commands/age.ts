@@ -8,7 +8,7 @@ import { ok, refuse, type ApplyResult } from './types';
 // buildings) follow from the Age itself, so only the Age and resources change.
 export const ageUp = (state: GameState): ApplyResult => {
   const status = ageUpStatus(state);
-  if (!status) return refuse('The next Rank is coming in a later milestone.');
+  if (!status) return refuse(`${ages[state.cycle.age].name} is the highest Rank.`);
   const missing = status.requirements
     .filter((r) => !r.met)
     .map((r) => `${r.label} ${r.have}/${r.need}`);

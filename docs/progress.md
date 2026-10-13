@@ -311,3 +311,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** T4.4 (Citadel and Bastion: hunter level caps and the roster bonus by Rank, the restoration sheets without an inscription). T4.10 needs no new save: the fixture is in.
 - **Open:** D117 is Proposed (save-shape details). Q10 ("Firstblade") before v0.5. `longNightArrival.cycle1MedianEmbers` waits for T4.15.
 - **Noticed, not changed:** in the game right now, a hunter's level cap is still 10 in Citadel and Bastion, and the roster bonus isn't applied yet (both T4.4).
+
+## 2026-10-13 — v0.4: T4.4 Citadel and Bastion
+- **Owner:** accepted D117 (D119).
+- **Done (T4.4):** the age bucket now adds each Rank reached (Keep +50%, Citadel +100%, Bastion +150%, never silver), with each Rank named in the breakdown; hunter level cap by Rank (10, 15, 20; Hamlet uses the Keep's); a level carried above the cap is kept and only new levels stop; active roster +2 at Citadel and +2 more at Bastion, shown in the roster breakdown; bounty ×1.25 and ×1.5, provisions 1 minute and tier cap 5 tested. The Rank sheet: no empty inscription for Citadel and Bastion, the "Unlocks" list names the hunter cap, roster, bounty and the Last Stand (Bastion), and at Bastion it no longer says "Citadel: coming later". Tests in `tests/ranks/citadel-bastion.test.ts`.
+- **Results:** `npm run check` green (1,059 tests); full `npm run sim:check` passes and matches the baseline (the simulated player still stops at the Keep, D118).
+- **Not done:** no screenshot of the new Rank sheet yet; it comes with the T4.11 screen pass. The "Make the Last Stand" button at Bastion is T4.11b.
+- **Next:** T4.5, Threat and defenses.

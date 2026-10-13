@@ -85,7 +85,7 @@ export const HunterView = ({ id }: { id: HunterId }) => {
         <Sprite id={hunterPortraitId(id)} scale={2} />
         <p class={`${styles.dim} ${styles.grow}`}>
           {roleNames[def.role]} · {def.damage} damage · {def.origin} · Lv {h.level}
-          {h.level >= levelCap() ? ' (max)' : ` · ${Math.floor(h.xp)}/${Math.round(need)} XP`}
+          {h.level >= levelCap(s) ? ' (max)' : ` · ${Math.floor(h.xp)}/${Math.round(need)} XP`}
         </p>
       </div>
       <p class={styles.small}>

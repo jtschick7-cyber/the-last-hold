@@ -1,4 +1,4 @@
-import { ages } from '../../content/ages';
+import { AGE_IDS, ages } from '../../content/ages';
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { SILVER_BUCKETS } from '../../content/buckets';
 import { JOB_IDS, jobs } from '../../content/jobs';
@@ -29,19 +29,21 @@ const buildingBonuses = (state: GameState, resource: ResourceId): Bonus[] =>
     );
   });
 
-const ageBonuses = (state: GameState): Bonus[] => {
-  const up = ages[state.cycle.age].ageUp;
-  return up
-    ? [
-        {
-          bucket: 'age',
-          label: ages[state.cycle.age].name,
-          value: num(up.allProductionKey),
-          key: up.allProductionKey,
-        },
-      ]
-    : [];
-};
+/** GDD §5.1.3 (D106): each Rank reached adds its bonus to the age bucket (Citadel adds to the Keep's). */
+const ageBonuses = (state: GameState): Bonus[] =>
+  AGE_IDS.slice(0, AGE_IDS.indexOf(state.cycle.age) + 1).flatMap((age) => {
+    const up = ages[age].ageUp;
+    return up
+      ? [
+          {
+            bucket: 'age' as const,
+            label: ages[age].name,
+            value: num(up.allProductionKey),
+            key: up.allProductionKey,
+          },
+        ]
+      : [];
+  });
 
 /** GDD §5.4.4: +0.5% to all production per trophy earned this cycle, once the Trophy Hall stands. */
 const trophyBonuses = (state: GameState): Bonus[] => {

@@ -1,3 +1,4 @@
+import { AGE_IDS } from '../../content/ages';
 import { buildings, BUILDING_IDS } from '../../content/buildings';
 import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
 import {
@@ -24,7 +25,14 @@ import { MS_PER_DAY, MS_PER_SECOND } from '../time';
 
 export const isOwned = (state: GameState, id: HunterId): boolean => state.hunters[id] !== undefined;
 
-/** Active roster cap: 3 in Hamlet, plus Barracks levels in the Keep (GDD §5.3.1, G5). */
+/** The Ranks reached so far this cycle, in order. */
+const ranksReached = (state: GameState): readonly string[] =>
+  AGE_IDS.slice(0, AGE_IDS.indexOf(state.cycle.age) + 1);
+
+/**
+ * Active roster cap: 3 in Hamlet, plus Barracks levels in the Keep (GDD §5.3.1, G5),
+ * plus 2 at Citadel and 2 more at Bastion (`roster.ageBonus`, D106).
+ */
 export const rosterCap = (state: GameState): Explained => {
   const base = num('roster.hamletCap');
   let barracks = 0;
@@ -33,16 +41,19 @@ export const rosterCap = (state: GameState): Explained => {
       if (e.kind === 'rosterCap') barracks += state.buildings[id] * e.perLevel;
     }
   }
-  const value = base + barracks;
+  const table = constantAt('roster.ageBonus').value as Readonly<Record<string, number>>;
+  const rankBonus = ranksReached(state).reduce((n, age) => n + (table[age] ?? 0), 0);
+  const value = base + barracks + rankBonus;
   return {
     value,
     breakdown: {
       label: 'Active roster',
       value,
-      formula: `${base} + ${barracks}`,
+      formula: `${base} + ${barracks} + ${rankBonus}`,
       children: [
         { label: 'Hearth Hall bunks', value: base, key: 'roster.hamletCap' },
         { label: 'Barracks levels', value: barracks },
+        { label: 'Rank (Citadel, Bastion)', value: rankBonus, key: 'roster.ageBonus' },
       ],
     },
   };
@@ -52,9 +63,35 @@ export const rosterCap = (state: GameState): Explained => {
 export const xpToNext = (level: number): number =>
   num('xp.base') * intPow(num('xp.growth'), level - 1);
 
-/** The Keep's hunter level cap (Hamlet uses it too, D72); per-Rank caps arrive with T4.4. */
-export const levelCap = (): number =>
-  (constantAt('hunter.levelCap').value as { readonly keep: number }).keep;
+/** The hunter level cap for the hold's Rank: Hamlet uses the Keep's (D72); Citadel 15, Bastion 20 (D106). */
+export const levelCap = (state: GameState): number => {
+  const table = constantAt('hunter.levelCap').value as Readonly<Record<string, number>> & {
+    readonly keep: number;
+  };
+  return table[state.cycle.age] ?? table.keep;
+};
+
+/**
+ * Adds contract XP and levels the hunter up to the Rank's cap; returns the levels
+ * reached. At the cap, XP isn't banked. A level carried above the cap (GDD §5.9.7)
+ * is kept: the cap only stops new levels.
+ */
+export const gainXp = (
+  state: GameState,
+  h: Pick<HunterState, 'level' | 'xp'>,
+  xp: number,
+): number[] => {
+  const cap = levelCap(state);
+  const reached: number[] = [];
+  h.xp += xp;
+  while (h.level < cap && h.xp >= xpToNext(h.level)) {
+    h.xp -= xpToNext(h.level);
+    h.level += 1;
+    reached.push(h.level);
+  }
+  if (h.level >= cap) h.xp = 0;
+  return reached;
+};
 
 const inRecovery = (h: HunterState, now: number): boolean =>
   h.recovery !== null && h.recovery.until > now;

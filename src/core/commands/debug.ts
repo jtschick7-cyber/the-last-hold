@@ -74,6 +74,8 @@ export const setSeed = (state: GameState, seed: string): ApplyResult => {
 export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
   if (!(AGE_IDS as readonly string[]).includes(age)) return refuse('That Rank does not exist.');
   state.cycle.age = age;
+  const record = state.cycles[state.cycles.length - 1];
+  if (record && record.ranks[age] === undefined) record.ranks[age] = state.time; // D113
   state.meta.debugUsed = true;
   return ok;
 };

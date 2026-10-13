@@ -20,6 +20,8 @@ export interface AgeUp {
   readonly cost: ResourceBundle;
   /** Age-bucket bonus to all production except silver (G1). */
   readonly allProductionKey: BalanceKey;
+  /** Grants that aren't a building, cap or balance entry (GDD §5.1.3), shown under "Unlocks". */
+  readonly alsoUnlocks?: readonly string[];
   /** setting-primer §6.5: the part of old Stanholm this Age restores. */
   readonly restores: {
     readonly summary: string;
@@ -73,6 +75,7 @@ export const ages: Readonly<Record<AgeId, AgeDef>> = {
       requires: { peasants: 65, buildings: { mill: 15, smithy: 12, barracks: 3, walls: 1 } },
       cost: { food: 1_500_000, wood: 600_000, iron: 250_000, silver: 2_500 },
       allProductionKey: 'age.bastion.allProduction',
+      alsoUnlocks: ['The Last Stand: once per cycle, when you choose'],
       restores: {
         summary: 'A sealed stair going down',
         description: 'Under the Bastion floor, a stair goes down to a sealed door.',

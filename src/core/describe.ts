@@ -8,7 +8,7 @@ import {
 import { jobs } from '../content/jobs';
 import type { MonsterAbility } from '../content/monsters';
 import { resources } from '../content/resources';
-import { num } from './balance-access';
+import { constantAt, num } from './balance-access';
 import { formatDuration } from './format';
 import { levelCapIn } from './systems/ages';
 
@@ -56,6 +56,16 @@ export const ageUnlocks = (to: AgeId): string[] => {
   if (!up) return [];
   const prev = AGE_IDS[AGE_IDS.indexOf(to) - 1];
   const lines = [`+${percent(num(up.allProductionKey))} to all production (not silver)`];
+  // D106: the Rank tables in balance.ts, read the way the engine reads them.
+  const table = (key: 'hunter.levelCap' | 'roster.ageBonus' | 'bounty.ageMult') =>
+    constantAt(key).value as Readonly<Record<string, number>>;
+  const hunterCap = (age: AgeId): number =>
+    table('hunter.levelCap')[age] ?? table('hunter.levelCap')['keep'] ?? 0;
+  if (prev && hunterCap(to) > hunterCap(prev)) lines.push(`Hunters up to level ${hunterCap(to)}`);
+  const roster = table('roster.ageBonus')[to] ?? 0;
+  if (roster > 0) lines.push(`+${roster} active hunters`);
+  const pay = (age: AgeId): number => table('bounty.ageMult')[age] ?? 1;
+  if (prev && pay(to) !== pay(prev)) lines.push(`Bounties ×${pay(to)}`);
   for (const id of BUILDING_IDS) {
     const b = buildings[id];
     if (b.availableFrom === to) lines.push(`New: ${b.name}`);
@@ -63,6 +73,7 @@ export const ageUnlocks = (to: AgeId): string[] => {
       lines.push(`${b.name} up to level ${levelCapIn(b, to)}`);
     }
   }
+  for (const line of up.alsoUnlocks ?? []) lines.push(line);
   return lines;
 };
 
