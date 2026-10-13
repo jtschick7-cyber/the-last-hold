@@ -3,7 +3,7 @@ import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { constantAt } from '../balance-access';
 import { slotFreed } from '../contracts/board';
 import { computeOdds } from '../contracts/odds';
-import { monsterFor } from '../investigation/knowledge';
+import { monsterFor, oddsTarget } from '../investigation/knowledge';
 import { releaseSlot } from '../investigation/lodge';
 import { maxPartySize } from '../contracts/party';
 import { provisions } from '../contracts/rewards';
@@ -47,7 +47,7 @@ export const launch = (
     gameSeed: state.meta.gameSeed,
     contractId: contract.id,
     party: snapshots,
-    monster: monsterFor(state, contract),
+    monster: oddsTarget(state, contract),
     location: contract.location,
     rank: state.cycle.age,
     prep,

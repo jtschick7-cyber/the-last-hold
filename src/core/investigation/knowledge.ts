@@ -3,7 +3,7 @@ import { num } from '../balance-access';
 import type { MonsterInstance } from '../combat';
 import { candidatesFor } from '../contracts/candidates';
 import type { ContractInstance, GameState } from '../state/game-state';
-import { isIdentified } from './clues';
+import { isIdentified, possibleSpecies } from './clues';
 
 // GDD §5.6.2: knowledge levels per species. 0 Unknown is "not in the bestiary".
 
@@ -59,3 +59,18 @@ export const recordFight = (state: GameState, monster: MonsterId, won: boolean):
         : 2;
   if (level > entry.level) entry.level = level;
 };
+
+/**
+ * What the odds are about: the one species when the contract is identified, otherwise every
+ * species the clues so far leave possible, each at its own knowledge level. It never depends
+ * on the true species, so the odds panel cannot give it away.
+ */
+export const oddsTarget = (
+  state: GameState,
+  contract: ContractInstance,
+): Required<MonsterInstance> | Required<MonsterInstance>[] =>
+  isIdentified(state.meta.gameSeed, contract)
+    ? monsterFor(state, contract)
+    : possibleSpecies(state.meta.gameSeed, contract).map((m) =>
+        monsterFor(state, { monster: m, tier: contract.tier }),
+      );

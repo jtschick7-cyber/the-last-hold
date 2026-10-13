@@ -148,3 +148,9 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options for 1:** (a) as built; (b) Spoil also ruins a potion that has not *finished* working, so it can cut a tonic short (more bite, more rules); (c) Spoil ruins any one potion the hunter carries, even a start-of-fight one, by making all potions fire on the hunter's first action instead.
 - **Recommendation:** (a) for 1, and the others as built.
 - **Answer (owner):**
+
+### Q15 — A useless item can nudge the displayed odds by a few points (blocks nothing) — open
+- **What happens:** the odds preview seeds its 500 fights from the party **and the preparation** (technical design §7.2), so a preparation that does nothing (a Grave Oil against a Water Spirit) still draws different dice from "no preparation", and the panel can read, say, 61% against "unprepared would be 59%" for an item that changes nothing. It is inside the ±margin, but it looks like the item did something.
+- **Options:** (a) keep it as the technical design says; (b) seed the odds preview from the party only, so the prepared and unprepared previews share their dice and an item with no effect shows exactly the same number (needs a one-line change to technical design §7.2; the real fight's seed still includes the preparation, so nothing about the real outcome changes).
+- **Recommendation:** (b). It makes "unprepared would be X%" a clean comparison. I have built (a), as written, until you decide.
+- **Answer (owner):**

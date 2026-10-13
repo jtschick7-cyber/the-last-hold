@@ -1,7 +1,7 @@
 import { LOCATION_IDS, type LocationId } from '../../content/damage';
 import { VILLAGE_IDS, villages } from '../../content/villages';
 import { constantAt, num } from '../balance-access';
-import { noteArrival } from '../investigation/knowledge';
+import { arrivalClues, noteArrival } from '../investigation/knowledge';
 import { candidatesFor } from './candidates';
 import { stream } from '../rng';
 import type { ContractInstance, GameState } from '../state/game-state';
@@ -57,8 +57,9 @@ export const generateContract = (
   const species = candidatesFor(location, tier);
   const monster = species[Math.min(species.length - 1, Math.floor(rolls.next() * species.length))];
   if (!monster) throw new Error(`No monster for ${location} at tier ${tier}.`);
-  // Every contract names its species until the odds can average over candidates (plan T3.10).
-  return { id: `c${index}`, village: village.id, monster, tier, location, arrivedAt, revealed: 3 };
+  // GDD §5.6.2: a contract arrives with no clues, unless its species is Mastered.
+  const revealed = arrivalClues(state, monster);
+  return { id: `c${index}`, village: village.id, monster, tier, location, arrivedAt, revealed };
 };
 
 /** The first Mine opens the board, with its first contract due at once. */

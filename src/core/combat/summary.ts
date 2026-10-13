@@ -2,7 +2,15 @@ import { monsters } from '../../content/monsters';
 import { num } from '../balance-access';
 import type { Breakdown } from '../breakdown/breakdown';
 import { buildHunter, buildMonster } from './build';
-import { armorEff, mightEff, monsterFamily, outgoingPct, speedEff, takenReduction } from './stats';
+import {
+  armorEff,
+  knowledgeBonus,
+  mightEff,
+  monsterFamily,
+  outgoingPct,
+  speedEff,
+  takenReduction,
+} from './stats';
 import type { Combatant, FightInput } from './types';
 import type { FightContext } from './stats';
 
@@ -28,6 +36,7 @@ const perAttack = (
   party: readonly Combatant[],
   ctx: FightContext,
   mightMult: number,
+  knowledge: number,
 ): number => {
   const resist = d.resist ? d.resist[a.damage] : 1;
   const crit = 1 + a.critChance * (a.critMult - 1);
@@ -37,6 +46,7 @@ const perAttack = (
     mean(a.varianceLo, a.varianceHi) *
     resist *
     (1 + outgoingPct(a, a.damage, ctx)) *
+    (1 + (a.side === 'hunter' ? knowledge : 0)) *
     crit;
   if (resist === 0) return 0;
   const hit = num('combat.hitChance');
@@ -46,14 +56,20 @@ const perAttack = (
   );
 };
 
-export const explainFight = (input: FightInput, winChance: number): Breakdown => {
-  const hunters = input.party.map((h, i) => buildHunter(h, i + 1));
+/**
+ * `label` replaces the monster's name in the text, for a candidate the player has not
+ * identified (the name would give it away).
+ */
+export const explainFight = (input: FightInput, winChance: number, label?: string): Breakdown => {
+  const hunters = input.party.map((h, i) => buildHunter(h, i + 1, input.prep));
   const monster = buildMonster(input.monster);
+  const name = label ?? monster.name;
+  const knowledge = knowledgeBonus(input.monster.knowledge ?? 0);
   const ctx = context(input);
   const partyRows = hunters.map((h) => {
     const mult = h.role === 'mender' ? num('mender.attackMult') : 1;
     // Speed is also the number of actions per 100 ticks (the meter threshold is 100).
-    const each = perAttack(h, monster, hunters, ctx, mult);
+    const each = perAttack(h, monster, hunters, ctx, mult, knowledge);
     return {
       label: `${h.name} (Speed ${speedEff(h)})`,
       value: each * speedEff(h),
@@ -70,7 +86,7 @@ export const explainFight = (input: FightInput, winChance: number): Breakdown =>
     monsters[input.monster.monster].attacks *
     hunters.reduce((s, h) => {
       const w = h.role === 'vanguard' ? num('target.vanguardWeight') : num('target.otherWeight');
-      return s + (w / totalWeight) * perAttack(monster, h, hunters, ctx, 1);
+      return s + (w / totalWeight) * perAttack(monster, h, hunters, ctx, 1, knowledge);
     }, 0);
   const monsterDamage = monsterPerAction * speedEff(monster);
   const partyHealth = hunters.reduce((s, h) => s + h.maxHealth, 0);
@@ -85,14 +101,14 @@ export const explainFight = (input: FightInput, winChance: number): Breakdown =>
         formula: 'Σ hunters',
         children: partyRows,
       },
-      { label: `${monster.name} Health`, value: monster.maxHealth },
+      { label: `${name} Health`, value: monster.maxHealth },
       {
         label: 'Ticks to bring it down',
         value: partyDamage > 0 ? (monster.maxHealth / partyDamage) * PER : Infinity,
         formula: `Health ÷ damage per ${PER} ticks × ${PER}`,
       },
       {
-        label: `${monster.name} damage per ${PER} ticks`,
+        label: `${name} damage per ${PER} ticks`,
         value: monsterDamage,
         formula: `${speedEff(monster)} actions × ${monsters[input.monster.monster].attacks} attack(s) × expected hit on a random target`,
       },

@@ -27,13 +27,31 @@ const base = {
   rank: 'keep' as const,
 };
 
-(window as unknown as { __bench: () => { odds: number; suggest4: number } }).__bench = () => {
+type Bench = { odds: number; suggest4: number; oddsUnknown: number; suggestUnknown: number };
+
+(window as unknown as { __bench: () => Bench }).__bench = () => {
   const party = HUNTER_IDS.slice(0, 3).map((id) => snap(id));
   // A typical launch: four hunters free, parties of up to three.
   const free = HUNTER_IDS.slice(0, 4).map((id) => snap(id));
+  // GDD §6.5, plan T3.10: an unidentified monster (three candidates) with preparation.
+  const unknown = {
+    ...base,
+    monster: ['upyr', 'draugr', 'strzyga'].map((m) => ({
+      monster: m as 'upyr',
+      tier: 4,
+      knowledge: 0,
+    })),
+    prep: {
+      oils: { halvar: 'grave-oil' as const },
+      potions: { zora: 'quickfoot-tincture' as const },
+      bombs: ['fire-pot' as const, 'saltburst' as const],
+    },
+  };
   return {
     odds: best(() => computeOdds({ ...base, party })),
     suggest4: best(() => suggestParty({ ...base, available: free, maxParty: 3 })),
+    oddsUnknown: best(() => computeOdds({ ...unknown, party })),
+    suggestUnknown: best(() => suggestParty({ ...unknown, available: free, maxParty: 3 })),
   };
 };
 const out = document.getElementById('out');

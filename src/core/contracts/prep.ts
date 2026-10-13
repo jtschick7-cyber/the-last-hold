@@ -61,6 +61,21 @@ export const spendPrep = (state: GameState, prep: Preparation): void => {
   for (const [item, n] of prepCounts(prep)) state.stores[item] -= n;
 };
 
+/** Does this oil's family match the species? A mismatched oil does nothing (GDD §5.7). */
+export const oilMatches = (oil: ConsumableId, monster: MonsterId): boolean => {
+  const e = consumables[oil].effect;
+  return e.kind === 'oil' && e.family === monsters[monster].family;
+};
+
+/** Is the species weak (resistance at or above `prep.weakAt`) to this bomb's damage type? */
+export const bombIsWeak = (bomb: ConsumableId, monster: MonsterId): boolean => {
+  const e = consumables[bomb].effect;
+  return (
+    (e.kind === 'burn' || e.kind === 'chill') &&
+    monsters[monster].resist[e.damageType] >= num('prep.weakAt')
+  );
+};
+
 /**
  * GDD §5.7 "well prepared": the contract succeeded with a matching oil on at least one hunter,
  * plus at least one bomb whose damage type the monster is weak to, or a Saltburst that
@@ -71,16 +86,7 @@ export const isWellPrepared = (
   prep: Preparation,
   saltburstCancelled: boolean,
 ): boolean => {
-  const def = monsters[monster];
-  const matchingOil = Object.values(prep.oils).some((id) => {
-    const e = consumables[id].effect;
-    return e.kind === 'oil' && e.family === def.family;
-  });
-  const weakBomb = prep.bombs.some((id) => {
-    const e = consumables[id].effect;
-    return (
-      (e.kind === 'burn' || e.kind === 'chill') && def.resist[e.damageType] >= num('prep.weakAt')
-    );
-  });
+  const matchingOil = Object.values(prep.oils).some((id) => oilMatches(id, monster));
+  const weakBomb = prep.bombs.some((id) => bombIsWeak(id, monster));
   return matchingOil && (weakBomb || saltburstCancelled);
 };
