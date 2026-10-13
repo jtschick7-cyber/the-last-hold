@@ -4,7 +4,7 @@ import { monsters } from '../../content/monsters';
 import { bestiaryFamilies } from '../../core/investigation/view';
 import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
-import { levelName } from '../app/knowledge-text';
+import { bestiaryLegend, levelName } from '../app/knowledge-text';
 import { BestiaryEntryView } from '../sheets/BestiaryEntrySheet';
 import styles from '../styles/ui.module.css';
 import { Sprite } from '../widgets/Sprite';
@@ -64,10 +64,7 @@ export const BestiaryScreen = () => {
           </ul>
         </section>
       ))}
-      <p class={`${styles.small} ${styles.dim}`}>
-        [?] seen on a contract, not yet identified · [·] not yet met. Win three times to study a
-        species and ten to master it.
-      </p>
+      <p class={`${styles.small} ${styles.dim}`}>{bestiaryLegend()}</p>
     </div>
   );
 };

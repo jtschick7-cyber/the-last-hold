@@ -3,10 +3,17 @@ import { consumables, type ConsumableId } from '../../content/consumables';
 import { ingredients, type IngredientId } from '../../content/ingredients';
 import { families } from '../../content/damage';
 import { monsters, type MonsterId } from '../../content/monsters';
+import { num } from '../../core/balance-access';
 import { oilMatches } from '../../core/contracts/prep';
 import type { CandidateView, ContractIdentity } from '../../core/investigation/view';
 
 // Plain wording for knowledge, investigation and preparation (GDD §5.6–5.7, §9.4–9.9).
+
+/** The bestiary's footer: the thresholds come from balance (knowledge.*, D99). */
+export const bestiaryLegend = (): string =>
+  `[?] seen on a contract, not yet identified · [·] not yet met. Win ${num(
+    'knowledge.studiedKills',
+  )} times to study a species and ${num('knowledge.masteredKills')} to master it.`;
 
 export const levelName = (level: number): string =>
   knowledgeLevels[KNOWLEDGE_LEVELS[level] ?? 'unknown'].name;
