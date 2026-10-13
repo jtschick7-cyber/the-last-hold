@@ -140,14 +140,14 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a). It keeps the wood theme and the recipe (thornwood + juniper), and nothing came up under that name.
 - **Answer (owner):** 2026-10-13: option (a), **Hardwood Tonic**. The GDD now says Hardwood Tonic (D96).
 
-### Q14 — How preparation works where the GDD is silent (blocks nothing; built as recommended, D92) — open
+### Q14 — How preparation works where the GDD is silent (blocks nothing; built as recommended, D92) — answered
 - **What I decided for you (all logged in D92, all tested; please look at the three that change play most):**
   1. **Spoil only ever hurts the Mending Draught.** The Kikimora's Spoil ruins an *unused* potion; the Hardwood Tonic and the Quickfoot Tincture are drunk at the start of the fight, so they are already used. That makes Spoil a small "don't bring a Mending Draught to a Kikimora" lesson.
   2. **Saltburst** goes off on the first moment an ability would take effect, cancels it, and the monster's abilities then do nothing for its next 3 actions. It can cancel a Second Soul (the Strzyga stays dead) and the Nix's Riverhorse. Swell (passive) cannot be cancelled.
   3. **Items are spent when the party sets out, win or lose.**
 - **Options for 1:** (a) as built; (b) Spoil also ruins a potion that has not *finished* working, so it can cut a tonic short (more bite, more rules); (c) Spoil ruins any one potion the hunter carries, even a start-of-fight one, by making all potions fire on the hunter's first action instead.
 - **Recommendation:** (a) for 1, and the others as built.
-- **Answer (owner):**
+- **Answer (owner):** 2026-10-13: (a) for Spoil, and Saltburst and spending as built. D92 is now Decided (D97).
 
 ### Q15 — A useless item can nudge the displayed odds by a few points (blocks nothing) — open
 - **What happens:** the odds preview seeds its 500 fights from the party **and the preparation** (technical design §7.2), so a preparation that does nothing (a Grave Oil against a Water Spirit) still draws different dice from "no preparation", and the panel can read, say, 61% against "unprepared would be 59%" for an item that changes nothing. It is inside the ±margin, but it looks like the item did something.
