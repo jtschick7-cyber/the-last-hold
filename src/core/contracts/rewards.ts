@@ -3,6 +3,8 @@ import { traits, type TraitId } from '../../content/traits';
 import { constantAt, num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import { intPow } from '../math';
+import type { GameState } from '../state/game-state';
+import { productionRate } from '../systems/production';
 
 // GDD §5.4: what a contract pays and costs. Each number comes with its breakdown,
 // built by the same function (GDD §5.0).
@@ -47,19 +49,35 @@ export const bounty = (
   };
 };
 
-/** Provisions paid at launch: `30 × partySize × 2.2^(tier−1)` food (GDD §5.4.2, G3). */
-export const provisions = (partySize: number, tier: number): Explained => {
+/**
+ * Provisions paid at launch (GDD §5.4.2, G3, Q9/D80): per hunter, the larger of the flat
+ * base and `incomeMinutes` of the hold's food income, times party size and the tier growth.
+ * The income term is what keeps food a real cost after the settling years.
+ */
+export const provisions = (state: GameState, partySize: number, tier: number): Explained => {
   const base = num('provisions.base');
   const growth = num('provisions.growth');
-  const value = base * partySize * intPow(growth, tier - 1);
+  const minutes =
+    (constantAt('provisions.incomeMinutes').value as Readonly<Record<string, number>>)[
+      state.cycle.age
+    ] ?? 0;
+  const income = minutes > 0 ? productionRate(state, 'food').value : 0;
+  const perHunter = Math.max(base, minutes * income);
+  const value = perHunter * partySize * intPow(growth, tier - 1);
   return {
     value,
     breakdown: {
       label: 'Provisions (food)',
       value,
-      formula: `${base} × ${partySize} × ${growth}^${tier - 1}`,
+      formula: `max(${base}, ${minutes} min × ${income} food/min) × ${partySize} × ${growth}^${tier - 1}`,
       children: [
-        { label: 'Base per hunter', value: base, key: 'provisions.base' },
+        { label: 'Flat base per hunter', value: base, key: 'provisions.base' },
+        {
+          label: 'Minutes of food income per hunter',
+          value: minutes,
+          key: 'provisions.incomeMinutes',
+        },
+        { label: 'Food income per minute', value: income },
         { label: 'Party size', value: partySize },
         { label: 'Growth per tier', value: growth, key: 'provisions.growth' },
         { label: 'Tier', value: tier },

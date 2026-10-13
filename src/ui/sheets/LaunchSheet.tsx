@@ -112,7 +112,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
   if (!contract) return <p>That contract is no longer on the board.</p>;
   const m = monsters[contract.monster];
   const { weak, resists } = resistLines(contract.monster);
-  const food = provisions(chosen.length, contract.tier);
+  const food = provisions(s, chosen.length, contract.tier);
   const short = s.resources.food < food.value;
   const wait = short
     ? timeToAfford(

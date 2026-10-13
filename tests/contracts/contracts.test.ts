@@ -7,7 +7,10 @@ import { computeOdds, type OddsInput } from '../../src/core/contracts/odds';
 import { bounty, provisions, trophies, xpPerHunter } from '../../src/core/contracts/rewards';
 import { deathSeed, fightSeed, oddsSeed } from '../../src/core/contracts/seeds';
 import { seeded } from '../../src/core/rng';
+import { constantAt, num } from '../../src/core/balance-access';
+import { productionRate } from '../../src/core/systems/production';
 import { snap } from '../combat/helpers';
+import { hamletWithMine, keepRich } from './helpers';
 
 const HOUR = 3600;
 const calm = { tier: 2, reckless: false, story: false, recoveryMult: 1, deathRoll: null };
@@ -88,9 +91,28 @@ describe('rewards (GDD §5.4)', () => {
     expect(bounty(1, 'keep', [hunters.toma.traits]).breakdown.children?.length).toBeGreaterThan(3);
   });
 
-  it('provisions: 30 × party × 2.2^(tier−1); tier 1 with 2 hunters is 60, tier 5 with 4 is about 2,811', () => {
-    expect(provisions(2, 1).value).toBe(60);
-    expect(provisions(4, 5).value).toBeCloseTo(2811.1, 0);
+  it('provisions in the Hamlet stay flat: 30 × party × 2.2^(tier−1); tier 1 with 2 hunters is 60', () => {
+    const s = hamletWithMine();
+    expect(provisions(s, 2, 1).value).toBe(60);
+    expect(provisions(s, 4, 5).value).toBeCloseTo(2811.1, 0);
+  });
+
+  it('provisions from the Keep follow the food income (Q9, D80): the larger of the flat base and the set minutes of it, per hunter', () => {
+    const s = keepRich();
+    s.peasants.jobs.farmer = 20;
+    const income = productionRate(s, 'food').value;
+    const minutes =
+      (constantAt('provisions.incomeMinutes').value as Record<string, number>).keep ?? 0;
+    const growth = num('provisions.growth');
+    const perHunter = Math.max(30, minutes * income);
+    expect(income).toBeGreaterThan(0);
+    expect(provisions(s, 3, 2).value).toBeCloseTo(perHunter * 3 * growth, 6);
+    // More food income, dearer provisions; the breakdown names the income it used.
+    s.peasants.jobs.farmer += 10;
+    if (minutes > 0) expect(provisions(s, 3, 2).value).toBeGreaterThan(perHunter * 3 * growth);
+    expect(provisions(s, 3, 2).breakdown.children?.map((c) => c.label)).toContain(
+      'Food income per minute',
+    );
   });
 
   it('trophies equal the tier; XP is 20 × tier, half on a failure', () => {

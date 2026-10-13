@@ -95,7 +95,7 @@ describe('launching (GDD §5.4.2)', () => {
     expect(run(s, { type: 'contract.launch', contract: c.id, party: ['halvar', 'zora'] }).ok).toBe(
       true,
     );
-    expect(s.resources.food).toBe(food - provisions(2, 2).value);
+    expect(s.resources.food).toBe(food - provisions(s, 2, 2).value);
     expect(s.board.open).toHaveLength(0);
     expect(s.running).toHaveLength(1);
     expect(s.running[0]?.endsAt).toBe(s.time + 1 * HOUR); // tier 2 lasts 1 h

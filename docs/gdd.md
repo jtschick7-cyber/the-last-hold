@@ -983,7 +983,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Board refill | 1 per interval, up to the cap; declining is free | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
 | Board opens | when the first Mine is built (G6) | — | 5.4.1 |
 | Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5 } | 5.4.1 |
-| Provisions | `p × partySize × g^(tier−1)` food at launch | `provisions.base` = 30, `provisions.growth` = 2.2 | 5.4.2 |
+| Provisions | `max(p, m × food/min) × partySize × g^(tier−1)` food at launch (Q9, D81; `m` is 0 in the Hamlet) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = `{hamlet: 0, keep: m}` | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
 | Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 72 *(⚑ v0.2 tuning, was 60: bounties must be 70% of silver from the Keep on, D76)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.0 } | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |

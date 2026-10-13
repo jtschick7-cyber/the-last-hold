@@ -73,14 +73,14 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a). Everything else in v0.2 goes ahead meanwhile; only T2.4 waits.
 - **Answer (owner):** the owner pasted a save code (a Keep-rank game, 29 peasants), 2026-10-13. It is now the fixture `tests/saves/fixtures/v1-owner.json`.
 
-### Q6 — Two small content problems found while writing v0.2 content (blocks nothing yet) — 6a answered, 6b open
+### Q6 — Two small content problems found while writing v0.2 content (blocks nothing yet) — answered
 - **6a. "Gloam Wolf" is an existing creature.** The name search (GDD §2.3 process rule) found a "Gloam Wolf" in *The Elder Scrolls Online* (shadowy dire wolves from Nocturnal's realm). Nothing else in the content collided.
   - **Options:** (a) **Gaunt Wolf** (the GDD describes them as "grey, gaunt, too quiet"); (b) Fell Wolf; (c) Pale Wolf; (d) keep "Gloam Wolf" and accept the overlap (not recommended: §2.3 forbids it).
   - **Recommendation:** (a). I searched "Gaunt Wolf" against the influences and found nothing. I've used it in the content for now as a Proposed name (D69); the internal id is just `wolf`, so renaming later touches no saves.
 - **6b. Toma Kettle's Speed breaks the GDD's own rule.** §8.5 says hunters vary "by up to ±10%" from their role baseline, but Toma's row has Speed 10 on a Vanguard baseline of 8 (+25%), before his Quick trait adds 3 more (so 13 in a fight, faster than the Mender and Striker baselines).
   - **Options:** (a) keep the table as written (Toma is the fast Vanguard, on purpose); (b) change his Speed to 8 or 9 (and keep Quick); (c) drop the "±10%" sentence and let the table rule.
   - **Recommendation:** (b) Speed 8: Quick already makes him fast, and a 13-Speed Vanguard acts nearly twice as often as Halvar (7). The content follows the table as written until you answer; the test names Toma as the one exception.
-- **Answer (owner):** 6a: **Gaunt Wolf** accepted, 2026-10-13 (D71). 6b: not answered yet; the content follows the GDD table as written (Speed 10) and the test names Toma as the one exception.
+- **Answer (owner):** 6a: **Gaunt Wolf** accepted, 2026-10-13 (D71). 6b: **option (b), Speed 8**, 2026-10-13 (D80); Toma's Speed is now 8 and the test no longer has an exception.
 
 ### Q7 — A log line shows the wrong Armor on one hit (blocks nothing; a small fix needs your OK) — answered
 - **Question:** when a hit takes the Draugr under half Health, its Swell ability raises its Armor by 50% *after* that hit. The fight log shows the Armor *after* the hit, so on that one line it shows the swollen number even though the hit itself met the lower one. The damage is right; only the printed Armor on that single line is off.
@@ -98,17 +98,17 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a) and (c) together. They change `suggest.finalists` (locked, 5 → 3) and add a stage-2 sample count (new, 200). Both are locked-constant territory, so I haven't touched them; Suggest is implemented exactly as the GDD says until you answer.
 - **Answer (owner):** yes, make it faster: 3 finalists at 200 fights each, then 500-fight odds for the winner only, 2026-10-13 (D73).
 
-### Q9 — Provisions can't be 20–40% of food income (blocks the "provisions matter" check; the check is marked pending, not failing) — open
+### Q9 — Provisions can't be 20–40% of food income (blocks the "provisions matter" check; the check is marked pending, not failing) — answered
 - **What the GDD asks:** from the Keep on, contract provisions (30 food × party size × 2.2 per tier above the first) should take 20–40% of the food income, so food stays a real cost after the settling years (G3, §6.3 #8).
 - **What the simulator measures** (Standard player, 5 seeds, both starts): provisions are about **0.2%** of food income (0.5% in the first hours after the Keep, 0.2–0.3% over the first days). Food income is already about a million a day at the Keep and keeps growing (Mills and settled peasants), while provisions top out at about 2,800 food for the biggest contract and the board only gives about 10 contracts a day.
 - **Why tuning can't fix it:** to reach 20% provisions would have to be about 100 times bigger. The early game would break: the first contract would cost thousands of food when the hold makes 6 a minute.
 - **Options:** (a) **Scale provisions with the hold's food income**, for example the cost is N minutes of the current food rate per hunter (with a floor so the first contract stays about 60 food). This makes food a real cost at every stage, and the 20–40% target becomes reachable by choosing N. It changes the provisions formula, which is design content. (b) **Keep the formula and drop or reword the check**: provisions are a small early gate (the first contracts need food you have to hold back) and nothing more. (c) **Measure it differently**: judge the share only in the first six hours after the Keep, with a lower band, still small. (d) Leave as it is for now and decide at the v0.4 flesh-out, when Citadel and Bastion bring their own costs.
 - **Recommendation:** (a), because your reason for the sink ("food stays a real cost after settling") is true only if it grows with income. If you'd rather not touch the formula now, (d) with the check staying "pending Q9" is safe.
-- **Answer (owner):**
+- **Answer (owner):** option (a), 2026-10-13 (D81): provisions scale with the hold's food income from the Keep on.
 
-### Q10 — "Firstblade" is already a Skyrim lore name (blocks one early-seed line; nothing else) — open
+### Q10 — "Firstblade" is already a Skyrim lore name (blocks one early-seed line; nothing else) — answered
 - **What I found:** the name search for the v0.2 text found "Firstblade" in *The Elder Scrolls* lore (a UESP "Lore:Firstblade" entry). The GDD §2.5 and setting primer use it as a working name for the order's last champion, and primer §6.7 lets Kozly Hollow notices end with *"…and may the Firstblade's name be kept warm."* ("Emberwrights" and every other new name came up clear.)
 - **What I did:** left that one seed line out of the v0.2 notices, so no collision ships. Everything else in the text is in. The villages' other seed (Mirograd's "my boy, who went onward with the order") is in, and Ravenfell never mentions her, as the primer says.
 - **Options:** (a) rename her now to something clear (candidates: **the Hearthblade**, **the Last Wright**, **the First Hand**), and put the seed line back with the new name; (b) keep "Firstblade" for now and decide before v0.5 (the primer says lore names get their check before then), with the seed line staying out until you do; (c) keep the name and accept the overlap (§2.3 says not to).
 - **Recommendation:** (b): nothing in v0.2 needs her name, and the title belongs to the story you're keeping for v0.5. When you choose, I'll rename it in the docs in one pass.
-- **Answer (owner):**
+- **Answer (owner):** option (b), 2026-10-13 (D80): keep the name for now, decide before v0.5; the seed line stays out until then.

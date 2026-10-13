@@ -154,7 +154,7 @@ export const runOne = (spec: RunSpec): RunResult => {
           if (c.type !== 'contract.launch') continue;
           const run = s.running.find((x) => x.contract.id === c.contract);
           if (run)
-            keepPhase.provisionsFood += provisions(run.party.length, run.contract.tier).value;
+            keepPhase.provisionsFood += provisions(s, run.party.length, run.contract.tier).value;
         }
       }
       checkIns.push({

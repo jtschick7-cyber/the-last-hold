@@ -22,7 +22,7 @@ type Act = (cmd: Command) => boolean;
 
 const sendable = (s: GameState, c: ContractInstance, party: HunterId[]): boolean => {
   if (party.length === 0) return false;
-  if (s.resources.food < provisions(party.length, c.tier).value) return false;
+  if (s.resources.food < provisions(s, party.length, c.tier).value) return false;
   const odds = computeOdds({
     gameSeed: s.meta.gameSeed,
     contractId: c.id,
@@ -83,7 +83,7 @@ export const firstContractFood = (s: GameState): number => {
   const free = availableHunters(s).length;
   if (free === 0) return 0;
   const tier = Math.max(...s.board.open.map((c) => c.tier));
-  return provisions(Math.min(free, maxPartySize(tier, s.cycle.age)), tier).value;
+  return provisions(s, Math.min(free, maxPartySize(tier, s.cycle.age)), tier).value;
 };
 
 /** Contracts worth sending first: the highest tier, then the longest on the board. */

@@ -34,7 +34,7 @@ export const launch = (
   const free = availableHunters(state);
   const notFree = party.find((h) => !free.includes(h));
   if (notFree) return refuse('Every hunter sent must be on the active roster and ready.');
-  const food = provisions(party.length, contract.tier).value;
+  const food = provisions(state, party.length, contract.tier).value;
   if (state.resources.food < food) return refuse('Not enough food for provisions.');
   const snapshots = party.map((h) => snapshotOf(state, h));
   const odds = computeOdds({

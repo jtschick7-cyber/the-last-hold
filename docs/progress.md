@@ -202,3 +202,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Still waiting on the owner:** the v0.2 playtest; Q6b, Q9, Q10; approvals of D72, D74–D79.
 - **Note:** the local WebKit run of the determinism e2e fails in this session (WebKit only runs in CI, as before); Chromium passes.
 
+## 2026-10-13 — v0.2 after the playtest (in progress, paused)
+- **Owner answers:** the playtest passed. Q6b Speed 8, Q9 option (a), Q10 option (b), and D72 and D74–D79 approved (D80 in `docs/decisions.md`).
+- **Done:** Q9 is built but **switched off**: provisions can scale with the hold's food income from the Keep (`provisions.incomeMinutes`, now 0 in the Keep, so the game plays exactly as playtested). Tests pass (846). The GDD §7 table lists the new constant.
+- **Not done:** Toma's Speed 8 and the re-record of seeded golden fight d (owner chose "re-record"); picking the Q9 numbers; un-pending the provisions check; PR, `sim:check`, `sim:accept`, merge, tag.
+- **Why paused:** with income-scaled provisions, three locked simulator checks pull against each other (provisions 20–40% of food, bounties ≥ 70% of silver, first tier-3 within 24–48 h). One tunable combination passed every check on one run (N = 1.5 minutes, growth 2.2, bounty base 78); the owner stopped me before I applied it and asked for a planning-chat prompt instead.
+
