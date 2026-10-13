@@ -1,7 +1,7 @@
 import { roundHalfUp } from './build';
 import { finalDamage, hurt } from './formula';
 import { emit, type Fight } from './fight-state';
-import { armorEff, mightEff, present, standing, takenReduction } from './stats';
+import { armorEff, mightEff, present, speedEff, standing, takenReduction } from './stats';
 import type { Combatant } from './types';
 
 // GDD §8.3 abilities in turn-meter form. Order inside a monster action [JC, D70]:
@@ -50,6 +50,7 @@ export const afterOwnHit = (
         if (draw() < a.chance) {
           target.hamstringLeft = a.actions;
           target.statusPct.speed = -a.speedCut;
+          target.speed = speedEff(target);
           notes.push(
             `${target.name} is hamstrung (Speed −${Math.round(a.speedCut * 100)}% for ${a.actions} actions)`,
           );

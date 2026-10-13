@@ -25,3 +25,7 @@ export const oddsSeed = (
 /** The death roll for one downed hunter on a Reckless contract. */
 export const deathSeed = (gameSeed: string, contractId: string, hunterId: string): string =>
   streamSeed(gameSeed, 'death', contractId, hunterId);
+
+/** Suggest, stage 1, sample i: the same seeds for every party, so comparisons are fair (GDD §6.5). */
+export const suggestSeed = (gameSeed: string, contractId: string, i: number): string =>
+  streamSeed(gameSeed, 'suggest', contractId, i);

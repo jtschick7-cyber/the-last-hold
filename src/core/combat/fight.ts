@@ -14,7 +14,7 @@ import type { Combatant, FightInput, FightResult } from './types';
 
 const actsBefore = (a: Combatant, b: Combatant): number =>
   b.meter - a.meter ||
-  speedEff(b) - speedEff(a) ||
+  b.speed - a.speed ||
   (a.side === b.side ? 0 : a.side === 'hunter' ? -1 : 1) ||
   a.slot - b.slot;
 
@@ -22,7 +22,10 @@ const actsBefore = (a: Combatant, b: Combatant): number =>
 const endOwnAction = (c: Combatant): void => {
   if (c.hamstringLeft > 0) {
     c.hamstringLeft -= 1;
-    if (c.hamstringLeft === 0) c.statusPct.speed = 0;
+    if (c.hamstringLeft === 0) {
+      c.statusPct.speed = 0;
+      c.speed = speedEff(c);
+    }
   }
 };
 
@@ -154,7 +157,7 @@ export const runFight = (input: FightInput): FightResult => {
     let anyReady = false;
     for (const c of everyone) {
       if (!standing(c) || c.awayLeft > 0) continue;
-      c.meter += speedEff(c);
+      c.meter += c.speed;
       if (c.meter >= threshold) anyReady = true;
     }
     if (!anyReady) continue;

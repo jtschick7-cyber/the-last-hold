@@ -62,6 +62,8 @@ export interface Combatant {
   readonly varianceHi: number;
   readonly critChance: number;
   readonly critMult: number;
+  /** speedEff, kept current: it only changes when a status (Hamstring) starts or ends. */
+  speed: number;
   readonly traits: readonly TraitEffect[];
   readonly fireTakenReduction: number;
   readonly silverSubHit: boolean;
