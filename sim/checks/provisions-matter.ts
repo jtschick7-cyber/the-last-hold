@@ -19,7 +19,8 @@ export const provisionsMatterCheck: Check = {
       const ok = share >= minShare && share <= maxShare;
       pass = (pass ?? true) && ok;
       lines.push(
-        `${r.spec.start} ${r.spec.seed}: provisions ${(share * 100).toFixed(1)}% of food income ${ok ? '✓' : '✗'}`,
+        `${r.spec.start} ${r.spec.seed}: provisions ${(share * 100).toFixed(1)}% of food income ${ok ? '✓' : '✗'}` +
+          `${r.keepPhase.byCycle.length > 1 ? ` [${r.keepPhase.byCycle.map((c) => `cycle ${c.cycle} ${((c.provisionsFood / Math.max(1e-9, c.jobFood)) * 100).toFixed(0)}%`).join(', ')}]` : ''}`,
       );
     }
     return { id: 'provisions-matter', text, pass, lines };

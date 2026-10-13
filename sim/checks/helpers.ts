@@ -29,6 +29,13 @@ export const groups = (runs: readonly RunResult[], policy: PolicyId): Map<StartI
 export const medianMoment = (runs: readonly RunResult[], moment: Moment): number =>
   median(runs.map((r) => r.moments[moment] ?? Number.POSITIVE_INFINITY));
 
+/** True when every run stopped early (the fast set) without this moment among its targets. */
+export const stoppedBefore = (runs: readonly RunResult[], moment?: Moment): boolean =>
+  runs.length > 0 &&
+  runs.every(
+    (r) => r.spec.stopAt !== undefined && (moment === undefined || !r.spec.stopAt.includes(moment)),
+  );
+
 /** A GDD §6.2 row: every bound, for every start that was run. */
 export const timeCheck = (target: TimeTarget, moment: Moment): Check => ({
   id: target.id,
@@ -36,6 +43,8 @@ export const timeCheck = (target: TimeTarget, moment: Moment): Check => ({
   judge: (runs): CheckResult => {
     const lines: string[] = [];
     let pass: boolean | null = null;
+    if (stoppedBefore(runs, moment))
+      return { id: target.id, text: target.text, pass: null, lines: ['not in the fast set'] };
     for (const b of target.bounds) {
       const byStart = groups(runs, b.policy);
       if (byStart.size === 0) lines.push(`${b.policy}: not run`);
@@ -61,14 +70,11 @@ export const timeCheck = (target: TimeTarget, moment: Moment): Check => ({
 
 /**
  * The check-ins an engagement check looks at: the scheduled ones (GDD §6.3
- * judges Standard check-ins, not the Opening's 10-second steps), from the
- * start until the Keep (v0.1's end of content), or the whole run if the Keep
- * was never reached.
+ * judges Standard check-ins, not the Opening's 10-second steps) of all of cycle 1,
+ * up to and including the Last Stand (v0.4, D114; through v0.3 it stopped at the Keep).
  */
-export const engagementWindow = (run: RunResult): readonly CheckInStat[] => {
-  const keep = run.moments.keep ?? Number.POSITIVE_INFINITY;
-  return run.checkIns.filter((c) => !c.opening && c.hours <= keep);
-};
+export const engagementWindow = (run: RunResult): readonly CheckInStat[] =>
+  run.checkIns.filter((c) => !c.opening && c.cycle === 1);
 
 /**
  * A check-in with something to do: a purchase, or a real choice passed up to

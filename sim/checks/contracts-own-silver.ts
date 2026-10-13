@@ -27,7 +27,8 @@ export const contractsOwnSilverCheck: Check = {
       pass = (pass ?? true) && ok;
       lines.push(
         `${r.spec.start} ${r.spec.seed}: ${(share * 100).toFixed(1)}% from bounties ` +
-          `(${Math.round(bountySilver)} of ${Math.round(bountySilver + jobSilver)} silver since the Keep at ${hoursText(r.moments.keep)}) ${ok ? '✓' : '✗'}`,
+          `(${Math.round(bountySilver)} of ${Math.round(bountySilver + jobSilver)} silver from the Keep on, every cycle; first Keep at ${hoursText(r.moments.keep)}) ${ok ? '✓' : '✗'}` +
+          `${r.keepPhase.byCycle.length > 1 ? ` [${r.keepPhase.byCycle.map((c) => `cycle ${c.cycle} ${((c.bountySilver / Math.max(1e-9, c.bountySilver + c.jobSilver)) * 100).toFixed(0)}%`).join(', ')}]` : ''}`,
       );
     }
     return { id: 'contracts-own-silver', text, pass, lines };

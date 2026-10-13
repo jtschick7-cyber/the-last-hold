@@ -1,4 +1,9 @@
+import { bastionCheck } from './bastion';
+import { bestLastStandCheck } from './best-last-stand';
+import { citadelCheck } from './citadel';
 import { contractsOwnSilverCheck } from './contracts-own-silver';
+import { firstLongNightCheck } from './first-long-night';
+import { laterCyclesCheck } from './later-cycles';
 import { firstContractCheck } from './first-contract';
 import { firstCottageCheck } from './first-cottage';
 import { firstIdentifiedCheck } from './first-identified';
@@ -42,4 +47,10 @@ export const CHECKS: readonly Check[] = [
   firstIdentifiedCheck,
   firstStudiedCheck,
   preparationMattersCheck,
+  // v0.4
+  citadelCheck,
+  bastionCheck,
+  bestLastStandCheck,
+  firstLongNightCheck,
+  laterCyclesCheck,
 ];
