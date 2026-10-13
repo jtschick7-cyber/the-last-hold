@@ -1,18 +1,17 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { monsters } from '../../content/monsters';
 import { villages } from '../../content/villages';
 import { constantAt } from '../../core/balance-access';
 import { formatDuration, formatNumber } from '../../core/format';
-import { computeOdds } from '../../core/contracts/odds';
 import { maxPartySize } from '../../core/contracts/party';
 import { provisions } from '../../core/contracts/rewards';
-import { suggestParty } from '../../core/contracts/suggest';
 import type { ContractInstance } from '../../core/state/game-state';
 import { timeToAfford } from '../../core/systems/costs';
 import { availableHunters, snapshotOf } from '../../core/systems/hunters';
 import { productionRate } from '../../core/systems/production';
 import { abilityLines, pct, resistLines } from '../app/contract-text';
+import { debounced, requestSuggest, type OddsAnswer } from '../app/odds-client';
 import { dispatch, game, version } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
@@ -80,20 +79,34 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
     () => free.filter((h) => party.includes(h)),
     [party.join(','), free.join(',')],
   );
-  const odds = useMemo(
-    () =>
-      contract && chosen.length > 0
-        ? computeOdds({
-            gameSeed: s.meta.gameSeed,
-            contractId: contract.id,
-            party: chosen.map((h) => snapshotOf(s, h)),
-            monster: { monster: contract.monster, tier: contract.tier },
-            location: contract.location,
-            rank: s.cycle.age,
-          })
-        : null,
-    [contractId, chosen.join(',')],
-  );
+  // Odds come from a worker, debounced; the last answer stays on screen, dimmed, while a new one is worked out.
+  const [answer, setAnswer] = useState<OddsAnswer | null>(null);
+  const [busy, setBusy] = useState(false);
+  const ask = useMemo(() => debounced(), []);
+  useEffect(() => {
+    if (!contract || chosen.length === 0) {
+      setAnswer(null);
+      return;
+    }
+    let live = true;
+    setBusy(true);
+    void ask({
+      gameSeed: s.meta.gameSeed,
+      contractId: contract.id,
+      party: chosen.map((h) => snapshotOf(s, h)),
+      monster: { monster: contract.monster, tier: contract.tier },
+      location: contract.location,
+      rank: s.cycle.age,
+    }).then((a) => {
+      if (!live || a === null) return;
+      setAnswer(a);
+      setBusy(false);
+    });
+    return () => {
+      live = false;
+    };
+  }, [contractId, chosen.join(',')]);
+  const odds = answer?.odds ?? null;
   if (!contract) return <p>That contract is no longer on the board.</p>;
   const m = monsters[contract.monster];
   const { weak, resists } = resistLines(contract.monster);
@@ -114,8 +127,9 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
           ? [...party, id]
           : party,
     );
-  const suggest = (): void => {
-    const pick = suggestParty({
+  const suggest = async (): Promise<void> => {
+    setBusy(true);
+    const pick = await requestSuggest({
       gameSeed: s.meta.gameSeed,
       contractId: contract.id,
       available: free.map((h) => snapshotOf(s, h)),
@@ -125,6 +139,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
       maxParty: max,
     });
     if (pick) setParty(pick.party.map((p) => p.id));
+    setBusy(false);
   };
   const send = (): void => {
     if (!odds) return;
@@ -156,7 +171,12 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
         <h3 class={`${styles.cardTitle} ${styles.grow}`}>
           Party ({chosen.length}/{max})
         </h3>
-        <button type="button" class={styles.btn} onClick={suggest} disabled={free.length === 0}>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => void suggest()}
+          disabled={free.length === 0}
+        >
           Suggest best
         </button>
       </div>
@@ -181,7 +201,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
         ))}
       </ul>
       {odds && (
-        <div class={styles.card}>
+        <div class={styles.card} style={busy ? { opacity: 0.6 } : undefined}>
           <div class={styles.row}>
             <strong class={odds.reckless ? styles.warn : undefined}>
               ODDS {pct(odds.winChance)} ±{Math.round(odds.margin * 100)}
@@ -197,6 +217,11 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
               Why ▸
             </button>
           </div>
+          {answer?.quick && (
+            <div class={`${styles.small} ${styles.warn}`}>
+              Quick estimate ({odds.samples} fights): this device couldn't run the full 500.
+            </div>
+          )}
           {odds.hunters.map((h) => (
             <div key={h.id} class={`${styles.small} ${styles.dim}`}>
               {hunters[h.id as HunterId].shortName}: {pct(h.downed)} wounded
@@ -222,7 +247,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
         type="button"
         class={styles.btnPrimary}
         style={{ width: '100%', ...(odds?.reckless ? { background: 'var(--c-warn)' } : {}) }}
-        disabled={!odds || short}
+        disabled={!odds || short || busy}
         onClick={send}
       >
         {odds?.reckless ? 'Send them anyway' : 'Send the hunters'}

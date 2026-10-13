@@ -28,7 +28,9 @@ export default defineConfig({
     },
   ],
   projects: [
-    { name: 'phone-chromium', use: { ...devices['Pixel 7'] } },
+    { name: 'phone-chromium', use: { ...devices['Pixel 7'] }, testIgnore: /bench\.spec\.ts/ },
+    // The benchmark needs Chromium's CPU throttling (CDP), so it runs there only.
+    { name: 'bench', use: { ...devices['Desktop Chrome'] }, testMatch: /bench\.spec\.ts/ },
     { name: 'webkit', use: { ...devices['iPhone 13'] }, testMatch: /determinism\.spec\.ts/ },
   ],
 });

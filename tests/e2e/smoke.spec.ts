@@ -68,6 +68,8 @@ test('send hunters on a contract, skip time, and collect', async ({ page }) => {
   });
   await page.getByRole('button', { name: 'Prepare' }).first().click();
   await expect(page.getByText(/^ODDS/)).toBeVisible();
+  // The worker answered: this is the full 500-fight odds, not the main-thread quick estimate.
+  await expect(page.getByText(/Quick estimate/)).toHaveCount(0);
   await page.getByRole('button', { name: 'Send the hunters' }).click();
   await expect(page.getByText('⏱ Running')).toBeVisible();
 

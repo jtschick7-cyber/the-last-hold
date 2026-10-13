@@ -320,9 +320,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### D. Odds and suggest
 
 - [x] **T2.16 Odds.** 500 samples, margin, injuries, death chance, rewards, "Why?" per 100 ticks.
-- [ ] **T2.17 Worker.** Protocol, debounce, main-thread fallback labeled "quick estimate".
+- [x] **T2.17 Worker.** Protocol, debounce, main-thread fallback labeled "quick estimate".
 - [x] **T2.18 Suggest.** Two-stage search with common seeds. Built exactly as the GDD says; it misses the speed budget (Q8).
-- [?] **T2.19 Benchmarks** (waits on Q8: the budget as written can't be met) in `bench.yml`: warn at the budget, fail at 2×. The debug timing readout too.
+- [x] **T2.19 Benchmarks** (D73 answered Q8). Measured at a 4× slowdown: odds 96 ms (budget 100), Suggest 324 ms (budget 300): a small warning, well under the 2× fail line. in `bench.yml`: warn at the budget, fail at 2×. The debug timing readout too.
 
 ### E. UI and tests
 
