@@ -2,13 +2,13 @@ import type { ResidentId } from '../residents';
 
 // setting-primer §6.2: short lines, at most one sentence each, 3–5 variants per
 // trigger. "{count}" is filled in by the UI for triggers that carry a number.
-// The first-contract-success trigger arrives with contracts in v0.2.
 export const LINE_TRIGGERS = [
   'first-building',
   'idle-peasants',
   'long-absence',
   'peasant-milestone',
   'age-up',
+  'first-contract-success',
 ] as const;
 export type LineTrigger = (typeof LINE_TRIGGERS)[number];
 
@@ -68,6 +68,16 @@ export const residentLines: Readonly<Record<LineTrigger, TriggerLines>> = {
       "Walls again. I'd almost forgotten how they sound in the wind.",
       'Good. A hold should look like a hold.',
       "The stove draws better already. Don't ask me how I know.",
+    ],
+  },
+  'first-contract-success': {
+    speaker: 'brana',
+    placeholders: [],
+    variants: [
+      'Silver. Real silver. Say it again so I believe it.',
+      'They came back with all their fingers and a purse. Write that down.',
+      "That's what a bounty looks like. Pretty, isn't it.",
+      "A contract done, silver counted twice. I'll find it a drawer.",
     ],
   },
 };

@@ -1,8 +1,8 @@
 import { hunters } from '../../content/hunters';
 import { monsters } from '../../content/monsters';
-import { villages } from '../../content/villages';
 import { constantAt, num } from '../../core/balance-access';
 import { formatDuration } from '../../core/format';
+import { noticeFor } from '../../core/contracts/notice';
 import { bounty, trophies } from '../../core/contracts/rewards';
 import type { ContractInstance } from '../../core/state/game-state';
 import { dispatch, game, version } from '../app/runtime';
@@ -20,7 +20,7 @@ const durationOf = (c: ContractInstance): number =>
 
 const Open = ({ c }: { c: ContractInstance }) => {
   const s = game();
-  const head = villages[c.village].head;
+  const notice = noticeFor(c, s.meta.gameSeed);
   const pay = bounty(c.tier, s.cycle.age, []).value;
   return (
     <li class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>
@@ -28,8 +28,9 @@ const Open = ({ c }: { c: ContractInstance }) => {
         {placeName(c)} · T{c.tier}
       </strong>
       <div class={`${styles.small} ${styles.dim}`}>
-        {head.title} {head.name} asks for help with a {monsters[c.monster].name}.
+        <em>“{notice.text}”</em> {notice.signature}
       </div>
+      <div class={styles.small}>{monsters[c.monster].name}</div>
       <div class={`${styles.cost} ${styles.small}`}>
         <span>
           {Math.round(pay)} <ResourceIcon r="silver" />

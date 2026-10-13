@@ -1,6 +1,7 @@
 import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
 import type { GearSlot } from '../../content/gear';
+import type { SceneId } from '../../content/text/scenes';
 import type { HunterId } from '../../content/hunters';
 import type { JobId } from '../../content/jobs';
 import type { ResourceBundle } from '../../content/resources';
@@ -28,6 +29,8 @@ export type Command =
   | { type: 'contract.decline'; contract: string }
   /** Acknowledges finished contracts; rewards were applied at completion (B9). */
   | { type: 'results.collect' }
+  /** Remembers that a scene has been shown (setting-primer §6.6). */
+  | { type: 'scene.seen'; scene: SceneId }
   | { type: 'hunter.recruit'; hunter: HunterId }
   /** Moves a hunter between the active roster and the reserve. */
   | { type: 'roster.set'; hunter: HunterId; active: boolean }

@@ -26,7 +26,8 @@ import {
   version,
 } from './runtime';
 import { ErrorBoundary } from './ErrorBoundary';
-import { openSheet } from './sheets';
+import { playScenes } from './scenes';
+import { openSheet, sheets } from './sheets';
 import { UpdateBanner } from './UpdateBanner';
 
 export const pendingUpdate = signal<UpdateHandle | null>(null);
@@ -116,6 +117,11 @@ export const App = () => {
     document.documentElement.dataset.theme = theme;
     document.documentElement.dataset.motion = reduceMotion;
   }, [version.value]);
+
+  // Scenes play once, when their moment comes (setting-primer §6.6).
+  useEffect(() => {
+    if (version.value > 0) playScenes();
+  }, [version.value, sheets.value.length]);
 
   useEffect(() => {
     currentScreen.value = tab.value;

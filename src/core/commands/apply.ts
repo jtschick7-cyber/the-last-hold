@@ -1,6 +1,6 @@
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
-import { collect, decline, launch } from './contracts';
+import { collect, decline, launch, markSeen } from './contracts';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
 import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
@@ -40,6 +40,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return decline(state, cmd.contract);
     case 'results.collect':
       return collect(state);
+    case 'scene.seen':
+      return markSeen(state, cmd.scene);
     case 'hunter.recruit':
       return recruit(state, cmd.hunter);
     case 'roster.set':

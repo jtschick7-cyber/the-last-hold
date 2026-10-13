@@ -113,7 +113,7 @@ export const HunterView = ({ id }: { id: HunterId }) => {
       <p class={styles.small}>
         Record: {h.record.won} won · {h.record.lost} lost
       </p>
-      <p class={`${styles.small} ${styles.dim}`}>{def.sketch}</p>
+      <p class={`${styles.small} ${styles.dim}`}>{def.bio}</p>
       <button
         type="button"
         class={styles.btn}

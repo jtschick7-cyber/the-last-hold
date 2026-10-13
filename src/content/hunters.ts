@@ -66,6 +66,9 @@ export interface HunterDef {
   readonly recruitPrice: number;
   /** Story hunters never die: a Reckless death roll becomes Grievously Wounded (GDD §5.3.7). */
   readonly story: boolean;
+  /** The public line (setting-primer §5): all anyone in the hold knows, no secrets. */
+  readonly bio: string;
+  /** The GDD §8.5 design sketch, which may hint at lore; not shown to the player. */
   readonly sketch: string;
 }
 
@@ -82,6 +85,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     stats: { health: 170, might: 12, armor: 8, speed: 7 },
     recruitPrice: 0,
     story: false,
+    bio: 'Former charcoal-burner. Calm, enormous, and smells permanently of smoke.',
     sketch: 'Former charcoal-burner. Calm, enormous, smells permanently of smoke.',
   },
   zora: {
@@ -96,6 +100,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     stats: { health: 100, might: 20, armor: 3, speed: 13 },
     recruitPrice: 0,
     story: false,
+    bio: 'Ran the Dubno ferry until the river turned deadly. Fights with a boathook.',
     sketch:
       'The Ferrywoman. Ran the Dubno ferry until the river turned deadly. Fights with a boathook.',
   },
@@ -111,6 +116,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     stats: { health: 115, might: 10, armor: 4, speed: 9 },
     recruitPrice: 150,
     story: true,
+    bio: 'Village bonesetter, 58. Has buried two masters and a wife, and isn’t done yet.',
     sketch: "Village bonesetter, 58. Has buried two masters and a wife, and isn't done yet.",
   },
   bjarna: {
@@ -125,6 +131,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     stats: { health: 95, might: 21, armor: 3, speed: 12 },
     recruitPrice: 400,
     story: false,
+    bio: 'Velkvik fisherwoman whose rime-dipped spear never quite thaws.',
     sketch: 'Velkvik fisherwoman. Her rime-dipped spear never quite thaws.',
   },
   vesna: {
@@ -139,6 +146,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     stats: { health: 105, might: 11, armor: 4, speed: 11 },
     recruitPrice: 350,
     story: false,
+    bio: 'Herbwife who knows which roots heal and which ones stop hearts.',
     sketch: 'Herbwife who knows which roots heal and which ones stop hearts.',
   },
   radek: {
@@ -153,6 +161,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     stats: { health: 165, might: 11, armor: 9, speed: 7 },
     recruitPrice: 500,
     story: false,
+    bio: 'Has buried half of Mirograd. Lately his shovel has been silver-shod.',
     sketch: 'Has buried half of Mirograd. Lately his shovel has been silver-shod.',
   },
   sigrun: {
@@ -167,6 +176,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     stats: { health: 100, might: 22, armor: 4, speed: 11 },
     recruitPrice: 1200,
     story: true,
+    bio: 'Lost a hand young and won’t say how. Knows forge-work better than she should.',
     sketch: "Exiled Emberwright apprentice who won't say why she left.",
   },
   toma: {
@@ -181,6 +191,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     stats: { health: 150, might: 12, armor: 7, speed: 10 },
     recruitPrice: 600,
     story: true,
+    bio: 'Tinker and talker, with opinions about every price at the hold.',
     sketch: 'Tinker and talker. Has opinions about every price at the hold.',
   },
 };

@@ -85,7 +85,7 @@ export const HuntersScreen = () => {
                 <span class={styles.grow}>
                   <strong>{c.name}</strong>
                   <div class={`${styles.small} ${styles.dim}`}>
-                    {roleNames[c.role]} · {c.damage} · {c.sketch}
+                    {roleNames[c.role]} · {c.damage} · {c.bio}
                   </div>
                 </span>
                 <button

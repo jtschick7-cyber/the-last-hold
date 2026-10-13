@@ -6,6 +6,7 @@ import type { HunterId } from '../../content/hunters';
 import type { JobId } from '../../content/jobs';
 import type { MonsterId } from '../../content/monsters';
 import type { ResourceId } from '../../content/resources';
+import type { SceneId } from '../../content/text/scenes';
 import type { VillageId } from '../../content/villages';
 import type { HunterSnapshot } from '../combat';
 import type { InjuryKind } from '../contracts/injury';
@@ -144,6 +145,8 @@ export interface GameState {
   /** Unread results; rewards were applied at completion (B9). */
   results: ContractResult[];
   fallen: FallenRecord[];
+  /** Scenes already shown (setting-primer §6.6), so each plays once. */
+  scenes: SceneId[];
   log: { recentFights: FightRef[] };
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */

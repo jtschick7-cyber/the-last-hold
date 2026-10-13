@@ -182,6 +182,19 @@ export const checkedNames: readonly CheckedName[] = [
     note: 'Uses the working lore name Emberwright, which gets its own check before v0.5.',
   },
   {
+    name: 'Emberwrights',
+    checked: '2026-10-13',
+    result: 'clear',
+    note: 'Searched with Emberwright: no match in any influence (Dark Souls has "Embers", which the GDD keeps on purpose).',
+  },
+  {
+    name: 'The fire for the folk',
+    checked: '2026-10-13',
+    result: 'generic',
+    note: "The order's public vow (setting-primer §2); a plain phrase.",
+  },
+  { name: 'Through the gate', checked: '2026-10-13', result: 'generic' },
+  {
     name: 'Trophy Hall',
     checked: '2026-10-13',
     result: 'clear',

@@ -47,6 +47,7 @@ export const createNewGame = (seed: string, now: number): GameState => {
     running: [],
     results: [],
     fallen: [],
+    scenes: [],
     log: { recentFights: [] },
     stats: {
       buildingsBought: 0,

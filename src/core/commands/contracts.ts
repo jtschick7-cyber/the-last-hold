@@ -1,4 +1,5 @@
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
+import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { constantAt } from '../balance-access';
 import { slotFreed } from '../contracts/board';
 import { computeOdds } from '../contracts/odds';
@@ -67,6 +68,14 @@ export const decline = (state: GameState, contractId: string): ApplyResult => {
   state.board.open = state.board.open.filter((c) => c.id !== contractId);
   if (state.board.open.length === before) return refuse('That contract is no longer on the board.');
   slotFreed(state);
+  return ok;
+};
+
+/** A scene was shown: remember it so it plays once. Harmless to repeat. */
+export const markSeen = (state: GameState, scene: SceneId): ApplyResult => {
+  if (!(SCENE_IDS as readonly string[]).includes(scene))
+    return refuse('That scene does not exist.');
+  if (!state.scenes.includes(scene)) state.scenes.push(scene);
   return ok;
 };
 

@@ -6,6 +6,7 @@ import { HUNTER_IDS, ROLE_IDS, type HunterId } from '../../content/hunters';
 import { JOB_IDS } from '../../content/jobs';
 import { MONSTER_IDS, type MonsterId } from '../../content/monsters';
 import { RESOURCE_IDS } from '../../content/resources';
+import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { TRAIT_IDS, type TraitId } from '../../content/traits';
 import { VILLAGE_IDS, type VillageId } from '../../content/villages';
 import type { HunterSnapshot } from '../combat';
@@ -105,6 +106,16 @@ const settingsFrom = (v: unknown, warnings: string[]): Settings => {
     rateUnit: pick('rateUnit', ['minute', 'hour']),
     reduceMotion: pick('reduceMotion', ['system', 'on', 'off']),
   };
+};
+
+const scenesSeen = (v: unknown, warnings: string[]): SceneId[] => {
+  const out: SceneId[] = [];
+  for (const x of arr(v, 'scenes')) {
+    if (!(SCENE_IDS as readonly unknown[]).includes(x))
+      warnings.push(`Dropped unknown scene "${String(x)}".`);
+    else if (!out.includes(x as SceneId)) out.push(x as SceneId);
+  }
+  return out;
 };
 
 const arr = (v: unknown, where: string): unknown[] => {
@@ -367,6 +378,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
     running: arr(s.running, 'running').map((r, i) => running(r, `running[${i}]`)),
     results: arr(s.results, 'results').map((r, i) => result(r, `results[${i}]`)),
     fallen: arr(s.fallen, 'fallen').map((r, i) => fallen(r, `fallen[${i}]`)),
+    scenes: scenesSeen(s.scenes, warnings),
     log: {
       recentFights: arr(logRaw.recentFights, 'log.recentFights').map((r, i) =>
         fightRef(r, `log.recentFights[${i}]`),

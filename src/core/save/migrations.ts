@@ -42,6 +42,7 @@ export const migrations: Readonly<Record<number, Migration>> = {
       running: [],
       results: [],
       fallen: [],
+      scenes: [],
       log: { recentFights: [] },
       stats: {
         ...asPlain(s.stats),

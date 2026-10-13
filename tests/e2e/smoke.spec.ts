@@ -71,6 +71,9 @@ test('send hunters on a contract, skip time, and collect', async ({ page }) => {
   // The worker answered: this is the full 500-fight odds, not the main-thread quick estimate.
   await expect(page.getByText(/Quick estimate/)).toHaveCount(0);
   await page.getByRole('button', { name: 'Send the hunters' }).click();
+  // The first contract plays a short scene once (setting-primer §6.6).
+  await expect(page.getByRole('dialog', { name: 'Through the gate' })).toBeVisible();
+  await page.getByRole('button', { name: 'Onward' }).click();
   await expect(page.getByText('⏱ Running')).toBeVisible();
 
   await debug('+1 h');
