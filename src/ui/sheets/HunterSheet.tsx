@@ -1,3 +1,4 @@
+import { hunterPortraitId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { traits } from '../../content/traits';
 import { formatDuration, formatNumber } from '../../core/format';
@@ -14,6 +15,7 @@ import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { Sprite } from '../widgets/Sprite';
 
 // GDD §9.7 hunter detail: stats with breakdowns, traits, gear and its upgrade,
 // the record, and a short bio.
@@ -79,10 +81,13 @@ export const HunterView = ({ id }: { id: HunterId }) => {
   const active = s.roster.active.includes(id);
   return (
     <div>
-      <p class={styles.dim}>
-        {roleNames[def.role]} · {def.damage} damage · {def.origin} · Lv {h.level}
-        {h.level >= levelCap() ? ' (max)' : ` · ${Math.floor(h.xp)}/${Math.round(need)} XP`}
-      </p>
+      <div class={styles.row}>
+        <Sprite id={hunterPortraitId(id)} scale={2} />
+        <p class={`${styles.dim} ${styles.grow}`}>
+          {roleNames[def.role]} · {def.damage} damage · {def.origin} · Lv {h.level}
+          {h.level >= levelCap() ? ' (max)' : ` · ${Math.floor(h.xp)}/${Math.round(need)} XP`}
+        </p>
+      </div>
       <p class={styles.small}>
         {status === 'recovering' && h.recovery
           ? `✚ ${h.recovery.kind}, back in ${formatDuration((h.recovery.until - s.time) / 1000)}`

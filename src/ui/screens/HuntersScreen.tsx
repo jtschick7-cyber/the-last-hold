@@ -1,3 +1,4 @@
+import { hunterPortraitId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { formatDuration, formatNumber } from '../../core/format';
 import {
@@ -12,6 +13,7 @@ import { openSheet } from '../app/sheets';
 import { HunterView } from '../sheets/HunterSheet';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { Sprite } from '../widgets/Sprite';
 
 // GDD §9.7: active roster, reserve, candidates, and locked silhouettes.
 const Card = ({ id }: { id: HunterId }) => {
@@ -36,10 +38,15 @@ const Card = ({ id }: { id: HunterId }) => {
         style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none' }}
         onClick={() => openSheet(def.name, () => <HunterView id={id} />)}
       >
-        <strong>{def.name}</strong>
-        <div class={`${styles.small} ${styles.dim}`}>
-          {roleNames[def.role]} · {def.damage} · Lv {h.level} · {line}
-        </div>
+        <span class={styles.row}>
+          <Sprite id={hunterPortraitId(id)} />
+          <span class={styles.grow}>
+            <strong>{def.name}</strong>
+            <div class={`${styles.small} ${styles.dim}`}>
+              {roleNames[def.role]} · {def.damage} · Lv {h.level} · {line}
+            </div>
+          </span>
+        </span>
       </button>
     </li>
   );
@@ -82,6 +89,7 @@ export const HuntersScreen = () => {
           <ul class={styles.list}>
             {cands.map((c) => (
               <li key={c.id} class={`${styles.row} ${styles.divider}`}>
+                <Sprite id={hunterPortraitId(c.id)} />
                 <span class={styles.grow}>
                   <strong>{c.name}</strong>
                   <div class={`${styles.small} ${styles.dim}`}>

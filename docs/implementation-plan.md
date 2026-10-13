@@ -332,8 +332,8 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### F. Art
 
-- [ ] **T2.23 Portrait generator.** The 8 hunters plus a contact sheet. 👤 Review.
-- [ ] **T2.24 Monster portraits.** The 12 species plus a contact sheet. 👤 Review; placeholders where rejected. **No battle sprites** (built when a screen needs them, v0.7 Delves) *(A17)*.
+- [x] **T2.23 Portrait generator.** The 8 hunters plus a contact sheet. 👤 Review *(built, D78; owner review pending: keep, regenerate or placeholder)*.
+- [x] **T2.24 Monster portraits.** The 12 species plus a contact sheet *(built, D78; owner review pending)*. 👤 Review; placeholders where rejected. **No battle sprites** (built when a screen needs them, v0.7 Delves) *(A17)*.
 
 ### G. Simulator
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
+import { monsterPortraitId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { monsters } from '../../content/monsters';
 import { villages } from '../../content/villages';
@@ -17,6 +18,7 @@ import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { Sprite } from '../widgets/Sprite';
 import { BreakdownView } from './BreakdownView';
 
 // GDD §9.5: the launch sheet. Pick a party (or Suggest), read the odds, pay
@@ -155,18 +157,21 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
   };
   return (
     <div>
-      <p>
-        <strong>
-          {villages[contract.village].name} · {m.name} · T{contract.tier}
-        </strong>
-      </p>
-      <p class={`${styles.small} ${styles.dim}`}>
-        weak: {weak}
-        <br />
-        resists: {resists}
-        <br />
-        {abilityLines(contract.monster).join(' · ')}
-      </p>
+      <div class={styles.row}>
+        <Sprite id={monsterPortraitId(contract.monster)} />
+        <div class={styles.grow}>
+          <strong>
+            {villages[contract.village].name} · {m.name} · T{contract.tier}
+          </strong>
+          <div class={`${styles.small} ${styles.dim}`}>
+            weak: {weak}
+            <br />
+            resists: {resists}
+            <br />
+            {abilityLines(contract.monster).join(' · ')}
+          </div>
+        </div>
+      </div>
       <div class={styles.row}>
         <h3 class={`${styles.cardTitle} ${styles.grow}`}>
           Party ({chosen.length}/{max})

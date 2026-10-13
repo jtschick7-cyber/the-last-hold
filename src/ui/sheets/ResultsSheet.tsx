@@ -1,4 +1,5 @@
 import { hunters } from '../../content/hunters';
+import { monsterPortraitId } from '../../content/assets';
 import { monsters } from '../../content/monsters';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { ContractResult } from '../../core/state/game-state';
@@ -7,6 +8,7 @@ import { openSheet } from '../app/sheets';
 import { placeName } from '../app/contract-text';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { Sprite } from '../widgets/Sprite';
 import { FightLogView } from './FightLogSheet';
 
 const INJURY: Record<string, string> = {
@@ -23,12 +25,17 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
   const fight = game().log.recentFights.find((f) => f.contractId === r.contractId);
   return (
     <li class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>
-      <strong class={r.success ? styles.good : styles.warn}>
-        {r.success ? '✔' : '✘'} {monsters[r.monster].name} · T{r.tier}
-      </strong>
-      <div class={`${styles.small} ${styles.dim}`}>
-        {placeName({ ...r, id: r.contractId, arrivedAt: 0 })} · finished{' '}
-        {formatDuration((now - r.at) / 1000)} ago
+      <div class={styles.row}>
+        <Sprite id={monsterPortraitId(r.monster)} />
+        <div class={styles.grow}>
+          <strong class={r.success ? styles.good : styles.warn}>
+            {r.success ? '✔' : '✘'} {monsters[r.monster].name} · T{r.tier}
+          </strong>
+          <div class={`${styles.small} ${styles.dim}`}>
+            {placeName({ ...r, id: r.contractId, arrivedAt: 0 })} · finished{' '}
+            {formatDuration((now - r.at) / 1000)} ago
+          </div>
+        </div>
       </div>
       {r.success ? (
         <div class={styles.cost}>
