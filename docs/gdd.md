@@ -923,7 +923,7 @@ The simulator can't measure these. The owner checks them at the end of each mile
 
 | What | Budget | How |
 |---|---|---|
-| **Suggested party** | ≤ 300 ms on a mid-range phone | Runs in a Web Worker. Stage 1 ranks every legal party with **50 samples**, using the **same seeds for every party** so comparisons are fair. Stage 2 reruns the **top 5 at 500 samples**. Against an unidentified monster, stage 1 uses **20 samples per candidate**. |
+| **Suggested party** | ≤ 300 ms on a mid-range phone | Runs in a Web Worker. Stage 1 ranks every legal party with **50 samples**, using the **same seeds for every party** so comparisons are fair. Stage 2 compares the **top 3 at 200 samples each**, and only the winner is rerun at the full 500 samples for the odds panel *(D73: was the top 5 at 500, too slow for a phone)*. Against an unidentified monster, stage 1 uses **20 samples per candidate**. |
 | **Live odds panel** | ≤ 100 ms per update | 500 samples, in the same worker |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | ≤ 5 min in CI | All policies and checks |
@@ -998,7 +998,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Turn meter | meter += Speed each tick; act at the threshold; fail at the tick limit | `combat.meterThreshold` = 100, `combat.maxTicks` = 400 | 5.5 |
 | Odds preview | `n` simulated fights; margin `±1.96 × √(p(1−p)/n)` | `odds.samples` = 500 **[JC: raised from 200; keeps the margin within ±4.4 points]** | 5.4.2 |
 | Well prepared | bounty multiplier | `prep.wellPreparedBounty` = 1.5 | 5.4.3 |
-| Suggested party | Stage 1: k samples per party (same seeds); stage 2: top N at full samples | `suggest.stage1Samples` = 50, `suggest.stage1PerCandidate` = 20, `suggest.finalists` = 5 | 6.5 |
+| Suggested party | Stage 1: k samples per party (same seeds); stage 2: top N at `stage2Samples`, then the winner at full samples | `suggest.stage1Samples` = 50, `suggest.stage1PerCandidate` = 20, `suggest.finalists` = 3, `suggest.stage2Samples` = 200 *(D73)* | 6.5 |
 | World-boss tokens *(v0.9)* | 1 per interval, banking up to the max; hunters rest after an attempt | `boss.tokenInterval` = 8 h, `boss.tokenMax` = 6, `boss.hunterRest` = 24 h | 5.12 |
 | Riftglass allowance *(v0.7)* | weekly cap ÷ 7 accrues per day, banking up to N weeks | `riftglass.bankWeeks` = 2 | 5.10 |
 | v0.4 arrival cap *(v0.4)* | trophy-to-Embers conversion capped at a share of the simulated cycle-1 median | `longNightArrival.emberCapShare` = 1.2 | 5.9 |

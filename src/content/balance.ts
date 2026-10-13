@@ -133,7 +133,9 @@ export const balance = {
   suggest: {
     stage1Samples: locked(50),
     stage1PerCandidate: locked(20),
-    finalists: locked(5),
+    // D73 (owner-approved): 5 finalists at 500 fights was too slow for a phone.
+    finalists: locked(3),
+    stage2Samples: locked(200),
   },
   boss: {
     tokenInterval: locked(8 * HOUR, 'seconds'), // 8 h

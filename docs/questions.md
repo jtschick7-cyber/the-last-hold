@@ -89,11 +89,11 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a). Nothing in play changes; only one printed number.
 - **Answer (owner):** make the fix, approved, 2026-10-13 (D71). Done: the log prints the Armor the hit met, and fight c's fingerprint was re-recorded.
 
-### Q8 — The Suggested-party speed budget can't be met as written (blocks T2.19) — open
+### Q8 — The Suggested-party speed budget can't be met as written (blocks T2.19) — answered
 - **What I measured** (Node on a fast desktop CPU, unthrottled; a phone is several times slower, and the GDD's benchmark uses a 4× slowdown as the stand-in):
   - **Live odds panel** (500 fights): about 27 ms. Budget: ≤ 100 ms at 4× slowdown, which is about 25 ms unthrottled. **Right at the line.**
   - **Suggested party:** 3 free hunters about 145 ms; 5 free hunters about 250–450 ms; 8 free hunters about 850–1,200 ms. Budget: ≤ 300 ms at 4×, about 75 ms unthrottled. **Over, by 2× to 15×.**
 - **Why:** each fight costs about 50 µs (about 3 µs per action; I profiled it and there's no easy 5× left). The GDD's stage 2 alone reruns 5 finalists at 500 fights = 2,500 fights, about 120 ms, which is more than the whole 75 ms budget before stage 1 even starts.
 - **Options:** (a) **Stage 2 compares 3 finalists at 200 fights each, then only the winner gets the full 500-fight odds** (the panel needs that number anyway). Estimated: 3 free hunters about 70 ms and 5 free hunters about 115 ms unthrottled, so about 280 ms and 460 ms at 4×. Fits the budget for small rosters and stays under the 2× fail line for 5. (b) Keep the algorithm and raise the budget to ≤ 1 s at 4× slowdown, which means a slower-feeling button on phones with big rosters. (c) Run Suggest in two steps in the worker: show the stage 1 pick immediately, then upgrade it when stage 2 finishes. Same total work, but it feels instant.
 - **Recommendation:** (a) and (c) together. They change `suggest.finalists` (locked, 5 → 3) and add a stage-2 sample count (new, 200). Both are locked-constant territory, so I haven't touched them; Suggest is implemented exactly as the GDD says until you answer.
-- **Answer (owner):**
+- **Answer (owner):** yes, make it faster: 3 finalists at 200 fights each, then 500-fight odds for the winner only, 2026-10-13 (D73).
