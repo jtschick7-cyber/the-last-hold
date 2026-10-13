@@ -268,7 +268,9 @@ describe('injuries and death (GDD §5.3.7)', () => {
 
   it('only a confirmed Reckless contract can kill a hunter, and the fallen are recorded', () => {
     let died = 0;
-    for (let i = 0; i < 40; i++) {
+    // 20 sample games: enough for at least one death (deterministic seeds), and keeps
+    // the test well inside the 5 s limit under load (owner's choice, 2026-10-13).
+    for (let i = 0; i < 20; i++) {
       const s = keepRich(`death${i}`);
       s.board.open = [];
       const c = put(s, { id: `d${i}`, tier: 5, monster: 'leshy', location: 'forest' });
