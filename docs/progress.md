@@ -283,3 +283,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Done (D103):** long hair falls behind the shoulders, so Herdis no longer reads as bearded (Stanko and Vesna changed the same way); Stanko holds his knife in a fist on a raised forearm; new icons: the Hunter's Lodge is a narrow red-gabled lodge with an arrow, the Alchemist's Hut a narrow blue-gabled hut with a jar. CI and the preview deploy are green.
 - **Process slip, reported:** one commit (`fccd418`, the icons) was pushed although that `npm run check` run had failed: the existing "only a confirmed Reckless contract can kill a hunter" test (about 3.5 s alone, unchanged since before this session) went over the 5 s test time limit once under load. Two full reruns are green, and CI is green on that commit. Options for the owner: make that test faster (fewer than 40 sample games, same assertion) or give it a longer time limit; neither changes what it checks.
 - **Next:** the owner's playtest of the preview.
+
+## 2026-10-13 — v0.3 complete
+- **State:** the owner's playtest passed; every decision is accepted (D105, including D59 and D84–D95). `sim:accept` recorded the baseline (18 of 18 checks pass). Plan status `complete`, checklist ticked. Then: PR to `main`, merge, tag `v0.3.0`.
+- **Next:** v0.4 needs a flesh-out session first (plan §0.4), on a new branch `milestone/v0.4`.
+- **Open:** Q10 ("Firstblade") before v0.5. The slow "only a confirmed Reckless contract can kill a hunter" test (about 3.5 s, near the 5 s limit under load) waits for the owner's choice: fewer sample games (recommended) or a longer time limit.
+- **Deferred, unchanged:** Pixel UI Pack frames; Node 20 workflow actions bump; WebKit e2e only in CI; the debug panel's simulated player sometimes skips the v0.3 buildings for 60 h (simulator only).

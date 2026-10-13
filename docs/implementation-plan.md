@@ -376,7 +376,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.3 — Bestiary & preparation
 
-**Status:** in progress
+**Status:** complete
 
 **Goal:** contracts against unknown monsters, clue-based investigation, a bestiary that speeds up later play, and preparation that clearly matters.
 **Reads:** GDD §5.6–5.7, §6 (v0.3 rows), §7.5, §8.3.1, §8.4, §8.6–8.7, §9.8–9.9; `setting-primer.md` §6.4.
@@ -424,11 +424,11 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### v0.3 owner playtest checklist 👤 (on the preview build)
 
-- [ ] Investigating feels like studying a case.
-- [ ] Preparation is a real decision.
-- [ ] The bestiary is pleasant to browse, and the "What it was" lines land.
-- [ ] Brewing isn't a chore.
-- [ ] Screenshot pass and monster art review.
+- [x] Investigating feels like studying a case.
+- [x] Preparation is a real decision.
+- [x] The bestiary is pleasant to browse, and the "What it was" lines land.
+- [x] Brewing isn't a chore.
+- [x] Screenshot pass and monster art review.
 
 **Out of scope:** alchemy discovery, skills, the Long Night, story secrets.
 

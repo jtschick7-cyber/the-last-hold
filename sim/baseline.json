@@ -1,5 +1,5 @@
 {
-  "milestone": "v0.2",
+  "milestone": "v0.3",
   "rulesVersion": 1,
   "groups": {
     "opening/mon": {
@@ -10,7 +10,10 @@
       "keep": 14,
       "first-contract": 0.1,
       "roster-4": 24,
-      "first-tier-3": 35
+      "first-tier-3": 35,
+      "hunters-lodge": 14,
+      "first-identified": 14.5,
+      "first-studied": 28
     },
     "opening/sat": {
       "first-cottage": 0,
@@ -20,7 +23,10 @@
       "keep": 24,
       "first-contract": 0.1,
       "roster-4": 24,
-      "first-tier-3": 48
+      "first-tier-3": 53.5,
+      "hunters-lodge": 28,
+      "first-identified": 28.5,
+      "first-studied": 33
     },
     "standard/mon": {
       "first-cottage": 0,
@@ -30,7 +36,10 @@
       "keep": 14,
       "first-contract": 0.1,
       "roster-4": 24,
-      "first-tier-3": 35
+      "first-tier-3": 35,
+      "hunters-lodge": 14,
+      "first-identified": 14.5,
+      "first-studied": 28
     },
     "standard/sat": {
       "first-cottage": 0,
@@ -40,7 +49,10 @@
       "keep": 24,
       "first-contract": 0.1,
       "roster-4": 24,
-      "first-tier-3": 48
+      "first-tier-3": 53.5,
+      "hunters-lodge": 28,
+      "first-identified": 28.5,
+      "first-studied": 33
     },
     "light/mon": {
       "first-cottage": 0,
@@ -50,7 +62,10 @@
       "keep": 24,
       "first-contract": 14,
       "roster-4": 38,
-      "first-tier-3": 64
+      "first-tier-3": 74,
+      "hunters-lodge": 29.5,
+      "first-identified": 30.5,
+      "first-studied": 54
     },
     "light/sat": {
       "first-cottage": 0,
@@ -60,7 +75,10 @@
       "keep": 27.5,
       "first-contract": 12,
       "roster-4": 36,
-      "first-tier-3": 72
+      "first-tier-3": 77.5,
+      "hunters-lodge": 27.5,
+      "first-identified": 28.5,
+      "first-studied": 52
     },
     "heavy/mon": {
       "first-cottage": 0,
@@ -69,8 +87,11 @@
       "peasants-10": 2.033333333333333,
       "keep": 14,
       "first-contract": 4,
-      "roster-4": 16,
-      "first-tier-3": 34
+      "roster-4": 24,
+      "first-tier-3": 34,
+      "hunters-lodge": 14,
+      "first-identified": 14.5,
+      "first-studied": 17
     },
     "heavy/sat": {
       "first-cottage": 0,
@@ -80,7 +101,10 @@
       "keep": 14,
       "first-contract": 4,
       "roster-4": 22,
-      "first-tier-3": 30
+      "first-tier-3": 30,
+      "hunters-lodge": 14,
+      "first-identified": 14.5,
+      "first-studied": 23
     }
   },
   "checks": {
@@ -98,6 +122,9 @@
     "first-tier-3": true,
     "odds-honest": true,
     "contracts-own-silver": true,
-    "provisions-matter": true
+    "provisions-matter": true,
+    "first-identified": true,
+    "first-studied": true,
+    "preparation-matters": true
   }
 }
