@@ -9,6 +9,7 @@ import { KNOWLEDGE_LEVELS, knowledgeLevels } from '../../src/content/knowledge';
 import { MONSTER_IDS, monsters } from '../../src/content/monsters';
 import { RESOURCE_IDS } from '../../src/content/resources';
 import { VILLAGE_IDS, villages } from '../../src/content/villages';
+import { bestiaryText } from '../../src/content/text/bestiary';
 import { num } from '../../src/core/balance-access';
 
 describe('knowledge levels (GDD §5.6.2)', () => {
@@ -165,5 +166,33 @@ describe('consumables (GDD §5.7)', () => {
 
   it('every summary is plain text with no leftover placeholder', () => {
     for (const c of Object.values(consumables)) expect(c.summary).not.toMatch(/\$\{|undefined/);
+  });
+});
+
+describe('bestiary text (setting-primer §6.4)', () => {
+  const sentences = (s: string): number => s.split(/[.!?]+\s/).filter((x) => x.trim()).length;
+
+  it('every species has a 2–3 sentence blurb and a one-sentence "What it was" line', () => {
+    expect(Object.keys(bestiaryText).sort()).toEqual([...MONSTER_IDS].sort());
+    for (const id of MONSTER_IDS) {
+      const { blurb, whatItWas } = bestiaryText[id];
+      expect(sentences(blurb), id).toBeGreaterThanOrEqual(2);
+      expect(sentences(blurb), id).toBeLessThanOrEqual(3);
+      expect(whatItWas, id).toMatch(/^What it was: .+\.$/);
+      expect(sentences(whatItWas), id).toBe(1);
+    }
+  });
+
+  it("the primer's own Upyr and Rusalka lines are used word for word", () => {
+    expect(bestiaryText.upyr.whatItWas).toBe(
+      'What it was: a miller buried in a hurry in the plague year, with no one left to watch the grave.',
+    );
+    expect(bestiaryText.rusalka.whatItWas).toBe(
+      "What it was: a girl from Dubno Ford who walked into the river the spring her betrothed didn't come home.",
+    );
+  });
+
+  it('no two "What it was" lines are the same', () => {
+    expect(new Set(MONSTER_IDS.map((m) => bestiaryText[m].whatItWas)).size).toBe(12);
   });
 });
