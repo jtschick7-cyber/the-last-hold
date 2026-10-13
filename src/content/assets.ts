@@ -77,7 +77,7 @@ const ICON_PACK: Record<ResourceId, { pack: string; url: string }> = {
   food: ONE_BIT,
   wood: TINY_TOWN,
   iron: TINY_TOWN,
-  silver: ONE_BIT,
+  silver: TINY_TOWN,
 };
 
 export const assets: readonly AssetEntry[] = [

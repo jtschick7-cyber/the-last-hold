@@ -50,10 +50,23 @@ export const compose = (r: Recipe): PNG => {
   return out;
 };
 
+/** Replaces each pixel's color with its brightness, keeping its opacity. */
+const greyscale = (png: PNG): void => {
+  for (let i = 0; i < png.data.length; i += 4) {
+    const r = png.data[i] ?? 0;
+    const g = png.data[i + 1] ?? 0;
+    const b = png.data[i + 2] ?? 0;
+    const luma = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+    png.data[i] = png.data[i + 1] = png.data[i + 2] = luma;
+  }
+};
+
 if (!palette) throw new Error('Choose a palette first (src/content/palette.ts).');
 for (const r of recipes) {
   const target = new URL(`public/assets/${r.file}`, root);
   mkdirSync(dirname(target.pathname), { recursive: true });
-  writeFileSync(target, recolorPng(PNG.sync.write(compose(r)), palette.colors));
+  const composed = compose(r);
+  if (r.grey) greyscale(composed);
+  writeFileSync(target, recolorPng(PNG.sync.write(composed), palette.colors));
   console.log(`${r.id} → public/assets/${r.file}`);
 }

@@ -41,6 +41,8 @@ export interface Recipe {
   readonly file: string;
   readonly sheet: SheetId;
   readonly layers: readonly (readonly (readonly (number | null)[])[])[];
+  /** Drop the pack's color first, so the palette picks greys (D65: a silvery coin from a gold one). */
+  readonly grey?: boolean;
 }
 
 const _ = null;
@@ -62,7 +64,13 @@ export const recipes: readonly Recipe[] = [
   { id: 'icon.resource.food', file: 'icons/food.png', sheet: 'bit', layers: [[[915]]] },
   { id: 'icon.resource.wood', file: 'icons/wood.png', sheet: 'town', layers: [[[106]]] },
   { id: 'icon.resource.iron', file: 'icons/iron.png', sheet: 'town', layers: [[[115]]] },
-  { id: 'icon.resource.silver', file: 'icons/silver.png', sheet: 'bitMono', layers: [[[188]]] },
+  {
+    id: 'icon.resource.silver',
+    file: 'icons/silver.png',
+    sheet: 'town',
+    layers: [[[93]]],
+    grey: true,
+  },
 
   // Buildings, 32 px (2 × 2 tiles).
   building('hearth-hall', [
