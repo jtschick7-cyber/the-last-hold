@@ -396,7 +396,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 - [x] **T3.2b Buildings.** Hunter's Lodge, Alchemist's Hut, Herb Garden. These add building ids to the saved state, so they wait for the migration (T3.4), as the Barracks did in v0.2.
 - [x] **T3.3 Text.** A bestiary blurb plus a "What it was" line for all 12 species.
 - [x] **T3.4 Migration v2 → v3,** using the owner's real v0.2 save.
-- [ ] **T3.5 Full coverage test** (GDD §8.3.1; the rules are locked).
+- [x] **T3.5 Full coverage test** (GDD §8.3.1; the rules are locked).
 - [ ] **T3.6 Unknown-monster contracts.** Candidates, clues as `advance` events, Lodge slots, Studied halving, Mastered auto-identify, Tracker.
 - [ ] **T3.7 Knowledge.** Level transitions, kills, bonuses.
 - [ ] **T3.8 Alchemy brewing.** Queues and the Herb Garden event.
