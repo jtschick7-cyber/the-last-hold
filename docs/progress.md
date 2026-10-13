@@ -215,3 +215,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** Q11 (does not block v0.2). Q10's seed line stays out until the owner decides the name before v0.5.
 - **Measurement note:** the simulator measures provisions from the state at the end of each check-in, not at the instant of launch; a purchase made after a launch in the same check-in can nudge the share slightly. It is well inside the band, so I left the measurement as the owner approved it.
 
+## 2026-10-13 — v0.2 complete
+- **Done:** the owner's playtest passed (including the provisions change). `sim:check` passes every check on 5 seeds, both starts; `sim:accept` recorded `sim/baseline.json`; v0.2 is `Status: complete` in the plan (D83). Merged to `main` as PR #4.
+- **Tag:** `v0.2.0` is pushed once from here; if it is refused (403), the owner creates it on GitHub.
+- **Next:** v0.3 (Bestiary & preparation) needs a flesh-out session first (plan §0.4) and the owner's two new hunters (plan v0.3 "Before you start"). Q11 (provisions read the current food income) is the first thing to settle at the start of v0.3.
+- **Open questions:** Q11. Q10's seed line stays out until the owner decides the name before v0.5. D59 (art choices) is still Proposed.
+- **Skipped or deferred:** clue tags and drops (v0.3 bestiary); Pixel UI Pack frames (D59); the Node 20 workflow actions bump; WebKit e2e only runs in CI.
+

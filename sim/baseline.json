@@ -1,5 +1,5 @@
 {
-  "milestone": "v0.1",
+  "milestone": "v0.2",
   "rulesVersion": 1,
   "groups": {
     "opening/mon": {
@@ -7,56 +7,80 @@
       "first-mine": 0.075,
       "mill-3": 3,
       "peasants-10": 3,
-      "keep": 14
+      "keep": 14,
+      "first-contract": 0.1,
+      "roster-4": 24,
+      "first-tier-3": 35
     },
     "opening/sat": {
       "first-cottage": 0,
       "first-mine": 0.075,
       "mill-3": 4,
       "peasants-10": 4,
-      "keep": 24
+      "keep": 24,
+      "first-contract": 0.1,
+      "roster-4": 24,
+      "first-tier-3": 48
     },
     "standard/mon": {
       "first-cottage": 0,
       "first-mine": 0.075,
       "mill-3": 3,
       "peasants-10": 3,
-      "keep": 14
+      "keep": 14,
+      "first-contract": 0.1,
+      "roster-4": 24,
+      "first-tier-3": 35
     },
     "standard/sat": {
       "first-cottage": 0,
       "first-mine": 0.075,
       "mill-3": 4,
       "peasants-10": 4,
-      "keep": 24
+      "keep": 24,
+      "first-contract": 0.1,
+      "roster-4": 24,
+      "first-tier-3": 48
     },
     "light/mon": {
       "first-cottage": 0,
       "first-mine": 5.5,
       "mill-3": 14,
       "peasants-10": 5.533333333333333,
-      "keep": 24
+      "keep": 24,
+      "first-contract": 14,
+      "roster-4": 38,
+      "first-tier-3": 64
     },
     "light/sat": {
       "first-cottage": 0,
       "first-mine": 3.5,
       "mill-3": 12,
       "peasants-10": 3.533333333333333,
-      "keep": 27.5
+      "keep": 27.5,
+      "first-contract": 12,
+      "roster-4": 36,
+      "first-tier-3": 72
     },
     "heavy/mon": {
       "first-cottage": 0,
       "first-mine": 2,
       "mill-3": 4,
       "peasants-10": 2.033333333333333,
-      "keep": 14
+      "keep": 14,
+      "first-contract": 4,
+      "roster-4": 16,
+      "first-tier-3": 34
     },
     "heavy/sat": {
       "first-cottage": 0,
       "first-mine": 2,
       "mill-3": 4,
       "peasants-10": 2.033333333333333,
-      "keep": 14
+      "keep": 14,
+      "first-contract": 4,
+      "roster-4": 22,
+      "first-tier-3": 30
     }
   },
   "checks": {
@@ -68,6 +92,12 @@
     "something-to-do": true,
     "no-dry-spells": true,
     "no-walls": true,
-    "no-overflow": true
+    "no-overflow": true,
+    "first-contract": true,
+    "roster-4": true,
+    "first-tier-3": true,
+    "odds-honest": true,
+    "contracts-own-silver": true,
+    "provisions-matter": true
   }
 }

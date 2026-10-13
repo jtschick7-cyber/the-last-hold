@@ -278,7 +278,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.2 — Hunters & contracts
 
-**Status:** in progress
+**Status:** complete
 
 **Goal:** contracts from Hamlet onward, an active and reserve roster, transparent turn-meter combat, rewards that feed the Hold, and honest odds.
 **Reads:** GDD §3.3, §4, §5.0, §5.3–5.5, §6 (v0.2 rows), §6.5, §7.3–7.4, §8.1–8.3, §8.5, §9.4–9.7; technical design §5.2–5.3, §7, §10.1, §14; `setting-primer.md` §3, §5, §6.3, §6.6–6.7.
