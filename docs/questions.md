@@ -119,7 +119,7 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a), at the start of v0.3, then re-check the provisions share.
 - **Answer (owner):** option (a), 2026-10-13 (D84): provisions read food capacity. One reading of mine, logged as Proposed in D84: capacity is limited by the number of peasants, so a hold with empty farmer slots is not charged for farmers it doesn't have.
 
-### Q12 — The two new hunters (blocks T3.1, and the parts of T3.2, T3.3 and T3.6 that need them) — open
+### Q12 — The two new hunters (blocks T3.1, and the parts of T3.2, T3.3 and T3.6 that need them) — answered
 - **Question:** the GDD (§8.5) reserves two hunters for v0.3: a **Wolf-friend Striker with Venom damage** and a **Tracker Mender**. Their definitions come from the owner's separate chat session. I have not invented them.
 - **What each hunter needs** (the same fields as the eight we have, GDD §8.5):
   - name (I search it against the influences, GDD §2.3, and add it to `tests/content/names.ts`);
@@ -132,7 +132,7 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options:** (a) you bring the full definitions from your chat session and I enter them as written; (b) you bring names and a line each, and I **propose** the numbers, unlocks and prices for you to approve one by one; (c) skip the two hunters for v0.3 and ship it with eight (the roster stays at 8, and the Barracks cap of 8 matters less).
 - **Recommendation:** (a). It is what the plan expects, and it keeps the design in your hands.
 - **What waits:** T3.1 is marked `[?]`. Everything else goes ahead: the Tracker trait's rule (T3.6) and the Wolf-friend trait's rule (T3.9) are built and tested with test hunters, and nothing ships to players until the hunters exist.
-- **Answer (owner):**
+- **Answer (owner):** 2026-10-13: option (a). The owner defined the two hunters in a separate chat: **Stanko Sleepless** (Striker, Venom, Lowland; Wolf-friend, Quick; 95/21/3/12; unlocks when the Gaunt Wolf reaches Studied; 450 silver) and **Herdis Strayfinder** (Mender, Frost, Highland; Tracker, Hard to kill; 120/9/4/10; unlocks when the Hunter's Lodge is built; 300 silver). Neither is a story hunter. The Striker was first named "Ivo", which is a Bear School witcher in *The Witcher*; the owner chose Stanko. D101, D102.
 
 ### Q13 — "Ironbark Tonic" collides with a Warcraft name (blocks nothing; the content uses a stand-in) — answered
 - **What I found:** the name search for the v0.3 consumables found **Ironbark** in *World of Warcraft* (a Restoration druid talent that reduces damage taken, which is what the tonic does) and as a *Hearthstone* druid spell. GDD §2.3 asks us to avoid influence names. Grave Oil, Drowned-Bane Oil, Thornbane Oil, Quickfoot Tincture and Saltburst came up clear.

@@ -153,6 +153,33 @@ export const checkedNames: readonly CheckedName[] = [
   { name: 'Sigrun', checked: '2026-10-13', result: 'clear', note: 'Short form; a Norse name.' },
   { name: 'Toma Kettle', checked: '2026-10-13', result: 'clear' },
   { name: 'Toma', checked: '2026-10-13', result: 'clear', note: 'Short form.' },
+  // v0.3 hunters (Q12), searched 2026-10-13.
+  {
+    name: 'Stanko Sleepless',
+    checked: '2026-10-13',
+    result: 'clear',
+    note: 'The owner\'s first choice, "Ivo", is a Bear School witcher (Ivo of Belhaven) and a dwarf in The Witcher, so the owner chose Stanko (D101).',
+  },
+  {
+    name: 'Stanko',
+    checked: '2026-10-13',
+    result: 'clear',
+    note: 'Short form; a South Slavic given name.',
+  },
+  {
+    name: 'Sleepless',
+    checked: '2026-10-13',
+    result: 'clear',
+    note: 'Epithet. Only unrelated books use "The Sleepless"; nothing in the influences.',
+  },
+  { name: 'Herdis Strayfinder', checked: '2026-10-13', result: 'clear' },
+  {
+    name: 'Herdis',
+    checked: '2026-10-13',
+    result: 'clear',
+    note: 'Short form; a Norse given name.',
+  },
+  { name: 'Strayfinder', checked: '2026-10-13', result: 'clear', note: 'Epithet.' },
   {
     name: 'Dubno Ford',
     checked: '2026-10-13',

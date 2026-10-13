@@ -7,6 +7,8 @@ import {
   type HunterId,
   type HunterUnlock,
 } from '../../content/hunters';
+import { knowledgeLevels } from '../../content/knowledge';
+import { monsters } from '../../content/monsters';
 import { traits } from '../../content/traits';
 import { num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
@@ -119,6 +121,8 @@ export const unlockMet = (state: GameState, unlock: HunterUnlock): boolean => {
       return (state.stats.kills[unlock.monster] ?? 0) >= 1;
     case 'buildingLevel':
       return state.buildings[unlock.building] >= unlock.level;
+    case 'knowledgeLevel':
+      return (state.bestiary[unlock.monster]?.level ?? 0) >= knowledgeLevels[unlock.level].number;
     case 'bountySilverEarned':
       return state.stats.bountySilver >= unlock.amount;
   }
@@ -136,7 +140,12 @@ export const describeUnlock = (unlock: HunterUnlock): string => {
     case 'defeatMonster':
       return `Defeat an ${unlock.monster === 'upyr' ? 'Upyr' : unlock.monster}`;
     case 'buildingLevel':
-      return `Smithy level ${unlock.level}`;
+      // A level-1 building reads as "Build the Hunter's Lodge" (GDD §8.5, Herdis).
+      return unlock.level === 1
+        ? `Build the ${buildings[unlock.building].name}`
+        : `${buildings[unlock.building].name} level ${unlock.level}`;
+    case 'knowledgeLevel':
+      return `${monsters[unlock.monster].name} reaches ${knowledgeLevels[unlock.level].name}`;
     case 'bountySilverEarned':
       return `Earn ${unlock.amount.toLocaleString('en-US')} silver in bounties`;
   }

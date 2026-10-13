@@ -86,6 +86,8 @@ A wide frontier between the southern kingdoms and the frozen north, where the va
 | Radek the Gravedigger | Lowlands | Has buried half of Mirograd. Lately his shovel has been silver-shod. |
 | Sigrun Halfhand | Fells | Lost a hand young and won't say how. Knows forge-work better than she should. |
 | Toma Kettle | Wanderer | Tinker and talker, with opinions about every price at the hold |
+| Stanko Sleepless | Lowlands | Kozly Hollow goatherd who raised a wolf pup with his flock. Says the grey ones aren't wolves anymore, and he'd know. |
+| Herdis Strayfinder | Fells | Has kept Ravenfell's sheep alive since she was nine, and found every one that strayed. Says hunters are easier: they tell you where it hurts. |
 
 ---
 

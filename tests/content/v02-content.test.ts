@@ -27,8 +27,8 @@ describe('v0.2 content', () => {
     }
   });
 
-  it('has 8 hunters, 12 monsters and 5 villages (GDD §8)', () => {
-    expect(HUNTER_IDS).toHaveLength(8);
+  it('has 10 hunters (8 from v0.2, 2 from v0.3), 12 monsters and 5 villages (GDD §8)', () => {
+    expect(HUNTER_IDS).toHaveLength(10);
     expect(MONSTER_IDS).toHaveLength(12);
     expect(VILLAGE_IDS).toHaveLength(5);
   });
@@ -46,6 +46,8 @@ describe('hunters (GDD §8.5)', () => {
       radek: 500,
       toma: 600,
       sigrun: 1200,
+      stanko: 450,
+      herdis: 300,
     });
     expect(HUNTER_IDS.filter((h) => hunters[h].unlock.kind === 'start').sort()).toEqual([
       'halvar',
@@ -57,7 +59,7 @@ describe('hunters (GDD §8.5)', () => {
     expect(HUNTER_IDS.filter((h) => hunters[h].story).sort()).toEqual(['ostap', 'sigrun', 'toma']);
   });
 
-  it('each hunter has two real traits and base stats within ±10% of the role baseline', () => {
+  it('each hunter has two real traits and base stats within ±10% or 1 point of the role baseline (D102)', () => {
     for (const id of HUNTER_IDS) {
       const h = hunters[id];
       expect(ROLE_IDS).toContain(h.role);
@@ -68,7 +70,7 @@ describe('hunters (GDD §8.5)', () => {
       const base = roleBaselines[h.role];
       for (const stat of ['health', 'might', 'armor', 'speed'] as const) {
         const ratio = h.stats[stat] / base[stat];
-        // A flat ±1 is allowed for the small stats, where 10% rounds to nothing.
+        // GDD §8.5: ±10% or 1 point, whichever is larger (D102).
         const off = Math.abs(h.stats[stat] - base[stat]);
         expect((ratio >= 0.9 && ratio <= 1.1) || off <= 1, `${id} ${stat}`).toBe(true);
       }
@@ -82,13 +84,12 @@ describe('hunters (GDD §8.5)', () => {
     expect(traits.quick.effect).toEqual({ kind: 'speedFlat', amount: 3 });
   });
 
-  it('traits active in v0.2 are the twelve GDD §8.5 lists; the rest wait for v0.3', () => {
+  it('traits active in v0.2 are the twelve GDD §8.5 lists; the three v0.3 traits have their hunters', () => {
     expect(TRAIT_IDS.filter((t) => traits[t].activeFrom === 'v0.2')).toHaveLength(12);
-    for (const id of HUNTER_IDS) {
-      for (const t of hunters[id].traits) {
-        if (traits[t].activeFrom === 'v0.3') expect(id).toBe('vesna'); // Herbwise only
-      }
-    }
+    const v03 = HUNTER_IDS.flatMap((id) =>
+      hunters[id].traits.filter((t) => traits[t].activeFrom === 'v0.3').map((t) => `${id}:${t}`),
+    );
+    expect(v03.sort()).toEqual(['herdis:tracker', 'stanko:wolf-friend', 'vesna:herbwise']);
   });
 });
 

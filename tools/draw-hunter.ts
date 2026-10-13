@@ -93,6 +93,15 @@ const weapon = (c: Canvas, w: PortraitSpec['weapon']): void => {
     case 'satchel':
       pole(53, 16, 49, 62, C.pine);
       break;
+    case 'knife':
+      // A short blade held up at the shoulder (Stanko): grip, crossguard, blade.
+      pole(51, 44, 50, 56, C.brownDark);
+      c.line(46, 43, 55, 43, C.ink, 3);
+      c.line(52, 26, 51, 42, C.ink, 5);
+      c.line(52, 27, 51, 41, C.ash, 3);
+      c.set(52, 30, C.frost);
+      c.set(52, 34, C.frost);
+      break;
   }
 };
 

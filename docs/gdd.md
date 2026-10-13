@@ -1167,7 +1167,7 @@ Each clue tag has several in-world texts. A contract draws one text per revealed
 | Striker | 100 | 20 | 3 | 12 |
 | Mender | 110 | 10 | 4 | 10 |
 
-Individual hunters vary by up to ±10% per stat.
+Individual hunters vary from the role baseline by up to ±10% or 1 point per stat, whichever is larger (so Armor and Speed may move by 1).
 
 | Hunter | Role | Damage | Origin | Traits | Unlock | Stats (H/M/A/S) | Sketch |
 |---|---|---|---|---|---|---|---|
@@ -1179,8 +1179,10 @@ Individual hunters vary by up to ±10% per stat.
 | **Radek the Gravedigger** | Vanguard | Silver | Lowland | Grave-warden, Hard to kill | Defeat an Upyr | 165/11/9/7 | Has buried half of Mirograd. Lately his shovel has been silver-shod. |
 | **Sigrun Halfhand** | Striker | Fire | Highland | Fire-touched, Lantern-bearer | Smithy level 5 | 100/22/4/11 | Exiled Emberwright apprentice who won't say why she left. *(lore hook)* |
 | **Toma Kettle** | Vanguard | Steel | Wanderer | Haggler, Quick | Earn 2,000 silver in bounties | 150/12/7/8 | Tinker and talker. Has opinions about every price at the hold. |
+| **Stanko Sleepless** *(v0.3)* | Striker | Venom | Lowland | Wolf-friend, Quick | The Gaunt Wolf reaches Studied | 95/21/3/12 | Sits up nights with a knife dipped in something he keeps in a goat's horn. Nobody in the Hollow has seen him sleep. |
+| **Herdis Strayfinder** *(v0.3)* | Mender | Frost | Highland | Tracker, Hard to kill | Build the Hunter's Lodge | 120/9/4/10 | Can follow a week-old track across bare rock. The iron heel of her crook is rime-salted, an old Ravenfell habit against things that walk at night. |
 
-**Recruitment prices** *(⚑ revision G5)*: Halvar and Zora free; Ostap 150; Vesna 350; Bjarna 400; Radek 500; Toma 600; Sigrun 1,200 silver.
+**Recruitment prices** *(⚑ revision G5)*: Halvar and Zora free; Ostap 150; Herdis 300 *(v0.3)*; Vesna 350; Bjarna 400; Stanko 450 *(v0.3)*; Radek 500; Toma 600; Sigrun 1,200 silver.
 
 **Traits:**
 
@@ -1199,12 +1201,12 @@ Individual hunters vary by up to ±10% per stat.
 | Lantern-bearer | Party hit chance +5% on barrow contracts | v0.2 |
 | Haggler | +10% bounty silver on contracts this hunter joins | v0.2 |
 | Herbwise | Potions carried by this hunter are 25% stronger | v0.3 |
-| Wolf-friend | +20% Might vs Beasts & Wilds | v0.3 *(reserved for a v0.3 hunter)* |
-| Tracker | While this hunter is idle at the hold, one Lodge slot reveals clues 25% faster | v0.3 *(reserved for a v0.3 hunter)* |
+| Wolf-friend | +20% Might vs Beasts & Wilds | v0.3 *(Stanko)* |
+| Tracker | While this hunter is idle at the hold, one Lodge slot reveals clues 25% faster | v0.3 *(Herdis)* |
 
 **v0.5 adds Arvid Stonebrow** (story hunter, Vanguard; unlocks when Act III begins) *(⚑ lore C4)*.
 
-**v0.3 adds 2 hunters** (a Wolf-friend Striker with Venom damage and a Tracker Mender), to be defined at the start of v0.3. That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
+**v0.3 adds 2 hunters:** Stanko Sleepless (a Wolf-friend Striker with Venom damage) and Herdis Strayfinder (a Tracker Mender), defined by the owner (Q12, D101). That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
 
 ### 8.6 Ingredients (v0.3)
 

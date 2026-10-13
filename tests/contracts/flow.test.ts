@@ -338,7 +338,7 @@ describe('injuries and death (GDD §5.3.7)', () => {
   });
 });
 
-import { candidates } from '../../src/core/systems/hunters';
+import { candidates, describeUnlock } from '../../src/core/systems/hunters';
 const candidatesIds = (s: GameState): string[] => candidates(s).map((c) => c.id);
 
 describe('the roster (GDD §5.3.1)', () => {
@@ -357,7 +357,7 @@ describe('the roster (GDD §5.3.1)', () => {
     expect(run(s, { type: 'hunter.recruit', hunter: 'ostap' }).ok).toBe(false);
   });
 
-  it('all eight unlock conditions work', () => {
+  it('all ten unlock conditions work', () => {
     const s = keepRich('unlocks');
     for (const id of ['ostap', 'bjarna', 'vesna', 'radek', 'sigrun', 'toma'] as const) {
       Reflect.deleteProperty(s.hunters, id);
@@ -379,6 +379,21 @@ describe('the roster (GDD §5.3.1)', () => {
       'toma',
       'vesna',
     ]);
+    // v0.3 (Q12): Herdis when the Hunter's Lodge is built; Stanko when the Gaunt Wolf is Studied.
+    s.buildings['hunters-lodge'] = 1;
+    expect(candidatesIds(s)).toContain('herdis');
+    s.bestiary.wolf = { level: 2, kills: 3 };
+    expect(candidatesIds(s)).not.toContain('stanko');
+    s.bestiary.wolf = { level: 3, kills: 4 };
+    expect(candidatesIds(s)).toContain('stanko');
+    s.bestiary.wolf = { level: 4, kills: 10 };
+    expect(candidatesIds(s)).toContain('stanko');
+  });
+
+  it('the locked silhouettes say how each v0.3 hunter unlocks', () => {
+    expect(describeUnlock(hunters.herdis.unlock)).toBe("Build the Hunter's Lodge");
+    expect(describeUnlock(hunters.stanko.unlock)).toBe('Gaunt Wolf reaches Studied');
+    expect(describeUnlock(hunters.sigrun.unlock)).toBe('Smithy level 5');
   });
 
   it('caps the active roster at 3 in Hamlet and 3 + Barracks levels in the Keep', () => {
