@@ -155,7 +155,7 @@ export const balance = {
 
   // ---- GDD §7.5 Bestiary & preparation ----
   knowledge: {
-    studiedKills: locked(3),
+    studiedKills: locked(4),
     masteredKills: locked(10),
     studiedDamage: tunable(0.05),
     masteredDamage: tunable(0.1),

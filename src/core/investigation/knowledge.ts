@@ -44,7 +44,7 @@ export const monsterFor = (
 
 /**
  * A fight against this species has finished (GDD §5.6.2): fighting it Identifies it, a win
- * is a kill, 3 kills make it Studied and 10 Mastered. A level is never lowered.
+ * is a kill, 4 kills make it Studied and 10 Mastered (D99). A level is never lowered.
  */
 export const recordFight = (state: GameState, monster: MonsterId, won: boolean): void => {
   raiseTo(state, monster, 2);

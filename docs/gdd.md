@@ -703,7 +703,7 @@ Logs are kept for the last 50 contracts. Any listed contract's log can be regene
 | 0 Unknown | — | The species doesn't appear in candidate lists. Its entry is hidden. |
 | 1 Sighted | It appears as a possibility on any contract | Shows as "?" in candidate lists. A silhouette entry in the bestiary. |
 | 2 Identified | Identify it through investigation, or fight it | Resistances, abilities, and stats become visible. Preparation can target it. |
-| 3 Studied | 3 kills | Clues on its contracts take half the time. +5% damage against it (knowledge bucket). |
+| 3 Studied | 4 kills | Clues on its contracts take half the time. +5% damage against it (knowledge bucket). |
 | 4 Mastered | 10 kills | Its contracts arrive already identified. +10% damage against it. A counter-tip for each of its abilities. |
 
 #### 5.6.3 Investigation
@@ -890,7 +890,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Roster of 4 hunters | By the end of day 2 | v0.2 |
 | First tier-3 success | Day 2 | v0.2 |
 | First species Identified through investigation | ≤ 2 h after the Hunter's Lodge is built | v0.3 |
-| First species Studied (3 kills) | Days 2–3 | v0.3 |
+| First species Studied (4 kills) | Days 2–3 | v0.3 |
 | Citadel reached | Day 2 | v0.4 |
 | Bastion reached; Last Stand available | Day 3 | v0.4 |
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.4 |
@@ -1008,7 +1008,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Knowledge thresholds | kills to reach Studied / Mastered | `knowledge.studiedKills` = 3, `knowledge.masteredKills` = 10 | 5.6.2 |
+| Knowledge thresholds | kills to reach Studied / Mastered | `knowledge.studiedKills` = 4, `knowledge.masteredKills` = 10 | 5.6.2 |
 | Knowledge damage | knowledge bucket | `knowledge.studiedDamage` = 0.05, `knowledge.masteredDamage` = 0.10 | 5.6.2 |
 | Clue time | per clue; × multiplier if Studied | `clue.time` = 30 min, `clue.studiedMult` = 0.5 | 5.6.3 |
 | Lodge slots | 1 per level | `lodge.maxLevel` = 3 | 5.6.3 |

@@ -46,7 +46,7 @@ export const knowledgeLevels: Readonly<Record<KnowledgeLevel, KnowledgeLevelDef>
     id: 'studied',
     number: 3,
     name: 'Studied',
-    how: '3 kills.',
+    how: '4 kills.',
     effect:
       'Clues on its contracts take half the time, and your hunters deal 5% more damage to it.',
   },

@@ -30,14 +30,14 @@ describe('levels from kills (GDD §5.6.2)', () => {
     expect(s.bestiary.wolf).toEqual({ level: 2, kills: 1 });
   });
 
-  it('3 kills make it Studied and 10 make it Mastered, the thresholds read from balance', () => {
+  it('4 kills make it Studied and 10 make it Mastered, the thresholds read from balance', () => {
     const s = keepRich('kn');
     for (let i = 1; i <= MASTERED; i++) {
       recordFight(s, 'upyr', true);
       const want = i >= MASTERED ? 4 : i >= STUDIED ? 3 : 2;
       expect(levelOf(s, 'upyr'), `${i} kills`).toBe(want);
     }
-    expect([STUDIED, MASTERED]).toEqual([3, 10]);
+    expect([STUDIED, MASTERED]).toEqual([4, 10]);
   });
 
   it('never lowers a level, and a Sighted species jumps straight to Identified by a fight', () => {

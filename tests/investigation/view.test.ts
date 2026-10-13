@@ -88,8 +88,8 @@ describe('the bestiary rows (GDD §9.8)', () => {
       level: 2,
       kills: 1,
       nextLevel: 3,
-      killsToNext: 2,
-      nextAtKills: 3,
+      killsToNext: 3,
+      nextAtKills: 4,
     });
     expect(knowledgeProgress({ level: 3, kills: 4 })).toMatchObject({
       nextLevel: 4,
@@ -102,7 +102,7 @@ describe('the bestiary rows (GDD §9.8)', () => {
     });
     expect(knowledgeProgress({ level: 1, kills: 0 })).toMatchObject({
       nextLevel: 3,
-      killsToNext: 3,
+      killsToNext: 4,
     });
   });
 });

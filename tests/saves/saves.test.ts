@@ -410,8 +410,8 @@ describe('the v2 → v3 migration (plan T3.4)', () => {
       const kills = old.state.stats.kills[id] ?? 0;
       const entry = after.bestiary[id as keyof typeof after.bestiary];
       expect(entry?.kills, id).toBe(kills);
-      // 3 kills is Studied and 10 is Mastered (GDD §5.6.2).
-      expect(entry?.level, id).toBe(kills >= 10 ? 4 : kills >= 3 ? 3 : 2);
+      // 4 kills is Studied and 10 is Mastered (GDD §5.6.2, D99).
+      expect(entry?.level, id).toBe(kills >= 10 ? 4 : kills >= 4 ? 3 : 2);
     }
   });
 
