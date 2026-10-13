@@ -392,7 +392,8 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### Tasks
 
 - [?] **T3.1 New hunters** (blocked on Q12: the owner's definitions). Add the 2 hunters from the owner's chat-session definitions: content, prices, generated portraits.
-- [ ] **T3.2 Content.** Knowledge levels; the clue library (20 tags × 3+ texts); 12 ingredients; 9 consumables; Lodge, Hut, Garden; gift reagents; drops; the v0.3 traits.
+- [x] **T3.2a Content.** Knowledge levels; the clue library (20 tags × 3+ texts); 12 ingredients; 9 consumables; gift reagents; drops. (The v0.3 traits were already in the v0.2 content.)
+- [ ] **T3.2b Buildings.** Hunter's Lodge, Alchemist's Hut, Herb Garden. These add building ids to the saved state, so they wait for the migration (T3.4), as the Barracks did in v0.2.
 - [ ] **T3.3 Text.** A bestiary blurb plus a "What it was" line for all 12 species.
 - [ ] **T3.4 Migration v2 → v3,** using the owner's real v0.2 save.
 - [ ] **T3.5 Full coverage test** (GDD §8.3.1; the rules are locked).

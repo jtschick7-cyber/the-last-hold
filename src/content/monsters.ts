@@ -1,10 +1,12 @@
+import type { ClueTag } from './clues';
 import { type DamageType, type FamilyId, type LocationId } from './damage';
+import type { IngredientId } from './ingredients';
 
 // GDD §8.3: the 12 monsters, identified for free in v0.2. Stats are at the
 // monster's base tier; each tier above it scales Health and Might by
 // monster.statGrowth and Armor by monster.armorGrowth (GDD §7.4). Speed doesn't
 // scale. Abilities are data here; core/combat (T2.7) gives them their effect.
-// Clue tags and drops arrive with the bestiary in v0.3.
+// Clue tags and drops are the bestiary's data (GDD §8.3, v0.3).
 
 export const MONSTER_IDS = [
   'wolf',
@@ -95,6 +97,10 @@ export interface MonsterDef {
   /** Multiplier on incoming damage of each type; 0 is immune (GDD §5.5). */
   readonly resist: Readonly<Record<DamageType, number>>;
   readonly abilities: readonly MonsterAbility[];
+  /** Exactly three tags; no two species in a contract cell share a set (GDD §8.3.1). */
+  readonly clueTags: readonly [ClueTag, ClueTag, ClueTag];
+  /** Reagents a success yields: `tier` units of each (GDD §8.6). */
+  readonly drops: readonly IngredientId[];
 }
 
 const resist = (
@@ -123,6 +129,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     attacks: 2,
     resist: resist(1.0, 1.0, 1.25, 1.0, 1.0, 1.25),
     abilities: [{ kind: 'hamstring', name: 'Hamstring', chance: 0.25, speedCut: 0.3, actions: 3 }],
+    clueTags: ['tracks', 'livestock', 'night'],
+    drops: ['wolf-fang'],
   },
   kikimora: {
     id: 'kikimora',
@@ -137,6 +145,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     attacks: 1,
     resist: resist(1.0, 1.25, 1.5, 0.75, 1.0, 0.5),
     abilities: [{ kind: 'spoil', name: 'Spoil' }],
+    clueTags: ['house', 'livestock', 'swamp'],
+    drops: ['thornwood'],
   },
   upyr: {
     id: 'upyr',
@@ -151,6 +161,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     attacks: 1,
     resist: resist(0.75, 1.5, 1.25, 0.75, 1.25, 0),
     abilities: [{ kind: 'bloodfeast', name: 'Bloodfeast', healFraction: 0.5 }],
+    clueTags: ['grave', 'bloodless', 'night'],
+    drops: ['grave-dust'],
   },
   rusalka: {
     id: 'rusalka',
@@ -165,6 +177,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     attacks: 1,
     resist: resist(1.0, 1.5, 0.75, 1.25, 1.0, 0.5),
     abilities: [{ kind: 'drowningSong', name: 'Drowning Song', every: 4 }],
+    clueTags: ['drowned', 'song', 'night'],
+    drops: ['river-pearl'],
   },
   poludnitsa: {
     id: 'poludnitsa',
@@ -181,6 +195,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     abilities: [
       { kind: 'noonHeat', name: 'Noon Heat', maxHealthFraction: 0.03, frostSuppressActions: 3 },
     ],
+    clueTags: ['noon', 'fields', 'madness'],
+    drops: ['noon-poppy'],
   },
   vodyanoy: {
     id: 'vodyanoy',
@@ -195,6 +211,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     attacks: 1,
     resist: resist(0.75, 1.25, 0.5, 1.5, 1.0, 1.0),
     abilities: [{ kind: 'dragUnder', name: 'Drag Under', every: 3, nextHitMult: 2 }],
+    clueTags: ['drowned', 'mill', 'swamp'],
+    drops: ['river-pearl'],
   },
   draugr: {
     id: 'draugr',
@@ -212,6 +230,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
       { kind: 'barrowGrip', name: 'Barrow-Grip', every: 3 },
       { kind: 'swell', name: 'Swell', belowHealth: 0.5, armorBonus: 0.5 },
     ],
+    clueTags: ['grave', 'cold', 'treasure'],
+    drops: ['grave-dust', 'rime-salt'],
   },
   bies: {
     id: 'bies',
@@ -226,6 +246,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     attacks: 1,
     resist: resist(1.0, 1.0, 1.25, 1.0, 1.5, 0.75),
     abilities: [{ kind: 'malice', name: 'Malice', mightPerAction: 0.05 }],
+    clueTags: ['madness', 'livestock', 'tracks'],
+    drops: ['thornwood'],
   },
   leshy: {
     id: 'leshy',
@@ -243,6 +265,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
       { kind: 'leadAstray', name: 'Lead Astray', chance: 0.15 },
       { kind: 'rootWall', name: 'Root-Wall', regenFraction: 0.05 },
     ],
+    clueTags: ['lost', 'forest-shift', 'tracks'],
+    drops: ['thornwood'],
   },
   strzyga: {
     id: 'strzyga',
@@ -257,6 +281,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     attacks: 1,
     resist: resist(0.75, 1.5, 1.0, 1.0, 1.5, 0.5),
     abilities: [{ kind: 'secondSoul', name: 'Second Soul', reviveFraction: 0.4 }],
+    clueTags: ['grave', 'bloodless', 'strange-birth'],
+    drops: ['grave-dust'],
   },
   huldra: {
     id: 'huldra',
@@ -271,6 +297,8 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     attacks: 1,
     resist: resist(1.0, 1.25, 1.25, 1.0, 1.0, 0.75),
     abilities: [{ kind: 'enthrall', name: 'Enthrall', every: 4, healFraction: 0.1 }],
+    clueTags: ['stranger', 'lost', 'livestock'],
+    drops: ['thornwood'],
   },
   nix: {
     id: 'nix',
@@ -287,5 +315,7 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     abilities: [
       { kind: 'riverhorse', name: 'Riverhorse', awayActions: 3, healthLossFraction: 0.2 },
     ],
+    clueTags: ['drowned', 'song', 'horse'],
+    drops: ['river-pearl'],
   },
 };

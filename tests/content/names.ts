@@ -261,4 +261,42 @@ export const checkedNames: readonly CheckedName[] = [
     'Thane',
     'Striker',
   ].map(generic),
+  // v0.3 content (plan T3.2). Web search against the influences, 2026-10-13.
+  // Everyday words: herbs, minerals, materials and the knowledge-level names.
+  ...[
+    'Yarrow',
+    'Mugwort',
+    'Juniper',
+    'Honeycomb',
+    "Hare's foot",
+    'Pitch',
+    'Rime salt',
+    'Grave dust',
+    'River pearl',
+    'Thornwood',
+    'Wolf fang',
+    'Noon poppy',
+    'Mending Draught',
+    'Fire Pot',
+    'Frost Pot',
+    'Unknown',
+    'Sighted',
+    'Identified',
+    'Studied',
+    'Mastered',
+  ].map((name): CheckedName => ({ name, checked: '2026-10-13', result: 'generic' })),
+  ...['Grave Oil', 'Drowned-Bane Oil', 'Thornbane Oil', 'Quickfoot Tincture', 'Saltburst'].map(
+    (name): CheckedName => ({
+      name,
+      checked: '2026-10-13',
+      result: 'clear',
+      note: 'Searched with the Witcher, Skyrim and Warcraft; only generic bane-oil items in other games (Baldur\'s Gate 3 "Oil of Bane"), no match.',
+    }),
+  ),
+  {
+    name: 'Hardwood Tonic',
+    checked: '2026-10-13',
+    result: 'clear',
+    note: 'Replaces the GDD name "Ironbark Tonic": Ironbark is a Warcraft druid talent for damage reduction (Q13, D86, Proposed).',
+  },
 ];
