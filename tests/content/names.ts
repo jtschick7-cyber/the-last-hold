@@ -300,6 +300,6 @@ export const checkedNames: readonly CheckedName[] = [
     name: 'Hardwood Tonic',
     checked: '2026-10-13',
     result: 'clear',
-    note: 'Replaces the GDD name "Ironbark Tonic": Ironbark is a Warcraft druid talent for damage reduction (Q13, D86, Proposed).',
+    note: 'Replaces the GDD name "Ironbark Tonic": Ironbark is a Warcraft druid talent for damage reduction (Q13: the owner chose this name, D96).',
   },
 ];

@@ -98,8 +98,8 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     summary: 'Once, below 30% Health: heal 40% of max Health.',
     recipe: { ingredients: { yarrow: 2, honeycomb: 1 }, resources: {} },
   },
-  // GDD §5.7 calls this "Ironbark Tonic"; Ironbark is a Warcraft druid talent for
-  // damage reduction (GDD §2.3), so the name is Claude's proposal (Q13, D86).
+  // GDD §5.7. Once "Ironbark Tonic"; Ironbark is a Warcraft druid talent for damage
+  // reduction (GDD §2.3), so the owner chose Hardwood (Q13, D96).
   'hardwood-tonic': {
     id: 'hardwood-tonic',
     name: 'Hardwood Tonic',

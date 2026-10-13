@@ -304,7 +304,7 @@ final      = 0                                                 if resist = 0 (im
 |---|---|---|
 | **flat** | Fixed additions to a stat, applied before any multiplier | Gear (+9 Might), Quick (+3 Speed) |
 | **stat%** | Percentage changes to a stat that last the whole fight | Quickfoot Tincture (+20% Speed), Swell (+50% Armor) |
-| **status%** | Temporary effects whose duration counts actions | Hamstring (−30% Speed), the Frost Pot slow, Ironbark Tonic, Malice (+5% Might per action) |
+| **status%** | Temporary effects whose duration counts actions | Hamstring (−30% Speed), the Frost Pot slow, Hardwood Tonic, Malice (+5% Might per action) |
 | **outgoing%** | Bonuses to damage dealt | Traits vs a family or location (Grave-warden, Fen-born, Fire-touched), oils |
 | **knowledge%** | Studied / Mastered bonus vs a species | +5% / +10% |
 | **taken%** | Reductions to damage taken. They **add together**, are **capped at 75%**, and apply **after Armor** *(B2)* | Shieldwall −10%, Fire-touched −20% Fire, Emberwright Plate −10% Fire |
@@ -754,7 +754,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 | Drowned-Bane Oil | Oil | +35% damage vs Water Spirits | 2 river pearl + 1 yarrow |
 | Thornbane Oil | Oil | +35% damage vs Field & Forest Spirits | 2 thornwood + 1 mugwort |
 | Mending Draught | Potion | Once, below 30% Health: heal 40% of max Health | 2 yarrow + 1 honeycomb |
-| Ironbark Tonic | Potion | +30% Armor until the holder's 5th action | 1 thornwood + 2 juniper |
+| Hardwood Tonic | Potion | +30% Armor until the holder's 5th action | 1 thornwood + 2 juniper |
 | Quickfoot Tincture | Potion | +20% Speed for the whole fight | 2 mugwort + 1 hare's foot |
 | Fire Pot | Bomb | At tick 1: 40 Fire damage, then 10 Fire on each of the monster's next 3 actions | 1 pitch + 1 wood (resource) |
 | Frost Pot | Bomb | At tick 1: 30 Frost damage, then −30% Speed for the monster's next 3 actions | 1 rime salt + 1 wood |
@@ -1214,14 +1214,14 @@ Each ingredient also has **4 hidden effects**, defined in v0.6 for alchemy disco
 |---|---|---|
 | Yarrow | Herb Garden | Drowned-Bane Oil, Mending Draught |
 | Mugwort | Herb Garden | Thornbane Oil, Quickfoot Tincture |
-| Juniper | Herb Garden | Grave Oil, Ironbark Tonic |
+| Juniper | Herb Garden | Grave Oil, Hardwood Tonic |
 | Honeycomb | Gift: Dubno Ford, Kozly Hollow | Mending Draught |
 | Hare's foot | Gift: Dubno Ford, Mirograd | Quickfoot Tincture |
 | Pitch | Gift: Kozly Hollow, Mirograd, Velkvik | Fire Pot |
 | Rime salt | Gift: Velkvik, Ravenfell; drop: Draugr | Frost Pot, Saltburst |
 | Grave dust | Drop: Upyr, Draugr, Strzyga | Grave Oil |
 | River pearl | Drop: Rusalka, Vodyanoy, Nix | Drowned-Bane Oil |
-| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra | Thornbane Oil, Ironbark Tonic |
+| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra | Thornbane Oil, Hardwood Tonic |
 | Wolf fang | Drop: Gloam Wolf | — *(reserved for v0.6 discovery)* |
 | Noon poppy | Drop: Poludnitsa | — *(reserved for v0.6 discovery)* |
 
@@ -1386,7 +1386,7 @@ Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes ava
 ├──────────────────────────────────┤
 │ PREPARE                (v0.3)    │
 │ Oil    Grave Oil ×3 ✔ matched    │
-│ Potion Mending · Ironbark · —    │
+│ Potion Mending · Hardwood · —    │
 │ Bombs  Fire Pot ✔ weak · —       │
 ├──────────────────────────────────┤
 │ ODDS  78% ±4                Why▸ │

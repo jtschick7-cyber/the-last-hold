@@ -134,11 +134,11 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **What waits:** T3.1 is marked `[?]`. Everything else goes ahead: the Tracker trait's rule (T3.6) and the Wolf-friend trait's rule (T3.9) are built and tested with test hunters, and nothing ships to players until the hunters exist.
 - **Answer (owner):**
 
-### Q13 — "Ironbark Tonic" collides with a Warcraft name (blocks nothing; the content uses a stand-in) — open
+### Q13 — "Ironbark Tonic" collides with a Warcraft name (blocks nothing; the content uses a stand-in) — answered
 - **What I found:** the name search for the v0.3 consumables found **Ironbark** in *World of Warcraft* (a Restoration druid talent that reduces damage taken, which is what the tonic does) and as a *Hearthstone* druid spell. GDD §2.3 asks us to avoid influence names. Grave Oil, Drowned-Bane Oil, Thornbane Oil, Quickfoot Tincture and Saltburst came up clear.
 - **Options:** (a) **Hardwood Tonic** (my stand-in, in the content now; D86); (b) **Stoutbark Tonic** or **Oakhide Tonic**; (c) keep "Ironbark Tonic" and accept the overlap (§2.3 says not to).
 - **Recommendation:** (a). It keeps the wood theme and the recipe (thornwood + juniper), and nothing came up under that name.
-- **Answer (owner):**
+- **Answer (owner):** 2026-10-13: option (a), **Hardwood Tonic**. The GDD now says Hardwood Tonic (D96).
 
 ### Q14 — How preparation works where the GDD is silent (blocks nothing; built as recommended, D92) — open
 - **What I decided for you (all logged in D92, all tested; please look at the three that change play most):**
