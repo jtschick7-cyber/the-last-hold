@@ -157,8 +157,8 @@ describe('completion (GDD §5.4.3, B9)', () => {
     expect(r?.success).toBe(true);
     expect(r?.at).toBe(T0 + 30 * 60_000);
     expect(s.resources.silver).toBe(silver + (r?.bounty ?? 0));
-    expect(r?.bounty).toBe(72);
-    expect(s.stats).toMatchObject({ contractsWon: 1, trophies: 1, bountySilver: 72 });
+    expect(r?.bounty).toBe(78);
+    expect(s.stats).toMatchObject({ contractsWon: 1, trophies: 1, bountySilver: 78 });
     expect(s.stats.kills.kikimora).toBe(1);
     expect(s.board.tierWins[0]).toBe(4); // 3 before
     expect(s.running).toHaveLength(0);

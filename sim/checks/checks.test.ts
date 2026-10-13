@@ -194,7 +194,7 @@ describe('v0.2 economy checks', () => {
     expect(contractsOwnSilverCheck.judge([withKeep({}, null)]).pass).toBe(false); // never reached the Keep
   });
 
-  it('provisions are judged against 20–40% of food income, and the check is marked pending Q9', () => {
+  it('provisions are judged against 20–40% of food income, and the check is enforced (no longer pending)', () => {
     const r = provisionsMatterCheck.judge([withKeep({ provisionsFood: 30, jobFood: 100 })]);
     expect(r.pass).toBe(true);
     expect(provisionsMatterCheck.judge([withKeep({ provisionsFood: 1, jobFood: 100 })]).pass).toBe(
@@ -203,7 +203,7 @@ describe('v0.2 economy checks', () => {
     expect(provisionsMatterCheck.judge([withKeep({ provisionsFood: 90, jobFood: 100 })]).pass).toBe(
       false,
     );
-    expect(r.pending).toBe('Q9');
+    expect(r.pending).toBeUndefined();
   });
 });
 

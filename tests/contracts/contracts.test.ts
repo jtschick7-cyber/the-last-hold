@@ -84,10 +84,10 @@ describe('injury (GDD §5.3.7)', () => {
 });
 
 describe('rewards (GDD §5.4)', () => {
-  it('bounty is 72 × 1.6^(tier−1), with the Rank multiplier and Haggler', () => {
-    expect(bounty(1, 'hamlet', []).value).toBe(72);
-    expect(bounty(3, 'keep', []).value).toBeCloseTo(72 * 1.6 * 1.6, 8);
-    expect(bounty(1, 'keep', [hunters.toma.traits]).value).toBeCloseTo(79.2, 8); // Toma is a Haggler (+10%)
+  it('bounty is 78 × 1.6^(tier−1), with the Rank multiplier and Haggler', () => {
+    expect(bounty(1, 'hamlet', []).value).toBe(78);
+    expect(bounty(3, 'keep', []).value).toBeCloseTo(78 * 1.6 * 1.6, 8);
+    expect(bounty(1, 'keep', [hunters.toma.traits]).value).toBeCloseTo(85.8, 8); // Toma is a Haggler (+10%)
     expect(bounty(1, 'keep', [hunters.toma.traits]).breakdown.children?.length).toBeGreaterThan(3);
   });
 

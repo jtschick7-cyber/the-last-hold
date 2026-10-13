@@ -98,13 +98,13 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a) and (c) together. They change `suggest.finalists` (locked, 5 → 3) and add a stage-2 sample count (new, 200). Both are locked-constant territory, so I haven't touched them; Suggest is implemented exactly as the GDD says until you answer.
 - **Answer (owner):** yes, make it faster: 3 finalists at 200 fights each, then 500-fight odds for the winner only, 2026-10-13 (D73).
 
-### Q9 — Provisions can't be 20–40% of food income (blocks the "provisions matter" check; the check is marked pending, not failing) — answered
+### Q9 — Provisions can't be 20–40% of food income (blocked the "provisions matter" check) — answered
 - **What the GDD asks:** from the Keep on, contract provisions (30 food × party size × 2.2 per tier above the first) should take 20–40% of the food income, so food stays a real cost after the settling years (G3, §6.3 #8).
 - **What the simulator measures** (Standard player, 5 seeds, both starts): provisions are about **0.2%** of food income (0.5% in the first hours after the Keep, 0.2–0.3% over the first days). Food income is already about a million a day at the Keep and keeps growing (Mills and settled peasants), while provisions top out at about 2,800 food for the biggest contract and the board only gives about 10 contracts a day.
 - **Why tuning can't fix it:** to reach 20% provisions would have to be about 100 times bigger. The early game would break: the first contract would cost thousands of food when the hold makes 6 a minute.
 - **Options:** (a) **Scale provisions with the hold's food income**, for example the cost is N minutes of the current food rate per hunter (with a floor so the first contract stays about 60 food). This makes food a real cost at every stage, and the 20–40% target becomes reachable by choosing N. It changes the provisions formula, which is design content. (b) **Keep the formula and drop or reword the check**: provisions are a small early gate (the first contracts need food you have to hold back) and nothing more. (c) **Measure it differently**: judge the share only in the first six hours after the Keep, with a lower band, still small. (d) Leave as it is for now and decide at the v0.4 flesh-out, when Citadel and Bastion bring their own costs.
 - **Recommendation:** (a), because your reason for the sink ("food stays a real cost after settling") is true only if it grows with income. If you'd rather not touch the formula now, (d) with the check staying "pending Q9" is safe.
-- **Answer (owner):** option (a), 2026-10-13 (D81): provisions scale with the hold's food income from the Keep on.
+- **Answer (owner):** option (a), 2026-10-13 (D81): provisions scale with the hold's food income from the Keep on. Numbers in D82; the check is enforced.
 
 ### Q10 — "Firstblade" is already a Skyrim lore name (blocks one early-seed line; nothing else) — answered
 - **What I found:** the name search for the v0.2 text found "Firstblade" in *The Elder Scrolls* lore (a UESP "Lore:Firstblade" entry). The GDD §2.5 and setting primer use it as a working name for the order's last champion, and primer §6.7 lets Kozly Hollow notices end with *"…and may the Firstblade's name be kept warm."* ("Emberwrights" and every other new name came up clear.)
@@ -112,3 +112,9 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options:** (a) rename her now to something clear (candidates: **the Hearthblade**, **the Last Wright**, **the First Hand**), and put the seed line back with the new name; (b) keep "Firstblade" for now and decide before v0.5 (the primer says lore names get their check before then), with the seed line staying out until you do; (c) keep the name and accept the overlap (§2.3 says not to).
 - **Recommendation:** (b): nothing in v0.2 needs her name, and the title belongs to the story you're keeping for v0.5. When you choose, I'll rename it in the docs in one pass.
 - **Answer (owner):** option (b), 2026-10-13 (D80): keep the name for now, decide before v0.5; the seed line stays out until then.
+
+### Q11 — Provisions read the current food income, which a player can lower for free (blocks nothing in v0.2) — open
+- **What happens:** from the Keep, provisions use the hold's food income at the moment of launch. Moving peasants between jobs is free and instant, so a player can take every farmer off, launch at the 30-food minimum, and put them back. That rewards a fiddly chore (pillar 5, §6.4) and makes food a cost only for players who don't do it. The simulated player never does this, so no check sees it.
+- **Options:** (a) base the income term on food capacity, what the food jobs would make with every food slot filled (no save change); (b) base it on the highest food income reached this cycle (needs a saved number and a migration); (c) accept it.
+- **Recommendation:** (a), at the start of v0.3, then re-check the provisions share.
+- **Answer (owner):**

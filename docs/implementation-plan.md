@@ -338,7 +338,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 ### G. Simulator
 
 - [x] **T2.25 Contract policy.** Highest expected value, suggested party, never Reckless, pays provisions.
-- [x] **T2.26 v0.2 checks and tuning** (tunables only). Done except one check: provisions at 20–40% of food income can't be reached by tuning (about 0.2%), so it is marked pending Q9.
+- [x] **T2.26 v0.2 checks and tuning** (tunables only). Done. The provisions check (20–40% of food income) was pending Q9 while provisions were flat (about 0.2%); the owner chose income-scaled provisions (D81) and the tunable values in D82, and the check is now enforced like the others.
 
 ### v0.2 acceptance criteria
 

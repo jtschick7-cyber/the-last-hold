@@ -50,7 +50,7 @@ export const bounty = (
 };
 
 /**
- * Provisions paid at launch (GDD §5.4.2, G3, Q9/D80): per hunter, the larger of the flat
+ * Provisions paid at launch (GDD §5.4.2, G3, Q9/D81): per hunter, the larger of the flat
  * base and `incomeMinutes` of the hold's food income, times party size and the tier growth.
  * The income term is what keeps food a real cost after the settling years.
  */
