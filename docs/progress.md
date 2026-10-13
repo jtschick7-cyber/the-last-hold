@@ -222,3 +222,19 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** Q11. Q10's seed line stays out until the owner decides the name before v0.5. D59 (art choices) is still Proposed.
 - **Skipped or deferred:** clue tags and drops (v0.3 bestiary); Pixel UI Pack frames (D59); the Node 20 workflow actions bump; WebKit e2e only runs in CI.
 
+## 2026-10-13 — v0.2 handoff to v0.3 (session end)
+- **State:** v0.2 is **complete**: merged to `main` as PR #4 (merge commit `bcc1885`), tagged `v0.2.0` (the owner created the tag on GitHub; tag pushes from the container are refused or disconnect), `sim/baseline.json` accepted, plan status `complete`, decisions D80–D83. `npm run check` is green (846 tests, about 30 s). The full `npm run sim:check` takes about 3 minutes and passes every check on 5 seeds, both starts.
+- **What the last stretch changed (D80–D82):** Toma Kettle's Speed is 8 and golden fight d was re-recorded; provisions scale with the hold's food income from the Keep (`provisions.incomeMinutes` Hamlet 0, Keep 1.5; growth 2.2; base 30); `bounty.base` is 78; the provisions check is enforced; "show rolls" labels every roll (D79).
+- **Next:** v0.3 Bestiary & preparation, on branch `milestone/v0.3` (this entry is its first commit). Plan §0.4 asks for flesh-out sessions only from v0.4 on: **the v0.3 section is already in full detail, so no flesh-out is needed.** Read its "Reads", "Before you start" and tasks first.
+- **Waiting on the owner (plan v0.3 "Before you start"):** (1) the definitions of the 2 new hunters (a Wolf-friend Striker with Venom; a Tracker Mender), needed for **T3.1**, so mark T3.1 `[?]` and write the question to `docs/questions.md` until they arrive; (2) the owner's real v0.2 save, needed before **T3.4** (the v2 → v3 migration fixture; same method as `tests/saves/fixtures/v1-owner.json`: More → Save & Data → copy the save code); (3) a look at the new portraits (v0.2's passed the playtest).
+- **Settle first, with the owner: Q11** (provisions read the food income at the moment of launch, which a player can lower for free by moving peasants). Recommendation (a): base the income term on food capacity (what the food jobs would make with every food slot filled), no save change; then re-check the provisions share (the target is 20–40%; it was 27–34% in v0.2).
+- **Open items:** Q10 ("Firstblade" is a lore name in *The Elder Scrolls*; one notice line is left out until the owner decides, before v0.5); D59 (art choices, Proposed); deferred: Pixel UI Pack frames, Node 20 workflow actions bump; WebKit e2e only runs in CI.
+- **Practical notes:**
+  - A fresh container needs `npm ci` before `npm run check`.
+  - Never use a broad find-and-replace on `src/content/balance.ts`: a loop did that in this milestone and silently changed two unrelated values (the Keep's contract tier cap and bounty multiplier). Edit single keys with exact matches and check `git diff` before running the simulator.
+  - Do not use `pkill -f` with a word that also appears in your own command line; it kills the shell.
+  - Tuning method that worked: change only tunable values, run `npm run sim:check` (about 3 minutes) per combination, write each result line to a file, and judge all targets together. Targets in `sim/targets.ts` stay locked.
+  - Debug panel: open the preview with `?debug` on the address (More → Debug): Unlock Keep, add resources, run the Standard player for N hours, timing readout.
+  - Pull requests: the GitHub tools work for this repository (there is no `gh`). Check CI by the commit's runs through the GitHub tools or `curl -s "https://api.github.com/repos/jtschick7-cyber/the-last-hold/actions/runs?head_sha=<sha>"`. Tag pushes: try once; if refused, ask the owner to create the tag on GitHub (Releases → Draft a new release).
+  - Run `npm run check` and look at the exit code before every commit; a piped command can hide a failure.
+
