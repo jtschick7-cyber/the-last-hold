@@ -437,7 +437,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.4 — The Long Night: mechanics
 
-**Status:** not started *(fleshed out 2026-10-13, D106–D115)*
+**Status:** in progress *(fleshed out 2026-10-13, D106–D115)*
 
 **Goal:** the cycle loop. Citadel and Bastion, Threat, a Last Stand you choose the moment for, Embers and warden upgrades, relics, and a Long Night that resets the hold and keeps what matters, plus the first Long Night for saves from before v0.4. Mechanics only: the text stays neutral (`setting-primer.md` §6.8).
 **Reads:** GDD §4.1, §5.1.2–5.1.3, §5.3.7, §5.4.1–5.4.2, §5.9, §6 (v0.4 rows, §6.1 policy, §6.3, §6.5), §7.1, §7.3–7.4, §7.6, §8.1, §8.9–8.10, §9.11, §9.13; technical design §5.2–5.3, §7.2, §9.4, §10.1, §13; `setting-primer.md` §6.5, §6.8.
@@ -452,8 +452,8 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### A. Content and state
 
-- [ ] **T4.1 Content.** Citadel and Bastion (requirements, costs, grants, restoration text, no inscription); Walls and Watchtower; the 8 warden upgrades (GDD §8.9) and the 6 relics (§8.10); every new balance key from GDD §7.1, §7.3, §7.4 and §7.6, marked tunable or locked (locked: `laststand.partyMax`, and the new `contract.ageTierCap` entries, D106). New Rank and building ids change the saved state, so wiring them in waits for T4.3, as in v0.2 and v0.3.
-- [ ] **T4.2 Names.** Collision search (GDD §2.3) for Warm Hearth, Full Larder, Young Families, Seasoned Hunters, Drill Yard, Village Goodwill, Swift Roads, Long Watch, The Hearth, Plough-Share, Mason's Plumb, Tally Stick, Bone Whistle, Copper Still, Iron Shutter and Forge Hall; add them to `tests/content/names.ts`. Citadel, Bastion, Walls, Watchtower, Threat, Last Stand, Long Night and Embers go in as generic or already checked. Any collision: stop and ask, with alternatives.
+- [x] **T4.1 Content.** Citadel and Bastion (requirements, costs, grants, restoration text, no inscription); Walls and Watchtower; the 8 warden upgrades (GDD §8.9) and the 6 relics (§8.10); every new balance key from GDD §7.1, §7.3, §7.4 and §7.6, marked tunable or locked (locked: `laststand.partyMax`, and the new `contract.ageTierCap` entries, D106). New Rank and building ids change the saved state, so wiring them in waits for T4.3, as in v0.2 and v0.3.
+- [x] **T4.2 Names.** Collision search (GDD §2.3) for Warm Hearth, Full Larder, Young Families, Seasoned Hunters, Drill Yard, Village Goodwill, Swift Roads, Long Watch, The Hearth, Plough-Share, Mason's Plumb, Tally Stick, Bone Whistle, Copper Still, Iron Shutter and Forge Hall; add them to `tests/content/names.ts`. Citadel, Bastion, Walls, Watchtower, Threat, Last Stand, Long Night and Embers go in as generic or already checked. Any collision: stop and ask, with alternatives. *Done: three collided and were renamed Kept Coals, Old Hands and Late Lantern; The Hearth kept (D116).*
 - [ ] **T4.3 Migration v3 → v4** (D113), using the **owner's real v0.3 save** as the fixture, with a round-trip test; the parts in technical design §5.2. `[?]` until the save is provided.
 
 ### B. Ranks, Threat and defenses

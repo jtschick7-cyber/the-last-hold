@@ -456,7 +456,7 @@ In v0.1–v0.3, the Keep is the end of content. The Rank screen shows the next R
 elapsed = clamp(now − lastSeen, 0, offlineCap)
 ```
 
-- **Offline cap:** a base of 12 h (D08), plus the Bell Tower (up to +3 h), plus later sources (Embers in v0.4: Long Watch, §8.9; Riftglass in v0.7). **Hard ceiling: 24 h** **[JC]**.
+- **Offline cap:** a base of 12 h (D08), plus the Bell Tower (up to +3 h), plus later sources (Embers in v0.4: Late Lantern, §8.9; Riftglass in v0.7). **Hard ceiling: 24 h** **[JC]**.
 - **Clock moved backward:** if `now < lastSeen`, then `elapsed = 0` and `lastSeen` is reset to `now` (D21). No penalty, no warning.
 
 **Simulation.** Offline time runs through **the same `advance(state, dt)` function** as live play. **`advance` is event-driven** *(⚑ revision A11 [JC])*:
@@ -876,7 +876,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 | Gear (A4), injuries, Threat, trophies this cycle (after conversion) | Candidates you haven't hired yet (unlocks are lifetime) |
 | | The Hall of the Fallen, Reports and fight replays, scenes already seen, settings, lifetime stats, the cycle number (+1), the cycle history |
 
-- **Hunter levels:** each hunter keeps half the levels above 1, rounded down (6 → 3, 5 → 3, 4 → 2); Seasoned Hunters raises the share. XP toward the next level goes to 0. A kept level above the current Rank's cap stays; the cap only stops new levels.
+- **Hunter levels:** each hunter keeps half the levels above 1, rounded down (6 → 3, 5 → 3, 4 → 2); Old Hands raises the share. XP toward the next level goes to 0. A kept level above the current Rank's cap stays; the cap only stops new levels.
 - **Contracts still running** when the stand starts finish on the spot with their real result (the dice were fixed at launch); their rewards apply and their trophies count.
 - **Injured hunters** can join the stand; all injuries clear at the Long Night.
 - **Dead hunters** return as candidates at the Long Night, at their usual price, with their levels halved like everyone's. Story hunters never die (§5.3.7).
@@ -1158,7 +1158,7 @@ Every constant here is tunable unless marked locked.
 | Stand preview | practice stands; range = 10th–90th percentile | `laststand.previewSamples` = 100, `laststand.policySamples` = 20 | 5.9.3, 6.5 |
 | Embers | `floor(rankMult × Σ_(n ≤ waves) p × g^(n−1) × (1 + b × Threat) + q × trophies)` | `embers.perWave` = 4, `embers.waveGrowth` = 1.15, `embers.threatBonus` = 0.005, `embers.perTrophy` = 1, `embers.rankMult` = { hamlet 0.25, keep 0.5, citadel 0.75, bastion 1 } | 5.9.4 |
 | Relic milestones | the first stand ever to hold each wave count | `relics.waveMilestones` = [6, 9, 12, 15, 18, 21] | 5.9.6 |
-| Levels kept | `1 + floor((L − 1) × k)`, k = base + Seasoned Hunters | `longNight.levelsKept` = 0.5 | 5.9.7 |
+| Levels kept | `1 + floor((L − 1) × k)`, k = base + Old Hands | `longNight.levelsKept` = 0.5 | 5.9.7 |
 | Warden upgrades | level L costs `c × g^(L−1)` Embers | per upgrade, in the content (§8.9) | 5.9.5 |
 | v0.4 arrival cap | trophies part ≤ share × the cycle-1 median | `longNightArrival.emberCapShare` = 1.2 **(locked)**, `longNightArrival.cycle1MedianEmbers` (set from the tuned simulator, D112) | 5.9.8 |
 
@@ -1395,20 +1395,20 @@ See the table in §5.7 (9 items in v0.3).
 
 Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes available only after Act V **[JC]**.
 
-### 8.9 Warden upgrades (v0.4, D111)
+### 8.9 Warden upgrades (v0.4, D111; names D116)
 
 Bought with Embers on The Hearth (§5.9.5). Level L costs `cost × growth^(L−1)` Embers. Every value is tunable.
 
 | Upgrade | Effect per level | Max | Cost | Growth |
 |---|---|---|---|---|
-| Warm Hearth | +10% all production except silver (ember bucket) | 10 | 15 | 1.5 |
+| Kept Coals | +10% all production except silver (ember bucket) | 10 | 15 | 1.5 |
 | Full Larder | Each cycle starts with +200 food and +200 wood | 5 | 10 | 1.6 |
 | Young Families | Each cycle starts with +1 Cottage and +2 peasants | 5 | 20 | 1.6 |
-| Seasoned Hunters | Hunters keep 10 more percentage points of their levels at the Long Night (50% → 100%) | 5 | 30 | 1.8 |
+| Old Hands | Hunters keep 10 more percentage points of their levels at the Long Night (50% → 100%) | 5 | 30 | 1.8 |
 | Drill Yard | +10% contract XP | 5 | 15 | 1.6 |
 | Village Goodwill | +5% bounty silver (bounties only; seams untouched, G1) | 5 | 25 | 1.7 |
 | Swift Roads | Contracts take 10% less time | 3 | 25 | 1.8 |
-| Long Watch | +1 h offline cap (still within the 24 h ceiling) | 4 | 20 | 2 |
+| Late Lantern | +1 h offline cap (still within the 24 h ceiling) | 4 | 20 | 2 |
 
 ### 8.10 Relics (v0.4, D111)
 

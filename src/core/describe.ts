@@ -36,6 +36,12 @@ const describeEffect = (e: BuildingEffect): string => {
       return `+${e.perLevel} kettle${e.perLevel === 1 ? '' : 's'}`;
     case 'herbGrowth':
       return `grows yarrow, mugwort and juniper, one each every ${formatDuration(num(e.intervalKey))}`;
+    case 'threatSlow':
+      return `Threat rises ${percent(num(e.perLevelKey))} slower`;
+    case 'standTaken':
+      return `${percent(num(e.perLevelKey))} less damage taken in the Last Stand`;
+    case 'standVolley':
+      return `a volley of ${num(e.perLevelKey)} Steel damage at the start of each wave`;
   }
 };
 

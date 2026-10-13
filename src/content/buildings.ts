@@ -1,4 +1,4 @@
-import type { AgeId } from './ages';
+import type { AgeId, V04AgeId } from './ages';
 import type { BalanceKey } from './balance';
 import type { JobId } from './jobs';
 import type { ResourceBundle, ResourceId } from './resources';
@@ -41,7 +41,13 @@ export type BuildingEffect =
   /** Kettles: this many brews at a time per level (GDD §5.7, v0.3). */
   | { readonly kind: 'brewSlots'; readonly perLevel: number }
   /** Grows one of each herb per copy every `intervalKey` seconds (GDD §5.7, v0.3). */
-  | { readonly kind: 'herbGrowth'; readonly intervalKey: BalanceKey };
+  | { readonly kind: 'herbGrowth'; readonly intervalKey: BalanceKey }
+  /** Slows the hourly Threat rate by this share per level (GDD §5.9.1, v0.4). */
+  | { readonly kind: 'threatSlow'; readonly perLevelKey: BalanceKey }
+  /** In the Last Stand, the party takes this much less damage per level (GDD §5.9.2, v0.4). */
+  | { readonly kind: 'standTaken'; readonly perLevelKey: BalanceKey }
+  /** In the Last Stand, a Steel volley of this × level at tick 1 of each wave (GDD §5.9.2, v0.4). */
+  | { readonly kind: 'standVolley'; readonly perLevelKey: BalanceKey };
 
 interface BuildingBase {
   readonly id: BuildingId;
@@ -206,4 +212,53 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     effects: [{ kind: 'herbGrowth', intervalKey: 'herbGarden.interval' }],
     availableFrom: 'keep',
   },
+};
+
+// ---- v0.4: defenses and the higher caps (GDD §5.1.2, §5.9.2, §8.1; D106, D107) ----
+// Content only (plan T4.1). New building ids and Ranks change the saved state, so
+// these join BUILDING_IDS, `buildings` and each `maxLevel` with the v3 → v4
+// migration (T4.3); T4.4 and T4.5 wire them in.
+export const DEFENSE_IDS = ['walls', 'watchtower'] as const;
+export type DefenseId = (typeof DEFENSE_IDS)[number];
+
+export interface DefenseBuilding extends Omit<LevelBuilding, 'id' | 'availableFrom' | 'maxLevel'> {
+  readonly id: DefenseId;
+  readonly availableFrom: V04AgeId;
+  readonly maxLevel: Readonly<Partial<Record<V04AgeId, number>>>;
+}
+
+export const defenses: Readonly<Record<DefenseId, DefenseBuilding>> = {
+  walls: {
+    id: 'walls',
+    name: 'Walls',
+    kind: 'level',
+    baseCost: { wood: 20_000, iron: 10_000 },
+    effects: [
+      { kind: 'standTaken', perLevelKey: 'walls.takenPerLevel' },
+      { kind: 'threatSlow', perLevelKey: 'threat.defenseSlowPerLevel' },
+    ],
+    availableFrom: 'citadel',
+    maxLevel: { citadel: 10, bastion: 15 },
+  },
+  watchtower: {
+    id: 'watchtower',
+    name: 'Watchtower',
+    kind: 'level',
+    baseCost: { wood: 15_000, iron: 8_000, silver: 100 },
+    effects: [
+      { kind: 'standVolley', perLevelKey: 'watchtower.volleyPerLevel' },
+      { kind: 'threatSlow', perLevelKey: 'threat.defenseSlowPerLevel' },
+    ],
+    availableFrom: 'citadel',
+    maxLevel: { citadel: 10, bastion: 15 },
+  },
+};
+
+/** GDD §5.1.2: the Mill, Sawpit and Smithy level caps in Citadel and Bastion (D106). */
+export const v04MaxLevels: Readonly<
+  Partial<Record<BuildingId, Readonly<Record<V04AgeId, number>>>>
+> = {
+  mill: { citadel: 15, bastion: 20 },
+  sawpit: { citadel: 15, bastion: 20 },
+  smithy: { citadel: 15, bastion: 20 },
 };
