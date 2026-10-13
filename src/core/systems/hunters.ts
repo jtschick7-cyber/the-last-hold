@@ -193,9 +193,25 @@ export const describeUnlock = (unlock: HunterUnlock): string => {
 /** A fallen hunter returns as a candidate this long after dying (before the Long Night, A12). */
 const returnDelayMs = (): number => num('death.returnDaysBeforeLongNight') * MS_PER_DAY;
 
-/** Fallen hunters who are not back yet. */
+/**
+ * Fallen hunters who are not back yet (GDD §5.3.7). From v0.4 a dead hunter returns at
+ * the next Long Night (D110); a save still before its first Long Night keeps the v0.3
+ * rule of 3 days.
+ */
 export const stillFallen = (state: GameState, id: HunterId): boolean =>
-  state.fallen.some((f) => f.hunter === id && state.time < f.diedAt + returnDelayMs());
+  state.fallen.some(
+    (f) =>
+      f.hunter === id &&
+      (state.arrivalDue ? state.time < f.diedAt + returnDelayMs() : f.cycle >= state.cycle.number),
+  );
+
+/** The level a returning hunter comes back at (GDD §5.9.7): halved at the Long Night, else 1. */
+export const returnLevel = (state: GameState, id: HunterId): number => {
+  let level = 1;
+  for (const f of state.fallen)
+    if (f.hunter === id && f.returnLevel !== undefined) level = f.returnLevel;
+  return level;
+};
 
 /** Candidates: unlocked, not owned, and not still mourned (GDD §5.3.1, §5.3.7). */
 export const candidates = (state: GameState): HunterDef[] =>

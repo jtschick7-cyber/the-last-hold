@@ -8,6 +8,7 @@ import { buy, upgrade } from './build';
 import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
 import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasants';
 import { setSettings } from './settings';
+import { makeStand, markStandSeen } from './stand';
 import { refuse, type ApplyResult, type Command } from './types';
 
 /**
@@ -60,6 +61,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return upgradeGear(state, cmd.hunter, cmd.slot);
     case 'settings.set':
       return setSettings(state, cmd.patch);
+    case 'stand.make':
+      return makeStand(state, cmd.party, cmd.prep ?? { oils: {}, potions: {} });
+    case 'stand.seen':
+      return markStandSeen(state);
     case 'debug.skip':
       return skip(state, cmd.ms, now);
     case 'debug.runPolicy':

@@ -98,6 +98,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
         diedAt: at,
         cycle: state.cycle.number,
         contractId: contract.id,
+        level: h.level,
       });
       injuries.push({ hunter: id, kind: 'dead', until: at });
       return;

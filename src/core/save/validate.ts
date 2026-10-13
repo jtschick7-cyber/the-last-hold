@@ -229,12 +229,15 @@ const fightRef = (v: unknown, where: string): FightRef => {
 
 const fallen = (v: unknown, where: string): FallenRecord => {
   const o = obj(v, where);
-  return {
+  const r: FallenRecord = {
     hunter: hunterId(o.hunter, `${where}.hunter`),
     diedAt: finite(o.diedAt, `${where}.diedAt`),
     cycle: count(o.cycle, `${where}.cycle`),
     contractId: str(o.contractId, `${where}.contractId`),
   };
+  if (o.level !== undefined) r.level = count(o.level, `${where}.level`);
+  if (o.returnLevel !== undefined) r.returnLevel = count(o.returnLevel, `${where}.returnLevel`);
+  return r;
 };
 
 const check = (raw: unknown, warnings: string[]): GameState => {

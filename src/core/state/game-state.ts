@@ -118,6 +118,10 @@ export interface FallenRecord {
   diedAt: number;
   cycle: number;
   contractId: string;
+  /** The level at death (v0.4); deaths recorded before v0.4 have none and return at level 1. */
+  level?: number;
+  /** Set at the Long Night: the level they come back at, halved like everyone's (GDD §5.9.7, D110). */
+  returnLevel?: number;
 }
 
 /** What the player has learned about a species (GDD §5.6.2). Never reset by the Long Night. */

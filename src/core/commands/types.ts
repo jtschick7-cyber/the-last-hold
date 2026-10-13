@@ -52,6 +52,15 @@ export type Command =
   | { type: 'roster.set'; hunter: HunterId; active: boolean }
   | { type: 'gear.upgrade'; hunter: HunterId; slot: GearSlot }
   | { type: 'settings.set'; patch: Partial<Settings> }
+  /** GDD §5.9.3: the Last Stand, then the Long Night. Final: there is no undo. */
+  | {
+      type: 'stand.make';
+      party: HunterId[];
+      /** One oil and one potion per hunter, from the stores; bombs are thrown automatically. */
+      prep?: Pick<Preparation, 'oils' | 'potions'>;
+    }
+  /** The stand's result sheet has been read. */
+  | { type: 'stand.seen' }
   // Debug (technical design §15): only offered with ?debug or in dev builds.
   | { type: 'debug.skip'; ms: number }
   /** Plays a simulator policy over the last `ms`, then catches up to now (technical design §15). */

@@ -342,3 +342,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Seen, for tuning (T4.15):** the waves a stand holds hardly depend on the dice: in most setups all 100 practice stands hold the same number of waves. The stand ends where a wave can't be won in 400 ticks, so it behaves like a wall, not a gamble. The "stand now or wait" choice still moves with Threat, levels and defenses.
 - **Results:** `npm run check` green (1,092 tests, 18 s of tests); full `npm run sim:check` passes and matches the baseline.
 - **Next:** T4.8, the Long Night reset.
+
+## 2026-10-13 — v0.4: T4.8 the Long Night reset
+- **Owner:** accepted D122 (D123).
+- **Done (T4.8):** the `stand.make` command (Bastion only, once per cycle, 1–6 active hunters, oils and potions from the stores; injured hunters may stand), in the GDD order: running contracts finish on the spot with their real result, the stand, the conversion into Embers and relics, the reset, the new cycle (`src/core/commands/stand.ts`, `src/core/long-night/`). Every row of the GDD §5.9.7 table has a test (`tests/long-night/long-night.test.ts`). `stand.seen` marks the result sheet read. Dead hunters now return at the next Long Night with their levels halved (the fallen record keeps their level); a save still facing its first Long Night keeps the old 3-day rule.
+- **Test changed by the design (D110):** the v0.3 test "a fallen hunter returns 3 days after death" now runs on a save before its first Long Night, where that rule still holds; a new test covers the v0.4 rule.
+- **Readings:** D124 (Proposed).
+- **Results:** `npm run check` green (1,111 tests); full `npm run sim:check` passes and matches the baseline.
+- **Next:** T4.9, buying warden upgrades on The Hearth and the remaining upgrade and relic effects.

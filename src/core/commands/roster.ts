@@ -4,7 +4,14 @@ import { RESOURCE_IDS } from '../../content/resources';
 import type { GameState } from '../state/game-state';
 import { freshHunter } from '../state/hunters-state';
 import { canAfford } from '../systems/costs';
-import { candidates, hunterStatus, isOwned, nextGear, rosterCap } from '../systems/hunters';
+import {
+  candidates,
+  hunterStatus,
+  isOwned,
+  nextGear,
+  returnLevel,
+  rosterCap,
+} from '../systems/hunters';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.3.1 (recruitment, active roster and reserve) and §5.3.6 (gear).
@@ -22,7 +29,8 @@ export const recruit = (state: GameState, id: HunterId): ApplyResult => {
   const price = hunters[id].recruitPrice;
   if (state.resources.silver < price) return refuse('Not enough silver to recruit them.');
   state.resources.silver -= price;
-  state.hunters[id] = freshHunter();
+  // GDD §5.9.7: a hunter back from the Hall of the Fallen keeps half their levels.
+  state.hunters[id] = { ...freshHunter(), level: returnLevel(state, id) };
   if (state.roster.active.length < rosterCap(state).value) state.roster.active.push(id);
   return ok;
 };

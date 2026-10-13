@@ -325,8 +325,10 @@ describe('injuries and death (GDD §5.3.7)', () => {
     }
   });
 
-  it('a fallen hunter returns as a candidate 3 days after death', () => {
+  it('before its first Long Night, a fallen hunter returns as a candidate 3 days after death', () => {
+    // GDD §5.3.7: the v0.3 rule, which still holds for a save facing its first Long Night.
     const s = keepRich('return');
+    s.arrivalDue = true;
     Reflect.deleteProperty(s.hunters, 'radek');
     s.roster.active = s.roster.active.filter((h) => h !== 'radek');
     s.fallen.push({ hunter: 'radek', diedAt: s.time, cycle: 1, contractId: 'c0' });
@@ -337,6 +339,18 @@ describe('injuries and death (GDD §5.3.7)', () => {
     expect(ids(s)).not.toContain('radek');
     advance(s, T0 + 3 * 24 * HOUR);
     expect(ids(s)).toContain('radek');
+  });
+
+  it('from v0.4, a fallen hunter returns at the next Long Night, not after 3 days (D110)', () => {
+    const s = keepRich('return-v04');
+    Reflect.deleteProperty(s.hunters, 'radek');
+    s.roster.active = s.roster.active.filter((h) => h !== 'radek');
+    s.fallen.push({ hunter: 'radek', diedAt: s.time, cycle: 1, contractId: 'c0', level: 7 });
+    s.stats.kills.upyr = 1;
+    advance(s, T0 + 30 * 24 * HOUR);
+    expect(candidatesIds(s)).not.toContain('radek');
+    s.cycle.number = 2; // the next cycle (the Long Night itself is tested in tests/long-night)
+    expect(candidatesIds(s)).toContain('radek');
   });
 });
 

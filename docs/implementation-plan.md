@@ -470,7 +470,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### D. The Long Night
 
-- [ ] **T4.8 Reset.** Everything in GDD §5.9.7, in this order: running contracts finish, the stand, conversion, the reset, the new cycle. Levels kept; dead hunters as candidates; the cycle history entry. Tested row by row against the "resets / kept" table.
+- [x] **T4.8 Reset.** Everything in GDD §5.9.7, in this order: running contracts finish, the stand, conversion, the reset, the new cycle. Levels kept; dead hunters as candidates; the cycle history entry. Tested row by row against the "resets / kept" table.
 - [ ] **T4.9 Warden upgrades and relic effects.** The Hearth (buying, costs, max levels, no re-spending); each upgrade's effect (ember bucket, starting state, levels kept, XP, bounties, durations, offline cap within the 24 h ceiling); each relic's effect (relic bucket; none touches silver).
 - [ ] **T4.10 The v0.4 arrival.** The arrival flag, sheet and stand (Threat 0, no defenses, the save's Rank multiplier, the capped trophies part); the debug action; a test that takes the owner's save through migration, arrival and reset. `[?]` until the save is provided.
 
