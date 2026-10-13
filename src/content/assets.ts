@@ -1,5 +1,7 @@
 import { AGE_IDS, type AgeId } from './ages';
 import { BUILDING_IDS, type BuildingId } from './buildings';
+import { HUNTER_IDS, hunters, type HunterId } from './hunters';
+import { MONSTER_IDS, monsters, type MonsterId } from './monsters';
 import { RESOURCE_IDS, type ResourceId } from './resources';
 
 // Technical design §12.1: every image the game shows has a manifest row.
@@ -44,6 +46,8 @@ const titled = (id: string): string =>
 export const resourceIconId = (r: ResourceId): string => `icon.resource.${r}`;
 export const buildingSpriteId = (b: BuildingId): string => `building.${b}`;
 export const holdSceneId = (a: AgeId): string => `scene.hold.${a}`;
+export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
+export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m}`;
 
 // Plan T1.31a: the v0.1 images, built from the owner's CC0 Kenney packs by
 // tools/build-art.ts (recipes in tools/art-recipes.ts) and recolored to the
@@ -80,6 +84,25 @@ const ICON_PACK: Record<ResourceId, { pack: string; url: string }> = {
   silver: TINY_TOWN,
 };
 
+// Plan T2.23/T2.24: portraits drawn by tools/gen-portraits.ts (hunters) and tools/gen-monsters.ts from each hunter's `portrait` parts and each species' recipe.
+const generated = (
+  id: string,
+  size: readonly [number, number],
+  label: string,
+  file: string,
+  generator: string,
+): AssetEntry => ({
+  id,
+  kind: 'portrait',
+  size,
+  label,
+  file,
+  generator,
+  source: 'generated',
+  license: 'CC0 (project-generated)',
+  credit: 'The Last Hold',
+});
+
 export const assets: readonly AssetEntry[] = [
   ...RESOURCE_IDS.map((r) =>
     fromPack(
@@ -103,6 +126,24 @@ export const assets: readonly AssetEntry[] = [
       `The hold, ${titled(a)}`,
       `scenes/hold-${a}.png`,
       TINY_TOWN,
+    ),
+  ),
+  ...HUNTER_IDS.map((h) =>
+    generated(
+      hunterPortraitId(h),
+      [64, 64],
+      hunters[h].name,
+      `portraits/${h}.png`,
+      'tools/gen-portraits.ts',
+    ),
+  ),
+  ...MONSTER_IDS.map((m) =>
+    generated(
+      monsterPortraitId(m),
+      [64, 64],
+      monsters[m].name,
+      `portraits/monster-${m}.png`,
+      'tools/gen-monsters.ts',
     ),
   ),
 ];

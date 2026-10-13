@@ -2,7 +2,6 @@ import { useState } from 'preact/hooks';
 import { buildingSpriteId } from '../../content/assets';
 import { BUILDING_IDS, buildings, type BuildingId } from '../../content/buildings';
 import { RESOURCE_IDS } from '../../content/resources';
-import { num } from '../../core/balance-access';
 import { describeBuilding } from '../../core/describe';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { GameState } from '../../core/state/game-state';
@@ -10,6 +9,7 @@ import { isAvailable, maxLevelNow } from '../../core/systems/ages';
 import {
   buildingCost,
   canAfford,
+  copyLimit,
   maxAffordableCount,
   timeToAfford,
 } from '../../core/systems/costs';
@@ -34,7 +34,7 @@ const Row = ({ id, mode, hinted }: { id: BuildingId; mode: Mode; hinted: boolean
   const def = buildings[id];
   const owned = s.buildings[id];
   const isLevel = def.kind === 'level';
-  const cap = def.kind === 'count' && def.maxCountKey ? num(def.maxCountKey) : null;
+  const cap = copyLimit(id);
   const atMax = isLevel ? owned >= maxLevelNow(s, id) : cap !== null && owned >= cap;
   const k = isLevel
     ? 1

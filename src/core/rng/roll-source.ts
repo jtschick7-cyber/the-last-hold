@@ -18,6 +18,26 @@ export const seeded = (seedString: string): RollSource => {
   return { next: () => gen.next() };
 };
 
+/**
+ * Hashes and warms a list of seed strings once, then hands out fresh streams that
+ * start exactly where `seeded(seed)` would. Suggest uses it: its first stage runs
+ * the same 50 seeds against every party, so seeding them once saves most of the
+ * seeding cost (GDD §6.5).
+ */
+export const seedBank = (seedStrings: readonly string[]): ((i: number) => RollSource) => {
+  const states = seedStrings.map((seed) => {
+    const gen = sfc32(cyrb128(seed));
+    for (let i = 0; i < WARM_UP; i++) gen.next();
+    return gen.state();
+  });
+  return (i) => {
+    const state = states[i];
+    if (!state) throw new RangeError(`No seed ${i} in this bank.`);
+    const gen = sfc32(state);
+    return { next: () => gen.next() };
+  };
+};
+
 export interface ScriptedRollSource extends RollSource {
   /** Throws unless every scripted roll was used. Call at the end of a test. */
   assertConsumed(): void;

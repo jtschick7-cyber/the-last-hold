@@ -1,5 +1,7 @@
-# Technical design §11.2 and §14: performance benchmarks, warn-only below 2× the
-# budget. A stub until v0.2 (plan T0.5): there is nothing to benchmark yet.
+# Technical design §11.2 and §14 (plan T2.19): performance benchmarks. The live
+# odds panel (500 fights, budget 100 ms) and the Suggested party (budget 300 ms)
+# run in Chromium with the CPU slowed 4×, as a stand-in for a mid-range phone.
+# Over the budget is a warning in the test report; over 2× the budget fails.
 name: Benchmarks
 
 on:
@@ -11,4 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - run: echo "No benchmarks yet (v0.0 stub)."
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run bench

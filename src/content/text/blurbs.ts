@@ -18,6 +18,10 @@ export const buildingBlurbs: Readonly<Record<BuildingId, string>> = {
     'One sawyer above, one below, and a long blade between them. The planks come out straight, which is more than can be said for the language.',
   smithy:
     'The old forge-stones are still here, black with three hundred years of fire. They take heat faster than they should.',
+  barracks:
+    'A long low hall with bunks for the ones who go out. Axes hang by the door, each worn to the shape of one hand.',
+  'trophy-hall':
+    'Fangs, horns and a river-pearl or two, nailed up where the whole hold can see them. Children stand under them and count.',
   'bell-tower':
     'The bell was found face-down in the rubble, uncracked. When it rings at dusk, the farms across the river light their lamps.',
 };

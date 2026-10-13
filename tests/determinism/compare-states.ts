@@ -11,6 +11,13 @@ const TIMESTAMP_KEYS = new Set([
   'at',
   'from',
   'to',
+  // v0.2 (schedule times, computed rather than stepped):
+  'until',
+  'endsAt',
+  'launchedAt',
+  'arrivedAt',
+  'nextArrivalAt',
+  'diedAt',
 ]);
 const FLOAT_PARENTS = new Set(['resources']);
 

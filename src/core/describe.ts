@@ -25,6 +25,10 @@ const describeEffect = (e: BuildingEffect): string => {
       return `+${percent(num(e.perLevelKey))} ${resources[e.resource].name.toLowerCase()}`;
     case 'offlineCap':
       return `+${formatDuration(num(e.perLevelKey))} offline cap`;
+    case 'rosterCap':
+      return `+${e.perLevel} active hunter${e.perLevel === 1 ? '' : 's'}`;
+    case 'trophyBonus':
+      return `+${percent(num(e.perTrophyKey))} production per trophy`;
   }
 };
 

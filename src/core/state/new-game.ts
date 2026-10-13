@@ -2,6 +2,7 @@ import { BUILDING_IDS, type BuildingId } from '../../content/buildings';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { start } from '../../content/start';
 import { SCHEMA_VERSION, type GameState, type Settings } from './game-state';
+import { freshHunter, startingHunters } from './hunters-state';
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'dark',
@@ -40,7 +41,24 @@ export const createNewGame = (seed: string, now: number): GameState => {
       lastSettleAt: 0,
     },
     buildings: fill<BuildingId>(BUILDING_IDS, start.buildings),
-    stats: { buildingsBought: 0, peasantsSettled: 0 },
+    hunters: Object.fromEntries(startingHunters().map((h) => [h, freshHunter()])),
+    roster: { active: startingHunters() },
+    board: { opened: false, open: [], nextArrivalAt: null, arrivals: 0, tierWins: [0, 0, 0, 0, 0] },
+    running: [],
+    results: [],
+    fallen: [],
+    scenes: [],
+    log: { recentFights: [] },
+    stats: {
+      buildingsBought: 0,
+      peasantsSettled: 0,
+      contractsWon: 0,
+      contractsLost: 0,
+      trophies: 0,
+      bountySilver: 0,
+      kills: {},
+      winsByLocation: {},
+    },
     settings: { ...DEFAULT_SETTINGS },
   };
 };

@@ -20,6 +20,9 @@ describe('descriptions for the UI', () => {
       'Sawpit up to level 10',
       'Smithy up to level 10',
       'New: Bell Tower',
+      // v0.2 (GDD §8.1): both arrive at the Keep.
+      'New: Barracks',
+      'New: Trophy Hall',
     ]);
     expect(ageUnlocks('hamlet')).toEqual([]);
   });

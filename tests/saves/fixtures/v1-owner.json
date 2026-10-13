@@ -1,0 +1,61 @@
+{
+  "app": "the-last-hold",
+  "schemaVersion": 1,
+  "rulesVersion": 1,
+  "savedAt": 1791881390799,
+  "state": {
+    "meta": {
+      "schemaVersion": 1,
+      "gameSeed": "843a6124181b0108",
+      "createdAt": 1791795157444,
+      "lastSeen": 1791881390164,
+      "clockHighWater": 1791881390164,
+      "debugUsed": false
+    },
+    "time": 1791881390164,
+    "cycle": {
+      "number": 1,
+      "age": "keep"
+    },
+    "resources": {
+      "food": 169133.0629360469,
+      "wood": 107074.52145168504,
+      "iron": 37204.06005459225,
+      "silver": 413.0603790039057
+    },
+    "peasants": {
+      "total": 29,
+      "jobs": {
+        "farmer": 9,
+        "woodcutter": 10,
+        "miner": 8,
+        "silver-digger": 2
+      },
+      "autoSettle": true,
+      "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
+      "lastSettleAt": 1791806222908
+    },
+    "buildings": {
+      "hearth-hall": 1,
+      "cottage": 13,
+      "farm": 3,
+      "woodcutters-camp": 4,
+      "mine": 4,
+      "silver-seam": 2,
+      "mill": 4,
+      "sawpit": 3,
+      "smithy": 3,
+      "bell-tower": 0
+    },
+    "stats": {
+      "buildingsBought": 34,
+      "peasantsSettled": 26
+    },
+    "settings": {
+      "theme": "dark",
+      "bestBuyHint": true,
+      "rateUnit": "hour",
+      "reduceMotion": "system"
+    }
+  }
+}

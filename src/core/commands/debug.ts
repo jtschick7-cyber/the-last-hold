@@ -4,6 +4,7 @@ import { play } from '../policies/play';
 import { POLICY_IDS, type PolicyId } from '../policies/schedules';
 import { catchUpNow } from '../sim/offline';
 import type { GameState } from '../state/game-state';
+import { shiftClock } from '../state/shift';
 import { ok, refuse, type ApplyResult } from './types';
 
 // Technical design §15 / GDD §9.10: every debug action is a command, and any of
@@ -15,9 +16,7 @@ import { ok, refuse, type ApplyResult } from './types';
  */
 export const skip = (state: GameState, ms: number, now: number): ApplyResult => {
   if (!Number.isFinite(ms) || ms <= 0) return refuse('Skip a positive amount of time.');
-  state.time -= ms;
-  state.meta.lastSeen -= ms;
-  state.peasants.lastSettleAt -= ms;
+  shiftClock(state, -ms); // everything scheduled moves with the clock
   catchUpNow(state, Math.max(now, state.time + ms));
   state.meta.debugUsed = true;
   return ok;
@@ -36,9 +35,7 @@ export const runPolicy = (
 ): ApplyResult => {
   if (!(POLICY_IDS as readonly string[]).includes(policy)) return refuse('Unknown policy.');
   if (!Number.isFinite(ms) || ms <= 0) return refuse('Run a policy for a positive time.');
-  state.time -= ms;
-  state.meta.lastSeen -= ms;
-  state.peasants.lastSettleAt -= ms;
+  shiftClock(state, -ms);
   // The replayed check-ins happen before the latest time seen, so move that
   // back too, or catch-up would read them as a clock moved backward (D21).
   state.meta.clockHighWater = Math.min(state.meta.clockHighWater, state.time);

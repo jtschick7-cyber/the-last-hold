@@ -96,13 +96,16 @@ export const balance = {
   provisions: {
     base: tunable(30),
     growth: tunable(2.2),
+    // Q9 (D81): from the Keep, each hunter's provisions are at least this many minutes
+    // of the hold's food income. Hamlet 0: the first contracts stay at the flat base.
+    incomeMinutes: tunable({ hamlet: 0, keep: 1.5 }),
   },
   monster: {
     statGrowth: tunable(1.35),
     armorGrowth: tunable(1.15),
   },
   bounty: {
-    base: tunable(60),
+    base: tunable(78),
     growth: tunable(1.6),
     ageMult: tunable({ hamlet: 1.0, keep: 1.0 }),
   },
@@ -133,7 +136,9 @@ export const balance = {
   suggest: {
     stage1Samples: locked(50),
     stage1PerCandidate: locked(20),
-    finalists: locked(5),
+    // D73 (owner-approved): 5 finalists at 500 fights was too slow for a phone.
+    finalists: locked(3),
+    stage2Samples: locked(200),
   },
   boss: {
     tokenInterval: locked(8 * HOUR, 'seconds'), // 8 h

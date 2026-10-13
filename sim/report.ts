@@ -62,8 +62,8 @@ const delta = (now: number | null, was: number | null | undefined): string => {
   return `${d > 0 ? '+' : '−'}${hoursText(Math.abs(d))}`;
 };
 
-const verdict = (pass: boolean | null): string =>
-  pass === null ? '– not judged' : pass ? '✓ pass' : '✗ FAIL';
+const verdict = (pass: boolean | null, pending?: string): string =>
+  pass === null ? '– not judged' : pass ? '✓ pass' : pending ? `✗ pending ${pending}` : '✗ FAIL';
 
 export const markdown = (report: Report, previous: Baseline | null): string => {
   const out: string[] = [
@@ -77,7 +77,7 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
     '',
   ];
   for (const c of report.checks) {
-    out.push(`- **${verdict(c.pass)}** ${c.id}: ${c.text}`);
+    out.push(`- **${verdict(c.pass, c.pending)}** ${c.id}: ${c.text}`);
     for (const line of c.lines) out.push(`  - ${line}`);
   }
   out.push('', '## Times to each moment (median over seeds)', '');

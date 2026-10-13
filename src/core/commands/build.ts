@@ -1,9 +1,9 @@
 import { BUILDING_IDS, buildings, type BuildingId } from '../../content/buildings';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
-import { num } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import { isAvailable, maxLevelNow } from '../systems/ages';
-import { buildingCost, canAfford, maxAffordableCount } from '../systems/costs';
+import { buildingCost, canAfford, copyLimit, maxAffordableCount } from '../systems/costs';
+import { syncBoardOpen } from '../contracts/board';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.1.2: construction is instant; pacing comes from costs.
@@ -26,14 +26,18 @@ export const buy = (state: GameState, id: BuildingId, count: number | 'max'): Ap
       ? refuse(`Can't afford a ${def.name} yet.`)
       : refuse('Buy at least one.');
   }
-  if (def.maxCountKey && state.buildings[id] + k > num(def.maxCountKey)) {
-    return refuse(`At most ${num(def.maxCountKey)} ${def.name}s.`);
+  const limit = copyLimit(id);
+  if (limit !== null && state.buildings[id] + k > limit) {
+    return refuse(
+      limit === 1 ? `${def.name} can be built once.` : `At most ${limit} ${def.name}s.`,
+    );
   }
   const cost = buildingCost(state, id, k).bundle;
   if (!canAfford(state, cost)) return refuse(`Not enough resources for ${k} × ${def.name}.`);
   pay(state, cost);
   state.buildings[id] += k;
   state.stats.buildingsBought += k;
+  syncBoardOpen(state); // the first Mine opens the contract board (GDD §5.4.1)
   return ok;
 };
 

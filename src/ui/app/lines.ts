@@ -27,11 +27,14 @@ export interface Watched {
   peasants: number;
   idle: number;
   age: string;
+  /** Contracts won so far, for the first-success line. */
+  won: number;
 }
 
 /** Compares before and after a change and speaks for whatever just happened. */
 export const noticeChanges = (before: Watched, after: Watched): void => {
   if (after.age !== before.age) return say('age-up');
+  if (before.won === 0 && after.won > 0) return say('first-contract-success');
   if (before.bought === 0 && after.bought > 0) return say('first-building');
   const milestone = lineTriggerRules.peasantMilestones.find(
     (m) => before.peasants < m && after.peasants >= m,

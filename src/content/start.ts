@@ -18,7 +18,7 @@ export interface StartDef {
 
 export const start: StartDef = {
   age: 'hamlet',
-  resources: { food: 50, wood: 75, iron: 0, silver: 0 },
+  resources: { food: 80, wood: 75, iron: 0, silver: 0 },
   buildings: { 'hearth-hall': 1, farm: 1, 'woodcutters-camp': 1 },
   jobs: { farmer: 1, woodcutter: 2, miner: 0, 'silver-digger': 0 },
   autoSettle: true,

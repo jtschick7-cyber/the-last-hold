@@ -8,7 +8,7 @@ export const noOverflowCheck: Check = {
   id: 'no-overflow',
   enforcedFrom,
   judge: (runs) => {
-    const long = runs.filter((r) => r.spec.days >= days && !r.spec.stopAtKeep);
+    const long = runs.filter((r) => r.spec.days >= days && r.spec.stopAt === undefined);
     if (long.length === 0) {
       return { id: 'no-overflow', text, pass: null, lines: [`needs ${days}-day runs`] };
     }

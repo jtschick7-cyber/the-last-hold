@@ -84,6 +84,7 @@ const bump = (): void => {
     peasants: state.peasants.total,
     idle: idlePeasants(state),
     age: state.cycle.age,
+    won: state.stats.contractsWon,
   };
   if (watched) noticeChanges(watched, current);
   watched = current;

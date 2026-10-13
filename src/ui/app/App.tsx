@@ -2,7 +2,9 @@ import { signal } from '@preact/signals';
 import { useEffect } from 'preact/hooks';
 import { buildInfo } from '../../platform/build-info';
 import type { UpdateHandle } from '../../platform/service-worker';
+import { ContractsScreen } from '../screens/ContractsScreen';
 import { HoldScreen } from '../screens/HoldScreen';
+import { HuntersScreen } from '../screens/HuntersScreen';
 import { MoreScreen } from '../screens/MoreScreen';
 import { InstallSheet } from '../more/InfoSheets';
 import { AwayView } from '../sheets/AwaySheet';
@@ -24,16 +26,31 @@ import {
   version,
 } from './runtime';
 import { ErrorBoundary } from './ErrorBoundary';
-import { openSheet } from './sheets';
+import { playScenes } from './scenes';
+import { openSheet, sheets } from './sheets';
 import { UpdateBanner } from './UpdateBanner';
 
 export const pendingUpdate = signal<UpdateHandle | null>(null);
 
-// GDD §9.1: a tab appears only when its system unlocks; v0.1 has Hold and More.
-const TABS = ['hold', 'more'] as const;
-type Tab = (typeof TABS)[number];
+// GDD §9.1: a tab appears only when its system unlocks. Contracts and Hunters
+// arrive with the first Mine (GDD §5.4.1).
+const ALL_TABS = ['hold', 'contracts', 'hunters', 'more'] as const;
+type Tab = (typeof ALL_TABS)[number];
 const tab = signal<Tab>('hold');
-const TAB_LABEL: Record<Tab, string> = { hold: 'Hold', more: 'More' };
+const TAB_LABEL: Record<Tab, string> = {
+  hold: 'Hold',
+  contracts: 'Contracts',
+  hunters: 'Hunters',
+  more: 'More',
+};
+const tabsFor = (opened: boolean): readonly Tab[] =>
+  ALL_TABS.filter((t) => opened || (t !== 'contracts' && t !== 'hunters'));
+const SCREENS: Record<Tab, () => preact.JSX.Element> = {
+  hold: () => <HoldScreen />,
+  contracts: () => <ContractsScreen />,
+  hunters: () => <HuntersScreen />,
+  more: () => <MoreScreen />,
+};
 
 const Ribbon = () =>
   buildInfo.channel === 'preview' ? (
@@ -101,6 +118,11 @@ export const App = () => {
     document.documentElement.dataset.motion = reduceMotion;
   }, [version.value]);
 
+  // Scenes play once, when their moment comes (setting-primer §6.6).
+  useEffect(() => {
+    if (version.value > 0) playScenes();
+  }, [version.value, sheets.value.length]);
+
   useEffect(() => {
     currentScreen.value = tab.value;
   }, [tab.value]);
@@ -117,16 +139,18 @@ export const App = () => {
   if (version.value === 0) return <main class={css.main}>Lighting the hearth…</main>;
 
   const progress = catchUpProgress.value;
+  const shown = tabsFor(game().board.opened);
+  const unread = game().results.length;
   return (
     <div class={css.app}>
       <Ribbon />
       <ResourceBar />
       <main class={css.main}>
         <Notices />
-        <ErrorBoundary>{tab.value === 'hold' ? <HoldScreen /> : <MoreScreen />}</ErrorBoundary>
+        <ErrorBoundary>{SCREENS[shown.includes(tab.value) ? tab.value : 'hold']()}</ErrorBoundary>
       </main>
       <nav class={css.tabs} aria-label="Screens">
-        {TABS.map((t) => (
+        {shown.map((t) => (
           <button
             type="button"
             key={t}
@@ -135,6 +159,7 @@ export const App = () => {
             onClick={() => (tab.value = t)}
           >
             {TAB_LABEL[t]}
+            {t === 'contracts' && unread > 0 ? ` (${unread})` : ''}
           </button>
         ))}
       </nav>

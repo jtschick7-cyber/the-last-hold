@@ -278,7 +278,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.2 — Hunters & contracts
 
-**Status:** not started
+**Status:** complete
 
 **Goal:** contracts from Hamlet onward, an active and reserve roster, transparent turn-meter combat, rewards that feed the Hold, and honest odds.
 **Reads:** GDD §3.3, §4, §5.0, §5.3–5.5, §6 (v0.2 rows), §6.5, §7.3–7.4, §8.1–8.3, §8.5, §9.4–9.7; technical design §5.2–5.3, §7, §10.1, §14; `setting-primer.md` §3, §5, §6.3, §6.6–6.7.
@@ -293,50 +293,52 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### A. Content and state
 
-- [ ] **T2.1 Content.** 8 hunters (prices, story-hunter flags), traits, gear tiers; all **12 monsters** (identified for free in v0.2); villages with heads (trust kept silent); Barracks, Trophy Hall; balance keys with `tunable` or `locked`.
-- [ ] **T2.2 Text.** Notices (3+ per village × location; seeds at most 1 in 10); the vow and first-contract scenes; hunter bios.
-- [ ] **T2.3 Names** for the new proper nouns.
-- [ ] **T2.4 Migration v1 → v2,** using the **owner's real v0.1 save** as the fixture. `[?]` until it's provided.
+- [x] **T2.1a Content.** 8 hunters (prices, story-hunter flags), traits, gear tiers; all **12 monsters** (identified for free in v0.2); villages with heads (trust kept silent). The balance keys this needs were already in `balance.ts` from v0.1; per-item numbers live in the content files (D44).
+- [x] **T2.1b Barracks and Trophy Hall** as buildings. They add building ids, which changes the saved state, so they go in together with the migration (T2.4, Q5).
+- [x] **T2.2 Text.** Notices (3+ per village × location; seeds at most 1 in 10); the vow and first-contract scenes; hunter bios.
+- [x] **T2.3 Names** for the new proper nouns (hunters, villages and heads, monsters, abilities, traits, gear). Searched 2026-10-13; one collision found (Gloam Wolf, Q6). Names for the notices and scenes (T2.2) get checked when that text is written.
+- [x] **T2.4 Migration v1 → v2,** using the **owner's real v0.1 save** as the fixture. `[?]` until it's provided (Q5).
 
 ### B. Combat
 
-- [ ] **T2.5 Turn meter.**
-- [ ] **T2.6 Attack resolution.** Buckets, Armor on direct attacks only, taken%, immunity, rounding, crits, targeting, Mender, Silver sub-hits (portable math only).
-- [ ] **T2.7 All 12 monster abilities.**
-- [ ] **T2.8 Golden test, GDD §5.5.1, line for line.** **This test gates the milestone.** It runs in Node, WebKit, and Chromium.
-- [ ] **T2.9 More combat tests.** Seeded goldens (record 5, then freeze them; they're locked), determinism, one test per ability, `rulesVersion`.
+- [x] **T2.5 Turn meter.**
+- [x] **T2.6 Attack resolution.** Buckets, Armor on direct attacks only, taken%, immunity, rounding, crits, targeting, Mender, Silver sub-hits (portable math only).
+- [x] **T2.7 All 12 monster abilities.**
+- [x] **T2.8 Golden test, GDD §5.5.1, line for line.** **This test gates the milestone.** It runs in Node, WebKit, and Chromium.
+- [x] **T2.9 More combat tests.** Seeded goldens (record 5, then freeze them; they're locked), determinism, one test per ability, `rulesVersion`.
 
 ### C. Contracts and roster
 
-- [ ] **T2.10 Board.** Opens at the first Mine; refill; tier unlocks and mix; barrow from T2; every generated cell has ≥ 1 species; Decline.
-- [ ] **T2.11 Launch.** Party rules, provisions, the Reckless confirmation with death chances, the fight seed.
-- [ ] **T2.12 Completion events.** Rewards at completion, injuries, death (story hunters downgraded), recovery, return after 3 days, results.
-- [ ] **T2.13 Roster.** Active and reserve, caps, candidates, prices, swaps, level-ups (Health and Might only).
-- [ ] **T2.14 Gear** upgrades in place.
-- [ ] **T2.15 Trophy Hall** (cumulative, silver excluded).
+- [x] **T2.10 Board.** Opens at the first Mine; refill; tier unlocks and mix; barrow from T2; every generated cell has ≥ 1 species; Decline.
+- [x] **T2.11 Launch.** Party rules, provisions, the Reckless confirmation with death chances, the fight seed.
+- [x] **T2.12a Reward and injury rules** (pure, in `core/contracts/`): bounty, provisions, trophies, XP, injury outcomes and recovery times, the death roll, seeds.
+- [x] **T2.12b Completion events.** Rewards at completion, injuries, death (story hunters downgraded), recovery, return after 3 days, results. Needs the saved state (T2.4).
+- [x] **T2.13 Roster.** Active and reserve, caps, candidates, prices, swaps, level-ups (Health and Might only).
+- [x] **T2.14 Gear** upgrades in place.
+- [x] **T2.15 Trophy Hall** (cumulative, silver excluded).
 
 ### D. Odds and suggest
 
-- [ ] **T2.16 Odds.** 500 samples, margin, injuries, death chance, rewards, "Why?" per 100 ticks.
-- [ ] **T2.17 Worker.** Protocol, debounce, main-thread fallback labeled "quick estimate".
-- [ ] **T2.18 Suggest.** Two-stage search with common seeds.
-- [ ] **T2.19 Benchmarks** in `bench.yml`: warn at the budget, fail at 2×. The debug timing readout too.
+- [x] **T2.16 Odds.** 500 samples, margin, injuries, death chance, rewards, "Why?" per 100 ticks.
+- [x] **T2.17 Worker.** Protocol, debounce, main-thread fallback labeled "quick estimate".
+- [x] **T2.18 Suggest.** Two-stage search with common seeds. Built exactly as the GDD says; it misses the speed budget (Q8).
+- [x] **T2.19 Benchmarks** (D73 answered Q8). Measured at a 4× slowdown: odds 96 ms (budget 100), Suggest 324 ms (budget 300): a small warning, well under the 2× fail line. in `bench.yml`: warn at the budget, fail at 2×. The debug timing readout too.
 
 ### E. UI and tests
 
-- [ ] **T2.20 Contracts tab.** Board, running and collect sections, Decline, the launch sheet, the fight log (ticks, rolls, seed and replay, collapse, the older-rules label).
-- [ ] **T2.21 Hunters tab.** Active, reserve, candidates, locked silhouettes, detail, gear, Hall of the Fallen.
-- [ ] **T2.22 Away sheet** additions; **extend the Playwright smoke:** launch a contract → skip time → collect.
+- [x] **T2.20 Contracts tab.** Board, running and collect sections, Decline, the launch sheet, the fight log (ticks, rolls, seed and replay, collapse, the older-rules label).
+- [x] **T2.21 Hunters tab.** Active, reserve, candidates, locked silhouettes, detail, gear, Hall of the Fallen.
+- [x] **T2.22 Away sheet** additions; **extend the Playwright smoke:** launch a contract → skip time → collect.
 
 ### F. Art
 
-- [ ] **T2.23 Portrait generator.** The 8 hunters plus a contact sheet. 👤 Review.
-- [ ] **T2.24 Monster portraits.** The 12 species plus a contact sheet. 👤 Review; placeholders where rejected. **No battle sprites** (built when a screen needs them, v0.7 Delves) *(A17)*.
+- [x] **T2.23 Portrait generator.** The 8 hunters plus a contact sheet. 👤 Review *(built, D78; owner review pending: keep, regenerate or placeholder)*.
+- [x] **T2.24 Monster portraits.** The 12 species plus a contact sheet *(built, D78; owner review pending)*. 👤 Review; placeholders where rejected. **No battle sprites** (built when a screen needs them, v0.7 Delves) *(A17)*.
 
 ### G. Simulator
 
-- [ ] **T2.25 Contract policy.** Highest expected value, suggested party, never Reckless, pays provisions.
-- [ ] **T2.26 v0.2 checks and tuning** (tunables only).
+- [x] **T2.25 Contract policy.** Highest expected value, suggested party, never Reckless, pays provisions.
+- [x] **T2.26 v0.2 checks and tuning** (tunables only). Done. The provisions check (20–40% of food income) was pending Q9 while provisions were flat (about 0.2%); the owner chose income-scaled provisions (D81) and the tunable values in D82, and the check is now enforced like the others.
 
 ### v0.2 acceptance criteria
 

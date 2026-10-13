@@ -1,6 +1,7 @@
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { num } from '../balance-access';
-import type { GameState } from '../state/game-state';
+import type { ContractResult, GameState } from '../state/game-state';
+import { shiftClock } from '../state/shift';
 import { offlineCap } from '../systems/offline-cap';
 import { MS_PER_SECOND } from '../time';
 import { advance, type AdvanceEvent } from './advance';
@@ -22,6 +23,14 @@ export interface AwaySummary {
   /** Net change per resource over the counted time (spending included). */
   resources: Record<ResourceId, number>;
   peasantsSettled: number;
+  /** What the jobs made while away, by resource (spending not subtracted). */
+  produced: Record<ResourceId, number>;
+  /** Contracts that finished while away, with their outcomes (GDD §5.2, v0.2). */
+  contracts: ContractResult[];
+  /** Hunters whose injury healed while away. */
+  recovered: string[];
+  /** Contracts that arrived on the board while away. */
+  arrivals: number;
   events: AdvanceEvent[];
 }
 
@@ -46,9 +55,15 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
   const chunk = num('offline.chunk') * MS_PER_SECOND;
   const total = Math.ceil(counted / chunk);
   const events: AdvanceEvent[] = [];
+  const produced = Object.fromEntries(RESOURCE_IDS.map((r) => [r, 0])) as Record<
+    ResourceId,
+    number
+  >;
 
   for (let i = 1; i <= total; i++) {
-    events.push(...advance(state, Math.min(end, state.time + chunk)).events);
+    const log = advance(state, Math.min(end, state.time + chunk));
+    events.push(...log.events);
+    for (const r of RESOURCE_IDS) produced[r] += log.produced[r];
     if (i % CHUNKS_PER_YIELD === 0 && i < total) yield { done: i, total };
   }
 
@@ -56,9 +71,7 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
     // D21: a clock moved backward counts as no time and costs nothing. Rebase
     // the game's clock onto the device's so live play carries on at once,
     // keeping the settle spacing intact.
-    const shift = now - state.time;
-    state.time = now;
-    state.peasants.lastSettleAt += shift;
+    shiftClock(state, now - state.time);
   }
   // Time past the cap passes without production (GDD §5.2).
   state.time = Math.max(state.time, now);
@@ -75,6 +88,10 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
     backwardClock,
     resources,
     peasantsSettled: state.stats.peasantsSettled - settledBefore,
+    produced,
+    contracts: events.flatMap((e) => (e.type === 'contract' ? [e.result] : [])),
+    recovered: events.flatMap((e) => (e.type === 'recovered' ? [e.hunter] : [])),
+    arrivals: events.filter((e) => e.type === 'arrival').length,
     events,
   };
 }

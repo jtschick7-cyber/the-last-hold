@@ -1,10 +1,12 @@
 import { RESOURCE_IDS } from '../../content/resources';
 import { lineTriggerRules, residentLines } from '../../content/text/lines';
 import { residents } from '../../content/residents';
+import { hunters, type HunterId } from '../../content/hunters';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { AwaySummary } from '../../core/sim';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { ResultsView } from './ResultsSheet';
 
 const MS = 1000;
 
@@ -31,6 +33,18 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
         <p>
           +{summary.peasantsSettled} {summary.peasantsSettled === 1 ? 'peasant' : 'peasants'}{' '}
           settled
+        </p>
+      )}
+      {summary.contracts.length > 0 && <ResultsView results={summary.contracts} />}
+      {summary.arrivals > 0 && (
+        <p class={styles.small}>
+          {summary.arrivals} new {summary.arrivals === 1 ? 'contract' : 'contracts'} on the board
+        </p>
+      )}
+      {summary.recovered.length > 0 && (
+        <p class={styles.small}>
+          Back on their feet:{' '}
+          {summary.recovered.map((h) => hunters[h as HunterId].shortName).join(', ')}
         </p>
       )}
       {long && line && (

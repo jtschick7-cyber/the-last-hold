@@ -1,11 +1,14 @@
 import { useState } from 'preact/hooks';
 import { RESOURCE_IDS } from '../../content/resources';
 import type { Command } from '../../core/commands';
+import { snapshotOf } from '../../core/systems/hunters';
+import { lastOddsMs, lastSuggestMs, requestOdds, requestSuggest } from '../app/odds-client';
 import { dispatch, game, lastCatchUpMs, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.10 / technical design §15: every action here is a debug.* command.
 // Using any of them marks the save (About shows it); nothing else changes.
+const fmtMs = (ms: number | null): string => (ms === null ? 'not run yet' : `${ms.toFixed(0)} ms`);
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 
@@ -15,6 +18,30 @@ export const DebugSheet = () => {
   const [hours, setHours] = useState('12');
   const [seed, setSeed] = useState(game().meta.gameSeed);
   const [note, setNote] = useState<string | null>(null);
+  const [measured, setMeasured] = useState<string | null>(null);
+  const measure = async (): Promise<void> => {
+    // Your active hunters against a tier-3 Upyr: a typical launch.
+    const s = game();
+    const party = s.roster.active.slice(0, 3).map((h) => snapshotOf(s, h));
+    const monster = { monster: 'upyr' as const, tier: 3 };
+    const base = {
+      gameSeed: s.meta.gameSeed,
+      contractId: 'timing',
+      monster,
+      location: 'field' as const,
+      rank: s.cycle.age,
+    };
+    setMeasured('Measuring…');
+    const o = await requestOdds({ ...base, party });
+    const sg = await requestSuggest({
+      ...base,
+      available: s.roster.active.map((h) => snapshotOf(s, h)),
+      maxParty: 3,
+    });
+    setMeasured(
+      `${o.quick ? 'Quick estimate (no worker): ' : ''}odds ${fmtMs(lastOddsMs.value)}, Suggest ${fmtMs(lastSuggestMs.value)} (${sg?.considered ?? 0} parties checked).`,
+    );
+  };
   const run = (cmd: Command): void => {
     const r = dispatch(cmd);
     setNote(r.ok ? 'Done.' : r.reason);
@@ -118,9 +145,16 @@ export const DebugSheet = () => {
       </h3>
       <p class={styles.small}>
         Last catch-up:{' '}
-        {lastCatchUpMs.value === null ? 'none yet' : `${lastCatchUpMs.value.toFixed(0)} ms`}. Odds
-        and Suggest timings arrive with contracts (v0.2).
+        {lastCatchUpMs.value === null ? 'none yet' : `${lastCatchUpMs.value.toFixed(0)} ms`}.
+        <br />
+        Last odds (500 fights): {fmtMs(lastOddsMs.value)}. Last Suggest:{' '}
+        {fmtMs(lastSuggestMs.value)}. GDD §6.5 budgets: odds 100 ms, Suggest 300 ms on a mid-range
+        phone.
       </p>
+      <button type="button" class={styles.btn} onClick={() => void measure()}>
+        Measure odds and Suggest here
+      </button>
+      {measured && <p class={styles.small}>{measured}</p>}
       <details>
         <summary>Raw state</summary>
         <pre style={{ fontSize: '0.7rem', overflowX: 'auto' }}>
