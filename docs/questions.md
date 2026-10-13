@@ -154,3 +154,10 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options:** (a) keep it as the technical design says; (b) seed the odds preview from the party only, so the prepared and unprepared previews share their dice and an item with no effect shows exactly the same number (needs a one-line change to technical design §7.2; the real fight's seed still includes the preparation, so nothing about the real outcome changes).
 - **Recommendation:** (b). It makes "unprepared would be X%" a clean comparison. I have built (a), as written, until you decide.
 - **Answer (owner):**
+
+### Q16 — The first Studied species comes before day 2 (blocks the "first Studied" check; it is marked pending) — open
+- **What I measured** (the simulated Standard player, Monday start, tier-1 contracts from the Hamlet's first Mine): the first species reaches **Studied (3 kills) at about 14.5 hours**. The target (GDD §6.2) is **days 2–3** (24–72 h). It is early because the Hamlet only ever posts two species (Gaunt Wolf and Kikimora), the player sends a party on most contracts, and any win counts.
+- **Why I can't fix it by tuning:** the 3-kill threshold (`knowledge.studiedKills`) and the target row are both locked. For information only, I tried the threshold at 4, 5 and 6 on one seed: any of them lands inside days 2–3. I did not keep that change.
+- **Options:** (a) change the threshold to 4 kills (one locked number and the GDD's wording; Mastered stays 10); (b) change the target to 12–72 h (a locked target row); (c) only wins from the Keep count as kills (a rules change: Hamlet fights teach nothing, which also makes the Keep's first days more meaningful); (d) leave both and accept that the first Studied species comes on day 1.
+- **Recommendation:** (a). It is the smallest change and keeps "Studied is a few wins, Mastered is a lot" intact. (d) is also reasonable if you like a quick first taste of the bestiary.
+- **Answer (owner):**

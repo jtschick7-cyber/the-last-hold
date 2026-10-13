@@ -403,7 +403,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 - [x] **T3.9 Preparation in combat.** Slots, potions, bombs, Saltburst, Spoil, Herbwise, the well-prepared bonus, each with tests.
 - [x] **T3.10 Odds with uncertainty.** (Also switches contract generation to post unknown monsters, D89 point 7; until then every contract arrives identified.) Averaging over candidates; oil effects per candidate; Suggest at 20 samples per candidate; benchmarks.
 - [x] **T3.11 UI.** The bestiary; investigation; preparation pickers with "unprepared would be X%"; the Alchemist's Hut.
-- [ ] **T3.12 Simulator.** The policy brews, prepares, and investigates; v0.3 checks; tuning.
+- [x] **T3.12 Simulator.** The policy brews, prepares, and investigates; v0.3 checks; tuning.
 
 ### v0.3 acceptance criteria
 

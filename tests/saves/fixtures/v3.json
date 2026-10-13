@@ -2,103 +2,240 @@
   "app": "the-last-hold",
   "schemaVersion": 3,
   "rulesVersion": 1,
-  "savedAt": 1791898122773,
+  "savedAt": 1792153800000,
   "state": {
     "meta": {
       "schemaVersion": 3,
       "gameSeed": "843a6124181b0108",
       "createdAt": 1791795157444,
-      "lastSeen": 1791898122370,
-      "clockHighWater": 1791898122370,
+      "lastSeen": 1792153800000,
+      "clockHighWater": 1792153800000,
       "debugUsed": false
     },
-    "time": 1791898122370,
+    "time": 1792153800000,
     "cycle": {
       "number": 1,
       "age": "keep"
     },
     "resources": {
-      "food": 213794.01913604696,
-      "wood": 136355.88195168477,
-      "iron": 47912.671894592626,
-      "silver": 702.4954290039085
+      "food": 12212.943731483356,
+      "wood": 51056.4298965394,
+      "iron": 258663.19694134057,
+      "silver": 323.8604456705758
     },
     "peasants": {
-      "total": 29,
+      "total": 77,
       "jobs": {
-        "farmer": 9,
+        "farmer": 57,
         "woodcutter": 10,
         "miner": 8,
         "silver-digger": 2
       },
       "autoSettle": true,
       "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
-      "lastSettleAt": 1791806222908
+      "lastSettleAt": 1792151751279.9006
     },
     "buildings": {
       "hearth-hall": 1,
-      "cottage": 13,
-      "farm": 3,
-      "woodcutters-camp": 4,
+      "cottage": 60,
+      "farm": 29,
+      "woodcutters-camp": 14,
       "mine": 4,
       "silver-seam": 2,
-      "mill": 4,
-      "sawpit": 3,
-      "smithy": 3,
+      "mill": 10,
+      "sawpit": 10,
+      "smithy": 10,
       "bell-tower": 0,
-      "barracks": 0,
-      "trophy-hall": 0,
-      "hunters-lodge": 0,
-      "alchemists-hut": 0,
-      "herb-garden": 0
+      "barracks": 4,
+      "trophy-hall": 1,
+      "hunters-lodge": 3,
+      "alchemists-hut": 2,
+      "herb-garden": 2
     },
     "hunters": {
       "halvar": {
-        "level": 1,
-        "xp": 40,
-        "weapon": null,
-        "armor": null,
+        "level": 5,
+        "xp": 233.75,
+        "weapon": "silvered-blade",
+        "armor": "emberwright-plate",
         "recovery": null,
         "record": {
-          "won": 2,
+          "won": 13,
           "lost": 0
         }
       },
       "zora": {
+        "level": 5,
+        "xp": 213.75,
+        "weapon": "silvered-blade",
+        "armor": "emberwright-plate",
+        "recovery": null,
+        "record": {
+          "won": 12,
+          "lost": 0
+        }
+      },
+      "ostap": {
+        "level": 5,
+        "xp": 193.75,
+        "weapon": "silvered-blade",
+        "armor": "emberwright-plate",
+        "recovery": null,
+        "record": {
+          "won": 11,
+          "lost": 0
+        }
+      },
+      "vesna": {
         "level": 1,
-        "xp": 20,
+        "xp": 0,
         "weapon": null,
         "armor": null,
         "recovery": null,
         "record": {
-          "won": 1,
+          "won": 0,
+          "lost": 0
+        }
+      },
+      "bjarna": {
+        "level": 5,
+        "xp": 13.75,
+        "weapon": "silvered-blade",
+        "armor": "emberwright-plate",
+        "recovery": null,
+        "record": {
+          "won": 9,
+          "lost": 1
+        }
+      },
+      "radek": {
+        "level": 4,
+        "xp": 62.5,
+        "weapon": "silvered-blade",
+        "armor": "emberwright-plate",
+        "recovery": null,
+        "record": {
+          "won": 7,
+          "lost": 0
+        }
+      },
+      "toma": {
+        "level": 3,
+        "xp": 95,
+        "weapon": "silvered-blade",
+        "armor": "emberwright-plate",
+        "recovery": null,
+        "record": {
+          "won": 3,
           "lost": 0
         }
       }
     },
     "roster": {
-      "active": ["halvar", "zora"]
+      "active": ["halvar", "zora", "ostap", "bjarna", "radek", "toma"]
     },
     "board": {
       "opened": true,
-      "open": [],
-      "nextArrivalAt": 1791901959611,
-      "arrivals": 2,
-      "tierWins": [2, 0, 0, 0, 0]
+      "open": [
+        {
+          "id": "c26",
+          "village": "velkvik",
+          "monster": "kikimora",
+          "tier": 1,
+          "location": "river",
+          "arrivedAt": 1792090800000,
+          "revealed": 2
+        },
+        {
+          "id": "c27",
+          "village": "mirograd",
+          "monster": "wolf",
+          "tier": 1,
+          "location": "field",
+          "arrivedAt": 1792098000000,
+          "revealed": 2
+        },
+        {
+          "id": "c29",
+          "village": "mirograd",
+          "monster": "kikimora",
+          "tier": 2,
+          "location": "river",
+          "arrivedAt": 1792112400000,
+          "revealed": 1
+        },
+        {
+          "id": "c30",
+          "village": "mirograd",
+          "monster": "nix",
+          "tier": 5,
+          "location": "river",
+          "arrivedAt": 1792141200000,
+          "revealed": 1
+        },
+        {
+          "id": "c31",
+          "village": "dubno-ford",
+          "monster": "nix",
+          "tier": 5,
+          "location": "river",
+          "arrivedAt": 1792148400000,
+          "revealed": 0
+        }
+      ],
+      "nextArrivalAt": 1792161000000,
+      "arrivals": 32,
+      "tierWins": [10, 4, 5, 5, 0]
     },
     "bestiary": {
       "kikimora": {
+        "level": 3,
+        "kills": 6
+      },
+      "wolf": {
+        "level": 3,
+        "kills": 6
+      },
+      "huldra": {
+        "level": 2,
+        "kills": 2
+      },
+      "rusalka": {
         "level": 2,
         "kills": 1
       },
-      "wolf": {
+      "upyr": {
         "level": 2,
         "kills": 1
+      },
+      "bies": {
+        "level": 2,
+        "kills": 1
+      },
+      "poludnitsa": {
+        "level": 2,
+        "kills": 2
+      },
+      "draugr": {
+        "level": 2,
+        "kills": 2
+      },
+      "vodyanoy": {
+        "level": 2,
+        "kills": 2
+      },
+      "nix": {
+        "level": 2,
+        "kills": 1
+      },
+      "strzyga": {
+        "level": 1,
+        "kills": 0
       }
     },
     "stores": {
-      "grave-oil": 0,
-      "drowned-bane-oil": 0,
+      "grave-oil": 3,
+      "drowned-bane-oil": 3,
       "thornbane-oil": 0,
       "mending-draught": 0,
       "hardwood-tonic": 0,
@@ -106,46 +243,190 @@
       "fire-pot": 0,
       "frost-pot": 0,
       "saltburst": 0,
-      "yarrow": 0,
-      "mugwort": 0,
-      "juniper": 0,
-      "honeycomb": 0,
-      "hares-foot": 0,
-      "pitch": 0,
-      "rime-salt": 0,
-      "grave-dust": 0,
-      "river-pearl": 0,
-      "thornwood": 0,
-      "wolf-fang": 0,
-      "noon-poppy": 0
+      "yarrow": 207,
+      "mugwort": 207,
+      "juniper": 207,
+      "honeycomb": 2,
+      "hares-foot": 8,
+      "pitch": 4,
+      "rime-salt": 12,
+      "grave-dust": 2,
+      "river-pearl": 8,
+      "thornwood": 10,
+      "wolf-fang": 6,
+      "noon-poppy": 7
     },
     "queues": {
-      "brewing": [],
-      "investigation": []
+      "brewing": [
+        {
+          "item": "thornbane-oil",
+          "doneAt": 1792154400000
+        },
+        {
+          "item": "fire-pot",
+          "doneAt": 1792154400000
+        }
+      ],
+      "investigation": [
+        {
+          "contractId": "c31",
+          "nextClueAt": 1792155600000
+        }
+      ]
     },
     "garden": {
-      "nextAt": null
+      "nextAt": 1792154400000
     },
-    "running": [],
-    "results": [
+    "running": [
       {
-        "contractId": "c1",
-        "village": "ravenfell",
-        "monster": "wolf",
-        "tier": 1,
-        "location": "forest",
-        "success": true,
-        "at": 1791897712819,
-        "bounty": 78,
-        "trophies": 1,
-        "xp": 20,
-        "winChance": 1,
-        "injuries": [],
-        "levelUps": [],
-        "reagents": {},
-        "wellPrepared": false
+        "contract": {
+          "id": "c28",
+          "village": "velkvik",
+          "monster": "nix",
+          "tier": 5,
+          "location": "river",
+          "arrivedAt": 1792105200000,
+          "revealed": 0
+        },
+        "party": ["halvar", "zora", "ostap", "bjarna"],
+        "snapshots": [
+          {
+            "id": "halvar",
+            "name": "Halvar Two-Smokes",
+            "role": "vanguard",
+            "damage": "steel",
+            "level": 5,
+            "base": {
+              "health": 170,
+              "might": 12,
+              "armor": 8,
+              "speed": 7
+            },
+            "traits": ["shieldwall", "steady"],
+            "weapon": "silvered-blade",
+            "armorGear": "emberwright-plate"
+          },
+          {
+            "id": "zora",
+            "name": "Zora Sedlak",
+            "role": "striker",
+            "damage": "steel",
+            "level": 5,
+            "base": {
+              "health": 100,
+              "might": 20,
+              "armor": 3,
+              "speed": 13
+            },
+            "traits": ["fen-born", "quick"],
+            "weapon": "silvered-blade",
+            "armorGear": "emberwright-plate"
+          },
+          {
+            "id": "ostap",
+            "name": "Old Ostap",
+            "role": "mender",
+            "damage": "steel",
+            "level": 5,
+            "base": {
+              "health": 115,
+              "might": 10,
+              "armor": 4,
+              "speed": 9
+            },
+            "traits": ["bonesetter", "hard-to-kill"],
+            "weapon": "silvered-blade",
+            "armorGear": "emberwright-plate"
+          },
+          {
+            "id": "bjarna",
+            "name": "Bjarna Ice-Hand",
+            "role": "striker",
+            "damage": "frost",
+            "level": 5,
+            "base": {
+              "health": 95,
+              "might": 21,
+              "armor": 3,
+              "speed": 12
+            },
+            "traits": ["cold-blooded", "fell-born"],
+            "weapon": "silvered-blade",
+            "armorGear": "emberwright-plate"
+          }
+        ],
+        "launchedAt": 1792134000000,
+        "endsAt": 1792162800000,
+        "reckless": false,
+        "prep": {
+          "oils": {},
+          "potions": {},
+          "bombs": []
+        },
+        "knowledge": 2,
+        "winChance": 1
+      },
+      {
+        "contract": {
+          "id": "c25",
+          "village": "mirograd",
+          "monster": "poludnitsa",
+          "tier": 4,
+          "location": "field",
+          "arrivedAt": 1792083600000,
+          "revealed": 2
+        },
+        "party": ["radek", "toma"],
+        "snapshots": [
+          {
+            "id": "radek",
+            "name": "Radek the Gravedigger",
+            "role": "vanguard",
+            "damage": "silver",
+            "level": 4,
+            "base": {
+              "health": 165,
+              "might": 11,
+              "armor": 9,
+              "speed": 7
+            },
+            "traits": ["grave-warden", "hard-to-kill"],
+            "weapon": "silvered-blade",
+            "armorGear": "emberwright-plate"
+          },
+          {
+            "id": "toma",
+            "name": "Toma Kettle",
+            "role": "vanguard",
+            "damage": "steel",
+            "level": 3,
+            "base": {
+              "health": 150,
+              "might": 12,
+              "armor": 7,
+              "speed": 8
+            },
+            "traits": ["haggler", "quick"],
+            "weapon": "silvered-blade",
+            "armorGear": "emberwright-plate"
+          }
+        ],
+        "launchedAt": 1792153800000,
+        "endsAt": 1792168200000,
+        "reckless": false,
+        "prep": {
+          "oils": {
+            "radek": "thornbane-oil",
+            "toma": "thornbane-oil"
+          },
+          "potions": {},
+          "bombs": []
+        },
+        "knowledge": 2,
+        "winChance": 1
       }
     ],
+    "results": [],
     "fallen": [],
     "scenes": ["vow", "first-contract"],
     "log": {
@@ -237,23 +518,1341 @@
             "potions": {},
             "bombs": []
           }
+        },
+        {
+          "contractId": "c2",
+          "seed": "843a6124181b0108:fight:c2:halvar,zora,ostap:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791909000000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c3",
+          "seed": "843a6124181b0108:fight:c3:halvar,zora,ostap:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 2,
+            "knowledge": 2
+          },
+          "location": "forest",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791928800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c4",
+          "seed": "843a6124181b0108:fight:c4:bjarna:",
+          "party": [
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 1,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "iron-blade",
+              "armorGear": "hide-armor"
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 2,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "loss",
+          "rulesVersion": 1,
+          "at": 1791928800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c5",
+          "seed": "843a6124181b0108:fight:c5:halvar,zora,ostap:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "mail"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "mail"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "rusalka",
+            "tier": 2,
+            "knowledge": 1
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791964800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c7",
+          "seed": "843a6124181b0108:fight:c7:bjarna:",
+          "party": [
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 1,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 2,
+            "knowledge": 2
+          },
+          "location": "barrow",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791964800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c8",
+          "seed": "843a6124181b0108:fight:c8:bjarna:",
+          "party": [
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 2,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "upyr",
+            "tier": 2,
+            "knowledge": 1
+          },
+          "location": "barrow",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791975600000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c11",
+          "seed": "843a6124181b0108:fight:c11:halvar,zora,ostap:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "bies",
+            "tier": 3,
+            "knowledge": 1
+          },
+          "location": "forest",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791979200000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c6",
+          "seed": "843a6124181b0108:fight:c6:bjarna:",
+          "party": [
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 2,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "silvered-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 3
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791982800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c12",
+          "seed": "843a6124181b0108:fight:c12:halvar,zora,ostap:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "huldra",
+            "tier": 3,
+            "knowledge": 1
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791988200000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c9",
+          "seed": "843a6124181b0108:fight:c9:bjarna:",
+          "party": [
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 2,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 1,
+            "knowledge": 2
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791995400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c13",
+          "seed": "843a6124181b0108:fight:c13:halvar,zora,ostap:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "draugr",
+            "tier": 3,
+            "knowledge": 1
+          },
+          "location": "barrow",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792000800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c10",
+          "seed": "843a6124181b0108:fight:c10:bjarna,radek:",
+          "party": [
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 3,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "radek",
+              "name": "Radek the Gravedigger",
+              "role": "vanguard",
+              "damage": "silver",
+              "level": 1,
+              "base": {
+                "health": 165,
+                "might": 11,
+                "armor": 9,
+                "speed": 7
+              },
+              "traits": ["grave-warden", "hard-to-kill"],
+              "weapon": "iron-blade",
+              "armorGear": "hide-armor"
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 1,
+            "knowledge": 3
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792013400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c16",
+          "seed": "843a6124181b0108:fight:c16:halvar,zora,ostap:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "draugr",
+            "tier": 3,
+            "knowledge": 2
+          },
+          "location": "barrow",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792018800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c14",
+          "seed": "843a6124181b0108:fight:c14:halvar,zora,ostap:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 1,
+            "knowledge": 3
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792049400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c15",
+          "seed": "843a6124181b0108:fight:c15:bjarna,radek:",
+          "party": [
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 3,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "radek",
+              "name": "Radek the Gravedigger",
+              "role": "vanguard",
+              "damage": "silver",
+              "level": 1,
+              "base": {
+                "health": 165,
+                "might": 11,
+                "armor": 9,
+                "speed": 7
+              },
+              "traits": ["grave-warden", "hard-to-kill"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 3
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792049400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c17",
+          "seed": "843a6124181b0108:fight:c17:radek:",
+          "party": [
+            {
+              "id": "radek",
+              "name": "Radek the Gravedigger",
+              "role": "vanguard",
+              "damage": "silver",
+              "level": 1,
+              "base": {
+                "health": 165,
+                "might": 11,
+                "armor": 9,
+                "speed": 7
+              },
+              "traits": ["grave-warden", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 3
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792060200000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c18",
+          "seed": "843a6124181b0108:fight:c18:radek:",
+          "party": [
+            {
+              "id": "radek",
+              "name": "Radek the Gravedigger",
+              "role": "vanguard",
+              "damage": "silver",
+              "level": 2,
+              "base": {
+                "health": 165,
+                "might": 11,
+                "armor": 9,
+                "speed": 7
+              },
+              "traits": ["grave-warden", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 1,
+            "knowledge": 3
+          },
+          "location": "forest",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792069200000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c19",
+          "seed": "843a6124181b0108:fight:c19:halvar,zora,ostap,bjarna:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 4,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 3,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "vodyanoy",
+            "tier": 4,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792072800000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c20",
+          "seed": "843a6124181b0108:fight:c20:halvar,zora,ostap,bjarna:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 4,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "nix",
+            "tier": 4,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792094400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c21",
+          "seed": "843a6124181b0108:fight:c21:radek,toma:",
+          "party": [
+            {
+              "id": "radek",
+              "name": "Radek the Gravedigger",
+              "role": "vanguard",
+              "damage": "silver",
+              "level": 2,
+              "base": {
+                "health": 165,
+                "might": 11,
+                "armor": 9,
+                "speed": 7
+              },
+              "traits": ["grave-warden", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "toma",
+              "name": "Toma Kettle",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 150,
+                "might": 12,
+                "armor": 7,
+                "speed": 8
+              },
+              "traits": ["haggler", "quick"],
+              "weapon": "iron-blade",
+              "armorGear": "hide-armor"
+            }
+          ],
+          "monster": {
+            "monster": "vodyanoy",
+            "tier": 4,
+            "knowledge": 2
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792094400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c23",
+          "seed": "843a6124181b0108:fight:c23:radek,toma:",
+          "party": [
+            {
+              "id": "radek",
+              "name": "Radek the Gravedigger",
+              "role": "vanguard",
+              "damage": "silver",
+              "level": 3,
+              "base": {
+                "health": 165,
+                "might": 11,
+                "armor": 9,
+                "speed": 7
+              },
+              "traits": ["grave-warden", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "toma",
+              "name": "Toma Kettle",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 2,
+              "base": {
+                "health": 150,
+                "might": 12,
+                "armor": 7,
+                "speed": 8
+              },
+              "traits": ["haggler", "quick"],
+              "weapon": "steel-blade",
+              "armorGear": "mail"
+            }
+          ],
+          "monster": {
+            "monster": "poludnitsa",
+            "tier": 3,
+            "knowledge": 1
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792105200000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
+        },
+        {
+          "contractId": "c22",
+          "seed": "843a6124181b0108:fight:c22:halvar,zora,ostap,bjarna:bomb:fire-pot",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "ostap",
+              "name": "Old Ostap",
+              "role": "mender",
+              "damage": "steel",
+              "level": 5,
+              "base": {
+                "health": 115,
+                "might": 10,
+                "armor": 4,
+                "speed": 9
+              },
+              "traits": ["bonesetter", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "bjarna",
+              "name": "Bjarna Ice-Hand",
+              "role": "striker",
+              "damage": "frost",
+              "level": 4,
+              "base": {
+                "health": 95,
+                "might": 21,
+                "armor": 3,
+                "speed": 12
+              },
+              "traits": ["cold-blooded", "fell-born"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "huldra",
+            "tier": 4,
+            "knowledge": 2
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792112400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": ["fire-pot"]
+          }
+        },
+        {
+          "contractId": "c24",
+          "seed": "843a6124181b0108:fight:c24:radek,toma:",
+          "party": [
+            {
+              "id": "radek",
+              "name": "Radek the Gravedigger",
+              "role": "vanguard",
+              "damage": "silver",
+              "level": 3,
+              "base": {
+                "health": 165,
+                "might": 11,
+                "armor": 9,
+                "speed": 7
+              },
+              "traits": ["grave-warden", "hard-to-kill"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            },
+            {
+              "id": "toma",
+              "name": "Toma Kettle",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 3,
+              "base": {
+                "health": 150,
+                "might": 12,
+                "armor": 7,
+                "speed": 8
+              },
+              "traits": ["haggler", "quick"],
+              "weapon": "silvered-blade",
+              "armorGear": "emberwright-plate"
+            }
+          ],
+          "monster": {
+            "monster": "poludnitsa",
+            "tier": 4,
+            "knowledge": 2
+          },
+          "location": "field",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1792148400000,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          }
         }
       ]
     },
     "stats": {
-      "buildingsBought": 34,
-      "peasantsSettled": 26,
-      "contractsWon": 2,
-      "contractsLost": 0,
-      "trophies": 2,
-      "bountySilver": 150,
+      "buildingsBought": 149,
+      "peasantsSettled": 74,
+      "contractsWon": 24,
+      "contractsLost": 1,
+      "trophies": 53,
+      "bountySilver": 3952.9056000000005,
       "kills": {
-        "kikimora": 1,
-        "wolf": 1
+        "kikimora": 6,
+        "wolf": 6,
+        "rusalka": 1,
+        "upyr": 1,
+        "bies": 1,
+        "huldra": 2,
+        "draugr": 2,
+        "vodyanoy": 2,
+        "nix": 1,
+        "poludnitsa": 2
       },
       "winsByLocation": {
-        "river": 1,
-        "forest": 1
+        "river": 8,
+        "forest": 4,
+        "barrow": 4,
+        "field": 8
       }
     },
     "settings": {

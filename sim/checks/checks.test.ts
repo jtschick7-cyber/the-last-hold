@@ -35,6 +35,9 @@ const run = (
     'first-contract': null,
     'roster-4': null,
     'first-tier-3': null,
+    'hunters-lodge': null,
+    'first-identified': null,
+    'first-studied': null,
     ...moments,
   },
   checkIns,
@@ -236,5 +239,51 @@ describe('odds honesty', () => {
       { ...run('standard', {}), contracts: rec(0.9, 9, 100) },
     ]);
     expect(few.pass).toBe(null);
+  });
+});
+
+// v0.3 checks, on made-up runs.
+import { firstIdentifiedCheck } from './first-identified';
+import { firstStudiedCheck } from './first-studied';
+import { makePreparationMattersCheck } from './preparation-matters';
+
+describe('v0.3 time targets', () => {
+  it('first Identified is judged from the Lodge: within 2 h', () => {
+    const ok = run('standard', { 'hunters-lodge': 40, 'first-identified': 41.5 });
+    expect(firstIdentifiedCheck.judge([ok]).pass).toBe(true);
+    const late = run('standard', { 'hunters-lodge': 40, 'first-identified': 43 });
+    expect(firstIdentifiedCheck.judge([late]).pass).toBe(false);
+    expect(firstIdentifiedCheck.judge([run('standard', { 'hunters-lodge': 40 })]).pass).toBe(false);
+  });
+
+  it('first Studied falls on days 2–3', () => {
+    expect(firstStudiedCheck.judge([run('standard', { 'first-studied': 50 })]).pass).toBe(true);
+    expect(firstStudiedCheck.judge([run('standard', { 'first-studied': 20 })]).pass).toBe(false);
+    expect(firstStudiedCheck.judge([run('standard', { 'first-studied': 80 })]).pass).toBe(false);
+  });
+});
+
+describe('preparation matters (GDD §6.3 #4)', () => {
+  const cases = (tier: number, gain: number, n = 10) =>
+    Array.from({ length: n }, () => ({ tier, bare: 0.5, prepared: 0.5 + gain }));
+  const base = run('standard', {});
+  const full = [base];
+
+  it('needs the full suite', () => {
+    const fast = [{ ...base, spec: { ...base.spec, days: 3 } }];
+    expect(makePreparationMattersCheck(() => cases(3, 0.3)).judge(fast).pass).toBeNull();
+  });
+
+  it('passes when every judged tier gains at least 15 points', () => {
+    const probe = () => [...cases(1, 0.2), ...cases(3, 0.16), ...cases(5, 0.4)];
+    expect(makePreparationMattersCheck(probe).judge(full).pass).toBe(true);
+  });
+
+  it('fails when a tier gains less, and ignores a tier with too few cases', () => {
+    const weak = () => [...cases(1, 0.2), ...cases(3, 0.1)];
+    expect(makePreparationMattersCheck(weak).judge(full).pass).toBe(false);
+    const thin = () => [...cases(1, 0.2), ...cases(2, 0.0, 3)];
+    expect(makePreparationMattersCheck(thin).judge(full).pass).toBe(true);
+    expect(makePreparationMattersCheck(() => []).judge(full).pass).toBeNull();
   });
 });

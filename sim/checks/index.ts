@@ -1,6 +1,8 @@
 import { contractsOwnSilverCheck } from './contracts-own-silver';
 import { firstContractCheck } from './first-contract';
 import { firstCottageCheck } from './first-cottage';
+import { firstIdentifiedCheck } from './first-identified';
+import { firstStudiedCheck } from './first-studied';
 import { firstMineCheck } from './first-mine';
 import { firstTier3Check } from './first-tier-3';
 import { keepCheck } from './keep';
@@ -9,6 +11,7 @@ import { noDrySpellsCheck } from './no-dry-spells';
 import { noOverflowCheck } from './no-overflow';
 import { noWallsCheck } from './no-walls';
 import { oddsHonestCheck } from './odds-honest';
+import { preparationMattersCheck } from './preparation-matters';
 import { peasants10Check } from './peasants-10';
 import { provisionsMatterCheck } from './provisions-matter';
 import { roster4Check } from './roster-4';
@@ -35,4 +38,8 @@ export const CHECKS: readonly Check[] = [
   oddsHonestCheck,
   contractsOwnSilverCheck,
   provisionsMatterCheck,
+  // v0.3
+  firstIdentifiedCheck,
+  firstStudiedCheck,
+  preparationMattersCheck,
 ];

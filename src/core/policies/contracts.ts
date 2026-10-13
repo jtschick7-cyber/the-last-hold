@@ -4,10 +4,13 @@ import { computeOdds } from '../contracts/odds';
 import { oddsTarget } from '../investigation/knowledge';
 import { maxPartySize } from '../contracts/party';
 import { provisions } from '../contracts/rewards';
-import type { ContractInstance, GameState } from '../state/game-state';
+import type { ContractInstance, GameState, Preparation } from '../state/game-state';
 import { copyLimit } from '../systems/costs';
 import { availableHunters, candidates, nextGear, rosterCap, snapshotOf } from '../systems/hunters';
 import { rankUpSilver, type Bundle } from './goals';
+import { contractIdentity } from '../investigation/view';
+import { investigationSlots } from '../investigation/lodge';
+import { brewMoves, investigateMoves, labBuildings, prepFor } from './lab';
 
 // GDD §6.1 (D75): what the simulated player does about contracts and hunters at
 // a check-in. It collects results, hires who it can afford once the next Rank-up
@@ -21,20 +24,29 @@ const MIN_ODDS = 0.35;
 
 type Act = (cmd: Command) => boolean;
 
-const sendable = (s: GameState, c: ContractInstance, party: HunterId[]): boolean => {
-  if (party.length === 0) return false;
-  if (s.resources.food < provisions(s, party.length, c.tier).value) return false;
-  const odds = computeOdds({
+/** The odds the launch panel would show for this party, or null if it can't go (no food, nobody). */
+const oddsFor = (
+  s: GameState,
+  c: ContractInstance,
+  party: HunterId[],
+  prep: Preparation,
+): number | null => {
+  if (party.length === 0) return null;
+  if (s.resources.food < provisions(s, party.length, c.tier).value) return null;
+  return computeOdds({
     gameSeed: s.meta.gameSeed,
     contractId: c.id,
     party: party.map((h) => snapshotOf(s, h)),
     monster: oddsTarget(s, c),
     location: c.location,
     rank: s.cycle.age,
+    prep,
     samples: PROBE_SAMPLES,
-  });
-  return odds.winChance >= MIN_ODDS;
+  }).winChance;
 };
+
+/** D95: an unidentified contract this close to a sure win is sent at once; a closer one waits for its clues. */
+const SURE_ENOUGH = 0.9;
 
 /** Hires every candidate it can afford, cheapest first, leaving the next Rank-up's silver untouched. */
 const recruit = (s: GameState, act: Act): number => {
@@ -99,13 +111,33 @@ export const contractMoves = (s: GameState, act: Act, reserve: Bundle): number =
   if (!s.board.opened) return 0;
   if (s.results.length > 0) act({ type: 'results.collect' });
   let actions = recruit(s, act) + equip(s, act, reserve);
+  // v0.3 (D95): Lodge, Hut and Garden, then the clues and the kettles, before the launches.
+  actions += labBuildings(s, act, reserve) + brewMoves(s, act);
   for (const c of [...s.board.open].sort(byValue)) {
     const free = availableHunters(s);
     if (free.length === 0) break;
     // The strongest party the roster can field; dropping weak members never helps odds.
     const party = free.slice(0, maxPartySize(c.tier, s.cycle.age));
-    if (sendable(s, c, party) && act({ type: 'contract.launch', contract: c.id, party }))
+    const prep = prepFor(s, c, party);
+    const odds = oddsFor(s, c, party, prep);
+    // D95: against a monster it can't name, a player who has Lodge slots waits for the clues
+    // when the odds are not already near-certain, instead of sending the party in blind.
+    if (
+      !contractIdentity(s, c).identified &&
+      investigationSlots(s) > 0 &&
+      (odds ?? 0) < SURE_ENOUGH
+    ) {
+      if (s.queues.investigation.some((q) => q.contractId === c.id)) continue;
+      if (act({ type: 'investigate.assign', contract: c.id })) continue;
+    }
+    if (
+      odds !== null &&
+      odds >= MIN_ODDS &&
+      act({ type: 'contract.launch', contract: c.id, party, prep })
+    )
       actions += 1;
   }
+  // Free Lodge slots go to the best contracts still waiting (they will be clear by the next check-in).
+  actions += investigateMoves(s, act);
   return actions;
 };
