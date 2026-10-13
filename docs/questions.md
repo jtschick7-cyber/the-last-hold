@@ -65,3 +65,10 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - (c) Stop and rethink the targets or the economy in a planning chat.
 - **Recommendation:** (a). It touches only the start and the Keep's price, and keeps G1's silver ceiling.
 - **Answer (owner):** (a), (a), (a), and D60 approved, 2026-10-12 (D62).
+
+### Q5 — Your real v0.1 save (blocks T2.4) — open
+- **Question:** the v1 → v2 save migration needs a fixture of a real old save (CLAUDE.md: never change the save schema without a migration, a fixture of a real old save, and a round-trip test). Can you export the save you played v0.1 with?
+- **How:** in the live or preview app, More → Save & Data → copy the save code (or Copy diagnostics) and paste it into a session. It holds only game numbers, no personal data.
+- **Options:** (a) you paste the save code; (b) you say "use a generated one", and I build the fixture from a fresh v0.1 game played by the simulator (not a real save, so it breaks the rule, and you would have to approve the exception).
+- **Recommendation:** (a). Everything else in v0.2 goes ahead meanwhile; only T2.4 waits.
+- **Answer (owner):**
