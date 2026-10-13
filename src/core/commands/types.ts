@@ -7,7 +7,7 @@ import type { JobId } from '../../content/jobs';
 import type { ConsumableId } from '../../content/consumables';
 import type { ResourceBundle } from '../../content/resources';
 import type { PolicyId } from '../policies/schedules';
-import type { Settings } from '../state/game-state';
+import type { Preparation, Settings } from '../state/game-state';
 
 // Technical design §4.3: every player action is a plain JSON Command, applied
 // through apply(). The UI, the simulator and the debug panel all use these.
@@ -26,7 +26,14 @@ export type Command =
   | { type: 'peasants.priority'; order: JobId[] }
   | { type: 'age.up' }
   /** Sends a party on a board contract; `confirmReckless` is the dialog's answer (GDD §5.3.7). */
-  | { type: 'contract.launch'; contract: string; party: HunterId[]; confirmReckless?: boolean }
+  | {
+      type: 'contract.launch';
+      contract: string;
+      party: HunterId[];
+      confirmReckless?: boolean;
+      /** What the party carries (GDD §5.7); spent from the stores at launch. */
+      prep?: Preparation;
+    }
   | { type: 'contract.decline'; contract: string }
   /** Puts a board contract in a free Lodge slot (GDD §5.6.3). */
   | { type: 'investigate.assign'; contract: string }

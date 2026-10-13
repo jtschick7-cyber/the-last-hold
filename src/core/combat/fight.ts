@@ -2,6 +2,7 @@ import { monsters } from '../../content/monsters';
 import { K } from './constants';
 import { buildHunter, buildMonster, roundHalfUp } from './build';
 import { endOfMonsterAction, heal, startOfMonsterAction } from './abilities';
+import { burnTick, cancelsAbility, startOfFight } from './prep';
 import { directAttack } from './damage';
 import { emit, type Fight } from './fight-state';
 import {
@@ -28,6 +29,18 @@ const actsBefore = (a: Combatant, b: Combatant): number =>
 
 /** A status that counts the holder's own actions ends here (Hamstring). */
 const endOwnAction = (c: Combatant): void => {
+  if (c.tonicLeft > 0) {
+    c.tonicLeft -= 1;
+    if (c.tonicLeft === 0) c.statusPct.armor = 0;
+  }
+  if (c.chillLeft > 0) {
+    c.chillLeft -= 1;
+    if (c.chillLeft === 0) {
+      c.statusPct.speed = 0;
+      c.speed = speedEff(c);
+    }
+  }
+  if (c.abilitiesBlocked > 0) c.abilitiesBlocked -= 1;
   if (c.hamstringLeft > 0) {
     c.hamstringLeft -= 1;
     if (c.hamstringLeft === 0) {
@@ -42,7 +55,7 @@ const resolveEnds = (f: Fight): void => {
   const m = f.monster;
   if (m.health <= 0) {
     const soul = m.abilities.find((a) => a.kind === 'secondSoul');
-    if (soul && !m.secondSoulUsed) {
+    if (soul && !m.secondSoulUsed && !cancelsAbility(f, m, 'Second Soul')) {
       m.secondSoulUsed = true;
       m.health = roundHalfUp(m.maxHealth * soul.reviveFraction);
       emit(f, {
@@ -123,6 +136,13 @@ const pickTarget = (
 };
 
 const monsterAct = (f: Fight, m: Combatant): void => {
+  f.monsterActing = true;
+  burnTick(f, m);
+  resolveEnds(f);
+  if (f.over) {
+    f.monsterActing = false;
+    return;
+  }
   const skipAttack = startOfMonsterAction(f, m);
   resolveEnds(f);
   if (!skipAttack) {
@@ -137,10 +157,11 @@ const monsterAct = (f: Fight, m: Combatant): void => {
     endOfMonsterAction(f, m);
     resolveEnds(f);
   }
+  f.monsterActing = false;
 };
 
 export const runFight = (input: FightInput): FightResult => {
-  const hunters = input.party.map((h, i) => buildHunter(h, i + 1));
+  const hunters = input.party.map((h, i) => buildHunter(h, i + 1, input.prep));
   const monster = buildMonster(input.monster);
   const ctx: FightContext = {
     location: input.location,
@@ -159,7 +180,14 @@ export const runFight = (input: FightInput): FightResult => {
     log: [],
     logging: input.log !== false,
     over: null,
+    saltburstArmed: false,
+    saltburstCancelled: false,
+    monsterActing: false,
+    bombs: input.prep?.bombs ?? [],
   };
+  // Potions that work from the start, then the bombs, before anyone acts (GDD §5.7).
+  startOfFight(f);
+  resolveEnds(f);
   const threshold = K.meterThreshold;
   const maxTicks = K.maxTicks;
   let tick = 0;
@@ -215,5 +243,6 @@ export const runFight = (input: FightInput): FightResult => {
     })),
     monsterHealth: monster.health,
     monsterMaxHealth: monster.maxHealth,
+    saltburstCancelled: f.saltburstCancelled,
   };
 };

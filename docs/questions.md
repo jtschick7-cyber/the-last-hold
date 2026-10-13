@@ -139,3 +139,12 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options:** (a) **Hardwood Tonic** (my stand-in, in the content now; D86); (b) **Stoutbark Tonic** or **Oakhide Tonic**; (c) keep "Ironbark Tonic" and accept the overlap (§2.3 says not to).
 - **Recommendation:** (a). It keeps the wood theme and the recipe (thornwood + juniper), and nothing came up under that name.
 - **Answer (owner):**
+
+### Q14 — How preparation works where the GDD is silent (blocks nothing; built as recommended, D92) — open
+- **What I decided for you (all logged in D92, all tested; please look at the three that change play most):**
+  1. **Spoil only ever hurts the Mending Draught.** The Kikimora's Spoil ruins an *unused* potion; the Hardwood Tonic and the Quickfoot Tincture are drunk at the start of the fight, so they are already used. That makes Spoil a small "don't bring a Mending Draught to a Kikimora" lesson.
+  2. **Saltburst** goes off on the first moment an ability would take effect, cancels it, and the monster's abilities then do nothing for its next 3 actions. It can cancel a Second Soul (the Strzyga stays dead) and the Nix's Riverhorse. Swell (passive) cannot be cancelled.
+  3. **Items are spent when the party sets out, win or lose.**
+- **Options for 1:** (a) as built; (b) Spoil also ruins a potion that has not *finished* working, so it can cut a tonic short (more bite, more rules); (c) Spoil ruins any one potion the hunter carries, even a start-of-fight one, by making all potions fire on the hunter's first action instead.
+- **Recommendation:** (a) for 1, and the others as built.
+- **Answer (owner):**

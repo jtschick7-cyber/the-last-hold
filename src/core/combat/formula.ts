@@ -28,3 +28,9 @@ export const finalDamage = (
   const floor = K.minDamage;
   return rounded < floor ? floor : rounded;
 };
+
+export const heal = (c: Combatant, amount: number): number => {
+  const before = c.health;
+  c.health = Math.min(c.maxHealth, c.health + amount);
+  return c.health - before;
+};

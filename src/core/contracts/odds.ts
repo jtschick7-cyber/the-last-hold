@@ -6,6 +6,8 @@ import type { Breakdown } from '../breakdown/breakdown';
 import { runFight, type HunterSnapshot, type MonsterInstance } from '../combat';
 import { explainFight } from '../combat/summary';
 import { seeded } from '../rng';
+import type { Preparation } from '../state/game-state';
+import { prepIds } from './prep';
 import { oddsSeed } from './seeds';
 import { bounty, trophies, xpPerHunter } from './rewards';
 
@@ -19,8 +21,8 @@ export interface OddsInput {
   readonly monster: MonsterInstance;
   readonly location: LocationId;
   readonly rank: AgeId;
-  /** Preparation ids (v0.3); empty in v0.2. */
-  readonly prep?: readonly string[];
+  /** What the party carries (GDD §5.7); absent means nothing. */
+  readonly prep?: Preparation;
   /** Overrides odds.samples (Suggest's first stage uses fewer). */
   readonly samples?: number;
 }
@@ -54,7 +56,7 @@ const marginFor = (p: number, n: number): number => 1.96 * Math.sqrt((p * (1 - p
 export const computeOdds = (input: OddsInput): Odds => {
   const n = input.samples ?? num('odds.samples');
   const ids = input.party.map((h) => h.id);
-  const prep = input.prep ?? [];
+  const seedPrep = input.prep ? prepIds(input.prep) : [];
   const bruised = ids.map(() => 0);
   const downed = ids.map(() => 0);
   let wins = 0;
@@ -64,8 +66,9 @@ export const computeOdds = (input: OddsInput): Odds => {
       party: input.party,
       monster: input.monster,
       location: input.location,
-      rolls: seeded(oddsSeed(input.gameSeed, input.contractId, ids, prep, i)),
+      rolls: seeded(oddsSeed(input.gameSeed, input.contractId, ids, seedPrep, i)),
       log: false,
+      prep: input.prep,
     });
     if (r.result === 'win') wins += 1;
     ticks += r.ticks;
@@ -105,6 +108,7 @@ export const computeOdds = (input: OddsInput): Odds => {
         monster: input.monster,
         location: input.location,
         rolls: seeded('why'),
+        prep: input.prep,
       },
       winChance,
     ),

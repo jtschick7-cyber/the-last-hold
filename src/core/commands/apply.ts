@@ -37,7 +37,7 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
     case 'age.up':
       return ageUp(state);
     case 'contract.launch':
-      return launch(state, cmd.contract, cmd.party, cmd.confirmReckless === true);
+      return launch(state, cmd.contract, cmd.party, cmd.confirmReckless === true, cmd.prep);
     case 'contract.decline':
       return decline(state, cmd.contract);
     case 'investigate.assign':

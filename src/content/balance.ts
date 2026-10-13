@@ -132,7 +132,12 @@ export const balance = {
     otherWeight: tunable(1),
   },
   odds: { samples: locked(500) },
-  prep: { wellPreparedBounty: locked(1.5) },
+  prep: {
+    wellPreparedBounty: locked(1.5),
+    // GDD §5.7: bombs a party can throw, and the resistance multiplier from which a species counts as weak (§8.3: bold = ≥ 1.25).
+    bombSlots: tunable(2),
+    weakAt: tunable(1.25),
+  },
   suggest: {
     stage1Samples: locked(50),
     stage1PerCandidate: locked(20),

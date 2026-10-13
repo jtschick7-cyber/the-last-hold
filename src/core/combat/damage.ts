@@ -2,6 +2,7 @@ import { num } from '../balance-access';
 import { finalDamage, hurt } from './formula';
 import { emit, fmt2, type Fight } from './fight-state';
 import { afterOwnHit } from './abilities';
+import { checkPotion } from './prep';
 import { armorEff, hitChance, mightEff, outgoingPct, standing, takenReduction } from './stats';
 import type { Combatant } from './types';
 
@@ -115,6 +116,7 @@ export const directAttack = (
     targetHealth: target.health,
   });
   if (attacker.silverSubHit && standing(target)) silverSubHit(f, attacker, target, variance, crit);
+  if (target.side === 'hunter') checkPotion(f, target);
   return true;
 };
 

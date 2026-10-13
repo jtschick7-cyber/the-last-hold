@@ -14,6 +14,7 @@ export const bounty = (
   tier: number,
   rank: AgeId,
   party: readonly (readonly TraitId[])[],
+  wellPrepared = false,
 ): Explained => {
   const base = num('bounty.base');
   const growth = num('bounty.growth');
@@ -31,19 +32,21 @@ export const bounty = (
     }
   }
   const tiered = base * intPow(growth, tier - 1);
-  const value = tiered * rankMult * (1 + hagglePct);
+  const prepMult = wellPrepared ? num('prep.wellPreparedBounty') : 1;
+  const value = tiered * rankMult * (1 + hagglePct) * prepMult;
   return {
     value,
     breakdown: {
       label: 'Bounty (silver)',
       value,
-      formula: `${base} × ${growth}^${tier - 1} × ${rankMult} × (1 + ${hagglePct})`,
+      formula: `${base} × ${growth}^${tier - 1} × ${rankMult} × (1 + ${hagglePct}) × ${prepMult}`,
       children: [
         { label: 'Base', value: base, key: 'bounty.base' },
         { label: 'Growth per tier', value: growth, key: 'bounty.growth' },
         { label: 'Tier', value: tier },
         { label: `Rank multiplier (${rank})`, value: rankMult, key: 'bounty.ageMult' },
         { label: `Haggler ×${hagglers}`, value: hagglePct },
+        { label: 'Well prepared', value: prepMult, key: 'prep.wellPreparedBounty' },
       ],
     },
   };

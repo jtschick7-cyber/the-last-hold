@@ -3,6 +3,8 @@ import { traits } from '../../content/traits';
 import { monsters } from '../../content/monsters';
 import { num } from '../balance-access';
 import { intPow } from '../math';
+import { hunterKit } from './prep';
+import type { Preparation } from '../state/game-state';
 import type { Combatant, HunterSnapshot, MonsterInstance } from './types';
 
 // GDD §5.3.2 and §7.4: hunters scale with level (Health and Might only), monsters
@@ -12,7 +14,17 @@ export const roundHalfUp = (x: number): number => Math.floor(x + 0.5);
 
 const zero = { might: 0, armor: 0, speed: 0 } as const;
 
-export const buildHunter = (h: HunterSnapshot, slot: number): Combatant => {
+const kit = {
+  spoiled: false,
+  burnLeft: 0,
+  burnAmount: 0,
+  chillLeft: 0,
+  abilitiesBlocked: 0,
+  tonicLeft: 0,
+} as const;
+
+export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation): Combatant => {
+  const { oilFamily, potion } = hunterKit(h, prep);
   const scale = 1 + num('hunter.levelStatGrowth') * (h.level - 1);
   const effects = h.traits.map((t) => traits[t].effect);
   const weapon = h.weapon ? gear[h.weapon] : null;
@@ -64,6 +76,9 @@ export const buildHunter = (h: HunterSnapshot, slot: number): Combatant => {
     awayLeft: 0,
     secondSoulUsed: false,
     noonHeatSuppressed: 0,
+    oilFamily,
+    potion,
+    ...kit,
   };
 };
 
@@ -104,5 +119,8 @@ export const buildMonster = (m: MonsterInstance): Combatant => {
     awayLeft: 0,
     secondSoulUsed: false,
     noonHeatSuppressed: 0,
+    oilFamily: null,
+    potion: null,
+    ...kit,
   };
 };

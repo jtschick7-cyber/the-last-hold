@@ -3,6 +3,7 @@ import type { LocationId } from '../../content/damage';
 import { num } from '../balance-access';
 import { runFight, type HunterSnapshot, type MonsterInstance } from '../combat';
 import { seedBank } from '../rng';
+import type { Preparation } from '../state/game-state';
 import { computeOdds, type Odds, type OddsInput } from './odds';
 import { suggestSeed } from './seeds';
 
@@ -20,6 +21,8 @@ export interface SuggestInput {
   readonly location: LocationId;
   readonly rank: AgeId;
   readonly maxParty: number;
+  /** What the party would carry; hunters outside a candidate party are simply not in it. */
+  readonly prep?: Preparation;
 }
 
 export interface Suggestion {
@@ -68,6 +71,7 @@ export const suggestParty = (input: SuggestInput): Suggestion | null => {
         location: input.location,
         rolls: bank(i),
         log: false,
+        prep: input.prep,
       });
       if (r.result === 'win') w += 1;
     }

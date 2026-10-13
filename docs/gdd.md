@@ -998,6 +998,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Turn meter | meter += Speed each tick; act at the threshold; fail at the tick limit | `combat.meterThreshold` = 100, `combat.maxTicks` = 400 | 5.5 |
 | Odds preview | `n` simulated fights; margin `±1.96 × √(p(1−p)/n)` | `odds.samples` = 500 **[JC: raised from 200; keeps the margin within ±4.4 points]** | 5.4.2 |
 | Well prepared | bounty multiplier | `prep.wellPreparedBounty` = 1.5 | 5.4.3 |
+| Preparation limits | bombs per party; the resistance from which a species is weak to a damage type (§8.3 bold) | `prep.bombSlots` = 2, `prep.weakAt` = 1.25 | 5.7 |
 | Suggested party | Stage 1: k samples per party (same seeds); stage 2: top N at `stage2Samples`, then the winner at full samples | `suggest.stage1Samples` = 50, `suggest.stage1PerCandidate` = 20, `suggest.finalists` = 3, `suggest.stage2Samples` = 200 *(D73)* | 6.5 |
 | World-boss tokens *(v0.9)* | 1 per interval, banking up to the max; hunters rest after an attempt | `boss.tokenInterval` = 8 h, `boss.tokenMax` = 6, `boss.hunterRest` = 24 h | 5.12 |
 | Riftglass allowance *(v0.7)* | weekly cap ÷ 7 accrues per day, banking up to N weeks | `riftglass.bankWeeks` = 2 | 5.10 |

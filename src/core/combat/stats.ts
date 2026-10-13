@@ -53,6 +53,8 @@ export const outgoingPct = (a: Combatant, type: DamageType, ctx: FightContext): 
     else if (e.kind === 'mightVsFamily' && e.family === ctx.family) sum += e.amount;
     else if (e.kind === 'damageType' && e.type === type) sum += e.dealt;
   }
+  // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
+  if (a.oilFamily !== null && a.oilFamily === ctx.family) sum += K.oilBonus;
   return sum;
 };
 
