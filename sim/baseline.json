@@ -1,0 +1,73 @@
+{
+  "milestone": "v0.1",
+  "rulesVersion": 1,
+  "groups": {
+    "opening/mon": {
+      "first-cottage": 0,
+      "first-mine": 0.075,
+      "mill-3": 3,
+      "peasants-10": 3,
+      "keep": 14
+    },
+    "opening/sat": {
+      "first-cottage": 0,
+      "first-mine": 0.075,
+      "mill-3": 4,
+      "peasants-10": 4,
+      "keep": 24
+    },
+    "standard/mon": {
+      "first-cottage": 0,
+      "first-mine": 0.075,
+      "mill-3": 3,
+      "peasants-10": 3,
+      "keep": 14
+    },
+    "standard/sat": {
+      "first-cottage": 0,
+      "first-mine": 0.075,
+      "mill-3": 4,
+      "peasants-10": 4,
+      "keep": 24
+    },
+    "light/mon": {
+      "first-cottage": 0,
+      "first-mine": 5.5,
+      "mill-3": 14,
+      "peasants-10": 5.533333333333333,
+      "keep": 24
+    },
+    "light/sat": {
+      "first-cottage": 0,
+      "first-mine": 3.5,
+      "mill-3": 12,
+      "peasants-10": 3.533333333333333,
+      "keep": 27.5
+    },
+    "heavy/mon": {
+      "first-cottage": 0,
+      "first-mine": 2,
+      "mill-3": 4,
+      "peasants-10": 2.033333333333333,
+      "keep": 14
+    },
+    "heavy/sat": {
+      "first-cottage": 0,
+      "first-mine": 2,
+      "mill-3": 4,
+      "peasants-10": 2.033333333333333,
+      "keep": 14
+    }
+  },
+  "checks": {
+    "first-cottage": true,
+    "first-mine": true,
+    "mill-3": true,
+    "peasants-10": true,
+    "keep": true,
+    "something-to-do": true,
+    "no-dry-spells": true,
+    "no-walls": true,
+    "no-overflow": true
+  }
+}

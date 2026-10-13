@@ -160,3 +160,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Update (same day):** the owner chose **Rank** and **rank up** (D64, Decided). Every screen, button and refusal message now says Rank; code names and the docs still say Age until a docs pass (D64 gives the mapping). Still open: approve D63, and the iron and silver icons.
 - **Update:** the owner chose the icons (D65): iron unchanged, silver is now the Tiny Town coin in grey. Open: approve D63.
 - **Update:** D63 approved (D66); GDD §5.1.1 and §9.2 updated. Playtest fixes merged into `milestone/v0.1`.
+
+## 2026-10-13 — v0.1 complete
+- **Done:** the owner's playtest passed. v0.1 merged to `main` via PR #2, tagged `v0.1.0`, plan status set to complete, `sim:accept` run (baseline in `sim/baseline.json`), decision D68. Playtest fixes shipped in it: Settle one button, clearer Peasants heading (D63/D66), Age renamed Rank on screens and in the docs (D64/D67), grey Tiny Town coin for silver (D65).
+- **Next:** v0.2, on branch `milestone/v0.2`. Read the plan's v0.2 section first.
+- **Open questions:** none. D59 (art choices) is still Proposed.
+- **Skipped or deferred:** Pixel UI Pack frames (D59); the deprecated Node 20 workflow actions can be bumped in a later milestone.

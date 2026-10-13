@@ -151,7 +151,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.1 — The Hold
 
-**Status:** in progress
+**Status:** complete
 
 **Goal:** the idle economy from Hamlet to Keep, playable on a phone, saving reliably, with offline progress, a debug panel, diagnostics, a working simulator, and the art pipeline.
 **Reads:** GDD §1–5.2, §6, §7.1–7.2, §9 (the v0.1 screens), §10; technical design §4–9, §11–15; `setting-primer.md` §5–7.
