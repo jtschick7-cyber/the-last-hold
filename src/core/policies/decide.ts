@@ -6,6 +6,7 @@ import { buildingCost } from '../systems/costs';
 import { idlePeasants, jobSlots } from '../systems/housing';
 import { bundleValue, deltaRateValue, payback, rateValue } from '../systems/valuation';
 import { contractMoves, firstContractFood } from './contracts';
+import { defenseMoves, emberMoves, freshMemory, standMove, type PolicyMemory } from './long-night';
 import {
   addBundles,
   affordable,
@@ -14,6 +15,7 @@ import {
   buildable,
   missingProducers,
   missingRequirements,
+  recruitHold,
   reserveFor,
   shouldSave,
   policyAgeUp,
@@ -128,6 +130,8 @@ export const decideCheckIn = (
   state: GameState,
   /** Time from now to the check-in after next (GDD §6.1's "within 2 check-ins"). */
   horizonMs: number,
+  /** What the player remembers between check-ins (the stand rule's last Embers per day). */
+  memory: PolicyMemory = freshMemory(),
 ): CheckInDecision => {
   const s = structuredClone(state);
   const commands: Command[] = [];
@@ -164,13 +168,16 @@ export const decideCheckIn = (
     affordableWith(s, pairCost(s, slots), reserve) && buy(HOUSING) && buy(slots);
 
   const hadOption = policyAgeUp(s)?.ready === true || BUILDING_IDS.some((id) => affordable(s, id));
+  // v0.4 (GDD §6.1, D114): the stand first (it ends the cycle), then Embers on The Hearth.
+  if (standMove(s, act, memory)) purchases += 1;
+  purchases += emberMoves(s, act);
   staff();
   if (policyAgeUp(s)?.ready && act({ type: 'age.up' })) {
     purchases += 1;
     agedUp = true;
   }
   // v0.2 (D75): contracts and hunters, before the building rules, so launches start their timers.
-  purchases += contractMoves(s, act, reserveFor(s));
+  purchases += contractMoves(s, act, reserveFor(s), recruitHold(s, horizonMs));
   // The first contract's provisions are held back from everything else, and settling
   // pauses so it doesn't spend that food (D75).
   const hold = firstContractFood(s);
@@ -191,6 +198,8 @@ export const decideCheckIn = (
   for (const id of missingRequirements(s)) {
     while (missingRequirements(s).includes(id) && buy(id, reserve()));
   }
+  // v0.4: Walls and the Watchtower in turn, from the Citadel.
+  purchases += defenseMoves(s, act, reserve);
   for (;;) {
     const r = bottleneck(s);
     const id = r ? slotBuildingFor(r) : undefined;

@@ -2,6 +2,7 @@ import { apply } from '../commands';
 import { catchUpNow, type AwaySummary } from '../sim/offline';
 import type { GameState } from '../state/game-state';
 import { decideCheckIn, type CheckInDecision } from './decide';
+import { freshMemory, type PolicyMemory } from './long-night';
 import { nextCheckIn, type PolicyId } from './schedules';
 
 // Technical design §13.1: a policy plays the real core through apply() and the
@@ -26,16 +27,23 @@ export interface PlayOptions {
   readonly onCheckIn?: (record: CheckInRecord, state: GameState) => void;
   /** Stop early once this returns true. */
   readonly stop?: (state: GameState) => boolean;
+  /** Carried between check-ins (the stand rule); a fresh one if absent. */
+  readonly memory?: PolicyMemory;
 }
 
 /** Plays check-ins from the state's current time; the first one is now. */
 export const play = (state: GameState, opts: PlayOptions): void => {
   let at = state.time;
+  const memory = opts.memory ?? freshMemory();
   while (at <= opts.until) {
     const peasantsBefore = state.peasants.total;
     const away = catchUpNow(state, at);
     const next = nextCheckIn(opts.policy, at, opts.startedAt);
-    const decision = decideCheckIn(state, nextCheckIn(opts.policy, next, opts.startedAt) - at);
+    const decision = decideCheckIn(
+      state,
+      nextCheckIn(opts.policy, next, opts.startedAt) - at,
+      memory,
+    );
     for (const cmd of decision.commands) {
       const result = apply(state, cmd, at);
       // The decision was made on a copy of this exact state, so it can't fail.

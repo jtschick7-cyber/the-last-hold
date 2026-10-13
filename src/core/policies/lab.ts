@@ -8,6 +8,14 @@ import { brewSlots } from '../alchemy/brewing';
 import { num } from '../balance-access';
 import type { ContractInstance, GameState, Preparation } from '../state/game-state';
 import { affordable, type Bundle } from './goals';
+import { ageIndex } from '../systems/ages';
+
+/** GDD §6.1 (v0.4, D114): from the Keep, the Lodge, the Hut and one Garden come before any recruit or gear. */
+export const labFirstSetBuilt = (s: GameState): boolean =>
+  ageIndex(s.cycle.age) < ageIndex('keep') ||
+  (s.buildings['hunters-lodge'] >= 1 &&
+    s.buildings['alchemists-hut'] >= 1 &&
+    s.buildings['herb-garden'] >= 1);
 
 // D95: what the simulated player does about the v0.3 systems. It builds the Lodge, the
 // Hut and a Garden once the Keep stands, sends its free Lodge slots after the
@@ -53,7 +61,7 @@ const nextStep = (s: GameState): BuildingId | null => {
 
 /** Buys the next Lodge, Hut or Garden step it can afford; returns how many it bought. */
 export const labBuildings = (s: GameState, act: Act, reserve: Bundle): number => {
-  if (s.cycle.age !== 'keep') return 0;
+  if (ageIndex(s.cycle.age) < ageIndex('keep')) return 0;
   let bought = 0;
   for (;;) {
     const next = nextStep(s);

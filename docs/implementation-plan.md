@@ -485,7 +485,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### G. Simulator
 
-- [ ] **T4.13 Policy rules** (GDD §6.1, D114; first lift the D118 hold at the Keep in `src/core/policies/goals.ts`, and keep the Rank-up silver aside only once the Rank-up's requirements are met, or the Citadel's 1,000 silver stops all recruiting): Rank-ups to Citadel and Bastion; v0.3 buildings first; a Tracker kept home; defenses; the stand rule (Standard, Light and Heavy); Embers cheapest first; the default three each cycle.
+- [x] **T4.13 Policy rules** (GDD §6.1, D114; first lift the D118 hold at the Keep in `src/core/policies/goals.ts`, and keep the Rank-up silver aside only once the Rank-up's requirements are met, or the Citadel's 1,000 silver stops all recruiting): Rank-ups to Citadel and Bastion; v0.3 buildings first; a Tracker kept home; defenses; the stand rule (Standard, Light and Heavy); Embers cheapest first; the default three each cycle.
 - [ ] **T4.14 Checks.** Citadel; Bastion; best Last Stand (practice stands to day 7); first Long Night (Standard, Light, Heavy); later cycles (≥ 15% faster, 2-day floor); overflow through 3 cycles (the `sim/targets.ts` row change the owner approved in D114); engagement checks over all of cycle 1; the economy checks over every stretch from the Keep in every cycle. Citadel and Bastion join the fast set; runs are 14 days.
 - [ ] **T4.15 Tuning** (tunables only) against every check, then set `longNightArrival.cycle1MedianEmbers` from the tuned simulator (decisions row with the value). If no reasonable values pass (the "later cycles" check is the known risk, GDD §5.9.5), stop and ask.
 

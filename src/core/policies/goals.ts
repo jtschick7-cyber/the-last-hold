@@ -3,7 +3,7 @@ import { BUILDING_IDS, buildings, type BuildingId } from '../../content/building
 import { JOB_IDS, jobs } from '../../content/jobs';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import type { GameState } from '../state/game-state';
-import { ageIndex, ageUpStatus, isAvailable, maxLevelNow, type AgeUpStatus } from '../systems/ages';
+import { ageUpStatus, isAvailable, maxLevelNow, type AgeUpStatus } from '../systems/ages';
 import { buildingCost, canAfford, copyLimit, timeToAfford } from '../systems/costs';
 import { housing } from '../systems/housing';
 import { productionRate } from '../systems/production';
@@ -11,13 +11,10 @@ import { settleCost } from '../systems/settle';
 import { MS_PER_SECOND } from '../time';
 
 /**
- * The Rank-up the simulated player works toward. Until its v0.4 rules (plan T4.13),
- * it stops at the Keep, so every v0.3 check measures what it did before Citadel and
- * Bastion existed (owner's choice, D118). The game itself has no such limit.
+ * The Rank-up the simulated player works toward: every Rank to Bastion (GDD §6.1, D114).
+ * (D118 held it at the Keep until these v0.4 rules existed; T4.13 lifted that.)
  */
-const POLICY_LAST_RANK = 'keep';
-export const policyAgeUp = (state: GameState): AgeUpStatus | null =>
-  ageIndex(state.cycle.age) >= ageIndex(POLICY_LAST_RANK) ? null : ageUpStatus(state);
+export const policyAgeUp = (state: GameState): AgeUpStatus | null => ageUpStatus(state);
 
 // What the simulated player knows about its goal, the next Age-up (GDD §6.1,
 // D60). Payback alone can't see it: under the locked weights every job is
@@ -60,8 +57,13 @@ const ageUpCost = (state: GameState): Bundle => {
 export const silverWanted = (state: GameState): boolean =>
   ageUpCost(state).silver > state.resources.silver;
 
-/** The silver the next Age-up costs (0 when there is none), which other spending must leave alone. */
-export const rankUpSilver = (state: GameState): number => ageUpCost(state).silver;
+/**
+ * The silver hires must leave alone: the next Rank-up's silver, once the policy is saving
+ * for it (affordable within 2 check-ins, GDD §6.1, D114); 0 otherwise. Holding it from the
+ * moment the requirements are met stopped all hiring for two days at the Citadel.
+ */
+export const recruitHold = (state: GameState, horizonMs: number): number =>
+  shouldSave(state, horizonMs) ? ageUpCost(state).silver : 0;
 
 /** Buildings (or levels) the next Age-up requires that the hold lacks. */
 export const missingRequirements = (state: GameState): BuildingId[] => {
