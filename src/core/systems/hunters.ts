@@ -7,9 +7,11 @@ import {
   type HunterId,
   type HunterUnlock,
 } from '../../content/hunters';
+import { traits } from '../../content/traits';
 import { num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import type { HunterSnapshot } from '../combat';
+import { roundHalfUp } from '../combat/build';
 import { recoveryMult } from '../contracts/injury';
 import { intPow } from '../math';
 import type { GameState, HunterState } from '../state/game-state';
@@ -169,3 +171,51 @@ export const lockedHunters = (state: GameState): HunterDef[] =>
 export const recoveryMs = (seconds: number): number => seconds * MS_PER_SECOND;
 
 export type { GearId };
+
+export type StatName = 'health' | 'might' | 'armor' | 'speed';
+
+/**
+ * A hunter's displayed stat with its breakdown (GDD §5.3.2, A14): base, level
+ * scaling (Health and Might only), gear, and traits. The same numbers the fight
+ * uses, because the fight reads the same snapshot (core/combat/build.ts).
+ */
+export const hunterStat = (state: GameState, id: HunterId, stat: StatName): Explained => {
+  const def = hunters[id];
+  const h = state.hunters[id];
+  if (!h) throw new Error(`${id} is not on the roster.`);
+  const label = { health: 'Health', might: 'Might', armor: 'Armor', speed: 'Speed' }[stat];
+  const base = def.stats[stat];
+  const growth = num('hunter.levelStatGrowth');
+  const scaled = stat === 'health' || stat === 'might';
+  const scale = scaled ? 1 + growth * (h.level - 1) : 1;
+  const children: Explained['breakdown'][] = [{ label: `Base (${def.shortName})`, value: base }];
+  if (scaled) {
+    children.push({
+      label: `Level ${h.level}`,
+      value: base * scale - base,
+      formula: `${base} × ${growth} × (${h.level} − 1)`,
+      key: 'hunter.levelStatGrowth',
+    });
+  }
+  let flat = 0;
+  for (const g of [slotGear(h, 'weapon'), slotGear(h, 'armor')]) {
+    if (!g) continue;
+    const add = stat === 'might' ? g.might : stat === 'armor' ? g.armor : 0;
+    if (add === 0) continue;
+    flat += add;
+    children.push({ label: g.name, value: add });
+  }
+  for (const t of def.traits) {
+    const e = traits[t].effect;
+    if (e.kind === 'speedFlat' && stat === 'speed') {
+      flat += e.amount;
+      children.push({ label: traits[t].name, value: e.amount });
+    }
+  }
+  const raw = base * scale + flat;
+  const value = stat === 'health' ? roundHalfUp(raw) : raw;
+  return {
+    value,
+    breakdown: { label, value, formula: 'base × level scale + gear + traits', children },
+  };
+};

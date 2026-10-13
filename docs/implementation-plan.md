@@ -326,9 +326,9 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### E. UI and tests
 
-- [ ] **T2.20 Contracts tab.** Board, running and collect sections, Decline, the launch sheet, the fight log (ticks, rolls, seed and replay, collapse, the older-rules label).
-- [ ] **T2.21 Hunters tab.** Active, reserve, candidates, locked silhouettes, detail, gear, Hall of the Fallen.
-- [ ] **T2.22 Away sheet** additions; **extend the Playwright smoke:** launch a contract → skip time → collect.
+- [x] **T2.20 Contracts tab.** Board, running and collect sections, Decline, the launch sheet, the fight log (ticks, rolls, seed and replay, collapse, the older-rules label).
+- [x] **T2.21 Hunters tab.** Active, reserve, candidates, locked silhouettes, detail, gear, Hall of the Fallen.
+- [x] **T2.22 Away sheet** additions; **extend the Playwright smoke:** launch a contract → skip time → collect.
 
 ### F. Art
 

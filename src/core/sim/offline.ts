@@ -1,6 +1,7 @@
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { num } from '../balance-access';
 import type { ContractResult, GameState } from '../state/game-state';
+import { shiftClock } from '../state/shift';
 import { offlineCap } from '../systems/offline-cap';
 import { MS_PER_SECOND } from '../time';
 import { advance, type AdvanceEvent } from './advance';
@@ -62,9 +63,7 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
     // D21: a clock moved backward counts as no time and costs nothing. Rebase
     // the game's clock onto the device's so live play carries on at once,
     // keeping the settle spacing intact.
-    const shift = now - state.time;
-    state.time = now;
-    state.peasants.lastSettleAt += shift;
+    shiftClock(state, now - state.time);
   }
   // Time past the cap passes without production (GDD §5.2).
   state.time = Math.max(state.time, now);

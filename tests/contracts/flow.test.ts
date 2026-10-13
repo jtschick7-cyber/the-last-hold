@@ -472,3 +472,39 @@ describe('Trophy Hall (GDD §5.4.4)', () => {
     expect(productionRate(s, 'food').value).toBe(before);
   });
 });
+
+import { hunterStat } from '../../src/core/systems/hunters';
+describe('displayed hunter stats (GDD §5.3.2, A14)', () => {
+  it('match what the fight uses: base, level scaling, gear and traits', () => {
+    const s = keepRich();
+    hunterOf(s, 'zora').level = 3;
+    hunterOf(s, 'zora').weapon = 'steel-blade';
+    hunterOf(s, 'zora').armor = 'mail';
+    const stat = (n: 'health' | 'might' | 'armor' | 'speed') => hunterStat(s, 'zora', n).value;
+    expect(stat('health')).toBe(120); // 100 × (1 + 0.1 × 2)
+    expect(stat('might')).toBeCloseTo(20 * 1.2 + 9, 10);
+    expect(stat('armor')).toBe(8); // 3 + 5
+    expect(stat('speed')).toBe(16); // 13 + Quick 3
+    const snap = snapshotOf(s, 'zora');
+    expect(snap.level).toBe(3);
+    const labels = (hunterStat(s, 'zora', 'might').breakdown.children ?? []).map((c) => c.label);
+    expect(labels).toEqual(['Base (Zora)', 'Level 3', 'Steel Blade']);
+    expect((hunterStat(s, 'zora', 'speed').breakdown.children ?? []).map((c) => c.label)).toEqual([
+      'Base (Zora)',
+      'Quick',
+    ]);
+  });
+});
+
+describe('the debug time skip moves the whole world (GDD §9.10)', () => {
+  it('a skip finishes running contracts, ends recoveries, and refills the board', () => {
+    const s = keepRich('skip');
+    s.board.open = [];
+    const c = put(s, { tier: 1, monster: 'kikimora' });
+    run(s, { type: 'contract.launch', contract: c.id, party: ['halvar', 'zora'] });
+    expect(run(s, { type: 'debug.skip', ms: 3 * HOUR }).ok).toBe(true);
+    expect(s.results).toHaveLength(1);
+    expect(s.running).toHaveLength(0);
+    expect(s.board.open.length).toBeGreaterThan(0);
+  });
+});
