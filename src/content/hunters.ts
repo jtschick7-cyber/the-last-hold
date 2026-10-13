@@ -298,7 +298,7 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     origin: 'wanderer',
     traits: ['haggler', 'quick'],
     unlock: { kind: 'bountySilverEarned', amount: 2000 },
-    stats: { health: 150, might: 12, armor: 7, speed: 10 },
+    stats: { health: 150, might: 12, armor: 7, speed: 8 },
     recruitPrice: 600,
     story: true,
     portrait: {

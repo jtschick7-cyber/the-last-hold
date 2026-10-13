@@ -67,9 +67,6 @@ describe('hunters (GDD §8.5)', () => {
       for (const t of h.traits) expect(TRAIT_IDS).toContain(t);
       const base = roleBaselines[h.role];
       for (const stat of ['health', 'might', 'armor', 'speed'] as const) {
-        // GDD §8.5's table gives Toma Speed 10 on a Vanguard baseline of 8 (+25%),
-        // against its own "±10%" rule. Content follows the table; see Q6.
-        if (id === 'toma' && stat === 'speed') continue;
         const ratio = h.stats[stat] / base[stat];
         // A flat ±1 is allowed for the small stats, where 10% rounds to nothing.
         const off = Math.abs(h.stats[stat] - base[stat]);

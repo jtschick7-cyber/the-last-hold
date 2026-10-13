@@ -3,6 +3,8 @@
 // which needs a `rulesVersion` bump and the owner's approval, never an edit here.
 // Fight c's fingerprint was re-recorded once, with the owner's approval (Q7, D71): the log
 // now prints the Armor a hit actually met. Its result, ticks and Health did not change.
+// Fight d was re-recorded once, with the owner's approval (Q6b, D80): Toma Kettle's Speed went
+// from 10 to 8. It is still a loss at tick 400; Health, lines and the fingerprint moved.
 // Each fingerprint hashes every log line, so any change to a single line shows.
 import { describe, expect, it } from 'vitest';
 import { runFight } from '../../src/core/combat';
@@ -66,10 +68,10 @@ const CASES = [
     want: {
       result: 'loss',
       ticks: 400,
-      health: [156, 114, 80, 106],
-      monster: 421,
-      lines: 261,
-      hash: 'ac8177f0',
+      health: [145, 100, 85, 107],
+      monster: 431,
+      lines: 253,
+      hash: 'a06f958d',
     },
   },
   {
