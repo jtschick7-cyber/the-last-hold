@@ -1,7 +1,8 @@
 import { LOCATION_IDS, type LocationId } from '../../content/damage';
-import { MONSTER_IDS, monsters, type MonsterId } from '../../content/monsters';
 import { VILLAGE_IDS, villages } from '../../content/villages';
 import { constantAt, num } from '../balance-access';
+import { arrivalClues, noteArrival } from '../investigation/knowledge';
+import { candidatesFor } from './candidates';
 import { stream } from '../rng';
 import type { ContractInstance, GameState } from '../state/game-state';
 import { MS_PER_SECOND } from '../time';
@@ -24,13 +25,6 @@ export const highestUnlockedTier = (state: GameState): number => {
   while (tier < 5 && (state.board.tierWins[tier - 1] ?? 0) >= need) tier += 1;
   return Math.min(tier, tierCap(state));
 };
-
-/** Species that can appear in a location at a tier, in content order (GDD §8.3.1). */
-export const candidatesFor = (location: LocationId, tier: number): MonsterId[] =>
-  MONSTER_IDS.filter((id) => {
-    const m = monsters[id];
-    return m.locations.includes(location) && tier >= m.tiers[0] && tier <= m.tiers[1];
-  });
 
 /**
  * One contract from its seed (technical design §7.2: `${gameSeed}:board:${index}`).
@@ -63,7 +57,9 @@ export const generateContract = (
   const species = candidatesFor(location, tier);
   const monster = species[Math.min(species.length - 1, Math.floor(rolls.next() * species.length))];
   if (!monster) throw new Error(`No monster for ${location} at tier ${tier}.`);
-  return { id: `c${index}`, village: village.id, monster, tier, location, arrivedAt };
+  // GDD §5.6.2: a contract arrives with no clues, unless its species is Mastered.
+  const revealed = arrivalClues(state, monster);
+  return { id: `c${index}`, village: village.id, monster, tier, location, arrivedAt, revealed };
 };
 
 /** The first Mine opens the board, with its first contract due at once. */
@@ -84,6 +80,7 @@ export const applyArrival = (state: GameState): ContractInstance | null => {
   if (!state.board.opened || due === null) return null;
   const contract = generateContract(state, state.board.arrivals, Math.min(due, state.time));
   state.board.open.push(contract);
+  noteArrival(state, contract);
   state.board.arrivals += 1;
   state.board.nextArrivalAt =
     state.board.open.length >= num('board.cap') ? null : due + intervalMs();
@@ -96,3 +93,5 @@ export const slotFreed = (state: GameState): void => {
     state.board.nextArrivalAt = state.time + intervalMs();
   }
 };
+
+export { candidatesFor };

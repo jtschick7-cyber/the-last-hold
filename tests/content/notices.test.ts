@@ -63,6 +63,7 @@ describe('notices', () => {
       tier: 2,
       location: 'river',
       arrivedAt: 0,
+      revealed: 3,
     };
     const a = noticeFor(c, 'seed');
     expect(a).toEqual(noticeFor(c, 'seed'));

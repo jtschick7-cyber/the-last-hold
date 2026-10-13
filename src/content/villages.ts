@@ -1,8 +1,9 @@
 import type { LocationId } from './damage';
+import type { IngredientId } from './ingredients';
 
 // GDD §8.2 and setting-primer §3: the five contract-giving villages, with their
 // heads. A contract's location tag comes from its village. Trust is kept silent
-// (setting-primer §3); gift reagents arrive in v0.3.
+// (setting-primer §3). Each success also gives one gift reagent (GDD §8.2, v0.3).
 
 export const VILLAGE_IDS = [
   'dubno-ford',
@@ -21,6 +22,8 @@ export interface VillageDef {
   readonly locations: readonly LocationId[];
   /** The village head's name and how they're addressed. */
   readonly head: { readonly name: string; readonly title: string };
+  /** Gift reagents; one of these comes with each success (GDD §8.2). */
+  readonly gifts: readonly IngredientId[];
 }
 
 export const villages: Readonly<Record<VillageId, VillageDef>> = {
@@ -31,6 +34,7 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     region: 'Lowland river crossing',
     locations: ['river', 'field'],
     head: { name: 'Marta Dubska', title: 'Headwoman' },
+    gifts: ['honeycomb', 'hares-foot'],
   },
   'kozly-hollow': {
     id: 'kozly-hollow',
@@ -39,6 +43,7 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     region: 'Lowland goatherd village in the old wood',
     locations: ['forest', 'field'],
     head: { name: 'Bohdan Kozel', title: 'Headman' },
+    gifts: ['honeycomb', 'pitch'],
   },
   mirograd: {
     id: 'mirograd',
@@ -47,6 +52,7 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     region: 'Lowland market town (the largest)',
     locations: ['field', 'river'],
     head: { name: 'Ilona Sváteková', title: 'Headwoman' },
+    gifts: ['hares-foot', 'pitch'],
   },
   velkvik: {
     id: 'velkvik',
@@ -55,6 +61,7 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     region: 'Highland fjord village',
     locations: ['river', 'barrow'],
     head: { name: 'Gunnar Ravnsson', title: 'Thane' },
+    gifts: ['rime-salt', 'pitch'],
   },
   ravenfell: {
     id: 'ravenfell',
@@ -63,5 +70,6 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     region: 'Highland hamlet among the barrow-hills',
     locations: ['barrow', 'forest'],
     head: { name: 'Sólveig Arnadóttir', title: 'Thane' },
+    gifts: ['rime-salt'],
   },
 };

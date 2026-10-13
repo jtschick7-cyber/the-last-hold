@@ -1,8 +1,10 @@
 import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
+import type { ConsumableId } from '../../content/consumables';
 import type { LocationId } from '../../content/damage';
 import type { GearId } from '../../content/gear';
 import type { HunterId } from '../../content/hunters';
+import type { IngredientId } from '../../content/ingredients';
 import type { JobId } from '../../content/jobs';
 import type { MonsterId } from '../../content/monsters';
 import type { ResourceId } from '../../content/resources';
@@ -12,8 +14,9 @@ import type { HunterSnapshot } from '../combat';
 import type { InjuryKind } from '../contracts/injury';
 
 // Technical design §5.2. v1 was the hold only (plan T1.9); v2 adds hunters,
-// contracts and fights (plan T2.4). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 2;
+// contracts and fights (plan T2.4); v3 adds the bestiary, stores, brewing, investigation
+// and preparation (plan T3.4). Times are epoch milliseconds.
+export const SCHEMA_VERSION = 3;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -35,7 +38,25 @@ export interface ContractInstance {
   tier: number;
   location: LocationId;
   arrivedAt: number;
+  /**
+   * Clues revealed so far, 0–3 (GDD §5.6.3). At 3 the species is identified; contracts
+   * for a Mastered species and every contract before v0.3 arrive at 3. Which tags and
+   * texts the clues are come from the clue seed, so only the count is saved.
+   */
+  revealed: number;
 }
+
+/**
+ * What a party carries into a fight (GDD §5.7): one oil and one potion per hunter, up to
+ * two bombs per party. Frozen at launch, like the hunter snapshots.
+ */
+export interface Preparation {
+  oils: Partial<Record<HunterId, ConsumableId>>;
+  potions: Partial<Record<HunterId, ConsumableId>>;
+  bombs: ConsumableId[];
+}
+
+export const noPreparation = (): Preparation => ({ oils: {}, potions: {}, bombs: [] });
 
 export interface RunningContract {
   contract: ContractInstance;
@@ -48,6 +69,9 @@ export interface RunningContract {
   reckless: boolean;
   /** The odds shown at launch (500 fights), kept so results can say how likely they were. */
   winChance: number;
+  prep: Preparation;
+  /** The species' knowledge level when the party set out, frozen so a replay never changes (GDD §5.6.2). */
+  knowledge: number;
 }
 
 export interface ContractResult {
@@ -66,7 +90,10 @@ export interface ContractResult {
   winChance: number;
   injuries: { hunter: HunterId; kind: InjuryKind; until: number }[];
   levelUps: { hunter: HunterId; level: number }[];
-  /** Unread until the player collects. */
+  /** Reagents the success brought: the drops and the village gift (GDD §8.6). */
+  reagents: Partial<Record<IngredientId, number>>;
+  /** A matching oil plus a weak-type bomb or a cancelling Saltburst (GDD §5.7). */
+  wellPrepared: boolean;
 }
 
 /** What it takes to replay a fight: seed and inputs, not the log (technical design §5.3). */
@@ -74,11 +101,12 @@ export interface FightRef {
   contractId: string;
   seed: string;
   party: HunterSnapshot[];
-  monster: { monster: MonsterId; tier: number };
+  monster: { monster: MonsterId; tier: number; knowledge: number };
   location: LocationId;
   result: 'win' | 'loss';
   rulesVersion: number;
   at: number;
+  prep: Preparation;
 }
 
 export interface FallenRecord {
@@ -86,6 +114,26 @@ export interface FallenRecord {
   diedAt: number;
   cycle: number;
   contractId: string;
+}
+
+/** What the player has learned about a species (GDD §5.6.2). Never reset by the Long Night. */
+export interface SpeciesKnowledge {
+  /** 1 Sighted, 2 Identified, 3 Studied, 4 Mastered. Absent from the bestiary = 0 Unknown. */
+  level: 1 | 2 | 3 | 4;
+  /** Successful contracts against it (the kill count of GDD §5.6.2). */
+  kills: number;
+}
+
+/** A brew in the Alchemist's Hut. `doneAt` is null while it waits for a free kettle. */
+export interface BrewJob {
+  item: ConsumableId;
+  doneAt: number | null;
+}
+
+/** A Lodge slot at work on a contract; the next clue is revealed at `nextClueAt`. */
+export interface InvestigationSlot {
+  contractId: string;
+  nextClueAt: number;
 }
 
 export interface Settings {
@@ -141,6 +189,12 @@ export interface GameState {
     /** Successes at tier 1..5; tier t+1 unlocks after 3 at tier t (B8). */
     tierWins: number[];
   };
+  bestiary: Partial<Record<MonsterId, SpeciesKnowledge>>;
+  /** Consumables and reagents in the hold's stores (GDD §5.7, §8.6). */
+  stores: Record<ConsumableId | IngredientId, number>;
+  queues: { brewing: BrewJob[]; investigation: InvestigationSlot[] };
+  /** The Herb Garden's next harvest; null until a garden stands (GDD §5.7). */
+  garden: { nextAt: number | null };
   running: RunningContract[];
   /** Unread results; rewards were applied at completion (B9). */
   results: ContractResult[];

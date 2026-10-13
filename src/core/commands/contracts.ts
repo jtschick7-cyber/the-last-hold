@@ -3,9 +3,12 @@ import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { constantAt } from '../balance-access';
 import { slotFreed } from '../contracts/board';
 import { computeOdds } from '../contracts/odds';
+import { monsterFor, oddsTarget } from '../investigation/knowledge';
+import { releaseSlot } from '../investigation/lodge';
 import { maxPartySize } from '../contracts/party';
 import { provisions } from '../contracts/rewards';
-import type { GameState } from '../state/game-state';
+import { prepProblem, spendPrep } from '../contracts/prep';
+import { noPreparation, type GameState, type Preparation } from '../state/game-state';
 import { availableHunters, snapshotOf } from '../systems/hunters';
 import { MS_PER_SECOND } from '../time';
 import { ok, refuse, type ApplyResult } from './types';
@@ -23,6 +26,7 @@ export const launch = (
   contractId: string,
   party: HunterId[],
   confirmReckless: boolean,
+  prep: Preparation = noPreparation(),
 ): ApplyResult => {
   const contract = state.board.open.find((c) => c.id === contractId);
   if (!contract) return refuse('That contract is no longer on the board.');
@@ -34,6 +38,8 @@ export const launch = (
   const free = availableHunters(state);
   const notFree = party.find((h) => !free.includes(h));
   if (notFree) return refuse('Every hunter sent must be on the active roster and ready.');
+  const problem = prepProblem(state, party, prep);
+  if (problem) return refuse(problem);
   const food = provisions(state, party.length, contract.tier).value;
   if (state.resources.food < food) return refuse('Not enough food for provisions.');
   const snapshots = party.map((h) => snapshotOf(state, h));
@@ -41,15 +47,18 @@ export const launch = (
     gameSeed: state.meta.gameSeed,
     contractId: contract.id,
     party: snapshots,
-    monster: { monster: contract.monster, tier: contract.tier },
+    monster: oddsTarget(state, contract),
     location: contract.location,
     rank: state.cycle.age,
+    prep,
   });
   if (odds.reckless && !confirmReckless) {
     return refuse('This contract is Reckless: the hunters could die. Confirm to send them anyway.');
   }
   state.resources.food -= food;
+  spendPrep(state, prep);
   state.board.open = state.board.open.filter((c) => c.id !== contractId);
+  releaseSlot(state, contractId);
   slotFreed(state);
   state.running.push({
     contract,
@@ -58,6 +67,8 @@ export const launch = (
     launchedAt: state.time,
     endsAt: state.time + duration(contract.tier),
     reckless: odds.reckless,
+    prep: structuredClone(prep),
+    knowledge: monsterFor(state, contract).knowledge,
     winChance: odds.winChance,
   });
   return ok;
@@ -67,6 +78,7 @@ export const decline = (state: GameState, contractId: string): ApplyResult => {
   const before = state.board.open.length;
   state.board.open = state.board.open.filter((c) => c.id !== contractId);
   if (state.board.open.length === before) return refuse('That contract is no longer on the board.');
+  releaseSlot(state, contractId);
   slotFreed(state);
   return ok;
 };

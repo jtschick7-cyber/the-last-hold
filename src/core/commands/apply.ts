@@ -1,6 +1,8 @@
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { collect, decline, launch, markSeen } from './contracts';
+import { cancelBrew, queueBrew } from './brew';
+import { assign, stop } from './investigate';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
 import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
@@ -35,9 +37,17 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
     case 'age.up':
       return ageUp(state);
     case 'contract.launch':
-      return launch(state, cmd.contract, cmd.party, cmd.confirmReckless === true);
+      return launch(state, cmd.contract, cmd.party, cmd.confirmReckless === true, cmd.prep);
     case 'contract.decline':
       return decline(state, cmd.contract);
+    case 'investigate.assign':
+      return assign(state, cmd.contract);
+    case 'investigate.stop':
+      return stop(state, cmd.contract);
+    case 'brew.queue':
+      return queueBrew(state, cmd.item);
+    case 'brew.cancel':
+      return cancelBrew(state, cmd.index);
     case 'results.collect':
       return collect(state);
     case 'scene.seen':

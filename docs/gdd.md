@@ -304,7 +304,7 @@ final      = 0                                                 if resist = 0 (im
 |---|---|---|
 | **flat** | Fixed additions to a stat, applied before any multiplier | Gear (+9 Might), Quick (+3 Speed) |
 | **stat%** | Percentage changes to a stat that last the whole fight | Quickfoot Tincture (+20% Speed), Swell (+50% Armor) |
-| **status%** | Temporary effects whose duration counts actions | Hamstring (−30% Speed), the Frost Pot slow, Ironbark Tonic, Malice (+5% Might per action) |
+| **status%** | Temporary effects whose duration counts actions | Hamstring (−30% Speed), the Frost Pot slow, Hardwood Tonic, Malice (+5% Might per action) |
 | **outgoing%** | Bonuses to damage dealt | Traits vs a family or location (Grave-warden, Fen-born, Fire-touched), oils |
 | **knowledge%** | Studied / Mastered bonus vs a species | +5% / +10% |
 | **taken%** | Reductions to damage taken. They **add together**, are **capped at 75%**, and apply **after Armor** *(B2)* | Shieldwall −10%, Fire-touched −20% Fire, Emberwright Plate −10% Fire |
@@ -586,7 +586,7 @@ Each contract has:
    - **Death chance** per hunter (Reckless contracts only).
    - **Expected rewards.**
    - **"Why?"** opens the summary math: party damage per 100 ticks vs monster Health, and monster damage per 100 ticks vs the party's effective Health.
-4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's current food income**, × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet and 1.5 in the Keep (Citadel and Bastion are set at v0.4). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 22 minutes of food income, and a tier-5 party of 4 about 2 h 20 min. The launch sheet's breakdown shows the food income used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
+4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet and 1 in the Keep (D85) (Citadel and Bastion are set at v0.4). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
 5. Launch. The hunters are busy for the contract's duration.
 
 The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 500 preview simulations use different derived seeds, so the preview never reveals the real roll.
@@ -703,7 +703,7 @@ Logs are kept for the last 50 contracts. Any listed contract's log can be regene
 | 0 Unknown | — | The species doesn't appear in candidate lists. Its entry is hidden. |
 | 1 Sighted | It appears as a possibility on any contract | Shows as "?" in candidate lists. A silhouette entry in the bestiary. |
 | 2 Identified | Identify it through investigation, or fight it | Resistances, abilities, and stats become visible. Preparation can target it. |
-| 3 Studied | 3 kills | Clues on its contracts take half the time. +5% damage against it (knowledge bucket). |
+| 3 Studied | 4 kills | Clues on its contracts take half the time. +5% damage against it (knowledge bucket). |
 | 4 Mastered | 10 kills | Its contracts arrive already identified. +10% damage against it. A counter-tip for each of its abilities. |
 
 #### 5.6.3 Investigation
@@ -754,7 +754,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 | Drowned-Bane Oil | Oil | +35% damage vs Water Spirits | 2 river pearl + 1 yarrow |
 | Thornbane Oil | Oil | +35% damage vs Field & Forest Spirits | 2 thornwood + 1 mugwort |
 | Mending Draught | Potion | Once, below 30% Health: heal 40% of max Health | 2 yarrow + 1 honeycomb |
-| Ironbark Tonic | Potion | +30% Armor until the holder's 5th action | 1 thornwood + 2 juniper |
+| Hardwood Tonic | Potion | +30% Armor until the holder's 5th action | 1 thornwood + 2 juniper |
 | Quickfoot Tincture | Potion | +20% Speed for the whole fight | 2 mugwort + 1 hare's foot |
 | Fire Pot | Bomb | At tick 1: 40 Fire damage, then 10 Fire on each of the monster's next 3 actions | 1 pitch + 1 wood (resource) |
 | Frost Pot | Bomb | At tick 1: 30 Frost damage, then −30% Speed for the monster's next 3 actions | 1 rime salt + 1 wood |
@@ -890,7 +890,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Roster of 4 hunters | By the end of day 2 | v0.2 |
 | First tier-3 success | Day 2 | v0.2 |
 | First species Identified through investigation | ≤ 2 h after the Hunter's Lodge is built | v0.3 |
-| First species Studied (3 kills) | Days 2–3 | v0.3 |
+| First species Studied (4 kills) | Days 2–3 | v0.3 |
 | Citadel reached | Day 2 | v0.4 |
 | Bastion reached; Last Stand available | Day 3 | v0.4 |
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.4 |
@@ -909,7 +909,7 @@ These catch dead zones and walls that pure time targets miss.
 5. **Odds are honest** *(v0.2)*: across 2,000 simulated contracts, the actual success rate in each 10-point odds bucket lands within ±5 points of the displayed odds.
 6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days in v0.2–v0.3), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.*
 7. **No overflow:** every number stays below 1e300 through 3 simulated cycles *(from v0.4)*. Through v0.3, the same check runs over 14 simulated days.
-8. **Provisions matter** *(v0.2; ⚑ revisions G3, Q9)*: cumulatively over the Keep phase of each simulated Standard run (at least 14 days in v0.2–v0.3), contract provisions take 20–40% of food income. Because provisions scale with food income from the Keep on (§5.4.2), the share is set mainly by `provisions.incomeMinutes`; the check keeps it honest as later milestones add contracts and costs.
+8. **Provisions matter** *(v0.2; ⚑ revisions G3, Q9)*: cumulatively over the Keep phase of each simulated Standard run (at least 14 days in v0.2–v0.3), contract provisions take 20–40% of food income. Because provisions scale with food capacity from the Keep on (§5.4.2), the share is set mainly by `provisions.incomeMinutes`; the check keeps it honest as later milestones add contracts and costs.
 
 ### 6.4 Playtest-only checks
 
@@ -983,7 +983,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Board refill | 1 per interval, up to the cap; declining is free | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
 | Board opens | when the first Mine is built (G6) | — | 5.4.1 |
 | Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5 } | 5.4.1 |
-| Provisions | `max(p, m × food/min) × partySize × g^(tier−1)` food at launch (Q9, D81; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1.5 } *(D82; Citadel and Bastion set at v0.4)* | 5.4.2 |
+| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1 } *(D82, D85; Citadel and Bastion set at v0.4)* | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
 | Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 78 *(⚑ v0.2 tuning: 60 → 72, D76; 72 → 78, D82)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.0 } | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
@@ -998,6 +998,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Turn meter | meter += Speed each tick; act at the threshold; fail at the tick limit | `combat.meterThreshold` = 100, `combat.maxTicks` = 400 | 5.5 |
 | Odds preview | `n` simulated fights; margin `±1.96 × √(p(1−p)/n)` | `odds.samples` = 500 **[JC: raised from 200; keeps the margin within ±4.4 points]** | 5.4.2 |
 | Well prepared | bounty multiplier | `prep.wellPreparedBounty` = 1.5 | 5.4.3 |
+| Preparation limits | bombs per party; the resistance from which a species is weak to a damage type (§8.3 bold) | `prep.bombSlots` = 2, `prep.weakAt` = 1.25 | 5.7 |
 | Suggested party | Stage 1: k samples per party (same seeds); stage 2: top N at `stage2Samples`, then the winner at full samples | `suggest.stage1Samples` = 50, `suggest.stage1PerCandidate` = 20, `suggest.finalists` = 3, `suggest.stage2Samples` = 200 *(D73)* | 6.5 |
 | World-boss tokens *(v0.9)* | 1 per interval, banking up to the max; hunters rest after an attempt | `boss.tokenInterval` = 8 h, `boss.tokenMax` = 6, `boss.hunterRest` = 24 h | 5.12 |
 | Riftglass allowance *(v0.7)* | weekly cap ÷ 7 accrues per day, banking up to N weeks | `riftglass.bankWeeks` = 2 | 5.10 |
@@ -1007,7 +1008,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Knowledge thresholds | kills to reach Studied / Mastered | `knowledge.studiedKills` = 3, `knowledge.masteredKills` = 10 | 5.6.2 |
+| Knowledge thresholds | kills to reach Studied / Mastered | `knowledge.studiedKills` = 4, `knowledge.masteredKills` = 10 | 5.6.2 |
 | Knowledge damage | knowledge bucket | `knowledge.studiedDamage` = 0.05, `knowledge.masteredDamage` = 0.10 | 5.6.2 |
 | Clue time | per clue; × multiplier if Studied | `clue.time` = 30 min, `clue.studiedMult` = 0.5 | 5.6.3 |
 | Lodge slots | 1 per level | `lodge.maxLevel` = 3 | 5.6.3 |
@@ -1166,7 +1167,7 @@ Each clue tag has several in-world texts. A contract draws one text per revealed
 | Striker | 100 | 20 | 3 | 12 |
 | Mender | 110 | 10 | 4 | 10 |
 
-Individual hunters vary by up to ±10% per stat.
+Individual hunters vary from the role baseline by up to ±10% or 1 point per stat, whichever is larger (so Armor and Speed may move by 1).
 
 | Hunter | Role | Damage | Origin | Traits | Unlock | Stats (H/M/A/S) | Sketch |
 |---|---|---|---|---|---|---|---|
@@ -1178,8 +1179,10 @@ Individual hunters vary by up to ±10% per stat.
 | **Radek the Gravedigger** | Vanguard | Silver | Lowland | Grave-warden, Hard to kill | Defeat an Upyr | 165/11/9/7 | Has buried half of Mirograd. Lately his shovel has been silver-shod. |
 | **Sigrun Halfhand** | Striker | Fire | Highland | Fire-touched, Lantern-bearer | Smithy level 5 | 100/22/4/11 | Exiled Emberwright apprentice who won't say why she left. *(lore hook)* |
 | **Toma Kettle** | Vanguard | Steel | Wanderer | Haggler, Quick | Earn 2,000 silver in bounties | 150/12/7/8 | Tinker and talker. Has opinions about every price at the hold. |
+| **Stanko Sleepless** *(v0.3)* | Striker | Venom | Lowland | Wolf-friend, Quick | The Gaunt Wolf reaches Studied | 95/21/3/12 | Sits up nights with a knife dipped in something he keeps in a goat's horn. Nobody in the Hollow has seen him sleep. |
+| **Herdis Strayfinder** *(v0.3)* | Mender | Frost | Highland | Tracker, Hard to kill | Build the Hunter's Lodge | 120/9/4/10 | Can follow a week-old track across bare rock. The iron heel of her crook is rime-salted, an old Ravenfell habit against things that walk at night. |
 
-**Recruitment prices** *(⚑ revision G5)*: Halvar and Zora free; Ostap 150; Vesna 350; Bjarna 400; Radek 500; Toma 600; Sigrun 1,200 silver.
+**Recruitment prices** *(⚑ revision G5)*: Halvar and Zora free; Ostap 150; Herdis 300 *(v0.3)*; Vesna 350; Bjarna 400; Stanko 450 *(v0.3)*; Radek 500; Toma 600; Sigrun 1,200 silver.
 
 **Traits:**
 
@@ -1198,12 +1201,12 @@ Individual hunters vary by up to ±10% per stat.
 | Lantern-bearer | Party hit chance +5% on barrow contracts | v0.2 |
 | Haggler | +10% bounty silver on contracts this hunter joins | v0.2 |
 | Herbwise | Potions carried by this hunter are 25% stronger | v0.3 |
-| Wolf-friend | +20% Might vs Beasts & Wilds | v0.3 *(reserved for a v0.3 hunter)* |
-| Tracker | While this hunter is idle at the hold, one Lodge slot reveals clues 25% faster | v0.3 *(reserved for a v0.3 hunter)* |
+| Wolf-friend | +20% Might vs Beasts & Wilds | v0.3 *(Stanko)* |
+| Tracker | While this hunter is idle at the hold, one Lodge slot reveals clues 25% faster | v0.3 *(Herdis)* |
 
 **v0.5 adds Arvid Stonebrow** (story hunter, Vanguard; unlocks when Act III begins) *(⚑ lore C4)*.
 
-**v0.3 adds 2 hunters** (a Wolf-friend Striker with Venom damage and a Tracker Mender), to be defined at the start of v0.3. That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
+**v0.3 adds 2 hunters:** Stanko Sleepless (a Wolf-friend Striker with Venom damage) and Herdis Strayfinder (a Tracker Mender), defined by the owner (Q12, D101). That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
 
 ### 8.6 Ingredients (v0.3)
 
@@ -1213,14 +1216,14 @@ Each ingredient also has **4 hidden effects**, defined in v0.6 for alchemy disco
 |---|---|---|
 | Yarrow | Herb Garden | Drowned-Bane Oil, Mending Draught |
 | Mugwort | Herb Garden | Thornbane Oil, Quickfoot Tincture |
-| Juniper | Herb Garden | Grave Oil, Ironbark Tonic |
+| Juniper | Herb Garden | Grave Oil, Hardwood Tonic |
 | Honeycomb | Gift: Dubno Ford, Kozly Hollow | Mending Draught |
 | Hare's foot | Gift: Dubno Ford, Mirograd | Quickfoot Tincture |
 | Pitch | Gift: Kozly Hollow, Mirograd, Velkvik | Fire Pot |
 | Rime salt | Gift: Velkvik, Ravenfell; drop: Draugr | Frost Pot, Saltburst |
 | Grave dust | Drop: Upyr, Draugr, Strzyga | Grave Oil |
 | River pearl | Drop: Rusalka, Vodyanoy, Nix | Drowned-Bane Oil |
-| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra | Thornbane Oil, Ironbark Tonic |
+| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra | Thornbane Oil, Hardwood Tonic |
 | Wolf fang | Drop: Gloam Wolf | — *(reserved for v0.6 discovery)* |
 | Noon poppy | Drop: Poludnitsa | — *(reserved for v0.6 discovery)* |
 
@@ -1385,7 +1388,7 @@ Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes ava
 ├──────────────────────────────────┤
 │ PREPARE                (v0.3)    │
 │ Oil    Grave Oil ×3 ✔ matched    │
-│ Potion Mending · Ironbark · —    │
+│ Potion Mending · Hardwood · —    │
 │ Bombs  Fire Pot ✔ weak · —       │
 ├──────────────────────────────────┤
 │ ODDS  78% ±4                Why▸ │

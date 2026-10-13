@@ -89,7 +89,7 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
   },
   {
     id: 'first-studied',
-    text: 'First species Studied (3 kills): days 2–3',
+    text: 'First species Studied (4 kills): days 2–3',
     bounds: [{ policy: 'standard', minHours: 24, maxHours: 72 }],
     enforcedFrom: 'v0.3',
   },

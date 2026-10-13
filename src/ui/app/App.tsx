@@ -2,6 +2,7 @@ import { signal } from '@preact/signals';
 import { useEffect } from 'preact/hooks';
 import { buildInfo } from '../../platform/build-info';
 import type { UpdateHandle } from '../../platform/service-worker';
+import { BestiaryScreen } from '../screens/BestiaryScreen';
 import { ContractsScreen } from '../screens/ContractsScreen';
 import { HoldScreen } from '../screens/HoldScreen';
 import { HuntersScreen } from '../screens/HuntersScreen';
@@ -34,21 +35,26 @@ export const pendingUpdate = signal<UpdateHandle | null>(null);
 
 // GDD §9.1: a tab appears only when its system unlocks. Contracts and Hunters
 // arrive with the first Mine (GDD §5.4.1).
-const ALL_TABS = ['hold', 'contracts', 'hunters', 'more'] as const;
+const ALL_TABS = ['hold', 'contracts', 'hunters', 'bestiary', 'more'] as const;
 type Tab = (typeof ALL_TABS)[number];
 const tab = signal<Tab>('hold');
 const TAB_LABEL: Record<Tab, string> = {
   hold: 'Hold',
   contracts: 'Contracts',
   hunters: 'Hunters',
+  bestiary: 'Bestiary',
   more: 'More',
 };
-const tabsFor = (opened: boolean): readonly Tab[] =>
-  ALL_TABS.filter((t) => opened || (t !== 'contracts' && t !== 'hunters'));
+// The Bestiary appears with the first species the player has seen (GDD §9.1, §5.6.2).
+const tabsFor = (opened: boolean, seen: boolean): readonly Tab[] =>
+  ALL_TABS.filter(
+    (t) => (opened || (t !== 'contracts' && t !== 'hunters')) && (seen || t !== 'bestiary'),
+  );
 const SCREENS: Record<Tab, () => preact.JSX.Element> = {
   hold: () => <HoldScreen />,
   contracts: () => <ContractsScreen />,
   hunters: () => <HuntersScreen />,
+  bestiary: () => <BestiaryScreen />,
   more: () => <MoreScreen />,
 };
 
@@ -139,7 +145,7 @@ export const App = () => {
   if (version.value === 0) return <main class={css.main}>Lighting the hearth…</main>;
 
   const progress = catchUpProgress.value;
-  const shown = tabsFor(game().board.opened);
+  const shown = tabsFor(game().board.opened, Object.keys(game().bestiary).length > 0);
   const unread = game().results.length;
   return (
     <div class={css.app}>

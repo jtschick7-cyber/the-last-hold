@@ -23,8 +23,8 @@ export interface RunSpec {
   readonly seed: string;
   readonly start: StartId;
   readonly days: number;
-  /** Stop once this moment is reached (the fast set needs nothing after its last target). */
-  readonly stopAt?: Moment;
+  /** Stop once every one of these moments is reached (the fast set needs nothing after its last target). */
+  readonly stopAt?: readonly Moment[];
 }
 
 export interface CheckInStat {
@@ -48,6 +48,10 @@ export const MOMENTS = [
   'first-contract',
   'roster-4',
   'first-tier-3',
+  // v0.3 (GDD §6.2):
+  'hunters-lodge',
+  'first-identified',
+  'first-studied',
 ] as const;
 export type Moment = (typeof MOMENTS)[number];
 
@@ -115,7 +119,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     policy: spec.policy === 'standard' ? 'opening' : spec.policy,
     startedAt: start,
     until: start + spec.days * DAY,
-    stop: () => spec.stopAt !== undefined && moments[spec.stopAt] !== null,
+    stop: () => spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null),
     onCheckIn: (rec, s) => {
       // Income: the net change while away, plus the food that settling spent.
       const settles = rec.away.events.filter((e) => e.type === 'settle');
@@ -135,6 +139,10 @@ export const runOne = (spec: RunSpec): RunResult => {
         if (c.type === 'contract.launch') mark('first-contract', rec.at);
       }
       if (Object.keys(s.hunters).length >= 4) mark('roster-4', rec.at);
+      if (s.buildings['hunters-lodge'] >= 1) mark('hunters-lodge', rec.at);
+      for (const e of rec.away.events) {
+        if (e.type === 'clue' && e.identified) mark('first-identified', e.at);
+      }
       for (const r of rec.away.contracts) {
         contracts.push({
           hours: (r.at - start) / HOUR,
@@ -143,6 +151,7 @@ export const runOne = (spec: RunSpec): RunResult => {
           success: r.success,
         });
         if (r.success && r.tier >= 3) mark('first-tier-3', r.at);
+        if (r.success && (s.bestiary[r.monster]?.level ?? 0) >= 3) mark('first-studied', r.at);
       }
       // The Keep phase runs from the Rank-up check-in on (GDD §6.3 #5 and #8).
       if (rec.agedUp) inKeep = true;

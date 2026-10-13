@@ -1,5 +1,6 @@
 import { hunters } from '../../content/hunters';
 import { monsterPortraitId } from '../../content/assets';
+import { ingredients, type IngredientId } from '../../content/ingredients';
 import { monsters } from '../../content/monsters';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { ContractResult } from '../../core/state/game-state';
@@ -32,8 +33,7 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
             {r.success ? '✔' : '✘'} {monsters[r.monster].name} · T{r.tier}
           </strong>
           <div class={`${styles.small} ${styles.dim}`}>
-            {placeName({ ...r, id: r.contractId, arrivedAt: 0 })} · finished{' '}
-            {formatDuration((now - r.at) / 1000)} ago
+            {placeName(r)} · finished {formatDuration((now - r.at) / 1000)} ago
           </div>
         </div>
       </div>
@@ -47,6 +47,19 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
         </div>
       ) : (
         <div class={styles.small}>No bounty. {r.xp} XP each.</div>
+      )}
+      {r.success && r.wellPrepared && (
+        <div class={`${styles.small} ${styles.good}`}>
+          Well prepared: ×1.5 bounty and +1 trophy.
+        </div>
+      )}
+      {Object.keys(r.reagents).length > 0 && (
+        <div class={styles.small}>
+          Reagents:{' '}
+          {Object.entries(r.reagents)
+            .map(([k, n]) => `${n} ${ingredients[k as IngredientId].name.toLowerCase()}`)
+            .join(', ')}
+        </div>
       )}
       {r.levelUps.map((l) => (
         <div key={l.hunter} class={`${styles.small} ${styles.good}`}>

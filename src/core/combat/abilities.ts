@@ -1,5 +1,6 @@
 import { roundHalfUp } from './build';
-import { finalDamage, hurt } from './formula';
+import { cancelsAbility, checkPotion, spoilHit } from './prep';
+import { finalDamage, heal, hurt } from './formula';
 import { emit, type Fight } from './fight-state';
 import { armorEff, mightEff, present, speedEff, standing, takenReduction } from './stats';
 import type { Combatant } from './types';
@@ -10,12 +11,6 @@ import type { Combatant } from './types';
 //   3. end-of-action effects (Noon Heat, Malice).
 // "Every Nth action" counts the monster's own actions, 1-based (1st, 4th, 7th for
 // every 3; 1st, 5th, 9th for every 4). Durations count the holder's own actions.
-
-export const heal = (c: Combatant, amount: number): number => {
-  const before = c.health;
-  c.health = Math.min(c.maxHealth, c.health + amount);
-  return c.health - before;
-};
 
 const lowestBy = (
   list: readonly Combatant[],
@@ -51,7 +46,7 @@ export const afterOwnHit = (
           (r) =>
             `Hamstring ${r.toFixed(3)} ${r < a.chance ? '<' : '≥'} ${Math.round(a.chance * 1000) / 10}% → ${r < a.chance ? 'hamstrung' : 'no effect'}`,
         );
-        if (hamstrung < a.chance) {
+        if (hamstrung < a.chance && !cancelsAbility(f, attacker, 'Hamstring')) {
           target.hamstringLeft = a.actions;
           target.statusPct.speed = -a.speedCut;
           target.speed = speedEff(target);
@@ -61,19 +56,29 @@ export const afterOwnHit = (
         }
         break;
       }
+      case 'spoil': {
+        // Its first hit on each hunter, cancelled or not, uses up the Spoil on that hunter.
+        if (target.spoiled) break;
+        target.spoiled = true;
+        if (cancelsAbility(f, attacker, 'Spoil')) break;
+        const ruined = spoilHit(target, attacker);
+        if (ruined) notes.push(ruined);
+        break;
+      }
       case 'bloodfeast': {
+        if (cancelsAbility(f, attacker, 'Bloodfeast')) break;
         const healed = heal(attacker, roundHalfUp(amount * a.healFraction));
         if (healed > 0) notes.push(`${attacker.name} drinks, +${healed}`);
         break;
       }
       case 'barrowGrip':
-        if (attacker.actions % a.every === 0) {
+        if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Barrow-Grip')) {
           lose(target);
           notes.push(`${target.name} is held (loses their next action)`);
         }
         break;
       case 'dragUnder':
-        if (attacker.actions % a.every === 0) {
+        if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Drag Under')) {
           lose(target);
           target.nextHitTakenMult = a.nextHitMult;
           notes.push(
@@ -111,12 +116,14 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
           amount: lost,
           targetHealth: h.health,
         });
+        checkPotion(f, h);
       }
     }
   }
   for (const a of m.abilities) {
     switch (a.kind) {
       case 'rootWall': {
+        if (cancelsAbility(f, m, 'Root-Wall')) break;
         const healed = heal(m, roundHalfUp(m.maxHealth * a.regenFraction));
         if (healed > 0) {
           emit(f, {
@@ -141,7 +148,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
             `Lead Astray ${r.toFixed(3)} ${r < a.chance ? '<' : '≥'} ${Math.round(a.chance * 1000) / 10}% → ${r < a.chance ? 'works' : 'fails'}`,
           );
         }
-        if (r < a.chance && standingHunters.length > 0) {
+        if (r < a.chance && standingHunters.length > 0 && !cancelsAbility(f, m, 'Lead Astray')) {
           const pick = f.rolls.next();
           used.push(pick);
           const idx = Math.min(
@@ -173,7 +180,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         break;
       }
       case 'drowningSong':
-        if (everyNth(m.actions, a.every)) {
+        if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Drowning Song')) {
           const victim = lowestBy(standingHunters, armorEff, false);
           if (victim) {
             lose(victim);
@@ -190,7 +197,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         }
         break;
       case 'enthrall':
-        if (everyNth(m.actions, a.every)) {
+        if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Enthrall')) {
           const victim = lowestBy(standingHunters, mightEff, true);
           if (victim) {
             lose(victim);
@@ -209,7 +216,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         }
         break;
       case 'riverhorse':
-        if (m.actions === 1) {
+        if (m.actions === 1 && !cancelsAbility(f, m, 'Riverhorse')) {
           const victim = lowestBy(standingHunters, (h) => h.health, false);
           if (victim) {
             victim.awayLeft = a.awayActions + 1; // returns at the start of the 3rd action after this one
@@ -243,6 +250,7 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
         m.noonHeatSuppressed -= 1;
         continue;
       }
+      if (cancelsAbility(f, m, 'Noon Heat')) continue;
       for (const h of f.hunters) {
         if (!standing(h)) continue;
         // Fire ignores Armor, but taken% (Fire-touched, Plate) still applies (B4).
@@ -259,9 +267,13 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
           amount,
           targetHealth: h.health,
         });
+        checkPotion(f, h);
       }
     } else if (a.kind === 'malice') {
+      if (cancelsAbility(f, m, 'Malice')) continue;
       m.statusPct.might += a.mightPerAction;
     }
   }
 };
+
+export { heal };

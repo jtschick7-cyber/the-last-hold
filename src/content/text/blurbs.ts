@@ -22,6 +22,12 @@ export const buildingBlurbs: Readonly<Record<BuildingId, string>> = {
     'A long low hall with bunks for the ones who go out. Axes hang by the door, each worn to the shape of one hand.',
   'trophy-hall':
     'Fangs, horns and a river-pearl or two, nailed up where the whole hold can see them. Children stand under them and count.',
+  'hunters-lodge':
+    "A long table, a lamp that is never put out, and a wall of pinned notices with the monsters' names scratched off. The old hunting-hall had a room like this, and somebody remembered where the lamp hung.",
+  'alchemists-hut':
+    'Kettles, a drying rack and a smell like a wet hedgerow set on fire. Everything in it is labelled in three different hands, and none of them agree.',
+  'herb-garden':
+    'Raised beds inside the south wall, where the old kitchen garden was. Yarrow, mugwort and juniper come up in tidy rows, as if they had been waiting to be asked.',
   'bell-tower':
     'The bell was found face-down in the rubble, uncracked. When it rings at dusk, the farms across the river light their lamps.',
 };

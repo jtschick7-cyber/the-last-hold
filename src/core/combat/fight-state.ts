@@ -1,3 +1,4 @@
+import type { ConsumableId } from '../../content/consumables';
 import type { RollSource } from '../rng';
 import type { Combatant, LogEntry } from './types';
 import type { FightContext } from './stats';
@@ -9,10 +10,20 @@ export interface Fight {
   readonly monster: Combatant;
   readonly rolls: RollSource;
   readonly ctx: FightContext;
+  /** knowledge% bucket: what the hunters' damage gains against this species (GDD §5.0). */
+  readonly knowledgePct: number;
+  /** The monster's knowledge level, for the log. */
+  readonly knowledge: number;
   readonly log: LogEntry[];
   /** False for odds previews: nothing is written, and no log text is built. */
   readonly logging: boolean;
   over: 'monster-down' | 'party-down' | null;
+  /** Bombs not yet used: Saltburst waits for the monster's first ability. */
+  saltburstArmed: boolean;
+  saltburstCancelled: boolean;
+  /** True while the monster is taking its action (a Saltburst then does not count that action). */
+  monsterActing: boolean;
+  readonly bombs: readonly ConsumableId[];
 }
 
 /** A log line whose text is built only if the fight is being logged. */

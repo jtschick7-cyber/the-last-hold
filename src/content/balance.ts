@@ -97,8 +97,8 @@ export const balance = {
     base: tunable(30),
     growth: tunable(2.2),
     // Q9 (D81): from the Keep, each hunter's provisions are at least this many minutes
-    // of the hold's food income. Hamlet 0: the first contracts stay at the flat base.
-    incomeMinutes: tunable({ hamlet: 0, keep: 1.5 }),
+    // of the hold's food capacity (Q11). Hamlet 0: the first contracts stay at the flat base.
+    incomeMinutes: tunable({ hamlet: 0, keep: 1 }),
   },
   monster: {
     statGrowth: tunable(1.35),
@@ -132,7 +132,12 @@ export const balance = {
     otherWeight: tunable(1),
   },
   odds: { samples: locked(500) },
-  prep: { wellPreparedBounty: locked(1.5) },
+  prep: {
+    wellPreparedBounty: locked(1.5),
+    // GDD §5.7: bombs a party can throw, and the resistance multiplier from which a species counts as weak (§8.3: bold = ≥ 1.25).
+    bombSlots: tunable(2),
+    weakAt: tunable(1.25),
+  },
   suggest: {
     stage1Samples: locked(50),
     stage1PerCandidate: locked(20),
@@ -150,7 +155,7 @@ export const balance = {
 
   // ---- GDD §7.5 Bestiary & preparation ----
   knowledge: {
-    studiedKills: locked(3),
+    studiedKills: locked(4),
     masteredKills: locked(10),
     studiedDamage: tunable(0.05),
     masteredDamage: tunable(0.1),

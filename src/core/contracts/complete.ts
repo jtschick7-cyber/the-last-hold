@@ -1,5 +1,8 @@
 import { HUNTER_IDS, hunters as hunterContent, type HunterId } from '../../content/hunters';
 import { runFight } from '../combat';
+import { recordFight } from '../investigation/knowledge';
+import { isWellPrepared, prepIds } from './prep';
+import { reagentsFor } from './reagents';
 import { seeded } from '../rng';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
@@ -36,9 +39,14 @@ const earliest = (state: GameState): number => {
 export const fightOf = (state: GameState, run: RunningContract) =>
   runFight({
     party: run.snapshots,
-    monster: { monster: run.contract.monster, tier: run.contract.tier },
+    monster: {
+      monster: run.contract.monster,
+      tier: run.contract.tier,
+      knowledge: run.knowledge,
+    },
     location: run.contract.location,
-    rolls: seeded(fightSeed(state.meta.gameSeed, run.contract.id, run.party)),
+    rolls: seeded(fightSeed(state.meta.gameSeed, run.contract.id, run.party, prepIds(run.prep))),
+    prep: run.prep,
   });
 
 /** Finishes the next contract. The caller has moved the clock to its end time. */
@@ -50,10 +58,18 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   const at = run.endsAt;
   const fight = fightOf(state, run);
   const success = fight.result === 'win';
+  recordFight(state, contract.monster, success);
   const partyTraits = run.snapshots.map((s) => s.traits);
-  const pay = success ? bounty(contract.tier, state.cycle.age, partyTraits).value : 0;
-  const earned = success ? trophies(contract.tier) : 0;
+  // GDD §5.7: a success with a matching oil and a weak-type bomb (or a cancelling Saltburst).
+  const wellPrepared =
+    success && isWellPrepared(contract.monster, run.prep, fight.saltburstCancelled);
+  const pay = success ? bounty(contract.tier, state.cycle.age, partyTraits, wellPrepared).value : 0;
+  const earned = success ? trophies(contract.tier, wellPrepared) : 0;
   const xp = xpPerHunter(contract.tier, success);
+  // GDD §5.4.3: a success brings reagents (the drops and a gift); a failure brings none.
+  const reagents = success ? reagentsFor(state.meta.gameSeed, contract) : {};
+  for (const [id, n] of Object.entries(reagents))
+    state.stores[id as keyof typeof state.stores] += n ?? 0;
 
   const injuries: ContractResult['injuries'] = [];
   const levelUps: ContractResult['levelUps'] = [];
@@ -113,13 +129,14 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
 
   const ref: FightRef = {
     contractId: contract.id,
-    seed: fightSeed(state.meta.gameSeed, contract.id, run.party),
+    seed: fightSeed(state.meta.gameSeed, contract.id, run.party, prepIds(run.prep)),
     party: run.snapshots,
-    monster: { monster: contract.monster, tier: contract.tier },
+    monster: { monster: contract.monster, tier: contract.tier, knowledge: run.knowledge },
     location: contract.location,
     result: fight.result,
     rulesVersion: RULES_VERSION,
     at,
+    prep: run.prep,
   };
   state.log.recentFights.push(ref);
   if (state.log.recentFights.length > FIGHTS_KEPT) state.log.recentFights.shift();
@@ -138,6 +155,8 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     winChance: run.winChance,
     injuries,
     levelUps,
+    reagents,
+    wellPrepared,
   };
   state.results.push(result);
   return result;

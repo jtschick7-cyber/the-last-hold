@@ -19,7 +19,7 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
   (b) I draw an original pixel font in-repo (digits, A–Z, a few symbols): CC0 by authorship, no download, but plainer.
   (c) Keep the system monospace stand-in until the v1.0 art pass.
 - **Recommendation:** (a). Kenney's fonts are made for exactly this and are CC0. I'd fold it into the T1.30 pack list so you download once.
-- **Answer (owner):**
+- **Answer (owner):** option (a), 2026-10-13 (D84): provisions read food capacity. One reading of mine, logged as Proposed in D84: capacity is limited by the number of peasants, so a hold with empty farmer slots is not charged for farmers it doesn't have.
 
 ### Q2 — Which palette (blocks T1.28) — answered
 - **Question:** every piece of art gets recolored to one 32-color palette (GDD §9.12). Which of the three candidates?
@@ -113,8 +113,51 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (b): nothing in v0.2 needs her name, and the title belongs to the story you're keeping for v0.5. When you choose, I'll rename it in the docs in one pass.
 - **Answer (owner):** option (b), 2026-10-13 (D80): keep the name for now, decide before v0.5; the seed line stays out until then.
 
-### Q11 — Provisions read the current food income, which a player can lower for free (blocks nothing in v0.2) — open
+### Q11 — Provisions read the current food income, which a player can lower for free (blocks nothing in v0.2) — answered
 - **What happens:** from the Keep, provisions use the hold's food income at the moment of launch. Moving peasants between jobs is free and instant, so a player can take every farmer off, launch at the 30-food minimum, and put them back. That rewards a fiddly chore (pillar 5, §6.4) and makes food a cost only for players who don't do it. The simulated player never does this, so no check sees it.
 - **Options:** (a) base the income term on food capacity, what the food jobs would make with every food slot filled (no save change); (b) base it on the highest food income reached this cycle (needs a saved number and a migration); (c) accept it.
 - **Recommendation:** (a), at the start of v0.3, then re-check the provisions share.
-- **Answer (owner):**
+- **Answer (owner):** option (a), 2026-10-13 (D84): provisions read food capacity. One reading of mine, logged as Proposed in D84: capacity is limited by the number of peasants, so a hold with empty farmer slots is not charged for farmers it doesn't have.
+
+### Q12 — The two new hunters (blocks T3.1, and the parts of T3.2, T3.3 and T3.6 that need them) — answered
+- **Question:** the GDD (§8.5) reserves two hunters for v0.3: a **Wolf-friend Striker with Venom damage** and a **Tracker Mender**. Their definitions come from the owner's separate chat session. I have not invented them.
+- **What each hunter needs** (the same fields as the eight we have, GDD §8.5):
+  - name (I search it against the influences, GDD §2.3, and add it to `tests/content/names.ts`);
+  - role, level-1 Health / Might / Armor / Speed (within ±10% of the role baseline);
+  - damage type (the Striker is Venom; the Mender's is yours to say);
+  - origin (Highland, Lowland or Wanderer) and the two traits (Wolf-friend and Tracker are reserved for them; the second trait of each is open);
+  - how they unlock (a condition) and their silver price (G5 prices run 150–1,200);
+  - a one-or-two-line sketch and public bio (setting primer style);
+  - a portrait look (skin, face, hair, beard, headgear, collar, one mark), which I can draft for your review if you leave it out.
+- **Options:** (a) you bring the full definitions from your chat session and I enter them as written; (b) you bring names and a line each, and I **propose** the numbers, unlocks and prices for you to approve one by one; (c) skip the two hunters for v0.3 and ship it with eight (the roster stays at 8, and the Barracks cap of 8 matters less).
+- **Recommendation:** (a). It is what the plan expects, and it keeps the design in your hands.
+- **What waits:** T3.1 is marked `[?]`. Everything else goes ahead: the Tracker trait's rule (T3.6) and the Wolf-friend trait's rule (T3.9) are built and tested with test hunters, and nothing ships to players until the hunters exist.
+- **Answer (owner):** 2026-10-13: option (a). The owner defined the two hunters in a separate chat: **Stanko Sleepless** (Striker, Venom, Lowland; Wolf-friend, Quick; 95/21/3/12; unlocks when the Gaunt Wolf reaches Studied; 450 silver) and **Herdis Strayfinder** (Mender, Frost, Highland; Tracker, Hard to kill; 120/9/4/10; unlocks when the Hunter's Lodge is built; 300 silver). Neither is a story hunter. The Striker was first named "Ivo", which is a Bear School witcher in *The Witcher*; the owner chose Stanko. D101, D102.
+
+### Q13 — "Ironbark Tonic" collides with a Warcraft name (blocks nothing; the content uses a stand-in) — answered
+- **What I found:** the name search for the v0.3 consumables found **Ironbark** in *World of Warcraft* (a Restoration druid talent that reduces damage taken, which is what the tonic does) and as a *Hearthstone* druid spell. GDD §2.3 asks us to avoid influence names. Grave Oil, Drowned-Bane Oil, Thornbane Oil, Quickfoot Tincture and Saltburst came up clear.
+- **Options:** (a) **Hardwood Tonic** (my stand-in, in the content now; D86); (b) **Stoutbark Tonic** or **Oakhide Tonic**; (c) keep "Ironbark Tonic" and accept the overlap (§2.3 says not to).
+- **Recommendation:** (a). It keeps the wood theme and the recipe (thornwood + juniper), and nothing came up under that name.
+- **Answer (owner):** 2026-10-13: option (a), **Hardwood Tonic**. The GDD now says Hardwood Tonic (D96).
+
+### Q14 — How preparation works where the GDD is silent (blocks nothing; built as recommended, D92) — answered
+- **What I decided for you (all logged in D92, all tested; please look at the three that change play most):**
+  1. **Spoil only ever hurts the Mending Draught.** The Kikimora's Spoil ruins an *unused* potion; the Hardwood Tonic and the Quickfoot Tincture are drunk at the start of the fight, so they are already used. That makes Spoil a small "don't bring a Mending Draught to a Kikimora" lesson.
+  2. **Saltburst** goes off on the first moment an ability would take effect, cancels it, and the monster's abilities then do nothing for its next 3 actions. It can cancel a Second Soul (the Strzyga stays dead) and the Nix's Riverhorse. Swell (passive) cannot be cancelled.
+  3. **Items are spent when the party sets out, win or lose.**
+- **Options for 1:** (a) as built; (b) Spoil also ruins a potion that has not *finished* working, so it can cut a tonic short (more bite, more rules); (c) Spoil ruins any one potion the hunter carries, even a start-of-fight one, by making all potions fire on the hunter's first action instead.
+- **Recommendation:** (a) for 1, and the others as built.
+- **Answer (owner):** 2026-10-13: (a) for Spoil, and Saltburst and spending as built. D92 is now Decided (D97).
+
+### Q15 — A useless item can nudge the displayed odds by a few points (blocks nothing) — answered
+- **What happens:** the odds preview seeds its 500 fights from the party **and the preparation** (technical design §7.2), so a preparation that does nothing (a Grave Oil against a Water Spirit) still draws different dice from "no preparation", and the panel can read, say, 61% against "unprepared would be 59%" for an item that changes nothing. It is inside the ±margin, but it looks like the item did something.
+- **Options:** (a) keep it as the technical design says; (b) seed the odds preview from the party only, so the prepared and unprepared previews share their dice and an item with no effect shows exactly the same number (needs a one-line change to technical design §7.2; the real fight's seed still includes the preparation, so nothing about the real outcome changes).
+- **Recommendation:** (b). It makes "unprepared would be X%" a clean comparison. I have built (a), as written, until you decide.
+- **Answer (owner):** 2026-10-13: option (b). The odds preview is seeded from the party only; technical design §7.2 updated (D98).
+
+### Q16 — The first Studied species comes before day 2 (blocks the "first Studied" check; it is marked pending) — answered
+- **What I measured** (the simulated Standard player, Monday start, tier-1 contracts from the Hamlet's first Mine): the first species reaches **Studied (3 kills) at about 14.5 hours**. The target (GDD §6.2) is **days 2–3** (24–72 h). It is early because the Hamlet only ever posts two species (Gaunt Wolf and Kikimora), the player sends a party on most contracts, and any win counts.
+- **Why I can't fix it by tuning:** the 3-kill threshold (`knowledge.studiedKills`) and the target row are both locked. For information only, I tried the threshold at 4, 5 and 6 on one seed: any of them lands inside days 2–3. I did not keep that change.
+- **Options:** (a) change the threshold to 4 kills (one locked number and the GDD's wording; Mastered stays 10); (b) change the target to 12–72 h (a locked target row); (c) only wins from the Keep count as kills (a rules change: Hamlet fights teach nothing, which also makes the Keep's first days more meaningful); (d) leave both and accept that the first Studied species comes on day 1.
+- **Recommendation:** (a). It is the smallest change and keeps "Studied is a few wins, Mastered is a lot" intact. (d) is also reasonable if you like a quick first taste of the bestiary.
+- **Answer (owner):** 2026-10-13: option (a), Studied at **4 kills** (D99). First Studied now comes at 28 h (Monday median of 5) and 33 h (Saturday); the check is no longer pending.

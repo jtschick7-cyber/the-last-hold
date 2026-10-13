@@ -1,5 +1,6 @@
 import type { DamageType, FamilyId, LocationId } from '../../content/damage';
 import { monsters, type MonsterId } from '../../content/monsters';
+import { num } from '../balance-access';
 import { K } from './constants';
 import type { Combatant } from './types';
 
@@ -37,6 +38,13 @@ export interface FightContext {
   readonly attacks: number;
 }
 
+/**
+ * knowledge% bucket (GDD §5.0): the damage bonus against a species the hunters know,
+ * +5% Studied (level 3) and +10% Mastered (level 4).
+ */
+export const knowledgeBonus = (level: number): number =>
+  level >= 4 ? num('knowledge.masteredDamage') : level >= 3 ? num('knowledge.studiedDamage') : 0;
+
 /** outgoing% bucket: traits vs a location or family, Fire-touched (GDD §5.0). */
 export const outgoingPct = (a: Combatant, type: DamageType, ctx: FightContext): number => {
   let sum = 0;
@@ -45,6 +53,8 @@ export const outgoingPct = (a: Combatant, type: DamageType, ctx: FightContext): 
     else if (e.kind === 'mightVsFamily' && e.family === ctx.family) sum += e.amount;
     else if (e.kind === 'damageType' && e.type === type) sum += e.dealt;
   }
+  // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
+  if (a.oilFamily !== null && a.oilFamily === ctx.family) sum += K.oilBonus;
   return sum;
 };
 

@@ -16,6 +16,7 @@ const replay = (ref: FightRef) =>
     monster: ref.monster,
     location: ref.location,
     rolls: seeded(ref.seed),
+    prep: ref.prep,
   });
 
 const COLLAPSE_EVERY = 50;

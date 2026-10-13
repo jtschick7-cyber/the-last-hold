@@ -3,6 +3,8 @@ import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import type { GameState } from '../state/game-state';
 import { isAvailable, maxLevelNow } from '../systems/ages';
 import { buildingCost, canAfford, copyLimit, maxAffordableCount } from '../systems/costs';
+import { startBrews } from '../alchemy/brewing';
+import { syncGarden } from '../alchemy/garden';
 import { syncBoardOpen } from '../contracts/board';
 import { ok, refuse, type ApplyResult } from './types';
 
@@ -38,6 +40,7 @@ export const buy = (state: GameState, id: BuildingId, count: number | 'max'): Ap
   state.buildings[id] += k;
   state.stats.buildingsBought += k;
   syncBoardOpen(state); // the first Mine opens the contract board (GDD §5.4.1)
+  syncGarden(state); // the first Herb Garden starts the harvest clock (GDD §5.7)
   return ok;
 };
 
@@ -54,5 +57,6 @@ export const upgrade = (state: GameState, id: BuildingId): ApplyResult => {
   pay(state, cost);
   state.buildings[id] += 1;
   state.stats.buildingsBought += 1;
+  startBrews(state); // a new kettle takes the next waiting brew (GDD §5.7)
   return ok;
 };

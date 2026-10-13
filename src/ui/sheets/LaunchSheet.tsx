@@ -1,25 +1,33 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { monsterPortraitId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
-import { monsters } from '../../content/monsters';
 import { villages } from '../../content/villages';
 import { constantAt } from '../../core/balance-access';
 import { formatDuration, formatNumber } from '../../core/format';
 import { maxPartySize } from '../../core/contracts/party';
 import { provisions } from '../../core/contracts/rewards';
-import type { ContractInstance } from '../../core/state/game-state';
+import { oddsTarget } from '../../core/investigation/knowledge';
+import { contractIdentity } from '../../core/investigation/view';
+import {
+  noPreparation,
+  type ContractInstance,
+  type Preparation,
+} from '../../core/state/game-state';
 import { timeToAfford } from '../../core/systems/costs';
 import { availableHunters, snapshotOf } from '../../core/systems/hunters';
 import { productionRate } from '../../core/systems/production';
 import { abilityLines, pct, resistLines } from '../app/contract-text';
+import { candidateList, identityText } from '../app/knowledge-text';
 import { debounced, requestSuggest, type OddsAnswer } from '../app/odds-client';
 import { dispatch, game, version } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { InvestigationPanel } from '../widgets/InvestigationPanel';
 import { Sprite } from '../widgets/Sprite';
 import { BreakdownView } from './BreakdownView';
+import { PreparationPicker } from './PreparationPicker';
 
 // GDD §9.5: the launch sheet. Pick a party (or Suggest), read the odds, pay
 // provisions, send. Reckless contracts (under 35%) turn the button red and ask
@@ -28,10 +36,12 @@ import { BreakdownView } from './BreakdownView';
 const ConfirmReckless = ({
   contract,
   party,
+  prep,
   deaths,
 }: {
   contract: ContractInstance;
   party: HunterId[];
+  prep: Preparation;
   deaths: Record<string, number>;
 }) => (
   <div>
@@ -57,8 +67,13 @@ const ConfirmReckless = ({
       style={{ width: '100%', background: 'var(--c-warn)' }}
       onClick={() => {
         if (
-          dispatch({ type: 'contract.launch', contract: contract.id, party, confirmReckless: true })
-            .ok
+          dispatch({
+            type: 'contract.launch',
+            contract: contract.id,
+            party,
+            confirmReckless: true,
+            prep,
+          }).ok
         ) {
           closeSheet();
           closeSheet();
@@ -81,10 +96,32 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
     () => free.filter((h) => party.includes(h)),
     [party.join(','), free.join(',')],
   );
+  // What the party carries; only hunters who are going count (GDD §5.7).
+  const [prep, setPrep] = useState<Preparation>(noPreparation());
+  const activePrep = useMemo<Preparation>(
+    () => ({
+      oils: Object.fromEntries(
+        Object.entries(prep.oils).filter(([h]) => chosen.includes(h as HunterId)),
+      ),
+      potions: Object.fromEntries(
+        Object.entries(prep.potions).filter(([h]) => chosen.includes(h as HunterId)),
+      ),
+      bombs: prep.bombs,
+    }),
+    [JSON.stringify(prep), chosen.join(',')],
+  );
+  const prepared =
+    Object.keys(activePrep.oils).length +
+      Object.keys(activePrep.potions).length +
+      activePrep.bombs.length >
+    0;
   // Odds come from a worker, debounced; the last answer stays on screen, dimmed, while a new one is worked out.
   const [answer, setAnswer] = useState<OddsAnswer | null>(null);
   const [busy, setBusy] = useState(false);
   const ask = useMemo(() => debounced(), []);
+  // "Unprepared would be X%" (GDD §9.5): the same odds with nothing carried.
+  const askBare = useMemo(() => debounced(), []);
+  const [bare, setBare] = useState<number | null>(null);
   useEffect(() => {
     if (!contract || chosen.length === 0) {
       setAnswer(null);
@@ -92,26 +129,34 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
     }
     let live = true;
     setBusy(true);
-    void ask({
+    const base = {
       gameSeed: s.meta.gameSeed,
       contractId: contract.id,
       party: chosen.map((h) => snapshotOf(s, h)),
-      monster: { monster: contract.monster, tier: contract.tier },
+      monster: oddsTarget(s, contract),
       location: contract.location,
       rank: s.cycle.age,
-    }).then((a) => {
+    };
+    void ask({ ...base, prep: activePrep }).then((a) => {
       if (!live || a === null) return;
       setAnswer(a);
       setBusy(false);
     });
+    if (prepared) {
+      void askBare(base).then((a) => {
+        if (live && a !== null) setBare(a.odds.winChance);
+      });
+    } else setBare(null);
     return () => {
       live = false;
     };
-  }, [contractId, chosen.join(',')]);
+  }, [contractId, chosen.join(','), JSON.stringify(activePrep), contract?.revealed]);
   const odds = answer?.odds ?? null;
   if (!contract) return <p>That contract is no longer on the board.</p>;
-  const m = monsters[contract.monster];
-  const { weak, resists } = resistLines(contract.monster);
+  const identity = contractIdentity(s, contract);
+  const known = identity.identified && identity.monster !== null;
+  const { weak, resists } =
+    known && identity.monster ? resistLines(identity.monster) : { weak: '', resists: '' };
   const food = provisions(s, chosen.length, contract.tier);
   const short = s.resources.food < food.value;
   const wait = short
@@ -135,10 +180,11 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
       gameSeed: s.meta.gameSeed,
       contractId: contract.id,
       available: free.map((h) => snapshotOf(s, h)),
-      monster: { monster: contract.monster, tier: contract.tier },
+      monster: oddsTarget(s, contract),
       location: contract.location,
       rank: s.cycle.age,
       maxParty: max,
+      prep: activePrep,
     });
     if (pick) setParty(pick.party.map((p) => p.id));
     setBusy(false);
@@ -148,30 +194,50 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
     if (odds.reckless) {
       const deaths = Object.fromEntries(odds.hunters.map((h) => [h.id, h.death]));
       openSheet('Send them anyway?', () => (
-        <ConfirmReckless contract={contract} party={chosen} deaths={deaths} />
+        <ConfirmReckless contract={contract} party={chosen} prep={activePrep} deaths={deaths} />
       ));
       return;
     }
-    if (dispatch({ type: 'contract.launch', contract: contract.id, party: chosen }).ok)
+    if (
+      dispatch({ type: 'contract.launch', contract: contract.id, party: chosen, prep: activePrep })
+        .ok
+    )
       closeSheet();
   };
   return (
     <div>
       <div class={styles.row}>
-        <Sprite id={monsterPortraitId(contract.monster)} />
+        {known && identity.monster ? (
+          <Sprite id={monsterPortraitId(identity.monster)} />
+        ) : (
+          <span class={styles.unknownBox} role="img" aria-label="Unknown monster">
+            ?
+          </span>
+        )}
         <div class={styles.grow}>
           <strong>
-            {villages[contract.village].name} · {m.name} · T{contract.tier}
+            {villages[contract.village].name} · {identityText(identity)} · T{contract.tier}
           </strong>
           <div class={`${styles.small} ${styles.dim}`}>
-            weak: {weak}
-            <br />
-            resists: {resists}
-            <br />
-            {abilityLines(contract.monster).join(' · ')}
+            {known && identity.monster ? (
+              <>
+                weak: {weak}
+                <br />
+                resists: {resists}
+                <br />
+                {abilityLines(identity.monster).join(' · ')}
+              </>
+            ) : (
+              <>
+                {candidateList(identity.candidates)}
+                <br />
+                Resistances and abilities show once it is identified.
+              </>
+            )}
           </div>
         </div>
       </div>
+      <InvestigationPanel contractId={contract.id} />
       <div class={styles.row}>
         <h3 class={`${styles.cardTitle} ${styles.grow}`}>
           Party ({chosen.length}/{max})
@@ -205,6 +271,13 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
           </li>
         ))}
       </ul>
+      <PreparationPicker
+        state={s}
+        party={chosen}
+        prep={activePrep}
+        identity={identity}
+        onChange={setPrep}
+      />
       {odds && (
         <div class={styles.card} style={busy ? { opacity: 0.6 } : undefined}>
           <div class={styles.row}>
@@ -222,6 +295,14 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
               Why ▸
             </button>
           </div>
+          {odds.assumesUnidentified && (
+            <div class={`${styles.small} ${styles.dim}`}>
+              Odds assume an unidentified monster: {odds.candidates.length} candidates.
+            </div>
+          )}
+          {prepared && bare !== null && (
+            <div class={`${styles.small} ${styles.dim}`}>unprepared would be {pct(bare)}</div>
+          )}
           {answer?.quick && (
             <div class={`${styles.small} ${styles.warn}`}>
               Quick estimate ({odds.samples} fights): this device couldn't run the full 500.

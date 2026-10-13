@@ -1,8 +1,9 @@
 import type { DamageType } from './damage';
+import type { KnowledgeLevel } from './knowledge';
 import type { MonsterId } from './monsters';
 import type { TraitId } from './traits';
 
-// GDD §5.3 and §8.5: eight hand-authored hunters. Stats are level-1 base values
+// GDD §5.3 and §8.5: ten hand-authored hunters (v0.3 added Stanko and Herdis, Q12). Stats are level-1 base values
 // (gear and traits are added by the selectors, GDD §5.3.2). Recruitment prices
 // are fixed silver prices (G5); the two starting hunters are free.
 
@@ -15,6 +16,8 @@ export const HUNTER_IDS = [
   'radek',
   'sigrun',
   'toma',
+  'stanko',
+  'herdis',
 ] as const;
 export type HunterId = (typeof HUNTER_IDS)[number];
 
@@ -28,7 +31,10 @@ export interface Stats {
   readonly speed: number;
 }
 
-/** GDD §8.5 role baselines at level 1 (hunters vary by up to ±10% per stat). */
+/**
+ * GDD §8.5 role baselines at level 1. Hunters vary from the baseline by up to ±10% or
+ * 1 point per stat, whichever is larger (so Armor and Speed may move by 1; D102).
+ */
 export const roleBaselines: Readonly<Record<RoleId, Stats>> = {
   vanguard: { health: 160, might: 12, armor: 8, speed: 8 },
   striker: { health: 100, might: 20, armor: 3, speed: 12 },
@@ -47,7 +53,13 @@ export type HunterUnlock =
   | { readonly kind: 'contractSuccesses'; readonly count: number }
   | { readonly kind: 'successAtLocation'; readonly location: 'river' }
   | { readonly kind: 'defeatMonster'; readonly monster: MonsterId }
-  | { readonly kind: 'buildingLevel'; readonly building: 'smithy'; readonly level: number }
+  | {
+      readonly kind: 'buildingLevel';
+      readonly building: 'smithy' | 'hunters-lodge';
+      readonly level: number;
+    }
+  /** A species reaches a knowledge level (GDD §5.3.1 "bestiary progress"). */
+  | { readonly kind: 'knowledgeLevel'; readonly monster: MonsterId; readonly level: KnowledgeLevel }
   | { readonly kind: 'bountySilverEarned'; readonly amount: number };
 
 export type Origin = 'highland' | 'lowland' | 'wanderer';
@@ -69,7 +81,7 @@ export interface PortraitSpec {
   readonly collar: 'cloth' | 'fur' | 'leather' | 'plate' | 'mail';
   readonly clothColor: 'brown' | 'green' | 'blue' | 'red' | 'grey' | 'violet';
   readonly weapon:
-    'axe' | 'boathook' | 'staff' | 'spear' | 'satchel' | 'shovel' | 'hammer' | 'kettle';
+    'axe' | 'boathook' | 'staff' | 'spear' | 'satchel' | 'shovel' | 'hammer' | 'kettle' | 'knife';
   /** Soot on the face (Halvar), a scar, and similar single marks. */
   readonly mark?: 'soot' | 'scar' | 'frost';
 }
@@ -315,5 +327,63 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     },
     bio: 'Tinker and talker, with opinions about every price at the hold.',
     sketch: 'Tinker and talker. Has opinions about every price at the hold.',
+  },
+  stanko: {
+    id: 'stanko',
+    name: 'Stanko Sleepless',
+    shortName: 'Stanko',
+    role: 'striker',
+    damage: 'venom',
+    origin: 'lowland',
+    traits: ['wolf-friend', 'quick'],
+    unlock: { kind: 'knowledgeLevel', monster: 'wolf', level: 'studied' },
+    stats: { health: 95, might: 21, armor: 3, speed: 12 },
+    recruitPrice: 450,
+    story: false,
+    portrait: {
+      skin: 'tan',
+      face: 'narrow',
+      hair: 'long',
+      hairColor: 'black',
+      beard: 'stubble',
+      headgear: 'none',
+      headgearColor: 'brown',
+      collar: 'fur',
+      clothColor: 'brown',
+      weapon: 'knife',
+      mark: 'scar',
+    },
+    bio: 'Kozly Hollow goatherd who raised a wolf pup with his flock. Says the grey ones aren’t wolves anymore, and he’d know.',
+    sketch:
+      "Sits up nights with a knife dipped in something he keeps in a goat's horn. Nobody in the Hollow has seen him sleep.",
+  },
+  herdis: {
+    id: 'herdis',
+    name: 'Herdis Strayfinder',
+    shortName: 'Herdis',
+    role: 'mender',
+    damage: 'frost',
+    origin: 'highland',
+    traits: ['tracker', 'hard-to-kill'],
+    unlock: { kind: 'buildingLevel', building: 'hunters-lodge', level: 1 },
+    stats: { health: 120, might: 9, armor: 4, speed: 10 },
+    recruitPrice: 300,
+    story: false,
+    portrait: {
+      skin: 'light',
+      face: 'square',
+      hair: 'long',
+      hairColor: 'auburn',
+      beard: 'none',
+      headgear: 'hood',
+      headgearColor: 'violet',
+      collar: 'fur',
+      clothColor: 'green',
+      weapon: 'staff',
+      mark: 'frost',
+    },
+    bio: 'Has kept Ravenfell’s sheep alive since she was nine, and found every one that strayed. Says hunters are easier: they tell you where it hurts.',
+    sketch:
+      'Can follow a week-old track across bare rock. The iron heel of her crook is rime-salted, an old Ravenfell habit against things that walk at night.',
   },
 };

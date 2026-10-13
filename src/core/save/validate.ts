@@ -1,8 +1,10 @@
 import { AGE_IDS } from '../../content/ages';
 import { BUILDING_IDS } from '../../content/buildings';
+import { CONSUMABLE_IDS, type ConsumableId } from '../../content/consumables';
 import { DAMAGE_TYPES, LOCATION_IDS, type LocationId } from '../../content/damage';
 import { GEAR_IDS, type GearId } from '../../content/gear';
 import { HUNTER_IDS, ROLE_IDS, type HunterId } from '../../content/hunters';
+import { INGREDIENT_IDS, type IngredientId } from '../../content/ingredients';
 import { JOB_IDS } from '../../content/jobs';
 import { MONSTER_IDS, type MonsterId } from '../../content/monsters';
 import { RESOURCE_IDS } from '../../content/resources';
@@ -19,7 +21,9 @@ import type {
   GameState,
   HunterState,
   RunningContract,
+  Preparation,
   Settings,
+  SpeciesKnowledge,
 } from '../state/game-state';
 import { DEFAULT_SETTINGS } from '../state/new-game';
 
@@ -156,10 +160,69 @@ const snapshot = (v: unknown, where: string): HunterSnapshot => {
   };
 };
 
+const knowledgeLevel = (v: unknown, where: string): number => {
+  const n = count(v, where);
+  if (n > 4) throw new Invalid(`${where} is above 4.`);
+  return n;
+};
+
+const consumableId = (v: unknown, where: string): ConsumableId =>
+  oneOf<ConsumableId>(v, CONSUMABLE_IDS, where);
+
+/** A hunter → consumable map; both sides must be known, or the entry is a hard error. */
+const perHunter = (v: unknown, where: string): Partial<Record<HunterId, ConsumableId>> => {
+  const out: Partial<Record<HunterId, ConsumableId>> = {};
+  for (const [k, x] of Object.entries(obj(v, where))) {
+    out[hunterId(k, `${where}.${k}`)] = consumableId(x, `${where}.${k}`);
+  }
+  return out;
+};
+
+const preparation = (v: unknown, where: string): Preparation => {
+  const o = obj(v, where);
+  return {
+    oils: perHunter(o.oils, `${where}.oils`),
+    potions: perHunter(o.potions, `${where}.potions`),
+    bombs: arr(o.bombs, `${where}.bombs`).map((b, i) => consumableId(b, `${where}.bombs[${i}]`)),
+  };
+};
+
+/** Reagents a result brought: unknown ingredients are a hard error here (they were just earned). */
+const reagentCounts = (v: unknown, where: string): Partial<Record<IngredientId, number>> => {
+  const out: Partial<Record<IngredientId, number>> = {};
+  for (const [k, x] of Object.entries(obj(v, where))) {
+    out[oneOf<IngredientId>(k, INGREDIENT_IDS, `${where}.${k}`)] = count(x, `${where}.${k}`);
+  }
+  return out;
+};
+
+const bestiaryFrom = (
+  v: unknown,
+  warnings: string[],
+): Partial<Record<MonsterId, SpeciesKnowledge>> => {
+  const out: Partial<Record<MonsterId, SpeciesKnowledge>> = {};
+  for (const [k, x] of Object.entries(obj(v, 'bestiary'))) {
+    if (!(MONSTER_IDS as readonly string[]).includes(k)) {
+      warnings.push(`Dropped unknown bestiary entry "${k}".`);
+      continue;
+    }
+    const e = obj(x, `bestiary.${k}`);
+    const level = count(e.level, `bestiary.${k}.level`);
+    if (level < 1 || level > 4) throw new Invalid(`bestiary.${k}.level is out of range.`);
+    out[k as MonsterId] = {
+      level: level as SpeciesKnowledge['level'],
+      kills: count(e.kills, `bestiary.${k}.kills`),
+    };
+  }
+  return out;
+};
+
 const contract = (v: unknown, where: string): ContractInstance => {
   const o = obj(v, where);
   const tier = count(o.tier, `${where}.tier`);
   if (tier < 1 || tier > 5) throw new Invalid(`${where}.tier is out of range.`);
+  const revealed = count(o.revealed, `${where}.revealed`);
+  if (revealed > 3) throw new Invalid(`${where}.revealed is above 3.`);
   return {
     id: str(o.id, `${where}.id`),
     village: oneOf<VillageId>(o.village, VILLAGE_IDS, `${where}.village`),
@@ -167,6 +230,7 @@ const contract = (v: unknown, where: string): ContractInstance => {
     tier,
     location: oneOf<LocationId>(o.location, LOCATION_IDS, `${where}.location`),
     arrivedAt: finite(o.arrivedAt, `${where}.arrivedAt`),
+    revealed,
   };
 };
 
@@ -206,12 +270,14 @@ const running = (v: unknown, where: string): RunningContract => {
     endsAt: finite(o.endsAt, `${where}.endsAt`),
     reckless: bool(o.reckless, `${where}.reckless`),
     winChance: unit(o.winChance, `${where}.winChance`),
+    prep: preparation(o.prep, `${where}.prep`),
+    knowledge: knowledgeLevel(o.knowledge, `${where}.knowledge`),
   };
 };
 
 const result = (v: unknown, where: string): ContractResult => {
   const o = obj(v, where);
-  const c = contract({ ...o, id: o.contractId, arrivedAt: 0 }, where);
+  const c = contract({ ...o, id: o.contractId, arrivedAt: 0, revealed: 3 }, where);
   return {
     contractId: c.id,
     village: c.village,
@@ -243,6 +309,8 @@ const result = (v: unknown, where: string): ContractResult => {
         level: count(r.level, `${where}.levelUps[${i}].level`),
       };
     }),
+    reagents: reagentCounts(o.reagents, `${where}.reagents`),
+    wellPrepared: bool(o.wellPrepared, `${where}.wellPrepared`),
   };
 };
 
@@ -256,11 +324,13 @@ const fightRef = (v: unknown, where: string): FightRef => {
     monster: {
       monster: oneOf<MonsterId>(m.monster, MONSTER_IDS, `${where}.monster.monster`),
       tier: count(m.tier, `${where}.monster.tier`),
+      knowledge: knowledgeLevel(m.knowledge, `${where}.monster.knowledge`),
     },
     location: oneOf<LocationId>(o.location, LOCATION_IDS, `${where}.location`),
     result: oneOf(o.result, ['win', 'loss'] as const, `${where}.result`),
     rulesVersion: count(o.rulesVersion, `${where}.rulesVersion`),
     at: finite(o.at, `${where}.at`),
+    prep: preparation(o.prep, `${where}.prep`),
   };
 };
 
@@ -302,6 +372,8 @@ const check = (raw: unknown, warnings: string[]): GameState => {
   const boardRaw = obj(s.board, 'board');
   const rosterRaw = obj(s.roster, 'roster');
   const logRaw = obj(s.log, 'log');
+  const queuesRaw = obj(s.queues, 'queues');
+  const gardenRaw = obj(s.garden, 'garden');
 
   const age = str(cycle.age, 'cycle.age');
   if (!(AGE_IDS as readonly string[]).includes(age)) throw new Invalid(`Unknown Rank "${age}".`);
@@ -375,6 +447,25 @@ const check = (raw: unknown, warnings: string[]): GameState => {
       arrivals: count(boardRaw.arrivals, 'board.arrivals'),
       tierWins,
     },
+    bestiary: bestiaryFrom(s.bestiary, warnings),
+    stores: idRecord(s.stores, [...CONSUMABLE_IDS, ...INGREDIENT_IDS], 'stores', count, warnings),
+    queues: {
+      brewing: arr(queuesRaw.brewing, 'queues.brewing').map((j, i) => {
+        const r = obj(j, `queues.brewing[${i}]`);
+        return {
+          item: consumableId(r.item, `queues.brewing[${i}].item`),
+          doneAt: orNull(r.doneAt, (x) => finite(x, `queues.brewing[${i}].doneAt`)),
+        };
+      }),
+      investigation: arr(queuesRaw.investigation, 'queues.investigation').map((j, i) => {
+        const r = obj(j, `queues.investigation[${i}]`);
+        return {
+          contractId: str(r.contractId, `queues.investigation[${i}].contractId`),
+          nextClueAt: finite(r.nextClueAt, `queues.investigation[${i}].nextClueAt`),
+        };
+      }),
+    },
+    garden: { nextAt: orNull(gardenRaw.nextAt, (x) => finite(x, 'garden.nextAt')) },
     running: arr(s.running, 'running').map((r, i) => running(r, `running[${i}]`)),
     results: arr(s.results, 'results').map((r, i) => result(r, `results[${i}]`)),
     fallen: arr(s.fallen, 'fallen').map((r, i) => fallen(r, `fallen[${i}]`)),

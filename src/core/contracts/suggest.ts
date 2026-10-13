@@ -3,6 +3,7 @@ import type { LocationId } from '../../content/damage';
 import { num } from '../balance-access';
 import { runFight, type HunterSnapshot, type MonsterInstance } from '../combat';
 import { seedBank } from '../rng';
+import type { Preparation } from '../state/game-state';
 import { computeOdds, type Odds, type OddsInput } from './odds';
 import { suggestSeed } from './seeds';
 
@@ -16,10 +17,13 @@ export interface SuggestInput {
   readonly contractId: string;
   /** Hunters free to go, in roster order (that order is the party slot order). */
   readonly available: readonly HunterSnapshot[];
-  readonly monster: MonsterInstance;
+  /** The species, or every species it could still be (stage 1 then uses 20 samples per candidate). */
+  readonly monster: MonsterInstance | readonly MonsterInstance[];
   readonly location: LocationId;
   readonly rank: AgeId;
   readonly maxParty: number;
+  /** What the party would carry; hunters outside a candidate party are simply not in it. */
+  readonly prep?: Preparation;
 }
 
 export interface Suggestion {
@@ -27,6 +31,8 @@ export interface Suggestion {
   readonly odds: Odds;
   /** How many parties stage 1 looked at. */
   readonly considered: number;
+  /** Fights per party in stage 1: 50, or 20 per candidate against an unidentified monster. */
+  readonly stage1PerParty: number;
 }
 
 /** Every non-empty party of at most `max` hunters, keeping roster order. */
@@ -54,7 +60,13 @@ export const legalParties = (
 export const suggestParty = (input: SuggestInput): Suggestion | null => {
   const all = legalParties(input.available, input.maxParty);
   if (all.length === 0) return null;
-  const stage1 = num('suggest.stage1Samples');
+  const pool: readonly MonsterInstance[] = Array.isArray(input.monster)
+    ? (input.monster as readonly MonsterInstance[])
+    : [input.monster as MonsterInstance];
+  const stage1 =
+    pool.length > 1
+      ? num('suggest.stage1PerCandidate') * pool.length
+      : num('suggest.stage1Samples');
   // The same fifty seeds for every party, hashed once.
   const bank = seedBank(
     Array.from({ length: stage1 }, (_, i) => suggestSeed(input.gameSeed, input.contractId, i)),
@@ -64,10 +76,12 @@ export const suggestParty = (input: SuggestInput): Suggestion | null => {
     for (let i = 0; i < stage1; i++) {
       const r = runFight({
         party,
-        monster: input.monster,
+        // The same candidate for the same seed index in every party, so the comparison is fair.
+        monster: pool[i % pool.length] as MonsterInstance,
         location: input.location,
         rolls: bank(i),
         log: false,
+        prep: input.prep,
       });
       if (r.result === 'win') w += 1;
     }
@@ -110,6 +124,7 @@ export const suggestParty = (input: SuggestInput): Suggestion | null => {
         party: best.party,
         odds: computeOdds(oddsInput(input, best.party)),
         considered: parties.length,
+        stage1PerParty: stage1,
       }
     : null;
 };

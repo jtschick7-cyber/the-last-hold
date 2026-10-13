@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { POLICY_IDS, type PolicyId } from '../src/core/policies';
 import { CHECKS, type CheckResult } from './checks';
 import { hoursText } from './checks/helpers';
-import { CURRENT_MILESTONE, FAST_UNTIL_TARGET } from './milestone';
+import { CURRENT_MILESTONE, FAST_UNTIL_TARGETS } from './milestone';
 import { markdown, summarize, type Baseline, type Report } from './report';
 import { runOne, STARTS, type RunResult, type RunSpec, type StartId } from './run';
 import { enforced } from './targets';
@@ -92,7 +92,7 @@ const specs = (o: Options): RunSpec[] =>
         seed: `sim-${i + 1}`,
         start,
         days: o.days,
-        ...(o.fast ? { stopAt: FAST_UNTIL_TARGET } : {}),
+        ...(o.fast ? { stopAt: FAST_UNTIL_TARGETS } : {}),
       })),
     ),
   );
@@ -146,7 +146,7 @@ const main = (): void => {
   } else {
     console.log(md);
   }
-  const scope = o.fast ? `fast set, until ${FAST_UNTIL_TARGET}` : `${runs.length} runs`;
+  const scope = o.fast ? `fast set, until ${FAST_UNTIL_TARGETS.join(', ')}` : `${runs.length} runs`;
   console.log(`Report: sim/reports/${name}.md (${scope}, ${seconds.toFixed(1)} s)`);
 
   if (o.accept) {

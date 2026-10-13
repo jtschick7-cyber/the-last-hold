@@ -3,6 +3,9 @@ import type { ContractResult, GameState } from '../state/game-state';
 import { productionRate } from '../systems/production';
 import { nextSettleTime, settleOne } from '../systems/settle-event';
 import { applyArrival, nextArrivalTime } from '../contracts/board';
+import { applyBrew, nextBrewTime } from '../alchemy/brewing';
+import { applyHarvest, nextGardenTime } from '../alchemy/garden';
+import { applyClue, nextClueTime } from '../investigation/lodge';
 import {
   applyCompletion,
   applyRecovery,
@@ -23,7 +26,13 @@ export type AdvanceEvent =
   /** A contract finished: its rewards, injuries and XP applied now (B9). */
   | { type: 'contract'; at: number; result: ContractResult }
   | { type: 'recovered'; at: number; hunter: string }
-  | { type: 'arrival'; at: number; contractId: string };
+  | { type: 'arrival'; at: number; contractId: string }
+  /** A brew finished into the stores (GDD §5.7). */
+  | { type: 'brew'; at: number; item: string }
+  /** The Herb Gardens grew `each` of every herb. */
+  | { type: 'harvest'; at: number; each: number }
+  /** A Lodge slot revealed a clue; `identified` when it left one species (GDD §5.6.3). */
+  | { type: 'clue'; at: number; contractId: string; revealed: number; identified: boolean };
 
 export interface AdvanceLog {
   from: number;
@@ -63,10 +72,14 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
   };
   for (let i = 0; i < MAX_EVENTS_PER_ADVANCE; i++) {
     // Technical design §6.2: the next event of any kind. Ties at the same instant go
-    // completions, recoveries, board arrivals, then settles [JC].
+    // completions, recoveries, brews, clues, refills (the Herb Garden, then board arrivals),
+    // then settles [JC].
     const due: [number | null, number][] = [
       [nextCompletionTime(state), 0],
       [nextRecoveryTime(state), 1],
+      [nextBrewTime(state), 5],
+      [nextClueTime(state), 4],
+      [nextGardenTime(state), 6],
       [nextArrivalTime(state), 2],
       [nextSettleTime(state), 3],
     ];
@@ -87,6 +100,15 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
     } else if (kind === 1) {
       const hunter = applyRecovery(state);
       if (hunter) log.events.push({ type: 'recovered', at: state.time, hunter });
+    } else if (kind === 5) {
+      const done = applyBrew(state);
+      if (done) log.events.push({ type: 'brew', ...done });
+    } else if (kind === 6) {
+      const h = applyHarvest(state);
+      if (h) log.events.push({ type: 'harvest', ...h });
+    } else if (kind === 4) {
+      const clue = applyClue(state);
+      if (clue) log.events.push({ type: 'clue', ...clue });
     } else if (kind === 2) {
       const c = applyArrival(state);
       if (c) log.events.push({ type: 'arrival', at: c.arrivedAt, contractId: c.id });

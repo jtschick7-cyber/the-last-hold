@@ -1,0 +1,209 @@
+{
+  "app": "the-last-hold",
+  "schemaVersion": 2,
+  "rulesVersion": 1,
+  "savedAt": 1791898122773,
+  "state": {
+    "meta": {
+      "schemaVersion": 2,
+      "gameSeed": "843a6124181b0108",
+      "createdAt": 1791795157444,
+      "lastSeen": 1791898122370,
+      "clockHighWater": 1791898122370,
+      "debugUsed": false
+    },
+    "time": 1791898122370,
+    "cycle": {
+      "number": 1,
+      "age": "keep"
+    },
+    "resources": {
+      "food": 213794.01913604696,
+      "wood": 136355.88195168477,
+      "iron": 47912.671894592626,
+      "silver": 702.4954290039085
+    },
+    "peasants": {
+      "total": 29,
+      "jobs": {
+        "farmer": 9,
+        "woodcutter": 10,
+        "miner": 8,
+        "silver-digger": 2
+      },
+      "autoSettle": true,
+      "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
+      "lastSettleAt": 1791806222908
+    },
+    "buildings": {
+      "hearth-hall": 1,
+      "cottage": 13,
+      "farm": 3,
+      "woodcutters-camp": 4,
+      "mine": 4,
+      "silver-seam": 2,
+      "mill": 4,
+      "sawpit": 3,
+      "smithy": 3,
+      "bell-tower": 0,
+      "barracks": 0,
+      "trophy-hall": 0
+    },
+    "hunters": {
+      "halvar": {
+        "level": 1,
+        "xp": 40,
+        "weapon": null,
+        "armor": null,
+        "recovery": null,
+        "record": {
+          "won": 2,
+          "lost": 0
+        }
+      },
+      "zora": {
+        "level": 1,
+        "xp": 20,
+        "weapon": null,
+        "armor": null,
+        "recovery": null,
+        "record": {
+          "won": 1,
+          "lost": 0
+        }
+      }
+    },
+    "roster": {
+      "active": ["halvar", "zora"]
+    },
+    "board": {
+      "opened": true,
+      "open": [],
+      "nextArrivalAt": 1791901959611,
+      "arrivals": 2,
+      "tierWins": [2, 0, 0, 0, 0]
+    },
+    "running": [],
+    "results": [
+      {
+        "contractId": "c1",
+        "village": "ravenfell",
+        "monster": "wolf",
+        "tier": 1,
+        "location": "forest",
+        "success": true,
+        "at": 1791897712819,
+        "bounty": 78,
+        "trophies": 1,
+        "xp": 20,
+        "winChance": 1,
+        "injuries": [],
+        "levelUps": []
+      }
+    ],
+    "fallen": [],
+    "scenes": ["vow", "first-contract"],
+    "log": {
+      "recentFights": [
+        {
+          "contractId": "c0",
+          "seed": "843a6124181b0108:fight:c0:halvar:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": null,
+              "armorGear": null
+            }
+          ],
+          "monster": {
+            "monster": "kikimora",
+            "tier": 1
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791889401331
+        },
+        {
+          "contractId": "c1",
+          "seed": "843a6124181b0108:fight:c1:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": null,
+              "armorGear": null
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": null,
+              "armorGear": null
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1
+          },
+          "location": "forest",
+          "result": "win",
+          "rulesVersion": 1,
+          "at": 1791897712819
+        }
+      ]
+    },
+    "stats": {
+      "buildingsBought": 34,
+      "peasantsSettled": 26,
+      "contractsWon": 2,
+      "contractsLost": 0,
+      "trophies": 2,
+      "bountySilver": 150,
+      "kills": {
+        "kikimora": 1,
+        "wolf": 1
+      },
+      "winsByLocation": {
+        "river": 1,
+        "forest": 1
+      }
+    },
+    "settings": {
+      "theme": "dark",
+      "bestBuyHint": true,
+      "rateUnit": "hour",
+      "reduceMotion": "system"
+    }
+  }
+}

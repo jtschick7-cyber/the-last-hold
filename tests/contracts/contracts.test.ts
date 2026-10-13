@@ -8,7 +8,7 @@ import { bounty, provisions, trophies, xpPerHunter } from '../../src/core/contra
 import { deathSeed, fightSeed, oddsSeed } from '../../src/core/contracts/seeds';
 import { seeded } from '../../src/core/rng';
 import { constantAt, num } from '../../src/core/balance-access';
-import { productionRate } from '../../src/core/systems/production';
+import { foodCapacity, productionRate } from '../../src/core/systems/production';
 import { snap } from '../combat/helpers';
 import { hamletWithMine, keepRich } from './helpers';
 
@@ -97,22 +97,52 @@ describe('rewards (GDD §5.4)', () => {
     expect(provisions(s, 4, 5).value).toBeCloseTo(2811.1, 0);
   });
 
-  it('provisions from the Keep follow the food income (Q9, D80): the larger of the flat base and the set minutes of it, per hunter', () => {
+  it('provisions from the Keep follow the food capacity (Q9/D81, Q11): the larger of the flat base and the set minutes of it, per hunter', () => {
     const s = keepRich();
-    s.peasants.jobs.farmer = 20;
-    const income = productionRate(s, 'food').value;
+    s.peasants.total = 29;
+    s.peasants.jobs.farmer = 10;
+    const capacity = foodCapacity(s).value;
     const minutes =
       (constantAt('provisions.incomeMinutes').value as Record<string, number>).keep ?? 0;
     const growth = num('provisions.growth');
-    const perHunter = Math.max(30, minutes * income);
-    expect(income).toBeGreaterThan(0);
+    const perHunter = Math.max(30, minutes * capacity);
+    expect(capacity).toBeGreaterThan(0);
     expect(provisions(s, 3, 2).value).toBeCloseTo(perHunter * 3 * growth, 6);
-    // More food income, dearer provisions; the breakdown names the income it used.
-    s.peasants.jobs.farmer += 10;
-    if (minutes > 0) expect(provisions(s, 3, 2).value).toBeGreaterThan(perHunter * 3 * growth);
+    // The breakdown names the capacity it used.
     expect(provisions(s, 3, 2).breakdown.children?.map((c) => c.label)).toContain(
-      'Food income per minute',
+      'Food capacity per minute',
     );
+  });
+
+  it('moving farmers between jobs does not change the provisions (Q11)', () => {
+    const s = keepRich();
+    s.peasants.total = 29;
+    s.peasants.jobs.farmer = 15;
+    const full = provisions(s, 3, 3).value;
+    s.peasants.jobs.farmer = 0; // every farmer taken off right before launch
+    s.peasants.jobs.woodcutter = 10;
+    expect(provisions(s, 3, 3).value).toBe(full);
+    expect(productionRate(s, 'food').value).toBe(0);
+  });
+
+  it('food capacity is every food slot filled, but never more farmers than there are peasants', () => {
+    const s = keepRich(); // 5 Farms, 3 slots each
+    s.peasants.total = 29;
+    s.peasants.jobs.farmer = 0;
+    expect(foodCapacity(s).value).toBeCloseTo(productionRate(s, 'food', 15).value, 8);
+    s.peasants.total = 6;
+    expect(foodCapacity(s).value).toBeCloseTo(productionRate(s, 'food', 6).value, 8);
+    expect(foodCapacity(s).breakdown.children?.map((c) => c.label)).toContain('Farmer slots');
+  });
+
+  it('a bigger food capacity makes provisions dearer', () => {
+    const s = keepRich();
+    s.peasants.total = 400;
+    s.buildings.farm = 20;
+    const small = provisions(s, 3, 2).value;
+    s.buildings.farm = 100;
+    expect(foodCapacity(s).value).toBeGreaterThan(0);
+    expect(provisions(s, 3, 2).value).toBeGreaterThan(small);
   });
 
   it('trophies equal the tier; XP is 20 × tier, half on a failure', () => {
@@ -127,8 +157,7 @@ describe('seeds (technical design §7.2)', () => {
   it('the preview seed never equals the real fight seed', () => {
     const real = fightSeed('g', 'c1', ['halvar', 'zora'], []);
     expect(real).toBe('g:fight:c1:halvar,zora:');
-    for (let i = 0; i < 500; i++)
-      expect(oddsSeed('g', 'c1', ['halvar', 'zora'], [], i)).not.toBe(real);
+    for (let i = 0; i < 500; i++) expect(oddsSeed('g', 'c1', ['halvar', 'zora'], i)).not.toBe(real);
     expect(deathSeed('g', 'c1', 'zora')).toBe('g:death:c1:zora');
   });
 });

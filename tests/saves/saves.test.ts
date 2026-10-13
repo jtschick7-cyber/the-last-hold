@@ -16,6 +16,7 @@ import {
 import { fnv1a, fromBase64Url, toBase64Url } from '../../src/core/save/code';
 import { SCHEMA_VERSION } from '../../src/core/state/game-state';
 import { createNewGame } from '../../src/core/state/new-game';
+import { shiftClock } from '../../src/core/state/shift';
 import { browserCodec } from '../../src/platform/compression';
 import { createSaveStore, SAVE_KEYS } from '../../src/platform/save-store';
 import { createChannelStorage } from '../../src/platform/storage';
@@ -344,5 +345,115 @@ describe('the v1 → v2 migration (plan T2.4)', () => {
     const g = createNewGame('seed', 0);
     expect(Object.keys(g.hunters).sort()).toEqual(['halvar', 'zora']);
     expect(g.board.opened).toBe(false);
+  });
+});
+
+describe('the v2 → v3 migration (plan T3.4)', () => {
+  type Old = {
+    state: {
+      resources: unknown;
+      peasants: unknown;
+      buildings: Record<string, number>;
+      hunters: unknown;
+      roster: unknown;
+      board: { open: { monster: string }[]; tierWins: number[]; nextArrivalAt: number | null };
+      running: { contract: { monster: string } }[];
+      results: { monster: string; success: boolean }[];
+      log: { recentFights: { monster: { monster: string } }[] };
+      stats: { kills: Record<string, number>; contractsWon: number; trophies: number };
+      scenes: string[];
+      time: number;
+    };
+  };
+  const old = readFixture('v2-owner.json') as Old;
+  const after = (() => {
+    const r = loadEnvelope(old);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.value.warnings).toEqual([]);
+    return r.value.state;
+  })();
+
+  it("upgrades the owner's real v0.2 save without losing anything the player had", () => {
+    expect(after.meta.schemaVersion).toBe(3);
+    expect(after.resources).toEqual(old.state.resources);
+    expect(after.peasants).toEqual(old.state.peasants);
+    expect(after.hunters).toEqual(old.state.hunters);
+    expect(after.roster).toEqual(old.state.roster);
+    expect(after.board.tierWins).toEqual(old.state.board.tierWins);
+    expect(after.board.nextArrivalAt).toBe(old.state.board.nextArrivalAt);
+    expect(after.scenes).toEqual(old.state.scenes);
+    expect(after.stats.kills).toEqual(old.state.stats.kills);
+    expect(after.stats.contractsWon).toBe(old.state.stats.contractsWon);
+    expect(after.stats.trophies).toBe(old.state.stats.trophies);
+    expect(after.time).toBe(old.state.time);
+    for (const [id, n] of Object.entries(old.state.buildings))
+      expect(after.buildings[id as keyof typeof after.buildings]).toBe(n);
+  });
+
+  it('adds the Lodge, the Hut and the Garden at 0', () => {
+    expect(after.buildings['hunters-lodge']).toBe(0);
+    expect(after.buildings['alchemists-hut']).toBe(0);
+    expect(after.buildings['herb-garden']).toBe(0);
+  });
+
+  it('every species the player has met was identified for free in v0.2, so it starts Identified', () => {
+    const met = new Set<string>([
+      ...old.state.board.open.map((c) => c.monster),
+      ...old.state.running.map((r) => r.contract.monster),
+      ...old.state.results.map((r) => r.monster),
+      ...old.state.log.recentFights.map((f) => f.monster.monster),
+      ...Object.keys(old.state.stats.kills),
+    ]);
+    expect(met.size).toBeGreaterThan(0);
+    expect(Object.keys(after.bestiary).sort()).toEqual([...met].sort());
+    for (const id of met) {
+      const kills = old.state.stats.kills[id] ?? 0;
+      const entry = after.bestiary[id as keyof typeof after.bestiary];
+      expect(entry?.kills, id).toBe(kills);
+      // 4 kills is Studied and 10 is Mastered (GDD §5.6.2, D99).
+      expect(entry?.level, id).toBe(kills >= 10 ? 4 : kills >= 4 ? 3 : 2);
+    }
+  });
+
+  it('contracts already posted keep their named species (3 of 3 clues)', () => {
+    for (const c of after.board.open) expect(c.revealed).toBe(3);
+    for (const r of after.running) {
+      expect(r.contract.revealed).toBe(3);
+      expect(r.prep).toEqual({ oils: {}, potions: {}, bombs: [] });
+      expect(r.knowledge).toBe(2);
+    }
+    for (const r of after.results) expect(r.wellPrepared).toBe(false);
+    for (const f of after.log.recentFights) {
+      expect(f.prep).toEqual({ oils: {}, potions: {}, bombs: [] });
+      expect(f.monster.knowledge).toBe(2);
+    }
+  });
+
+  it('starts with empty stores and queues, and no garden clock', () => {
+    expect(Object.keys(after.stores)).toHaveLength(21);
+    expect(Object.values(after.stores).every((n) => n === 0)).toBe(true);
+    expect(after.queues).toEqual({ brewing: [], investigation: [] });
+    expect(after.garden).toEqual({ nextAt: null });
+  });
+
+  it('a new game has the same v3 parts', () => {
+    const g = createNewGame('seed', 0);
+    expect(g.bestiary).toEqual({});
+    expect(g.queues).toEqual({ brewing: [], investigation: [] });
+    expect(Object.keys(g.stores)).toHaveLength(21);
+  });
+
+  it('the debug time skip moves the new timers with the clock', () => {
+    const s = structuredClone(after);
+    s.garden.nextAt = 1_000;
+    s.queues.brewing = [
+      { item: 'fire-pot', doneAt: 2_000 },
+      { item: 'saltburst', doneAt: null },
+    ];
+    s.queues.investigation = [{ contractId: 'c1', nextClueAt: 3_000 }];
+    shiftClock(s, 500);
+    expect(s.garden.nextAt).toBe(1_500);
+    expect(s.queues.brewing.map((j) => j.doneAt)).toEqual([2_500, null]);
+    expect(s.queues.investigation[0]?.nextClueAt).toBe(3_500);
   });
 });

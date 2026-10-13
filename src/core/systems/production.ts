@@ -6,6 +6,7 @@ import { resources, type ResourceId } from '../../content/resources';
 import { num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
+import { jobSlots } from './housing';
 import { applyBuckets, type Bonus } from './buckets';
 
 // GDD §5.1.1: rate_R = workers_R × baseRate_R × buckets. Rates are per minute,
@@ -61,12 +62,16 @@ const trophyBonuses = (state: GameState): Bonus[] => {
   );
 };
 
-/** Production of one resource per minute, with its breakdown. */
-export const productionRate = (state: GameState, resource: ResourceId): Explained => {
+/** Production of one resource per minute, with its breakdown. `workers` overrides the job's headcount (for capacity). */
+export const productionRate = (
+  state: GameState,
+  resource: ResourceId,
+  workers?: number,
+): Explained => {
   const job = JOB_IDS.find((j) => jobs[j].produces === resource);
   if (!job) return { value: 0, breakdown: { label: `${resource} per minute`, value: 0 } };
   const def = jobs[job];
-  const count = state.peasants.jobs[job];
+  const count = workers ?? state.peasants.jobs[job];
   const perWorker = num(def.rateKey);
   const base = {
     label: `${def.name}s × base rate`,
@@ -95,6 +100,29 @@ export const productionRate = (state: GameState, resource: ResourceId): Explaine
       ...(resource === 'silver'
         ? { formula: 'base × relic × event (no other bonuses apply to silver)' }
         : {}),
+    },
+  };
+};
+
+/**
+ * Food per minute if every farmer slot were filled, limited only by how many peasants the
+ * hold has (GDD §5.4.2, Q11). Provisions read this instead of today's food income, so moving
+ * peasants between jobs right before a launch cannot lower them.
+ */
+export const foodCapacity = (state: GameState): Explained => {
+  const slots = jobSlots(state, 'farmer').value;
+  const farmers = Math.min(slots, state.peasants.total);
+  const rate = productionRate(state, 'food', farmers);
+  return {
+    value: rate.value,
+    breakdown: {
+      ...rate.breakdown,
+      label: 'Food capacity per minute',
+      children: [
+        ...(rate.breakdown.children ?? []),
+        { label: 'Farmer slots', value: slots },
+        { label: 'Peasants', value: state.peasants.total },
+      ],
     },
   };
 };

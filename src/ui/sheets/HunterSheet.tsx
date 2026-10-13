@@ -109,7 +109,6 @@ export const HunterView = ({ id }: { id: HunterId }) => {
         {def.traits.map((t) => (
           <li key={t}>
             <strong>{traits[t].name}:</strong> {traits[t].summary}
-            {traits[t].activeFrom === 'v0.3' ? ' (takes effect in a later update)' : ''}
           </li>
         ))}
       </ul>

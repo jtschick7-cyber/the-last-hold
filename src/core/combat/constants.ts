@@ -13,4 +13,5 @@ export const K = {
   healBelow: num('mender.healBelow'),
   healMult: num('mender.healMult'),
   menderAttack: num('mender.attackMult'),
+  oilBonus: num('oil.familyBonus'),
 } as const;

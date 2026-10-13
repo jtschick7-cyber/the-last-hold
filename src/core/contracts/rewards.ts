@@ -4,7 +4,7 @@ import { constantAt, num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import { intPow } from '../math';
 import type { GameState } from '../state/game-state';
-import { productionRate } from '../systems/production';
+import { foodCapacity } from '../systems/production';
 
 // GDD §5.4: what a contract pays and costs. Each number comes with its breakdown,
 // built by the same function (GDD §5.0).
@@ -14,6 +14,7 @@ export const bounty = (
   tier: number,
   rank: AgeId,
   party: readonly (readonly TraitId[])[],
+  wellPrepared = false,
 ): Explained => {
   const base = num('bounty.base');
   const growth = num('bounty.growth');
@@ -31,28 +32,31 @@ export const bounty = (
     }
   }
   const tiered = base * intPow(growth, tier - 1);
-  const value = tiered * rankMult * (1 + hagglePct);
+  const prepMult = wellPrepared ? num('prep.wellPreparedBounty') : 1;
+  const value = tiered * rankMult * (1 + hagglePct) * prepMult;
   return {
     value,
     breakdown: {
       label: 'Bounty (silver)',
       value,
-      formula: `${base} × ${growth}^${tier - 1} × ${rankMult} × (1 + ${hagglePct})`,
+      formula: `${base} × ${growth}^${tier - 1} × ${rankMult} × (1 + ${hagglePct}) × ${prepMult}`,
       children: [
         { label: 'Base', value: base, key: 'bounty.base' },
         { label: 'Growth per tier', value: growth, key: 'bounty.growth' },
         { label: 'Tier', value: tier },
         { label: `Rank multiplier (${rank})`, value: rankMult, key: 'bounty.ageMult' },
         { label: `Haggler ×${hagglers}`, value: hagglePct },
+        { label: 'Well prepared', value: prepMult, key: 'prep.wellPreparedBounty' },
       ],
     },
   };
 };
 
 /**
- * Provisions paid at launch (GDD §5.4.2, G3, Q9/D81): per hunter, the larger of the flat
- * base and `incomeMinutes` of the hold's food income, times party size and the tier growth.
- * The income term is what keeps food a real cost after the settling years.
+ * Provisions paid at launch (GDD §5.4.2, G3, Q9/D81, Q11): per hunter, the larger of the flat
+ * base and `incomeMinutes` of the hold's food capacity (not today's income, so shuffling
+ * peasants can't lower it), times party size and the tier growth. The income term is what
+ * keeps food a real cost after the settling years.
  */
 export const provisions = (state: GameState, partySize: number, tier: number): Explained => {
   const base = num('provisions.base');
@@ -61,7 +65,7 @@ export const provisions = (state: GameState, partySize: number, tier: number): E
     (constantAt('provisions.incomeMinutes').value as Readonly<Record<string, number>>)[
       state.cycle.age
     ] ?? 0;
-  const income = minutes > 0 ? productionRate(state, 'food').value : 0;
+  const income = minutes > 0 ? foodCapacity(state).value : 0;
   const perHunter = Math.max(base, minutes * income);
   const value = perHunter * partySize * intPow(growth, tier - 1);
   return {
@@ -69,15 +73,15 @@ export const provisions = (state: GameState, partySize: number, tier: number): E
     breakdown: {
       label: 'Provisions (food)',
       value,
-      formula: `max(${base}, ${minutes} min × ${income} food/min) × ${partySize} × ${growth}^${tier - 1}`,
+      formula: `max(${base}, ${minutes} min × ${income} food/min capacity) × ${partySize} × ${growth}^${tier - 1}`,
       children: [
         { label: 'Flat base per hunter', value: base, key: 'provisions.base' },
         {
-          label: 'Minutes of food income per hunter',
+          label: 'Minutes of food capacity per hunter',
           value: minutes,
           key: 'provisions.incomeMinutes',
         },
-        { label: 'Food income per minute', value: income },
+        { label: 'Food capacity per minute', value: income },
         { label: 'Party size', value: partySize },
         { label: 'Growth per tier', value: growth, key: 'provisions.growth' },
         { label: 'Tier', value: tier },

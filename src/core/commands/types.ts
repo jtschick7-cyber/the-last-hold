@@ -4,9 +4,10 @@ import type { GearSlot } from '../../content/gear';
 import type { SceneId } from '../../content/text/scenes';
 import type { HunterId } from '../../content/hunters';
 import type { JobId } from '../../content/jobs';
+import type { ConsumableId } from '../../content/consumables';
 import type { ResourceBundle } from '../../content/resources';
 import type { PolicyId } from '../policies/schedules';
-import type { Settings } from '../state/game-state';
+import type { Preparation, Settings } from '../state/game-state';
 
 // Technical design §4.3: every player action is a plain JSON Command, applied
 // through apply(). The UI, the simulator and the debug panel all use these.
@@ -25,8 +26,23 @@ export type Command =
   | { type: 'peasants.priority'; order: JobId[] }
   | { type: 'age.up' }
   /** Sends a party on a board contract; `confirmReckless` is the dialog's answer (GDD §5.3.7). */
-  | { type: 'contract.launch'; contract: string; party: HunterId[]; confirmReckless?: boolean }
+  | {
+      type: 'contract.launch';
+      contract: string;
+      party: HunterId[];
+      confirmReckless?: boolean;
+      /** What the party carries (GDD §5.7); spent from the stores at launch. */
+      prep?: Preparation;
+    }
   | { type: 'contract.decline'; contract: string }
+  /** Puts a board contract in a free Lodge slot (GDD §5.6.3). */
+  | { type: 'investigate.assign'; contract: string }
+  /** Takes a contract off its Lodge slot; the clues shown stay. */
+  | { type: 'investigate.stop'; contract: string }
+  /** Queues a brew in the Alchemist's Hut; the recipe is paid now (GDD §5.7). */
+  | { type: 'brew.queue'; item: ConsumableId }
+  /** Cancels a queued brew and refunds it. */
+  | { type: 'brew.cancel'; index: number }
   /** Acknowledges finished contracts; rewards were applied at completion (B9). */
   | { type: 'results.collect' }
   /** Remembers that a scene has been shown (setting-primer §6.6). */

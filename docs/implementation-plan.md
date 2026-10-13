@@ -376,7 +376,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.3 — Bestiary & preparation
 
-**Status:** not started
+**Status:** complete
 
 **Goal:** contracts against unknown monsters, clue-based investigation, a bestiary that speeds up later play, and preparation that clearly matters.
 **Reads:** GDD §5.6–5.7, §6 (v0.3 rows), §7.5, §8.3.1, §8.4, §8.6–8.7, §9.8–9.9; `setting-primer.md` §6.4.
@@ -391,18 +391,19 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### Tasks
 
-- [ ] **T3.1 New hunters.** Add the 2 hunters from the owner's chat-session definitions: content, prices, generated portraits.
-- [ ] **T3.2 Content.** Knowledge levels; the clue library (20 tags × 3+ texts); 12 ingredients; 9 consumables; Lodge, Hut, Garden; gift reagents; drops; the v0.3 traits.
-- [ ] **T3.3 Text.** A bestiary blurb plus a "What it was" line for all 12 species.
-- [ ] **T3.4 Migration v2 → v3,** using the owner's real v0.2 save.
-- [ ] **T3.5 Full coverage test** (GDD §8.3.1; the rules are locked).
-- [ ] **T3.6 Unknown-monster contracts.** Candidates, clues as `advance` events, Lodge slots, Studied halving, Mastered auto-identify, Tracker.
-- [ ] **T3.7 Knowledge.** Level transitions, kills, bonuses.
-- [ ] **T3.8 Alchemy brewing.** Queues and the Herb Garden event.
-- [ ] **T3.9 Preparation in combat.** Slots, potions, bombs, Saltburst, Spoil, Herbwise, the well-prepared bonus, each with tests.
-- [ ] **T3.10 Odds with uncertainty.** Averaging over candidates; oil effects per candidate; Suggest at 20 samples per candidate; benchmarks.
-- [ ] **T3.11 UI.** The bestiary; investigation; preparation pickers with "unprepared would be X%"; the Alchemist's Hut.
-- [ ] **T3.12 Simulator.** The policy brews, prepares, and investigates; v0.3 checks; tuning.
+- [x] **T3.1 New hunters** (Q12 answered: Stanko Sleepless and Herdis Strayfinder, D101). Add the 2 hunters from the owner's chat-session definitions: content, prices, generated portraits.
+- [x] **T3.2a Content.** Knowledge levels; the clue library (20 tags × 3+ texts); 12 ingredients; 9 consumables; gift reagents; drops. (The v0.3 traits were already in the v0.2 content.)
+- [x] **T3.2b Buildings.** Hunter's Lodge, Alchemist's Hut, Herb Garden. These add building ids to the saved state, so they wait for the migration (T3.4), as the Barracks did in v0.2.
+- [x] **T3.3 Text.** A bestiary blurb plus a "What it was" line for all 12 species.
+- [x] **T3.4 Migration v2 → v3,** using the owner's real v0.2 save.
+- [x] **T3.5 Full coverage test** (GDD §8.3.1; the rules are locked).
+- [x] **T3.6 Unknown-monster contracts.** Candidates, clues as `advance` events, Lodge slots, Studied halving, Mastered auto-identify, Tracker.
+- [x] **T3.7 Knowledge.** Level transitions, kills, bonuses.
+- [x] **T3.8 Alchemy brewing.** Queues and the Herb Garden event.
+- [x] **T3.9 Preparation in combat.** Slots, potions, bombs, Saltburst, Spoil, Herbwise, the well-prepared bonus, each with tests.
+- [x] **T3.10 Odds with uncertainty.** (Also switches contract generation to post unknown monsters, D89 point 7; until then every contract arrives identified.) Averaging over candidates; oil effects per candidate; Suggest at 20 samples per candidate; benchmarks.
+- [x] **T3.11 UI.** The bestiary; investigation; preparation pickers with "unprepared would be X%"; the Alchemist's Hut.
+- [x] **T3.12 Simulator.** The policy brews, prepares, and investigates; v0.3 checks; tuning.
 
 ### v0.3 acceptance criteria
 
@@ -423,11 +424,11 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### v0.3 owner playtest checklist 👤 (on the preview build)
 
-- [ ] Investigating feels like studying a case.
-- [ ] Preparation is a real decision.
-- [ ] The bestiary is pleasant to browse, and the "What it was" lines land.
-- [ ] Brewing isn't a chore.
-- [ ] Screenshot pass and monster art review.
+- [x] Investigating feels like studying a case.
+- [x] Preparation is a real decision.
+- [x] The bestiary is pleasant to browse, and the "What it was" lines land.
+- [x] Brewing isn't a chore.
+- [x] Screenshot pass and monster art review.
 
 **Out of scope:** alchemy discovery, skills, the Long Night, story secrets.
 

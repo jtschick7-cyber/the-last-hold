@@ -1,9 +1,11 @@
-import type { DamageType, LocationId } from '../../content/damage';
+import type { ConsumableEffect, ConsumableId } from '../../content/consumables';
+import type { DamageType, FamilyId, LocationId } from '../../content/damage';
 import type { GearId } from '../../content/gear';
 import type { HunterId, RoleId, Stats } from '../../content/hunters';
 import type { MonsterAbility, MonsterId } from '../../content/monsters';
 import type { TraitEffect, TraitId } from '../../content/traits';
 import type { RollSource } from '../rng';
+import type { Preparation } from '../state/game-state';
 
 // GDD §5.5: the combat inputs, the live combatants, and the fight log.
 
@@ -24,6 +26,11 @@ export interface HunterSnapshot {
 export interface MonsterInstance {
   readonly monster: MonsterId;
   readonly tier: number;
+  /**
+   * The species' knowledge level when the party set out, 0–4 (GDD §5.6.2): Studied and
+   * Mastered add to the damage the hunters deal. Frozen at launch; absent means 0.
+   */
+  readonly knowledge?: number;
 }
 
 export interface FightInput {
@@ -33,6 +40,21 @@ export interface FightInput {
   readonly rolls: RollSource;
   /** Default true. Odds previews pass false: same fight, no log. */
   readonly log?: boolean;
+  /** What the party carries (GDD §5.7); absent means nothing. */
+  readonly prep?: Preparation;
+}
+
+/** A potion a hunter carries (GDD §5.7). `used` is true once it has fired or been ruined. */
+export interface HunterPotion {
+  readonly id: ConsumableId;
+  readonly name: string;
+  readonly effect: Extract<
+    ConsumableEffect,
+    { kind: 'heal' | 'armorUntilAction' | 'speedWholeFight' }
+  >;
+  /** 0.25 more power with Herbwise (potionPower). */
+  readonly power: number;
+  used: boolean;
 }
 
 export type Side = 'hunter' | 'monster';
@@ -80,6 +102,20 @@ export interface Combatant {
   secondSoulUsed: boolean;
   /** Frost Pot suppression of Noon Heat, in the monster's actions (v0.3 source). */
   noonHeatSuppressed: number;
+  /** Oil on the weapon: +oil.familyBonus damage vs this family, for the whole fight. */
+  readonly oilFamily: FamilyId | null;
+  potion: HunterPotion | null;
+  /** Hardwood Tonic: the holder's own actions it still covers. */
+  tonicLeft: number;
+  /** Spoil has already had its first hit on this hunter. */
+  spoiled: boolean;
+  /** Fire Pot: Fire damage on each of the monster's next actions. */
+  burnLeft: number;
+  burnAmount: number;
+  /** Frost Pot: −Speed% for the monster's next actions. */
+  chillLeft: number;
+  /** Saltburst: the monster's next actions in which abilities do nothing. */
+  abilitiesBlocked: number;
 }
 
 export interface LogEntry {
@@ -113,4 +149,6 @@ export interface FightResult {
   }[];
   readonly monsterHealth: number;
   readonly monsterMaxHealth: number;
+  /** A Saltburst went off and cancelled an ability (part of "well prepared", GDD §5.7). */
+  readonly saltburstCancelled: boolean;
 }
