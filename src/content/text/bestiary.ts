@@ -1,4 +1,4 @@
-import type { MonsterId } from '../monsters';
+import type { MonsterAbility, MonsterId } from '../monsters';
 
 // setting-primer §6.4: every bestiary entry has a blurb (2–3 sentences, in the voice
 // of a hunter's notebook, drawn from folklore, practical and a little wry) and a
@@ -84,4 +84,39 @@ export const bestiaryText: Readonly<Record<MonsterId, BestiaryText>> = {
     whatItWas:
       "What it was: the ferryman's horse, standing at the water-steps the night he rowed out after a child and did not return.",
   },
+};
+
+/**
+ * A Mastered species shows a counter-tip for each of its abilities (GDD §5.6.2). Each tip
+ * names something the game really does: a consumable, a trait or a rule of the fight.
+ */
+export const abilityTips: Readonly<Record<MonsterAbility['kind'], string>> = {
+  hamstring:
+    'A Quickfoot Tincture buys back the lost Speed, and a Saltburst cancels the first one that lands and the next three actions after it.',
+  spoil:
+    'Leave the Mending Draught at home: it ruins an unused potion. Tonics and Tinctures are drunk before its first hit, so they are safe.',
+  bloodfeast:
+    'Hit it hard and fast so it has less to drink. A Saltburst stops the healing for three actions.',
+  drowningSong:
+    'The song takes the lowest-Armor hunter, so keep your frailest hunter out of the front, or answer with a Saltburst on the first note.',
+  noonHeat:
+    'A Frost Pot quiets it for three actions, and a Saltburst cancels the first burn. Fire-touched hunters and an Emberwright plate take less.',
+  dragUnder:
+    'Bring a Hardwood Tonic for the doubled hit, or a Saltburst to cancel the first grab and the two after it.',
+  barrowGrip:
+    'Silver or Rune steel shortens the fight; a Saltburst cancels the first grip and the next three actions.',
+  swell:
+    'Its Armor rises once it is half-dead, so open with heavy hits and bring Fire or Frost, which ignore Armor in a bomb.',
+  malice:
+    'It gets worse every action, so end the fight early; a Frost Pot slows it and a Saltburst stops it growing for a while.',
+  leadAstray:
+    'A Saltburst cancels the first time it works. Otherwise bring a party deep enough to cover a lost action.',
+  rootWall:
+    'A burst of damage beats its regrowth: use Thornbane Oil and a Fire Pot, and a Saltburst stops the mending for three actions.',
+  secondSoul:
+    'It gets up once, so save your best hits for the second life. A Saltburst going off when it falls keeps it down.',
+  enthrall:
+    'It always takes your strongest hunter first, so do not put every eggshell in one basket; a Saltburst cancels the first charm.',
+  riverhorse:
+    'It takes the hunter with the least Health, so keep everyone topped up, or set a Saltburst and the horse carries nobody.',
 };

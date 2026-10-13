@@ -8,9 +8,12 @@ import type { ContractInstance } from '../../core/state/game-state';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { placeName } from '../app/contract-text';
+import { contractIdentity } from '../../core/investigation/view';
+import { identityText } from '../app/knowledge-text';
 import { LaunchView } from '../sheets/LaunchSheet';
 import { ResultsView } from '../sheets/ResultsSheet';
 import styles from '../styles/ui.module.css';
+import { InvestigationPanel } from '../widgets/InvestigationPanel';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 
 // GDD §9.4: the contract board. Running contracts, what is ready to collect, and
@@ -30,7 +33,11 @@ const Open = ({ c }: { c: ContractInstance }) => {
       <div class={`${styles.small} ${styles.dim}`}>
         <em>“{notice.text}”</em> {notice.signature}
       </div>
-      <div class={styles.small}>{monsters[c.monster].name}</div>
+      <div class={styles.small}>
+        {identityText(contractIdentity(s, c))}
+        {s.queues.investigation.some((q) => q.contractId === c.id) ? ' · 🔍 investigating' : ''}
+      </div>
+      <InvestigationPanel contractId={c.id} />
       <div class={`${styles.cost} ${styles.small}`}>
         <span>
           {Math.round(pay)} <ResourceIcon r="silver" />
@@ -90,8 +97,10 @@ export const ContractsScreen = () => {
             <ul class={styles.list}>
               {s.running.map((r) => (
                 <li key={r.contract.id} class={styles.divider}>
-                  {monsters[r.contract.monster].name} · T{r.contract.tier} ·{' '}
-                  {formatDuration((r.endsAt - s.time) / 1000)} left
+                  {contractIdentity(s, r.contract).identified
+                    ? monsters[r.contract.monster].name
+                    : 'Unknown monster'}{' '}
+                  · T{r.contract.tier} · {formatDuration((r.endsAt - s.time) / 1000)} left
                   <div class={`${styles.small} ${styles.dim}`}>
                     {r.party.map((h) => hunters[h].shortName).join(', ')}
                     {r.reckless ? ' · Reckless' : ''}

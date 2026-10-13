@@ -16,6 +16,8 @@ import {
 import { productionRate } from '../../core/systems/production';
 import { bestBuy, payback } from '../../core/systems/valuation';
 import { dispatch, game, version } from '../app/runtime';
+import { openSheet } from '../app/sheets';
+import { HutView } from '../sheets/HutSheet';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { Num } from '../widgets/Num';
@@ -66,6 +68,15 @@ const Row = ({ id, mode, hinted }: { id: BuildingId; mode: Mode; hinted: boolean
           <span class={styles.hint}>
             <Num text="●" breakdown={() => payback(s, id).breakdown} />
           </span>
+        )}
+        {id === 'alchemists-hut' && owned > 0 && (
+          <button
+            type="button"
+            class={styles.btn}
+            onClick={() => openSheet("Alchemist's Hut", () => <HutView />)}
+          >
+            Open
+          </button>
         )}
         <button
           type="button"

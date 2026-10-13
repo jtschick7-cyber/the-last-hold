@@ -1,3 +1,4 @@
+import { consumables, type ConsumableId } from '../../content/consumables';
 import { RESOURCE_IDS } from '../../content/resources';
 import { lineTriggerRules, residentLines } from '../../content/text/lines';
 import { residents } from '../../content/residents';
@@ -39,6 +40,20 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
       {summary.arrivals > 0 && (
         <p class={styles.small}>
           {summary.arrivals} new {summary.arrivals === 1 ? 'contract' : 'contracts'} on the board
+        </p>
+      )}
+      {summary.events.some((e) => e.type === 'brew') && (
+        <p class={styles.small}>
+          Brewed:{' '}
+          {summary.events
+            .filter((e) => e.type === 'brew')
+            .map((e) => (e.type === 'brew' ? consumables[e.item as ConsumableId].name : ''))
+            .join(', ')}
+        </p>
+      )}
+      {summary.events.some((e) => e.type === 'clue') && (
+        <p class={styles.small}>
+          {summary.events.filter((e) => e.type === 'clue').length} clues came in at the Lodge.
         </p>
       )}
       {summary.recovered.length > 0 && (

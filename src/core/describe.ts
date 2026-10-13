@@ -6,6 +6,7 @@ import {
   type BuildingId,
 } from '../content/buildings';
 import { jobs } from '../content/jobs';
+import type { MonsterAbility } from '../content/monsters';
 import { resources } from '../content/resources';
 import { num } from './balance-access';
 import { formatDuration } from './format';
@@ -56,4 +57,44 @@ export const ageUnlocks = (to: AgeId): string[] => {
     }
   }
   return lines;
+};
+
+const ordinal = (n: number): string => {
+  const rest = n % 100;
+  if (rest >= 11 && rest <= 13) return `${n}th`;
+  return `${n}${['th', 'st', 'nd', 'rd'][n % 10 > 3 ? 0 : n % 10] ?? 'th'}`;
+};
+
+/** An ability in plain words, built from its numbers so it can never disagree with the fight (GDD §8.3). */
+export const describeAbility = (a: MonsterAbility): string => {
+  switch (a.kind) {
+    case 'hamstring':
+      return `Each hit has a ${percent(a.chance)} chance to cut the target's Speed by ${percent(a.speedCut)} for their next ${a.actions} actions.`;
+    case 'spoil':
+      return "Its first hit on each hunter ruins that hunter's unused potion.";
+    case 'bloodfeast':
+      return `Heals ${percent(a.healFraction)} of the damage it deals.`;
+    case 'drowningSong':
+      return `On its ${[0, 1, 2].map((i) => ordinal(1 + i * a.every)).join(', ')}… action, instead of attacking, it charms the lowest-Armor hunter, who loses their next action.`;
+    case 'noonHeat':
+      return `On each of its actions, every hunter loses ${percent(a.maxHealthFraction)} of max Health (Fire; ignores Armor). A Frost Pot suppresses it for ${a.frostSuppressActions} actions.`;
+    case 'dragUnder':
+      return `Every ${ordinal(a.every)} action, its attack grabs the target: they lose their next action and take ×${a.nextHitMult} from the next hit.`;
+    case 'barrowGrip':
+      return `Every ${ordinal(a.every)} action, its attack holds the target: they lose their next action.`;
+    case 'swell':
+      return `Below ${percent(a.belowHealth)} Health, its Armor rises by ${percent(a.armorBonus)}.`;
+    case 'malice':
+      return `Its Might rises by ${percent(a.mightPerAction)} after each of its actions, and the rises stack.`;
+    case 'leadAstray':
+      return `On each of its actions, a ${percent(a.chance)} chance that one random hunter loses their next action.`;
+    case 'rootWall':
+      return `Regenerates ${percent(a.regenFraction)} of max Health on each of its actions.`;
+    case 'secondSoul':
+      return `The first time it reaches 0 Health, it rises again at ${percent(a.reviveFraction)} Health (once per fight).`;
+    case 'enthrall':
+      return `On its 1st action and every ${ordinal(a.every)} after, the hunter with the highest Might is enthralled: they lose their next action, and it heals ${percent(a.healFraction)} of max Health.`;
+    case 'riverhorse':
+      return `On its 1st action it carries off the lowest-Health hunter, who can't act or be targeted until ${a.awayActions} of its actions have passed, then returns having lost ${percent(a.healthLossFraction)} of max Health. A Saltburst cancels it.`;
+  }
 };
