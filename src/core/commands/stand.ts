@@ -11,7 +11,8 @@ import { arrivalTrophyCap, standInputFor } from '../stand/from-state';
 import { bestWavesEver, relicsFound } from '../stand/relics';
 import type { GameState, Preparation, StandRecord } from '../state/game-state';
 import { bandFor } from '../story/band';
-import { standDocuments, wardenDocuments } from '../story/documents';
+import { arriveArvid } from '../story/act3';
+import { currentAct, standDocuments, wardenDocuments } from '../story/documents';
 import { triumphantStand } from '../story/trust';
 import { ok, refuse, type ApplyResult } from './types';
 
@@ -105,6 +106,8 @@ export const makeStand = (
   // 4–5. The reset and the new cycle; the next warden's arrival closes the act's scene.
   resetForNewCycle(state);
   wardenDocuments(state);
+  // GDD §8.5 (D211): Arvid arrives with Ilse as Act III begins.
+  if (currentAct(state) === 3) arriveArvid(state, 'warden');
   return ok;
 };
 

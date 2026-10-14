@@ -82,9 +82,11 @@ const standingMet = (state: GameState, doc: DocumentDef, p: ActProgress): boolea
     case 'nextWarden':
       return false;
     case 'arvidArrives':
-    case 'huntersTogether':
-      // Act III's two new conditions (D211, D213): judged when they happen, from T6.7.
+      // Judged when he arrives (core/story/act3.ts), never by a sweep.
       return false;
+    case 'huntersTogether':
+      // D213: both at the hold, once the act has begun, after the earlier scene is found.
+      return c.hunters.every((h) => state.hunters[h] !== undefined) && isFound(state, c.after);
   }
 };
 
@@ -105,10 +107,15 @@ const VIA: Readonly<Record<DocumentCondition['kind'], FoundVia>> = {
  */
 export const sweepDocuments = (state: GameState, via?: FoundVia): string[] => {
   const keys: string[] = [];
-  for (const doc of allDocuments) {
-    const p = progressOf(state, doc.act);
-    if (!p || isFound(state, doc.id) || !standingMet(state, doc, p)) continue;
-    keys.push(...findDocument(state, doc, via ?? VIA[doc.condition.kind]));
+  // Repeats while something new turns up: a document can be the `after` of another (D3-08).
+  for (let again = true; again;) {
+    again = false;
+    for (const doc of allDocuments) {
+      const p = progressOf(state, doc.act);
+      if (!p || isFound(state, doc.id) || !standingMet(state, doc, p)) continue;
+      keys.push(...findDocument(state, doc, via ?? VIA[doc.condition.kind]));
+      again = true;
+    }
   }
   return keys;
 };

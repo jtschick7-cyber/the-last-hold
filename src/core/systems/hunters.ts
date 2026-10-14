@@ -9,7 +9,7 @@ import {
   type HunterUnlock,
 } from '../../content/hunters';
 import { knowledgeLevels } from '../../content/knowledge';
-import { actNumeral, LAST_WRITTEN_ACT } from '../../content/story/acts';
+import { actNumeral } from '../../content/story/acts';
 import { monsters } from '../../content/monsters';
 import { traits } from '../../content/traits';
 import { constantAt, num } from '../balance-access';
@@ -175,8 +175,9 @@ export const unlockMet = (state: GameState, unlock: HunterUnlock): boolean => {
     case 'bountySilverEarned':
       return state.stats.bountySilver >= unlock.amount;
     case 'arrivesWithIlse':
-      // GDD §8.5 (D211): Arvid comes with Ilse when Act III begins (the arrival itself is T6.7).
-      return unlock.act <= LAST_WRITTEN_ACT && state.story.acts.some((a) => a.act >= unlock.act);
+      // GDD §8.5 (D211): Arvid is never recruited. He joins the roster when Act III begins
+      // (core/story/act3.ts), so he is never a candidate.
+      return false;
   }
 };
 

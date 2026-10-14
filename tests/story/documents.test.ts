@@ -1,5 +1,5 @@
 // Plan T5.6: every Act I and Act II document arrives on its condition, row by row
-// against lore-secrets §21–§22 (D148), and Act III's (§26, T6.1b; T6.7 finishes them), and stays obtainable in later cycles.
+// against lore-secrets §21–§22 (D148) and Act III's (§26), and stays obtainable in later cycles.
 import { describe, expect, it } from 'vitest';
 import { allDocuments, UNWRITTEN_ACT_LINE } from '../../src/content/story/acts';
 import { kamenfellNoticeEnd } from '../../src/content/story/scenes';
@@ -9,7 +9,9 @@ import { noticeFor } from '../../src/core/contracts/notice';
 import { advance } from '../../src/core/sim';
 import { HOUR, keepRich, run } from '../contracts/helpers';
 import { freshCycleRecord } from '../../src/core/state/new-game';
+import { freshHunter } from '../../src/core/state/hunters-state';
 import { freshAct } from '../../src/core/state/story-state';
+import { arriveArvid } from '../../src/core/story/act3';
 import { createNewGame } from '../../src/core/state/new-game';
 import type { ContractInstance, GameState } from '../../src/core/state/game-state';
 import {
@@ -211,6 +213,26 @@ describe('Act III (lore-secrets §26)', () => {
     return s;
   };
 
+  it('D3-01: Arvid arrives with Ilse, on the new-warden sheet or on load (D211, D214)', () => {
+    const s = act3();
+    expect(isFound(s, 'D3-01')).toBe(false);
+    expect(sweepDocuments(s)).not.toContain('doc:D3-01'); // never by a sweep: only by his arrival
+    expect(arriveArvid(s, 'warden')).toContain('doc:D3-01');
+    expect(s.story.documents.find((d) => d.id === 'D3-01')?.via).toBe('warden');
+    expect(arriveArvid(s, 'warden')).toEqual([]); // once
+    mark('D3-01');
+  });
+
+  it('D3-08: Arvid and Sigrun both at the hold in Act III, after D2-08 (D213)', () => {
+    const s = act3();
+    arriveArvid(s, 'warden');
+    s.hunters.sigrun = freshHunter();
+    expect(sweepDocuments(s)).not.toContain('doc:D3-08'); // D2-08 not found yet
+    s.story.documents.push({ id: 'D2-08', cycle: 2, at: s.time, via: 'roster' });
+    expect(sweepDocuments(s)).toContain('doc:D3-08');
+    mark('D3-08');
+  });
+
   it('D3-02 and D3-03: the 1st and 2nd Velkvik wins in Act III (earlier acts do not count)', () => {
     const s = act3();
     expect(isFound(s, 'D3-02')).toBe(false);
@@ -292,15 +314,7 @@ describe('acts (GDD §5.14.1)', () => {
   });
 
   it('every document has a condition test above', () => {
-    // D3-01 (Arvid's arrival) and D3-08 (Arvid and Sigrun) have no machinery until T6.7;
-    // their tests join then.
-    const later = ['D3-01', 'D3-08'];
-    expect([...tested].sort()).toEqual(
-      allDocuments
-        .map((d) => d.id)
-        .filter((id) => !later.includes(id))
-        .sort(),
-    );
+    expect([...tested].sort()).toEqual(allDocuments.map((d) => d.id).sort());
   });
 });
 

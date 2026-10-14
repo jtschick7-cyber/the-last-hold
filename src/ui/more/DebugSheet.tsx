@@ -157,6 +157,9 @@ export const DebugSheet = () => {
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.addArvid' })}>
           Add Arvid
         </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.startActIII' })}>
+          Start Act III
+        </button>
         <button
           type="button"
           class={styles.btn}

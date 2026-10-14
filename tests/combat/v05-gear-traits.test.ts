@@ -95,14 +95,13 @@ describe('Old Wright (Arvid)', () => {
 });
 
 describe('Arvid Netmender (GDD §8.5)', () => {
-  it('is a free story hunter who unlocks when Act III begins', () => {
+  it('is a free story hunter who arrives with Ilse when Act III begins, never recruited', () => {
     expect(hunters.arvid).toMatchObject({ recruitPrice: 0, story: true });
     const s = keepRich('arvid');
     expect(unlockMet(s, hunters.arvid.unlock)).toBe(false);
     s.story.acts.push(freshAct(2, 2, s.time), freshAct(3, 3, s.time));
-    // Act III is written from v0.6 (D209), so Act III's start meets his unlock. How he
-    // arrives (with Ilse, onto the roster) is T6.7.
-    expect(unlockMet(s, hunters.arvid.unlock)).toBe(true);
+    // He is never a candidate: Act III's start brings him onto the roster (D211, T6.7).
+    expect(unlockMet(s, hunters.arvid.unlock)).toBe(false);
   });
 
   it('a debug action adds him to the roster, for testing', () => {

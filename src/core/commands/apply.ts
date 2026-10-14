@@ -1,3 +1,4 @@
+import { debugStartActThree, startActThree } from './act3';
 import { arriveV05, nameWarden, readArchive, runV05Arrival } from './wardens';
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
@@ -100,6 +101,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return nameWarden(state, cmd.cycle, cmd.name);
     case 'story.arrive':
       return arriveV05(state, cmd.names);
+    case 'story.startActIII':
+      return startActThree(state);
+    case 'debug.startActIII':
+      return debugStartActThree(state);
     case 'debug.runV05Arrival':
       return runV05Arrival(state);
     case 'archive.read':
