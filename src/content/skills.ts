@@ -9,11 +9,21 @@ export interface SkillDef {
   readonly name: string;
   /** What each level gives, for the Rank screen (GDD §5.8.6). */
   readonly gives: string;
+  /** Whether the bonus adds (+) or takes off (−), for its sign on screen. */
+  readonly sign: '+' | '−';
 }
 
 export const skills: Readonly<Record<SkillId, SkillDef>> = {
-  alchemy: { id: 'alchemy', name: 'Alchemy', gives: 'Brews are stronger' },
-  smithing: { id: 'smithing', name: 'Smithing', gives: 'Gear upgrades cost less' },
-  lore: { id: 'lore', name: 'Lore', gives: 'Clues take less time' },
-  command: { id: 'command', name: 'Command', gives: 'Hunters earn more contract XP' },
+  alchemy: { id: 'alchemy', name: 'Alchemy', gives: 'Brews are stronger', sign: '+' },
+  smithing: { id: 'smithing', name: 'Smithing', gives: 'Gear upgrades cost less', sign: '−' },
+  lore: { id: 'lore', name: 'Lore', gives: 'Clues take less time', sign: '−' },
+  command: { id: 'command', name: 'Command', gives: 'Hunters earn more contract XP', sign: '+' },
 };
+
+/** GDD §5.8.6: one line on the away sheet or results when a level is reached. */
+export const emberRemembersMore = (name: string, level: number): string =>
+  `The ember remembers more: ${name} ${level}.`;
+
+/** GDD §5.8.6: the new-warden sheet lists them all. */
+export const emberRemembers = (levels: readonly { name: string; level: number }[]): string =>
+  `The ember remembers: ${levels.map((l) => `${l.name} ${l.level}`).join(' · ')}.`;

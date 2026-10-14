@@ -51,7 +51,7 @@ test('the stand’s band, the testament, naming the new warden, and the Roll', a
   await tab(page, 'Hold').click();
   await page.getByRole('button', { name: 'Rank ▸' }).click();
   await page.getByRole('button', { name: 'Make the Last Stand' }).click();
-  await expect(page.getByText(/Held from 9 waves · Triumphant from 12/)).toBeVisible();
+  await expect(page.getByText(/Held from 12 waves · Triumphant from 15/)).toBeVisible();
   await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 15_000 });
   await page.getByRole('button', { name: 'Start', exact: true }).click();
   await page.getByRole('button', { name: 'Go up to the walls' }).click();

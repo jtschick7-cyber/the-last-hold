@@ -9,6 +9,8 @@ import { freshHunter } from '../../src/core/state/hunters-state';
 import { freshAct } from '../../src/core/state/story-state';
 import type { GameState } from '../../src/core/state/game-state';
 import { candidates, levelCap, unlockMet } from '../../src/core/systems/hunters';
+import { allDocuments } from '../../src/content/story/acts';
+import { foundLine } from '../../src/core/story/archive';
 import { actThreeDue } from '../../src/core/story/act3';
 import { isFound, sweepDocuments } from '../../src/core/story/documents';
 import { T0, keepRich, run } from '../contracts/helpers';
@@ -235,5 +237,19 @@ describe('D3-08: Arvid and Sigrun at the hold (D213)', () => {
     s.story.documents.push({ id: 'D2-08', cycle: 2, at: 0, via: 'roster' });
     expect(run(s, { type: 'story.startActIII' }).ok).toBe(true);
     expect(isFound(s, 'D3-08')).toBe(true);
+  });
+});
+
+describe('the reader says how Arvid’s scene was found', () => {
+  it('reads its own condition, even when it was found on load', () => {
+    const s = v05Cycle3('found-line');
+    run(s, { type: 'story.startActIII' });
+    const doc = allDocuments.find((d) => d.id === 'D3-01');
+    const found = s.story.documents.find((d) => d.id === 'D3-01');
+    if (!doc || !found) throw new Error('D3-01 not found');
+    expect(found.via).toBe('arrival');
+    expect(foundLine(doc, found)).toBe(
+      "Found: Arvid's arrival with Ilse when Act III begins, cycle 3.",
+    );
   });
 });

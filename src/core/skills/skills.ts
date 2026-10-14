@@ -94,3 +94,47 @@ export const skillBonusAt = (skill: SkillId, level: number): Explained => {
 
 export const skillBonus = (state: GameState, skill: SkillId): Explained =>
   skillBonusAt(skill, skillLevel(state, skill));
+
+/** What the Rank screen shows for one skill (GDD §5.8.6): level, progress, bonus and its breakdown. */
+export interface SkillView {
+  readonly id: SkillId;
+  readonly name: string;
+  readonly gives: string;
+  readonly level: number;
+  readonly progress: SkillProgress;
+  readonly maxed: boolean;
+  /** The bonus at this level as a share (0.12 = 12%), with its breakdown line. */
+  readonly bonus: Explained;
+  /** "+12%" or "−12%". */
+  readonly bonusText: string;
+}
+
+const percent = (share: number): string => `${Math.round(share * 1000) / 10}%`;
+
+export const skillViews = (state: GameState): SkillView[] =>
+  SKILL_IDS.map((id) => {
+    const progress = progressFor(state.skills[id]);
+    const bonus = skillBonusAt(id, progress.level);
+    const detail =
+      progress.needed === 0
+        ? 'Highest level'
+        : `${progress.into} of ${progress.needed} XP toward level ${progress.level + 1}`;
+    return {
+      id,
+      name: skills[id].name,
+      gives: skills[id].gives,
+      level: progress.level,
+      progress,
+      maxed: progress.needed === 0,
+      bonus: {
+        value: bonus.value,
+        breakdown: {
+          ...bonus.breakdown,
+          children: [
+            { label: `${skills[id].name} experience`, value: state.skills[id], formula: detail },
+          ],
+        },
+      },
+      bonusText: `${skills[id].sign}${percent(bonus.value)}`,
+    };
+  });

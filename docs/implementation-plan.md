@@ -729,7 +729,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 
 #### E. UI
 - [x] **T6.9a The Hut** *(Done as D231; the Playwright smoke for it is with T6.9b.)*. Brew, Experiment and Book sections (GDD §9.9); discovery lines on the away sheet and results.
-- [ ] **T6.9b Skills and Act III on screen.** "What the ember remembers" on the Rank screen with breakdowns; the skill lines on the away sheet and new-warden sheet; Arvid's arrival and the Act III scenes; "Held from 12 · Triumphant from 15" on the stand screen. **Extend the Playwright smoke:** debug → queue an experiment → skip time → a property revealed in the Book; and debug "Start Act III" → Arvid arrives → D3-01. Screenshot pass at phone size.
+- [x] **T6.9b Skills and Act III on screen** *(Done as D232. Playwright: tests/e2e/alchemy-skills.spec.ts; the phone-size screenshots were checked.)* "What the ember remembers" on the Rank screen with breakdowns; the skill lines on the away sheet and new-warden sheet; Arvid's arrival and the Act III scenes; "Held from 12 · Triumphant from 15" on the stand screen. **Extend the Playwright smoke:** debug → queue an experiment → skip time → a property revealed in the Book; and debug "Start Act III" → Arvid arrives → D3-01. Screenshot pass at phone size.
 
 #### F. Art
 - [ ] **T6.10 Art** (the D59 method): 16 px icons for the six new brews and the four skills (1-Bit Pack where it fits, recolored). 👤 Review.

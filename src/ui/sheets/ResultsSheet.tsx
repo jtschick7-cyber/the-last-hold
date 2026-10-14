@@ -5,7 +5,7 @@ import { monsters } from '../../content/monsters';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { ContractResult } from '../../core/state/game-state';
 import { foundLines } from '../../core/story/found-lines';
-import { game, version } from '../app/runtime';
+import { emberNews, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { placeName } from '../app/contract-text';
 import styles from '../styles/ui.module.css';
@@ -98,13 +98,28 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
   );
 };
 
-export const ResultsView = ({ results }: { results: readonly ContractResult[] }) => {
+export const ResultsView = ({
+  results,
+  ember,
+}: {
+  results: readonly ContractResult[];
+  /** Live results also carry the skill level-ups since the game opened (GDD §5.8.6). */
+  ember?: boolean;
+}) => {
   const now = game().time;
   return (
-    <ul class={styles.list}>
-      {results.map((r) => (
-        <ResultLine key={r.contractId} r={r} now={now} />
-      ))}
-    </ul>
+    <>
+      {ember &&
+        emberNews.value.map((line, i) => (
+          <p key={i} class={`${styles.small} ${styles.good}`}>
+            {line}
+          </p>
+        ))}
+      <ul class={styles.list}>
+        {results.map((r) => (
+          <ResultLine key={r.contractId} r={r} now={now} />
+        ))}
+      </ul>
+    </>
   );
 };

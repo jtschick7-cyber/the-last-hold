@@ -4,6 +4,8 @@ import type { Command } from '../../core/commands';
 import { snapshotOf } from '../../core/systems/hunters';
 import { lastOddsMs, lastSuggestMs, requestOdds, requestSuggest } from '../app/odds-client';
 import { dispatch, game, lastCatchUpMs, version } from '../app/runtime';
+import { openSheet } from '../app/sheets';
+import { DocumentReader } from '../screens/ArchiveScreen';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.10 / technical design §15: every action here is a debug.* command.
@@ -157,7 +159,15 @@ export const DebugSheet = () => {
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.addArvid' })}>
           Add Arvid
         </button>
-        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.startActIII' })}>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
+            const r = dispatch({ type: 'debug.startActIII' });
+            setNote(r.ok ? 'Done.' : r.reason);
+            if (r.ok) openSheet('The net-mender', () => <DocumentReader id="D3-01" />);
+          }}
+        >
           Start Act III
         </button>
         <button

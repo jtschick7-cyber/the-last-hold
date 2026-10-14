@@ -11,6 +11,8 @@ import { HuntersScreen } from '../screens/HuntersScreen';
 import { MoreScreen } from '../screens/MoreScreen';
 import { InstallSheet } from '../more/InfoSheets';
 import { ArrivalView } from '../sheets/ArrivalView';
+import { actThreeDue } from '../../core/story/act3';
+import { ActThreeArrivalView } from '../sheets/ActThreeArrivalView';
 import { V05ArrivalView } from '../sheets/V05ArrivalView';
 import { AwayView } from '../sheets/AwaySheet';
 import styles from '../styles/ui.module.css';
@@ -154,8 +156,10 @@ export const App = () => {
   const arrival = game().arrivalDue;
   // GDD §5.14.1: then, for a save from before v0.5, Ilse's arrival does the same.
   const meetIlse = !arrival && game().story.arrivalDue;
+  // GDD §5.14.1 (D214): a save in a cycle that began Act III unwritten meets Arvid on load.
+  const meetArvid = !arrival && !meetIlse && actThreeDue(game());
   const shown: readonly Tab[] =
-    arrival || meetIlse
+    arrival || meetIlse || meetArvid
       ? ['hold', 'more']
       : tabsFor(
           game().board.opened,
@@ -175,6 +179,8 @@ export const App = () => {
             <ArrivalView />
           ) : meetIlse && screen === 'hold' ? (
             <V05ArrivalView />
+          ) : meetArvid && screen === 'hold' ? (
+            <ActThreeArrivalView />
           ) : (
             SCREENS[screen]()
           )}

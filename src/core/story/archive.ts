@@ -58,7 +58,8 @@ export const describeCondition = (doc: DocumentDef): string => {
 
 /** "Found: the 2nd Mirograd contract won in Act I, cycle 1." */
 export const foundLine = (doc: DocumentDef, found: FoundDocument): string =>
-  found.via === 'arrival'
+  // Arvid's own scene reads its condition even when found on load (D214).
+  found.via === 'arrival' && doc.condition.kind !== 'arvidArrives'
     ? `Found: brought by Ilse when she came, cycle ${found.cycle}.`
     : `Found: ${describeCondition(doc)}, cycle ${found.cycle}.`;
 

@@ -1,5 +1,8 @@
 import { useEffect } from 'preact/hooks';
+import { emberRemembers } from '../../content/skills';
+import { arvidArrival } from '../../content/story/act3';
 import { bandLabels, ilseReturns } from '../../content/story/scenes';
+import { skillViews } from '../../core/skills/skills';
 import { trustStepLine } from '../../content/story/trust';
 import { UNWRITTEN_ACT_LINE } from '../../content/story/acts';
 import type { DocumentDef } from '../../content/story/documents';
@@ -73,23 +76,31 @@ export const Testament = ({ act }: { act: DocumentDef | string | null }) => {
   );
 };
 
-/** The closing scene the new warden's arrival brought, and Ilse's return. */
+/** The closing scene the new warden's arrival brought, Ilse's return (with Arvid when Act III begins), then D3-01. */
 export const WardenScenes = ({ stand }: { stand: StandRecord }) => {
   const s = game();
   const ids = s.story.documents
     .filter((d) => d.via === 'warden' && d.at === stand.at)
     .map((d) => d.id);
   useRead(ids);
+  // D3-01 plays after Ilse's line, which names Arvid (GDD §5.14.3, D211).
+  const arvid = ids.includes('D3-01');
   return (
     <>
-      {ids.map((id) => (
-        <DocumentReader key={id} id={id} />
-      ))}
+      {ids
+        .filter((id) => id !== 'D3-01')
+        .map((id) => (
+          <DocumentReader key={id} id={id} />
+        ))}
       {s.story.ilseAt !== null && (
         <p class={styles.small}>
-          <em>{ilseReturns}</em>
+          <em>{arvid ? arvidArrival : ilseReturns}</em>
         </p>
       )}
+      {arvid && <DocumentReader id="D3-01" />}
+      <p class={styles.small}>
+        {emberRemembers(skillViews(s).map((v) => ({ name: v.name, level: v.level })))}
+      </p>
     </>
   );
 };

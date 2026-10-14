@@ -1,5 +1,6 @@
 import { signal } from '@preact/signals';
 import { consumables } from '../../content/consumables';
+import type { SkillId } from '../../content/skills';
 import { experimentLines } from '../../core/alchemy/hut-view';
 import { apply, type ApplyResult, type Command } from '../../core/commands';
 import { advance, catchUp, type AwaySummary } from '../../core/sim';
@@ -21,7 +22,8 @@ import {
 } from '../../platform/storage';
 import { captureErrors, DIAGNOSTICS_KEEP, type CapturedError } from '../../platform/diagnostics';
 import { sideList, type SideList } from '../../platform/side-store';
-import { noticeChanges, type Watched } from './lines';
+import { levelUpLines, noticeChanges, type Watched } from './lines';
+import { skillLevels } from '../../core/skills/skills';
 
 // Technical design §6.3 and §10: one mutable game state, plus a `version` signal
 // bumped after every apply and advance. Components re-read selectors when it
@@ -39,6 +41,9 @@ export const awaySummary = signal<AwaySummary | null>(null);
 /** GDD §9.9: what experiments showed since the game opened (live play only), newest last. */
 export const hutNews = signal<string[]>([]);
 const HUT_NEWS_KEEP = 4;
+/** GDD §5.8.6: skill level-ups in live play, as the lines the results show (session only; nothing is saved). */
+export const emberNews = signal<string[]>([]);
+let watchedSkills: Record<SkillId, number> | null = null;
 /** Shown instead of the game when a save can't safely be used. */
 export const blocked = signal<string | null>(null);
 /** Problems from loading (quarantined saves, repairs), for the player to see once. */
@@ -102,6 +107,12 @@ const bump = (): void => {
   };
   if (watched) noticeChanges(watched, current);
   watched = current;
+  const levels = skillLevels(state);
+  if (watchedSkills) {
+    const rose = levelUpLines(watchedSkills, levels);
+    if (rose.length > 0) emberNews.value = [...emberNews.value, ...rose].slice(-HUT_NEWS_KEEP);
+  }
+  watchedSkills = levels;
 };
 
 /** The live state. Read it inside components that also read `version`. */
@@ -142,6 +153,7 @@ const runCatchUp = async (): Promise<void> => {
     step = gen.next();
   }
   catchUpProgress.value = null;
+  watchedSkills = skillLevels(s); // the away sheet words these; the live lines start from here
   lastCatchUpMs.value = performance.now() - started;
   if (step.value.away >= AWAY_SHEET_FROM_MS) {
     awaySummary.value = step.value;
@@ -214,6 +226,8 @@ export const startGame = async (): Promise<void> => {
 export const adoptGame = async (next: GameState): Promise<void> => {
   state = next;
   watched = null;
+  watchedSkills = null;
+  emberNews.value = [];
   awaySummary.value = null;
   await runCatchUp();
   bump();
@@ -224,6 +238,8 @@ export const adoptGame = async (next: GameState): Promise<void> => {
 export const resetGame = (): void => {
   state = createNewGame(randomSeed(), now());
   watched = null;
+  watchedSkills = null;
+  emberNews.value = [];
   awaySummary.value = null;
   bump();
   saveNow();

@@ -7,6 +7,7 @@ import { experimentLines } from '../../core/alchemy/hut-view';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { AwaySummary } from '../../core/sim';
 import styles from '../styles/ui.module.css';
+import { levelUpLines } from '../app/lines';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { ResultsView } from './ResultsSheet';
 
@@ -65,6 +66,12 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
           )}
         </div>
       )}
+      {summary.skills &&
+        levelUpLines(summary.skills.before, summary.skills.after).map((line) => (
+          <p key={line} class={`${styles.small} ${styles.good}`}>
+            {line}
+          </p>
+        ))}
       {summary.events.some((e) => e.type === 'clue') && (
         <p class={styles.small}>
           {summary.events.filter((e) => e.type === 'clue').length} clues came in at the Lodge.
