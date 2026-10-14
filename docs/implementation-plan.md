@@ -536,7 +536,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### v0.5 — The Long Night: Act I and the story systems
 
-**Status:** in progress *(fleshed out 2026-10-14, D144–D169)*
+**Status:** complete *(fleshed out 2026-10-14, D144–D169; playtest passed 2026-10-14, D192)*
 
 **Goal:** the story arrives. Acts I and II, documents and Ilse's Archive, the forty names, warden naming and the Roll of Wardens, hunter letters, village trust on screen, the stand's band, the Citadel and Bastion inscriptions; and the mechanics the story needs: ruin contracts with four Cursed creatures, Rune damage, the Wright's Blade and Arvid Netmender. Existing saves start Act I at once (D149).
 **Reads:** GDD §5.1.3 (restores), §5.3.4, §5.3.6, §5.4.1, §5.4.3, §5.6.1, §5.9.3, §5.9.7, §5.14, §6.1–6.3 and §6.5 (v0.5 lines), §7.7, §8.2–§8.6, §9.11, §9.14, the v0.5 judgment calls; `lore-secrets.md` §8, §10–§12, §15, §20–§25; `setting-primer.md` (voice); technical design §5.2, §7.2, §9.4, §13.
@@ -672,15 +672,15 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 
 ### v0.5 owner playtest checklist 👤 (on the preview build)
 
-- [ ] Ilse's arrival and the Archive feel like the story arriving, not a menu.
-- [ ] Act I's documents read well, arrive at sensible moments, and each has one wrongness, not more.
-- [ ] Your save started Act I smoothly, and naming your earlier wardens felt right.
-- [ ] The Names view makes you want to find the next one; the hints are fair.
-- [ ] Ruins and the Cursed feel different from the folklore monsters; the Wright's Blade feels worth it.
-- [ ] Trust is easy to read; the band on your stand felt fair.
-- [ ] The Roll of Wardens and the inscriptions land.
-- [ ] Screenshot pass and new art review.
-- [ ] (If you reach it) Act II and Sigrun's confession.
+- [x] Ilse's arrival and the Archive feel like the story arriving, not a menu.
+- [x] Act I's documents read well, arrive at sensible moments, and each has one wrongness, not more.
+- [x] Your save started Act I smoothly, and naming your earlier wardens felt right.
+- [x] The Names view makes you want to find the next one; the hints are fair.
+- [x] Ruins and the Cursed feel different from the folklore monsters; the Wright's Blade feels worth it.
+- [x] Trust is easy to read; the band on your stand felt fair.
+- [x] The Roll of Wardens and the inscriptions land.
+- [x] Screenshot pass and new art review.
+- [x] (If you reach it) Act II and Sigrun's confession.
 
 **Out of scope:** Acts III–VI and their documents (Act III is written at the v0.6 flesh-out); Arvid arriving in play; the Deep family (D161); Ember-echoes (Delves, v0.7); trust rewards (v0.10); hunter relics.
 

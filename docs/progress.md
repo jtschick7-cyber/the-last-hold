@@ -523,3 +523,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
   - Art: unzip `art-src/kenney_*.zip` into `art-src/packs/tiny-town` and `.../1-bit-pack` (git-ignored) before `npx vite-node tools/build-art.ts`; then `tools/gen-credits.ts`; portraits: `tools/gen-portraits.ts` and `tools/gen-monsters.ts`.
   - Story keys across code: `doc:<id>`, `name:<n>`, `letter:<hunter>:<slot>`, `ribbon:<count>`, `trust:<village>:<level>`. Lint bans number literals in `src/core/`; lore numbers live in `src/content/story/`.
   - The worker restarted several times in earlier sessions; commit and push after every task.
+
+## 2026-10-14 — v0.5 complete
+- **State:** the owner's playtest passed; D192 accepts every Proposed row of v0.5 (D171, D172, D174, D176–D179, D181–D184, D187–D189). `npm run check` green (1,305 tests); the full `sim:check` passes every check (40 runs, 154 s); `sim:accept` recorded the baseline. Plan v0.5 is `complete` and its playtest checklist ticked. Then: PR to `main`, merge, tag `v0.5.0` (one try; the owner creates it on GitHub if refused).
+- **Next:** v0.6 (alchemy discovery and skills through use, and Act III's text) needs a flesh-out session first (plan §0.4); Arvid can't arrive until Act III is written.
+- **Deferred, unchanged:** Acts III–VI and their documents; Arvid arriving in play; the Deep family; Ember-echoes; trust rewards; hunter relics; Pixel UI Pack frames; Node 20 workflow actions bump; WebKit e2e only in CI.
