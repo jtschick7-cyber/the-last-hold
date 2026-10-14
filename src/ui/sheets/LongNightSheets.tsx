@@ -5,6 +5,7 @@ import { relics } from '../../content/relics';
 import { describeRelic } from '../../core/describe-long-night';
 import { formatNumber } from '../../core/format';
 import { embersPayout } from '../../core/stand/embers';
+import { RULES_VERSION } from '../../core/rules-version';
 import { replayStand } from '../../core/stand/replay';
 import type { GameState, StandRecord } from '../../core/state/game-state';
 import { rosterCap } from '../../core/systems/hunters';
@@ -30,6 +31,14 @@ export const lastStand = (s: GameState): { cycle: number; stand: StandRecord } |
   return null;
 };
 
+/** Technical design §5.3: a stand recorded under older rules may replay differently. */
+const OlderRules = ({ stand }: { stand: StandRecord }) =>
+  stand.rulesVersion === RULES_VERSION ? null : (
+    <p class={`${styles.small} ${styles.warn}`}>
+      Recorded with an older rules version, so this replay may differ from what happened.
+    </p>
+  );
+
 const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
   const result = useMemo(() => replayStand(stand), [stand.seed, stand.at]);
   const w = result.waves[n - 1];
@@ -42,6 +51,7 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
           {w.fight.result === 'win' ? 'held' : 'the walls fell'} at tick {w.fight.ticks}
         </strong>
       </p>
+      <OlderRules stand={stand} />
       <ul class={styles.list} style={{ fontSize: '0.875rem' }}>
         {w.fight.log.map((l, i) => (
           <li key={i} class={styles.divider} style={{ padding: 'var(--space-1) 0' }}>
@@ -62,6 +72,7 @@ const Result = ({ stand }: { stand: StandRecord }) => {
   });
   return (
     <div>
+      <OlderRules stand={stand} />
       <p>
         The walls held <strong>{stand.wavesHeld}</strong> {stand.wavesHeld === 1 ? 'wave' : 'waves'}
         .
