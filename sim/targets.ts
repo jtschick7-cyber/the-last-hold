@@ -5,7 +5,7 @@
 
 import type { PolicyId } from '../src/core/policies';
 
-export const MILESTONES = ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v0.7'] as const;
+export const MILESTONES = ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v0.5', 'v0.7'] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
 export interface Bound {
@@ -131,6 +131,39 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.4',
   },
+  // v0.5 (owner-approved, D168; GDD §6.2). The story rows below are judged by their own
+  // checks, from the documents, names and trust the run found (STORY below).
+  {
+    id: 'first-ruin',
+    text: 'First ruin contract won: ≤ 24 h after the Keep',
+    bounds: [{ policy: 'standard', maxHours: 24 }],
+    relativeTo: 'keep',
+    enforcedFrom: 'v0.5',
+  },
+  {
+    id: 'act-1',
+    text: 'Act I lands in its cycle: its contract, Rank and stand documents found by the end of cycle 1, and the next warden’s by the start of cycle 2',
+    bounds: [],
+    enforcedFrom: 'v0.5',
+  },
+  {
+    id: 'act-2',
+    text: 'Act II lands in its cycle: every document but Sigrun’s confession found in cycle 2, and the next warden’s by the start of cycle 3',
+    bounds: [],
+    enforcedFrom: 'v0.5',
+  },
+  {
+    id: 'ribbonshades',
+    text: 'All six Ribbonshade names found by the end of cycle 3',
+    bounds: [],
+    enforcedFrom: 'v0.5',
+  },
+  {
+    id: 'trust-moves',
+    text: 'At least one village rises a step in cycle 1',
+    bounds: [],
+    enforcedFrom: 'v0.5',
+  },
   {
     id: 'idle-only',
     text: 'Idle-only vs Standard: first-time completion of all content ≤ 1.3× slower',
@@ -138,6 +171,33 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     enforcedFrom: 'v0.7',
   },
 ];
+
+/**
+ * GDD §6.2 (v0.5, D168): which documents and names the story rows look at. Ids are
+ * from lore-secrets §21–§22, names from §20. Each document is judged on the median
+ * over the Monday Standard seeds of the cycle it was found in; a document never
+ * found counts as infinitely late. D1-02, D1-05 and D2-08 depend on a village's trust,
+ * a species' mastery and a recruit, so they are reported, not judged.
+ */
+export const STORY = {
+  act1: {
+    /** Found by the end of cycle 1: contract, Rank and stand conditions. */
+    byCycle: 1,
+    docs: ['D1-01', 'D1-03', 'D1-04', 'D1-06', 'D1-09', 'D1-10'],
+    /** The next warden's arrival closes the act: found by the start of cycle 2. */
+    nextWarden: { doc: 'D1-07', byCycle: 2 },
+    reportedOnly: ['D1-02', 'D1-05'],
+  },
+  act2: {
+    byCycle: 2,
+    docs: ['D2-01', 'D2-02', 'D2-03', 'D2-04', 'D2-05', 'D2-06', 'D2-07', 'D2-09'],
+    nextWarden: { doc: 'D2-10', byCycle: 3 },
+    reportedOnly: ['D2-08'],
+  },
+  /** The six Ribbonshade names (roll numbers, in their fixed order) by the end of cycle 3. */
+  ribbonNames: [39, 15, 16, 17, 19, 20],
+  ribbonsByCycle: 3,
+} as const;
 
 /** GDD §6.3: engagement checks, judged on every seed (technical design §13.3). */
 export const ENGAGEMENT = {
