@@ -22,6 +22,10 @@ export const acts: readonly ActDef[] = [
 /** The last act whose text is in the game. */
 export const LAST_WRITTEN_ACT = 2;
 
+/** "III" for act 3 (lore-secrets §5 has six acts). */
+export const actNumeral = (act: number): string =>
+  ['I', 'II', 'III', 'IV', 'V', 'VI'][act - 1] ?? String(act);
+
 export const UNWRITTEN_ACT_LINE = 'The story continues in a later version.';
 
 export const allDocuments: readonly DocumentDef[] = acts.flatMap((a) => a.documents);

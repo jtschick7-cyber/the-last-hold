@@ -1,5 +1,4 @@
 import { HUNTER_IDS, hunters, type HunterId } from '../hunters';
-import { arvid } from '../hunters-v05';
 
 // GDD §5.14.7 (D155, D156) and lore-secrets §23 (D165): every hunter has two
 // letters to the warden, written at Ilse's asking: slot 0 at the first of
@@ -8,7 +7,7 @@ import { arvid } from '../hunters-v05';
 // other 17 carry none and are drafted for the owner's approval in T5.12; until
 // then their text is null.
 
-export type LetterHunter = HunterId | 'arvid';
+export type LetterHunter = HunterId;
 export type LetterSlot = 0 | 1;
 
 export interface LetterDef {
@@ -84,19 +83,17 @@ const written: readonly LetterDef[] = [
   },
 ];
 
-const signatureOf = (hunter: LetterHunter): string =>
-  `— ${hunter === 'arvid' ? arvid.shortName : hunters[hunter].shortName}`;
+const signatureOf = (hunter: LetterHunter): string => `— ${hunters[hunter].shortName}`;
 
 /** All 22 letters (D156): every hunter, both slots, in roster order then Arvid. */
-export const letters: readonly LetterDef[] = [...HUNTER_IDS, 'arvid' as const].flatMap(
-  (hunter: LetterHunter) =>
-    ([0, 1] as const).map(
-      (slot): LetterDef =>
-        written.find((l) => l.hunter === hunter && l.slot === slot) ?? {
-          hunter,
-          slot,
-          body: null,
-          signature: signatureOf(hunter),
-        },
-    ),
+export const letters: readonly LetterDef[] = HUNTER_IDS.flatMap((hunter: LetterHunter) =>
+  ([0, 1] as const).map(
+    (slot): LetterDef =>
+      written.find((l) => l.hunter === hunter && l.slot === slot) ?? {
+        hunter,
+        slot,
+        body: null,
+        signature: signatureOf(hunter),
+      },
+  ),
 );

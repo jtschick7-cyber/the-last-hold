@@ -8,6 +8,7 @@ import {
   candidates,
   hunterStatus,
   isOwned,
+  gearLock,
   nextGear,
   returnLevel,
   rosterCap,
@@ -67,6 +68,8 @@ export const upgradeGear = (state: GameState, id: HunterId, slot: GearSlot): App
   if (state.buildings[next.requires.building] < next.requires.level) {
     return refuse(`${next.name} needs Smithy level ${next.requires.level}.`);
   }
+  const lock = gearLock(state, next);
+  if (lock) return refuse(`The ${next.name} ${lock}.`);
   const cost = Object.fromEntries(RESOURCE_IDS.map((r) => [r, next.cost[r] ?? 0])) as Record<
     (typeof RESOURCE_IDS)[number],
     number

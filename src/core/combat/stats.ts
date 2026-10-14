@@ -90,6 +90,16 @@ export const hitChance = (
  * after Armor (GDD §5.0, B2). Only hunters have any (Shieldwall, Fire-touched,
  * Emberwright Plate).
  */
+/** The present party member with the lowest % Health; ties by party slot. */
+const lowestHealth = (party: readonly Combatant[]): Combatant | null => {
+  let best: Combatant | null = null;
+  for (const c of party) {
+    if (!present(c)) continue;
+    if (!best || healthPct(c) < healthPct(best)) best = c;
+  }
+  return best;
+};
+
 export const takenReduction = (
   defender: Combatant,
   type: DamageType,
@@ -98,9 +108,12 @@ export const takenReduction = (
   if (defender.side !== 'hunter') return 0;
   let sum = defender.extraTaken;
   for (const ally of party) {
-    if (ally === defender || !present(ally)) continue;
+    if (!present(ally)) continue;
     for (const e of ally.traits) {
-      if (e.kind === 'alliesTakenWhileStanding') sum += -e.amount;
+      if (e.kind === 'alliesTakenWhileStanding' && ally !== defender) sum += -e.amount;
+      // Shield-companion (v0.5): the lowest % Health member, the holder included (D177).
+      else if (e.kind === 'lowestHealthTakenWhileStanding' && lowestHealth(party) === defender)
+        sum += e.amount;
     }
   }
   if (type === 'fire') {

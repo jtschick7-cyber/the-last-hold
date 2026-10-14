@@ -1,4 +1,4 @@
-import { AGE_IDS } from '../../content/ages';
+import { AGE_IDS, ages } from '../../content/ages';
 import { buildings, BUILDING_IDS } from '../../content/buildings';
 import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
 import {
@@ -9,6 +9,7 @@ import {
   type HunterUnlock,
 } from '../../content/hunters';
 import { knowledgeLevels } from '../../content/knowledge';
+import { actNumeral, LAST_WRITTEN_ACT } from '../../content/story/acts';
 import { monsters } from '../../content/monsters';
 import { traits } from '../../content/traits';
 import { constantAt, num } from '../balance-access';
@@ -127,6 +128,15 @@ export const nextGear = (h: HunterState, slot: GearSlot): GearDef | null => {
   );
 };
 
+/** What still blocks a gear tier: the Smithy level, then a Rank (the Wright's Blade, D159); null if nothing. */
+export const gearLock = (state: GameState, next: GearDef): string | null => {
+  if (state.buildings[next.requires.building] < next.requires.level)
+    return `needs Smithy ${next.requires.level}`;
+  if (next.requiresAge && AGE_IDS.indexOf(state.cycle.age) < AGE_IDS.indexOf(next.requiresAge))
+    return `needs the ${ages[next.requiresAge].name}`;
+  return null;
+};
+
 /** A hunter frozen for a fight (technical design §5.3). */
 export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
   const def = hunters[id];
@@ -164,6 +174,9 @@ export const unlockMet = (state: GameState, unlock: HunterUnlock): boolean => {
       return (state.bestiary[unlock.monster]?.level ?? 0) >= knowledgeLevels[unlock.level].number;
     case 'bountySilverEarned':
       return state.stats.bountySilver >= unlock.amount;
+    case 'actBegins':
+      // GDD §8.5: Arvid comes when Act III begins, and an act begins only once it's written.
+      return unlock.act <= LAST_WRITTEN_ACT && state.story.acts.some((a) => a.act >= unlock.act);
   }
 };
 
@@ -187,6 +200,8 @@ export const describeUnlock = (unlock: HunterUnlock): string => {
       return `${monsters[unlock.monster].name} reaches ${knowledgeLevels[unlock.level].name}`;
     case 'bountySilverEarned':
       return `Earn ${unlock.amount.toLocaleString('en-US')} silver in bounties`;
+    case 'actBegins':
+      return `Arrives when Act ${actNumeral(unlock.act)} begins`;
   }
 };
 

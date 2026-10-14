@@ -128,22 +128,28 @@ export const directAttack = (
     targetHealth: target.health,
   });
   if (attacker.side === 'hunter') sealBurn(f, attacker, target, amount);
-  if (attacker.silverSubHit && standing(target)) silverSubHit(f, attacker, target, variance, crit);
+  if (attacker.silverSubHit && standing(target))
+    subHit(f, attacker, target, variance, crit, 'silver');
+  if (attacker.runeSubHit && standing(target)) subHit(f, attacker, target, variance, crit, 'rune');
   if (target.side === 'hunter') checkPotion(f, target);
   return true;
 };
 
-/** GDD §5.3.6 (B3): a separate Silver sub-hit, no Armor, logged as its own line. */
-const silverSubHit = (
+/**
+ * GDD §5.3.6 (B3): a separate sub-hit, no Armor, logged as its own line: Silver from
+ * the Silvered Blade, and from v0.5 Rune too from the Wright's Blade (D159).
+ */
+const subHit = (
   f: Fight,
   attacker: Combatant,
   target: Combatant,
   variance: number,
   crit: boolean,
+  type: 'silver' | 'rune',
 ): void => {
-  const resistance = target.resist ? target.resist.silver : 1;
+  const resistance = target.resist ? target.resist[type] : 1;
   const dealt =
-    num('gear.silveredFraction') *
+    num(type === 'silver' ? 'gear.silveredFraction' : 'gear.runedFraction') *
     mightEff(attacker) *
     variance *
     (crit ? attacker.critMult : 1) *
@@ -155,7 +161,7 @@ const silverSubHit = (
     kind: 'sub-hit',
     target: target.id,
     text: () =>
-      `${attacker.name}'s silver also hits ${the(target)} — Silver ${fmt2(dealt)} ` +
+      `${attacker.name}'s ${type} also hits ${the(target)} — ${cap(type)} ${fmt2(dealt)} ` +
       `${resistance === 0 ? 'immune' : ''}= ${amount} · ${target.name} ${target.health}/${target.maxHealth}`,
     rolls: [],
     dealt,

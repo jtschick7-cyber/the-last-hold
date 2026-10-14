@@ -5,7 +5,16 @@ import { cancelBrew, queueBrew } from './brew';
 import { assign, stop } from './investigate';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
-import { addEmbers, addResources, runArrival, runPolicy, setSeed, skip, unlockAge } from './debug';
+import {
+  addEmbers,
+  addResources,
+  runArrival,
+  runPolicy,
+  setSeed,
+  skip,
+  unlockAge,
+  addArvid,
+} from './debug';
 import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasants';
 import { setSettings } from './settings';
 import { makeStand, markStandSeen } from './stand';
@@ -82,6 +91,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return runArrival(state);
     case 'debug.unlockAge':
       return unlockAge(state, cmd.age);
+    case 'debug.addArvid':
+      return addArvid(state);
     default:
       return refuse('Unknown command.');
   }

@@ -8,10 +8,11 @@ import { CLUE_TAGS } from '../../src/content/clues';
 import { V05_CLUE_TAGS, v05ClueTexts } from '../../src/content/clues-v05';
 import { CURSED_IDS, cursed, type CursedId } from '../../src/content/cursed';
 import { DAMAGE_TYPES } from '../../src/content/damage';
-import { gear, wrightsBlade } from '../../src/content/gear';
+import { gear } from '../../src/content/gear';
 import { arvid, v05Traits } from '../../src/content/hunters-v05';
 import { roleBaselines } from '../../src/content/hunters';
 import { INGREDIENT_IDS } from '../../src/content/ingredients';
+import { traits as traitDefs } from '../../src/content/traits';
 import { RUIN_VILLAGES, villages } from '../../src/content/villages';
 
 const gdd = readFileSync(new URL('../../docs/gdd.md', import.meta.url), 'utf8');
@@ -144,6 +145,8 @@ describe('ruins in the villages (GDD §8.2, D157)', () => {
   });
 });
 
+const wrightsBlade = gear['wrights-blade'];
+
 describe("the Wright's Blade (GDD §5.3.6, D159, D170)", () => {
   it('is the fourth weapon tier, with the GDD numbers and requirements', () => {
     expect(wrightsBlade).toMatchObject({
@@ -172,7 +175,7 @@ describe('Arvid Netmender (GDD §8.5, D154)', () => {
     expect(role).toBe('Vanguard');
     expect(damage).toBe('Rune');
     expect(origin).toBe('Highland');
-    expect(traits).toBe(arvid.traits.map((t) => v05Traits[t].name).join(', '));
+    expect(traits).toBe(arvid.traits.map((t) => traitDefs[t].name).join(', '));
     const s = arvid.stats;
     expect(stats).toBe(`${s.health}/${s.might}/${s.armor}/${s.speed}`);
     expect(arvid).toMatchObject({ role: 'vanguard', damage: 'rune', origin: 'highland' });

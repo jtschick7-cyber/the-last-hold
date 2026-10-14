@@ -1,3 +1,4 @@
+import { V05_TRAIT_IDS, v05Traits } from './hunters-v05';
 import { type DamageType, type FamilyId, type LocationId } from './damage';
 
 // GDD §8.5 traits: each with an exact numeric effect, as data. Core combat and
@@ -20,6 +21,8 @@ export const TRAIT_IDS = [
   'herbwise',
   'wolf-friend',
   'tracker',
+  // v0.5: Arvid's (GDD §8.5, D154).
+  ...V05_TRAIT_IDS,
 ] as const;
 export type TraitId = (typeof TRAIT_IDS)[number];
 
@@ -43,7 +46,9 @@ export type TraitEffect =
   | { readonly kind: 'bountyPct'; readonly amount: number }
   | { readonly kind: 'potionPower'; readonly amount: number }
   /** Idle at the hold: one Lodge slot reveals clues faster (v0.3). */
-  | { readonly kind: 'clueSpeed'; readonly amount: number };
+  | { readonly kind: 'clueSpeed'; readonly amount: number }
+  /** While the holder stands, the party member with the lowest % Health takes this much less (v0.5). */
+  | { readonly kind: 'lowestHealthTakenWhileStanding'; readonly amount: number };
 
 export interface TraitDef {
   readonly id: TraitId;
@@ -51,7 +56,7 @@ export interface TraitDef {
   readonly summary: string;
   readonly effect: TraitEffect;
   /** Milestone it starts to matter in; v0.3 and reserved traits are inert in v0.2. */
-  readonly activeFrom: 'v0.2' | 'v0.3';
+  readonly activeFrom: 'v0.2' | 'v0.3' | 'v0.5';
 }
 
 export const traits: Readonly<Record<TraitId, TraitDef>> = {
@@ -161,4 +166,5 @@ export const traits: Readonly<Record<TraitId, TraitDef>> = {
     effect: { kind: 'clueSpeed', amount: 0.25 },
     activeFrom: 'v0.3',
   },
+  ...v05Traits,
 };

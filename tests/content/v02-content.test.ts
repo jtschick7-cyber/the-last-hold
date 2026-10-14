@@ -27,8 +27,8 @@ describe('v0.2 content', () => {
     }
   });
 
-  it('has 10 hunters (8 from v0.2, 2 from v0.3), 16 monsters (4 Cursed from v0.5) and 5 villages (GDD §8)', () => {
-    expect(HUNTER_IDS).toHaveLength(10);
+  it('has 11 hunters (8 from v0.2, 2 from v0.3, Arvid from v0.5), 16 monsters (4 Cursed from v0.5) and 5 villages (GDD §8)', () => {
+    expect(HUNTER_IDS).toHaveLength(11);
     expect(MONSTER_IDS).toHaveLength(16);
     expect(VILLAGE_IDS).toHaveLength(5);
   });
@@ -48,6 +48,7 @@ describe('hunters (GDD §8.5)', () => {
       sigrun: 1200,
       stanko: 450,
       herdis: 300,
+      arvid: 0, // GDD §8.5 (v0.5): free
     });
     expect(HUNTER_IDS.filter((h) => hunters[h].unlock.kind === 'start').sort()).toEqual([
       'halvar',
@@ -55,8 +56,13 @@ describe('hunters (GDD §8.5)', () => {
     ]);
   });
 
-  it('story hunters are Sigrun, Ostap and Toma (Arvid arrives in v0.5)', () => {
-    expect(HUNTER_IDS.filter((h) => hunters[h].story).sort()).toEqual(['ostap', 'sigrun', 'toma']);
+  it('story hunters are Sigrun, Ostap, Toma and, from v0.5, Arvid', () => {
+    expect(HUNTER_IDS.filter((h) => hunters[h].story).sort()).toEqual([
+      'arvid',
+      'ostap',
+      'sigrun',
+      'toma',
+    ]);
   });
 
   it('each hunter has two real traits and base stats within ±10% or 1 point of the role baseline (D102)', () => {
@@ -235,7 +241,11 @@ describe('gear (GDD §5.3.6)', () => {
     });
   });
 
-  it('only the Silvered Blade has a Silver sub-hit', () => {
-    expect(GEAR_IDS.filter((g) => gear[g].silverSubHit)).toEqual(['silvered-blade']);
+  it("only the Silvered Blade and the Wright's Blade (v0.5, which keeps it) have a Silver sub-hit", () => {
+    expect(GEAR_IDS.filter((g) => gear[g].silverSubHit)).toEqual([
+      'silvered-blade',
+      'wrights-blade',
+    ]);
+    expect(GEAR_IDS.filter((g) => gear[g].runeSubHit)).toEqual(['wrights-blade']);
   });
 });

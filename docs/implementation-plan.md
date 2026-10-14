@@ -586,7 +586,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
   - The four abilities in the fight engine: Lightless (hit chance), Seal-burn (Fire back to a direct attacker, no Armor), Re-forge (Saltburst cancels it), Unthawed (first Fire hit, stat%).
   - The creatures join the Last Stand's waves at their tiers.
   - **Contract fights and every golden fight unchanged.** If a golden changes, stop and ask; bump `rulesVersion` only with the owner's OK.
-- [ ] **T5.5 Rune.**
+- [x] **T5.5 Rune.** *(Readings in D177.)*
   - The Wright's Blade: Citadel and Smithy 8; the Rune sub-hit on its own log line; the breakdowns.
   - Arvid's traits (Shield-companion as taken%, within the 75% cap; Old Wright).
   - Arvid's unlock: when Act III begins. He can't arrive in v0.5, so a debug action adds him for testing.

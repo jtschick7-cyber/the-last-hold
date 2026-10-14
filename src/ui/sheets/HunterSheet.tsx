@@ -7,6 +7,7 @@ import {
   hunterStat,
   hunterStatus,
   levelCap,
+  gearLock,
   nextGear,
   slotGear,
   xpToNext,
@@ -25,8 +26,8 @@ const Slot = ({ id, slot }: { id: HunterId; slot: 'weapon' | 'armor' }) => {
   if (!h) return null;
   const current = slotGear(h, slot);
   const next = nextGear(h, slot);
-  const smithy = next ? s.buildings[next.requires.building] : 0;
-  const locked = next ? smithy < next.requires.level : false;
+  const lock = next ? gearLock(s, next) : null;
+  const locked = lock !== null;
   const affordable = next
     ? RESOURCE_IDS.every((r) => s.resources[r] >= (next.cost[r] ?? 0))
     : false;
@@ -37,11 +38,15 @@ const Slot = ({ id, slot }: { id: HunterId; slot: 'weapon' | 'armor' }) => {
         {next && (
           <div class={`${styles.small} ${styles.dim}`}>
             Next: {next.name}
-            {next.silverSubHit ? ' (adds a Silver sub-hit)' : ''}
+            {next.runeSubHit
+              ? ' (adds a Rune sub-hit)'
+              : next.silverSubHit
+                ? ' (adds a Silver sub-hit)'
+                : ''}
             {next.fireTakenReduction > 0 ? ' (−10% Fire taken)' : ''}
             {next.might > 0 ? ` · +${next.might} Might` : ''}
             {next.armor > 0 ? ` · +${next.armor} Armor` : ''}
-            {locked ? ` · needs Smithy ${next.requires.level}` : ''}
+            {lock ? ` · ${lock}` : ''}
             <span class={styles.cost}>
               {RESOURCE_IDS.filter((r) => (next.cost[r] ?? 0) > 0).map((r) => (
                 <span

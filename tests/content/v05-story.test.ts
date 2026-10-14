@@ -255,7 +255,8 @@ describe('the forty names (lore-secrets §8, §20)', () => {
 
 describe('hunter letters (GDD §5.14.7, lore-secrets §23)', () => {
   it('two per hunter, 22 in all, with the five name-bearing ones written', () => {
-    expect(letters).toHaveLength(2 * (HUNTER_IDS.length + 1));
+    expect(HUNTER_IDS).toContain('arvid');
+    expect(letters).toHaveLength(2 * HUNTER_IDS.length);
     const written = letters.filter((l) => l.body !== null);
     expect(written.map((l) => `${l.hunter}:${l.slot}`).sort()).toEqual(
       ['arvid:0', 'ostap:0', 'ostap:1', 'sigrun:0', 'toma:0'].sort(),

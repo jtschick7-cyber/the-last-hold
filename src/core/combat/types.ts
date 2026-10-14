@@ -106,6 +106,7 @@ export interface Combatant {
   readonly traits: readonly TraitEffect[];
   readonly fireTakenReduction: number;
   readonly silverSubHit: boolean;
+  readonly runeSubHit: boolean;
   readonly abilities: readonly MonsterAbility[];
   /** Actions taken so far, including lost ones. */
   actions: number;

@@ -73,6 +73,8 @@ export type Command =
   | { type: 'debug.addEmbers'; amount: number }
   /** GDD §5.9.8: makes this save face the v0.4 arrival, as a pre-v0.4 save does. */
   | { type: 'debug.runArrival' }
+  /** Plan T5.5: Arvid can't arrive in v0.5 (Act III isn't written), so this adds him. */
+  | { type: 'debug.addArvid' }
   | { type: 'debug.unlockAge'; age: AgeId };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };

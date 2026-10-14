@@ -2,29 +2,15 @@ import { CURSED_FAMILY } from './cursed';
 import type { HunterDef } from './hunters';
 import type { TraitDef } from './traits';
 
-// GDD §8.5 (v0.5, D154): Arvid Netmender and his two traits. Content only (plan
-// T5.1): hunters and traits are saved state, so they join HUNTER_IDS and
-// TRAIT_IDS after the v4 → v5 migration (T5.3); T5.5 gives the traits their
-// effect. He unlocks when Act III begins, so he can't arrive in v0.5 (a debug
-// action adds him for testing, T5.5).
+// GDD §8.5 (v0.5, D154): Arvid Netmender and his two traits, spread into the
+// hunter and trait tables (T5.5). He unlocks when Act III begins, so he can't
+// arrive in v0.5; a debug action adds him for testing.
 
 export const V05_TRAIT_IDS = ['shield-companion', 'old-wright'] as const;
 export type V05TraitId = (typeof V05_TRAIT_IDS)[number];
 
-export type V05TraitEffect =
-  /** While the holder stands, the party member with the lowest % Health takes this much less (taken%; ties by slot). */
-  | { readonly kind: 'lowestHealthTakenWhileStanding'; readonly amount: number }
-  | {
-      readonly kind: 'mightVsFamily';
-      readonly family: typeof CURSED_FAMILY.id;
-      readonly amount: number;
-    };
-
-export interface V05TraitDef extends Omit<TraitDef, 'id' | 'effect' | 'activeFrom'> {
-  readonly id: V05TraitId;
-  readonly effect: V05TraitEffect;
-  readonly activeFrom: 'v0.5';
-}
+/** Arvid's traits, as the main trait table holds them (traits.ts spreads them in). */
+type V05TraitDef = Omit<TraitDef, 'id'> & { readonly id: V05TraitId };
 
 export const v05Traits: Readonly<Record<V05TraitId, V05TraitDef>> = {
   'shield-companion': {
@@ -44,14 +30,7 @@ export const v05Traits: Readonly<Record<V05TraitId, V05TraitDef>> = {
   },
 };
 
-export interface V05HunterDef extends Omit<HunterDef, 'id' | 'traits' | 'unlock'> {
-  readonly id: 'arvid';
-  readonly traits: readonly [V05TraitId, V05TraitId];
-  /** GDD §8.5: when Act III begins (lore-secrets §10). */
-  readonly unlock: { readonly kind: 'actBegins'; readonly act: number };
-}
-
-export const arvid: V05HunterDef = {
+export const arvid: HunterDef = {
   id: 'arvid',
   name: 'Arvid Netmender',
   shortName: 'Arvid',
