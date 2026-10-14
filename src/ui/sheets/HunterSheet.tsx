@@ -17,6 +17,7 @@ import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { Sprite } from '../widgets/Sprite';
+import { HunterLetters } from './HunterLetters';
 
 // GDD §9.7 hunter detail: stats with breakdowns, traits, gear and its upgrade,
 // the record, and a short bio.
@@ -122,6 +123,7 @@ export const HunterView = ({ id }: { id: HunterId }) => {
       <p class={styles.small}>
         Record: {h.record.won} won · {h.record.lost} lost
       </p>
+      <HunterLetters id={id} />
       <p class={`${styles.small} ${styles.dim}`}>{def.bio}</p>
       <button
         type="button"

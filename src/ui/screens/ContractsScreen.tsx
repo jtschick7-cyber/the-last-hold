@@ -16,6 +16,7 @@ import { ResultsView } from '../sheets/ResultsSheet';
 import styles from '../styles/ui.module.css';
 import { InvestigationPanel } from '../widgets/InvestigationPanel';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { VillagesPanel } from '../widgets/VillagesPanel';
 
 // GDD §9.4: the contract board. Running contracts, what is ready to collect, and
 // the open contracts, each with what it pays and what it takes.
@@ -78,6 +79,7 @@ export const ContractsScreen = () => {
   };
   return (
     <div>
+      <VillagesPanel />
       <section class={styles.card} aria-labelledby="board-title">
         <h2 id="board-title" class={styles.cardTitle}>
           Board {s.board.open.length}/{cap}

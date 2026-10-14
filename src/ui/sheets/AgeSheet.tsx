@@ -14,8 +14,8 @@ import { standProblem } from '../../core/commands/stand';
 
 // GDD §9.2 "Rank ▸" (D64: the player-facing word for an Age is Rank): what the next Rank restores, its checklist, its costs, and
 // what it unlocks. At Bastion, the last Rank, the sheet shows what the hold has
-// restored (GDD §9.13; the Last Stand button arrives with T4.11b). Citadel and
-// Bastion restorations have no inscription until v0.5 (setting-primer §6.5).
+// restored (GDD §9.13). The Citadel and Bastion restorations carry their
+// inscriptions from v0.5 (D160, setting-primer §6.5).
 
 export const RestorationView = ({ age }: { age: keyof typeof ages }) => {
   const r = ages[age].ageUp?.restores;
