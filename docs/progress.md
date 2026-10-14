@@ -495,3 +495,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** your answer to Q17, then finish T5.16 (and run `npm run sim:check` once more); then the v0.5 playtest checklist in the plan. Only after "the playtest passed": PR with the template, `npm run sim:accept`, merge, tag `v0.5.0`.
 - **Open questions:** Q17. **Proposed, for your review:** D171, D172, D174, D176–D179, D181–D184, D187–D189.
 - **Not done / deferred:** nothing skipped. The unwritten Act III text, Arvid arriving, the Deep family, Ember-echoes and trust rewards stay out of v0.5 as planned.
+
+## 2026-10-14 — v0.5 build complete; ready for the playtest
+- **State:** every v0.5 task is ticked (T5.1–T5.16). Branch `milestone/v0.5`, all pushed. `npm run check` green (1,305 tests, about 47 s). The full `npm run sim:check` passes every check (40 runs, 135 s on 4 cores, was 4.5–6 minutes).
+- **Q17 and Q18 (D190, D191), your choices:** while the six Ribbonshade names are missing, half of the ruin contracts that can hold one are Ribbonshades (`ruin.ribbonshadeShare`); and Act II's 2nd to 5th ruin documents and the six names are due by the end of cycle 4 (two `sim/targets.ts` rows, own commit). The share isn't the lever (0.5, 0.7 and 0.9 gave the same result); the board's ruin supply is.
+- **Next:** your v0.5 playtest (checklist in the plan, including the new art, D187). Only after "the playtest passed": PR with the template, `npm run sim:accept`, merge, tag `v0.5.0`.
+- **Worth a look in the playtest:** the simulated stands are all Triumphant (13–17 waves, thresholds 9 and 12), so the Broken and Held bands may rarely show for a strong player (band numbers are tunable); every village reaches Sworn by about cycle 4 in the simulator (trust steps are tunable).
+- **Proposed, awaiting your review:** D171, D172, D174, D176–D179, D181–D184, D187–D189.
