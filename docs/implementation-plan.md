@@ -725,7 +725,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 
 #### D. Story, bands and trust
 - [x] **T6.7 Act III** *(Done as D229. The sheet that shows the on-load arrival and the debug button are T6.9b.)*. Every condition (row-by-row test against `lore-secrets.md` §26); Arvid's arrival (joins directly, active if room, at the highest hunter's level within the Rank cap; the new-warden line, then D3-01); Act III starting on load for a save in a no-act cycle (D214), with D3-04 / D3-05 found if their Rank is already behind it; D3-05's scene then strip; D3-08's condition; the Accounts event. The debug panel's "Add Arvid" stays; add "Start Act III" for testing.
-- [ ] **T6.8 Bands and trust.** Thresholds 12 / 15 from `balance.ts`; a Triumphant stand adds `trust.triumphantContracts` progress to every village (carry-over, Sworn stops counting; each step it completes gets its line); past stands keep their recorded band (Roll of Wardens, result sheets).
+- [x] **T6.8 Bands and trust** *(Done as D230; "Held from 12 · Triumphant from 15" on the stand screen was already there.)*. Thresholds 12 / 15 from `balance.ts`; a Triumphant stand adds `trust.triumphantContracts` progress to every village (carry-over, Sworn stops counting; each step it completes gets its line); past stands keep their recorded band (Roll of Wardens, result sheets).
 
 #### E. UI
 - [ ] **T6.9a The Hut.** Brew, Experiment and Book sections (GDD §9.9); discovery lines on the away sheet and results.

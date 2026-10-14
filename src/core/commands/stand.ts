@@ -101,7 +101,7 @@ export const makeStand = (
   // GDD §5.14.9: the stand closes the act (its testament on the result sheet), and a
   // Triumphant one raises every village's trust a step (D146).
   // The steps are kept on the record so the result sheet can show them whenever it is opened (D183).
-  if (bandFor(result.wavesHeld) === 'triumphant') stand.trustSteps = triumphantStand(state);
+  if (stand.band === 'triumphant') stand.trustSteps = triumphantStand(state);
   standDocuments(state);
   // 4–5. The reset and the new cycle; the next warden's arrival closes the act's scene.
   resetForNewCycle(state);

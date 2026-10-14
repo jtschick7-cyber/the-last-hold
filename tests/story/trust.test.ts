@@ -2,6 +2,7 @@
 // a step from each Triumphant stand, carry-over, never down; notices read it; it
 // changes no number.
 import { describe, expect, it } from 'vitest';
+import { num } from '../../src/core/balance-access';
 import { trustClosingLines } from '../../src/content/story/trust';
 import { VILLAGE_IDS } from '../../src/content/villages';
 import { noticeFor } from '../../src/core/contracts/notice';
@@ -46,24 +47,48 @@ describe('trust (GDD §5.14.6)', () => {
     });
   });
 
-  it('a Triumphant stand raises every village a step, and counted progress carries over', () => {
+  it('a Triumphant stand counts 10 contracts toward every village’s next step (D195)', () => {
     const s = createNewGame('trust', T0);
     for (let i = 0; i < 6; i++) winForVillage(s, 'kozly-hollow');
     const keys = triumphantStand(s);
-    expect(keys).toContain('trust:kozly-hollow:wary');
-    expect(keys).toHaveLength(5);
+    // Cold needs 10: Kozly Hollow (6 + 10 = 16) and Ravenfell (10) rise; the rest only gain progress.
+    expect(keys).toEqual(['trust:kozly-hollow:wary', 'trust:ravenfell:wary']);
     expect(s.story.trust['kozly-hollow']).toMatchObject({
       level: 'wary',
-      progress: 6,
+      progress: 6, // 16 − 10 carried over
       triumphs: 1,
     });
-    expect(s.story.trust.mirograd.level).toBe('trusting');
+    expect(s.story.trust.ravenfell).toMatchObject({ level: 'wary', progress: 0, triumphs: 1 });
+    expect(s.story.trust['dubno-ford']).toMatchObject({ level: 'wary', progress: 10 });
+    expect(s.story.trust.velkvik).toMatchObject({ level: 'wary', progress: 10 });
+    expect(s.story.trust.mirograd).toMatchObject({ level: 'hopeful', progress: 10 });
+    expect(s.story.trust.mirograd.won).toBe(0); // stands are not contracts won for the village
   });
 
-  it('never drops and stops at Sworn', () => {
+  it('the amount is the tunable, and a big enough one climbs two steps with one key each', () => {
+    expect(num('trust.triumphantContracts')).toBe(10);
     const s = createNewGame('trust', T0);
-    for (let i = 0; i < 5; i++) triumphantStand(s);
+    // Hopeful needs 20, then Trusting 25: start so that this stand's 10 completes the first and the carry the second.
+    s.story.trust.mirograd.progress = 20 + 25 - num('trust.triumphantContracts');
+    const keys = triumphantStand(s);
+    expect(keys).toContain('trust:mirograd:trusting');
+    expect(keys).toContain('trust:mirograd:sworn');
+    expect(s.story.trust.mirograd.level).toBe('sworn');
+    expect(s.story.trust.mirograd.progress).toBe(0);
+  });
+
+  it('a Sworn village stops counting', () => {
+    const s = createNewGame('trust', T0);
+    for (let i = 0; i < 30; i++) triumphantStand(s);
     expect(VILLAGE_IDS.every((v) => s.story.trust[v].level === 'sworn')).toBe(true);
+    const triumphs = s.story.trust.mirograd.triumphs;
+    expect(triumphantStand(s)).toEqual([]);
+    expect(s.story.trust.mirograd).toMatchObject({ progress: 0, triumphs });
+  });
+
+  it('never drops, and contract wins stop counting at Sworn', () => {
+    const s = createNewGame('trust', T0);
+    for (const v of VILLAGE_IDS) s.story.trust[v].level = 'sworn';
     expect(winForVillage(s, 'mirograd')).toEqual([]);
     expect(s.story.trust.mirograd.progress).toBe(0);
     expect(s.story.trust.mirograd.won).toBe(1);

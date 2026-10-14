@@ -5,7 +5,6 @@ import { UNWRITTEN_ACT_LINE } from '../../content/story/acts';
 import type { DocumentDef } from '../../content/story/documents';
 import { villages } from '../../content/villages';
 import type { StandRecord } from '../../core/state/game-state';
-import { bandFor } from '../../core/story/band';
 import { docKey, isFound } from '../../core/story/documents';
 import { parseTrustKey } from '../../core/story/trust';
 import { residentLines } from '../../core/story/wardens';
@@ -20,13 +19,13 @@ import { DocumentReader } from '../screens/ArchiveScreen';
 /** The stand's band, from the waves it held. */
 export const BandLine = ({ stand }: { stand: StandRecord }) => (
   <p>
-    <strong>{bandLabels[bandFor(stand.wavesHeld)]}</strong>
+    <strong>{bandLabels[stand.band]}</strong>
   </p>
 );
 
 /** One line each from Pechko and Brana for the band, then any trust steps the stand brought. */
 export const ResidentsAndTrust = ({ stand }: { stand: StandRecord }) => {
-  const lines = residentLines(stand.seed, bandFor(stand.wavesHeld));
+  const lines = residentLines(stand.seed, stand.band);
   return (
     <>
       <p class={styles.small}>
