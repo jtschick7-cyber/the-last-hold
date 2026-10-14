@@ -553,20 +553,20 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### A. Content and state
 
-- [ ] **T5.1 Content and keys.** *(Split, as planned: T5.1a mechanics content, T5.1b story content.)*
+- [x] **T5.1 Content and keys.** *(Split, as planned: T5.1a mechanics content, T5.1b story content.)*
   - [x] **T5.1a Keys and mechanics content.**
     - The v0.5 keys from GDD §7.7 into `balance.ts`, all tunable, and the §7.7 rows rewritten into the `key` = value form in the same commit (D166).
     - The four Cursed creatures (stats, resistances, abilities, clue tags and texts, drops) and the ruin row of the coverage table, checked against the GDD in `tests/content/v05-content.test.ts` (the live coverage test covers ruins once they join the board, T5.4).
     - The ruin tag on Kozly Hollow, Velkvik and Ravenfell; the Wright's Blade (was "Runed Blade", D170); Arvid Netmender and his two traits. Outside the saved-state id lists until their wiring tasks (D171).
-  - [ ] **T5.1b Story content.**
+  - [x] **T5.1b Story content.** *(In `src/content/story/`; readings in D172.)*
     - Story content in `src/content/`: acts, every Act I and II document with its condition and text, the forty names with their sources and hints, the five name-bearing letters (and slots for the other 17), the residents' band lines, the trust text, the inscriptions, and the warden-name list.
     - A test against the GDD and `lore-secrets.md` tables.
   - Wiring that changes saved state waits for T5.3.
-- [ ] **T5.2 Names.** Collision search (GDD §2.3) for every new proper noun:
+- [x] **T5.2 Names.** Collision search (GDD §2.3) for every new proper noun:
   - the 36 new roll names;
   - Věra, Dana Lisová, Master Hrafn, Hallvard, Master Bielik, and the four non-Sent apprentices on the Mirograd roll;
   - Kamenfell and the warden-name list.
-  Ribbonshade, Anvil-wight, Gloam-moths, Rimewrought, Arvid Netmender, Shield-companion and Old Wright are already clear (D154, D158). Add all of them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
+  Ribbonshade, Anvil-wight, Gloam-moths, Rimewrought, Arvid Netmender, Shield-companion and Old Wright are already clear (D154, D158). Add all of them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives. *Done: "Runed Blade" became the Wright's Blade (D170); the owner set the rule for people's names and roll #20 became Torgils Torkelsson (D173); 11 warden names with any influence namesake were dropped.*
 - [ ] **T5.3 Migration v4 → v5**, using the **owner's real v0.4 save** as the fixture, with a round-trip test. New saved state:
   - the act per cycle and its counters;
   - documents found (with cycle and how);

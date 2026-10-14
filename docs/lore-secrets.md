@@ -454,7 +454,7 @@ The full original text of decision **D32**, trimmed from `docs/decisions.md` und
 | 17 | 232 | Pavel Lesák | Kozly Hollow | Ribbonshade | Something in an old forge still wears a ribbon. |
 | 18 | 234 | Kazimír Plachý | Mirograd | **Act I** (D1-03) | The order's clerk kept a roll for every village. |
 | 19 | 236 | Orm Ketilsson | Velkvik | Ribbonshade | Something in an old forge still wears a ribbon. |
-| 20 | 238 | Ivar Torkelsson | Ravenfell | Ribbonshade | Something in an old forge still wears a ribbon. |
+| 20 | 238 | Torgils Torkelsson | Ravenfell | Ribbonshade | Something in an old forge still wears a ribbon. |
 | 21 | 240 | Ludmila Hrubá | Mirograd | Act IV | Someone kept a second ledger. |
 | 22 | 242 | Anežka Vrbová | Kozly Hollow | Act IV | Someone kept a second ledger. |
 | 23 | 244 | Ondřej Vlček | Mirograd | **Act I** (D1-03) | The order's clerk kept a roll for every village. |
