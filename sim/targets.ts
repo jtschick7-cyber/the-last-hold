@@ -148,13 +148,13 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
   },
   {
     id: 'act-2',
-    text: 'Act II lands in its cycle: its Rank and stand documents and its first two found in cycle 2, the 2nd to 5th ruin documents by the end of cycle 3, and the next warden’s by the start of cycle 3',
+    text: 'Act II lands in its cycle: its Rank and stand documents and its first two found in cycle 2, the 2nd to 5th ruin documents by the end of cycle 4, and the next warden’s by the start of cycle 3',
     bounds: [],
     enforcedFrom: 'v0.5',
   },
   {
     id: 'ribbonshades',
-    text: 'All six Ribbonshade names found by the end of cycle 3',
+    text: 'All six Ribbonshade names found by the end of cycle 4',
     bounds: [],
     enforcedFrom: 'v0.5',
   },
@@ -191,15 +191,16 @@ export const STORY = {
   act2: {
     byCycle: 2,
     docs: ['D2-01', 'D2-02', 'D2-07', 'D2-09'],
-    // Owner-approved change (Q17, D190): the 2nd to 5th ruin win count ruin wins across the
-    // act, and a cycle brings only a few ruins, so they are due by the end of cycle 3.
-    later: { docs: ['D2-03', 'D2-04', 'D2-05', 'D2-06'], byCycle: 3 },
+    // Owner-approved change (Q17, Q18, D190, D191): the 2nd to 5th ruin win count ruin wins
+    // across the act, and a cycle brings only a few ruins, so they are due by the end of cycle 4.
+    later: { docs: ['D2-03', 'D2-04', 'D2-05', 'D2-06'], byCycle: 4 },
     nextWarden: { doc: 'D2-10', byCycle: 3 },
     reportedOnly: ['D2-08'],
   },
   /** The six Ribbonshade names (roll numbers, in their fixed order) by the end of cycle 3. */
   ribbonNames: [39, 15, 16, 17, 19, 20],
-  ribbonsByCycle: 3,
+  // Owner-approved change (Q18, D191): was cycle 3; a cycle brings only a few ruins.
+  ribbonsByCycle: 4,
 } as const;
 
 /** GDD §6.3: engagement checks, judged on every seed (technical design §13.3). */

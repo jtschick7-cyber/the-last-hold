@@ -389,7 +389,7 @@ describe('Act I and Act II land in their cycles (D168)', () => {
   const act1 = [...STORY.act1.docs.map((d) => doc(d, 1)), doc('D1-07', 2)];
   const act2 = [
     ...STORY.act2.docs.map((d) => doc(d, 2)),
-    ...STORY.act2.later.docs.map((d) => doc(d, 3)),
+    ...STORY.act2.later.docs.map((d) => doc(d, 4)),
     doc('D2-10', 3),
   ];
   it('Act I: its contract, Rank and stand documents by the end of cycle 1, D1-07 at the next warden', () => {
@@ -404,9 +404,9 @@ describe('Act I and Act II land in their cycles (D168)', () => {
     expect(r.lines.join('\n')).toContain('D1-02');
     expect(r.lines.join('\n')).toContain('reported only');
   });
-  it('Act II’s 2nd to 5th ruin documents are due by the end of cycle 3 (Q17)', () => {
+  it('Act II’s 2nd to 5th ruin documents are due by the end of cycle 4 (Q17, Q18)', () => {
     expect(act2Check.judge([withStory({ documents: act2 })]).pass).toBe(true);
-    const slow = act2.map((d) => (d.id === 'D2-06' ? doc('D2-06', 4) : d));
+    const slow = act2.map((d) => (d.id === 'D2-06' ? doc('D2-06', 5) : d));
     expect(act2Check.judge([withStory({ documents: slow })]).pass).toBe(false);
   });
   it('Act II: its Rank, stand and first documents in cycle 2, D2-10 at the next warden', () => {
@@ -422,9 +422,9 @@ describe('Act I and Act II land in their cycles (D168)', () => {
 
 describe('Ribbonshade names (D168)', () => {
   const names = (cycle: number) => STORY.ribbonNames.map((n) => ({ n, cycle, hours: 1 }));
-  it('all six by the end of cycle 3', () => {
-    expect(ribbonshadesCheck.judge([withStory({ names: names(3) })]).pass).toBe(true);
-    expect(ribbonshadesCheck.judge([withStory({ names: names(4) })]).pass).toBe(false);
+  it('all six by the end of cycle 4 (Q18)', () => {
+    expect(ribbonshadesCheck.judge([withStory({ names: names(4) })]).pass).toBe(true);
+    expect(ribbonshadesCheck.judge([withStory({ names: names(5) })]).pass).toBe(false);
     expect(ribbonshadesCheck.judge([withStory({ names: names(2).slice(0, 5) })]).pass).toBe(false);
   });
 });

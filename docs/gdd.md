@@ -1096,9 +1096,9 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.4 |
 | Later cycles | Each ≥ 15% faster than the first, with a floor of 2 days **[JC]** *(D134: was "than the one before"; after cycle 2, cycles settle at about 3 days)*. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.4 |
 | Act I lands in its cycle *(D168)* | Every Act I document with a contract, Rank or stand condition found by the end of cycle 1; D1-07 at the next warden (D1-02 and D1-05 reported only) | v0.5 |
-| Act II lands in its cycle *(D168, Q17)* | D2-01, D2-02, D2-07 and D2-09 found in cycle 2; the 2nd to 5th ruin documents (D2-03 to D2-06) by the end of cycle 3; D2-10 with the next warden (D2-08 reported only) | v0.5 |
+| Act II lands in its cycle *(D168, Q17)* | D2-01, D2-02, D2-07 and D2-09 found in cycle 2; the 2nd to 5th ruin documents (D2-03 to D2-06) by the end of cycle 4; D2-10 with the next warden (D2-08 reported only) | v0.5 |
 | First ruin contract won *(D168)* | ≤ 24 h after the Keep | v0.5 |
-| All six Ribbonshade names *(D168)* | By the end of cycle 3 | v0.5 |
+| All six Ribbonshade names *(D168, Q18)* | By the end of cycle 4 | v0.5 |
 | A village's trust rises *(D168)* | In cycle 1 | v0.5 |
 | Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.7 |
 
