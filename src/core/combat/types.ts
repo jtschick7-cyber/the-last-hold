@@ -59,6 +59,8 @@ export interface FightInput {
   /** What the party carries (GDD §5.7); absent means nothing. */
   readonly prep?: Preparation;
   readonly stand?: StandWaveOptions;
+  /** The warden's Alchemy level, frozen at launch (GDD §5.8.6, D206): brews are 3% stronger per level. Absent means 0. */
+  readonly alchemy?: number;
 }
 
 /** A potion a hunter carries (GDD §5.7). `used` is true once it has fired or been ruined. */

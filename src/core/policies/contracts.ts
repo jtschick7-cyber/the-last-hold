@@ -1,3 +1,5 @@
+import { skillLevel } from '../skills/skills';
+import { gearCost } from '../skills/hooks';
 import type { HunterId } from '../../content/hunters';
 import type { Command } from '../commands';
 import { computeOdds } from '../contracts/odds';
@@ -51,6 +53,7 @@ const oddsFor = (
     location: c.location,
     rank: s.cycle.age,
     prep,
+    alchemy: skillLevel(s, 'alchemy'),
     samples: PROBE_SAMPLES,
   }).winChance;
 };
@@ -101,8 +104,9 @@ const equip = (s: GameState, act: Act, reserve: Bundle): number => {
     for (const slot of ['weapon', 'armor'] as const) {
       const next = nextGear(h, slot);
       if (!next) continue;
+      const price = gearCost(s, next).cost;
       const clear = (['food', 'wood', 'iron', 'silver'] as const).every(
-        (r) => s.resources[r] - (next.cost[r] ?? 0) >= reserve[r],
+        (r) => s.resources[r] - price[r] >= reserve[r],
       );
       if (clear && act({ type: 'gear.upgrade', hunter: id, slot })) n += 1;
     }

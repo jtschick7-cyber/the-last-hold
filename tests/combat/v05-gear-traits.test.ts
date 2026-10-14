@@ -87,6 +87,7 @@ describe('Old Wright (Arvid)', () => {
       monsterId: 'upyr' as const,
       attacks: 1,
       hitCut: 0,
+      oilBonus: 0.35,
     });
     expect(outgoingPct(a, 'rune', ctx('cursed'))).toBeCloseTo(0.2);
     expect(outgoingPct(a, 'rune', ctx('restless-dead'))).toBe(0);

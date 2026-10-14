@@ -1,3 +1,4 @@
+import { skillLevel } from '../../core/skills/skills';
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { monsterPortraitId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
@@ -136,6 +137,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
       monster: oddsTarget(s, contract),
       location: contract.location,
       rank: s.cycle.age,
+      alchemy: skillLevel(s, 'alchemy'),
       bountyBonus: bountyBonus(s).value,
       xpBonus: contractXpBonus(s).value,
     };
@@ -185,6 +187,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
       monster: oddsTarget(s, contract),
       location: contract.location,
       rank: s.cycle.age,
+      alchemy: skillLevel(s, 'alchemy'),
       maxParty: max,
       prep: activePrep,
     });

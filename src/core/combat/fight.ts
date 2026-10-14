@@ -6,6 +6,7 @@ import { burnTick, cancelsAbility, startOfFight } from './prep';
 import { directAttack } from './damage';
 import { emit, type Fight } from './fight-state';
 import {
+  alchemyPotency,
   healthPct,
   knowledgeBonus,
   lightlessCut,
@@ -173,12 +174,14 @@ export const runFight = (input: FightInput): FightResult => {
     }
   }
   const monster = buildMonster(input.monster, stand?.monsterStrength ?? 1);
+  const potency = alchemyPotency(input.alchemy ?? 0);
   const ctx: FightContext = {
     location: input.location,
     family: monsterFamily(input.monster.monster),
     monsterId: input.monster.monster,
     attacks: monsters[input.monster.monster].attacks,
     hitCut: lightlessCut(input.monster.monster),
+    oilBonus: K.oilBonus * potency,
   };
   const f: Fight = {
     tick: 0,
@@ -196,6 +199,7 @@ export const runFight = (input: FightInput): FightResult => {
     monsterActing: false,
     bombs: input.prep?.bombs ?? [],
     volley: stand?.volley ?? 0,
+    potency,
   };
   // Potions that work from the start, then the bombs, before anyone acts (GDD §5.7).
   startOfFight(f);

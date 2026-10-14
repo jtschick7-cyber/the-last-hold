@@ -1,6 +1,7 @@
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
 import type { IngredientId } from '../../content/ingredients';
+import { noteBrewFinished, noteExperimentFinished } from '../skills/hooks';
 import { finishExperiment, type ExperimentResult } from './book';
 import { num } from '../balance-access';
 import type { BrewJob, GameState, KettleJob } from '../state/game-state';
@@ -85,9 +86,13 @@ export const applyBrew = (state: GameState): BrewDone | ExperimentDone | null =>
   if (!job) return null;
   state.queues.brewing.splice(index, 1);
   startBrews(state);
-  if (job.kind === 'experiment')
-    return { a: job.a, b: job.b, at: state.time, ...finishExperiment(state, job.a, job.b) };
+  if (job.kind === 'experiment') {
+    const result = finishExperiment(state, job.a, job.b);
+    noteExperimentFinished(state, result.revealed.length);
+    return { a: job.a, b: job.b, at: state.time, ...result };
+  }
   state.stores[job.item] += 1;
+  noteBrewFinished(state);
   return { item: job.item, at: state.time };
 };
 

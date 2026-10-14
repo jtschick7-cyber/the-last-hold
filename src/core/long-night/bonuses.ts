@@ -1,3 +1,4 @@
+import { skillBonus } from '../skills/skills';
 import type { ResourceId } from '../../content/resources';
 import { RELIC_IDS, relics, type RelicEffect } from '../../content/relics';
 import { UPGRADE_IDS, upgrades, type UpgradeEffect } from '../../content/warden-upgrades';
@@ -65,11 +66,17 @@ export const relicBonuses = (state: GameState, resource: ResourceId): Bonus[] =>
       : [];
   });
 
-/** Contract XP: Drill Yard and the Tally Stick. */
+const commandLine = (state: GameState): Breakdown => {
+  const b = skillBonus(state, 'command');
+  return { ...b.breakdown, value: b.value };
+};
+
+/** Contract XP: Drill Yard, the Tally Stick and Command. */
 export const contractXpBonus = (state: GameState): Explained =>
   explained('Contract XP bonus', [
     ...upgradeLines(state, 'contractXp'),
     ...relicLines(state, 'contractXp'),
+    commandLine(state), // Command (GDD §5.8.6), adding with the Drill Yard and the Tally Stick
   ]);
 
 /** Bounty silver: Village Goodwill (bounties only; seams untouched, G1). */

@@ -1,3 +1,4 @@
+import { noteDocument } from '../skills/hooks';
 import { knowledgeLevels } from '../../content/knowledge';
 import { allDocuments, LAST_WRITTEN_ACT, UNWRITTEN_ACT_LINE } from '../../content/story/acts';
 import type { DocumentCondition, DocumentDef } from '../../content/story/documents';
@@ -43,6 +44,7 @@ export const findDocument = (state: GameState, doc: DocumentDef, via: FoundVia):
   state.story.documents.push({ id: doc.id, cycle: state.cycle.number, at: state.time, via });
   state.story.unread.push(docKey(doc.id));
   if (state.story.ilseAt === null) state.story.ilseAt = state.time;
+  noteDocument(state); // Lore (GDD §5.8.6)
   const keys = [docKey(doc.id)];
   for (const n of doc.names) {
     const k = findName(state, n);

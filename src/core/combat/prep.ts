@@ -50,7 +50,7 @@ export const startOfFight = (f: Fight): void => {
     const p = h.potion;
     if (!p) continue;
     if (p.effect.kind === 'speedWholeFight') {
-      const bonus = p.effect.speedBonus * (1 + p.power);
+      const bonus = p.effect.speedBonus * (1 + p.power) * f.potency;
       h.statPct.speed += bonus;
       h.speed = speedEff(h);
       p.used = true;
@@ -62,7 +62,7 @@ export const startOfFight = (f: Fight): void => {
       });
     } else if (p.effect.kind === 'fireTaken') {
       // GDD §5.8.5: Coldwater Draught, drunk at the start; Herbwise strengthens it.
-      const cut = p.effect.takenCut * (1 + p.power);
+      const cut = p.effect.takenCut * (1 + p.power) * f.potency;
       h.fireTakenPotion += cut;
       p.used = true;
       emit(f, {
@@ -73,7 +73,7 @@ export const startOfFight = (f: Fight): void => {
       });
     } else if (p.effect.kind === 'hitChance') {
       // GDD §5.8.5: Owl-Eye Drops, put in at the start; the bonus is points of hit chance.
-      const points = p.effect.hitChance * (1 + p.power);
+      const points = p.effect.hitChance * (1 + p.power) * f.potency;
       h.hitBonus += points;
       p.used = true;
       emit(f, {
@@ -87,7 +87,7 @@ export const startOfFight = (f: Fight): void => {
       // Held until an ability would cost the holder an action; Spoil can still ruin it (D92).
       h.steadfastLeft = p.effect.uses;
     } else if (p.effect.kind === 'armorUntilAction') {
-      const bonus = p.effect.armorBonus * (1 + p.power);
+      const bonus = p.effect.armorBonus * (1 + p.power) * f.potency;
       h.statusPct.armor += bonus;
       h.tonicLeft = p.effect.untilAction;
       p.used = true;
@@ -101,6 +101,7 @@ export const startOfFight = (f: Fight): void => {
     }
   }
   const m = f.monster;
+  const shown = (x: number): number => Math.round(x * f.potency * 100) / 100;
   if (f.volley > 0) {
     // GDD §5.9.2: Steel that ignores Armor, like a bomb (no oil, trait or knowledge bonus).
     const resist = m.resist ? m.resist.steel : 1;
@@ -122,7 +123,7 @@ export const startOfFight = (f: Fight): void => {
     const e = consumables[id].effect;
     if (e.kind === 'burn' || e.kind === 'chill') {
       const resist = m.resist ? m.resist[e.damageType] : 1;
-      const dealt = e.initial * resist;
+      const dealt = e.initial * f.potency * resist;
       const amount = finalDamage(dealt, m, resist, false, 0, 1);
       hurt(m, amount);
       // A Fire Pot is a Fire hit: it cracks a Rimewrought's rime (Unthawed, D176).
@@ -131,7 +132,7 @@ export const startOfFight = (f: Fight): void => {
       if (e.kind === 'burn') {
         // A status with the same name refreshes rather than stacks (GDD §5.0).
         m.burnLeft = e.actions;
-        m.burnAmount = e.perAction;
+        m.burnAmount = e.perAction * f.potency;
       } else {
         m.chillLeft = e.actions;
         m.statusPct.speed = -e.speedCut;
@@ -143,9 +144,9 @@ export const startOfFight = (f: Fight): void => {
         actor: 'party',
         kind: 'bomb',
         text: () =>
-          `The party throws a ${consumables[id].name} — ${e.damageType[0]?.toUpperCase()}${e.damageType.slice(1)} ${e.initial}` +
+          `The party throws a ${consumables[id].name} — ${e.damageType[0]?.toUpperCase()}${e.damageType.slice(1)} ${shown(e.initial)}` +
           `${resist === 1 ? '' : resist === 0 ? ' immune' : ` ×${resist} resist`} = ${amount}` +
-          `${slow ? `, and the ${m.name} slows (−${percent(e.speedCut)} Speed for ${e.actions} actions)` : `, and the ${m.name} burns (${e.perAction} Fire on each of its next ${e.actions} actions)`}` +
+          `${slow ? `, and the ${m.name} slows (−${percent(e.speedCut)} Speed for ${e.actions} actions)` : `, and the ${m.name} burns (${shown(e.perAction)} Fire on each of its next ${e.actions} actions)`}` +
           `${cracked ? `; ${cracked}` : ''}` +
           ` · ${m.name} ${m.health}/${m.maxHealth}`,
         rolls: [],
@@ -199,7 +200,10 @@ export const checkPotion = (f: Fight, h: Combatant): void => {
   if (!p || p.used || p.effect.kind !== 'heal' || h.health <= 0) return;
   if (h.health >= h.maxHealth * p.effect.belowHealth) return;
   p.used = true;
-  const healed = heal(h, roundHalfUp(h.maxHealth * p.effect.healFraction * (1 + p.power)));
+  const healed = heal(
+    h,
+    roundHalfUp(h.maxHealth * p.effect.healFraction * (1 + p.power) * f.potency),
+  );
   emit(f, {
     actor: h.id,
     kind: 'prep',

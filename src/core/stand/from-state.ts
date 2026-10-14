@@ -1,3 +1,4 @@
+import { skillLevel } from '../skills/skills';
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
 import type { HunterId } from '../../content/hunters';
 import type { MonsterId } from '../../content/monsters';
@@ -47,6 +48,7 @@ export const standInputFor = (
   defenses: { walls: state.buildings.walls, watchtower: state.buildings.watchtower },
   relics: state.relics.map((r) => r.id),
   knowledge: knowledgeNow(state),
+  alchemy: skillLevel(state, 'alchemy'),
 });
 
 /** GDD §5.9.8 (D112): the arrival caps the trophies part at share × the cycle-1 median. */

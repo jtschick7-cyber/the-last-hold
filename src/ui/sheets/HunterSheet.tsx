@@ -1,3 +1,4 @@
+import { gearCost } from '../../core/skills/hooks';
 import { hunterPortraitId, WRIGHTS_BLADE_ICON } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { traits } from '../../content/traits';
@@ -29,9 +30,9 @@ const Slot = ({ id, slot }: { id: HunterId; slot: 'weapon' | 'armor' }) => {
   const next = nextGear(h, slot);
   const lock = next ? gearLock(s, next) : null;
   const locked = lock !== null;
-  const affordable = next
-    ? RESOURCE_IDS.every((r) => s.resources[r] >= (next.cost[r] ?? 0))
-    : false;
+  // GDD §5.8.6: the cost after Smithing, from the same function the command pays with.
+  const cost = next ? gearCost(s, next).cost : null;
+  const affordable = cost ? RESOURCE_IDS.every((r) => s.resources[r] >= cost[r]) : false;
   return (
     <div class={styles.row}>
       <span class={styles.grow}>
@@ -51,12 +52,9 @@ const Slot = ({ id, slot }: { id: HunterId; slot: 'weapon' | 'armor' }) => {
             {next.armor > 0 ? ` · +${next.armor} Armor` : ''}
             {lock ? ` · ${lock}` : ''}
             <span class={styles.cost}>
-              {RESOURCE_IDS.filter((r) => (next.cost[r] ?? 0) > 0).map((r) => (
-                <span
-                  key={r}
-                  class={s.resources[r] >= (next.cost[r] ?? 0) ? undefined : styles.short}
-                >
-                  <ResourceIcon r={r} /> {formatNumber(next.cost[r] ?? 0)}
+              {RESOURCE_IDS.filter((r) => (cost?.[r] ?? 0) > 0).map((r) => (
+                <span key={r} class={s.resources[r] >= (cost?.[r] ?? 0) ? undefined : styles.short}>
+                  <ResourceIcon r={r} /> {formatNumber(cost?.[r] ?? 0)}
                 </span>
               ))}
             </span>

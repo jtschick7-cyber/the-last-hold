@@ -39,6 +39,8 @@ export interface FightContext {
   readonly attacks: number;
   /** Gloam-moths' Lightless: hunters' hit chance is this much lower while it stands (v0.5). */
   readonly hitCut: number;
+  /** The oil bonus this fight: `oil.familyBonus`, made stronger by Alchemy (GDD §5.8.6). */
+  readonly oilBonus: number;
 }
 
 /** GDD §8.3 Lightless (a passive): the cut to every hunter's hit chance. */
@@ -63,7 +65,7 @@ export const outgoingPct = (a: Combatant, type: DamageType, ctx: FightContext): 
     else if (e.kind === 'damageType' && e.type === type) sum += e.dealt;
   }
   // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
-  if (a.oilFamily !== null && a.oilFamily === ctx.family) sum += K.oilBonus;
+  if (a.oilFamily !== null && a.oilFamily === ctx.family) sum += ctx.oilBonus;
   return sum;
 };
 
@@ -145,3 +147,6 @@ export const unthaw = (c: Combatant): string | null => {
   }
   return null;
 };
+
+/** GDD §5.8.6: every number in a brew's effect is this much stronger at an Alchemy level (1 at level 0). */
+export const alchemyPotency = (level: number): number => 1 + num('skill.alchemyPotency') * level;

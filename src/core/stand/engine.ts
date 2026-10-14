@@ -34,6 +34,8 @@ export interface StandInput {
   readonly knowledge: Readonly<Partial<Record<MonsterId, number>>>;
   /** Default false: practice stands don't build logs. */
   readonly log?: boolean;
+  /** The warden's Alchemy level, frozen when the stand was made (GDD §5.8.6). */
+  readonly alchemy?: number;
 }
 
 export interface WaveOutcome {
@@ -157,6 +159,7 @@ export const runStand = (input: StandInput): StandResult => {
       log: input.log === true,
       prep: { oils: input.prep.oils, potions, bombs },
       stand: { health, monsterStrength: strength, partyTaken, volley },
+      alchemy: input.alchemy,
     });
     waves.push({ wave, startHealth: { ...health }, bombs, fight });
     for (const id of fight.potionsUsed) potionUsed.add(id);

@@ -197,7 +197,10 @@ describe('the Long Night (GDD §5.9.7)', () => {
 
     it('the recipe book and the warden skills (GDD §5.9.7, v0.6)', () => {
       expect(s.book).toEqual(before.book);
-      expect(s.skills).toEqual(before.skills);
+      // Kept, never reset: the stand itself earns Command XP (a wave held, GDD §5.8.6).
+      for (const id of Object.keys(before.skills) as (keyof typeof before.skills)[])
+        expect(s.skills[id], id).toBeGreaterThanOrEqual(before.skills[id]);
+      expect(s.skills.lore).toBeGreaterThanOrEqual(45); // and the stand's documents add to it
     });
 
     it('the bestiary, Embers, relics, warden upgrades', () => {

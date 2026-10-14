@@ -1,3 +1,4 @@
+import { noteWavesHeld } from '../skills/hooks';
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
 import { num } from '../balance-access';
 import { applyCompletion } from '../contracts/complete';
@@ -56,6 +57,7 @@ export const makeStand = (
   spendPrep(state, full);
   const input = standInputFor(state, party, full);
   const result = runStand(input);
+  noteWavesHeld(state, result.wavesHeld); // Command (GDD §5.8.6)
   // 3. Conversion: Embers and relics.
   const payout = embersPayout({
     rank: state.cycle.age,
@@ -88,7 +90,7 @@ export const makeStand = (
     arrival: state.arrivalDue,
     trustSteps: [],
     band: bandFor(result.wavesHeld),
-    alchemy: 0, // the warden's Alchemy level, frozen here from T6.6 (D206)
+    alchemy: input.alchemy ?? 0, // frozen with the stand (D206)
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];

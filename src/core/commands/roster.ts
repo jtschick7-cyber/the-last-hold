@@ -1,3 +1,4 @@
+import { gearCost, noteGearUpgraded } from '../skills/hooks';
 import type { GearSlot } from '../../content/gear';
 import { HUNTER_IDS, hunters, type HunterId } from '../../content/hunters';
 import { RESOURCE_IDS } from '../../content/resources';
@@ -74,13 +75,11 @@ export const upgradeGear = (state: GameState, id: HunterId, slot: GearSlot): App
   }
   const lock = gearLock(state, next);
   if (lock) return refuse(`The ${next.name} ${lock}.`);
-  const cost = Object.fromEntries(RESOURCE_IDS.map((r) => [r, next.cost[r] ?? 0])) as Record<
-    (typeof RESOURCE_IDS)[number],
-    number
-  >;
+  const { cost } = gearCost(state, next); // after Smithing (GDD §5.8.6)
   if (!canAfford(state, cost)) return refuse(`Not enough resources for ${next.name}.`);
   for (const r of RESOURCE_IDS) state.resources[r] -= cost[r];
   if (slot === 'weapon') h.weapon = next.id;
   else h.armor = next.id;
+  noteGearUpgraded(state, next.tier);
   return ok;
 };

@@ -13,6 +13,7 @@ export const standInputOf = (record: StandRecord, log = true): StandInput => ({
   defenses: record.defenses,
   relics: record.relics,
   knowledge: record.knowledge,
+  alchemy: record.alchemy,
   log,
 });
 

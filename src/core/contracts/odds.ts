@@ -33,6 +33,8 @@ export interface OddsInput {
   /** Village Goodwill and Drill Yard / Tally Stick, for the expected rewards (GDD §8.9–8.10). */
   readonly bountyBonus?: number;
   readonly xpBonus?: number;
+  /** The warden's Alchemy level (GDD §5.8.6); the launch freezes the level the fight is made at. */
+  readonly alchemy?: number;
 }
 
 export interface HunterOdds {
@@ -94,6 +96,7 @@ export const computeOdds = (input: OddsInput): Odds => {
         rolls: seeded(oddsSeed(input.gameSeed, input.contractId, ids, k * per + j)),
         log: false,
         prep: input.prep,
+        alchemy: input.alchemy,
       });
       if (r.result === 'win') winsBy[k] = (winsBy[k] ?? 0) + 1;
       ticks += r.ticks;
@@ -120,6 +123,7 @@ export const computeOdds = (input: OddsInput): Odds => {
     location: input.location,
     rolls: seeded('why'),
     prep: input.prep,
+    alchemy: input.alchemy,
   });
   const only = pool[0];
   return {

@@ -1,3 +1,4 @@
+import { noteContractWon } from '../skills/hooks';
 import { HUNTER_IDS, hunters as hunterContent, type HunterId } from '../../content/hunters';
 import { runFight } from '../combat';
 import { recordFight } from '../investigation/knowledge';
@@ -53,6 +54,7 @@ export const fightOf = (state: GameState, run: RunningContract) =>
     location: run.contract.location,
     rolls: seeded(fightSeed(state.meta.gameSeed, run.contract.id, run.party, prepIds(run.prep))),
     prep: run.prep,
+    alchemy: run.alchemy,
   });
 
 /** Finishes the next contract. The caller has moved the clock to its end time. */
@@ -118,6 +120,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   state.resources.silver += pay;
   if (success) {
     state.stats.contractsWon += 1;
+    noteContractWon(state, contract.tier); // Command (GDD §5.8.6)
     state.stats.trophies += earned;
     state.stats.bountySilver += pay;
     state.stats.kills[contract.monster] = (state.stats.kills[contract.monster] ?? 0) + 1;

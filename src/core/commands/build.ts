@@ -1,3 +1,4 @@
+import { noteSmithyBuilt } from '../skills/hooks';
 import { BUILDING_IDS, buildings, type BuildingId } from '../../content/buildings';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import type { GameState } from '../state/game-state';
@@ -57,6 +58,7 @@ export const upgrade = (state: GameState, id: BuildingId): ApplyResult => {
   pay(state, cost);
   state.buildings[id] += 1;
   state.stats.buildingsBought += 1;
+  if (id === 'smithy') noteSmithyBuilt(state, 1); // Smithing (GDD §5.8.6)
   startBrews(state); // a new kettle takes the next waiting brew (GDD §5.7)
   return ok;
 };
