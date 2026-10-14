@@ -5,4 +5,11 @@ import type { Milestone } from './targets';
 export const CURRENT_MILESTONE: Milestone = 'v0.4';
 
 /** Technical design §11.2: the fast set runs through this milestone's last time target. */
-export const FAST_UNTIL_TARGETS = ['first-tier-3', 'first-identified', 'first-studied'] as const;
+export const FAST_UNTIL_TARGETS = [
+  'first-tier-3',
+  'first-identified',
+  'first-studied',
+  // v0.4 (D130): joined once tuning put them on target (T4.15).
+  'citadel',
+  'bastion',
+] as const;

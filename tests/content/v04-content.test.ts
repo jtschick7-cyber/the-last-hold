@@ -34,17 +34,17 @@ describe('Citadel and Bastion (GDD §5.1.3, D106)', () => {
       food: 300_000,
       wood: 150_000,
       iron: 60_000,
-      silver: 1_000,
+      silver: 600, // D138
     });
     expect(up('bastion').requires).toEqual({
-      peasants: 65,
-      buildings: { mill: 15, smithy: 12, barracks: 3, walls: 1 },
+      peasants: 60,
+      buildings: { mill: 12, smithy: 9, barracks: 3, walls: 1 },
     });
     expect(up('bastion').cost).toEqual({
-      food: 1_500_000,
-      wood: 600_000,
-      iron: 250_000,
-      silver: 2_500,
+      food: 500_000,
+      wood: 300_000,
+      iron: 110_000,
+      silver: 1_600,
     });
   });
 

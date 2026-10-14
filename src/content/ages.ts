@@ -60,7 +60,7 @@ export const ages: Readonly<Record<AgeId, AgeDef>> = {
     name: 'Citadel',
     ageUp: {
       requires: { peasants: 50, buildings: { mill: 10, smithy: 8, barracks: 1 } },
-      cost: { food: 300_000, wood: 150_000, iron: 60_000, silver: 1_000 },
+      cost: { food: 300_000, wood: 150_000, iron: 60_000, silver: 600 },
       allProductionKey: 'age.citadel.allProduction',
       restores: {
         summary: 'The old Forge Hall',
@@ -72,8 +72,8 @@ export const ages: Readonly<Record<AgeId, AgeDef>> = {
     id: 'bastion',
     name: 'Bastion',
     ageUp: {
-      requires: { peasants: 65, buildings: { mill: 15, smithy: 12, barracks: 3, walls: 1 } },
-      cost: { food: 1_500_000, wood: 600_000, iron: 250_000, silver: 2_500 },
+      requires: { peasants: 60, buildings: { mill: 12, smithy: 9, barracks: 3, walls: 1 } },
+      cost: { food: 500_000, wood: 300_000, iron: 110_000, silver: 1_600 },
       allProductionKey: 'age.bastion.allProduction',
       alsoUnlocks: ['The Last Stand: once per cycle, when you choose'],
       restores: {

@@ -80,7 +80,7 @@ const parse = (args: readonly string[]): Options => {
   if (o.fast) {
     // Technical design §11.2: Opening plus Standard, 1 seed, through the
     // milestone's last time target.
-    Object.assign(o, { policies: ['opening', 'standard'], seeds: 1, starts: ['mon'], days: 3 });
+    Object.assign(o, { policies: ['opening', 'standard'], seeds: 1, starts: ['mon'], days: 5 }); // Bastion: days 3–4
   }
   if (o.accept && o.fast) usage('--accept needs the full suite, not --fast.');
   return o;

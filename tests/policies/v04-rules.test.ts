@@ -46,7 +46,7 @@ describe('the simulated player in v0.4 (GDD §6.1)', () => {
     s.resources = { food: 0, wood: 0, iron: 0, silver: 0 };
     expect(recruitHold(s, DAY)).toBe(0); // requirements met, but far from affordable
     s.resources = { food: 1e7, wood: 1e7, iron: 1e7, silver: 1e6 };
-    expect(recruitHold(s, DAY)).toBe(1_000); // affordable within 2 check-ins: saving
+    expect(recruitHold(s, DAY)).toBe(600); // affordable within 2 check-ins: saving (Citadel silver, D138)
   });
 
   it('from the Keep, holds the Rank-up silver once the rest is in reach: bounties bring it (D132)', () => {
@@ -55,7 +55,7 @@ describe('the simulated player in v0.4 (GDD §6.1)', () => {
     Object.assign(s.buildings, { mill: 10, smithy: 8, barracks: 1 });
     s.peasants.total = 50;
     s.resources = { food: 1e7, wood: 1e7, iron: 1e7, silver: 0 };
-    expect(recruitHold(s, DAY)).toBe(1_000); // no Seam rate reaches 1,000 silver in time
+    expect(recruitHold(s, DAY)).toBe(600); // no Seam rate reaches the Citadel's 600 silver in a day
   });
 
   it('while saving, gear and the Lodge, Hut and Garden leave the Rank-up silver alone too (D132)', () => {

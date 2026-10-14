@@ -129,7 +129,7 @@ describe('runStand (GDD §5.9.3)', () => {
     expect(r.waves[0]?.bombs).toEqual(['saltburst']);
   });
 
-  it('Threat makes every wave stronger: +1% Health and Might per point', () => {
+  it('Threat makes every wave stronger: +0.61% Health and Might per point (D138)', () => {
     const r = runStand(input({ threat: 100 }));
     const w = r.waves[0];
     if (!w) throw new Error('no wave');
@@ -137,7 +137,7 @@ describe('runStand (GDD §5.9.3)', () => {
     const steps = w.wave.tier - def.tiers[0];
     let scale = 1;
     for (let i = 0; i < steps; i++) scale *= num('monster.statGrowth');
-    expect(w.fight.monsterMaxHealth).toBe(roundHalfUp(def.health * scale * 2));
+    expect(w.fight.monsterMaxHealth).toBe(roundHalfUp(def.health * scale * 1.61));
     expect(r.wavesHeld).toBeLessThanOrEqual(base.wavesHeld);
   });
 

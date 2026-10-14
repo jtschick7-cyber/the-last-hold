@@ -26,11 +26,11 @@ const stand = (k: number): StandInput => ({
 });
 
 describe('the Embers payout (GDD §5.9.4)', () => {
-  it('waves part Σ 4 × 1.15^(n−1), × Rank × (1 + 0.005 × Threat), + 1 per trophy, floored', () => {
+  it('waves part Σ 4 × 1.15^(n−1), × Rank × (1 + 0.007 × Threat), + 1 per trophy, floored', () => {
     // 3 waves: 4 + 4.6 + 5.29 = 13.89.
     expect(embersPayout({ rank: 'bastion', waves: 3, threat: 0, trophies: 10 }).value).toBe(23);
     expect(embersPayout({ rank: 'bastion', waves: 3, threat: 100, trophies: 0 }).value).toBe(
-      Math.floor(13.89 * 1.5),
+      Math.floor(13.89 * 1.7), // D138
     );
     expect(embersPayout({ rank: 'keep', waves: 3, threat: 0, trophies: 0 }).value).toBe(
       Math.floor(13.89 * 0.5),

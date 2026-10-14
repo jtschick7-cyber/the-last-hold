@@ -174,7 +174,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Food** | Basic | Farms, fishery; peasants | Settling peasants; **contract provisions** *(⚑ revision G3)* | No | v0.1 |
 | **Wood** | Basic | Woodcutter's camp; peasants | Buildings; bomb casings; arrow shafts | No | v0.1 |
 | **Iron** | Basic | Mine; peasants | Buildings; smithy gear | No | v0.1 |
-| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.25/min each, no bonuses; G1); **contract bounties (main source)** | Silvered gear; recruitment; Rank-ups | No | v0.1 |
+| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.24/min each, no bonuses; G1, D138); **contract bounties (main source)** | Silvered gear; recruitment; Rank-ups | No | v0.1 |
 | **Peasants** | Population | Houses + food surplus | Assigned to gathering jobs | No | v0.1 |
 | **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; levels partly reset: half the levels above 1 are kept (§5.9.7); **gear resets** *(⚑ revision A4)* | v0.2 |
 | **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.8); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.4 arrival, G8) | v0.2 |
@@ -352,7 +352,7 @@ The four basic resources are **food, wood, iron, and silver**. There are no stor
 rate_R = workers_R × baseRate_R × (bucket multipliers, §5.0)
 ```
 
-**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.4). With at most 2 Seams, seam income can never exceed 2 × 0.25/min = **720 silver per day**. Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
+**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.4). With at most 2 Seams, seam income can never exceed 2 × 0.24/min = **about 690 silver per day** (720 at 0.25/min before D138). Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
 
 #### 5.1.2 Buildings
 
@@ -420,13 +420,13 @@ In v0.1–v0.3, the Keep is the end of content. The Rank screen shows the next R
 
 | | Citadel | Bastion |
 |---|---|---|
-| Requires | 50 peasants, Mill 10, Smithy 8, Barracks 1 | 65 peasants, Mill 15, Smithy 12, Barracks 3, Walls 1 |
-| Cost | 300,000 food, 150,000 wood, 60,000 iron, 1,000 silver | 1,500,000 food, 600,000 wood, 250,000 iron, 2,500 silver |
+| Requires | 50 peasants, Mill 10, Smithy 8, Barracks 1 | 60 peasants, Mill 12, Smithy 9, Barracks 3, Walls 1 *(T4.15, D138)* |
+| Cost | 300,000 food, 150,000 wood, 60,000 iron, 600 silver *(D138)* | 500,000 food, 300,000 wood, 110,000 iron, 1,600 silver *(D138)* |
 | All production (age bucket, not silver) | +50% (adds to the Keep's) | +50% more |
 | Mill, Sawpit, Smithy level cap | 15 | 20 |
 | Hunter level cap | 15 | 20 |
-| Bounty multiplier | ×1.25 | ×1.5 |
-| Provisions (`provisions.incomeMinutes`) | 1 | 1 |
+| Bounty multiplier | ×3.5 *(D138)* | ×3 *(D138)* |
+| Provisions (`provisions.incomeMinutes`) | 4.1 *(D138)* | 2.5 *(D138)* |
 | Active roster | +2 | +2 |
 | Highest contract tier | 5 | 5 |
 | Unlocks | Walls and Watchtower (§5.9.2) | the Last Stand (§5.9.3) |
@@ -590,7 +590,7 @@ Each contract has:
 | Location tag | Forest, river, field or barrow; **ruin from v0.5** *(⚑ revision D-2)*. **Barrow contracts start at tier 2** *(⚑ revision A3 [JC])*. Interacts with traits. |
 | Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5; at most 2 in Hamlet (G6) |
 | Duration | 30 min / 1 h / 2 h / 4 h / 8 h by tier |
-| Bounty | `78 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.0, Citadel 1.25, Bastion 1.5; D106). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6; 72 → 78 in the Q9 tuning (D82): provisions now grow with food income, so fewer contracts go out and each pays a little more)* |
+| Bounty | `91 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.1, Citadel 3.5, Bastion 3; D106, D138). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6; 72 → 78 in the Q9 tuning (D82): provisions now grow with food income, so fewer contracts go out and each pays a little more; 78 → 91 in the v0.4 tuning, D138)* |
 | Trophies | Equal to the tier, of that monster's family |
 | Reagents | *(v0.3)* monster-specific drops |
 
@@ -606,7 +606,7 @@ Each contract has:
    - **Death chance** per hunter (Reckless contracts only).
    - **Expected rewards.**
    - **"Why?"** opens the summary math: party damage per 100 ticks vs monster Health, and monster damage per 100 ticks vs the party's effective Health.
-4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1 in the Keep (D85), and 1 in Citadel and Bastion (D106; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
+4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1 in the Keep (D85), 4.1 in the Citadel and 2.5 in Bastion (D106, D138; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
 5. Launch. The hunters are busy for the contract's duration.
 
 The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 500 preview simulations use different derived seeds, so the preview never reveals the real roll.
@@ -623,7 +623,7 @@ The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation ID
 
 #### 5.4.4 How contracts feed the Hold
 
-- **Silver bounties** are the main silver source from v0.2 on. Silver Seams are capped at 720 silver per day for the whole game (G1), so bounties overtake them as higher tiers unlock.
+- **Silver bounties** are the main silver source from v0.2 on. Silver Seams are capped at about 690 silver per day for the whole game (G1; 720 before D138), so bounties overtake them as higher tiers unlock.
 - **Trophy Hall** (Keep, one level, cost 500 wood, 200 iron): gives **+0.5% to all Hold production per trophy earned this cycle**, in the trophy bucket. The count is the **cumulative trophies earned this cycle; spending trophies (v0.8) never reduces it** *(⚑ revision A7)*. Silver is excluded (G1).
 - **Reagents** go to the Alchemist *(v0.3)*.
 
@@ -804,11 +804,11 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 
 #### 5.9.1 Threat *(D108)*
 
-- Threat starts each cycle at **0** and rises every hour by the rate for the hold's Rank: **Hamlet 0, Keep 0.5, Citadel 1, Bastion 2**. Time away counts exactly as it does for production, so the offline cap applies to Threat too.
-- **Each failed contract adds 3 × its tier. Each completed contract takes off 1 × its tier.** A full board, old contracts and declined contracts add nothing *(G2)*.
+- Threat starts each cycle at **0** and rises every hour by the rate for the hold's Rank: **Hamlet 0, Keep 0.5, Citadel 1, Bastion 1** *(D138)*. Time away counts exactly as it does for production, so the offline cap applies to Threat too.
+- **Each failed contract adds 3 × its tier. Each completed contract takes off 0.76 × its tier** *(D138)*. A full board, old contracts and declined contracts add nothing *(G2)*.
 - **Defenses slow the hourly rate:** each level of Walls or Watchtower takes off 2%, so at most 60% at the Bastion caps.
 - Threat never goes below 0, and it resets to 0 at the Long Night.
-- **What Threat does, and nothing else:** every point makes each wave of the Last Stand +1% Health and Might, and adds +0.5% to the waves part of the Embers payout (§5.9.4). No forced stand, no damage to buildings, no harder contracts (pillar 5; no rubber-banding, §5.4.1).
+- **What Threat does, and nothing else:** every point makes each wave of the Last Stand +0.61% Health and Might, and adds +0.7% to the waves part *(D138)* of the Embers payout (§5.9.4). No forced stand, no damage to buildings, no harder contracts (pillar 5; no rubber-banding, §5.4.1).
 - **Shown** as a meter on the Hold screen from the Keep on, with a breakdown: the Rank's rate, what defenses take off, contracts completed and failed (§9.13).
 
 #### 5.9.2 Defenses *(D107)*
@@ -842,7 +842,7 @@ From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat
 
 ```
 wavesPart = Σ (n = 1 … waves held)  4 × 1.15^(n − 1)
-Embers    = floor( rankMult × wavesPart × (1 + 0.005 × Threat)  +  1 × trophies earned this cycle )
+Embers    = floor( rankMult × wavesPart × (1 + 0.007 × Threat)  +  1 × trophies earned this cycle )
 rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 ```
 
@@ -1072,7 +1072,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Bulk cost (k copies) | `base × r^n × (r^k − 1)/(r − 1)` | — | 5.1.2 |
 | Max affordable | `min over resources of floor(log(1 + f(r−1)/(base·r^n)) / log r)` | — | 5.1.2 |
 | Settle cost | `a × g^P` | `peasant.settleBase` = 20, `peasant.settleGrowth` = 1.15, `peasant.settleMinInterval` = 30 s | 5.1.1 |
-| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.25/min | 5.1.1 |
+| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.24/min *(D138)* | 5.1.1 |
 | Silver cap | Silver Seams limited; silver-digger output takes only relic and event buckets | `silverSeam.max` = 2 | 5.1.1 |
 | Building bonuses | per level | `mill.perLevel` = 0.25, `sawpit.perLevel` = 0.25, `smithy.ironPerLevel` = 0.20 | 5.1.2 |
 | Rank multiplier | Each Rank from the Keep adds to the age bucket (not silver, G1) | `age.keep.allProduction` = 0.50, `age.citadel.allProduction` = 0.50, `age.bastion.allProduction` = 0.50 *(D106)* | 5.1.3 |
@@ -1109,9 +1109,9 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Board refill | 1 per interval, up to the cap; declining is free | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
 | Board opens | when the first Mine is built (G6) | — | 5.4.1 |
 | Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5, citadel 5, bastion 5 } *(locked; new entries D106)* | 5.4.1 |
-| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1, citadel 1, bastion 1 } *(D82, D85, D106)* | 5.4.2 |
+| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1, citadel 4.1, bastion 2.5 } *(D82, D85, D106, D138)* | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
-| Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 78 *(⚑ v0.2 tuning: 60 → 72, D76; 72 → 78, D82)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.0, citadel 1.25, bastion 1.5 } *(D106)* | 5.4.1 |
+| Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 91 *(⚑ v0.2 tuning: 60 → 72, D76; 72 → 78, D82; v0.4: 78 → 91, D138)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.1, citadel 3.5, bastion 3 } *(D106, D138)* | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
 | Duration | by tier | `contract.duration` = [30 min, 1 h, 2 h, 4 h, 8 h] | 5.4.1 |
 | Party size | by tier | `contract.partySize` = [3, 3, 3, 4, 4], `contract.hamletPartyMax` = 2 | 5.4.1 |
@@ -1146,9 +1146,9 @@ Every constant here is tunable unless marked locked.
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Threat rate | per hour by Rank, × (1 − slow); slow = 2% per level of Walls or Watchtower | `threat.ratePerHour` = { hamlet 0, keep 0.5, citadel 1, bastion 2 }, `threat.defenseSlowPerLevel` = 0.02 | 5.9.1 |
-| Threat from contracts | +f × tier on a failure; −c × tier on a success; never below 0 | `threat.failedPerTier` = 3, `threat.completedPerTier` = 1 | 5.9.1 |
-| Wave strength from Threat | Health and Might × (1 + w × Threat) | `threat.waveStrengthPerPoint` = 0.01 | 5.9.3 |
+| Threat rate | per hour by Rank, × (1 − slow); slow = 2% per level of Walls or Watchtower | `threat.ratePerHour` = { hamlet 0, keep 0.5, citadel 1, bastion 1 } *(D138)*, `threat.defenseSlowPerLevel` = 0.02 | 5.9.1 |
+| Threat from contracts | +f × tier on a failure; −c × tier on a success; never below 0 | `threat.failedPerTier` = 3, `threat.completedPerTier` = 0.76 *(D138)* | 5.9.1 |
+| Wave strength from Threat | Health and Might × (1 + w × Threat) | `threat.waveStrengthPerPoint` = 0.0061 *(D138)* | 5.9.3 |
 | Walls | party taken% −x per level in the stand (75% cap, `combat.takenCap`) | `walls.takenPerLevel` = 0.02 | 5.9.2 |
 | Watchtower | at tick 1 of each wave, v × level Steel damage, ignores Armor | `watchtower.volleyPerLevel` = 20 | 5.9.2 |
 | Defense costs | level building, `base × 1.75^(L−1)` | Walls 20,000 wood + 10,000 iron; Watchtower 15,000 wood + 8,000 iron + 100 silver (content, D44) | 5.9.2 |
@@ -1156,11 +1156,11 @@ Every constant here is tunable unless marked locked.
 | Stand party | up to N active hunters | `laststand.partyMax` = 6 **(locked)** | 5.9.3 |
 | Between waves | standing hunters recover a share of max Health | `laststand.recoverBetween` = 0.20 | 5.9.3 |
 | Stand preview | practice stands; range = 10th–90th percentile | `laststand.previewSamples` = 100, `laststand.policySamples` = 20 | 5.9.3, 6.5 |
-| Embers | `floor(rankMult × Σ_(n ≤ waves) p × g^(n−1) × (1 + b × Threat) + q × trophies)` | `embers.perWave` = 4, `embers.waveGrowth` = 1.15, `embers.threatBonus` = 0.005, `embers.perTrophy` = 1, `embers.rankMult` = { hamlet 0.25, keep 0.5, citadel 0.75, bastion 1 } | 5.9.4 |
+| Embers | `floor(rankMult × Σ_(n ≤ waves) p × g^(n−1) × (1 + b × Threat) + q × trophies)` | `embers.perWave` = 4, `embers.waveGrowth` = 1.15, `embers.threatBonus` = 0.007 *(D138)*, `embers.perTrophy` = 1, `embers.rankMult` = { hamlet 0.25, keep 0.5, citadel 0.75, bastion 1 } | 5.9.4 |
 | Relic milestones | the first stand ever to hold each wave count | `relics.waveMilestones` = [6, 9, 12, 15, 18, 21] | 5.9.6 |
 | Levels kept | `1 + floor((L − 1) × k)`, k = base + Old Hands | `longNight.levelsKept` = 0.5 | 5.9.7 |
 | Warden upgrades | level L costs `c × g^(L−1)` Embers | per upgrade, in the content (§8.9) | 5.9.5 |
-| v0.4 arrival cap | trophies part ≤ share × the cycle-1 median | `longNightArrival.emberCapShare` = 1.2 **(locked)**, `longNightArrival.cycle1MedianEmbers` (set from the tuned simulator, D112) | 5.9.8 |
+| v0.4 arrival cap | trophies part ≤ share × the cycle-1 median | `longNightArrival.emberCapShare` = 1.2 **(locked)**, `longNightArrival.cycle1MedianEmbers` = 193 (set from the tuned simulator: the median of cycle 1's stand, Standard, Monday, 5 seeds; D112, D138) | 5.9.8 |
 
 ---
 

@@ -36,7 +36,7 @@ export const balance = {
     food: tunable(6, 'perMinute'),
     wood: tunable(4, 'perMinute'),
     iron: tunable(2, 'perMinute'),
-    silver: tunable(0.25, 'perMinute'),
+    silver: tunable(0.24, 'perMinute'),
   },
   silverSeam: { max: locked(2) },
   mill: { perLevel: tunable(0.25) },
@@ -104,16 +104,16 @@ export const balance = {
     growth: tunable(2.2),
     // Q9 (D81): from the Keep, each hunter's provisions are at least this many minutes
     // of the hold's food capacity (Q11). Hamlet 0: the first contracts stay at the flat base.
-    incomeMinutes: tunable({ hamlet: 0, keep: 1, citadel: 1, bastion: 1 }), // D106
+    incomeMinutes: tunable({ hamlet: 0, keep: 1, citadel: 4.1, bastion: 2.5 }), // D106
   },
   monster: {
     statGrowth: tunable(1.35),
     armorGrowth: tunable(1.15),
   },
   bounty: {
-    base: tunable(78),
+    base: tunable(91),
     growth: tunable(1.6),
-    ageMult: tunable({ hamlet: 1.0, keep: 1.0, citadel: 1.25, bastion: 1.5 }), // D106
+    ageMult: tunable({ hamlet: 1.0, keep: 1.1, citadel: 3.5, bastion: 3.0 }), // D106
   },
   combat: {
     hitChance: tunable(0.9),
@@ -177,13 +177,13 @@ export const balance = {
   // ---- GDD §7.6 The Long Night (v0.4, D106–D114) ----
   threat: {
     // Per hour by Rank (D108); time away counts as for production.
-    ratePerHour: tunable({ hamlet: 0, keep: 0.5, citadel: 1, bastion: 2 }),
+    ratePerHour: tunable({ hamlet: 0, keep: 0.5, citadel: 1, bastion: 1 }),
     // Each level of Walls or Watchtower slows the hourly rate by this share.
     defenseSlowPerLevel: tunable(0.02),
     failedPerTier: tunable(3),
-    completedPerTier: tunable(1),
+    completedPerTier: tunable(0.76),
     // Each point: every Last Stand wave +1% Health and Might.
-    waveStrengthPerPoint: tunable(0.01),
+    waveStrengthPerPoint: tunable(0.0061),
   },
   walls: { takenPerLevel: tunable(0.02) }, // party taken% in the stand; combat.takenCap applies
   watchtower: { volleyPerLevel: tunable(20) }, // Steel damage at tick 1 of each wave, ignores Armor
@@ -198,15 +198,19 @@ export const balance = {
   embers: {
     perWave: tunable(4),
     waveGrowth: tunable(1.15),
-    threatBonus: tunable(0.005),
+    threatBonus: tunable(0.007),
     perTrophy: tunable(1),
     rankMult: tunable({ hamlet: 0.25, keep: 0.5, citadel: 0.75, bastion: 1 }),
   },
   relics: { waveMilestones: tunable([6, 9, 12, 15, 18, 21]) },
   longNight: { levelsKept: tunable(0.5) },
   // D112: the trophies part of the arrival's Embers is capped at this share of the
-  // cycle-1 median. `cycle1MedianEmbers` joins in T4.15, set from the tuned simulator.
-  longNightArrival: { emberCapShare: locked(1.2) },
+  // cycle-1 median, set from the tuned simulator in T4.15 (D138).
+  longNightArrival: {
+    emberCapShare: locked(1.2),
+    // The median Embers of cycle 1's stand (Standard, Monday, 5 seeds) after T4.15 (D138).
+    cycle1MedianEmbers: tunable(193),
+  },
 } as const;
 
 export type Balance = typeof balance;

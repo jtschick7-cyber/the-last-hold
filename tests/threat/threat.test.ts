@@ -24,17 +24,17 @@ describe('Threat (plan T4.5)', () => {
     expect(after10h('hamlet')).toBe(0);
     expect(after10h('keep')).toBeCloseTo(5);
     expect(after10h('citadel')).toBeCloseTo(10);
-    expect(after10h('bastion')).toBeCloseTo(20);
+    expect(after10h('bastion')).toBeCloseTo(10); // Bastion 1 per hour (D138)
   });
 
   it('each level of Walls or Watchtower slows the rate by 2%, so 60% at the Bastion caps', () => {
     const s = at('bastion');
     s.buildings.walls = 3;
     s.buildings.watchtower = 2;
-    expect(threatRate(s).value).toBeCloseTo(2 * (1 - 0.1));
+    expect(threatRate(s).value).toBeCloseTo(1 * (1 - 0.1));
     s.buildings.walls = 15;
     s.buildings.watchtower = 15;
-    expect(threatRate(s).value).toBeCloseTo(2 * 0.4);
+    expect(threatRate(s).value).toBeCloseTo(1 * 0.4);
   });
 
   it('the rate breakdown names the Rank rate and what defenses take off', () => {
@@ -46,17 +46,17 @@ describe('Threat (plan T4.5)', () => {
     expect(tree).toContain('Walls');
   });
 
-  it('a failed contract adds 3 × tier; a completed one takes off 1 × tier; never below 0', () => {
+  it('a failed contract adds 3 × tier; a completed one takes off 0.76 × tier; never below 0', () => {
     const s = at('keep');
     applyContractThreat(s, 4, false);
     expect(s.threat).toBe(12);
     applyContractThreat(s, 5, true);
-    expect(s.threat).toBe(7);
-    applyContractThreat(s, 5, true);
-    applyContractThreat(s, 5, true);
+    expect(s.threat).toBeCloseTo(8.2); // 12 − 0.76 × 5 (D138)
+    for (let i = 0; i < 3; i++) applyContractThreat(s, 5, true);
     expect(s.threat).toBe(0);
     // The meter's tally counts what contracts did, before the floor.
-    expect(s.cycles[0]?.contractThreat).toEqual({ added: 12, removed: 15 });
+    expect(s.cycles[0]?.contractThreat.added).toBe(12);
+    expect(s.cycles[0]?.contractThreat.removed).toBeCloseTo(15.2);
   });
 
   it('the meter shows the value, the rate now and what contracts did this cycle', () => {
@@ -83,7 +83,7 @@ describe('Threat (plan T4.5)', () => {
   it('time away counts as for production: the offline cap applies', () => {
     const s = at('bastion');
     catchUpNow(s, T0 + 48 * HOUR); // 12 h cap, no Bell Tower
-    expect(s.threat).toBeCloseTo(24);
+    expect(s.threat).toBeCloseTo(12); // 12 h at 1 per hour
   });
 
   it('contracts finishing during advance() move Threat at the moment they finish', () => {
@@ -105,8 +105,8 @@ describe('Threat (plan T4.5)', () => {
     advance(s, T0 + 10 * HOUR);
     const r = s.results.find((x) => x.contractId === 'w');
     expect(r?.success).toBe(true);
-    // 0.5 h at 0.5/h = 0.25, minus 1 × tier 1, floored at 0; then 9.5 h at 0.5/h.
+    // 0.5 h at 0.5/h = 0.25, minus 0.76 × tier 1, floored at 0; then 9.5 h at 0.5/h.
     expect(s.threat).toBeCloseTo(4.75);
-    expect(s.cycles[0]?.contractThreat).toEqual({ added: 0, removed: 1 });
+    expect(s.cycles[0]?.contractThreat).toEqual({ added: 0, removed: 0.76 });
   });
 });

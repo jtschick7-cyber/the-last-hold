@@ -74,15 +74,16 @@ describe('Citadel and Bastion (plan T4.4)', () => {
     expect(maxLevelNow(at('bastion'), 'barracks')).toBe(5);
   });
 
-  it('bounties pay ×1.25 in Citadel and ×1.5 in Bastion; the tier cap stays 5', () => {
+  it('bounties pay ×1.1 in the Keep, ×3.5 in Citadel and ×3 in Bastion; the tier cap stays 5', () => {
     const pay = (age: AgeId): number => bounty(3, age, []).value;
-    expect(pay('citadel') / pay('keep')).toBeCloseTo(1.25);
-    expect(pay('bastion') / pay('keep')).toBeCloseTo(1.5);
+    expect(pay('keep') / pay('hamlet')).toBeCloseTo(1.1); // D138
+    expect(pay('citadel') / pay('hamlet')).toBeCloseTo(3.5);
+    expect(pay('bastion') / pay('hamlet')).toBeCloseTo(3);
     expect(tierCap(at('citadel'))).toBe(5);
     expect(tierCap(at('bastion'))).toBe(5);
   });
 
-  it('provisions read 1 minute of food capacity in both', () => {
+  it("provisions read each Rank's minutes of food capacity in both", () => {
     for (const age of ['citadel', 'bastion'] as const) {
       const s = at(age);
       s.peasants.total = 40;
@@ -105,12 +106,12 @@ describe('Citadel and Bastion (plan T4.4)', () => {
     const citadel = ageUnlocks('citadel').join('\n');
     expect(citadel).toContain('Hunters up to level 15');
     expect(citadel).toContain('+2 active hunters');
-    expect(citadel).toContain('Bounties ×1.25');
+    expect(citadel).toContain('Bounties ×3.5');
     expect(citadel).toContain('New: Walls');
     expect(citadel).toContain('Mill up to level 15');
     const bastion = ageUnlocks('bastion').join('\n');
     expect(bastion).toContain('Hunters up to level 20');
-    expect(bastion).toContain('Bounties ×1.5');
+    expect(bastion).toContain('Bounties ×3');
     expect(bastion).toContain('The Last Stand');
   });
 
@@ -124,6 +125,6 @@ describe('Citadel and Bastion (plan T4.4)', () => {
     s.buildings.barracks = 1;
     expect(apply(s, { type: 'age.up' }, 0).ok).toBe(true);
     expect(s.cycle.age).toBe('citadel');
-    expect(s.resources.silver).toBe(1e5 - 1_000);
+    expect(s.resources.silver).toBe(1e5 - 600);
   });
 });

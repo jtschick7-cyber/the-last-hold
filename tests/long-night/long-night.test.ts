@@ -97,9 +97,9 @@ describe('the Long Night (GDD §5.9.7)', () => {
   it('2–3. the stand is recorded, and its Embers and relics are converted', () => {
     if (!stand) throw new Error('no stand');
     expect(stand.party.map((h) => h.id)).toEqual([...SIX]);
-    // The running tier-1 contract finished first; its success took 1 × tier off Threat.
+    // The running tier-1 contract finished first; its success took 0.76 × tier off Threat (D138).
     const won = s.stats.contractsWon > before.stats.contractsWon;
-    expect(stand.threat).toBe(won ? 29 : 33);
+    expect(stand.threat).toBeCloseTo(won ? 29.24 : 33);
     expect(stand.defenses).toEqual({ walls: 2, watchtower: 0 });
     expect(stand.bombs).toEqual({ 'fire-pot': 3 });
     expect(stand.relics).toEqual(['tally-stick']);

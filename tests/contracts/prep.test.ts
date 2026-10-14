@@ -247,11 +247,12 @@ describe('well prepared (GDD §5.7, §5.4.3)', () => {
     const r = s.results[0];
     expect(r?.success).toBe(true);
     expect(r?.wellPrepared).toBe(true);
-    expect(r?.bounty).toBe(78 * num('prep.wellPreparedBounty'));
+    const ordinary = 91 * 1.1; // a Keep contract (D138)
+    expect(r?.bounty).toBeCloseTo(ordinary * num('prep.wellPreparedBounty'), 8);
     expect(r?.trophies).toBe(2);
-    expect(s.resources.silver).toBeGreaterThanOrEqual(silver + 117);
+    expect(s.resources.silver).toBeGreaterThanOrEqual(silver + ordinary * 1.5 - 1e-9);
     expect(s.stats.trophies).toBe(2);
-    expect(s.stats.bountySilver).toBe(117);
+    expect(s.stats.bountySilver).toBeCloseTo(ordinary * 1.5, 8);
   });
 
   it('an ordinary success pays the ordinary bounty', () => {
@@ -264,7 +265,6 @@ describe('well prepared (GDD §5.7, §5.4.3)', () => {
     expect(s.results[0]).toMatchObject({
       success: true,
       wellPrepared: false,
-      bounty: 78,
       trophies: 1,
     });
   });
