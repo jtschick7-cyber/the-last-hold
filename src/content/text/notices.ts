@@ -8,10 +8,8 @@ import type { VillageId } from '../villages';
 // Kozly Hollow and Ravenfell (Cold) are terse, Dubno Ford and Velkvik (Wary) are
 // plain, Mirograd (Hopeful) says a little more. At most 1 in 10 carries an early
 // seed, never more than one per notice, never explained (§6.7); Ravenfell never
-// mentions the Firstblade, in blessing or curse.
-//
-// Held back for the owner (Q10): Kozly Hollow's seed "…and may the Firstblade's
-// name be kept warm", because "Firstblade" is already a Skyrim lore name.
+// mentions the Hearthblade, in blessing or curse. Kozly Hollow's seed, "…and may the
+// Hearthblade's name be kept warm", came back once the owner chose the name (Q10, D142).
 
 export type NoticeTable = Readonly<
   Record<VillageId, Readonly<Partial<Record<LocationId, readonly string[]>>>>
@@ -32,7 +30,7 @@ export const notices: NoticeTable = {
   },
   'kozly-hollow': {
     forest: [
-      'Goats lost in the wood. We found the bells and no goats. Pay is fair.',
+      "Goats lost in the wood. We found the bells and no goats. Pay is fair. …and may the Hearthblade's name be kept warm.",
       "The path to the high pasture moves. Two herders came back by dark, one didn't. Come, or don't.",
       'Trees marked in the night, and not by us. We sleep with the door barred. Pay is silver.',
     ],

@@ -112,6 +112,7 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options:** (a) rename her now to something clear (candidates: **the Hearthblade**, **the Last Wright**, **the First Hand**), and put the seed line back with the new name; (b) keep "Firstblade" for now and decide before v0.5 (the primer says lore names get their check before then), with the seed line staying out until you do; (c) keep the name and accept the overlap (§2.3 says not to).
 - **Recommendation:** (b): nothing in v0.2 needs her name, and the title belongs to the story you're keeping for v0.5. When you choose, I'll rename it in the docs in one pass.
 - **Answer (owner):** option (b), 2026-10-13 (D80): keep the name for now, decide before v0.5; the seed line stays out until then.
+- **Final answer (owner):** **the Hearthblade**, 2026-10-14 (D142). Searched against the influences: clear. The Kozly Hollow seed line is back in the notices.
 
 ### Q11 — Provisions read the current food income, which a player can lower for free (blocks nothing in v0.2) — answered
 - **What happens:** from the Keep, provisions use the hold's food income at the moment of launch. Moving peasants between jobs is free and instant, so a player can take every farmer off, launch at the 30-food minimum, and put them back. That rewards a fiddly chore (pillar 5, §6.4) and makes food a cost only for players who don't do it. The simulated player never does this, so no check sees it.

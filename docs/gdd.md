@@ -113,8 +113,8 @@ All content is original. The influences supply *feel*, never names, characters, 
 
 - **Places:** Compounds that mix the two roots: Slavic *-grad, -ov, -no, stan-, vel-* with Nordic *-holm, -fell, -mark, -vik*. Examples: Stanholm, Velkvik, Dubno Ford, Ravenfell.
 - **People:** Lowlanders use Slavic-style given names (Dobrava, Milosz, Vesna). Highlanders use Nordic-style names (Yrsa, Halvar, Bjarna). Many hunters carry an epithet earned in the field ("Halvar Two-Smokes").
-- **The Emberwrights:** Ranks and titles in plain English: Keeper of the Forge, Firstblade, Wright, Apprentice *(⚑ lore L7: "Keeper" replaces Forge-Mother)*.
-- **Lore names in the outline are working names** (Gloamreach, Stanholm, Emberwrights, Hearthseal, the Unlit, Firstblade). They get collision-checked before v0.5. **[JC: the Firstblade's name changes from the outline's placeholder to "Yrsa Varn" to fit the Nordic naming style; the Keeper is "Dobrava Halsten".]**
+- **The Emberwrights:** Ranks and titles in plain English: Keeper of the Forge, Hearthblade, Wright, Apprentice *(⚑ lore L7: "Keeper" replaces Forge-Mother)*.
+- **Lore names in the outline are working names** (Gloamreach, Stanholm, Emberwrights, Hearthseal, the Unlit, Hearthblade). They get collision-checked before v0.5 *("Firstblade" became "Hearthblade": the old title is an Elder Scrolls lore name; Q10, D142)*. **[JC: the Hearthblade's name changes from the outline's placeholder to "Yrsa Varn" to fit the Nordic naming style; the Keeper is "Dobrava Halsten".]**
 
 ---
 
@@ -265,7 +265,7 @@ Every layer has at least one input from another layer and one output to another 
 4. **Event participation:** event milestones are reachable with about 70% participation. *(Superseded by G7: absence can delay an event reward but never forfeit it.)*
 5. **Routine check-in target:** 15 taps or fewer.
 6. **Avoid "jarl"** as too Skyrim-coded; use "thane" or "headman" instead.
-7. **Character names:** Firstblade "Yrsa Varn", Keeper "Dobrava Halsten" *(title renamed in lore L7)*.
+7. **Character names:** Hearthblade "Yrsa Varn" *(the title was Firstblade until D142)*, Keeper "Dobrava Halsten" *(title renamed in lore L7)*.
 8. **Strzyga and Lady Midday are in the creature pool,** with designs drawn from folklore only and no reuse of the games' signature contract plots.
 9. **The domovoi is a friendly resident of the hold,** not a monster.
 10. **Prestige currency is named Embers; Delve currency is named Riftglass.**

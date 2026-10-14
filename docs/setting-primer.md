@@ -38,7 +38,7 @@ A wide frontier between the southern kingdoms and the frozen north, where the va
 - **Since then, monsters are more common and crueler.** Grief that once faded now curdles. A careless burial now always rises.
 - **Now a warden has come,** and the hearth in the ruined Hearth Hall is warm again.
 
-**How the villages tell the Fall.** They don't agree. Most curse the order's last champion, **the Firstblade**, and say she broke something she shouldn't have. A few quietly bless her. Nobody says why. *(That disagreement is deliberate; see §8.)*
+**How the villages tell the Fall.** They don't agree. Most curse the order's last champion, **the Hearthblade** *(D142)*, and say she broke something she shouldn't have. A few quietly bless her. Nobody says why. *(That disagreement is deliberate; see §8.)*
 
 ---
 
@@ -147,9 +147,9 @@ Each Rank-up uncovers part of the old hold, with a short inscription.
 ### 6.7 Early seeds (allowed from v0.2) **[JC]**
 
 At most **1 in 10** contract notices may carry one of these. Never more than one per notice, never explained:
-- Kozly Hollow notices sometimes end with *"…and may the Firstblade's name be kept warm."*
+- Kozly Hollow notices sometimes end with *"…and may the Hearthblade's name be kept warm."*
 - A Mirograd notice may mention *"my boy, who went onward with the order."*
-- Ravenfell notices never mention the Firstblade, whether blessing or curse.
+- Ravenfell notices never mention the Hearthblade, whether blessing or curse.
 
 ### 6.8 Long Night text, before the story (v0.4) **[JC]**
 

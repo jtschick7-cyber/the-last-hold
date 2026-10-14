@@ -39,19 +39,22 @@ describe('notices', () => {
     }
   });
 
-  it('carry an early seed in at most 1 in 10, never more than one, and Ravenfell never mentions the Firstblade', () => {
-    const seeded = all.filter((n) => /went onward|firstblade|the order/i.test(n.text));
+  it('carry an early seed in at most 1 in 10, never more than one, and Ravenfell never mentions the Hearthblade', () => {
+    const seeded = all.filter((n) => /went onward|hearthblade|the order/i.test(n.text));
     expect(seeded.length / all.length).toBeLessThanOrEqual(0.1);
     for (const n of seeded) {
-      const marks = [/went onward/i, /firstblade/i].filter((r) => r.test(n.text)).length;
+      const marks = [/went onward/i, /hearthblade/i].filter((r) => r.test(n.text)).length;
       expect(marks).toBeLessThanOrEqual(1);
     }
     for (const n of all.filter((x) => x.village === 'ravenfell')) {
-      expect(n.text).not.toMatch(/firstblade|order/i);
+      expect(n.text).not.toMatch(/hearthblade|order/i);
     }
   });
 
-  it('hold back the Firstblade until the owner settles Q10 (a Skyrim lore name)', () => {
+  it("Kozly Hollow alone blesses the Hearthblade's name, once (Q10, D142; primer §6.7)", () => {
+    const blessing = all.filter((n) => /may the Hearthblade's name be kept warm/.test(n.text));
+    expect(blessing).toHaveLength(1);
+    expect(blessing[0]?.village).toBe('kozly-hollow');
     for (const n of all) expect(n.text).not.toMatch(/firstblade/i);
   });
 

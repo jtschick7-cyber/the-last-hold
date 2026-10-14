@@ -346,6 +346,12 @@ export const checkedNames: readonly CheckedName[] = [
     'Tally Stick',
   ].map((name): CheckedName => ({ name, checked: '2026-10-13', result: 'generic' })),
   {
+    name: 'Hearthblade',
+    checked: '2026-10-14',
+    result: 'clear',
+    note: 'Replaces "Firstblade", an Elder Scrolls lore name (Q10: the owner chose this name, D142). Searched on UESP, Warcraft, Witcher, Dark Souls and Warhammer: nothing.',
+  },
+  {
     name: 'The Long Night',
     checked: '2026-10-14',
     result: 'generic',
