@@ -2,7 +2,7 @@
 
 **Status:** Revised after the plan review (D34–D36). Awaiting owner approval.
 **Reads with:** `CLAUDE.md` (the workflow, definition of done, and owner gates live there, not here), `gdd.md` (what), `technical-design.md` (how), `decisions.md` (why).
-**Depth:** v0.0–v0.5 are in full detail (v0.5 fleshed out 2026-10-14, D144–D169). v0.6 and later are outlines; each gets a **flesh-out session** before it starts (§0.4).
+**Depth:** v0.0–v0.6 are in full detail (v0.6 fleshed out 2026-10-14, D193–D220). v0.7 and later are outlines; each gets a **flesh-out session** before it starts (§0.4).
 **Markers:** **[JC]** = judgment call. **👤** = owner task. **[?]** = task blocked on an owner question (see `docs/questions.md`).
 
 ---
@@ -66,6 +66,7 @@ Claude Code doesn't start an outline-level milestone until its flesh-out is done
 | Death and Long Night | `death.returnDaysBeforeLongNight`, `longNightArrival.emberCapShare`, `laststand.partyMax` (D107) |
 | Simulated player | `value.weights` (they define the simulated player, so tuning them would game the checks) |
 | Events | `boss.*`, `riftglass.bankWeeks` |
+| Skills | skill.maxLevel (D217; written with backticks in T6.1, when the key joins balance.ts) |
 
 Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage rules**. Everything else in `balance.ts` is tunable.
 
@@ -81,6 +82,7 @@ Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage r
 | v0.3 | 12 | 8–12 |
 | v0.4 | 16 | 10–14 |
 | v0.5 | 17 | 12–16 |
+| v0.6 | 14 | 10–14 |
 
 Estimates, not commitments. If a task proves bigger than a session, split it here first.
 
@@ -686,10 +688,92 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 
 ### v0.6 — Alchemy discovery & skills through use
 
-**Status:** not started *(needs a flesh-out)*
+**Status:** not started *(fleshed out 2026-10-14, D193–D220)*
 
-- **Scope:** hidden ingredient effects, experiments, the recipe book; warden skills (Alchemy, Smithing, Lore, Command; they persist).
-- **Open questions:** hunter use-skills; how many effects; whether v0.3's fixed recipes become discovered recipes.
+**Goal:** alchemy becomes discovery: hidden properties, experiments and a recipe book, with six new brews that answer named gaps; four warden skills that grow with use and survive the Long Night; Act III and Arvid's arrival; and the v0.5 lessons applied to bands and trust.
+**Reads:** GDD §4.1, §5.7, §5.8, §5.9.3, §5.9.7, §5.14.1, §5.14.3, §5.14.6, §5.14.8–5.14.9, §6.1–6.3 and §6.5 (v0.6 lines), §7.7, §7.8, §8.5–8.7, §9.9, §9.11, §9.13; `lore-secrets.md` §10, §20, §26; technical design §5.2, §7.2, §13.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| **Export your real v0.5 save** (More → Save & Data → Copy save code) and paste it into a session | T6.3 (the migration fixture) | Before T6.3 |
+| Decide any name collisions the search finds | T6.2 | When asked |
+| Review the new art (six brew icons, four skill icons) | T6.12 | In the playtest |
+
+#### A. Content and state
+- [ ] **T6.1 Content and keys.** *(May split: T6.1a mechanics, T6.1b story.)*
+  - **a:** the §7.8 keys into `balance.ts` (`skill.maxLevel` locked, the rest tunable) and the §7.7 changes (`band.heldFrom` 12, `band.triumphantFrom` 15, `trust.triumphantContracts` 10), with §7.7–§7.8 rewritten to the `key` = value form in the same commit, and the `skill.maxLevel` row in §0.6 written with backticks in that commit too; the properties table (§8.6) and the six new brews (§5.8.5) in content, outside the saved-state id lists until T6.3 (as D171); a content test for the table's rules (§8.6 A13).
+  - **b:** Act III in `src/content/story/` (every document's condition and text word for word from `lore-secrets.md` §26, the arrival lines, the "Yrsa's choice" Accounts event with its excerpts, D3-08); Arvid's unlock changed to "arrives with Ilse when Act III begins"; a test against `lore-secrets.md` §26 word for word, and the true-ending gate's counts with the new sources.
+- [ ] **T6.2 Names.** Collision search (GDD §2.3, D173 rule) for Hidebane Oil, Wright's Oil, Coldwater Draught, Owl-Eye Drops, Steadfast Draught, Poppy Smoke (backups ready: Forgebane Oil, Hearthward Draught), Torvald Aslaksson, Hrefna Sigvaldsdóttir, Běla Dvorská, Sindri Eyvindsson. Alchemy, Smithing, Lore and Command are generic (D208). Add all to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
+- [ ] **T6.3 Migration v5 → v6**, using the **owner's real v0.5 save** as the fixture, with a round-trip test. New saved state:
+  - the recipe book (properties revealed per ingredient: the 15 from the start; pairs tried);
+  - warden skill XP (all 0 for an old save, D205);
+  - experiment jobs in the brewing queue;
+  - store slots for the six new brews (0);
+  - the Alchemy level on running contracts, fight records and stand records (0 for old records, so replays are unchanged);
+  - each past stand's band, recorded with the thresholds it was made under (9 / 12), so it keeps its band (D194).
+  Technical design §5.2 updated in the same commit.
+
+#### B. Alchemy
+- [ ] **T6.4 The recipe book and experiments** (core): the known-recipe rule and the shapes (GDD §5.8.2), alternate recipes and the 2:1 split, experiment jobs (paid when queued, refunds, Copper Still), the reveal rule in §8.6 order, refusals ("already tried", "nothing left to learn"), "Discovered:" results. Test-first, rule by rule.
+- [ ] **T6.5 The new brews in combat.** The two oils (and well-prepared), Coldwater (taken%, cap), Owl-Eye (hit chance), Steadfast (first lost action prevented; other effects kept), Poppy Smoke (the monster's next action lost at tick 1); Herbwise, Spoil and Saltburst as GDD §5.8.5 says; the stand's bomb order and once-per-stand potions. **Contract fights for every existing item and every golden fight unchanged; `rulesVersion` stays 3 — if a golden changes, stop and ask** (D218). One test per new effect; benchmarks unchanged in budget.
+
+#### C. Skills
+- [ ] **T6.6 Warden skills.** XP from every activity in §5.8.6; levels with the curve and the locked cap; the four bonuses (Alchemy potency on every brew number, frozen at launch on contracts, fight records and stands; Smithing gear costs; Lore clue time; Command contract XP); kept through the Long Night (test it in the reset's row-by-row test); breakdown lines; level-up lines.
+
+#### D. Story, bands and trust
+- [ ] **T6.7 Act III.** Every condition (row-by-row test against `lore-secrets.md` §26); Arvid's arrival (joins directly, active if room, at the highest hunter's level within the Rank cap; the new-warden line, then D3-01); Act III starting on load for a save in a no-act cycle (D214), with D3-04 / D3-05 found if their Rank is already behind it; D3-05's scene then strip; D3-08's condition; the Accounts event. The debug panel's "Add Arvid" stays; add "Start Act III" for testing.
+- [ ] **T6.8 Bands and trust.** Thresholds 12 / 15 from `balance.ts`; a Triumphant stand adds `trust.triumphantContracts` progress to every village (carry-over, Sworn stops counting; each step it completes gets its line); past stands keep their recorded band (Roll of Wardens, result sheets).
+
+#### E. UI
+- [ ] **T6.9a The Hut.** Brew, Experiment and Book sections (GDD §9.9); discovery lines on the away sheet and results.
+- [ ] **T6.9b Skills and Act III on screen.** "What the ember remembers" on the Rank screen with breakdowns; the skill lines on the away sheet and new-warden sheet; Arvid's arrival and the Act III scenes; "Held from 12 · Triumphant from 15" on the stand screen. **Extend the Playwright smoke:** debug → queue an experiment → skip time → a property revealed in the Book; and debug "Start Act III" → Arvid arrives → D3-01. Screenshot pass at phone size.
+
+#### F. Art
+- [ ] **T6.10 Art** (the D59 method): 16 px icons for the six new brews and the four skills (1-Bit Pack where it fits, recolored). 👤 Review.
+
+#### G. Simulator
+- [ ] **T6.11 Policy rules** (GDD §6.1, D215): experiments in spare kettles; the new brews in the kit; Arvid used through the roster rule.
+- [ ] **T6.12 Checks.** The v0.6 rows in `sim/targets.ts` in **their own commit** (owner-approved, D216); the milestone becomes v0.6; the reported lines (bands per cycle, skill levels, properties found). No new simulated runs: the new checks read the existing runs (D196).
+- [ ] **T6.13 Tuning** (tunables only) against every check. Likely levers: `skill.*` XP values (for "skills pace"), `band.*`, `trust.stepContracts` and `trust.triumphantContracts` (for "trust rises in cycle 1" against "no Sworn before cycle 4"), `experiment.time`. If no reasonable values pass, stop and ask.
+
+### v0.6 acceptance criteria
+1. Experiments reveal properties by the rule, never waste a pair, and the book persists through the Long Night; every brew is makeable (content test).
+2. The six new brews work in contracts and the stand as GDD §5.8.5 says, with readable log lines and honest odds; Beasts & Wilds and Cursed contracts can be well prepared.
+3. Warden skills rise from their activities, show their bonuses in breakdowns, survive the Long Night, and only Alchemy changes a fight (frozen at launch).
+4. Act III runs in its cycle; every document arrives on its condition (row-by-row test); Arvid arrives as designed; all 40 names still have exactly one source (gate test).
+5. Bands use 12 / 15, old stands keep their band, and a Triumphant stand adds 10 contracts of trust.
+6. The owner's real v0.5 save migrates and round-trips; old fights and stands replay unchanged; every golden fight unchanged (`rulesVersion` 3).
+7. Every earlier check passes; the full suite stays ≤ 5 min.
+
+### v0.6 simulator checks
+
+| Check | Target |
+|---|---|
+| First new brew discovered | ≤ 24 h after the Alchemist's Hut |
+| Recipe book complete | 36 of 36 by the end of cycle 3 |
+| Skills start moving | Every skill ≥ 1 by the end of cycle 1 |
+| Skills pace | Every skill between 4 and 8 at the end of cycle 3 |
+| Act III lands in its cycle | D3-01 to D3-06 by the end of cycle 3; D3-07 with the next warden; D3-08 reported only |
+| Arvid's level-5 letter | By the end of cycle 4 |
+| Trust keeps an arc | No village Sworn before the end of cycle 4 |
+| All earlier checks | Pass (including trust rises in cycle 1, preparation matters, later cycles) |
+| Suite time | ≤ 5 min in CI |
+
+Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: bands per cycle, skill levels per cycle, properties found per cycle.
+
+### v0.6 owner playtest checklist 👤 (on the preview build)
+- [ ] An experiment session (a few pairs, come back) feels like discovery, not a chore.
+- [ ] The book is easy to read; you can tell what to try next.
+- [ ] At least one new brew changes a contract decision (check "unprepared would be X%").
+- [ ] Skills are visible and their bonuses make sense in breakdowns.
+- [ ] Your save migrated smoothly; your old stands kept their bands on the Roll.
+- [ ] Held feels like a good night and Triumphant like an earned one.
+- [ ] (Via debug "Start Act III", or if you reach it) Arvid's arrival and Act III's documents read well, one wrongness each.
+- [ ] Screenshot pass and new art review.
+
+**Out of scope:** hunter use-skills (v0.8 flesh-out); three-ingredient brews; Acts IV–VI; the Deep family; Ember-echoes; trust rewards; the extras not taken (D213).
 
 ### v0.7 — Delves
 
@@ -697,6 +781,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 
 - **Scope:** about 5-minute runs, 6 floors plus a guardian, two patron doors per floor, six patrons (the Unlit after Act V), the Riftglass allowance, multi-monster combat, **battle sprites**.
 - **Open questions:** whether injuries carry back; allowance size; blessing pools; group targeting.
+- **Story pace check (P4, D220):** Act IV must be written before the owner's save enters Act III; at the latest, at the v0.7 flesh-out.
 
 ### v0.8 — Hunter depth
 
@@ -736,3 +821,4 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 7. **Citadel and Bastion ship in v0.4 with neutral text;** their inscriptions arrive in v0.5.
 8. **v0.5 is 17 tasks over 12–16 sessions;** T5.1 may split into mechanics and story content.
 9. **Arvid ships in v0.5 but can't arrive until Act III is written;** a debug action tests him.
+10. **v0.6 is 14 tasks (T6.1–T6.13, with T6.9 in two parts) over 10–14 sessions;** T6.1 may split into mechanics and story content.
