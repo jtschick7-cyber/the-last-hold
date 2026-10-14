@@ -163,7 +163,7 @@ interface GameState {
     clockHighWater: number           // latest time ever seen (backward-clock guard, D21)
     debugUsed: boolean               // informational only
   }
-  cycle: { number: number; age: AgeId; wardenName?: string /* v0.5 */ }   // AgeId gains citadel, bastion (v0.4)
+  cycle: { number: number; age: AgeId }         // AgeId gains citadel, bastion (v0.4)
   resources: Record<ResourceId, number>          // food, wood, iron, silver
   peasants: { total: number; jobs: Record<JobId, number>; autoSettle: boolean;
               priority: JobId[]; lastSettleAt: number }
@@ -182,6 +182,7 @@ interface GameState {
   relics: { id: RelicId; cycle: number }[]       // v0.4; owned, with the cycle found
   arrivalDue: boolean                            // v0.4; a pre-v0.4 save still faces its first Long Night
   cycles: CycleRecord[]                          // v0.4; one short entry per cycle
+  story: StoryState                              // v0.5; acts, documents, names, letters, trust (below)
   stats: LifetimeStats                           // trophies this cycle, totals
   log: { recentFights: FightRef[] }              // seeds + inputs, not full logs (§5.3)
   settings: Settings
@@ -189,6 +190,7 @@ interface GameState {
 ```
 
 - **Cycle history** *(v0.4, D113)*: each `CycleRecord` holds when the cycle started, when each Rank was reached, when the stand was made, waves held, the Embers breakdown, the relics found, and the stand's inputs (party snapshots, preparation, defense levels, Threat, seed), so its wave logs can be rebuilt like contract fights (§5.3). About 200 bytes per cycle; v0.5's Roll of Wardens reads it. The stand's wave list is not stored: it comes from the stand seed. Walls and Watchtower are ordinary entries in `buildings`.
+- **The story** *(v0.5, plan T5.3)*: each `CycleRecord` also holds the **act** it tells (null for cycles before v0.5, and for a cycle still owed the v0.4 arrival) and the **warden's name** (up to 24 characters; null until named). `StoryState` holds: the v0.5 arrival flag; when Ilse arrived; one `ActProgress` per act begun (its cycle, start time, and the counters that run from then: wins, wins by village, ruin wins); documents found (id, cycle, time, how); names found (roll number, cycle, time) and the count of Ribbonshades defeated; each hunter's **highest level ever** (letters read it, D155); letters reached; each village's trust (level, progress toward the next step, wins counted, Triumphant stands); and the unread Archive items for the badge. Nothing in it resets at the Long Night. The v4 → v5 migration starts Act I in the current cycle (D149), or with the cycle after a pending v0.4 arrival; it sets each hunter's highest level from their level now or at death, and every village to its starting trust.
 - **Derived values are never stored:** rates, the active-roster cap, odds. They come from **selectors** (`core/state/selectors.ts`). Each selector that feeds a visible number also returns a `Breakdown` tree (§5.4).
 - **Fight logs are not stored.** A `FightRef` holds the seed and the inputs (party, preparation, monster instance), and the log is **regenerated on demand** by re-running the fight. This keeps saves small and proves determinism every time a log opens.
 

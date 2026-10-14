@@ -37,4 +37,10 @@ export const shiftClock = (state: GameState, delta: number): void => {
     }
     if (c.stand) c.stand.at += delta;
   }
+  const story = state.story;
+  if (story.ilseAt !== null) story.ilseAt += delta;
+  for (const a of story.acts) a.startedAt += delta;
+  for (const d of story.documents) d.at += delta;
+  for (const n of story.names) n.at += delta;
+  for (const l of story.letters) l.at += delta;
 };

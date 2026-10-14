@@ -51,6 +51,66 @@ const v3ToV4: Migration = (state) => {
   };
 };
 
+// v4 → v5 (plan T5.3): the story (GDD §5.14). Act I starts at once in the current
+// cycle (D149), unless the save still owes its v0.4 arrival: then it starts with the
+// cycle after that Long Night. Earlier cycles had no act, and every warden is
+// unnamed until the v0.5 arrival asks. Each hunter's highest level is the best the
+// save still knows: their level now, or their level at death.
+const v4ToV5: Migration = (state) => {
+  const s: Plain = structuredClone(state);
+  const cycles = Array.isArray(s.cycles) ? (s.cycles as Plain[]) : [];
+  const startsNow = s.arrivalDue !== true;
+  const current = cycles.length - 1;
+  const cycleNumber = asPlain(s.cycle).number;
+  const peakLevels: Record<string, number> = {};
+  const note = (id: unknown, level: unknown): void => {
+    if (typeof id !== 'string' || typeof level !== 'number') return;
+    peakLevels[id] = Math.max(peakLevels[id] ?? 0, level);
+  };
+  for (const [id, h] of Object.entries(asPlain(s.hunters))) note(id, asPlain(h).level);
+  for (const f of Array.isArray(s.fallen) ? (s.fallen as Plain[]) : []) note(f.hunter, f.level);
+  return {
+    ...s,
+    cycles: cycles.map((c, i) => ({
+      ...c,
+      act: startsNow && i === current ? 1 : null,
+      warden: null,
+    })),
+    story: {
+      arrivalDue: true,
+      ilseAt: null,
+      acts: startsNow
+        ? [
+            {
+              act: 1,
+              cycle: cycleNumber,
+              startedAt: s.time,
+              wins: 0,
+              winsByVillage: {},
+              ruinWins: 0,
+            },
+          ]
+        : [],
+      documents: [],
+      names: [],
+      ribbonshades: 0,
+      peakLevels,
+      letters: [],
+      // setting-primer §3's starting trust, as of v5, kept here so a later change never rewrites old saves.
+      trust: Object.fromEntries(
+        Object.entries({
+          'dubno-ford': 'wary',
+          'kozly-hollow': 'cold',
+          mirograd: 'hopeful',
+          velkvik: 'wary',
+          ravenfell: 'cold',
+        }).map(([v, level]) => [v, { level, progress: 0, won: 0, triumphs: 0 }]),
+      ),
+      unread: [],
+    },
+  };
+};
+
 export const migrations: Readonly<Record<number, Migration>> = {
   // v1 → v2 (plan T2.4): hunters, the board, running and unread contracts, fights.
   // The two starting hunters (free, GDD §8.5) join the roster. If a Mine already
@@ -176,6 +236,7 @@ export const migrations: Readonly<Record<number, Migration>> = {
   },
 
   3: v3ToV4,
+  4: v4ToV5,
 };
 
 export const NEWER_VERSION = 'This save is from a newer version of the game.';

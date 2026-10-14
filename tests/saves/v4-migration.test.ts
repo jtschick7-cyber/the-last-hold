@@ -79,6 +79,9 @@ describe('the v3 → v4 migration (plan T4.3)', () => {
         ranks: { hamlet: before.meta.createdAt },
         contractThreat: { added: 0, removed: 0 },
         stand: null,
+        // v5 (T5.3): a save still owed its v0.4 arrival has no act yet, and no warden name.
+        act: null,
+        warden: null,
       },
     ]);
   });
@@ -100,6 +103,8 @@ describe('v4 state (technical design §5.2, D113)', () => {
         ranks: { hamlet: 5_000 },
         contractThreat: { added: 0, removed: 0 },
         stand: null,
+        act: 1, // v5 (T5.3): a new game starts Act I
+        warden: null,
       },
     ]);
   });

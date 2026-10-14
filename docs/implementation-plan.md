@@ -567,7 +567,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
   - Věra, Dana Lisová, Master Hrafn, Hallvard, Master Bielik, and the four non-Sent apprentices on the Mirograd roll;
   - Kamenfell and the warden-name list.
   Ribbonshade, Anvil-wight, Gloam-moths, Rimewrought, Arvid Netmender, Shield-companion and Old Wright are already clear (D154, D158). Add all of them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives. *Done: "Runed Blade" became the Wright's Blade (D170); the owner set the rule for people's names and roll #20 became Torgils Torkelsson (D173); 11 warden names with any influence namesake were dropped.*
-- [ ] **T5.3 Migration v4 → v5**, using the **owner's real v0.4 save** as the fixture, with a round-trip test. New saved state:
+- [x] **T5.3 Migration v4 → v5**, using the **owner's real v0.4 save** as the fixture, with a round-trip test. New saved state:
   - the act per cycle and its counters;
   - documents found (with cycle and how);
   - names found and the Ribbonshade count;
@@ -577,7 +577,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
   - Ilse's arrival;
   - the v0.5 arrival flag;
   - unread-item badges.
-  Technical design §5.2 updated in the same commit. `[?]` until the save is provided.
+  Technical design §5.2 updated in the same commit. *Done with the owner's save code of 2026-10-14 (`v4-owner.json`); readings in D174.*
 
 ### B. Ruins, the Cursed and Rune
 

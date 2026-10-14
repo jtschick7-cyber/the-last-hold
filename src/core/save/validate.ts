@@ -32,6 +32,7 @@ import {
   unit,
   type Obj,
 } from './guards';
+import { storyFrom } from './validate-story';
 import { longNightFrom } from './validate-long-night';
 import type {
   ContractInstance,
@@ -369,6 +370,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
       ),
     },
     ...longNightFrom(s, cycleNumber, warnings),
+    story: storyFrom(s, warnings),
     settings: settingsFrom(s.settings, warnings),
   };
 };

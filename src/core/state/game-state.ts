@@ -13,14 +13,16 @@ import type { SceneId } from '../../content/text/scenes';
 import type { VillageId } from '../../content/villages';
 import type { UpgradeId } from '../../content/warden-upgrades';
 import type { HunterSnapshot } from '../combat';
+import type { StoryState } from './story-state';
 import type { InjuryKind } from '../contracts/injury';
 
 // Technical design §5.2. v1 was the hold only (plan T1.9); v2 adds hunters,
 // contracts and fights (plan T2.4); v3 adds the bestiary, stores, brewing, investigation
 // and preparation (plan T3.4); v4 adds Citadel and Bastion, Walls and Watchtower, Threat,
-// Embers, warden upgrades, relics, the v0.4 arrival and the cycle history (plan T4.3, D113).
-// Times are epoch milliseconds.
-export const SCHEMA_VERSION = 4;
+// Embers, warden upgrades, relics, the v0.4 arrival and the cycle history (plan T4.3, D113);
+// v5 adds the story: acts, documents, names, letters, trust, Ilse, warden names and the
+// v0.5 arrival (plan T5.3). Times are epoch milliseconds.
+export const SCHEMA_VERSION = 5;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -190,6 +192,10 @@ export interface CycleRecord {
   /** Threat that contracts added (failures) and took off (successes), before the floor at 0 (GDD §5.9.1). */
   contractThreat: { added: number; removed: number };
   stand: StandRecord | null;
+  /** The act this cycle tells (v5, GDD §5.14.1); null for cycles before v0.5 or before the v0.4 arrival. */
+  act: number | null;
+  /** The warden's name (D152), up to 24 characters; null until named. */
+  warden: string | null;
 }
 
 export interface Settings {
@@ -270,6 +276,8 @@ export interface GameState {
   arrivalDue: boolean;
   /** One entry per cycle; the last is the current one (D113). */
   cycles: CycleRecord[];
+  /** The story (v5, GDD §5.14). */
+  story: StoryState;
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;
