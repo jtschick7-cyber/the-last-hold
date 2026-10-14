@@ -82,7 +82,11 @@ describe('the Archive', () => {
     expect(accounts(s)).toEqual([]);
     findDocument(s, doc('D1-02'), 'contract');
     const cards = accounts(s);
-    expect(cards.map((c) => c.heading)).toEqual(['The Night of the Fall', 'The apprentices']);
+    expect(cards.map((c) => c.heading)).toEqual([
+      'The Night of the Fall',
+      'The apprentices',
+      "Yrsa's choice",
+    ]);
     expect(cards[0]?.accounts).toEqual([
       {
         document: 'D1-02',

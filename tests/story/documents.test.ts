@@ -1,5 +1,5 @@
 // Plan T5.6: every Act I and Act II document arrives on its condition, row by row
-// against lore-secrets §21–§22 (D148), and stays obtainable in later cycles.
+// against lore-secrets §21–§22 (D148), and Act III's (§26, T6.1b; T6.7 finishes them), and stays obtainable in later cycles.
 import { describe, expect, it } from 'vitest';
 import { allDocuments, UNWRITTEN_ACT_LINE } from '../../src/content/story/acts';
 import { kamenfellNoticeEnd } from '../../src/content/story/scenes';
@@ -200,6 +200,57 @@ describe('Act II (lore-secrets §22)', () => {
   });
 });
 
+describe('Act III (lore-secrets §26)', () => {
+  /** A save in Act III's cycle: cycle 3, with Act I and Act II behind it. */
+  const act3 = (): GameState => {
+    const s = createNewGame('act3', T0);
+    win(s, 'velkvik'); // an Act I win for Velkvik
+    nextCycle(s);
+    win(s, 'velkvik'); // and an Act II one
+    nextCycle(s);
+    return s;
+  };
+
+  it('D3-02 and D3-03: the 1st and 2nd Velkvik wins in Act III (earlier acts do not count)', () => {
+    const s = act3();
+    expect(isFound(s, 'D3-02')).toBe(false);
+    win(s, 'mirograd');
+    expect(isFound(s, 'D3-02')).toBe(false);
+    expect(win(s, 'velkvik')).toContain('doc:D3-02');
+    expect(isFound(s, 'D3-03')).toBe(false);
+    expect(win(s, 'velkvik')).toContain('doc:D3-03');
+    mark('D3-02', 'D3-03');
+  });
+
+  it("D3-04: the Citadel reached in Act III, with Arvid's four names", () => {
+    const s = act3();
+    expect(isFound(s, 'D3-04')).toBe(false);
+    reach(s, 'citadel');
+    const keys = sweepDocuments(s);
+    expect(keys).toEqual(
+      expect.arrayContaining(['doc:D3-04', 'name:30', 'name:32', 'name:33', 'name:36']),
+    );
+    mark('D3-04');
+  });
+
+  it('D3-05: Bastion reached in Act III, with Eirik’s name', () => {
+    const s = act3();
+    expect(isFound(s, 'D3-05')).toBe(false);
+    reach(s, 'bastion');
+    expect(sweepDocuments(s)).toEqual(expect.arrayContaining(['doc:D3-05', 'name:37']));
+    mark('D3-05');
+  });
+
+  it('D3-06 on the Act III stand; D3-07 when the next warden arrives', () => {
+    const s = act3();
+    standDocuments(s);
+    expect(isFound(s, 'D3-06')).toBe(true);
+    nextCycle(s);
+    expect(wardenDocuments(s)).toEqual(expect.arrayContaining(['doc:D3-07']));
+    mark('D3-06', 'D3-07');
+  });
+});
+
 describe('acts (GDD §5.14.1)', () => {
   it('documents stay obtainable in later cycles', () => {
     const s = createNewGame('later', T0);
@@ -225,9 +276,10 @@ describe('acts (GDD §5.14.1)', () => {
   it('an unwritten act closes with "The story continues in a later version."', () => {
     expect(actClosing(1)).toMatchObject({ id: 'D1-06' });
     expect(actClosing(2)).toMatchObject({ id: 'D2-09' });
-    expect(actClosing(3)).toBe(UNWRITTEN_ACT_LINE);
+    expect(actClosing(3)).toMatchObject({ id: 'D3-06' });
+    expect(actClosing(4)).toBe(UNWRITTEN_ACT_LINE);
     expect(actClosing(null)).toBeNull();
-    expect(allDocuments.some((d) => d.act >= 3)).toBe(false);
+    expect(allDocuments.some((d) => d.act >= 4)).toBe(false);
   });
 
   it('in Act II, a fell village’s ruin notice names Kamenfell; never in Act I or the lowlands', () => {
@@ -239,8 +291,16 @@ describe('acts (GDD §5.14.1)', () => {
     expect(noticeFor(low, 'seed', 2).text).not.toContain('Kamenfell');
   });
 
-  it('every Act I and Act II document has a condition test above', () => {
-    expect([...tested].sort()).toEqual(allDocuments.map((d) => d.id).sort());
+  it('every document has a condition test above', () => {
+    // D3-01 (Arvid's arrival) and D3-08 (Arvid and Sigrun) have no machinery until T6.7;
+    // their tests join then.
+    const later = ['D3-01', 'D3-08'];
+    expect([...tested].sort()).toEqual(
+      allDocuments
+        .map((d) => d.id)
+        .filter((id) => !later.includes(id))
+        .sort(),
+    );
   });
 });
 

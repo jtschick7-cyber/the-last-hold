@@ -63,8 +63,8 @@ export type HunterUnlock =
   /** A species reaches a knowledge level (GDD §5.3.1 "bestiary progress"). */
   | { readonly kind: 'knowledgeLevel'; readonly monster: MonsterId; readonly level: KnowledgeLevel }
   | { readonly kind: 'bountySilverEarned'; readonly amount: number }
-  /** When this act begins (Arvid, Act III; v0.5). */
-  | { readonly kind: 'actBegins'; readonly act: number };
+  /** He arrives with Ilse when this act begins and joins the roster directly (Arvid, Act III; D211). */
+  | { readonly kind: 'arrivesWithIlse'; readonly act: number };
 
 export type Origin = 'highland' | 'lowland' | 'wanderer';
 

@@ -1,10 +1,10 @@
 import { act1Documents } from './act1';
 import { act2Documents } from './act2';
+import { act3Documents } from './act3';
 import type { DocumentDef } from './documents';
 
-// GDD §5.14.1 and lore-secrets §5: one act per cycle. Acts I and II are written
-// (D163, D164); Act III is written at the v0.6 flesh-out. An act that isn't
-// written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
+// GDD §5.14.1 and lore-secrets §5: one act per cycle. Acts I, II and III are written
+// (D163, D164, D209). An act that isn't written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
 
 export interface ActDef {
   readonly act: number;
@@ -17,10 +17,11 @@ export interface ActDef {
 export const acts: readonly ActDef[] = [
   { act: 1, heading: 'I. The Fall', witness: 'Marta Dubska', documents: act1Documents },
   { act: 2, heading: 'II. The Sent', witness: 'Tomek Lis', documents: act2Documents },
+  { act: 3, heading: 'III. The Night', witness: 'Arvid Netmender', documents: act3Documents },
 ];
 
 /** The last act whose text is in the game. */
-export const LAST_WRITTEN_ACT = 2;
+export const LAST_WRITTEN_ACT = 3;
 
 /** "III" for act 3 (lore-secrets §5 has six acts). */
 export const actNumeral = (act: number): string =>
@@ -33,10 +34,10 @@ export const allDocuments: readonly DocumentDef[] = acts.flatMap((a) => a.docume
 /**
  * GDD §5.14.3, §9.14: the Accounts view. Each key event's accounts sit side by
  * side, each labeled with its witness; none is marked true. Excerpts are quoted
- * word for word from their documents (lore-secrets §21.3, §22.3).
+ * word for word from their documents (lore-secrets §21.3, §22.3, §26.3).
  */
 export interface AccountEvent {
-  readonly id: 'fall' | 'apprentices' | 'bell';
+  readonly id: 'fall' | 'apprentices' | 'bell' | 'yrsa';
   readonly heading: string;
   readonly accounts: readonly { readonly document: string; readonly excerpt: string }[];
 }
@@ -62,6 +63,7 @@ export const accountEvents: readonly AccountEvent[] = [
           'Then she broke whatever it was under the hold, and after that night nobody came down the road for a fourth.',
       },
       { document: 'D1-10', excerpt: 'A folded sheet with nothing written on it.' },
+      { document: 'D3-06', excerpt: 'Then we took our hammers to the chains.' },
     ],
   },
   {
@@ -83,6 +85,8 @@ export const accountEvents: readonly AccountEvent[] = [
       { document: 'D2-06', excerpt: "The cart's turned toward Stanholm, not the south road." },
       { document: 'D2-01', excerpt: "Tomek isn't on it. Nobody from the Hollow is." },
       { document: 'D2-08', excerpt: "They don't go south." },
+      { document: 'D3-03', excerpt: 'The cart never came through.' },
+      { document: 'D3-05', excerpt: '272 · Eirik Varn · Velkvik · ribboned · onward' },
     ],
   },
   {
@@ -99,6 +103,28 @@ export const accountEvents: readonly AccountEvent[] = [
         document: 'D2-09',
         excerpt: "I've had twenty-odd years to wonder why a feast needs a cart in the dark.",
       },
+    ],
+  },
+  {
+    id: 'yrsa',
+    heading: "Yrsa's choice",
+    accounts: [
+      {
+        document: 'D1-09',
+        excerpt:
+          "Whatever she broke, she broke for a reason, and the fells don't ask a Varn to explain herself.",
+      },
+      {
+        document: 'D1-02',
+        excerpt:
+          'Then she broke whatever it was under the hold, and after that night nobody came down the road for a fourth.',
+      },
+      {
+        document: 'D3-04',
+        excerpt:
+          "Everyone who stood up had someone on it. The ones who stayed in their seats didn't.",
+      },
+      { document: 'D3-06', excerpt: 'Yrsa was right.' },
     ],
   },
 ];

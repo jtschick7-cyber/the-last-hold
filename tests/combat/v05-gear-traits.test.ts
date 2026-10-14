@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { hunters } from '../../src/content/hunters';
 import { buildHunter } from '../../src/core/combat/build';
 import { outgoingPct, takenReduction } from '../../src/core/combat/stats';
-import { candidates, lockedHunters, unlockMet } from '../../src/core/systems/hunters';
+import { unlockMet } from '../../src/core/systems/hunters';
 import { freshAct } from '../../src/core/state/story-state';
 import { cyclic, fightOf, lines, snap } from './helpers';
 import { give, keepRich, run } from '../contracts/helpers';
@@ -94,15 +94,14 @@ describe('Old Wright (Arvid)', () => {
 });
 
 describe('Arvid Netmender (GDD §8.5)', () => {
-  it('is a free story hunter who unlocks when Act III begins, which v0.5 cannot reach', () => {
+  it('is a free story hunter who unlocks when Act III begins', () => {
     expect(hunters.arvid).toMatchObject({ recruitPrice: 0, story: true });
     const s = keepRich('arvid');
     expect(unlockMet(s, hunters.arvid.unlock)).toBe(false);
     s.story.acts.push(freshAct(2, 2, s.time), freshAct(3, 3, s.time));
-    // Act III isn't written yet (v0.6), so he still can't arrive.
-    expect(unlockMet(s, hunters.arvid.unlock)).toBe(false);
-    expect(candidates(s).some((h) => h.id === 'arvid')).toBe(false);
-    expect(lockedHunters(s).some((h) => h.id === 'arvid')).toBe(true);
+    // Act III is written from v0.6 (D209), so Act III's start meets his unlock. How he
+    // arrives (with Ilse, onto the roster) is T6.7.
+    expect(unlockMet(s, hunters.arvid.unlock)).toBe(true);
   });
 
   it('a debug action adds him to the roster, for testing', () => {

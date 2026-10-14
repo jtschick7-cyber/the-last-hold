@@ -49,6 +49,10 @@ export const describeCondition = (doc: DocumentDef): string => {
       return `${act}'s Last Stand`;
     case 'nextWarden':
       return `the warden after ${act}`;
+    case 'arvidArrives':
+      return `Arvid's arrival with Ilse when ${act} begins`;
+    case 'huntersTogether':
+      return `${c.hunters.map((h) => hunters[h].shortName).join(' and ')} both at the hold`;
   }
 };
 

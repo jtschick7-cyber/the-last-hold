@@ -9,6 +9,7 @@ import { CONSUMABLE_IDS, consumables } from '../../src/content/consumables';
 import { families } from '../../src/content/damage';
 import { INGREDIENT_IDS, ingredients } from '../../src/content/ingredients';
 import { ingredientProperties } from '../../src/content/properties';
+import { arvidArrival, arvidArrivalOnLoad } from '../../src/content/story/act3';
 
 const gdd = readFileSync(new URL('../../docs/gdd.md', import.meta.url), 'utf8');
 const cells = (line: string): string[] =>
@@ -148,5 +149,13 @@ describe('the v0.6 balance keys (GDD §7.7, §7.8, D194, D195, D217)', () => {
   it('keep every skill key tunable except the cap', () => {
     for (const [k, v] of Object.entries(balance.skill))
       if (k !== 'maxLevel' && 'locked' in v) expect(v.locked, k).toBe(false);
+  });
+});
+
+describe("Act III's arrival lines (lore-secrets §26, D211, D214)", () => {
+  const lore = readFileSync(new URL('../../docs/lore-secrets.md', import.meta.url), 'utf8');
+  it('are the lore lines word for word', () => {
+    expect(lore).toContain(`*"${arvidArrival}"*`);
+    expect(lore).toContain(`*"${arvidArrivalOnLoad}"*`);
   });
 });

@@ -79,6 +79,10 @@ const standingMet = (state: GameState, doc: DocumentDef, p: ActProgress): boolea
     case 'actStand':
     case 'nextWarden':
       return false;
+    case 'arvidArrives':
+    case 'huntersTogether':
+      // Act III's two new conditions (D211, D213): judged when they happen, from T6.7.
+      return false;
   }
 };
 
@@ -89,6 +93,8 @@ const VIA: Readonly<Record<DocumentCondition['kind'], FoundVia>> = {
   hunterAtRank: 'roster',
   actStand: 'stand',
   nextWarden: 'warden',
+  arvidArrives: 'warden',
+  huntersTogether: 'roster',
 };
 
 /**

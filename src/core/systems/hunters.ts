@@ -174,8 +174,8 @@ export const unlockMet = (state: GameState, unlock: HunterUnlock): boolean => {
       return (state.bestiary[unlock.monster]?.level ?? 0) >= knowledgeLevels[unlock.level].number;
     case 'bountySilverEarned':
       return state.stats.bountySilver >= unlock.amount;
-    case 'actBegins':
-      // GDD §8.5: Arvid comes when Act III begins, and an act begins only once it's written.
+    case 'arrivesWithIlse':
+      // GDD §8.5 (D211): Arvid comes with Ilse when Act III begins (the arrival itself is T6.7).
       return unlock.act <= LAST_WRITTEN_ACT && state.story.acts.some((a) => a.act >= unlock.act);
   }
 };
@@ -200,8 +200,8 @@ export const describeUnlock = (unlock: HunterUnlock): string => {
       return `${monsters[unlock.monster].name} reaches ${knowledgeLevels[unlock.level].name}`;
     case 'bountySilverEarned':
       return `Earn ${unlock.amount.toLocaleString('en-US')} silver in bounties`;
-    case 'actBegins':
-      return `Arrives when Act ${actNumeral(unlock.act)} begins`;
+    case 'arrivesWithIlse':
+      return `Arrives with Ilse when Act ${actNumeral(unlock.act)} begins`;
   }
 };
 
