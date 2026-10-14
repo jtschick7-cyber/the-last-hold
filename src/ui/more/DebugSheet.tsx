@@ -151,6 +151,9 @@ export const DebugSheet = () => {
         >
           +100 Embers
         </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.runArrival' })}>
+          Run the arrival
+        </button>
       </div>
       {note && <p class={styles.small}>{note}</p>}
       <h3 class={styles.cardTitle} style={{ marginTop: 'var(--space-3)' }}>

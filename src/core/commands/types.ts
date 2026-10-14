@@ -71,6 +71,8 @@ export type Command =
   | { type: 'debug.addResources'; bundle: ResourceBundle }
   | { type: 'debug.setSeed'; seed: string }
   | { type: 'debug.addEmbers'; amount: number }
+  /** GDD §5.9.8: makes this save face the v0.4 arrival, as a pre-v0.4 save does. */
+  | { type: 'debug.runArrival' }
   | { type: 'debug.unlockAge'; age: AgeId };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };

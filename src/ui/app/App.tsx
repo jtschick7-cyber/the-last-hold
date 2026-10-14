@@ -8,6 +8,7 @@ import { HoldScreen } from '../screens/HoldScreen';
 import { HuntersScreen } from '../screens/HuntersScreen';
 import { MoreScreen } from '../screens/MoreScreen';
 import { InstallSheet } from '../more/InfoSheets';
+import { ArrivalView } from '../sheets/ArrivalView';
 import { AwayView } from '../sheets/AwaySheet';
 import styles from '../styles/ui.module.css';
 import { ResourceBar } from '../widgets/ResourceBar';
@@ -124,9 +125,9 @@ export const App = () => {
     document.documentElement.dataset.motion = reduceMotion;
   }, [version.value]);
 
-  // Scenes play once, when their moment comes (setting-primer §6.6).
+  // Scenes play once, when their moment comes (setting-primer §6.6); not during the arrival.
   useEffect(() => {
-    if (version.value > 0) playScenes();
+    if (version.value > 0 && !game().arrivalDue) playScenes();
   }, [version.value, sheets.value.length]);
 
   useEffect(() => {
@@ -145,7 +146,12 @@ export const App = () => {
   if (version.value === 0) return <main class={css.main}>Lighting the hearth…</main>;
 
   const progress = catchUpProgress.value;
-  const shown = tabsFor(game().board.opened, Object.keys(game().bestiary).length > 0);
+  // GDD §5.9.8: while the v0.4 arrival is due, it takes the Hold's place; only More stays.
+  const arrival = game().arrivalDue;
+  const shown: readonly Tab[] = arrival
+    ? ['hold', 'more']
+    : tabsFor(game().board.opened, Object.keys(game().bestiary).length > 0);
+  const screen = shown.includes(tab.value) ? tab.value : 'hold';
   const unread = game().results.length;
   return (
     <div class={css.app}>
@@ -153,7 +159,9 @@ export const App = () => {
       <ResourceBar />
       <main class={css.main}>
         <Notices />
-        <ErrorBoundary>{SCREENS[shown.includes(tab.value) ? tab.value : 'hold']()}</ErrorBoundary>
+        <ErrorBoundary>
+          {arrival && screen === 'hold' ? <ArrivalView /> : SCREENS[screen]()}
+        </ErrorBoundary>
       </main>
       <nav class={css.tabs} aria-label="Screens">
         {shown.map((t) => (

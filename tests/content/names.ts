@@ -345,6 +345,12 @@ export const checkedNames: readonly CheckedName[] = [
     'Plough-Share',
     'Tally Stick',
   ].map((name): CheckedName => ({ name, checked: '2026-10-13', result: 'generic' })),
+  {
+    name: 'The Long Night',
+    checked: '2026-10-14',
+    result: 'generic',
+    note: 'The arrival sheet title (GDD §5.9.8, T4.10): "Long Night" with the article; that name was searched on 2026-10-13 (generic).',
+  },
   ...['Drill Yard', 'Village Goodwill', 'Swift Roads', "Mason's Plumb", 'Iron Shutter'].map(
     (name): CheckedName => ({ name, checked: '2026-10-13', result: 'clear' }),
   ),

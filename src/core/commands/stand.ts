@@ -6,7 +6,7 @@ import { RULES_VERSION } from '../rules-version';
 import { resetForNewCycle } from '../long-night/reset';
 import { embersPayout } from '../stand/embers';
 import { runStand } from '../stand/engine';
-import { standInputFor } from '../stand/from-state';
+import { arrivalTrophyCap, standInputFor } from '../stand/from-state';
 import { bestWavesEver, relicsFound } from '../stand/relics';
 import type { GameState, Preparation, StandRecord } from '../state/game-state';
 import { ok, refuse, type ApplyResult } from './types';
@@ -17,7 +17,8 @@ import { ok, refuse, type ApplyResult } from './types';
 
 /** Why the stand can't be made now, or null. */
 export const standProblem = (state: GameState): string | null => {
-  if (state.cycle.age !== 'bastion') return 'The Last Stand opens at Bastion.';
+  // GDD §5.9.8: a save from before v0.4 faces its first stand at whatever Rank it has.
+  if (!state.arrivalDue && state.cycle.age !== 'bastion') return 'The Last Stand opens at Bastion.';
   const record = state.cycles[state.cycles.length - 1];
   if (!record || record.stand) return 'This cycle has already made its stand.';
   return null;
@@ -58,6 +59,7 @@ export const makeStand = (
     waves: result.wavesHeld,
     threat: input.threat,
     trophies: state.stats.trophies,
+    trophyCap: arrivalTrophyCap(state),
   });
   const found = relicsFound(
     input.seed,
@@ -80,7 +82,7 @@ export const makeStand = (
     wavesHeld: result.wavesHeld,
     embers: { waves: payout.waves, trophies: payout.trophies, total: payout.value },
     relicsFound: found,
-    arrival: false,
+    arrival: state.arrivalDue,
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];

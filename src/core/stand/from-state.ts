@@ -46,6 +46,14 @@ export const standInputFor = (
   knowledge: knowledgeNow(state),
 });
 
+/** GDD §5.9.8 (D112): the arrival caps the trophies part at share × the cycle-1 median. */
+export const arrivalCapValue = (): number =>
+  num('longNightArrival.emberCapShare') * num('longNightArrival.cycle1MedianEmbers');
+
+/** The trophies cap for a stand made now: only the v0.4 arrival has one. */
+export const arrivalTrophyCap = (state: GameState): number | null =>
+  state.arrivalDue ? arrivalCapValue() : null;
+
 /** Days since the current cycle began. */
 export const cycleDays = (state: GameState): number => {
   const record = state.cycles[state.cycles.length - 1];
@@ -57,7 +65,7 @@ export const previewInputFor = (
   party: readonly HunterId[],
   prep: Pick<Preparation, 'oils' | 'potions'>,
   samples = num('laststand.previewSamples'),
-  trophyCap: number | null = null,
+  trophyCap: number | null = arrivalTrophyCap(state),
 ): StandPreviewInput => {
   const days = cycleDays(state);
   return {

@@ -58,7 +58,8 @@ export const embersPayout = (i: EmbersInput): EmbersPayout => {
       label: `Trophies this cycle: ${i.trophies}`,
       value: trophies,
       formula:
-        cap !== null && raw > cap
+        // At the cap (also when a saved, already-capped part is shown again).
+        cap !== null && raw >= cap
           ? `${num('embers.perTrophy')} × trophies, capped at ${cap} for the first Long Night`
           : `${num('embers.perTrophy')} × trophies`,
       key: 'embers.perTrophy',

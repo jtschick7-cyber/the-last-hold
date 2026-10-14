@@ -5,6 +5,7 @@ import { relics } from '../../content/relics';
 import { describeRelic } from '../../core/describe-long-night';
 import { formatNumber } from '../../core/format';
 import { embersPayout } from '../../core/stand/embers';
+import { arrivalCapValue } from '../../core/stand/from-state';
 import { RULES_VERSION } from '../../core/rules-version';
 import { replayStand } from '../../core/stand/replay';
 import type { GameState, StandRecord } from '../../core/state/game-state';
@@ -69,6 +70,8 @@ const Result = ({ stand }: { stand: StandRecord }) => {
     waves: stand.wavesHeld,
     threat: stand.threat,
     trophies: stand.embers.trophies,
+    // GDD §5.9.8: the arrival's trophies part was capped (the record keeps the capped part).
+    trophyCap: stand.arrival ? arrivalCapValue() : null,
   });
   return (
     <div>

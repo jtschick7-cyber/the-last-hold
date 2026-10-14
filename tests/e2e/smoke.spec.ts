@@ -128,3 +128,44 @@ test('make the Last Stand at Bastion and start a new cycle', async ({ page }) =>
   await expect(page.getByText(/The Long Night: what happened/)).toHaveCount(0);
   expect(errors).toEqual([]);
 });
+
+// Plan T4.10 (GDD §5.9.8): the v0.4 arrival takes the Hold's place until the stand is made.
+test('the v0.4 arrival: a Keep save faces its first Long Night, then starts over', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('./?debug');
+  const tab = (name: string) =>
+    page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
+  const onward = async () => {
+    const o = page.getByRole('button', { name: 'Onward' });
+    if (await o.isVisible().catch(() => false)) await o.click();
+  };
+  await tab('More').click();
+  await page.getByRole('button', { name: /^Debug/ }).click();
+  await page.getByRole('button', { name: 'Unlock Keep', exact: true }).click();
+  await page.getByRole('button', { name: 'Run the arrival', exact: true }).click();
+  await page.getByRole('button', { name: 'Close' }).first().click();
+  await onward();
+
+  await tab('Hold').click();
+  await expect(page.getByRole('heading', { name: 'The Long Night' })).toBeVisible();
+  await expect(page.getByText(/Everyone who can hold a spear goes up/)).toBeVisible();
+  // It can't be put off: only Hold and More are left.
+  await expect(page.getByRole('navigation').getByRole('button')).toHaveCount(2);
+  await page.getByRole('button', { name: 'To the walls' }).click();
+  await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 15_000 });
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.getByRole('button', { name: 'Go up to the walls' }).click();
+
+  const night = page.getByRole('dialog', { name: 'The Long Night' });
+  await expect(night.getByText(/The walls held/)).toBeVisible();
+  for (let i = 0; i < 3; i++) await night.getByRole('button', { name: 'Next' }).click();
+  await night.getByRole('button', { name: 'Begin cycle 2' }).click();
+  await onward();
+
+  await expect(page.getByText(/Stanholm — Hamlet/)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'The Long Night' })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
