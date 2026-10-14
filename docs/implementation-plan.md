@@ -643,7 +643,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
   - The v0.5 rows in `sim/targets.ts` (owner-approved, D168; their own commit); the milestone becomes v0.5.
   - **The suite runs in parallel,** one run per core (D169), with a test that the parallel report matches a sequential one.
   - Full suite ≤ 5 min in CI.
-- [ ] **T5.16 Tuning** (tunables only) against every check; likely levers are the ruin creatures' numbers and the trust steps. If no reasonable values pass, stop and ask.
+- [?] **T5.16 Tuning** *(Mostly done, D189: two checks, Act II and the Ribbonshade names, can't pass by tuning; the question is Q17, `docs/questions.md`.)* (tunables only) against every check; likely levers are the ruin creatures' numbers and the trust steps. If no reasonable values pass, stop and ask.
 
 ### v0.5 acceptance criteria
 
