@@ -1,11 +1,11 @@
 import { HUNTER_IDS, hunters, type HunterId } from '../hunters';
+import { unnamedLetters } from './letters-unnamed';
 
 // GDD §5.14.7 (D155, D156) and lore-secrets §23 (D165): every hunter has two
 // letters to the warden, written at Ilse's asking: slot 0 at the first of
 // `letters.levels`, slot 1 at the second, counting the highest level the hunter
-// has ever reached. Five carry names and are written here word for word. The
-// other 17 carry none and are drafted for the owner's approval in T5.12; until
-// then their text is null.
+// has ever reached. Five carry names and are written here word for word; the other 17
+// carry none (`letters-unnamed.ts`, approved by the owner in T5.12).
 
 export type LetterHunter = HunterId;
 export type LetterSlot = 0 | 1;
@@ -85,11 +85,13 @@ const written: readonly LetterDef[] = [
 
 const signatureOf = (hunter: LetterHunter): string => `— ${hunters[hunter].shortName}`;
 
+const all: readonly LetterDef[] = [...written, ...unnamedLetters];
+
 /** All 22 letters (D156): every hunter, both slots, in roster order then Arvid. */
 export const letters: readonly LetterDef[] = HUNTER_IDS.flatMap((hunter: LetterHunter) =>
   ([0, 1] as const).map(
     (slot): LetterDef =>
-      written.find((l) => l.hunter === hunter && l.slot === slot) ?? {
+      all.find((l) => l.hunter === hunter && l.slot === slot) ?? {
         hunter,
         slot,
         body: null,

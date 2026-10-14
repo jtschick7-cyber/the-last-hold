@@ -254,14 +254,29 @@ describe('the forty names (lore-secrets §8, §20)', () => {
 });
 
 describe('hunter letters (GDD §5.14.7, lore-secrets §23)', () => {
-  it('two per hunter, 22 in all, with the five name-bearing ones written', () => {
+  it('two per hunter, 22 in all, every one written; exactly five carry a name (T5.12)', () => {
     expect(HUNTER_IDS).toContain('arvid');
     expect(letters).toHaveLength(2 * HUNTER_IDS.length);
-    const written = letters.filter((l) => l.body !== null);
-    expect(written.map((l) => `${l.hunter}:${l.slot}`).sort()).toEqual(
-      ['arvid:0', 'ostap:0', 'ostap:1', 'sigrun:0', 'toma:0'].sort(),
-    );
+    expect(letters.every((l) => l.body !== null)).toBe(true);
+    expect(
+      letters
+        .filter((l) => l.name !== undefined)
+        .map((l) => `${l.hunter}:${l.slot}`)
+        .sort(),
+    ).toEqual(['arvid:0', 'ostap:0', 'ostap:1', 'sigrun:0', 'toma:0']);
     expect(balance.letters.levels.value).toEqual([5, 8]);
+  });
+
+  it('the 17 unnamed ones are owner-approved letters to the warden that name no one on the roll', () => {
+    const unnamed = letters.filter((l) => l.name === undefined);
+    expect(unnamed).toHaveLength(17);
+    for (const l of unnamed) {
+      const key = `${l.hunter}:${l.slot}`;
+      const text = (l.body ?? []).join(' ');
+      expect(l.body?.[0], key).toMatch(/^Warden — /);
+      expect(l.body?.length, key).toBeGreaterThanOrEqual(3);
+      for (const r of roll) expect(text, `${key} names ${r.name}`).not.toContain(r.name);
+    }
   });
 
   it('are word for word', () => {
@@ -272,7 +287,7 @@ describe('hunter letters (GDD §5.14.7, lore-secrets §23)', () => {
       'sigrun:0': '### Sigrun Halfhand, level 5',
       'arvid:0': '### Arvid Netmender, level 5',
     };
-    for (const l of letters.filter((x) => x.body)) {
+    for (const l of letters.filter((x) => x.name !== undefined)) {
       const key = `${l.hunter}:${l.slot}`;
       const text = flat(quoted(loreSection(heads[key] ?? '?')));
       for (const p of [...(l.body ?? []), l.signature]) expect(text, key).toContain(flat(p));

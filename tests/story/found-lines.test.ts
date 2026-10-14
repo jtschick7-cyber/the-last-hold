@@ -36,9 +36,9 @@ describe('what a contract result says the story brought', () => {
     ]);
   });
 
-  it('a hunter’s letter, only once it is written; names and unknown keys say nothing', () => {
+  it('a hunter’s letter; names and unknown keys say nothing', () => {
     expect(foundLines(s, ['letter:ostap:0'])).toEqual(['Ostap wrote you a letter.']);
-    expect(foundLines(s, ['letter:halvar:0'])).toEqual([]); // not written until T5.12
+    expect(foundLines(s, ['letter:halvar:0'])).toEqual(['Halvar wrote you a letter.']);
     expect(foundLines(s, ['name:28', 'what:ever', 'doc:nope'])).toEqual([]);
   });
 });

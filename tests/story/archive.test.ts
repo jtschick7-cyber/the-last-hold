@@ -63,11 +63,14 @@ describe('the Archive', () => {
     expect(laterNote(s, 'D1-04')).toBe(halinaRibbonNote);
   });
 
-  it('the letters shelf holds written letters reached; the hunter sheet shows locked rows', () => {
+  it('the letters shelf holds the letters reached; the hunter sheet shows locked rows', () => {
     const s = createNewGame('archive', T0);
     notePeak(s, 'ostap', 5);
-    notePeak(s, 'halvar', 5); // reached, but its text waits for T5.12
-    expect(lettersShelf(s).map((l) => [l.hunter, l.slot, l.level])).toEqual([['ostap', 0, 5]]);
+    notePeak(s, 'halvar', 5);
+    expect(lettersShelf(s).map((l) => [l.hunter, l.slot, l.level])).toEqual([
+      ['ostap', 0, 5],
+      ['halvar', 0, 5],
+    ]);
     expect(hunterLetters(s, 'ostap').map((l) => [l.level, l.letter !== null])).toEqual([
       [5, true],
       [8, false],
