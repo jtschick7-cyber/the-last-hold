@@ -50,7 +50,8 @@ export const generateContract = (
       ] ?? VILLAGE_IDS[0]
     ];
   const places: readonly LocationId[] = village.locations.filter(
-    (l) => LOCATION_IDS.includes(l) && (l !== 'barrow' || tier >= 2),
+    // Barrows and ruins start at tier 2 (A3, D157), so never in the Hamlet.
+    (l) => LOCATION_IDS.includes(l) && ((l !== 'barrow' && l !== 'ruin') || tier >= 2),
   );
   const location =
     places[Math.min(places.length - 1, Math.floor(rolls.next() * places.length))] ?? 'field';

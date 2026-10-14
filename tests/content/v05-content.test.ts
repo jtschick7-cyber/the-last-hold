@@ -100,7 +100,7 @@ describe('the Cursed creatures (GDD §8.3, D158)', () => {
     for (const id of CURSED_IDS)
       for (const t of cursed[id].clueTags) expect(known.has(t), t).toBe(true);
     for (const t of V05_CLUE_TAGS) {
-      expect(CLUE_TAGS as readonly string[]).not.toContain(t);
+      expect(CLUE_TAGS as readonly string[]).toContain(t); // joined in T5.4
       const texts = v05ClueTexts[t];
       expect(texts.length, t).toBeGreaterThanOrEqual(3);
       expect(new Set(texts).size, t).toBe(texts.length);

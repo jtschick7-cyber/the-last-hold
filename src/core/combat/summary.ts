@@ -5,6 +5,7 @@ import { buildHunter, buildMonster } from './build';
 import {
   armorEff,
   knowledgeBonus,
+  lightlessCut,
   mightEff,
   monsterFamily,
   outgoingPct,
@@ -27,6 +28,7 @@ const context = (input: FightInput): FightContext => ({
   family: monsterFamily(input.monster.monster),
   monsterId: input.monster.monster,
   attacks: monsters[input.monster.monster].attacks,
+  hitCut: lightlessCut(input.monster.monster),
 });
 
 /** Expected damage of one direct attack, after resist, crit, Armor and taken%. */

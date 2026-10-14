@@ -2,11 +2,11 @@
 // Run: npx vite-node tools/gen-monsters.ts
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { MONSTER_IDS } from '../src/content/monsters';
-import { drawMonster } from './draw-monster';
+import { drawMonster, hasDrawing } from './draw-monster';
 
 const out = new URL('../public/assets/portraits/', import.meta.url);
 mkdirSync(out, { recursive: true });
-for (const id of MONSTER_IDS) {
+for (const id of MONSTER_IDS.filter(hasDrawing)) {
   writeFileSync(new URL(`monster-${id}.png`, out), drawMonster(id).toPng());
   console.log(`portrait.monster.${id} → public/assets/portraits/monster-${id}.png`);
 }

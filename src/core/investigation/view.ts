@@ -65,6 +65,7 @@ const FAMILY_ORDER: readonly FamilyId[] = [
   'water-spirits',
   'field-and-forest-spirits',
   'beasts-and-wilds',
+  'cursed',
 ];
 
 export const bestiaryFamilies = (state: GameState): BestiaryRow[] =>

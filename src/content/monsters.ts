@@ -1,6 +1,7 @@
 import type { ClueTag } from './clues';
 import { type DamageType, type FamilyId, type LocationId } from './damage';
 import type { IngredientId } from './ingredients';
+import { CURSED_IDS, cursed, type CursedAbility } from './cursed';
 
 // GDD §8.3: the 12 monsters, identified for free in v0.2. Stats are at the
 // monster's base tier; each tier above it scales Health and Might by
@@ -21,11 +22,14 @@ export const MONSTER_IDS = [
   'strzyga',
   'huldra',
   'nix',
+  // v0.5: the Cursed of the ruins (GDD §8.3, D158).
+  ...CURSED_IDS,
 ] as const;
 export type MonsterId = (typeof MONSTER_IDS)[number];
 
-/** Every ability's numbers, exactly as GDD §8.3 words them (turn-meter form, G4). */
+/** Every ability's numbers, exactly as GDD §8.3 words them (turn-meter form, G4); the Cursed's are in cursed.ts. */
 export type MonsterAbility =
+  | CursedAbility
   | {
       readonly kind: 'hamstring';
       readonly name: 'Hamstring';
@@ -318,4 +322,5 @@ export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
     clueTags: ['drowned', 'song', 'horse'],
     drops: ['river-pearl'],
   },
+  ...cursed,
 };

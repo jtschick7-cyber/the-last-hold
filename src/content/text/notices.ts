@@ -39,6 +39,12 @@ export const notices: NoticeTable = {
       "Something sits at the edge of the field at dusk. It doesn't move when we come. We stopped coming.",
       'A haystack burned from the inside out. We pay in silver, not in words.',
     ],
+    // v0.5 ruins (D157): the old stone works up the valley.
+    ruin: [
+      'Hammering from the old forge at night. Nobody up there to hammer. Pay is silver.',
+      'The goat that strayed into the ruin came back singed. The boy who went after it came back quiet. Come.',
+      "Lanterns die at the ruin's gate. We've stopped carrying them up. Pay is fair.",
+    ],
   },
   mirograd: {
     field: [
@@ -63,6 +69,12 @@ export const notices: NoticeTable = {
       'Cold comes down from the hills before the weather does, and the sheep will not go near the stones. Two men went to look. Pay is fair.',
       'Grave-goods turned up on the path, wet with dew and laid out neatly. Whoever lays them out will want paying back. Come before the next one.',
     ],
+    // v0.5 ruins (D157).
+    ruin: [
+      'There is frost on the old outpost stones in high summer, and tracks in it too big for anything we know. Pay is silver.',
+      "The net-house below the ruin smells of a forge that hasn't been lit in twenty years. Something up there is working. We would like it to stop.",
+      'Our herd-girl saw a thin shape in the ruined doorway, standing still as a post. She did not go closer, and nor will we. Pay is silver, and a place at the fire.',
+    ],
   },
   ravenfell: {
     barrow: [
@@ -74,6 +86,12 @@ export const notices: NoticeTable = {
       'Woodcutters come back with their tools and no memory of the afternoon. Pay is silver.',
       "Something knocks on the shutters, always from the forest side. We don't open. We would like it to stop.",
       'The ravens left the fell. That is never good. Pay is silver.',
+    ],
+    // v0.5 ruins (D157).
+    ruin: [
+      'The old stones up the fell are cold to the touch in the sun. Pay is silver.',
+      'Something rose off the ruin roof like smoke. It was not smoke. Come.',
+      'Footprints in the frost by the old gate, pressed into rock. We put down salt. Pay is fair.',
     ],
   },
 };

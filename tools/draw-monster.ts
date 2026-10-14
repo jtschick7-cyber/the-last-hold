@@ -15,6 +15,7 @@ const BACKDROP: Record<FamilyId, readonly [string, string, string]> = {
   'field-and-forest-spirits': [C.pine, C.moss, C.grass],
   'restless-dead': [C.plum, C.night, C.slate],
   'water-spirits': [C.night, C.blue, C.cyan],
+  cursed: [C.ink, C.wine, C.rust], // v0.5; the Cursed's portraits come with T5.13
 };
 
 /** Two matching eyes, mirrored about the middle. */
@@ -375,7 +376,8 @@ const nix = (c: Canvas): void => {
   });
 };
 
-const DRAW: Record<MonsterId, (c: Canvas) => void> = {
+/** The Cursed (v0.5) have no drawing until plan T5.13; their assets are placeholders. */
+const DRAW: Partial<Record<MonsterId, (c: Canvas) => void>> = {
   wolf,
   kikimora,
   upyr,
@@ -390,6 +392,8 @@ const DRAW: Record<MonsterId, (c: Canvas) => void> = {
   nix,
 };
 
+export const hasDrawing = (id: MonsterId): boolean => DRAW[id] !== undefined;
+
 export const drawMonster = (id: MonsterId): Canvas => {
   const [dark, mid, light] = BACKDROP[monsters[id].family];
   const c = new Canvas();
@@ -397,7 +401,9 @@ export const drawMonster = (id: MonsterId): Canvas => {
   c.ellipse(CX, 32, 29, 30, mid);
   c.ellipse(CX, 32, 22, 23, light === C.cyan ? C.blue : dark);
   c.ellipse(CX, 32, 22, 23, (x, y) => ((x + y) % 7 === 0 ? mid : dark));
-  DRAW[id](c);
+  const draw = DRAW[id];
+  if (!draw) throw new Error(`No portrait drawing for ${id} yet (plan T5.13).`);
+  draw(c);
   c.outline(C.ink);
   return c;
 };

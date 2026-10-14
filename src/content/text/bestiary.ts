@@ -84,6 +84,31 @@ export const bestiaryText: Readonly<Record<MonsterId, BestiaryText>> = {
     whatItWas:
       "What it was: the ferryman's horse, standing at the water-steps the night he rowed out after a child and did not return.",
   },
+  // v0.5: the Cursed of the ruins (GDD §8.3). Drafts for the owner's review (D171, D176).
+  'gloam-moths': {
+    blurb:
+      'A swarm that comes off old rafters like smoke and eats the light out of a lantern. Each one is nothing; together they are a dark you can walk into and not walk out of. Bring fire, and bring it early.',
+    whatItWas:
+      "What it was: the moths that came every night to the order's forge lamps, and went on coming after the lamps went out.",
+  },
+  ribbonshade: {
+    blurb:
+      'A thin shape that stands in old forge doorways the way a child stands to be looked over. It does not hunt so much as wait, and whatever touches it comes away burned. It is easier to fight than to look at.',
+    whatItWas:
+      "What it was: someone young who wore the order's ribbon on their sleeve, and was proud of it.",
+  },
+  'anvil-wight': {
+    blurb:
+      'A dead smith at a cold anvil, still working. It mends itself between blows the way it once mended blades, and the hammering carries for a mile on a still night. Its iron hide shrugs off steel; the old runes do not.',
+    whatItWas:
+      'What it was: a Wright who stayed at the forge the night the sky went out, and has not finished the job.',
+  },
+  rimewrought: {
+    blurb:
+      'Iron and rime in the shape of a man twice too tall, slow as a glacier and about as easy to stop. Frost does nothing to it. Warm it, and the rime cracks, and then it can be hurt like anything else.',
+    whatItWas:
+      "What it was: one of the order's iron guardians, frozen where it stood the night the cold came down the river.",
+  },
 };
 
 /**
@@ -119,4 +144,12 @@ export const abilityTips: Readonly<Record<MonsterAbility['kind'], string>> = {
     'It always takes your strongest hunter first, so do not put every eggshell in one basket; a Saltburst cancels the first charm.',
   riverhorse:
     'It takes the hunter with the least Health, so keep everyone topped up, or set a Saltburst and the horse carries nobody.',
+  lightless:
+    'While the swarm stands, every swing is likelier to miss. It is weak to Fire: a Fire Pot or a Fire hunter burns it down before the misses add up.',
+  sealBurn:
+    'Every direct hit burns the hunter who lands it, so lean on Frost, which it fears, and on bombs. Fire-touched hunters and Emberwright Plate feel the burn less.',
+  reForge:
+    'Every third action it mends itself instead of striking; a Saltburst cancels the first mending. It is weak to Rune.',
+  unthawed:
+    'The first Fire to touch it cracks its rime and strips its Armor for the rest of the fight, so open with a Fire Pot or a Fire hunter.',
 };

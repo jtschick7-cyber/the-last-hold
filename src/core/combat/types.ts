@@ -135,6 +135,8 @@ export interface Combatant {
   abilitiesBlocked: number;
   /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
   extraTaken: number;
+  /** Rimewrought's Unthawed has stripped its Armor (GDD §8.3, v0.5). */
+  unthawed: boolean;
 }
 
 export interface LogEntry {

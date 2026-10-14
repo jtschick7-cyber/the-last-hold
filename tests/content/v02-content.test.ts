@@ -27,9 +27,9 @@ describe('v0.2 content', () => {
     }
   });
 
-  it('has 10 hunters (8 from v0.2, 2 from v0.3), 12 monsters and 5 villages (GDD §8)', () => {
+  it('has 10 hunters (8 from v0.2, 2 from v0.3), 16 monsters (4 Cursed from v0.5) and 5 villages (GDD §8)', () => {
     expect(HUNTER_IDS).toHaveLength(10);
-    expect(MONSTER_IDS).toHaveLength(12);
+    expect(MONSTER_IDS).toHaveLength(16);
     expect(VILLAGE_IDS).toHaveLength(5);
   });
 });
@@ -169,6 +169,13 @@ describe('villages and coverage (GDD §8.2, §8.3.1)', () => {
       'vodyanoy,nix',
     ],
     barrow: [null, 'wolf,upyr', 'upyr,draugr', 'draugr,strzyga', 'draugr,strzyga'],
+    ruin: [
+      null,
+      'gloam-moths,ribbonshade',
+      'gloam-moths,ribbonshade,anvil-wight',
+      'ribbonshade,anvil-wight,rimewrought',
+      'anvil-wight,rimewrought',
+    ],
   };
 
   const candidates = (location: string, tier: number): string[] =>
@@ -185,7 +192,7 @@ describe('villages and coverage (GDD §8.2, §8.3.1)', () => {
     for (const [location, row] of Object.entries(table)) {
       row.forEach((expected, i) => {
         const tier = i + 1;
-        if (expected === null) return; // barrow tier 1 is never generated
+        if (expected === null) return; // barrow and ruin tier 1 are never generated
         expect(candidates(location, tier), `${location} T${tier}`).toEqual(
           expected.split(',').sort(),
         );
@@ -196,7 +203,7 @@ describe('villages and coverage (GDD §8.2, §8.3.1)', () => {
   it('every cell a village can generate has at least one species', () => {
     for (const id of VILLAGE_IDS) {
       for (const location of villages[id].locations) {
-        for (let tier = location === 'barrow' ? 2 : 1; tier <= 5; tier++) {
+        for (let tier = location === 'barrow' || location === 'ruin' ? 2 : 1; tier <= 5; tier++) {
           expect(candidates(location, tier).length, `${id} ${location} T${tier}`).toBeGreaterThan(
             0,
           );

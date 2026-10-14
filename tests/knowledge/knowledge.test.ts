@@ -214,10 +214,11 @@ describe('knowledge in real contracts (GDD §5.6.2)', () => {
     expect(entry?.kills).toBe(ref?.result === 'win' ? 1 : 0);
   });
 
-  it('all twelve species can be tracked', () => {
+  it('every species can be tracked (sixteen from v0.5)', () => {
     const s = keepRich('kn');
     for (const m of MONSTER_IDS) recordFight(s, m, true);
-    expect(Object.keys(s.bestiary)).toHaveLength(12);
+    expect(Object.keys(s.bestiary)).toHaveLength(MONSTER_IDS.length);
+    expect(MONSTER_IDS).toHaveLength(16);
   });
 
   it('knowledge persists: the fixture saves keep it, and seeds for fights do not depend on it', () => {

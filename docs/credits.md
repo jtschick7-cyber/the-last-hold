@@ -20,4 +20,4 @@ The Last Hold is an original game. Every image and font is CC0 (public domain): 
 ## Made for the game
 
 - 22 generated images (CC0, The Last Hold).
-- 0 assets still shown as placeholder silhouettes (original, CC0).
+- 4 assets still shown as placeholder silhouettes (original, CC0).

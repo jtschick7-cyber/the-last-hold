@@ -581,7 +581,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### B. Ruins, the Cursed and Rune
 
-- [ ] **T5.4 Ruins and the Cursed.**
+- [x] **T5.4 Ruins and the Cursed.** *(Readings in D176; `rulesVersion` 3, owner-approved, D175.)*
   - Ruin contracts from the Keep at tier 2 and up; clue generation for the new tags.
   - The four abilities in the fight engine: Lightless (hit chance), Seal-burn (Fire back to a direct attacker, no Armor), Re-forge (Saltburst cancels it), Unthawed (first Fire hit, stat%).
   - The creatures join the Last Stand's waves at their tiers.
@@ -595,6 +595,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 - [ ] **T5.6 Acts and documents.**
   - One act per cycle; counters per act; an unwritten act closes with "The story continues in a later version."
+  - In Act II, fell villages' ruin notices end "…up at the old Kamenfell outpost." (moved here from T5.4, D176).
   - Every condition kind (§5.14.2), and delivery: contract results, Rank-up sheets, the stand result, scenes.
   - Documents stay obtainable in later cycles.
   - **A test for every Act I and Act II document's condition,** row by row against `lore-secrets.md` §21–§22.

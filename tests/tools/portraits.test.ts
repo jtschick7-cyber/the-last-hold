@@ -8,7 +8,7 @@ import { assetById, hunterPortraitId, monsterPortraitId } from '../../src/conten
 import { HUNTER_IDS, hunters } from '../../src/content/hunters';
 import { MONSTER_IDS } from '../../src/content/monsters';
 import { drawHunter } from '../../tools/draw-hunter';
-import { drawMonster } from '../../tools/draw-monster';
+import { drawMonster, hasDrawing } from '../../tools/draw-monster';
 import { PALETTE_HEX } from '../../tools/pixel';
 
 const file = (name: string): Buffer =>
@@ -20,7 +20,8 @@ const cases = [
     name: `${id}.png`,
     drawn: () => drawHunter(hunters[id].portrait).toPng(),
   })),
-  ...MONSTER_IDS.map((id) => ({
+  // The Cursed (v0.5) are drawn in plan T5.13; until then they are placeholders (below).
+  ...MONSTER_IDS.filter(hasDrawing).map((id) => ({
     row: monsterPortraitId(id),
     name: `monster-${id}.png`,
     drawn: () => drawMonster(id).toPng(),
@@ -28,8 +29,16 @@ const cases = [
 ];
 
 describe('generated portraits', () => {
+  it('only the four Cursed wait for their portraits (plan T5.13), as placeholders', () => {
+    const pending = MONSTER_IDS.filter((id) => !hasDrawing(id));
+    expect(pending).toEqual(['gloam-moths', 'ribbonshade', 'anvil-wight', 'rimewrought']);
+    for (const id of pending)
+      expect(assetById.get(monsterPortraitId(id))?.source).toBe('placeholder');
+  });
+
   it('has a manifest row for each hunter and species, pointing at its file', () => {
-    expect(cases).toHaveLength(HUNTER_IDS.length + MONSTER_IDS.length);
+    const pending = MONSTER_IDS.filter((id) => !hasDrawing(id));
+    expect(cases).toHaveLength(HUNTER_IDS.length + MONSTER_IDS.length - pending.length);
     for (const c of cases) {
       const row = assetById.get(c.row);
       expect(row?.source, c.row).toBe('generated');

@@ -3,7 +3,15 @@ import { finalDamage, hurt } from './formula';
 import { emit, fmt2, type Fight } from './fight-state';
 import { afterOwnHit } from './abilities';
 import { checkPotion } from './prep';
-import { armorEff, hitChance, mightEff, outgoingPct, standing, takenReduction } from './stats';
+import {
+  armorEff,
+  hitChance,
+  mightEff,
+  outgoingPct,
+  standing,
+  takenReduction,
+  unthaw,
+} from './stats';
 import type { Combatant } from './types';
 
 // GDD §5.5 "Attack resolution": rolls are drawn in a fixed order (target roll if
@@ -92,6 +100,10 @@ export const directAttack = (
   const amount = finalDamage(dealt, target, resistance, true, taken, hitMult);
   hurt(target, amount);
   const notes = afterOwnHit(f, attacker, target, amount, draw);
+  if (attacker.damage === 'fire') {
+    const cracked = unthaw(target);
+    if (cracked) notes.push(cracked);
+  }
   const floored = resistance > 0 && amount === 1 && dealt - armor < 1;
   const bits = (): string => {
     const out = [`${cap(attacker.damage)} ${fmt2(dealt)}`];
@@ -115,6 +127,7 @@ export const directAttack = (
     amount,
     targetHealth: target.health,
   });
+  if (attacker.side === 'hunter') sealBurn(f, attacker, target, amount);
   if (attacker.silverSubHit && standing(target)) silverSubHit(f, attacker, target, variance, crit);
   if (target.side === 'hunter') checkPotion(f, target);
   return true;
@@ -149,4 +162,37 @@ const silverSubHit = (
     amount,
     targetHealth: target.health,
   });
+};
+
+/**
+ * GDD §8.3 Seal-burn (Ribbonshade, a passive): a hunter whose direct attack hits it
+ * takes a share of the damage dealt back as Fire. Armor doesn't apply; taken% does
+ * (Fire-touched, Emberwright Plate), as with Noon Heat (B4). Not cancelled by a
+ * Saltburst (D176).
+ */
+const sealBurn = (f: Fight, attacker: Combatant, target: Combatant, dealt: number): void => {
+  for (const a of target.abilities) {
+    if (a.kind !== 'sealBurn' || dealt <= 0) continue;
+    const raw = dealt * a.reflectFraction;
+    const amount = finalDamage(
+      raw,
+      attacker,
+      1,
+      false,
+      takenReduction(attacker, 'fire', f.hunters),
+      1,
+    );
+    hurt(attacker, amount);
+    emit(f, {
+      actor: target.id,
+      kind: 'ability',
+      target: attacker.id,
+      text: () =>
+        `${target.name}'s Seal-burn scorches ${attacker.name}: Fire ${fmt2(raw)} = ${amount} · ${attacker.name} ${attacker.health}/${attacker.maxHealth}`,
+      rolls: [],
+      amount,
+      targetHealth: attacker.health,
+    });
+    checkPotion(f, attacker);
+  }
 };

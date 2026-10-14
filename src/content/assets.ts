@@ -161,14 +161,17 @@ export const assets: readonly AssetEntry[] = [
       'tools/gen-portraits.ts',
     ),
   ),
+  // The Cursed (v0.5) are placeholders until their portraits are drawn (plan T5.13).
   ...MONSTER_IDS.map((m) =>
-    generated(
-      monsterPortraitId(m),
-      [64, 64],
-      monsters[m].name,
-      `portraits/monster-${m}.png`,
-      'tools/gen-monsters.ts',
-    ),
+    monsters[m].family === 'cursed'
+      ? placeholder(monsterPortraitId(m), 'portrait', [64, 64], monsters[m].name)
+      : generated(
+          monsterPortraitId(m),
+          [64, 64],
+          monsters[m].name,
+          `portraits/monster-${m}.png`,
+          'tools/gen-monsters.ts',
+        ),
   ),
   // v0.4 (plan T4.12): Embers, Threat and the relics, from the 1-Bit Pack.
   fromPack(EMBERS_ICON, 'icon', [16, 16], 'Embers', 'icons/embers.png', ONE_BIT),
