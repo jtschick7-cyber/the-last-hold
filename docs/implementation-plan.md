@@ -437,7 +437,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ## v0.4 — The Long Night: mechanics
 
-**Status:** in progress *(fleshed out 2026-10-13, D106–D115)*
+**Status:** complete *(fleshed out 2026-10-13, D106–D115; playtest passed 2026-10-14, D141)*
 
 **Goal:** the cycle loop. Citadel and Bastion, Threat, a Last Stand you choose the moment for, Embers and warden upgrades, relics, and a Long Night that resets the hold and keeps what matters, plus the first Long Night for saves from before v0.4. Mechanics only: the text stays neutral (`setting-primer.md` §6.8).
 **Reads:** GDD §4.1, §5.1.2–5.1.3, §5.3.7, §5.4.1–5.4.2, §5.9, §6 (v0.4 rows, §6.1 policy, §6.3, §6.5), §7.1, §7.3–7.4, §7.6, §8.1, §8.9–8.10, §9.11, §9.13; technical design §5.2–5.3, §7.2, §9.4, §10.1, §13; `setting-primer.md` §6.5, §6.8.
@@ -516,14 +516,14 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 
 ### v0.4 owner playtest checklist 👤 (on the preview build)
 
-- [ ] Citadel and Bastion feel like new chapters, not just bigger numbers.
-- [ ] Threat is easy to read, and the pressure feels fair rather than punishing.
-- [ ] The stand screen makes "stand now or wait a day" a real, readable choice.
-- [ ] The stand's wave logs make sense.
-- [ ] The Long Night sheets are clear and short.
-- [ ] Cycle 2 feels faster, and the upgrades feel worth buying.
-- [ ] Your old save's arrival went smoothly.
-- [ ] Screenshot pass and new art review.
+- [x] Citadel and Bastion feel like new chapters, not just bigger numbers.
+- [x] Threat is easy to read, and the pressure feels fair rather than punishing.
+- [x] The stand screen makes "stand now or wait a day" a real, readable choice.
+- [x] The stand's wave logs make sense.
+- [x] The Long Night sheets are clear and short.
+- [x] Cycle 2 feels faster, and the upgrades feel worth buying.
+- [x] Your old save's arrival went smoothly.
+- [x] Screenshot pass and new art review.
 
 **Out of scope:** the story (Act I, documents, inscriptions); warden naming and the Roll of Wardens display; relics for hunters and relic slots; re-spending Embers; contract tiers above 5; paying resources to lower Threat.
 

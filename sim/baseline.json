@@ -1,6 +1,6 @@
 {
-  "milestone": "v0.3",
-  "rulesVersion": 1,
+  "milestone": "v0.4",
+  "rulesVersion": 2,
   "groups": {
     "opening/mon": {
       "first-cottage": 0,
@@ -10,10 +10,14 @@
       "keep": 14,
       "first-contract": 0.1,
       "roster-4": 24,
-      "first-tier-3": 35,
+      "first-tier-3": 40,
       "hunters-lodge": 14,
       "first-identified": 14.5,
-      "first-studied": 28
+      "first-studied": 28,
+      "citadel": 48,
+      "bastion": 96,
+      "best-last-stand": 96,
+      "first-long-night": 101.5
     },
     "opening/sat": {
       "first-cottage": 0,
@@ -22,11 +26,15 @@
       "peasants-10": 4,
       "keep": 24,
       "first-contract": 0.1,
-      "roster-4": 24,
-      "first-tier-3": 53.5,
-      "hunters-lodge": 28,
-      "first-identified": 28.5,
-      "first-studied": 33
+      "roster-4": 28,
+      "first-tier-3": 51,
+      "hunters-lodge": 24,
+      "first-identified": 24.5,
+      "first-studied": 32.5,
+      "citadel": 70,
+      "bastion": 94,
+      "best-last-stand": 94,
+      "first-long-night": 99.5
     },
     "standard/mon": {
       "first-cottage": 0,
@@ -36,10 +44,14 @@
       "keep": 14,
       "first-contract": 0.1,
       "roster-4": 24,
-      "first-tier-3": 35,
+      "first-tier-3": 40,
       "hunters-lodge": 14,
       "first-identified": 14.5,
-      "first-studied": 28
+      "first-studied": 28,
+      "citadel": 48,
+      "bastion": 96,
+      "best-last-stand": 96,
+      "first-long-night": 101.5
     },
     "standard/sat": {
       "first-cottage": 0,
@@ -48,11 +60,15 @@
       "peasants-10": 4,
       "keep": 24,
       "first-contract": 0.1,
-      "roster-4": 24,
-      "first-tier-3": 53.5,
-      "hunters-lodge": 28,
-      "first-identified": 28.5,
-      "first-studied": 33
+      "roster-4": 28,
+      "first-tier-3": 51,
+      "hunters-lodge": 24,
+      "first-identified": 24.5,
+      "first-studied": 32.5,
+      "citadel": 70,
+      "bastion": 94,
+      "best-last-stand": 94,
+      "first-long-night": 99.5
     },
     "light/mon": {
       "first-cottage": 0,
@@ -61,11 +77,15 @@
       "peasants-10": 5.533333333333333,
       "keep": 24,
       "first-contract": 14,
-      "roster-4": 38,
+      "roster-4": 48,
       "first-tier-3": 74,
       "hunters-lodge": 29.5,
       "first-identified": 30.5,
-      "first-studied": 54
+      "first-studied": 54,
+      "citadel": 72,
+      "bastion": 101.5,
+      "best-last-stand": 110,
+      "first-long-night": 120
     },
     "light/sat": {
       "first-cottage": 0,
@@ -74,11 +94,15 @@
       "peasants-10": 3.533333333333333,
       "keep": 27.5,
       "first-contract": 12,
-      "roster-4": 36,
-      "first-tier-3": 77.5,
+      "roster-4": 46,
+      "first-tier-3": 62,
       "hunters-lodge": 27.5,
       "first-identified": 28.5,
-      "first-studied": 52
+      "first-studied": 52,
+      "citadel": 60,
+      "bastion": 94,
+      "best-last-stand": 99.5,
+      "first-long-night": 118
     },
     "heavy/mon": {
       "first-cottage": 0,
@@ -88,10 +112,14 @@
       "keep": 14,
       "first-contract": 4,
       "roster-4": 24,
-      "first-tier-3": 34,
+      "first-tier-3": 32,
       "hunters-lodge": 14,
       "first-identified": 14.5,
-      "first-studied": 17
+      "first-studied": 17,
+      "citadel": 48,
+      "bastion": 72,
+      "best-last-stand": 72,
+      "first-long-night": 76
     },
     "heavy/sat": {
       "first-cottage": 0,
@@ -100,11 +128,15 @@
       "peasants-10": 2.033333333333333,
       "keep": 14,
       "first-contract": 4,
-      "roster-4": 22,
-      "first-tier-3": 30,
+      "roster-4": 24,
+      "first-tier-3": 36,
       "hunters-lodge": 14,
       "first-identified": 14.5,
-      "first-studied": 23
+      "first-studied": 23,
+      "citadel": 46,
+      "bastion": 94,
+      "best-last-stand": 94,
+      "first-long-night": 98
     }
   },
   "checks": {
@@ -125,6 +157,11 @@
     "provisions-matter": true,
     "first-identified": true,
     "first-studied": true,
-    "preparation-matters": true
+    "preparation-matters": true,
+    "citadel": true,
+    "bastion": true,
+    "best-last-stand": true,
+    "first-long-night": true,
+    "later-cycles": true
   }
 }
