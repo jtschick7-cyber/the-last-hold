@@ -586,6 +586,6 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## 2026-10-14 — v0.6 complete
 - **The owner's playtest passed** (on the preview build, with D239–D241 in it). Plan §0.3 followed: baseline accepted (`sim:accept`, 35 of 35 checks on 5 seeds), plan status `complete`, checklist ticked, decisions row D242.
 - **Merge and tag:** pull request from `milestone/v0.6` into `main`, then tag `v0.6.0` on the merge commit.
-- **Still Proposed:** D239 (noon poppy gift at Velkvik; the owner's example was Kozly Hollow), D240, D241. The owner can accept or change them.
+- **D239–D241 accepted by the owner (D243).**
 - **Next:** the v0.7 (Delves) flesh-out session in chat (plan §0.4); Claude Code does not start it before that. One thing for that session: Act IV must be written before the owner's save enters Act III (D220); the owner's cycle count decides how soon.
 - **Deferred, carried over:** the on-load Arvid card has no UI test; the nine older brews have no icons (v1.0 art pass).
