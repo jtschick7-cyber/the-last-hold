@@ -209,8 +209,9 @@ describe('Arvid Netmender (GDD §8.5, D154)', () => {
 
 describe('the v0.5 balance keys (GDD §7.7, D166)', () => {
   it('have the GDD starting values, all tunable', () => {
-    expect(balance.band.heldFrom).toMatchObject({ value: 9, locked: false });
-    expect(balance.band.triumphantFrom).toMatchObject({ value: 12, locked: false });
+    // D194 (v0.6) moved the bands from 9 / 12 to 12 / 15.
+    expect(balance.band.heldFrom).toMatchObject({ value: 12, locked: false });
+    expect(balance.band.triumphantFrom).toMatchObject({ value: 15, locked: false });
     expect(balance.trust.stepContracts).toMatchObject({ value: [10, 15, 20, 25], locked: false });
     expect(balance.letters.levels).toMatchObject({ value: [5, 8], locked: false });
     expect(balance.gear.runedFraction.locked).toBe(false);

@@ -13,6 +13,9 @@ const standAt = (level: number, party: readonly (typeof SIX)[number][]): GameSta
   s.cycle.age = 'bastion';
   s.time = T0;
   for (const h of Object.values(s.hunters)) if (h) h.level = level;
+  // Bands are 12 / 15 from v0.6 (D194): defenses let a strong party reach Triumphant.
+  s.buildings.walls = 10; // bands are 12 / 15 from v0.6 (D194): defenses carry a strong party to Triumphant
+  s.buildings.watchtower = 10;
   expect(
     run(s, { type: 'stand.make', party: [...party], prep: { oils: {}, potions: {} } }).ok,
   ).toBe(true);
@@ -27,8 +30,10 @@ const standOf = (s: GameState) => {
 
 describe('the stand records its trust steps (D183)', () => {
   it('a Triumphant stand records one step for every village that could rise', () => {
-    const s = standAt(10, SIX);
+    const s = standAt(20, SIX);
     const stand = standOf(s);
+    console.log('WAVES', stand.wavesHeld);
+    console.log('WAVES', stand.wavesHeld);
     expect(bandFor(stand.wavesHeld)).toBe('triumphant');
     expect(stand.trustSteps).toHaveLength(VILLAGE_IDS.length);
     for (const v of VILLAGE_IDS) {

@@ -1337,7 +1337,7 @@ Every constant here is tunable (D166).
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Stand band | Broken below `heldFrom`; Held below `triumphantFrom`; Triumphant from it | `band.heldFrom` = 12, `band.triumphantFrom` = 15 (waves) *(D194; were 9 and 12)* | 5.14.8 |
-| Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand counts as `trust.triumphantContracts` contracts for every village | `trust.stepContracts` = [10, 15, 20, 25], `trust.triumphantContracts` 10 *(D195; added to `balance.ts` in T6.1)* | 5.14.6 |
+| Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand counts as `trust.triumphantContracts` contracts for every village | `trust.stepContracts` = [10, 15, 20, 25], `trust.triumphantContracts` = 10 *(D195)* | 5.14.6 |
 | Hunter letters | at the highest level ever reached | `letters.levels` = [5, 8] | 5.14.7 |
 | Runed sub-hit | `f × Might_eff × variance × crit × resist[Rune]`, no Armor | `gear.runedFraction` = 0.25 | 5.3.6 |
 | Ribbonshade share | the share of ruin contracts (tiers 2–4) that is a Ribbonshade while a Ribbonshade name is still missing | `ruin.ribbonshadeShare` = 0.5 | 5.14.4 |
@@ -1350,14 +1350,13 @@ Every constant here is tunable unless marked locked.
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Experiment | 1 unit of each of two ingredients; takes the time (× Copper Still) | `experiment.time` 10 min, `experiment.units` 1 | 5.8.3 |
-| Skill level | level L → L+1 costs `b × g^L` XP; 0–10 | `skill.maxLevel` 10 **(locked)**, `skill.xpBase` 20, `skill.xpGrowth` 1.6 | 5.8.6 |
-| Skill XP | per activity | `skill.xp.alchemy` { brew 1, experiment 3, property 10 }, `skill.xp.smithing` { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` { contractPerTier 1, wave 1 } | 5.8.6 |
-| Skill bonuses | per level | `skill.alchemyPotency` 0.03, `skill.smithingCost` 0.04, `skill.loreClueTime` 0.04, `skill.commandXp` 0.04 | 5.8.6 |
+| Experiment | 1 unit of each of two ingredients; takes the time (× Copper Still) | `experiment.time` = 10 min, `experiment.units` = 1 | 5.8.3 |
+| Skill level | level L → L+1 costs `b × g^L` XP; 0–10 | `skill.maxLevel` = 10 **(locked)**, `skill.xpBase` = 20, `skill.xpGrowth` = 1.6 | 5.8.6 |
+| Skill XP | per activity | `skill.xp.alchemy` = { brew 1, experiment 3, property 10 }, `skill.xp.smithing` = { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` = { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` = { contractPerTier 1, wave 1 } | 5.8.6 |
+| Skill bonuses | per level | `skill.alchemyPotency` = 0.03, `skill.smithingCost` = 0.04, `skill.loreClueTime` = 0.04, `skill.commandXp` = 0.04 | 5.8.6 |
 
 Brew numbers live with their content, like every consumable (§5.8.5): Coldwater 0.40 Fire taken; Owl-Eye 0.10 hit chance; Steadfast 1 use; Poppy Smoke 1 lost action; the new oils use `oil.familyBonus`. The properties table is content (§8.6).
 
-*Balance-test note:* as in v0.5 (D166), these rows list their values without the `key` = value form until T6.1 adds the keys to `balance.ts` and rewrites them to that form in the same commit, so `npm run check` stays green. The same goes for `trust.triumphantContracts` in §7.7.
 
 ---
 

@@ -66,7 +66,7 @@ Claude Code doesn't start an outline-level milestone until its flesh-out is done
 | Death and Long Night | `death.returnDaysBeforeLongNight`, `longNightArrival.emberCapShare`, `laststand.partyMax` (D107) |
 | Simulated player | `value.weights` (they define the simulated player, so tuning them would game the checks) |
 | Events | `boss.*`, `riftglass.bankWeeks` |
-| Skills | skill.maxLevel (D217; written with backticks in T6.1, when the key joins balance.ts) |
+| Skills | `skill.maxLevel` (D217) |
 
 Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage rules**. Everything else in `balance.ts` is tunable.
 
@@ -688,7 +688,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 
 ### v0.6 — Alchemy discovery & skills through use
 
-**Status:** not started *(fleshed out 2026-10-14, D193–D220)*
+**Status:** in progress *(fleshed out 2026-10-14, D193–D220)*
 
 **Goal:** alchemy becomes discovery: hidden properties, experiments and a recipe book, with six new brews that answer named gaps; four warden skills that grow with use and survive the Long Night; Act III and Arvid's arrival; and the v0.5 lessons applied to bands and trust.
 **Reads:** GDD §4.1, §5.7, §5.8, §5.9.3, §5.9.7, §5.14.1, §5.14.3, §5.14.6, §5.14.8–5.14.9, §6.1–6.3 and §6.5 (v0.6 lines), §7.7, §7.8, §8.5–8.7, §9.9, §9.11, §9.13; `lore-secrets.md` §10, §20, §26; technical design §5.2, §7.2, §13.
@@ -702,10 +702,11 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 | Review the new art (six brew icons, four skill icons) | T6.12 | In the playtest |
 
 #### A. Content and state
-- [ ] **T6.1 Content and keys.** *(May split: T6.1a mechanics, T6.1b story.)*
+- [x] **T6.1a Content and keys: mechanics.**
   - **a:** the §7.8 keys into `balance.ts` (`skill.maxLevel` locked, the rest tunable) and the §7.7 changes (`band.heldFrom` 12, `band.triumphantFrom` 15, `trust.triumphantContracts` 10), with §7.7–§7.8 rewritten to the `key` = value form in the same commit, and the `skill.maxLevel` row in §0.6 written with backticks in that commit too; the properties table (§8.6) and the six new brews (§5.8.5) in content, outside the saved-state id lists until T6.3 (as D171); a content test for the table's rules (§8.6 A13).
-  - **b:** Act III in `src/content/story/` (every document's condition and text word for word from `lore-secrets.md` §26, the arrival lines, the "Yrsa's choice" Accounts event with its excerpts, D3-08); Arvid's unlock changed to "arrives with Ilse when Act III begins"; a test against `lore-secrets.md` §26 word for word, and the true-ending gate's counts with the new sources.
-- [ ] **T6.2 Names.** Collision search (GDD §2.3, D173 rule) for Hidebane Oil, Wright's Oil, Coldwater Draught, Owl-Eye Drops, Steadfast Draught, Poppy Smoke (backups ready: Forgebane Oil, Hearthward Draught), Torvald Aslaksson, Hrefna Sigvaldsdóttir, Běla Dvorská, Sindri Eyvindsson. Alchemy, Smithing, Lore and Command are generic (D208). Add all to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
+- [ ] **T6.1b Content: the story.**
+  - Act III in `src/content/story/` (every document's condition and text word for word from `lore-secrets.md` §26, the arrival lines, the "Yrsa's choice" Accounts event with its excerpts, D3-08); Arvid's unlock changed to "arrives with Ilse when Act III begins"; a test against `lore-secrets.md` §26 word for word, and the true-ending gate's counts with the new sources.
+- [x] **T6.2 Names.** Collision search (GDD §2.3, D173 rule) for Hidebane Oil, Wright's Oil, Coldwater Draught, Owl-Eye Drops, Steadfast Draught, Poppy Smoke (backups ready: Forgebane Oil, Hearthward Draught), Torvald Aslaksson, Hrefna Sigvaldsdóttir, Běla Dvorská, Sindri Eyvindsson. Alchemy, Smithing, Lore and Command are generic (D208). Add all to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
 - [ ] **T6.3 Migration v5 → v6**, using the **owner's real v0.5 save** as the fixture, with a round-trip test. New saved state:
   - the recipe book (properties revealed per ingredient: the 15 from the start; pairs tried);
   - warden skill XP (all 0 for an old save, D205);

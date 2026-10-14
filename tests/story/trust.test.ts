@@ -78,8 +78,8 @@ describe('trust (GDD §5.14.6)', () => {
     expect(b.breakdown.children?.map((c) => c.value)).toEqual([6, 0]);
   });
 
-  it('only a Triumphant stand raises it: bands from 9 and 12 waves (D145)', () => {
-    expect([8, 9, 11, 12, 20].map(bandFor)).toEqual([
+  it('only a Triumphant stand raises it: bands from 12 and 15 waves (D194)', () => {
+    expect([11, 12, 14, 15, 20].map(bandFor)).toEqual([
       'broken',
       'held',
       'held',
