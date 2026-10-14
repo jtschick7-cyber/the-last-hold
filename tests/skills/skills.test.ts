@@ -80,21 +80,22 @@ describe('Smithing: XP and cheaper gear', () => {
     );
   });
 
-  it('gear costs 4% less per level, every resource including silver, at most 40%', () => {
+  it('gear costs `skill.smithingCost` less per level, every resource including silver', () => {
     const s = keepRich('smith2');
     const g = gear['silvered-blade'] ?? Object.values(gear).find((x) => (x.cost.silver ?? 0) > 0);
     if (!g) throw new Error('no gear with silver');
     const full = gearCost(s, g).cost;
+    const step = num('skill.smithingCost'); // a tunable (D228): the test follows it
     s.skills.smithing = 10_000; // level 10
     const cheap = gearCost(s, g);
     for (const r of ['food', 'wood', 'iron', 'silver'] as const)
-      expect(cheap.cost[r]).toBe(Math.floor(full[r] * 0.6 + 0.5));
+      expect(cheap.cost[r]).toBe(Math.floor(full[r] * (1 - 10 * step) + 0.5));
     expect(cheap.breakdown.label).toBe('Smithing 10');
-    expect(cheap.breakdown.value).toBeCloseTo(0.4, 9);
+    expect(cheap.breakdown.value).toBeCloseTo(10 * step, 9);
     // The command pays exactly what the breakdown says.
-    s.skills.smithing = 20 + 32 + 51; // level 3: −12%
+    s.skills.smithing = 20 + 32 + 51; // level 3
     const price = gearCost(s, g).cost;
-    expect(price.silver).toBe(Math.floor((g.cost.silver ?? 0) * 0.88 + 0.5));
+    expect(price.silver).toBe(Math.floor((g.cost.silver ?? 0) * (1 - 3 * step) + 0.5));
   });
 });
 

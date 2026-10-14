@@ -138,7 +138,7 @@ describe('the v0.6 balance keys (GDD §7.7, §7.8, D194, D195, D217)', () => {
     expect(balance.skill.xp.lore.value).toEqual({ clue: 1, knowledgeLevel: 5, document: 5 });
     expect(balance.skill.xp.command.value).toEqual({ contractPerTier: 1, wave: 1 });
     expect(balance.skill.alchemyPotency.value).toBe(0.03);
-    expect(balance.skill.smithingCost.value).toBe(0.04);
+    expect(balance.skill.smithingCost.value).toBe(0.0175); // D228;
     expect(balance.skill.loreClueTime.value).toBe(0.04);
     expect(balance.skill.commandXp.value).toBe(0.04);
   });

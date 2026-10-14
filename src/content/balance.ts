@@ -239,7 +239,7 @@ export const balance = {
     },
     // Per level (D205): brews stronger, gear cheaper, clues quicker, contract XP higher.
     alchemyPotency: tunable(0.03),
-    smithingCost: tunable(0.04),
+    smithingCost: tunable(0.0175),
     loreClueTime: tunable(0.04),
     commandXp: tunable(0.04),
   },

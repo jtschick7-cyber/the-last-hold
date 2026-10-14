@@ -850,7 +850,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 | Skill | XP from (tunable) | Gives, per level |
 |---|---|---|
 | **Alchemy** | brew finished 1 · experiment 3 · property revealed 10 | Brews **+3% stronger** (to +30%): every number in a brew's effect (oil bonus, heal, Armor, Speed, Coldwater, Owl-Eye, bomb damage and burn). Counts of actions (Saltburst's block, Steadfast, Poppy Smoke, durations) don't change. Multiplies with Herbwise. |
-| **Smithing** | gear upgrade: its tier × 2 · Smithy level built 2 | Gear upgrades cost **4% less** (to −40%), every resource including silver |
+| **Smithing** | gear upgrade: its tier × 2 · Smithy level built 2 | Gear upgrades cost **1.75% less** per level (to −17.5%; D228), every resource including silver |
 | **Lore** | clue revealed 1 · species reaching a knowledge level 5 · document or letter found 5 | Clues take **4% less time** (to −40%), after Studied, Tracker and the Bone Whistle |
 | **Command** | contract won: its tier · wave held in the Last Stand 1 | Hunters earn **+4% contract XP** (to +40%), adding with Drill Yard and the Tally Stick |
 
@@ -1353,7 +1353,7 @@ Every constant here is tunable unless marked locked.
 | Experiment | 1 unit of each of two ingredients; takes the time (× Copper Still) | `experiment.time` = 10 min, `experiment.units` = 1 | 5.8.3 |
 | Skill level | level L → L+1 costs `b × g^L` XP; 0–10 | `skill.maxLevel` = 10 **(locked)**, `skill.xpBase` = 20, `skill.xpGrowth` = 1.6 | 5.8.6 |
 | Skill XP | per activity | `skill.xp.alchemy` = { brew 1, experiment 3, property 10 }, `skill.xp.smithing` = { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` = { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` = { contractPerTier 1, wave 1 } | 5.8.6 |
-| Skill bonuses | per level | `skill.alchemyPotency` = 0.03, `skill.smithingCost` = 0.04, `skill.loreClueTime` = 0.04, `skill.commandXp` = 0.04 | 5.8.6 |
+| Skill bonuses | per level | `skill.alchemyPotency` = 0.03, `skill.smithingCost` = 0.0175 *(D228)*, `skill.loreClueTime` = 0.04, `skill.commandXp` = 0.04 | 5.8.6 |
 
 Brew numbers live with their content, like every consumable (§5.8.5): Coldwater 0.40 Fire taken; Owl-Eye 0.10 hit chance; Steadfast 1 use; Poppy Smoke 1 lost action; the new oils use `oil.familyBonus`. The properties table is content (§8.6).
 
