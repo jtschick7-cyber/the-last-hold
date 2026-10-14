@@ -457,3 +457,13 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **For the owner's review (playtest):** the ruin notices, the Cursed bestiary entries and counter-tips, the extra clue texts (D171, D176).
 - **Deferred:** Act II's Kamenfell line in ruin notices moves to T5.6 (it needs the act wiring). The simulator isn't re-tuned yet (T5.16); ruins change the board, so expect some checks to move.
 - **Next:** T5.5 (the Wright's Blade, Arvid's traits and his debug action), then T5.6 onward.
+
+## 2026-10-14 — v0.5 build: T5.5–T5.10
+- **T5.5 (D177):** the Wright's Blade (Silver and Rune sub-hits; Smithy 8 and the Citadel), Arvid with Shield-companion and Old Wright; More → Debug → "Add Arvid" (he can't arrive before Act III is written).
+- **T5.6 (D178):** acts and documents: each act's own counters; contract wins, Rank-ups, knowledge and recruiting find documents; the stand brings the testament, the next warden the closing scene; the first document brings Ilse; Kamenfell in Act II ruin notices. Row-by-row test for every Act I and II document.
+- **T5.7 (D179):** Ribbonshade names (Jaro first, then a plain ribbon after six); the true-ending gate test.
+- **T5.8 (D180, owner's choice):** trust steps from contracts and Triumphant stands, the breakdown, step lines; notices close with a trust line once a village is above its starting trust (four lines drafted for review at T5.12). GDD §5.14.6 updated.
+- **T5.9 (D181):** bands and the residents' lines, `warden.name` and Suggest, the Roll of Wardens data, letters at levels 5 and 8 of the highest level, the Citadel and Bastion inscriptions.
+- **T5.10 (D182):** the v0.5 arrival (core and debug action), tested on the owner's real v0.4 save.
+- **Tests changed by the design:** the v0.4 "no inscription" test now checks the v0.5 inscriptions (D160); hunter and gear counts include Arvid and the Wright's Blade.
+- **Next:** T5.11a (the Archive UI), T5.11b (story across the game, the arrival scene, the Playwright smoke), T5.12 (letters and lists for the owner), T5.13 (art), T5.14–T5.16 (simulator).
