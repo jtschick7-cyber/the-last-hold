@@ -1,5 +1,10 @@
 import { AGE_IDS, ages, type AgeId } from '../../content/ages';
-import { buildings, type BuildingDef, type BuildingId } from '../../content/buildings';
+import {
+  buildings,
+  type BuildingDef,
+  type BuildingId,
+  type LevelBuilding,
+} from '../../content/buildings';
 import type { GameState } from '../state/game-state';
 import { canAfford } from './costs';
 
@@ -14,10 +19,23 @@ export const nextAge = (state: GameState): AgeId | null =>
 export const isAvailable = (state: GameState, def: BuildingDef): boolean =>
   ageIndex(state.cycle.age) >= ageIndex(def.availableFrom);
 
+/**
+ * A level building's cap in an Age: that Age's entry, else the latest earlier one
+ * (the Barracks is max 5 in every Rank, GDD §8.1); 0 before its first entry.
+ */
+export const levelCapIn = (def: LevelBuilding, age: AgeId): number => {
+  for (let i = ageIndex(age); i >= 0; i--) {
+    const id = AGE_IDS[i];
+    const cap = id === undefined ? undefined : def.maxLevel[id];
+    if (cap !== undefined) return cap;
+  }
+  return 0;
+};
+
 /** The highest level a level building may reach in the current Age (0 = not yet). */
 export const maxLevelNow = (state: GameState, id: BuildingId): number => {
   const def = buildings[id];
-  return def.kind === 'level' ? (def.maxLevel[state.cycle.age] ?? 0) : 0;
+  return def.kind === 'level' ? levelCapIn(def, state.cycle.age) : 0;
 };
 
 export interface Requirement {

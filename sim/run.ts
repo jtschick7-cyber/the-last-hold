@@ -4,6 +4,14 @@ import { OPENING_LENGTH } from '../src/core/policies/schedules';
 import { createNewGame } from '../src/core/state/new-game';
 import { provisions } from '../src/core/contracts/rewards';
 import { settleCost } from '../src/core/systems/settle';
+import { apply } from '../src/core/commands';
+import { standProblem } from '../src/core/commands/stand';
+import { standKit } from '../src/core/policies/long-night';
+import { suggestSix } from '../src/core/stand/suggest';
+import { ageIndex } from '../src/core/systems/ages';
+
+/** GDD §5.9.4: the best-stand samples run from Bastion up to day 7 of cycle 1. */
+const BEST_STAND_UNTIL = 7 * 24;
 
 // Technical design §13.1: one simulated game, played by a policy on a virtual
 // clock through the real core. Records what the checks and the report need.
@@ -25,6 +33,12 @@ export interface RunSpec {
   readonly days: number;
   /** Stop once every one of these moments is reached (the fast set needs nothing after its last target). */
   readonly stopAt?: readonly Moment[];
+  /**
+   * Keep playing past `days` until this many Long Nights have happened, up to `maxDays`
+   * (GDD §6.3 #7, D114: every number below 1e300 through 3 cycles).
+   */
+  readonly minCycles?: number;
+  readonly maxDays?: number;
 }
 
 export interface CheckInStat {
@@ -36,6 +50,8 @@ export interface CheckInStat {
   readonly agedUp: boolean;
   /** One of the Opening's 10-second steps, not a scheduled check-in. */
   readonly opening: boolean;
+  /** The cycle the check-in began in (the stand's check-in still counts as the cycle it ends). */
+  readonly cycle: number;
 }
 
 export const MOMENTS = [
@@ -52,6 +68,11 @@ export const MOMENTS = [
   'hunters-lodge',
   'first-identified',
   'first-studied',
+  // v0.4 (GDD §6.2), all in cycle 1:
+  'citadel',
+  'bastion',
+  'best-last-stand',
+  'first-long-night',
 ] as const;
 export type Moment = (typeof MOMENTS)[number];
 
@@ -64,12 +85,24 @@ export interface ContractRecord {
   readonly success: boolean;
 }
 
-/** What the Keep phase (from the Rank-up on) earned and spent, for the v0.2 economy checks. */
+/**
+ * What the Keep phase earned and spent, for the economy checks (GDD §6.3 #6 and #8). From
+ * v0.4 (D114) it is every stretch from the Keep onward in every cycle; the Hamlet
+ * stretches are left out. `byCycle` holds each cycle's stretch.
+ */
 export interface KeepPhase {
   readonly bountySilver: number;
   readonly jobSilver: number;
   readonly provisionsFood: number;
   readonly jobFood: number;
+  readonly byCycle: readonly (Omit<KeepPhase, 'byCycle'> & { readonly cycle: number })[];
+}
+
+/** GDD §5.9.4 (D109): a practice stand on a throwaway copy, from Bastion to day 7 of cycle 1. */
+export interface StandSample {
+  readonly hours: number;
+  readonly embers: number;
+  readonly perDay: number;
 }
 
 export interface RunResult {
@@ -83,6 +116,11 @@ export interface RunResult {
   /** The largest number anywhere in the state over the run (GDD §6.3 #7). */
   readonly largestNumber: number;
   readonly final: { readonly age: string; readonly peasants: number };
+  /** Long Nights that happened in the run. */
+  readonly cyclesDone: number;
+  /** Each finished cycle's length in hours (start to its stand), in order. */
+  readonly cycleHours: readonly number[];
+  readonly standSamples: readonly StandSample[];
   readonly contracts: readonly ContractRecord[];
   readonly keepPhase: KeepPhase;
 }
@@ -110,16 +148,38 @@ export const runOne = (spec: RunSpec): RunResult => {
   const peaks = { ...income, peasants: state.peasants.total };
   let largestNumber = largest(state);
   const contracts: ContractRecord[] = [];
-  const keepPhase = { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 0 };
-  let inKeep = false;
+  type Stretch = {
+    cycle: number;
+    bountySilver: number;
+    jobSilver: number;
+    provisionsFood: number;
+    jobFood: number;
+  };
+  const stretches = new Map<number, Stretch>();
+  const stretch = (cycle: number): Stretch => {
+    let x = stretches.get(cycle);
+    if (!x) {
+      x = { cycle, bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 0 };
+      stretches.set(cycle, x);
+    }
+    return x;
+  };
+  // The Rank and cycle the hold was in when the last check-in ended: time away is theirs.
+  let prevAge = state.cycle.age;
+  let prevCycle = state.cycle.number;
+  const standSamples: StandSample[] = [];
 
   play(state, {
     // D62 (Q4a): a fresh start under Standard begins with the Opening's 15
     // active minutes, which then switches to Standard (GDD §6.1).
     policy: spec.policy === 'standard' ? 'opening' : spec.policy,
     startedAt: start,
-    until: start + spec.days * DAY,
-    stop: () => spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null),
+    until: start + Math.max(spec.days, spec.minCycles ? (spec.maxDays ?? spec.days) : 0) * DAY,
+    stop: (st) =>
+      (spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null)) ||
+      (spec.minCycles !== undefined &&
+        st.time >= start + spec.days * DAY &&
+        st.cycle.number > spec.minCycles),
     onCheckIn: (rec, s) => {
       // Income: the net change while away, plus the food that settling spent.
       const settles = rec.away.events.filter((e) => e.type === 'settle');
@@ -135,6 +195,10 @@ export const runOne = (spec: RunSpec): RunResult => {
       if (s.buildings.mill >= 3) mark('mill-3', rec.at);
       if (s.peasants.total >= 10) mark('peasants-10', rec.at);
       if (rec.agedUp) mark('keep', rec.at);
+      const first = s.cycles[0];
+      if (first?.ranks.citadel !== undefined) mark('citadel', first.ranks.citadel);
+      if (first?.ranks.bastion !== undefined) mark('bastion', first.ranks.bastion);
+      if (first?.stand) mark('first-long-night', first.stand.at);
       for (const c of rec.commands) {
         if (c.type === 'contract.launch') mark('first-contract', rec.at);
       }
@@ -153,17 +217,38 @@ export const runOne = (spec: RunSpec): RunResult => {
         if (r.success && r.tier >= 3) mark('first-tier-3', r.at);
         if (r.success && (s.bestiary[r.monster]?.level ?? 0) >= 3) mark('first-studied', r.at);
       }
-      // The Keep phase runs from the Rank-up check-in on (GDD §6.3 #5 and #8).
-      if (rec.agedUp) inKeep = true;
-      if (inKeep) {
-        keepPhase.jobSilver += rec.away.produced.silver;
-        keepPhase.jobFood += rec.away.produced.food;
-        for (const r of rec.away.contracts) keepPhase.bountySilver += r.bounty;
+      // The Keep phase (GDD §6.3 #6 and #8, D114): time away belongs to the Rank the hold
+      // was in; launches to the Rank it is in now. Hamlet stretches are left out.
+      if (ageIndex(prevAge) >= ageIndex('keep')) {
+        const x = stretch(prevCycle);
+        x.jobSilver += rec.away.produced.silver;
+        x.jobFood += rec.away.produced.food;
+        for (const r of rec.away.contracts) x.bountySilver += r.bounty;
+      }
+      if (ageIndex(s.cycle.age) >= ageIndex('keep')) {
         for (const c of rec.commands) {
           if (c.type !== 'contract.launch') continue;
           const run = s.running.find((x) => x.contract.id === c.contract);
           if (run)
-            keepPhase.provisionsFood += provisions(s, run.party.length, run.contract.tier).value;
+            stretch(s.cycle.number).provisionsFood += provisions(
+              s,
+              run.party.length,
+              run.contract.tier,
+            ).value;
+        }
+      }
+      // GDD §5.9.4: from Bastion to day 7 of cycle 1, a practice stand on a throwaway copy.
+      const hours = (rec.at - start) / HOUR;
+      if (s.cycle.number === 1 && hours <= BEST_STAND_UNTIL && !standProblem(s)) {
+        const copy = structuredClone(s);
+        const party = suggestSix(copy);
+        if (
+          party.length > 0 &&
+          apply(copy, { type: 'stand.make', party, prep: standKit(copy, party) }, copy.time).ok
+        ) {
+          const embers = copy.cycles[0]?.stand?.embers.total ?? 0;
+          const days = (s.time - (s.cycles[0]?.startedAt ?? start)) / DAY;
+          standSamples.push({ hours, embers, perDay: embers / Math.max(days, 1 / 24) });
         }
       }
       checkIns.push({
@@ -175,12 +260,21 @@ export const runOne = (spec: RunSpec): RunResult => {
         opening:
           (spec.policy === 'opening' || spec.policy === 'standard') &&
           rec.at <= start + OPENING_LENGTH,
+        cycle: prevCycle,
       });
+      prevAge = s.cycle.age;
+      prevCycle = s.cycle.number;
       for (const r of RESOURCE_IDS) peaks[r] = Math.max(peaks[r], s.resources[r]);
       peaks.peasants = Math.max(peaks.peasants, s.peasants.total);
       largestNumber = Math.max(largestNumber, largest(s));
     },
   });
+  // GDD §5.9.4: the best Last Stand timing is the sample with the most Embers per day.
+  const best = standSamples.reduce<StandSample | null>(
+    (b, x) => (b === null || x.perDay > b.perDay ? x : b),
+    null,
+  );
+  if (best) moments['best-last-stand'] = best.hours;
   return {
     spec,
     moments,
@@ -189,7 +283,16 @@ export const runOne = (spec: RunSpec): RunResult => {
     peaks,
     largestNumber,
     final: { age: state.cycle.age, peasants: state.peasants.total },
+    cyclesDone: state.cycle.number - 1,
+    cycleHours: state.cycles.flatMap((c) => (c.stand ? [(c.stand.at - c.startedAt) / HOUR] : [])),
+    standSamples,
     contracts,
-    keepPhase,
+    keepPhase: {
+      bountySilver: [...stretches.values()].reduce((n, x) => n + x.bountySilver, 0),
+      jobSilver: [...stretches.values()].reduce((n, x) => n + x.jobSilver, 0),
+      provisionsFood: [...stretches.values()].reduce((n, x) => n + x.provisionsFood, 0),
+      jobFood: [...stretches.values()].reduce((n, x) => n + x.jobFood, 0),
+      byCycle: [...stretches.values()],
+    },
   };
 };

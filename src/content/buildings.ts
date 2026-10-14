@@ -22,6 +22,8 @@ export const BUILDING_IDS = [
   'hunters-lodge',
   'alchemists-hut',
   'herb-garden',
+  'walls',
+  'watchtower',
 ] as const;
 export type BuildingId = (typeof BUILDING_IDS)[number];
 
@@ -41,7 +43,13 @@ export type BuildingEffect =
   /** Kettles: this many brews at a time per level (GDD §5.7, v0.3). */
   | { readonly kind: 'brewSlots'; readonly perLevel: number }
   /** Grows one of each herb per copy every `intervalKey` seconds (GDD §5.7, v0.3). */
-  | { readonly kind: 'herbGrowth'; readonly intervalKey: BalanceKey };
+  | { readonly kind: 'herbGrowth'; readonly intervalKey: BalanceKey }
+  /** Slows the hourly Threat rate by this share per level (GDD §5.9.1, v0.4). */
+  | { readonly kind: 'threatSlow'; readonly perLevelKey: BalanceKey }
+  /** In the Last Stand, the party takes this much less damage per level (GDD §5.9.2, v0.4). */
+  | { readonly kind: 'standTaken'; readonly perLevelKey: BalanceKey }
+  /** In the Last Stand, a Steel volley of this × level at tick 1 of each wave (GDD §5.9.2, v0.4). */
+  | { readonly kind: 'standVolley'; readonly perLevelKey: BalanceKey };
 
 interface BuildingBase {
   readonly id: BuildingId;
@@ -68,7 +76,11 @@ export interface CountBuilding extends BuildingBase {
 export interface LevelBuilding extends BuildingBase {
   readonly kind: 'level';
   readonly baseCost: ResourceBundle;
-  /** Highest level allowed in each Age; missing Ages mean "not available". */
+  /**
+   * Highest level allowed in each Age. An Age with no entry keeps the cap of the
+   * latest earlier Age that has one (Barracks max 5 in every Rank, GDD §8.1); before
+   * the first entry the building isn't available.
+   */
   readonly maxLevel: Readonly<Partial<Record<AgeId, number>>>;
 }
 
@@ -130,7 +142,7 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     baseCost: { wood: 120, iron: 40 },
     effects: [{ kind: 'production', resource: 'food', perLevelKey: 'mill.perLevel' }],
     availableFrom: 'hamlet',
-    maxLevel: { hamlet: 5, keep: 10 },
+    maxLevel: { hamlet: 5, keep: 10, citadel: 15, bastion: 20 }, // Citadel, Bastion: D106
   },
   sawpit: {
     id: 'sawpit',
@@ -139,7 +151,7 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     baseCost: { wood: 100, iron: 60 },
     effects: [{ kind: 'production', resource: 'wood', perLevelKey: 'sawpit.perLevel' }],
     availableFrom: 'hamlet',
-    maxLevel: { hamlet: 5, keep: 10 },
+    maxLevel: { hamlet: 5, keep: 10, citadel: 15, bastion: 20 }, // Citadel, Bastion: D106
   },
   smithy: {
     id: 'smithy',
@@ -149,7 +161,7 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     // GDD §5.1.2: also unlocks gear tiers, from v0.2.
     effects: [{ kind: 'production', resource: 'iron', perLevelKey: 'smithy.ironPerLevel' }],
     availableFrom: 'hamlet',
-    maxLevel: { hamlet: 3, keep: 10 },
+    maxLevel: { hamlet: 3, keep: 10, citadel: 15, bastion: 20 }, // Citadel, Bastion: D106
   },
   'bell-tower': {
     id: 'bell-tower',
@@ -206,4 +218,32 @@ export const buildings: Readonly<Record<BuildingId, BuildingDef>> = {
     effects: [{ kind: 'herbGrowth', intervalKey: 'herbGarden.interval' }],
     availableFrom: 'keep',
   },
+  // GDD §5.9.2, §8.1 (v0.4, D107): both Citadel; Bastion requires Walls 1.
+  walls: {
+    id: 'walls',
+    name: 'Walls',
+    kind: 'level',
+    baseCost: { wood: 20_000, iron: 10_000 },
+    effects: [
+      { kind: 'standTaken', perLevelKey: 'walls.takenPerLevel' },
+      { kind: 'threatSlow', perLevelKey: 'threat.defenseSlowPerLevel' },
+    ],
+    availableFrom: 'citadel',
+    maxLevel: { citadel: 10, bastion: 15 },
+  },
+  watchtower: {
+    id: 'watchtower',
+    name: 'Watchtower',
+    kind: 'level',
+    baseCost: { wood: 15_000, iron: 8_000, silver: 100 },
+    effects: [
+      { kind: 'standVolley', perLevelKey: 'watchtower.volleyPerLevel' },
+      { kind: 'threatSlow', perLevelKey: 'threat.defenseSlowPerLevel' },
+    ],
+    availableFrom: 'citadel',
+    maxLevel: { citadel: 10, bastion: 15 },
+  },
 };
+
+/** The two defenses (GDD §5.9.2): they slow Threat and fight in the Last Stand. */
+export const DEFENSE_IDS = ['walls', 'watchtower'] as const satisfies readonly BuildingId[];

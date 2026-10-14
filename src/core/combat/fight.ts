@@ -162,7 +162,16 @@ const monsterAct = (f: Fight, m: Combatant): void => {
 
 export const runFight = (input: FightInput): FightResult => {
   const hunters = input.party.map((h, i) => buildHunter(h, i + 1, input.prep));
-  const monster = buildMonster(input.monster);
+  const stand = input.stand;
+  if (stand) {
+    // GDD §5.9.3: Health carries over between waves; Walls and the Iron Shutter reduce damage taken.
+    for (const h of hunters) {
+      const carried = stand.health[h.id as keyof typeof stand.health];
+      if (carried !== undefined) h.health = Math.min(h.maxHealth, carried);
+      h.extraTaken = stand.partyTaken;
+    }
+  }
+  const monster = buildMonster(input.monster, stand?.monsterStrength ?? 1);
   const ctx: FightContext = {
     location: input.location,
     family: monsterFamily(input.monster.monster),
@@ -184,6 +193,7 @@ export const runFight = (input: FightInput): FightResult => {
     saltburstCancelled: false,
     monsterActing: false,
     bombs: input.prep?.bombs ?? [],
+    volley: stand?.volley ?? 0,
   };
   // Potions that work from the start, then the bombs, before anyone acts (GDD §5.7).
   startOfFight(f);
@@ -244,5 +254,6 @@ export const runFight = (input: FightInput): FightResult => {
     monsterHealth: monster.health,
     monsterMaxHealth: monster.maxHealth,
     saltburstCancelled: f.saltburstCancelled,
+    potionsUsed: hunters.filter((h) => h.potion?.used === true).map((h) => h.id),
   };
 };

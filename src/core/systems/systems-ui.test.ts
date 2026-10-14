@@ -16,6 +16,7 @@ describe('descriptions for the UI', () => {
   it('lists what the Keep unlocks (GDD §5.1.3)', () => {
     expect(ageUnlocks('keep')).toEqual([
       '+50% to all production (not silver)',
+      'Bounties ×1.1', // D138
       'Mill up to level 10',
       'Sawpit up to level 10',
       'Smithy up to level 10',

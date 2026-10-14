@@ -12,6 +12,7 @@ import {
   nextCompletionTime,
   nextRecoveryTime,
 } from '../contracts/complete';
+import { accrueThreat } from '../threat/threat';
 import { MS_PER_MINUTE } from '../time';
 
 // Technical design §6.2 (GDD §5.2, D30): advance() is event-driven. Rates are
@@ -55,6 +56,8 @@ const integrate = (state: GameState, until: number, produced: Record<ResourceId,
     state.resources[r] += made;
     produced[r] += made;
   }
+  // GDD §5.9.1: Threat rises with time like production, so the offline cap applies to it.
+  accrueThreat(state, dt);
   state.time = until;
 };
 

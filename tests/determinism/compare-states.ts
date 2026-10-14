@@ -20,6 +20,9 @@ const TIMESTAMP_KEYS = new Set([
   'diedAt',
 ]);
 const FLOAT_PARENTS = new Set(['resources']);
+// v0.4: Threat rises with time exactly like a resource (GDD §5.9.1), so it gets the
+// resource tolerance; everything about contracts' Threat stays in exact integer tallies.
+const FLOAT_KEYS = new Set(['threat']);
 
 const floatClose = (a: number, b: number): boolean =>
   Math.abs(a - b) <= Math.max(1e-9 * Math.max(Math.abs(a), Math.abs(b)), 1e-6);
@@ -31,7 +34,8 @@ export const compareStates = (a: unknown, b: unknown, path: string[] = []): stri
     const parent = path[path.length - 2] ?? '';
     if (TIMESTAMP_KEYS.has(key))
       return Math.abs(a - b) <= 1 ? [] : [`${where}: ${a} vs ${b} (> 1 ms)`];
-    if (FLOAT_PARENTS.has(parent)) return floatClose(a, b) ? [] : [`${where}: ${a} vs ${b}`];
+    if (FLOAT_PARENTS.has(parent) || (FLOAT_KEYS.has(key) && path.length === 1))
+      return floatClose(a, b) ? [] : [`${where}: ${a} vs ${b}`];
     return a === b ? [] : [`${where}: ${a} vs ${b} (must match exactly)`];
   }
   if (Array.isArray(a) && Array.isArray(b)) {

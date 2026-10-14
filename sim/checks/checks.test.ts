@@ -15,6 +15,7 @@ const ci = (hours: number, purchases: number, extra: Partial<CheckInStat> = {}):
   saving: false,
   agedUp: false,
   opening: false,
+  cycle: 1,
   ...extra,
 });
 
@@ -38,6 +39,10 @@ const run = (
     'hunters-lodge': null,
     'first-identified': null,
     'first-studied': null,
+    citadel: null,
+    bastion: null,
+    'best-last-stand': null,
+    'first-long-night': null,
     ...moments,
   },
   checkIns,
@@ -45,8 +50,11 @@ const run = (
   peaks: { food: 0, wood: 0, iron: 0, silver: 0, peasants: 0 },
   largestNumber: 1,
   final: { age: 'keep', peasants: 10 },
+  cyclesDone: 3,
   contracts: [],
-  keepPhase: { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 0 },
+  keepPhase: { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 0, byCycle: [] },
+  cycleHours: [],
+  standSamples: [],
 });
 
 describe('time targets', () => {
@@ -69,16 +77,25 @@ describe('time targets', () => {
 });
 
 describe('engagement checks', () => {
-  it('look only at check-ins up to the Keep', () => {
-    const r = run('standard', { keep: 2 }, [
+  it('look at all of cycle 1, past the Keep, up to the stand, and not at later cycles (D114)', () => {
+    const quietAfterKeep = run('standard', { keep: 2 }, [
       ci(0, 1),
       ci(1, 1),
       ci(2, 1, { agedUp: true }),
       ci(3, 0),
       ci(4, 0),
     ]);
-    expect(somethingToDoCheck.judge([r]).pass).toBe(true);
-    expect(noDrySpellsCheck.judge([r]).pass).toBe(true);
+    expect(noDrySpellsCheck.judge([quietAfterKeep]).pass).toBe(false); // cycle 1 goes on past the Keep
+    const quietInCycle2 = run('standard', { keep: 2 }, [
+      ci(0, 1),
+      ci(1, 1),
+      ci(2, 1, { agedUp: true }),
+      ci(3, 1), // the stand's check-in still belongs to cycle 1
+      ci(4, 0, { cycle: 2 }),
+      ci(5, 0, { cycle: 2 }),
+    ]);
+    expect(somethingToDoCheck.judge([quietInCycle2]).pass).toBe(true);
+    expect(noDrySpellsCheck.judge([quietInCycle2]).pass).toBe(true);
   });
 
   it("skip the Opening's 10-second steps", () => {
@@ -132,17 +149,17 @@ describe('engagement checks', () => {
   });
 });
 
-describe('no overflow', () => {
-  it('needs 14-day runs and fails at 1e300', () => {
-    expect(
-      noOverflowCheck.judge([
-        { ...run('standard', {}), spec: { policy: 'standard', seed: 'a', start: 'mon', days: 3 } },
-      ]).pass,
-    ).toBeNull();
-    expect(noOverflowCheck.judge([{ ...run('standard', {}), largestNumber: 1e301 }]).pass).toBe(
-      false,
-    );
-    expect(noOverflowCheck.judge([run('standard', {})]).pass).toBe(true);
+describe('no overflow (through 3 cycles, D114)', () => {
+  const long = (over: Partial<RunResult> = {}): RunResult => ({
+    ...run('standard', {}),
+    spec: { policy: 'standard', seed: 'a', start: 'mon', days: 14, minCycles: 3, maxDays: 42 },
+    ...over,
+  });
+  it('needs runs through 3 cycles, fails at 1e300, and fails a run that never got there', () => {
+    expect(noOverflowCheck.judge([run('standard', {})]).pass).toBeNull();
+    expect(noOverflowCheck.judge([long({ largestNumber: 1e301 })]).pass).toBe(false);
+    expect(noOverflowCheck.judge([long({ cyclesDone: 2 })]).pass).toBe(false);
+    expect(noOverflowCheck.judge([long()]).pass).toBe(true);
   });
 });
 
@@ -184,7 +201,14 @@ describe('v0.2 economy checks', () => {
     keep: number | null = 14,
   ): RunResult => ({
     ...run('standard', keep === null ? {} : { keep }),
-    keepPhase: { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 1, ...phase },
+    keepPhase: {
+      bountySilver: 0,
+      jobSilver: 0,
+      provisionsFood: 0,
+      jobFood: 1,
+      byCycle: [],
+      ...phase,
+    },
   });
 
   it('bounties must be at least 70% of the silver since the Keep', () => {
@@ -195,6 +219,28 @@ describe('v0.2 economy checks', () => {
       contractsOwnSilverCheck.judge([withKeep({ bountySilver: 69, jobSilver: 31 })]).pass,
     ).toBe(false);
     expect(contractsOwnSilverCheck.judge([withKeep({}, null)]).pass).toBe(false); // never reached the Keep
+  });
+
+  it('both shares are judged on cycle 1 only; later cycles are reported (D135)', () => {
+    const c = (cycle: number, bountySilver: number, provisionsFood: number) => ({
+      cycle,
+      bountySilver,
+      jobSilver: 100 - bountySilver,
+      provisionsFood,
+      jobFood: 100,
+    });
+    const r = withKeep({
+      bountySilver: 120,
+      jobSilver: 80,
+      provisionsFood: 40,
+      jobFood: 200,
+      byCycle: [c(1, 75, 30), c(2, 45, 10)],
+    });
+    expect(contractsOwnSilverCheck.judge([r]).pass).toBe(true); // 60% over both, 75% in cycle 1
+    expect(provisionsMatterCheck.judge([r]).pass).toBe(true); // 20% over both, 30% in cycle 1
+    const low = withKeep({ byCycle: [c(1, 65, 15), c(2, 90, 30)] });
+    expect(contractsOwnSilverCheck.judge([low]).pass).toBe(false);
+    expect(provisionsMatterCheck.judge([low]).pass).toBe(false);
   });
 
   it('provisions are judged against 20–40% of food income, and the check is enforced (no longer pending)', () => {
@@ -285,5 +331,25 @@ describe('preparation matters (GDD §6.3 #4)', () => {
     const thin = () => [...cases(1, 0.2), ...cases(2, 0.0, 3)];
     expect(makePreparationMattersCheck(thin).judge(full).pass).toBe(true);
     expect(makePreparationMattersCheck(() => []).judge(full).pass).toBeNull();
+  });
+});
+
+// v0.4 checks, on made-up runs.
+import { laterCyclesCheck } from './later-cycles';
+
+describe('later cycles (GDD §6.2, D111)', () => {
+  const cycles = (...hours: number[]): RunResult => ({ ...run('standard', {}), cycleHours: hours });
+  it('each later cycle at least 15% faster than the first (D134)', () => {
+    expect(laterCyclesCheck.judge([cycles(100, 85, 72)]).pass).toBe(true);
+    expect(laterCyclesCheck.judge([cycles(100, 80, 82)]).pass).toBe(true); // a plateau is fine
+    expect(laterCyclesCheck.judge([cycles(100, 90)]).pass).toBe(false);
+    expect(laterCyclesCheck.judge([cycles(100, 80, 86)]).pass).toBe(false);
+  });
+  it('a cycle at the 2-day floor passes; one below it fails', () => {
+    expect(laterCyclesCheck.judge([cycles(56, 48, 48)]).pass).toBe(true);
+    expect(laterCyclesCheck.judge([cycles(60, 40)]).pass).toBe(false);
+  });
+  it('needs two finished cycles in every Monday run', () => {
+    expect(laterCyclesCheck.judge([cycles(100)]).pass).toBe(false);
   });
 });

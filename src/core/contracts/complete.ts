@@ -6,10 +6,12 @@ import { reagentsFor } from './reagents';
 import { seeded } from '../rng';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
-import { levelCap, recoveryFactor, xpToNext } from '../systems/hunters';
+import { gainXp, recoveryFactor } from '../systems/hunters';
+import { applyContractThreat } from '../threat/threat';
 import { MS_PER_SECOND } from '../time';
 import { injuryOutcome, needsDeathRoll, type InjuryOutcome } from './injury';
-import { bounty, trophies, xpPerHunter } from './rewards';
+import { holdBounty, trophies, xpPerHunter } from './rewards';
+import { contractXpBonus } from '../long-night/bonuses';
 import { deathSeed, fightSeed } from './seeds';
 
 // GDD §5.4.3 (B9): rewards, injuries and XP apply the moment a contract's timer
@@ -63,9 +65,9 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   // GDD §5.7: a success with a matching oil and a weak-type bomb (or a cancelling Saltburst).
   const wellPrepared =
     success && isWellPrepared(contract.monster, run.prep, fight.saltburstCancelled);
-  const pay = success ? bounty(contract.tier, state.cycle.age, partyTraits, wellPrepared).value : 0;
+  const pay = success ? holdBounty(state, contract.tier, partyTraits, wellPrepared).value : 0;
   const earned = success ? trophies(contract.tier, wellPrepared) : 0;
-  const xp = xpPerHunter(contract.tier, success);
+  const xp = xpPerHunter(contract.tier, success, contractXpBonus(state).value);
   // GDD §5.4.3: a success brings reagents (the drops and a gift); a failure brings none.
   const reagents = success ? reagentsFor(state.meta.gameSeed, contract) : {};
   for (const [id, n] of Object.entries(reagents))
@@ -97,6 +99,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
         diedAt: at,
         cycle: state.cycle.number,
         contractId: contract.id,
+        level: h.level,
       });
       injuries.push({ hunter: id, kind: 'dead', until: at });
       return;
@@ -105,13 +108,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
       h.recovery = { kind: outcome.kind, until: at + outcome.recoverySeconds * MS_PER_SECOND };
       injuries.push({ hunter: id, kind: outcome.kind, until: h.recovery.until });
     }
-    h.xp += xp;
-    while (h.level < levelCap() && h.xp >= xpToNext(h.level)) {
-      h.xp -= xpToNext(h.level);
-      h.level += 1;
-      levelUps.push({ hunter: id, level: h.level });
-    }
-    if (h.level >= levelCap()) h.xp = 0;
+    for (const level of gainXp(state, h, xp)) levelUps.push({ hunter: id, level });
   });
 
   state.resources.silver += pay;
@@ -126,6 +123,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   } else {
     state.stats.contractsLost += 1;
   }
+  applyContractThreat(state, contract.tier, success); // GDD §5.9.1
 
   const ref: FightRef = {
     contractId: contract.id,

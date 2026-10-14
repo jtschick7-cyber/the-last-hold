@@ -8,8 +8,9 @@ import {
 import { jobs } from '../content/jobs';
 import type { MonsterAbility } from '../content/monsters';
 import { resources } from '../content/resources';
-import { num } from './balance-access';
+import { constantAt, num } from './balance-access';
 import { formatDuration } from './format';
+import { levelCapIn } from './systems/ages';
 
 // Plain-language descriptions built from content and balance, so the UI shows
 // what the engine uses and never restates a number by hand.
@@ -36,6 +37,12 @@ const describeEffect = (e: BuildingEffect): string => {
       return `+${e.perLevel} kettle${e.perLevel === 1 ? '' : 's'}`;
     case 'herbGrowth':
       return `grows yarrow, mugwort and juniper, one each every ${formatDuration(num(e.intervalKey))}`;
+    case 'threatSlow':
+      return `Threat rises ${percent(num(e.perLevelKey))} slower`;
+    case 'standTaken':
+      return `${percent(num(e.perLevelKey))} less damage taken in the Last Stand`;
+    case 'standVolley':
+      return `a volley of ${num(e.perLevelKey)} Steel damage at the start of each wave`;
   }
 };
 
@@ -49,13 +56,24 @@ export const ageUnlocks = (to: AgeId): string[] => {
   if (!up) return [];
   const prev = AGE_IDS[AGE_IDS.indexOf(to) - 1];
   const lines = [`+${percent(num(up.allProductionKey))} to all production (not silver)`];
+  // D106: the Rank tables in balance.ts, read the way the engine reads them.
+  const table = (key: 'hunter.levelCap' | 'roster.ageBonus' | 'bounty.ageMult') =>
+    constantAt(key).value as Readonly<Record<string, number>>;
+  const hunterCap = (age: AgeId): number =>
+    table('hunter.levelCap')[age] ?? table('hunter.levelCap')['keep'] ?? 0;
+  if (prev && hunterCap(to) > hunterCap(prev)) lines.push(`Hunters up to level ${hunterCap(to)}`);
+  const roster = table('roster.ageBonus')[to] ?? 0;
+  if (roster > 0) lines.push(`+${roster} active hunters`);
+  const pay = (age: AgeId): number => table('bounty.ageMult')[age] ?? 1;
+  if (prev && pay(to) !== pay(prev)) lines.push(`Bounties ×${pay(to)}`);
   for (const id of BUILDING_IDS) {
     const b = buildings[id];
     if (b.availableFrom === to) lines.push(`New: ${b.name}`);
-    else if (b.kind === 'level' && prev && (b.maxLevel[to] ?? 0) > (b.maxLevel[prev] ?? 0)) {
-      lines.push(`${b.name} up to level ${b.maxLevel[to] ?? 0}`);
+    else if (b.kind === 'level' && prev && levelCapIn(b, to) > levelCapIn(b, prev)) {
+      lines.push(`${b.name} up to level ${levelCapIn(b, to)}`);
     }
   }
+  for (const line of up.alsoUnlocks ?? []) lines.push(line);
   return lines;
 };
 

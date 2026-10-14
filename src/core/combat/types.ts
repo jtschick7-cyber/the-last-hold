@@ -33,15 +33,32 @@ export interface MonsterInstance {
   readonly knowledge?: number;
 }
 
+/**
+ * A Last Stand wave (GDD §5.9.3, D107). A contract fight passes none of this, and
+ * the fight is exactly the contract rules (`rulesVersion` 1).
+ */
+export interface StandWaveOptions {
+  /** Each hunter's Health at the start of the wave (carried over); absent means full. */
+  readonly health: Readonly<Partial<Record<HunterId, number>>>;
+  /** The monster's Health and Might × this (Threat, GDD §5.9.1). */
+  readonly monsterStrength: number;
+  /** Extra taken% for every hunter (Walls, the Iron Shutter), inside `combat.takenCap`. */
+  readonly partyTaken: number;
+  /** Watchtower: Steel damage at tick 1 that ignores Armor, like a bomb; 0 for none. */
+  readonly volley: number;
+}
+
 export interface FightInput {
   readonly party: readonly HunterSnapshot[];
   readonly monster: MonsterInstance;
-  readonly location: LocationId;
+  /** Null in the Last Stand: the hold isn't a contract location, so location traits don't apply. */
+  readonly location: LocationId | null;
   readonly rolls: RollSource;
   /** Default true. Odds previews pass false: same fight, no log. */
   readonly log?: boolean;
   /** What the party carries (GDD §5.7); absent means nothing. */
   readonly prep?: Preparation;
+  readonly stand?: StandWaveOptions;
 }
 
 /** A potion a hunter carries (GDD §5.7). `used` is true once it has fired or been ruined. */
@@ -116,6 +133,8 @@ export interface Combatant {
   chillLeft: number;
   /** Saltburst: the monster's next actions in which abilities do nothing. */
   abilitiesBlocked: number;
+  /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
+  extraTaken: number;
 }
 
 export interface LogEntry {
@@ -151,4 +170,6 @@ export interface FightResult {
   readonly monsterMaxHealth: number;
   /** A Saltburst went off and cancelled an ability (part of "well prepared", GDD §5.7). */
   readonly saltburstCancelled: boolean;
+  /** Hunters whose potion fired or was ruined in this fight (the stand's once-per-stand rule). */
+  readonly potionsUsed: readonly string[];
 }

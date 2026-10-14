@@ -36,13 +36,18 @@ export const balance = {
     food: tunable(6, 'perMinute'),
     wood: tunable(4, 'perMinute'),
     iron: tunable(2, 'perMinute'),
-    silver: tunable(0.25, 'perMinute'),
+    silver: tunable(0.24, 'perMinute'),
   },
   silverSeam: { max: locked(2) },
   mill: { perLevel: tunable(0.25) },
   sawpit: { perLevel: tunable(0.25) },
   smithy: { ironPerLevel: tunable(0.2) },
-  age: { keep: { allProduction: tunable(0.5) } },
+  // GDD §5.1.3 (D106): each Rank from the Keep adds to the age bucket (not silver, G1).
+  age: {
+    keep: { allProduction: tunable(0.5) },
+    citadel: { allProduction: tunable(0.5) },
+    bastion: { allProduction: tunable(0.5) },
+  },
   // The simulated player's valuation: locked so tuning can't game the checks (plan §0.6).
   value: { weights: locked({ food: 1, wood: 1.5, iron: 3, silver: 12 }) },
   trophyHall: { perTrophy: tunable(0.005) },
@@ -59,7 +64,8 @@ export const balance = {
   // ---- GDD §7.3 Hunters ----
   hunter: {
     levelStatGrowth: tunable(0.1),
-    levelCap: { keep: tunable(10) },
+    // Hamlet uses the Keep's cap (D72); Citadel and Bastion raise it (D106).
+    levelCap: tunable({ keep: 10, citadel: 15, bastion: 20 }),
   },
   xp: {
     base: tunable(50),
@@ -88,7 +94,7 @@ export const balance = {
   contract: {
     recklessBelow: locked(0.35),
     unlockSuccesses: locked(3),
-    ageTierCap: locked({ hamlet: 1, keep: 5 }),
+    ageTierCap: locked({ hamlet: 1, keep: 5, citadel: 5, bastion: 5 }), // citadel, bastion: D106 (owner-approved)
     duration: tunable([30 * MIN, 1 * HOUR, 2 * HOUR, 4 * HOUR, 8 * HOUR], 'seconds'), // 30 min … 8 h
     partySize: locked([3, 3, 3, 4, 4]),
     hamletPartyMax: locked(2),
@@ -98,16 +104,16 @@ export const balance = {
     growth: tunable(2.2),
     // Q9 (D81): from the Keep, each hunter's provisions are at least this many minutes
     // of the hold's food capacity (Q11). Hamlet 0: the first contracts stay at the flat base.
-    incomeMinutes: tunable({ hamlet: 0, keep: 1 }),
+    incomeMinutes: tunable({ hamlet: 0, keep: 1, citadel: 4.1, bastion: 2.5 }), // D106
   },
   monster: {
     statGrowth: tunable(1.35),
     armorGrowth: tunable(1.15),
   },
   bounty: {
-    base: tunable(78),
+    base: tunable(91),
     growth: tunable(1.6),
-    ageMult: tunable({ hamlet: 1.0, keep: 1.0 }),
+    ageMult: tunable({ hamlet: 1.0, keep: 1.1, citadel: 3.5, bastion: 3.0 }), // D106
   },
   combat: {
     hitChance: tunable(0.9),
@@ -151,7 +157,6 @@ export const balance = {
     hunterRest: locked(24 * HOUR, 'seconds'), // 24 h
   },
   riftglass: { bankWeeks: locked(2) },
-  longNightArrival: { emberCapShare: locked(1.2) },
 
   // ---- GDD §7.5 Bestiary & preparation ----
   knowledge: {
@@ -168,6 +173,44 @@ export const balance = {
   oil: { familyBonus: tunable(0.35) },
   brew: { time: tunable(10 * MIN, 'seconds') }, // 10 min
   hut: { maxLevel: tunable(5) },
+
+  // ---- GDD §7.6 The Long Night (v0.4, D106–D114) ----
+  threat: {
+    // Per hour by Rank (D108); time away counts as for production.
+    ratePerHour: tunable({ hamlet: 0, keep: 0.5, citadel: 1, bastion: 1 }),
+    // Each level of Walls or Watchtower slows the hourly rate by this share.
+    defenseSlowPerLevel: tunable(0.02),
+    failedPerTier: tunable(3),
+    completedPerTier: tunable(0.76),
+    // Each point: every Last Stand wave +1% Health and Might.
+    waveStrengthPerPoint: tunable(0.0061),
+  },
+  walls: { takenPerLevel: tunable(0.02) }, // party taken% in the stand; combat.takenCap applies
+  watchtower: { volleyPerLevel: tunable(20) }, // Steel damage at tick 1 of each wave, ignores Armor
+  laststand: {
+    firstTier: tunable(2),
+    wavesPerTier: tunable(2),
+    partyMax: locked(6), // D107
+    recoverBetween: tunable(0.2),
+    previewSamples: tunable(100), // the stand screen's preview (GDD §6.5)
+    policySamples: tunable(20), // the simulated player's quick preview (GDD §6.1)
+  },
+  embers: {
+    perWave: tunable(4),
+    waveGrowth: tunable(1.15),
+    threatBonus: tunable(0.007),
+    perTrophy: tunable(1),
+    rankMult: tunable({ hamlet: 0.25, keep: 0.5, citadel: 0.75, bastion: 1 }),
+  },
+  relics: { waveMilestones: tunable([6, 9, 12, 15, 18, 21]) },
+  longNight: { levelsKept: tunable(0.5) },
+  // D112: the trophies part of the arrival's Embers is capped at this share of the
+  // cycle-1 median, set from the tuned simulator in T4.15 (D138).
+  longNightArrival: {
+    emberCapShare: locked(1.2),
+    // The median Embers of cycle 1's stand (Standard, Monday, 5 seeds) after T4.15 (D138).
+    cycle1MedianEmbers: tunable(193),
+  },
 } as const;
 
 export type Balance = typeof balance;

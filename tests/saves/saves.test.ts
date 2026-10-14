@@ -374,7 +374,7 @@ describe('the v2 → v3 migration (plan T3.4)', () => {
   })();
 
   it("upgrades the owner's real v0.2 save without losing anything the player had", () => {
-    expect(after.meta.schemaVersion).toBe(3);
+    expect(after.meta.schemaVersion).toBe(SCHEMA_VERSION);
     expect(after.resources).toEqual(old.state.resources);
     expect(after.peasants).toEqual(old.state.peasants);
     expect(after.hunters).toEqual(old.state.hunters);

@@ -30,6 +30,9 @@ export interface OddsInput {
   readonly prep?: Preparation;
   /** Overrides odds.samples (Suggest's first stage uses fewer). */
   readonly samples?: number;
+  /** Village Goodwill and Drill Yard / Tally Stick, for the expected rewards (GDD §8.9–8.10). */
+  readonly bountyBonus?: number;
+  readonly xpBonus?: number;
 }
 
 export interface HunterOdds {
@@ -110,7 +113,7 @@ export const computeOdds = (input: OddsInput): Odds => {
   const reckless = winChance < num('contract.recklessBelow');
   const traits = input.party.map((h) => h.traits);
   const tier = pool[0]?.tier ?? 1;
-  const bountyValue = bounty(tier, input.rank, traits).value;
+  const bountyValue = bounty(tier, input.rank, traits, false, input.bountyBonus ?? 0).value;
   const fightOf = (monster: MonsterInstance) => ({
     party: input.party,
     monster,
@@ -138,7 +141,8 @@ export const computeOdds = (input: OddsInput): Odds => {
     expectedBounty: winChance * bountyValue,
     expectedTrophies: winChance * trophies(tier),
     expectedXpPerHunter:
-      winChance * xpPerHunter(tier, true) + (1 - winChance) * xpPerHunter(tier, false),
+      winChance * xpPerHunter(tier, true, input.xpBonus ?? 0) +
+      (1 - winChance) * xpPerHunter(tier, false, input.xpBonus ?? 0),
     meanTicks: ticks / total,
     why:
       pool.length === 1 && only

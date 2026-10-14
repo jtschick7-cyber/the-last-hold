@@ -1,9 +1,9 @@
 import { hunters } from '../../content/hunters';
 import { monsters } from '../../content/monsters';
-import { constantAt, num } from '../../core/balance-access';
+import { num } from '../../core/balance-access';
 import { formatDuration } from '../../core/format';
 import { noticeFor } from '../../core/contracts/notice';
-import { bounty, trophies } from '../../core/contracts/rewards';
+import { contractDuration, holdBounty, trophies } from '../../core/contracts/rewards';
 import type { ContractInstance } from '../../core/state/game-state';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
@@ -18,13 +18,12 @@ import { ResourceIcon } from '../widgets/ResourceIcon';
 
 // GDD §9.4: the contract board. Running contracts, what is ready to collect, and
 // the open contracts, each with what it pays and what it takes.
-const durationOf = (c: ContractInstance): number =>
-  (constantAt('contract.duration').value as readonly number[])[c.tier - 1] ?? 0;
+const durationOf = (c: ContractInstance): number => contractDuration(game(), c.tier).value;
 
 const Open = ({ c }: { c: ContractInstance }) => {
   const s = game();
   const notice = noticeFor(c, s.meta.gameSeed);
-  const pay = bounty(c.tier, s.cycle.age, []).value;
+  const pay = holdBounty(s, c.tier, []).value;
   return (
     <li class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>
       <strong>

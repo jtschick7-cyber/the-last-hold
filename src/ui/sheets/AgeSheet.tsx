@@ -7,10 +7,14 @@ import { dispatch, game, version } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { HearthView } from './HearthView';
+import { StandView } from './StandSheet';
+import { standProblem } from '../../core/commands/stand';
 
 // GDD §9.2 "Rank ▸" (D64: the player-facing word for an Age is Rank): what the next Rank restores, its checklist, its costs, and
-// what it unlocks. Past the last built Age: "Coming in a later milestone" with
-// no fake progress bar (GDD §5.1.3).
+// what it unlocks. At Bastion, the last Rank, the sheet shows what the hold has
+// restored (GDD §9.13; the Last Stand button arrives with T4.11b). Citadel and
+// Bastion restorations have no inscription until v0.5 (setting-primer §6.5).
 
 export const RestorationView = ({ age }: { age: keyof typeof ages }) => {
   const r = ages[age].ageUp?.restores;
@@ -19,9 +23,11 @@ export const RestorationView = ({ age }: { age: keyof typeof ages }) => {
     <div>
       <h3 class={styles.cardTitle}>{r.summary}</h3>
       <p>{r.description}</p>
-      <blockquote style={{ margin: 0, fontStyle: 'italic', color: 'var(--c-ember)' }}>
-        “{r.inscription}”
-      </blockquote>
+      {r.inscription && (
+        <blockquote style={{ margin: 0, fontStyle: 'italic', color: 'var(--c-ember)' }}>
+          “{r.inscription}”
+        </blockquote>
+      )}
     </div>
   );
 };
@@ -37,10 +43,17 @@ export const AgeSheet = () => {
           The hold is a <strong>{ages[s.cycle.age].name}</strong>.
         </p>
         <RestorationView age={s.cycle.age} />
-        <div class={styles.card} style={{ marginTop: 'var(--space-3)' }}>
-          <h3 class={styles.cardTitle}>Citadel</h3>
-          <p class={styles.dim}>Coming in a later milestone.</p>
-        </div>
+        {s.cycle.age === 'bastion' && !standProblem(s) && (
+          <button
+            type="button"
+            class={styles.btnPrimary}
+            style={{ width: '100%', marginTop: 'var(--space-3)' }}
+            onClick={() => openSheet('The Last Stand', () => <StandView />)}
+          >
+            Make the Last Stand
+          </button>
+        )}
+        <HearthView />
       </div>
     );
   }
@@ -95,6 +108,7 @@ export const AgeSheet = () => {
       >
         Rank up to {ages[status.to].name}
       </button>
+      <HearthView />
     </div>
   );
 };

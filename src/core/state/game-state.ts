@@ -7,16 +7,20 @@ import type { HunterId } from '../../content/hunters';
 import type { IngredientId } from '../../content/ingredients';
 import type { JobId } from '../../content/jobs';
 import type { MonsterId } from '../../content/monsters';
+import type { RelicId } from '../../content/relics';
 import type { ResourceId } from '../../content/resources';
 import type { SceneId } from '../../content/text/scenes';
 import type { VillageId } from '../../content/villages';
+import type { UpgradeId } from '../../content/warden-upgrades';
 import type { HunterSnapshot } from '../combat';
 import type { InjuryKind } from '../contracts/injury';
 
 // Technical design §5.2. v1 was the hold only (plan T1.9); v2 adds hunters,
 // contracts and fights (plan T2.4); v3 adds the bestiary, stores, brewing, investigation
-// and preparation (plan T3.4). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 3;
+// and preparation (plan T3.4); v4 adds Citadel and Bastion, Walls and Watchtower, Threat,
+// Embers, warden upgrades, relics, the v0.4 arrival and the cycle history (plan T4.3, D113).
+// Times are epoch milliseconds.
+export const SCHEMA_VERSION = 4;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -114,6 +118,10 @@ export interface FallenRecord {
   diedAt: number;
   cycle: number;
   contractId: string;
+  /** The level at death (v0.4); deaths recorded before v0.4 have none and return at level 1. */
+  level?: number;
+  /** Set at the Long Night: the level they come back at, halved like everyone's (GDD §5.9.7, D110). */
+  returnLevel?: number;
 }
 
 /** What the player has learned about a species (GDD §5.6.2). Never reset by the Long Night. */
@@ -134,6 +142,54 @@ export interface BrewJob {
 export interface InvestigationSlot {
   contractId: string;
   nextClueAt: number;
+}
+
+/**
+ * A Last Stand, as made (GDD §5.9.3). Its inputs are frozen like a contract's, so
+ * every wave log can be rebuilt by re-running the stand (technical design §5.3); the
+ * wave list comes from the stand seed and is not stored.
+ */
+export interface StandRecord {
+  at: number;
+  /** `${gameSeed}:stand:${cycle}` (D115). */
+  seed: string;
+  /** The Rank it was made at: Bastion, or the save's own Rank at the v0.4 arrival. */
+  rank: AgeId;
+  threat: number;
+  party: HunterSnapshot[];
+  /** One oil and one potion per hunter; `bombs` stays empty (they come from `bombs` below). */
+  prep: Preparation;
+  /** The bombs in the stores when the stand began; they are thrown automatically. */
+  bombs: Partial<Record<ConsumableId, number>>;
+  defenses: { walls: number; watchtower: number };
+  /** Relics owned when it began (the Iron Shutter fights in the stand). */
+  relics: RelicId[];
+  /** Each species' knowledge level when it began (Studied and Mastered bonuses). */
+  knowledge: Partial<Record<MonsterId, number>>;
+  rulesVersion: number;
+  wavesHeld: number;
+  /** The payout (GDD §5.9.4): the waves part (after Rank and Threat), the trophies part (capped at the arrival). */
+  embers: { waves: number; trophies: number; total: number };
+  /** Relics found at its wave milestones (GDD §5.9.6). */
+  relicsFound: RelicId[];
+  /** The v0.4 arrival's stand (GDD §5.9.8). */
+  arrival: boolean;
+  /** The result sheet has been seen. */
+  seen: boolean;
+}
+
+/**
+ * One cycle's history entry (technical design §5.2, D113): the current cycle is the
+ * last one. v0.5's Roll of Wardens reads these.
+ */
+export interface CycleRecord {
+  number: number;
+  startedAt: number;
+  /** When each Rank was reached; a Rank reached before v0.4 has no time. */
+  ranks: Partial<Record<AgeId, number>>;
+  /** Threat that contracts added (failures) and took off (successes), before the floor at 0 (GDD §5.9.1). */
+  contractThreat: { added: number; removed: number };
+  stand: StandRecord | null;
 }
 
 export interface Settings {
@@ -202,6 +258,18 @@ export interface GameState {
   /** Scenes already shown (setting-primer §6.6), so each plays once. */
   scenes: SceneId[];
   log: { recentFights: FightRef[] };
+  /** GDD §5.9.1: never below 0; counts only once `arrivalDue` is false. Resets at the Long Night. */
+  threat: number;
+  /** Unspent Embers (GDD §5.9.4). Kept forever. */
+  embers: number;
+  /** Warden upgrade levels (GDD §5.9.5); 0 = not bought. */
+  upgrades: Record<UpgradeId, number>;
+  /** Relics owned, with the cycle each was found in (GDD §5.9.6). */
+  relics: { id: RelicId; cycle: number }[];
+  /** A save from before v0.4 still faces its first Long Night (GDD §5.9.8). */
+  arrivalDue: boolean;
+  /** One entry per cycle; the last is the current one (D113). */
+  cycles: CycleRecord[];
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;

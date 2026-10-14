@@ -1,6 +1,7 @@
 import { HUNTER_IDS } from '../../src/content/hunters';
 import { computeOdds } from '../../src/core/contracts/odds';
 import { suggestParty } from '../../src/core/contracts/suggest';
+import { previewStand } from '../../src/core/stand/preview';
 import { snap } from '../combat/helpers';
 
 // GDD §6.5: the live odds panel (500 fights) and Suggested party, timed in this
@@ -27,7 +28,13 @@ const base = {
   rank: 'keep' as const,
 };
 
-type Bench = { odds: number; suggest4: number; oddsUnknown: number; suggestUnknown: number };
+type Bench = {
+  odds: number;
+  suggest4: number;
+  oddsUnknown: number;
+  suggestUnknown: number;
+  stand: number;
+};
 
 (window as unknown as { __bench: () => Bench }).__bench = () => {
   const party = HUNTER_IDS.slice(0, 3).map((id) => snap(id));
@@ -52,6 +59,31 @@ type Bench = { odds: number; suggest4: number; oddsUnknown: number; suggestUnkno
     suggest4: best(() => suggestParty({ ...base, available: free, maxParty: 3 })),
     oddsUnknown: best(() => computeOdds({ ...unknown, party })),
     suggestUnknown: best(() => suggestParty({ ...unknown, available: free, maxParty: 3 })),
+    // GDD §6.5 (D114): the Last Stand preview, 100 practice stands of six level-10 hunters.
+    stand: best(() =>
+      previewStand({
+        stand: {
+          seed: 'bench:stand:1',
+          threat: 40,
+          party: HUNTER_IDS.slice(0, 6).map((id) => snap(id, { level: 10 })),
+          prep: {
+            oils: {},
+            potions: { [HUNTER_IDS[0] ?? 'halvar']: 'mending-draught' },
+            bombs: [],
+          },
+          bombs: { 'fire-pot': 4, saltburst: 2 },
+          defenses: { walls: 10, watchtower: 10 },
+          relics: [],
+          knowledge: {},
+        },
+        samples: 100,
+        rank: 'bastion',
+        trophies: 60,
+        cycleDays: 3,
+        threatPerDay: 40,
+        trophiesPerDay: 20,
+      }),
+    ),
   };
 };
 const out = document.getElementById('out');

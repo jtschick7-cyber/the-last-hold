@@ -117,7 +117,9 @@ describe('seeded golden fights (locked)', () => {
     }).toEqual(c.want);
   });
 
-  it('these goldens belong to combat rules version 1', () => {
-    expect(RULES_VERSION).toBe(1);
+  // Owner-approved (D139): version 2 changed only Last Stand waves; these contract
+  // fights, recorded under version 1, reproduce unchanged.
+  it('these goldens were recorded under rules version 1; version 2 keeps their contract fights', () => {
+    expect(RULES_VERSION).toBe(2);
   });
 });

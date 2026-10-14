@@ -29,4 +29,12 @@ export const shiftClock = (state: GameState, delta: number): void => {
   }
   for (const f of state.fallen) f.diedAt += delta;
   for (const f of state.log.recentFights) f.at += delta;
+  for (const c of state.cycles) {
+    c.startedAt += delta;
+    for (const age of Object.keys(c.ranks) as (keyof typeof c.ranks)[]) {
+      const at = c.ranks[age];
+      if (at !== undefined) c.ranks[age] = at + delta;
+    }
+    if (c.stand) c.stand.at += delta;
+  }
 };

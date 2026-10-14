@@ -7,10 +7,20 @@ import { provisions } from '../contracts/rewards';
 import type { ContractInstance, GameState, Preparation } from '../state/game-state';
 import { copyLimit } from '../systems/costs';
 import { availableHunters, candidates, nextGear, rosterCap, snapshotOf } from '../systems/hunters';
-import { rankUpSilver, type Bundle } from './goals';
+import type { Bundle } from './goals';
 import { contractIdentity } from '../investigation/view';
 import { investigationSlots } from '../investigation/lodge';
-import { brewMoves, investigateMoves, labBuildings, prepFor } from './lab';
+import { brewMoves, investigateMoves, labBuildings, labFirstSetBuilt, prepFor } from './lab';
+import { ageIndex } from '../systems/ages';
+import { hunters } from '../../content/hunters';
+import { traits } from '../../content/traits';
+
+/** GDD §6.1 (D114): "within 5 points of the best odds". */
+const TRACKER_SLACK = 0.05;
+
+/** Does this hunter have a Tracker trait (an idle one speeds a Lodge slot, GDD §5.6.3)? */
+const trackerOf = (id: HunterId): boolean =>
+  hunters[id].traits.some((t) => traits[t].effect.kind === 'clueSpeed');
 
 // GDD §6.1 (D75): what the simulated player does about contracts and hunters at
 // a check-in. It collects results, hires who it can afford once the next Rank-up
@@ -49,10 +59,10 @@ const oddsFor = (
 const SURE_ENOUGH = 0.9;
 
 /** Hires every candidate it can afford, cheapest first, leaving the next Rank-up's silver untouched. */
-const recruit = (s: GameState, act: Act): number => {
+const recruit = (s: GameState, act: Act, hold: number): number => {
   let n = 0;
   for (const c of [...candidates(s)].sort((a, b) => a.recruitPrice - b.recruitPrice)) {
-    const leaves = s.resources.silver - c.recruitPrice >= rankUpSilver(s);
+    const leaves = s.resources.silver - c.recruitPrice >= hold;
     if (leaves && act({ type: 'hunter.recruit', hunter: c.id })) n += 1;
   }
   return n;
@@ -64,7 +74,7 @@ const equip = (s: GameState, act: Act, reserve: Bundle): number => {
   const owned = Object.keys(s.hunters).length;
   if (
     owned > rosterCap(s).value &&
-    s.cycle.age === 'keep' &&
+    ageIndex(s.cycle.age) >= ageIndex('keep') &&
     s.buildings.barracks < (copyLimit('barracks') ?? 5)
   ) {
     if (act({ type: 'build.upgrade', building: 'barracks' })) n += 1;
@@ -107,19 +117,44 @@ const byValue = (a: ContractInstance, b: ContractInstance): number =>
  * One check-in's contract and hunter moves. Returns how many meaningful actions
  * it took (launches, hires, upgrades), for the simulator's engagement checks.
  */
-export const contractMoves = (s: GameState, act: Act, reserve: Bundle): number => {
+export const contractMoves = (
+  s: GameState,
+  act: Act,
+  reserve: Bundle,
+  /** Silver hires, gear and the Lodge, Hut and Garden leave alone while the policy saves for the Rank-up (goals.recruitHold, D132). */
+  silverHold = 0,
+): number => {
   if (!s.board.opened) return 0;
   if (s.results.length > 0) act({ type: 'results.collect' });
-  let actions = recruit(s, act) + equip(s, act, reserve);
-  // v0.3 (D95): Lodge, Hut and Garden, then the clues and the kettles, before the launches.
-  actions += labBuildings(s, act, reserve) + brewMoves(s, act);
+  // v0.4 (GDD §6.1, D114): from the Keep, the first Lodge, Hut and Garden come before any
+  // recruit or gear upgrade; after that the v0.3 order (D95): hires and gear, then the
+  // rest of the Lodge, Hut and Garden steps, the clues and the kettles, before the launches.
+  let actions = 0;
+  const held = { ...reserve, silver: reserve.silver + silverHold };
+  if (!labFirstSetBuilt(s)) actions += labBuildings(s, act, held);
+  if (labFirstSetBuilt(s))
+    actions += recruit(s, act, silverHold) + equip(s, act, held) + labBuildings(s, act, held);
+  actions += brewMoves(s, act);
   for (const c of [...s.board.open].sort(byValue)) {
     const free = availableHunters(s);
     if (free.length === 0) break;
     // The strongest party the roster can field; dropping weak members never helps odds.
-    const party = free.slice(0, maxPartySize(c.tier, s.cycle.age));
-    const prep = prepFor(s, c, party);
-    const odds = oddsFor(s, c, party, prep);
+    let party = free.slice(0, maxPartySize(c.tier, s.cycle.age));
+    let prep = prepFor(s, c, party);
+    let odds = oddsFor(s, c, party, prep);
+    // v0.4 (GDD §6.1, D114): a Tracker stays home, speeding a busy Lodge slot, when a party
+    // without her is within 5 points of the best odds.
+    const tracker = party.find((h) => trackerOf(h));
+    if (tracker && odds !== null && s.queues.investigation.length > 0) {
+      const alt = free.filter((h) => h !== tracker).slice(0, maxPartySize(c.tier, s.cycle.age));
+      const altPrep = prepFor(s, c, alt);
+      const altOdds = oddsFor(s, c, alt, altPrep);
+      if (altOdds !== null && altOdds >= odds - TRACKER_SLACK) {
+        party = alt;
+        prep = altPrep;
+        odds = altOdds;
+      }
+    }
     // D95: against a monster it can't name, a player who has Lodge slots waits for the clues
     // when the odds are not already near-certain, instead of sending the party in blind.
     if (

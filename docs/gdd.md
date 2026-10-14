@@ -174,9 +174,9 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Food** | Basic | Farms, fishery; peasants | Settling peasants; **contract provisions** *(⚑ revision G3)* | No | v0.1 |
 | **Wood** | Basic | Woodcutter's camp; peasants | Buildings; bomb casings; arrow shafts | No | v0.1 |
 | **Iron** | Basic | Mine; peasants | Buildings; smithy gear | No | v0.1 |
-| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.25/min each, no bonuses; G1); **contract bounties (main source)** | Silvered gear; recruitment; Rank-ups | No | v0.1 |
+| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.24/min each, no bonuses; G1, D138); **contract bounties (main source)** | Silvered gear; recruitment; Rank-ups | No | v0.1 |
 | **Peasants** | Population | Houses + food surplus | Assigned to gathering jobs | No | v0.1 |
-| **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; rank partly resets (detailed in v0.4); **gear resets** *(⚑ revision A4)* | v0.2 |
+| **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; levels partly reset: half the levels above 1 are kept (§5.9.7); **gear resets** *(⚑ revision A4)* | v0.2 |
 | **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.8); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.4 arrival, G8) | v0.2 |
 | **Reagents** | Ingredients | Contracts; herb garden; Delves | Alchemy: oils, potions, bombs | No | v0.3 |
 | **Gear** | Items | Smithy (iron + silver + wood) | Equipped by hunters | No (relics are the persistent gear) | v0.2 |
@@ -184,7 +184,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Knowledge** | Unlocks | Investigating and killing monsters; alchemy experiments | Never spent; reduces investigation time and raises odds | **Yes** | v0.3 |
 | **Threat** | Pressure meter | Rises with the Rank's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.4 |
 | **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades | **Yes** | v0.4 |
-| **Relics** | Persistent items | Last Stand milestones; Delves | Equipped on the hold or on hunters | **Yes** | v0.6 / v0.8 |
+| **Relics** | Persistent items | Last Stand wave milestones (§5.9.6); Delves (v0.7) | The hold (v0.4: every relic owned works); hunters (v0.8) | **Yes** | v0.4 / v0.8 *(⚑ v0.4 flesh-out, D111)* |
 | **Riftglass** | Delve currency with a **banked allowance**: 1/7 of the weekly cap accrues per day, banking up to 2 weeks *(⚑ revision G7)* | Delve floors | Sidegrades, convenience upgrades (e.g., +1 h offline cap), cosmetic hold improvements | **Yes** | v0.7 |
 | **Lore documents** | Collectibles | Contracts, Delves, Long Night | Mystery progression; some give small hints or bonuses | **Yes** | v0.5 |
 | **Boss marks / Hunt points** | Event currencies | World bosses; Legendary Hunts | Event rewards; unlocking a legendary hunter | **Yes** | v0.9 |
@@ -352,7 +352,7 @@ The four basic resources are **food, wood, iron, and silver**. There are no stor
 rate_R = workers_R × baseRate_R × (bucket multipliers, §5.0)
 ```
 
-**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.4). With at most 2 Seams, seam income can never exceed 2 × 0.25/min = **720 silver per day**. Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
+**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.4). With at most 2 Seams, seam income can never exceed 2 × 0.24/min = **about 690 silver per day** (720 at 0.25/min before D138). Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
 
 #### 5.1.2 Buildings
 
@@ -392,9 +392,9 @@ payback(item) = value(cost) ÷ value(Δrate per min)        (lower is better)
 | Woodcutter's Camp | Count | 25 wood, 15 food | +3 Woodcutter slots | Hamlet (start with 1) |
 | Mine | Count | 80 wood, 40 food | +2 Miner slots | Hamlet |
 | Silver Seam | Count (**max 2**) | 150 wood, 120 iron | +1 Silver-digger slot; never boosted (G1) | Hamlet |
-| Mill | Level (max 5 in Hamlet, 10 in Keep) | 120 wood, 40 iron | +25% food per level (building bucket) | Hamlet |
-| Sawpit | Level (max 5 / 10) | 100 wood, 60 iron | +25% wood per level | Hamlet |
-| Smithy | Level (max 3 / 10) | 200 wood, 150 iron | +20% iron per level. Unlocks gear tiers (v0.2) | Hamlet |
+| Mill | Level (max 5 in Hamlet, 10 in Keep, 15 in Citadel, 20 in Bastion) | 120 wood, 40 iron | +25% food per level (building bucket) | Hamlet |
+| Sawpit | Level (max 5 / 10 / 15 / 20) | 100 wood, 60 iron | +25% wood per level | Hamlet |
+| Smithy | Level (max 3 / 10 / 15 / 20) | 200 wood, 150 iron | +20% iron per level. Unlocks gear tiers (v0.2) | Hamlet |
 | Bell Tower | Level (max 3) | 1,500 wood, 800 iron, 150 silver | +1 h offline cap per level | Keep |
 
 #### 5.1.3 Ranks
@@ -412,9 +412,29 @@ From v0.2 onward, Keep also unlocks contract tiers above 1, the Barracks, and th
 
 **Each Rank-up restores part of old Stanholm**, with a short inscription *(⚑ revision, lore C7)*. Keep restores the gatehouse and the Roll of Honor (`setting-primer.md` §6.5); Citadel and Bastion are in `lore-secrets.md` §11.
 
-In v0.1, the Keep is the end of content. The Rank screen shows the next Rank (Citadel) as "Coming in a later milestone," with no fake progress bar.
+In v0.1–v0.3, the Keep is the end of content. The Rank screen shows the next Rank (Citadel) as "Coming in a later milestone," with no fake progress bar.
 
 **Pacing target:** Keep is reached after **8–14 hours of game time**, under the simulator's **Standard** policy (§6.1). The simulator enforces this band (§6.2). *(⚑ revision A9: the policy is defined only in §6.1.)*
+
+**Citadel and Bastion** *(v0.4; ⚑ v0.4 flesh-out, D106)*. Contract tiers stay 1–5: the new Ranks make contracts pay more instead.
+
+| | Citadel | Bastion |
+|---|---|---|
+| Requires | 50 peasants, Mill 10, Smithy 8, Barracks 1 | 60 peasants, Mill 12, Smithy 9, Barracks 3, Walls 1 *(T4.15, D138)* |
+| Cost | 300,000 food, 150,000 wood, 60,000 iron, 600 silver *(D138)* | 500,000 food, 300,000 wood, 110,000 iron, 1,600 silver *(D138)* |
+| All production (age bucket, not silver) | +50% (adds to the Keep's) | +50% more |
+| Mill, Sawpit, Smithy level cap | 15 | 20 |
+| Hunter level cap | 15 | 20 |
+| Bounty multiplier | ×3.5 *(D138)* | ×3 *(D138)* |
+| Provisions (`provisions.incomeMinutes`) | 4.1 *(D138)* | 2.5 *(D138)* |
+| Active roster | +2 | +2 |
+| Highest contract tier | 5 | 5 |
+| Unlocks | Walls and Watchtower (§5.9.2) | the Last Stand (§5.9.3) |
+| Restores | **the old Forge Hall**: *"The roof is back on the old Forge Hall. Its forges are cold."* | **a sealed stair going down**: *"Under the Bastion floor, a stair goes down to a sealed door."* |
+
+- Every number is a tunable starting value (requirements and costs live with the Ranks in the content, D44), except the roster bonus and the tier cap, which are locked. The simulator tunes the costs to the targets: Citadel on day 2, Bastion on days 3–4 (§6.2, D137).
+- The restorations show no inscription until v0.5 (`setting-primer.md` §6.5).
+- A hunter who carries a level above the current Rank's cap (§5.9.7) keeps it; the cap only stops new levels.
 
 #### 5.1.4 Starting state
 
@@ -436,7 +456,7 @@ In v0.1, the Keep is the end of content. The Rank screen shows the next Rank (Ci
 elapsed = clamp(now − lastSeen, 0, offlineCap)
 ```
 
-- **Offline cap:** a base of 12 h (D08), plus the Bell Tower (up to +3 h), plus later sources (Embers in v0.4, Riftglass in v0.7). **Hard ceiling: 24 h** **[JC]**.
+- **Offline cap:** a base of 12 h (D08), plus the Bell Tower (up to +3 h), plus later sources (Embers in v0.4: Late Lantern, §8.9; Riftglass in v0.7). **Hard ceiling: 24 h** **[JC]**.
 - **Clock moved backward:** if `now < lastSeen`, then `elapsed = 0` and `lastSeen` is reset to `now` (D21). No penalty, no warning.
 
 **Simulation.** Offline time runs through **the same `advance(state, dt)` function** as live play. **`advance` is event-driven** *(⚑ revision A11 [JC])*:
@@ -547,7 +567,7 @@ Runed weapons (Rune damage) arrive with the Emberwright lore in v0.5.
 - Launching a Reckless contract requires a confirmation dialog that names each hunter and their exact death chance.
 - Recovering hunters can't take contracts. Recovery runs on real time, including offline.
 - **Story hunters never die** *(⚑ revision, lore C4)*: Sigrun, Ostap, Toma and Arvid can be wounded, but on a Reckless contract their death roll becomes Grievously Wounded instead. They persist through every Long Night and are always available before their act needs them (`lore-secrets.md` §10).
-- Dead hunters are gone for the cycle. Their memorial stays in the Hall of the Fallen (More menu). **[JC: a dead named hunter returns as a candidate after the next Long Night, with their lore tracked. Permanently losing a hand-authored character felt too punishing for a collection game.]** Before v0.4, when no Long Night exists yet, a dead hunter returns as a candidate **3 days** after their death *(⚑ revision A12 [JC])*.
+- Dead hunters are gone for the cycle. Their memorial stays in the Hall of the Fallen (More menu). **[JC: a dead named hunter returns as a candidate after the next Long Night, with their lore tracked. Permanently losing a hand-authored character felt too punishing for a collection game.]** Before v0.4, when no Long Night exists yet, a dead hunter returns as a candidate **3 days** after their death *(⚑ revision A12 [JC])*. **From v0.4,** a dead hunter returns as a candidate at the next Long Night, at their usual price, with their levels halved like everyone's (§5.9.7, D110).
 
 ---
 
@@ -566,11 +586,11 @@ Each contract has:
 |---|---|
 | Village | The giver. Flavor in v0.2; ties into Reputation in v0.10. |
 | Monster | In v0.2, always a known species (identified for free). Unknown monsters arrive in v0.3. |
-| Tier | 1–5 within Keep. Each tier above the monster's base tier multiplies Health and Might by 1.35 and Armor by 1.15 (§7). |
+| Tier | 1–5 from the Keep on; Citadel and Bastion add no tiers (D106). Each tier above the monster's base tier multiplies Health and Might by 1.35 and Armor by 1.15 (§7). |
 | Location tag | Forest, river, field or barrow; **ruin from v0.5** *(⚑ revision D-2)*. **Barrow contracts start at tier 2** *(⚑ revision A3 [JC])*. Interacts with traits. |
 | Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5; at most 2 in Hamlet (G6) |
 | Duration | 30 min / 1 h / 2 h / 4 h / 8 h by tier |
-| Bounty | `78 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.0; Citadel and Bastion set at v0.4). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6; 72 → 78 in the Q9 tuning (D82): provisions now grow with food income, so fewer contracts go out and each pays a little more)* |
+| Bounty | `91 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.1, Citadel 3.5, Bastion 3; D106, D138). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6; 72 → 78 in the Q9 tuning (D82): provisions now grow with food income, so fewer contracts go out and each pays a little more; 78 → 91 in the v0.4 tuning, D138)* |
 | Trophies | Equal to the tier, of that monster's family |
 | Reagents | *(v0.3)* monster-specific drops |
 
@@ -586,7 +606,7 @@ Each contract has:
    - **Death chance** per hunter (Reckless contracts only).
    - **Expected rewards.**
    - **"Why?"** opens the summary math: party damage per 100 ticks vs monster Health, and monster damage per 100 ticks vs the party's effective Health.
-4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet and 1 in the Keep (D85) (Citadel and Bastion are set at v0.4). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
+4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1 in the Keep (D85), 4.1 in the Citadel and 2.5 in Bastion (D106, D138; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
 5. Launch. The hunters are busy for the contract's duration.
 
 The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 500 preview simulations use different derived seeds, so the preview never reveals the real roll.
@@ -603,7 +623,7 @@ The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation ID
 
 #### 5.4.4 How contracts feed the Hold
 
-- **Silver bounties** are the main silver source from v0.2 on. Silver Seams are capped at 720 silver per day for the whole game (G1), so bounties overtake them as higher tiers unlock.
+- **Silver bounties** are the main silver source from v0.2 on. Silver Seams are capped at about 690 silver per day for the whole game (G1; 720 before D138), so bounties overtake them as higher tiers unlock.
 - **Trophy Hall** (Keep, one level, cost 500 wood, 200 iron): gives **+0.5% to all Hold production per trophy earned this cycle**, in the trophy bucket. The count is the **cumulative trophies earned this cycle; spending trophies (v0.8) never reduces it** *(⚑ revision A7)*. Silver is excluded (G1).
 - **Reagents** go to the Alchemist *(v0.3)*.
 
@@ -774,20 +794,115 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 - **Warden skills** improve through use: Alchemy, Smithing, Lore, and Command. Each grows from its activity, with a small permanent bonus per level that survives the Long Night **[JC]**.
 - **Open questions:** whether hunters also have use-based skills (per damage type); how many effects there are in total; whether the v0.3 fixed recipes become discovered recipes.
 
-### 5.9 The Long Night *(v0.4 mechanics, v0.5 story; outline)*
+### 5.9 The Long Night *(v0.4 mechanics, v0.5 story)*
 
 *⚑ Milestones renumbered (P2, P3): the Long Night's mechanics ship in v0.4, ahead of alchemy discovery (now v0.6), and Act I with its story systems ships in v0.5. Mapping in `decisions.md` D35.*
 
-- **Threat** rises over the cycle: a base rate per Rank, plus spikes from failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)*. Completed contracts and defensive buildings push it down.
-- **The Last Stand** is available from Bastion on (day 3). It is an auto-battle against escalating waves, using the hold's defenses plus up to 6 hunters.
-  - The Embers payout depends on waves survived, the Rank reached, Threat at the time of the stand, and trophies converted.
-  - Making the stand later pays more Embers, but Threat raises the difficulty. The sweet spot should land around days 4–5 (§6).
-- **Remaining Ranks:** Citadel and Bastion.
-- **What resets and what persists:** per §4. Embers buy permanent warden upgrades. Relics drop at payout milestones.
+*⚑ Brought to full detail in the v0.4 flesh-out (D106–D115). Every number is a tunable starting value unless marked locked; §7.6 lists the keys.*
+
+**The cycle in one line:** rank the hold up to Bastion, keep Threat in check, and choose when to make the Last Stand. The Long Night then resets the hold and keeps what you learned, recruited and earned.
+
+#### 5.9.1 Threat *(D108)*
+
+- Threat starts each cycle at **0** and rises every hour by the rate for the hold's Rank: **Hamlet 0, Keep 0.5, Citadel 1, Bastion 1** *(D138)*. Time away counts exactly as it does for production, so the offline cap applies to Threat too.
+- **Each failed contract adds 3 × its tier. Each completed contract takes off 0.76 × its tier** *(D138)*. A full board, old contracts and declined contracts add nothing *(G2)*.
+- **Defenses slow the hourly rate:** each level of Walls or Watchtower takes off 2%, so at most 60% at the Bastion caps.
+- Threat never goes below 0, and it resets to 0 at the Long Night.
+- **What Threat does, and nothing else:** every point makes each wave of the Last Stand +0.61% Health and Might, and adds +0.7% to the waves part *(D138)* of the Embers payout (§5.9.4). No forced stand, no damage to buildings, no harder contracts (pillar 5; no rubber-banding, §5.4.1).
+- **Shown** as a meter on the Hold screen from the Keep on, with a breakdown: the Rank's rate, what defenses take off, contracts completed and failed (§9.13).
+
+#### 5.9.2 Defenses *(D107)*
+
+From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat (§5.9.1). Bastion requires Walls level 1.
+
+| Building | Level cap | In the Last Stand |
+|---|---|---|
+| **Walls** | 10 in Citadel, 15 in Bastion | The party takes 2% less damage per level (taken%, so the 75% cap applies) |
+| **Watchtower** | 10 / 15 | At tick 1 of each wave, a volley of 20 × level Steel damage that ignores Armor, like a bomb (no oil, trait or knowledge bonus) |
+
+#### 5.9.3 The Last Stand *(D107)*
+
+- **When:** available from Bastion, once per cycle, always voluntary. Starting it is final: the confirmation says the Long Night follows.
+- **The waves are monsters you know.** When the hold reaches Bastion, the stand's seed (`${gameSeed}:stand:${cycle}`) fixes the cycle's wave list, and the stand screen shows it. A species not yet Identified shows as "?".
+  - Wave 1 is tier 2, and every 2 waves add a tier. Past tier 5, the contract tier scaling keeps going (Health and Might ×1.35, Armor ×1.15 per step).
+  - Each wave's species is picked from those whose tier range includes the wave's tier (above tier 5: those that reach tier 5).
+  - Threat makes every wave stronger (§5.9.1).
+- **The party:** up to **6** active hunters *(locked)*. A suggested six fills the slots: the highest levels, with at least one Vanguard and one Mender; any can be swapped. Injured hunters can join (recovery timers are ignored). Contracts still running finish on the spot with their real result before the stand begins (§5.9.7).
+- **Preparation:** one oil and one potion per hunter for the whole stand, chosen with the contract pickers. Bombs are thrown automatically from the stores, up to 2 per wave (`prep.bombSlots`): bombs the wave's species is weak to first, then Saltbursts. The stores reset after the Long Night anyway.
+- **The fight:** one wave at a time, using the contract fight rules (§5.5), with these differences:
+  - Hunters keep their Health between waves. Before each new wave, every standing hunter recovers 20% of max Health. Downed hunters stay down for the rest of the stand.
+  - The Watchtower's volley and the bombs land at tick 1; Walls (and the Iron Shutter relic) reduce damage taken.
+  - Location traits (Fen-born, Fell-born, Lantern-bearer) don't apply: the hold isn't a contract location. Family traits, oils and Studied or Mastered bonuses do.
+  - A potion fires once in the whole stand, on its usual condition.
+- **The end:** when every hunter is down, or a wave isn't won within the 400-tick limit, the walls fall. **Waves held** is the number of waves won. The stand causes **no injuries and no deaths**.
+- **The preview** (in the odds worker): 100 practice stands with their own seeds. It shows expected waves (the median, with a 10th–90th percentile range), the Embers the stand would pay now with their breakdown and per day of the cycle, how much Threat rises by tomorrow, and an estimate of tomorrow's Embers, labeled as an estimate (it assumes today's Threat rate and today's average trophies per day). Budget in §6.5.
+- **Logs:** every wave has a fight log, rebuilt on demand from the stand's saved inputs (technical design §5.3).
+
+#### 5.9.4 Embers *(D109)*
+
+```
+wavesPart = Σ (n = 1 … waves held)  4 × 1.15^(n − 1)
+Embers    = floor( rankMult × wavesPart × (1 + 0.007 × Threat)  +  1 × trophies earned this cycle )
+rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
+```
+
+- In normal play the stand is only open in Bastion, so `rankMult` is 1. The lower values matter only for the arrival (§5.9.8).
+- The trophies counted are the cycle's cumulative count (A7). At the arrival the trophies part is capped (§5.9.8).
+- **The sweet spot.** Early in Bastion, defenses, hunter levels and gear grow faster than Threat, so each day holds more waves. Later, level costs climb (×1.75 per level) while Threat keeps rising, and the waves win. Trophies add a steady amount throughout. Total Embers keeps creeping up if you wait, but **Embers per day of the cycle** rises, peaks and falls. The target is a peak on **days 4–5** (§6.2).
+- **How the simulator measures it:** from Bastion on, at every check-in up to day 7, it runs a practice stand on a throwaway copy of the game and records Embers ÷ days so far. The median time of the peak over the 5 seeds must fall on days 4–5.
+- Embers are kept forever. The game calls them "what the last warden left in the hearth" (`setting-primer.md` §6.8).
+
+#### 5.9.5 Warden upgrades: The Hearth *(D111)*
+
+- Embers buy **permanent warden upgrades** on **The Hearth**, in the Hearth Hall, open at any time. Unspent Embers carry over.
+- A **flat list**: eight upgrades, each with levels and a rising cost (§8.9). No branches, and no re-spending in v0.4.
+- Production bonuses go in the **ember** bucket (§5.0); none applies to Silver Seams (G1).
+- **Risk, noted at planning:** a cycle's speed is limited mostly by silver and by how many contracts the hunters can run, and the board's pace is locked. That's why the list includes bounty, level, XP and duration upgrades. If the "later cycles" check (§6.2) still fails after tuning, the build stops and asks rather than touching anything locked.
+
+#### 5.9.6 Relics *(D111)*
+
+- **Found at Last Stand milestones:** the first time any stand holds wave **6, 9, 12, 15, 18 and 21**, you find one relic you don't have yet, picked by the stand's seed. A first stand of about 10 waves finds two.
+- **v0.4 relics belong to the hold.** Every relic you own works; there are no slots until there are more relics (v0.7). Relics for hunters arrive with hunter depth (v0.8).
+- Bonuses go in the **relic** bucket (§5.0). No v0.4 relic touches silver. The six are in §8.10.
+- Relics are kept forever.
+
+#### 5.9.7 The Long Night: what resets and what's kept *(D110)*
+
+| Resets (to the §5.1.4 start, plus warden upgrades) | Kept |
+|---|---|
+| Rank (back to Hamlet), every building, resources, peasants | Every hunter you've hired, and part of their levels |
+| The contract board, tier unlocks, unread results | The bestiary: knowledge, kills, Mastered auto-identify |
+| Stores (consumables and reagents), the brewing queue, Lodge slots | Embers, relics, warden upgrades |
+| Gear (A4), injuries, Threat, trophies this cycle (after conversion) | Candidates you haven't hired yet (unlocks are lifetime) |
+| | The Hall of the Fallen, Reports and fight replays, scenes already seen, settings, lifetime stats, the cycle number (+1), the cycle history |
+
+- **Hunter levels:** each hunter keeps half the levels above 1, rounded down (6 → 3, 5 → 3, 4 → 2); Old Hands raises the share. XP toward the next level goes to 0. A kept level above the current Rank's cap stays; the cap only stops new levels.
+- **Contracts still running** when the stand starts finish on the spot with their real result (the dice were fixed at launch); their rewards apply and their trophies count.
+- **Injured hunters** can join the stand; all injuries clear at the Long Night.
+- **Dead hunters** return as candidates at the Long Night, at their usual price, with their levels halved like everyone's. Story hunters never die (§5.3.7).
+- **The active roster** goes back to the Hamlet cap of 3. You choose which 3 on the new-warden sheet (the three highest levels are pre-chosen); everyone else waits in the reserve.
+- **Contract tier unlocks** reset with the hold.
+- **The new cycle** starts in Hamlet from the §5.1.4 starting state, plus any warden upgrades (Full Larder, Young Families).
+- **What you see, in order:**
+  1. The stand's result: waves held, the Embers breakdown, any relic. Pechko: *"The walls fell. The hearth didn't. Someone will come."*
+  2. *"The story continues in a later version."* (P4)
+  3. The Hearth: spend now or later.
+  4. The new-warden sheet: *"Seasons pass. Someone new walks up the road, hands warm in the cold."* You choose your 3 active hunters.
+
+#### 5.9.8 Arriving at v0.4 *(⚑ revision G8; details D112)*
+
+- When a save from before v0.4 first loads in v0.4 (preview or live, including one imported later from a save code), it faces **the first Long Night**. New games never do.
+- **When:** on first load, after the away catch-up. The arrival sheet explains, then the normal stand screen opens: you choose the six and their preparation, see the preview, and start. It can't be put off. Running contracts finish on the spot.
+- **The arrival sheet:** title *"The Long Night"*; *"The dark is at the walls tonight. Everyone who can hold a spear goes up."*; and a plain note: *"New in this version: each cycle ends in a Last Stand. Your save faces its first one now. Afterwards the hold starts over; your hunters, your bestiary and anything your Embers buy are kept."*
+- **The conditions:** Threat is 0 (it starts counting after the arrival); no defenses (they need the Citadel); the Rank multiplier is the save's Rank (a Keep save pays ×0.5 on the waves part); relic milestones as normal.
+- **The cap:** only the trophies part is capped, at **1.2 ×** the median Embers a simulated Standard player earns in cycle 1 (Monday start, 5 seeds). The share is locked; the median is a tunable constant set from the tuned simulator and recorded in a decisions row. The waves part is added on top. Before v0.4 the Trophy Hall bonus is uncapped [JC].
+- Then the normal Long Night (§5.9.7).
+- **Testing:** a debug action runs the arrival; the owner's real v0.3 save is the fixture.
+
+#### 5.9.9 A new warden each cycle
+
+- **A new warden each cycle** *(⚑ lore L4)*: after each Long Night a new warden arrives; **from v0.5** you name them. The **Roll of Wardens** (L9) carves each warden's name, Ranks reached, Last Stand band and relics into the Hearth Hall. From v0.4 the save keeps one short history entry per cycle for it (technical design §5.2, D113).
 - **Story (v0.5):** mystery act 1 plus the first lore documents. Residents react to how the stand went. **Until an act is written, a finished cycle closes with "The story continues in a later version"; when the act ships, its documents unlock in your current cycle** *(⚑ P4 [JC])*.
-- **A new warden each cycle** *(⚑ lore L4)*: after each Long Night a new warden arrives; **from v0.5** you name them. The **Roll of Wardens** (L9) carves each warden's name, Ranks reached, Last Stand band and relics into the Hearth Hall.
-- **Arriving at v0.4** *(⚑ revision G8)*: when a pre-v0.4 save first loads in v0.4, the game triggers the first Long Night (neutral text; the story arrives in v0.5): a scripted Last Stand with the normal payout, then §4.1's normal reset rules. **Trophy-to-Embers conversion at that moment is capped** at 120% of the median Embers a simulated Standard player earns in cycle 1 [JC]. Before v0.4, the Trophy Hall bonus is uncapped [JC].
-- **Open questions:** the payout curve; how hunter rank partly resets (gear resets fully, A4); whether buildings can be damaged by high Threat (leaning no, per pillar 5).
 
 ### 5.10 Delves *(v0.7, outline)*
 
@@ -874,6 +989,12 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **Preparation:** brews and equips matching consumables for identified monsters.
 - **Investigation:** keeps every Lodge slot busy.
 - **Never** launches Reckless contracts.
+- **Rank-ups** *(v0.4, D114)*: works toward Citadel and Bastion as it does toward the Keep: requirements first, then saving once the Rank-up is affordable within 2 check-ins.
+- **v0.3 buildings first** *(v0.4)*: in the Keep, the Hunter's Lodge, the Alchemist's Hut and one Herb Garden come before any recruit or gear upgrade, as soon as each is affordable with the Rank-up reserve kept.
+- **Tracker** *(v0.4)*: leaves a Tracker out of a party when a party without her is within 5 points of the best odds and a Lodge slot is busy.
+- **Defenses** *(v0.4)*: from Citadel, raises Walls and the Watchtower in turn (lower one first) whenever a level is affordable with the Rank-up reserve kept.
+- **The stand** *(v0.4)*: from Bastion, runs a quick preview (20 practice stands) at every check-in and stands at the first check-in where Embers per day of the cycle is lower than at the one before. It takes the suggested six; each hunter carries the oil for the family most common in the first 12 waves; Mending Draughts for as many hunters as it has; bombs are automatic. Light and Heavy use the same rule.
+- **Embers** *(v0.4)*: buys the cheapest affordable warden upgrade (ties by list order), and keeps the default three active hunters in each new cycle.
 
 ### 6.2 Targets
 
@@ -892,10 +1013,10 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | First species Identified through investigation | ≤ 2 h after the Hunter's Lodge is built | v0.3 |
 | First species Studied (4 kills) | Days 2–3 | v0.3 |
 | Citadel reached | Day 2 | v0.4 |
-| Bastion reached; Last Stand available | Day 3 | v0.4 |
+| Bastion reached; Last Stand available | Days 3–4 *(D137: was day 3)* | v0.4 |
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.4 |
 | **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.4 |
-| Later cycles | Each ≥ 15% faster than the one before, with a floor of 2 days **[JC]**. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.4 |
+| Later cycles | Each ≥ 15% faster than the first, with a floor of 2 days **[JC]** *(D134: was "than the one before"; after cycle 2, cycles settle at about 3 days)*. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.4 |
 | Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.7 |
 
 ### 6.3 Engagement checks (simulator)
@@ -907,9 +1028,13 @@ These catch dead zones and walls that pure time targets miss.
 3. **No walls:** no single purchase takes more than 3 check-ins of saving, except Rank-ups, which may take up to 5.
 4. **Preparation matters** *(v0.3)*: on identified contracts at equal tier, matched preparation raises the odds by at least 15 percentage points over no preparation.
 5. **Odds are honest** *(v0.2)*: across 2,000 simulated contracts, the actual success rate in each 10-point odds bucket lands within ±5 points of the displayed odds.
-6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days in v0.2–v0.3), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.*
+6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days; from v0.4, cycle 1's stretches from the Keep onward, D114, D135; later cycles restart at tier 1 and are reported only), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.*
 7. **No overflow:** every number stays below 1e300 through 3 simulated cycles *(from v0.4)*. Through v0.3, the same check runs over 14 simulated days.
-8. **Provisions matter** *(v0.2; ⚑ revisions G3, Q9)*: cumulatively over the Keep phase of each simulated Standard run (at least 14 days in v0.2–v0.3), contract provisions take 20–40% of food income. Because provisions scale with food capacity from the Keep on (§5.4.2), the share is set mainly by `provisions.incomeMinutes`; the check keeps it honest as later milestones add contracts and costs.
+8. **Provisions matter** *(v0.2; ⚑ revisions G3, Q9)*: cumulatively over the Keep phase of each simulated Standard run (at least 14 days; from v0.4, cycle 1's stretches from the Keep onward, D114, D135; later cycles are reported only), contract provisions take 20–40% of food income. Because provisions scale with food capacity from the Keep on (§5.4.2), the share is set mainly by `provisions.incomeMinutes`; the check keeps it honest as later milestones add contracts and costs.
+
+**Which check-ins checks 1–3 watch** *(v0.4, D114)*: every check-in of cycle 1 up to the Last Stand (through v0.3: up to the Keep). Rank-ups, Citadel and Bastion included, may take up to 5 check-ins of saving.
+
+**The stand preview is honest** *(v0.4, D114)*: checked by a test, not a simulator check. The preview runs the same stand code with other seeds; across many real stands, the waves held must land inside the preview's range about as often as the range says.
 
 ### 6.4 Playtest-only checks
 
@@ -925,10 +1050,11 @@ The simulator can't measure these. The owner checks them at the end of each mile
 |---|---|---|
 | **Suggested party** | ≤ 300 ms on a mid-range phone | Runs in a Web Worker. Stage 1 ranks every legal party with **50 samples**, using the **same seeds for every party** so comparisons are fair. Stage 2 compares the **top 3 at 200 samples each**, and only the winner is rerun at the full 500 samples for the odds panel *(D73: was the top 5 at 500, too slow for a phone)*. Against an unidentified monster, stage 1 uses **20 samples per candidate**. |
 | **Live odds panel** | ≤ 100 ms per update | 500 samples, in the same worker |
+| **Last Stand preview** *(v0.4, D114)* | ≤ 1 s on a mid-range phone | 100 practice stands (`laststand.previewSamples`), in the same worker |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | ≤ 5 min in CI | All policies and checks |
 
-A benchmark test enforces the first two on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone.
+A benchmark test enforces the first three on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone.
 
 ---
 
@@ -946,10 +1072,10 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Bulk cost (k copies) | `base × r^n × (r^k − 1)/(r − 1)` | — | 5.1.2 |
 | Max affordable | `min over resources of floor(log(1 + f(r−1)/(base·r^n)) / log r)` | — | 5.1.2 |
 | Settle cost | `a × g^P` | `peasant.settleBase` = 20, `peasant.settleGrowth` = 1.15, `peasant.settleMinInterval` = 30 s | 5.1.1 |
-| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.25/min | 5.1.1 |
+| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.24/min *(D138)* | 5.1.1 |
 | Silver cap | Silver Seams limited; silver-digger output takes only relic and event buckets | `silverSeam.max` = 2 | 5.1.1 |
 | Building bonuses | per level | `mill.perLevel` = 0.25, `sawpit.perLevel` = 0.25, `smithy.ironPerLevel` = 0.20 | 5.1.2 |
-| Rank multiplier | Keep adds to the age bucket (not silver, G1) | `age.keep.allProduction` = 0.50 | 5.1.3 |
+| Rank multiplier | Each Rank from the Keep adds to the age bucket (not silver, G1) | `age.keep.allProduction` = 0.50, `age.citadel.allProduction` = 0.50, `age.bastion.allProduction` = 0.50 *(D106)* | 5.1.3 |
 | Best payback | `value(cost) ÷ value(Δrate)`, `value = Σ w_r × amount_r` | `value.weights` = { food 1, wood 1.5, iron 3, silver 12 } | 5.1.2 |
 | Trophy Hall | `+x per trophy earned this cycle` | `trophyHall.perTrophy` = 0.005 | 5.4.4 |
 | Herb Garden | per garden | `herbGarden.interval` = 10 min per herb type | 5.7 |
@@ -966,7 +1092,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Level scaling | Health and Might: `stat × (1 + s × (L − 1))`; Armor and Speed don't scale | `hunter.levelStatGrowth` = 0.10, `hunter.levelCap.keep` = 10 | 5.3.2 |
+| Level scaling | Health and Might: `stat × (1 + s × (L − 1))`; Armor and Speed don't scale | `hunter.levelStatGrowth` = 0.10, `hunter.levelCap` = { keep 10, citadel 15, bastion 20 } (Hamlet uses the Keep's cap, D72; D106) | 5.3.2 |
 | XP to next level | `x × g^(L−1)` | `xp.base` = 50, `xp.growth` = 1.5 | 5.3.2 |
 | XP per contract | `per × tier` (half on failure) | `xp.perTier` = 20 | 5.3.2 |
 | Recruitment cost | Fixed price per hunter (G5) | `hunter.recruitPrice`, in each hunter's content entry (§8.5) | 5.3.1 |
@@ -974,7 +1100,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Recovery | Bruised: fixed; Wounded: `per × tier`; Grievous: ×3 | `injury.bruised` = 30 min, `injury.woundedPerTier` = 2 h, `injury.grievousMult` = 3, `injury.bruisedBelow` = 0.30 | 5.3.7 |
 | Reckless line | odds < threshold | `contract.recklessBelow` = 0.35 | 5.3.7 |
 | Death roll | per downed hunter on a Reckless contract | `injury.deathChance` = 0.30 | 5.3.7 |
-| Dead hunter returns | Before v0.4: after N days; from v0.4: after the next Long Night | `death.returnDaysBeforeLongNight` = 3 | 5.3.7 |
+| Dead hunter returns | Before v0.4: after N days; from v0.4: at the next Long Night, at their usual price, levels halved (D110) | `death.returnDaysBeforeLongNight` = 3 | 5.3.7 |
 
 ### 7.4 Contracts & combat
 
@@ -982,10 +1108,10 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 |---|---|---|---|
 | Board refill | 1 per interval, up to the cap; declining is free | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
 | Board opens | when the first Mine is built (G6) | — | 5.4.1 |
-| Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5 } | 5.4.1 |
-| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1 } *(D82, D85; Citadel and Bastion set at v0.4)* | 5.4.2 |
+| Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5, citadel 5, bastion 5 } *(locked; new entries D106)* | 5.4.1 |
+| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1, citadel 4.1, bastion 2.5 } *(D82, D85, D106, D138)* | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
-| Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 78 *(⚑ v0.2 tuning: 60 → 72, D76; 72 → 78, D82)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.0 } | 5.4.1 |
+| Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 91 *(⚑ v0.2 tuning: 60 → 72, D76; 72 → 78, D82; v0.4: 78 → 91, D138)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.1, citadel 3.5, bastion 3 } *(D106, D138)* | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
 | Duration | by tier | `contract.duration` = [30 min, 1 h, 2 h, 4 h, 8 h] | 5.4.1 |
 | Party size | by tier | `contract.partySize` = [3, 3, 3, 4, 4], `contract.hamletPartyMax` = 2 | 5.4.1 |
@@ -1002,7 +1128,6 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Suggested party | Stage 1: k samples per party (same seeds); stage 2: top N at `stage2Samples`, then the winner at full samples | `suggest.stage1Samples` = 50, `suggest.stage1PerCandidate` = 20, `suggest.finalists` = 3, `suggest.stage2Samples` = 200 *(D73)* | 6.5 |
 | World-boss tokens *(v0.9)* | 1 per interval, banking up to the max; hunters rest after an attempt | `boss.tokenInterval` = 8 h, `boss.tokenMax` = 6, `boss.hunterRest` = 24 h | 5.12 |
 | Riftglass allowance *(v0.7)* | weekly cap ÷ 7 accrues per day, banking up to N weeks | `riftglass.bankWeeks` = 2 | 5.10 |
-| v0.4 arrival cap *(v0.4)* | trophy-to-Embers conversion capped at a share of the simulated cycle-1 median | `longNightArrival.emberCapShare` = 1.2 | 5.9 |
 
 ### 7.5 Bestiary & preparation
 
@@ -1015,17 +1140,39 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Oil bonus | vs the matching family | `oil.familyBonus` = 0.35 | 5.7 |
 | Brew time | per item, one per Hut level at a time | `brew.time` = 10 min, `hut.maxLevel` = 5 | 5.7 |
 
+### 7.6 The Long Night *(v0.4, D106–D114)*
+
+Every constant here is tunable unless marked locked.
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Threat rate | per hour by Rank, × (1 − slow); slow = 2% per level of Walls or Watchtower | `threat.ratePerHour` = { hamlet 0, keep 0.5, citadel 1, bastion 1 } *(D138)*, `threat.defenseSlowPerLevel` = 0.02 | 5.9.1 |
+| Threat from contracts | +f × tier on a failure; −c × tier on a success; never below 0 | `threat.failedPerTier` = 3, `threat.completedPerTier` = 0.76 *(D138)* | 5.9.1 |
+| Wave strength from Threat | Health and Might × (1 + w × Threat) | `threat.waveStrengthPerPoint` = 0.0061 *(D138)* | 5.9.3 |
+| Walls | party taken% −x per level in the stand (75% cap, `combat.takenCap`) | `walls.takenPerLevel` = 0.02 | 5.9.2 |
+| Watchtower | at tick 1 of each wave, v × level Steel damage, ignores Armor | `watchtower.volleyPerLevel` = 20 | 5.9.2 |
+| Defense costs | level building, `base × 1.75^(L−1)` | Walls 20,000 wood + 10,000 iron; Watchtower 15,000 wood + 8,000 iron + 100 silver (content, D44) | 5.9.2 |
+| Waves | wave n at tier `t₁ + floor((n − 1) / k)`; past tier 5 the §7.4 tier scaling continues | `laststand.firstTier` = 2, `laststand.wavesPerTier` = 2 | 5.9.3 |
+| Stand party | up to N active hunters | `laststand.partyMax` = 6 **(locked)** | 5.9.3 |
+| Between waves | standing hunters recover a share of max Health | `laststand.recoverBetween` = 0.20 | 5.9.3 |
+| Stand preview | practice stands; range = 10th–90th percentile | `laststand.previewSamples` = 100, `laststand.policySamples` = 20 | 5.9.3, 6.5 |
+| Embers | `floor(rankMult × Σ_(n ≤ waves) p × g^(n−1) × (1 + b × Threat) + q × trophies)` | `embers.perWave` = 4, `embers.waveGrowth` = 1.15, `embers.threatBonus` = 0.007 *(D138)*, `embers.perTrophy` = 1, `embers.rankMult` = { hamlet 0.25, keep 0.5, citadel 0.75, bastion 1 } | 5.9.4 |
+| Relic milestones | the first stand ever to hold each wave count | `relics.waveMilestones` = [6, 9, 12, 15, 18, 21] | 5.9.6 |
+| Levels kept | `1 + floor((L − 1) × k)`, k = base + Old Hands | `longNight.levelsKept` = 0.5 | 5.9.7 |
+| Warden upgrades | level L costs `c × g^(L−1)` Embers | per upgrade, in the content (§8.9) | 5.9.5 |
+| v0.4 arrival cap | trophies part ≤ share × the cycle-1 median | `longNightArrival.emberCapShare` = 1.2 **(locked)**, `longNightArrival.cycle1MedianEmbers` = 193 (set from the tuned simulator: the median of cycle 1's stand, Standard, Monday, 5 seeds; D112, D138) | 5.9.8 |
+
 ---
 
 ## 8. Starter Content
 
-Content for v0.1–v0.3. Each table maps one-to-one to a content file in `src/content/` (see `technical-design.md`). Later milestones add rows, not new formats.
+Content for v0.1–v0.4. Each table maps one-to-one to a content file in `src/content/` (see `technical-design.md`). Later milestones add rows, not new formats.
 
 **[JC]** Every proper noun below still needs the collision search from §2.3 before it ships. That's a task in the implementation plan.
 
 ### 8.1 Buildings
 
-The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.3 (all Keep):
+The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.4 (Keep unless noted):
 
 | Building | Type | Base cost | Effect | From |
 |---|---|---|---|---|
@@ -1034,6 +1181,8 @@ The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.3 (all Keep):
 | Hunter's Lodge | Level (max 3) | 800 wood, 400 iron, 200 silver | 1 investigation slot per level | v0.3 |
 | Alchemist's Hut | Level (max 5) | 700 wood, 300 iron, 150 silver | Brews consumables; 1 brew at a time per level | v0.3 |
 | Herb Garden | Count | 300 wood, 100 food | +1 yarrow, mugwort and juniper every 10 min | v0.3 |
+| Walls | Level (max 10 in Citadel, 15 in Bastion) | 20,000 wood, 10,000 iron | In the Last Stand, the party takes 2% less damage per level; each level slows Threat by 2% | v0.4 (Citadel) |
+| Watchtower | Level (max 10 / 15) | 15,000 wood, 8,000 iron, 100 silver | At the start of each wave, a volley of 20 × level Steel damage that ignores Armor; each level slows Threat by 2% | v0.4 (Citadel) |
 
 ### 8.2 Villages (contract givers)
 
@@ -1246,12 +1395,40 @@ See the table in §5.7 (9 items in v0.3).
 
 Who the patrons are is in `lore-secrets.md` (v0.5). The Unlit patron becomes available only after Act V **[JC]**.
 
+### 8.9 Warden upgrades (v0.4, D111; names D116)
+
+Bought with Embers on The Hearth (§5.9.5). Level L costs `cost × growth^(L−1)` Embers. Every value is tunable.
+
+| Upgrade | Effect per level | Max | Cost | Growth |
+|---|---|---|---|---|
+| Kept Coals | +10% all production except silver (ember bucket) | 10 | 15 | 1.5 |
+| Full Larder | Each cycle starts with +200 food and +200 wood | 5 | 10 | 1.6 |
+| Young Families | Each cycle starts with +1 Cottage and +2 peasants | 5 | 20 | 1.6 |
+| Old Hands | Hunters keep 10 more percentage points of their levels at the Long Night (50% → 100%) | 5 | 30 | 1.8 |
+| Drill Yard | +10% contract XP | 5 | 15 | 1.6 |
+| Village Goodwill | +5% bounty silver (bounties only; seams untouched, G1) | 5 | 25 | 1.7 |
+| Swift Roads | Contracts take 10% less time | 3 | 25 | 1.8 |
+| Late Lantern | +1 h offline cap (still within the 24 h ceiling) | 4 | 20 | 2 |
+
+### 8.10 Relics (v0.4, D111)
+
+Found at Last Stand wave milestones (§5.9.6). Bonuses go in the relic bucket; none touches silver. Every value is tunable.
+
+| Relic | Effect |
+|---|---|
+| Plough-Share | +10% food |
+| Mason's Plumb | +10% wood and iron |
+| Tally Stick | +15% contract XP |
+| Bone Whistle | Clues take 15% less time |
+| Copper Still | Brewing takes 20% less time |
+| Iron Shutter | In the Last Stand, the party takes 5% less damage (counts toward the 75% cap) |
+
 ---
 
 ## Judgment calls in §6–8
 
 1. **Simulated players start runs on Monday at 07:00,** with a second run starting Saturday at 09:00.
-2. **Later cycles must each be at least 15% faster than the one before,** with a floor of 2 days.
+2. **Later cycles must each be at least 15% faster than the first,** with a floor of 2 days *(D134)*.
 3. **Odds preview raised from 200 to 500 simulated fights.** This keeps the displayed margin within ±4.4 points. *(Small edit to approved §5.4.2.)*
 4. **Monster tier scaling is relative to each monster's base tier,** and Armor scales more slowly (1.15 per tier) than Health and Might (1.35). *(Small edit to approved §5.4.1.)*
 5. **"Leshy bark" renamed to "thornwood"** and dropped by three monsters, so the forest oil is available from tier 1. *(Small edit to approved §5.7.)*
@@ -1528,6 +1705,7 @@ The Hut opens from its building row on the Hold screen.
 | v0.1 | Shell, Hold, Rank screen, away sheet, rates sheet, breakdown sheets, More (Reports, Save & Data, Settings, Debug, About) |
 | v0.2 | + Hunters (roster, detail, candidates), Contracts (board, launch sheet, fight log), Hall of the Fallen, gear upgrades |
 | v0.3 | + Bestiary (grid, entries), investigation on the board and launch sheet, preparation on the launch sheet, Alchemist's Hut |
+| v0.4 | + Threat meter, Citadel and Bastion on the Rank screen, defenses, The Hearth (upgrades and relics), the Last Stand screen, the Long Night sheets, the arrival sheet (§9.13) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -1551,6 +1729,14 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 | Buildings | CC0 packs where they fit; otherwise generated from simple modular parts |
 
 **Honest note:** the generated monsters (especially the poludnitsa, vodyanoy, huldra and nix) will be the weakest art in the game. CC0 packs almost never include folklore creatures like these. The asset manifest lets you swap in better art later without touching code.
+
+### 9.13 Long Night screens *(v0.4, D107–D112, D115)*
+
+- **Threat meter** (Hold screen, from the Keep): the value and "+X per hour now". Long-press for the breakdown: the Rank's rate, what defenses take off, contracts completed and failed.
+- **Rank screen** (Hearth Hall): Citadel and Bastion Rank-ups with requirements and costs; the restoration sheet without an inscription (v0.5 adds them); **The Hearth** (Embers on hand, the warden upgrades, the relics you own); from Bastion, **Make the Last Stand**.
+- **Last Stand screen:** the wave list (the first 12; "?" for species not yet Identified); six slots with the suggested six; one oil and one potion per hunter; bombs shown as "thrown automatically from stores"; the preview (expected waves with a range; Embers now with the breakdown and per day of the cycle; Threat by tomorrow; Embers tomorrow, labeled as an estimate); **Start**, with a confirmation that says the Long Night follows.
+- **The Long Night sheets**, in order (§5.9.7): the stand's result, with a link to each wave's log; the closing line; The Hearth; the new-warden sheet with the choice of 3 active hunters.
+- **Arrival sheet** (old saves only, §5.9.8).
 
 ---
 

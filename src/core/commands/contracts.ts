@@ -1,22 +1,17 @@
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
 import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
-import { constantAt } from '../balance-access';
 import { slotFreed } from '../contracts/board';
 import { computeOdds } from '../contracts/odds';
 import { monsterFor, oddsTarget } from '../investigation/knowledge';
 import { releaseSlot } from '../investigation/lodge';
 import { maxPartySize } from '../contracts/party';
-import { provisions } from '../contracts/rewards';
+import { contractDurationMs, provisions } from '../contracts/rewards';
 import { prepProblem, spendPrep } from '../contracts/prep';
 import { noPreparation, type GameState, type Preparation } from '../state/game-state';
 import { availableHunters, snapshotOf } from '../systems/hunters';
-import { MS_PER_SECOND } from '../time';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.4.2 launching, §5.4.1 declining, §5.4.3 collecting.
-
-const duration = (tier: number): number =>
-  ((constantAt('contract.duration').value as readonly number[])[tier - 1] ?? 0) * MS_PER_SECOND;
 
 const knownHunter = (id: unknown): id is HunterId =>
   typeof id === 'string' && (HUNTER_IDS as readonly string[]).includes(id);
@@ -65,7 +60,7 @@ export const launch = (
     party: [...party],
     snapshots,
     launchedAt: state.time,
-    endsAt: state.time + duration(contract.tier),
+    endsAt: state.time + contractDurationMs(state, contract.tier),
     reckless: odds.reckless,
     prep: structuredClone(prep),
     knowledge: monsterFor(state, contract).knowledge,

@@ -101,8 +101,9 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
   },
   {
     id: 'bastion',
-    text: 'Bastion reached; Last Stand available: day 3',
-    bounds: [{ policy: 'standard', minHours: 48, maxHours: 72 }],
+    // Owner-approved change (D137): was day 3 (48–72 h).
+    text: 'Bastion reached; Last Stand available: days 3–4',
+    bounds: [{ policy: 'standard', minHours: 48, maxHours: 96 }],
     enforcedFrom: 'v0.4',
   },
   {
@@ -123,7 +124,9 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
   },
   {
     id: 'later-cycles',
-    text: 'Later cycles: each ≥ 15% faster than the one before, with a floor of 2 days',
+    // Owner-approved change (D134): against cycle 1, not the one before; cycles settle at
+    // about 3 days after cycle 2 (the schedule and the locked board pace).
+    text: 'Later cycles: each ≥ 15% faster than the first, with a floor of 2 days',
     // Compares cycles with each other: judged by its own check from v0.4.
     bounds: [],
     enforcedFrom: 'v0.4',
@@ -171,10 +174,11 @@ export const ENGAGEMENT = {
     minDays: 14,
     enforcedFrom: 'v0.2',
   },
+  // D114 (owner-approved): through v0.3 this was 14 simulated days; from v0.4, 3 cycles.
   noOverflow: {
-    text: 'Every number stays below 1e300 (14 simulated days through v0.3)',
+    text: 'Every number stays below 1e300 through 3 simulated cycles',
     limit: 1e300,
-    days: 14,
+    cycles: 3,
     enforcedFrom: 'v0.1',
   },
   provisionsMatter: {

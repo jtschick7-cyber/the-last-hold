@@ -21,6 +21,7 @@ const kit = {
   chillLeft: 0,
   abilitiesBlocked: 0,
   tonicLeft: 0,
+  extraTaken: 0,
 } as const;
 
 export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation): Combatant => {
@@ -82,10 +83,12 @@ export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation)
   };
 };
 
-export const buildMonster = (m: MonsterInstance): Combatant => {
+/** `strength` multiplies Health and Might: Threat in the Last Stand (GDD §5.9.1); 1 elsewhere. */
+export const buildMonster = (m: MonsterInstance, strength = 1): Combatant => {
   const def = monsters[m.monster];
   const steps = m.tier - def.tiers[0];
-  const statScale = intPow(num('monster.statGrowth'), steps);
+  const tierScale = intPow(num('monster.statGrowth'), steps);
+  const statScale = strength === 1 ? tierScale : tierScale * strength;
   const armorScale = intPow(num('monster.armorGrowth'), steps);
   const maxHealth = roundHalfUp(def.health * statScale);
   return {

@@ -2,6 +2,7 @@ import { AGE_IDS, type AgeId } from './ages';
 import { BUILDING_IDS, type BuildingId } from './buildings';
 import { HUNTER_IDS, hunters, type HunterId } from './hunters';
 import { MONSTER_IDS, monsters, type MonsterId } from './monsters';
+import { RELIC_IDS, relics, type RelicId } from './relics';
 import { RESOURCE_IDS, type ResourceId } from './resources';
 
 // Technical design §12.1: every image the game shows has a manifest row.
@@ -46,6 +47,9 @@ const titled = (id: string): string =>
 export const resourceIconId = (r: ResourceId): string => `icon.resource.${r}`;
 export const buildingSpriteId = (b: BuildingId): string => `building.${b}`;
 export const holdSceneId = (a: AgeId): string => `scene.hold.${a}`;
+export const EMBERS_ICON = 'icon.embers';
+export const THREAT_ICON = 'icon.threat';
+export const relicIconId = (r: RelicId): string => `icon.relic.${r}`;
 export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
 export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m}`;
 
@@ -103,6 +107,15 @@ const generated = (
   credit: 'The Last Hold',
 });
 
+// Ids whose art isn't drawn yet; <Sprite> draws the placeholder for them.
+const NO_ART_YET: ReadonlySet<string> = new Set<string>([]);
+const placeholder = (
+  id: string,
+  kind: AssetKind,
+  size: readonly [number, number],
+  label: string,
+): AssetEntry => ({ id, kind, size, label, source: 'placeholder' });
+
 export const assets: readonly AssetEntry[] = [
   ...RESOURCE_IDS.map((r) =>
     fromPack(
@@ -116,17 +129,28 @@ export const assets: readonly AssetEntry[] = [
     ),
   ),
   ...BUILDING_IDS.map((b) =>
-    fromPack(buildingSpriteId(b), 'building', [32, 32], titled(b), `buildings/${b}.png`, TINY_TOWN),
+    NO_ART_YET.has(b)
+      ? placeholder(buildingSpriteId(b), 'building', [32, 32], titled(b))
+      : fromPack(
+          buildingSpriteId(b),
+          'building',
+          [32, 32],
+          titled(b),
+          `buildings/${b}.png`,
+          TINY_TOWN,
+        ),
   ),
   ...AGE_IDS.map((a) =>
-    fromPack(
-      holdSceneId(a),
-      'scene',
-      [160, 64],
-      `The hold, ${titled(a)}`,
-      `scenes/hold-${a}.png`,
-      TINY_TOWN,
-    ),
+    NO_ART_YET.has(a)
+      ? placeholder(holdSceneId(a), 'scene', [160, 64], `The hold, ${titled(a)}`)
+      : fromPack(
+          holdSceneId(a),
+          'scene',
+          [160, 64],
+          `The hold, ${titled(a)}`,
+          `scenes/hold-${a}.png`,
+          TINY_TOWN,
+        ),
   ),
   ...HUNTER_IDS.map((h) =>
     generated(
@@ -145,6 +169,12 @@ export const assets: readonly AssetEntry[] = [
       `portraits/monster-${m}.png`,
       'tools/gen-monsters.ts',
     ),
+  ),
+  // v0.4 (plan T4.12): Embers, Threat and the relics, from the 1-Bit Pack.
+  fromPack(EMBERS_ICON, 'icon', [16, 16], 'Embers', 'icons/embers.png', ONE_BIT),
+  fromPack(THREAT_ICON, 'icon', [16, 16], 'Threat', 'icons/threat.png', ONE_BIT),
+  ...RELIC_IDS.map((r) =>
+    fromPack(relicIconId(r), 'icon', [16, 16], relics[r].name, `icons/relic-${r}.png`, ONE_BIT),
   ),
 ];
 

@@ -1,3 +1,4 @@
+import { AGE_IDS } from '../../content/ages';
 import { buildings, BUILDING_IDS } from '../../content/buildings';
 import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
 import {
@@ -10,7 +11,7 @@ import {
 import { knowledgeLevels } from '../../content/knowledge';
 import { monsters } from '../../content/monsters';
 import { traits } from '../../content/traits';
-import { num } from '../balance-access';
+import { constantAt, num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import type { HunterSnapshot } from '../combat';
 import { roundHalfUp } from '../combat/build';
@@ -24,7 +25,14 @@ import { MS_PER_DAY, MS_PER_SECOND } from '../time';
 
 export const isOwned = (state: GameState, id: HunterId): boolean => state.hunters[id] !== undefined;
 
-/** Active roster cap: 3 in Hamlet, plus Barracks levels in the Keep (GDD §5.3.1, G5). */
+/** The Ranks reached so far this cycle, in order. */
+const ranksReached = (state: GameState): readonly string[] =>
+  AGE_IDS.slice(0, AGE_IDS.indexOf(state.cycle.age) + 1);
+
+/**
+ * Active roster cap: 3 in Hamlet, plus Barracks levels in the Keep (GDD §5.3.1, G5),
+ * plus 2 at Citadel and 2 more at Bastion (`roster.ageBonus`, D106).
+ */
 export const rosterCap = (state: GameState): Explained => {
   const base = num('roster.hamletCap');
   let barracks = 0;
@@ -33,16 +41,19 @@ export const rosterCap = (state: GameState): Explained => {
       if (e.kind === 'rosterCap') barracks += state.buildings[id] * e.perLevel;
     }
   }
-  const value = base + barracks;
+  const table = constantAt('roster.ageBonus').value as Readonly<Record<string, number>>;
+  const rankBonus = ranksReached(state).reduce((n, age) => n + (table[age] ?? 0), 0);
+  const value = base + barracks + rankBonus;
   return {
     value,
     breakdown: {
       label: 'Active roster',
       value,
-      formula: `${base} + ${barracks}`,
+      formula: `${base} + ${barracks} + ${rankBonus}`,
       children: [
         { label: 'Hearth Hall bunks', value: base, key: 'roster.hamletCap' },
         { label: 'Barracks levels', value: barracks },
+        { label: 'Rank (Citadel, Bastion)', value: rankBonus, key: 'roster.ageBonus' },
       ],
     },
   };
@@ -52,7 +63,35 @@ export const rosterCap = (state: GameState): Explained => {
 export const xpToNext = (level: number): number =>
   num('xp.base') * intPow(num('xp.growth'), level - 1);
 
-export const levelCap = (): number => num('hunter.levelCap.keep');
+/** The hunter level cap for the hold's Rank: Hamlet uses the Keep's (D72); Citadel 15, Bastion 20 (D106). */
+export const levelCap = (state: GameState): number => {
+  const table = constantAt('hunter.levelCap').value as Readonly<Record<string, number>> & {
+    readonly keep: number;
+  };
+  return table[state.cycle.age] ?? table.keep;
+};
+
+/**
+ * Adds contract XP and levels the hunter up to the Rank's cap; returns the levels
+ * reached. At the cap, XP isn't banked. A level carried above the cap (GDD §5.9.7)
+ * is kept: the cap only stops new levels.
+ */
+export const gainXp = (
+  state: GameState,
+  h: Pick<HunterState, 'level' | 'xp'>,
+  xp: number,
+): number[] => {
+  const cap = levelCap(state);
+  const reached: number[] = [];
+  h.xp += xp;
+  while (h.level < cap && h.xp >= xpToNext(h.level)) {
+    h.xp -= xpToNext(h.level);
+    h.level += 1;
+    reached.push(h.level);
+  }
+  if (h.level >= cap) h.xp = 0;
+  return reached;
+};
 
 const inRecovery = (h: HunterState, now: number): boolean =>
   h.recovery !== null && h.recovery.until > now;
@@ -154,9 +193,25 @@ export const describeUnlock = (unlock: HunterUnlock): string => {
 /** A fallen hunter returns as a candidate this long after dying (before the Long Night, A12). */
 const returnDelayMs = (): number => num('death.returnDaysBeforeLongNight') * MS_PER_DAY;
 
-/** Fallen hunters who are not back yet. */
+/**
+ * Fallen hunters who are not back yet (GDD §5.3.7). From v0.4 a dead hunter returns at
+ * the next Long Night (D110); a save still before its first Long Night keeps the v0.3
+ * rule of 3 days.
+ */
 export const stillFallen = (state: GameState, id: HunterId): boolean =>
-  state.fallen.some((f) => f.hunter === id && state.time < f.diedAt + returnDelayMs());
+  state.fallen.some(
+    (f) =>
+      f.hunter === id &&
+      (state.arrivalDue ? state.time < f.diedAt + returnDelayMs() : f.cycle >= state.cycle.number),
+  );
+
+/** The level a returning hunter comes back at (GDD §5.9.7): halved at the Long Night, else 1. */
+export const returnLevel = (state: GameState, id: HunterId): number => {
+  let level = 1;
+  for (const f of state.fallen)
+    if (f.hunter === id && f.returnLevel !== undefined) level = f.returnLevel;
+  return level;
+};
 
 /** Candidates: unlocked, not owned, and not still mourned (GDD §5.3.1, §5.3.7). */
 export const candidates = (state: GameState): HunterDef[] =>

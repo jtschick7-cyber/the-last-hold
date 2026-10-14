@@ -8,7 +8,7 @@ import { ok, refuse, type ApplyResult } from './types';
 // buildings) follow from the Age itself, so only the Age and resources change.
 export const ageUp = (state: GameState): ApplyResult => {
   const status = ageUpStatus(state);
-  if (!status) return refuse('The next Rank is coming in a later milestone.');
+  if (!status) return refuse(`${ages[state.cycle.age].name} is the highest Rank.`);
   const missing = status.requirements
     .filter((r) => !r.met)
     .map((r) => `${r.label} ${r.have}/${r.need}`);
@@ -18,5 +18,8 @@ export const ageUp = (state: GameState): ApplyResult => {
   const cost = ages[status.to].ageUp?.cost ?? {};
   for (const r of RESOURCE_IDS) state.resources[r] -= cost[r] ?? 0;
   state.cycle.age = status.to;
+  // D113: the cycle history keeps when each Rank was reached.
+  const record = state.cycles[state.cycles.length - 1];
+  if (record) record.ranks[status.to] = state.time;
   return ok;
 };

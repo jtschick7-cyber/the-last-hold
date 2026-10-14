@@ -5,9 +5,11 @@ import { cancelBrew, queueBrew } from './brew';
 import { assign, stop } from './investigate';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
-import { addResources, runPolicy, setSeed, skip, unlockAge } from './debug';
+import { addEmbers, addResources, runArrival, runPolicy, setSeed, skip, unlockAge } from './debug';
 import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasants';
 import { setSettings } from './settings';
+import { makeStand, markStandSeen } from './stand';
+import { buyUpgrade } from './hearth';
 import { refuse, type ApplyResult, type Command } from './types';
 
 /**
@@ -60,6 +62,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return upgradeGear(state, cmd.hunter, cmd.slot);
     case 'settings.set':
       return setSettings(state, cmd.patch);
+    case 'stand.make':
+      return makeStand(state, cmd.party, cmd.prep ?? { oils: {}, potions: {} });
+    case 'stand.seen':
+      return markStandSeen(state);
+    case 'upgrade.buy':
+      return buyUpgrade(state, cmd.upgrade);
     case 'debug.skip':
       return skip(state, cmd.ms, now);
     case 'debug.runPolicy':
@@ -68,6 +76,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return addResources(state, cmd.bundle);
     case 'debug.setSeed':
       return setSeed(state, cmd.seed);
+    case 'debug.addEmbers':
+      return addEmbers(state, cmd.amount);
+    case 'debug.runArrival':
+      return runArrival(state);
     case 'debug.unlockAge':
       return unlockAge(state, cmd.age);
     default:

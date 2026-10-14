@@ -158,8 +158,9 @@ describe('completion (GDD §5.4.3, B9)', () => {
     expect(r?.success).toBe(true);
     expect(r?.at).toBe(T0 + 30 * 60_000);
     expect(s.resources.silver).toBe(silver + (r?.bounty ?? 0));
-    expect(r?.bounty).toBe(78);
-    expect(s.stats).toMatchObject({ contractsWon: 1, trophies: 1, bountySilver: 78 });
+    expect(r?.bounty).toBeCloseTo(91 * 1.1, 8); // a Keep contract (D138)
+    expect(s.stats).toMatchObject({ contractsWon: 1, trophies: 1 });
+    expect(s.stats.bountySilver).toBeCloseTo(91 * 1.1, 8);
     expect(s.stats.kills.kikimora).toBe(1);
     expect(s.board.tierWins[0]).toBe(4); // 3 before
     expect(s.running).toHaveLength(0);
@@ -268,7 +269,9 @@ describe('injuries and death (GDD §5.3.7)', () => {
 
   it('only a confirmed Reckless contract can kill a hunter, and the fallen are recorded', () => {
     let died = 0;
-    for (let i = 0; i < 40; i++) {
+    // 20 sample games: enough for at least one death (deterministic seeds), and keeps
+    // the test well inside the 5 s limit under load (owner's choice, 2026-10-13).
+    for (let i = 0; i < 20; i++) {
       const s = keepRich(`death${i}`);
       s.board.open = [];
       const c = put(s, { id: `d${i}`, tier: 5, monster: 'leshy', location: 'forest' });
@@ -323,8 +326,10 @@ describe('injuries and death (GDD §5.3.7)', () => {
     }
   });
 
-  it('a fallen hunter returns as a candidate 3 days after death', () => {
+  it('before its first Long Night, a fallen hunter returns as a candidate 3 days after death', () => {
+    // GDD §5.3.7: the v0.3 rule, which still holds for a save facing its first Long Night.
     const s = keepRich('return');
+    s.arrivalDue = true;
     Reflect.deleteProperty(s.hunters, 'radek');
     s.roster.active = s.roster.active.filter((h) => h !== 'radek');
     s.fallen.push({ hunter: 'radek', diedAt: s.time, cycle: 1, contractId: 'c0' });
@@ -335,6 +340,18 @@ describe('injuries and death (GDD §5.3.7)', () => {
     expect(ids(s)).not.toContain('radek');
     advance(s, T0 + 3 * 24 * HOUR);
     expect(ids(s)).toContain('radek');
+  });
+
+  it('from v0.4, a fallen hunter returns at the next Long Night, not after 3 days (D110)', () => {
+    const s = keepRich('return-v04');
+    Reflect.deleteProperty(s.hunters, 'radek');
+    s.roster.active = s.roster.active.filter((h) => h !== 'radek');
+    s.fallen.push({ hunter: 'radek', diedAt: s.time, cycle: 1, contractId: 'c0', level: 7 });
+    s.stats.kills.upyr = 1;
+    advance(s, T0 + 30 * 24 * HOUR);
+    expect(candidatesIds(s)).not.toContain('radek');
+    s.cycle.number = 2; // the next cycle (the Long Night itself is tested in tests/long-night)
+    expect(candidatesIds(s)).toContain('radek');
   });
 });
 

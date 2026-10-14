@@ -31,7 +31,8 @@ export const speedEff = (c: Combatant): number =>
 export const healthPct = (c: Combatant): number => c.health / c.maxHealth;
 
 export interface FightContext {
-  readonly location: LocationId;
+  /** Null in the Last Stand (no location traits). */
+  readonly location: LocationId | null;
   readonly family: FamilyId;
   readonly monsterId: MonsterId;
   /** The monster's attacks per action. */
@@ -86,7 +87,7 @@ export const takenReduction = (
   party: readonly Combatant[],
 ): number => {
   if (defender.side !== 'hunter') return 0;
-  let sum = 0;
+  let sum = defender.extraTaken;
   for (const ally of party) {
     if (ally === defender || !present(ally)) continue;
     for (const e of ally.traits) {

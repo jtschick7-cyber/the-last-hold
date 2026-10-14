@@ -68,6 +68,23 @@ export const startOfFight = (f: Fight): void => {
     }
   }
   const m = f.monster;
+  if (f.volley > 0) {
+    // GDD §5.9.2: Steel that ignores Armor, like a bomb (no oil, trait or knowledge bonus).
+    const resist = m.resist ? m.resist.steel : 1;
+    const amount = finalDamage(f.volley * resist, m, resist, false, 0, 1);
+    hurt(m, amount);
+    emit(f, {
+      actor: 'party',
+      kind: 'volley',
+      text: () =>
+        `The Watchtower looses a volley — Steel ${f.volley}` +
+        `${resist === 1 ? '' : resist === 0 ? ' immune' : ` ×${resist} resist`} = ${amount}` +
+        ` · ${m.name} ${m.health}/${m.maxHealth}`,
+      rolls: [],
+      amount,
+      targetHealth: m.health,
+    });
+  }
   for (const id of f.bombs) {
     const e = consumables[id].effect;
     if (e.kind === 'burn' || e.kind === 'chill') {

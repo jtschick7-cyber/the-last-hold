@@ -74,6 +74,27 @@ export const setSeed = (state: GameState, seed: string): ApplyResult => {
 export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
   if (!(AGE_IDS as readonly string[]).includes(age)) return refuse('That Rank does not exist.');
   state.cycle.age = age;
+  const record = state.cycles[state.cycles.length - 1];
+  if (record && record.ranks[age] === undefined) record.ranks[age] = state.time; // D113
+  state.meta.debugUsed = true;
+  return ok;
+};
+
+/** Adds Embers, to try The Hearth (technical design §15). */
+/** GDD §5.9.8: the save faces the v0.4 arrival; Threat waits until it is over. */
+export const runArrival = (state: GameState): ApplyResult => {
+  if (state.arrivalDue) return refuse('The arrival is already due.');
+  const record = state.cycles[state.cycles.length - 1];
+  if (!record || record.stand) return refuse('This cycle has already made its stand.');
+  state.arrivalDue = true;
+  state.threat = 0;
+  state.meta.debugUsed = true;
+  return ok;
+};
+
+export const addEmbers = (state: GameState, amount: number): ApplyResult => {
+  if (!Number.isInteger(amount) || amount <= 0) return refuse('A whole number of Embers, please.');
+  state.embers += amount;
   state.meta.debugUsed = true;
   return ok;
 };

@@ -3,12 +3,18 @@ import { BUILDING_IDS, buildings, type BuildingId } from '../../content/building
 import { JOB_IDS, jobs } from '../../content/jobs';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import type { GameState } from '../state/game-state';
-import { ageUpStatus, isAvailable, maxLevelNow } from '../systems/ages';
+import { ageUpStatus, isAvailable, maxLevelNow, type AgeUpStatus } from '../systems/ages';
 import { buildingCost, canAfford, copyLimit, timeToAfford } from '../systems/costs';
 import { housing } from '../systems/housing';
 import { productionRate } from '../systems/production';
 import { settleCost } from '../systems/settle';
 import { MS_PER_SECOND } from '../time';
+
+/**
+ * The Rank-up the simulated player works toward: every Rank to Bastion (GDD §6.1, D114).
+ * (D118 held it at the Keep until these v0.4 rules existed; T4.13 lifted that.)
+ */
+export const policyAgeUp = (state: GameState): AgeUpStatus | null => ageUpStatus(state);
 
 // What the simulated player knows about its goal, the next Age-up (GDD §6.1,
 // D60). Payback alone can't see it: under the locked weights every job is
@@ -41,8 +47,8 @@ export const affordableWith = (state: GameState, cost: Bundle, reserve = emptyBu
 export const affordable = (state: GameState, id: BuildingId, reserve = emptyBundle()): boolean =>
   buildable(state, id) && affordableWith(state, buildingCost(state, id).bundle, reserve);
 
-const ageUpCost = (state: GameState): Bundle => {
-  const status = ageUpStatus(state);
+export const ageUpCost = (state: GameState): Bundle => {
+  const status = policyAgeUp(state);
   const cost = status ? (ages[status.to].ageUp?.cost ?? {}) : {};
   return Object.fromEntries(RESOURCE_IDS.map((r) => [r, cost[r] ?? 0])) as Bundle;
 };
@@ -51,12 +57,17 @@ const ageUpCost = (state: GameState): Bundle => {
 export const silverWanted = (state: GameState): boolean =>
   ageUpCost(state).silver > state.resources.silver;
 
-/** The silver the next Age-up costs (0 when there is none), which other spending must leave alone. */
-export const rankUpSilver = (state: GameState): number => ageUpCost(state).silver;
+/**
+ * The silver hires must leave alone: the next Rank-up's silver, once the policy is saving
+ * for it (affordable within 2 check-ins, GDD §6.1, D114); 0 otherwise. Holding it from the
+ * moment the requirements are met stopped all hiring for two days at the Citadel.
+ */
+export const recruitHold = (state: GameState, horizonMs: number): number =>
+  shouldSave(state, horizonMs) ? ageUpCost(state).silver : 0;
 
 /** Buildings (or levels) the next Age-up requires that the hold lacks. */
 export const missingRequirements = (state: GameState): BuildingId[] => {
-  const status = ageUpStatus(state);
+  const status = policyAgeUp(state);
   const req = status ? (ages[status.to].ageUp?.requires.buildings ?? {}) : {};
   return BUILDING_IDS.filter((id) => state.buildings[id] < (req[id] ?? 0));
 };
@@ -86,6 +97,13 @@ export const missingProducers = (state: GameState): BuildingId[] =>
     return id && state.buildings[id] === 0 ? [id] : [];
   });
 
+/** The next Age-up still requires more peasants. */
+const peasantsShort = (state: GameState): boolean => {
+  const status = policyAgeUp(state);
+  const need = status ? (ages[status.to].ageUp?.requires.peasants ?? 0) : 0;
+  return state.peasants.total < need;
+};
+
 /** The food it costs to settle a peasant in every empty bed. */
 const settlingFood = (state: GameState): number => {
   let food = 0;
@@ -99,9 +117,17 @@ const settlingFood = (state: GameState): number => {
  */
 export const bottleneck = (state: GameState): ResourceId | null => {
   // Auto-settle will spend food on every empty bed first, so that food is
-  // still needed too (D62).
+  // still needed too (D62), but from the Keep only while the Rank-up needs more peasants:
+  // late in a cycle each settler costs millions, and food would always look shortest (D132).
   const cost = { ...ageUpCost(state) };
-  if (state.peasants.autoSettle) cost.food += settlingFood(state);
+  if (state.peasants.autoSettle && (state.cycle.age === 'hamlet' || peasantsShort(state)))
+    cost.food += settlingFood(state);
+  // The levels and buildings the Age-up still requires cost resources too (D132).
+  if (state.cycle.age !== 'hamlet')
+    for (const id of missingRequirements(state)) {
+      const c = buildingCost(state, id).bundle;
+      for (const r of RESOURCE_IDS) cost[r] += c[r];
+    }
   let worst: ResourceId | null = null;
   let worstMinutes = 0;
   for (const r of RESOURCE_IDS) {
@@ -122,9 +148,13 @@ export const bottleneck = (state: GameState): ResourceId | null => {
  * by the check-in after next, the policy saves for it.
  */
 export const shouldSave = (state: GameState, horizonMs: number): boolean => {
-  const status = ageUpStatus(state);
+  const status = policyAgeUp(state);
   if (!status || !status.requirements.every((r) => r.met)) return false;
-  const seconds = timeToAfford(state, ageUpCost(state), (r) => productionRate(state, r).value);
+  // From the Keep, silver mostly comes from bounties, which no rate shows: once the rest is
+  // within reach, the policy saves (and holds its silver) for the Rank-up (D132).
+  const cost = ageUpCost(state);
+  if (state.cycle.age !== 'hamlet') cost.silver = Math.min(cost.silver, state.resources.silver);
+  const seconds = timeToAfford(state, cost, (r) => productionRate(state, r).value);
   return seconds !== null && seconds * MS_PER_SECOND <= horizonMs;
 };
 

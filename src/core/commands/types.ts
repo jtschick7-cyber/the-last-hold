@@ -8,6 +8,7 @@ import type { ConsumableId } from '../../content/consumables';
 import type { ResourceBundle } from '../../content/resources';
 import type { PolicyId } from '../policies/schedules';
 import type { Preparation, Settings } from '../state/game-state';
+import type { UpgradeId } from '../../content/warden-upgrades';
 
 // Technical design §4.3: every player action is a plain JSON Command, applied
 // through apply(). The UI, the simulator and the debug panel all use these.
@@ -52,12 +53,26 @@ export type Command =
   | { type: 'roster.set'; hunter: HunterId; active: boolean }
   | { type: 'gear.upgrade'; hunter: HunterId; slot: GearSlot }
   | { type: 'settings.set'; patch: Partial<Settings> }
+  /** GDD §5.9.3: the Last Stand, then the Long Night. Final: there is no undo. */
+  | {
+      type: 'stand.make';
+      party: HunterId[];
+      /** One oil and one potion per hunter, from the stores; bombs are thrown automatically. */
+      prep?: Pick<Preparation, 'oils' | 'potions'>;
+    }
+  /** The stand's result sheet has been read. */
+  | { type: 'stand.seen' }
+  /** GDD §5.9.5: one more level of a warden upgrade, for Embers. */
+  | { type: 'upgrade.buy'; upgrade: UpgradeId }
   // Debug (technical design §15): only offered with ?debug or in dev builds.
   | { type: 'debug.skip'; ms: number }
   /** Plays a simulator policy over the last `ms`, then catches up to now (technical design §15). */
   | { type: 'debug.runPolicy'; policy: PolicyId; ms: number }
   | { type: 'debug.addResources'; bundle: ResourceBundle }
   | { type: 'debug.setSeed'; seed: string }
+  | { type: 'debug.addEmbers'; amount: number }
+  /** GDD §5.9.8: makes this save face the v0.4 arrival, as a pre-v0.4 save does. */
+  | { type: 'debug.runArrival' }
   | { type: 'debug.unlockAge'; age: AgeId };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };

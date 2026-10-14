@@ -2,6 +2,8 @@ import { signal } from '@preact/signals';
 import { computeOdds, type Odds, type OddsInput } from '../../core/contracts/odds';
 import { suggestParty, type SuggestInput, type Suggestion } from '../../core/contracts/suggest';
 import type { WorkerRequest, WorkerResponse } from '../../platform/worker/protocol';
+import { num } from '../../core/balance-access';
+import { previewStand, type StandPreview, type StandPreviewInput } from '../../core/stand/preview';
 
 // Technical design §10.1: odds and Suggest go to a worker, debounced, with stale
 // answers dropped. If workers aren't available (or one fails), the main thread
@@ -99,4 +101,28 @@ export const debounced = (): ((input: OddsInput) => Promise<OddsAnswer | null>) 
       }, DEBOUNCE_MS);
     });
   };
+};
+
+export const lastStandMs = signal<number | null>(null);
+
+export interface StandAnswer {
+  preview: StandPreview;
+  /** True when the main thread answered with fewer practice stands. */
+  quick: boolean;
+}
+
+/** GDD §5.9.3, §6.5: the Last Stand preview, in the worker (100 practice stands). */
+export const requestStandPreview = async (input: StandPreviewInput): Promise<StandAnswer> => {
+  const reply = send({ kind: 'stand', input });
+  if (reply) {
+    const r = await reply;
+    if (r.kind === 'stand') {
+      lastStandMs.value = r.ms;
+      return { preview: r.result, quick: false };
+    }
+  }
+  const started = performance.now();
+  const preview = previewStand({ ...input, samples: num('laststand.policySamples') });
+  lastStandMs.value = performance.now() - started;
+  return { preview, quick: true };
 };

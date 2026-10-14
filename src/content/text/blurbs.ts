@@ -30,4 +30,8 @@ export const buildingBlurbs: Readonly<Record<BuildingId, string>> = {
     'Raised beds inside the south wall, where the old kitchen garden was. Yarrow, mugwort and juniper come up in tidy rows, as if they had been waiting to be asked.',
   'bell-tower':
     'The bell was found face-down in the rubble, uncracked. When it rings at dusk, the farms across the river light their lamps.',
+  walls:
+    'New stone on the old footings, course by course. The old line runs straighter than the new one.',
+  watchtower:
+    'A timber tower over the north gate, with a brazier and a rack of bolts. From the top you can see the whole road, and the dark beyond it.',
 };

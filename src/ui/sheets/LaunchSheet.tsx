@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import { monsterPortraitId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { villages } from '../../content/villages';
-import { constantAt } from '../../core/balance-access';
 import { formatDuration, formatNumber } from '../../core/format';
 import { maxPartySize } from '../../core/contracts/party';
-import { provisions } from '../../core/contracts/rewards';
+import { contractDuration, provisions } from '../../core/contracts/rewards';
+import { bountyBonus, contractXpBonus } from '../../core/long-night/bonuses';
 import { oddsTarget } from '../../core/investigation/knowledge';
 import { contractIdentity } from '../../core/investigation/view';
 import {
@@ -136,6 +136,8 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
       monster: oddsTarget(s, contract),
       location: contract.location,
       rank: s.cycle.age,
+      bountyBonus: bountyBonus(s).value,
+      xpBonus: contractXpBonus(s).value,
     };
     void ask({ ...base, prep: activePrep }).then((a) => {
       if (!live || a === null) return;
@@ -342,5 +344,4 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
   );
 };
 
-const contractSeconds = (c: ContractInstance): number =>
-  (constantAt('contract.duration').value as readonly number[])[c.tier - 1] ?? 0;
+const contractSeconds = (c: ContractInstance): number => contractDuration(game(), c.tier).value;

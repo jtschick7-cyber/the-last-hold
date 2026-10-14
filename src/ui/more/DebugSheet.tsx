@@ -132,13 +132,29 @@ export const DebugSheet = () => {
           Set seed
         </button>
       </div>
-      <button
-        type="button"
-        class={styles.btn}
-        onClick={() => run({ type: 'debug.unlockAge', age: 'keep' })}
-      >
-        Unlock Keep
-      </button>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        {(['keep', 'citadel', 'bastion'] as const).map((age) => (
+          <button
+            type="button"
+            key={age}
+            class={styles.btn}
+            onClick={() => run({ type: 'debug.unlockAge', age })}
+          >
+            Unlock {age[0]?.toUpperCase()}
+            {age.slice(1)}
+          </button>
+        ))}
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.addEmbers', amount: 100 })}
+        >
+          +100 Embers
+        </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.runArrival' })}>
+          Run the arrival
+        </button>
+      </div>
       {note && <p class={styles.small}>{note}</p>}
       <h3 class={styles.cardTitle} style={{ marginTop: 'var(--space-3)' }}>
         Timing

@@ -1,4 +1,4 @@
-import { ages } from '../../content/ages';
+import { AGE_IDS, ages } from '../../content/ages';
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { SILVER_BUCKETS } from '../../content/buckets';
 import { JOB_IDS, jobs } from '../../content/jobs';
@@ -8,6 +8,7 @@ import type { Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
 import { jobSlots } from './housing';
 import { applyBuckets, type Bonus } from './buckets';
+import { emberBonuses, relicBonuses } from '../long-night/bonuses';
 
 // GDD §5.1.1: rate_R = workers_R × baseRate_R × buckets. Rates are per minute,
 // as the GDD writes them; advance() converts.
@@ -29,19 +30,21 @@ const buildingBonuses = (state: GameState, resource: ResourceId): Bonus[] =>
     );
   });
 
-const ageBonuses = (state: GameState): Bonus[] => {
-  const up = ages[state.cycle.age].ageUp;
-  return up
-    ? [
-        {
-          bucket: 'age',
-          label: ages[state.cycle.age].name,
-          value: num(up.allProductionKey),
-          key: up.allProductionKey,
-        },
-      ]
-    : [];
-};
+/** GDD §5.1.3 (D106): each Rank reached adds its bonus to the age bucket (Citadel adds to the Keep's). */
+const ageBonuses = (state: GameState): Bonus[] =>
+  AGE_IDS.slice(0, AGE_IDS.indexOf(state.cycle.age) + 1).flatMap((age) => {
+    const up = ages[age].ageUp;
+    return up
+      ? [
+          {
+            bucket: 'age' as const,
+            label: ages[age].name,
+            value: num(up.allProductionKey),
+            key: up.allProductionKey,
+          },
+        ]
+      : [];
+  });
 
 /** GDD §5.4.4: +0.5% to all production per trophy earned this cycle, once the Trophy Hall stands. */
 const trophyBonuses = (state: GameState): Bonus[] => {
@@ -86,6 +89,9 @@ export const productionRate = (
     ...buildingBonuses(state, resource),
     ...ageBonuses(state),
     ...trophyBonuses(state),
+    // GDD §5.9.5–5.9.6: Kept Coals (ember) and the production relics (relic); never silver.
+    ...emberBonuses(state),
+    ...relicBonuses(state, resource),
   ];
   // G1 (D30): silver-digger output takes only the relic and event buckets.
   const result =
