@@ -2,6 +2,7 @@ import { RESOURCE_IDS } from '../src/content/resources';
 import { RULES_VERSION } from '../src/core/rules-version';
 import type { CheckResult } from './checks';
 import { hoursText, medianMoment } from './checks/helpers';
+import { bandLabels, type Band } from '../src/content/story/scenes';
 import { MOMENTS, type Moment, type RunResult } from './run';
 
 // Technical design §13.2: the JSON report (times to every moment, income by
@@ -65,6 +66,28 @@ const delta = (now: number | null, was: number | null | undefined): string => {
 const verdict = (pass: boolean | null, pending?: string): string =>
   pass === null ? '– not judged' : pass ? '✓ pass' : pending ? `✗ pending ${pending}` : '✗ FAIL';
 
+/** Reported, not judged (GDD §6.2 v0.5): each Standard run's bands, letters, names, documents and trust. */
+export const storyLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.spec.policy === 'standard')
+    .map((r) => {
+      const s = r.story;
+      const bands = s.bands
+        .map((b) => `cycle ${b.cycle} ${bandLabels[b.band as Band]} (${b.waves} waves)`)
+        .join(', ');
+      const last = s.trust[s.trust.length - 1];
+      const trust = last
+        ? Object.entries(last.levels)
+            .map(([v, l]) => `${v} ${l}`)
+            .join(', ')
+        : 'none';
+      return (
+        `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${bands || 'no stand'}; ` +
+        `${s.letters.length} letters, ${s.names.length} of 40 names, ${s.documents.length} documents; ` +
+        `trust at the end: ${trust}`
+      );
+    });
+
 export const markdown = (report: Report, previous: Baseline | null): string => {
   const out: string[] = [
     `# Simulator report: ${report.name}`,
@@ -80,6 +103,7 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
     out.push(`- **${verdict(c.pass, c.pending)}** ${c.id}: ${c.text}`);
     for (const line of c.lines) out.push(`  - ${line}`);
   }
+  out.push('', '## Story (reported only)', '', ...storyLines(report.runs));
   out.push('', '## Times to each moment (median over seeds)', '');
   out.push(`| Run | ${MOMENTS.join(' | ')} |`, `|---|${MOMENTS.map(() => '---').join('|')}|`);
   for (const [k, ms] of Object.entries(report.baseline.groups)) {

@@ -8,7 +8,7 @@ import type { Check, CheckResult } from './types';
 
 const JUDGED_START: StartId = 'mon';
 
-const median = (xs: readonly number[]): number => {
+export const median = (xs: readonly number[]): number => {
   const s = [...xs].sort((a, b) => a - b);
   const mid = Math.floor(s.length / 2);
   return s.length % 2 ? (s[mid] ?? NaN) : ((s[mid - 1] ?? NaN) + (s[mid] ?? NaN)) / 2;

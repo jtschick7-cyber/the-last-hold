@@ -638,8 +638,8 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### G. Simulator
 
-- [ ] **T5.14 Policy rules** (GDD §6.1, D167): refill the active roster from the reserve whenever there's room (highest levels first); buy the Wright's Blade like any gear; report bands, letters reached, trust levels and names found per cycle.
-- [ ] **T5.15 Checks and speed.**
+- [x] **T5.14 Policy rules** *(D188)* (GDD §6.1, D167): refill the active roster from the reserve whenever there's room (highest levels first); buy the Wright's Blade like any gear; report bands, letters reached, trust levels and names found per cycle.
+- [x] **T5.15 Checks and speed.** *(Rows in their own commit, D168; the full suite's CI time is measured with T5.16.)*
   - The v0.5 rows in `sim/targets.ts` (owner-approved, D168; their own commit); the milestone becomes v0.5.
   - **The suite runs in parallel,** one run per core (D169), with a test that the parallel report matches a sequential one.
   - Full suite ≤ 5 min in CI.

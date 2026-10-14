@@ -5,8 +5,9 @@ import { POLICY_IDS, type PolicyId } from '../src/core/policies';
 import { CHECKS, type CheckResult } from './checks';
 import { hoursText } from './checks/helpers';
 import { CURRENT_MILESTONE, FAST_UNTIL_TARGETS } from './milestone';
+import { defaultWorkers, runSequential, runSpecs } from './parallel';
 import { markdown, summarize, type Baseline, type Report } from './report';
-import { runOne, STARTS, type RunResult, type RunSpec, type StartId } from './run';
+import { STARTS, type RunResult, type RunSpec, type StartId } from './run';
 import { ENGAGEMENT, enforced } from './targets';
 
 const OVERFLOW_CYCLES = ENGAGEMENT.noOverflow.cycles;
@@ -104,10 +105,14 @@ const specs = (o: Options): RunSpec[] =>
 const readBaseline = (): Baseline | null =>
   existsSync(BASELINE) ? (JSON.parse(readFileSync(BASELINE, 'utf8')) as Baseline) : null;
 
-const main = (): void => {
+const main = async (): Promise<void> => {
   const o = parse(process.argv.slice(2));
   const began = performance.now();
-  const runs: RunResult[] = specs(o).map(runOne);
+  // D169: the full suite plays its runs in parallel, one worker per core; the fast set is two
+  // short runs and stays in this process. Results are identical either way (sim/parallel.test.ts).
+  const runs: RunResult[] = o.fast
+    ? runSequential(specs(o))
+    : await runSpecs(specs(o), defaultWorkers());
   const checks: CheckResult[] = o.check
     ? CHECKS.filter((c) => enforced(c.enforcedFrom, CURRENT_MILESTONE)).map((c) => c.judge(runs))
     : [];
@@ -174,4 +179,4 @@ const main = (): void => {
   }
 };
 
-main();
+void main();

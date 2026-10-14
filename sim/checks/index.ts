@@ -21,6 +21,10 @@ import { peasants10Check } from './peasants-10';
 import { provisionsMatterCheck } from './provisions-matter';
 import { roster4Check } from './roster-4';
 import { somethingToDoCheck } from './something-to-do';
+import { firstRuinCheck } from './first-ruin';
+import { ribbonshadesCheck } from './ribbonshades';
+import { act1Check, act2Check } from './story-acts';
+import { trustMovesCheck } from './trust-moves';
 import type { Check } from './types';
 
 export type { Check, CheckResult } from './types';
@@ -53,4 +57,10 @@ export const CHECKS: readonly Check[] = [
   bestLastStandCheck,
   firstLongNightCheck,
   laterCyclesCheck,
+  // v0.5 (D168)
+  firstRuinCheck,
+  act1Check,
+  act2Check,
+  ribbonshadesCheck,
+  trustMovesCheck,
 ];

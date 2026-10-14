@@ -2,6 +2,7 @@ import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
 import { play, type PolicyId } from '../src/core/policies';
 import { OPENING_LENGTH } from '../src/core/policies/schedules';
 import { createNewGame } from '../src/core/state/new-game';
+import type { GameState } from '../src/core/state/game-state';
 import { provisions } from '../src/core/contracts/rewards';
 import { settleCost } from '../src/core/systems/settle';
 import { apply } from '../src/core/commands';
@@ -9,6 +10,9 @@ import { standProblem } from '../src/core/commands/stand';
 import { standKit } from '../src/core/policies/long-night';
 import { suggestSix } from '../src/core/stand/suggest';
 import { ageIndex } from '../src/core/systems/ages';
+import { bandFor } from '../src/core/story/band';
+import { startingTrust, TRUST_LEVELS } from '../src/content/story/trust';
+import { VILLAGE_IDS } from '../src/content/villages';
 
 /** GDD §5.9.4: the best-stand samples run from Bastion up to day 7 of cycle 1. */
 const BEST_STAND_UNTIL = 7 * 24;
@@ -73,6 +77,8 @@ export const MOMENTS = [
   'bastion',
   'best-last-stand',
   'first-long-night',
+  // v0.5 (GDD §6.2, D168):
+  'first-ruin',
 ] as const;
 export type Moment = (typeof MOMENTS)[number];
 
@@ -105,6 +111,38 @@ export interface StandSample {
   readonly perDay: number;
 }
 
+/**
+ * What the story brought over a run (GDD §6.2 v0.5, D168; plan T5.14). The checks judge
+ * documents, Ribbonshade names and trust; bands, letters and trust per cycle are reported only.
+ */
+export interface StoryRecord {
+  readonly documents: readonly {
+    readonly id: string;
+    readonly cycle: number;
+    readonly hours: number;
+  }[];
+  readonly names: readonly { readonly n: number; readonly cycle: number; readonly hours: number }[];
+  readonly letters: readonly {
+    readonly hunter: string;
+    readonly slot: number;
+    readonly cycle: number;
+    readonly hours: number;
+  }[];
+  /** Each finished cycle's stand: its band and the waves it held. */
+  readonly bands: readonly {
+    readonly cycle: number;
+    readonly band: string;
+    readonly waves: number;
+  }[];
+  /** Each village's trust level when the cycle ended (the last entry is the end of the run). */
+  readonly trust: readonly {
+    readonly cycle: number;
+    readonly levels: Readonly<Record<string, string>>;
+  }[];
+  /** Villages whose trust had risen above its starting level when cycle 1 ended. */
+  readonly trustRoseInCycle1: number;
+}
+
 export interface RunResult {
   readonly spec: RunSpec;
   /** Hours from the start to each GDD §6.2 moment, or null if never reached. */
@@ -123,6 +161,7 @@ export interface RunResult {
   readonly standSamples: readonly StandSample[];
   readonly contracts: readonly ContractRecord[];
   readonly keepPhase: KeepPhase;
+  readonly story: StoryRecord;
 }
 
 const largest = (value: unknown): number => {
@@ -168,6 +207,9 @@ export const runOne = (spec: RunSpec): RunResult => {
   let prevAge = state.cycle.age;
   let prevCycle = state.cycle.number;
   const standSamples: StandSample[] = [];
+  const trust: { cycle: number; levels: Record<string, string> }[] = [];
+  const levelsNow = (s: GameState): Record<string, string> =>
+    Object.fromEntries(VILLAGE_IDS.map((v) => [v, s.story.trust[v].level]));
 
   play(state, {
     // D62 (Q4a): a fresh start under Standard begins with the Opening's 15
@@ -208,6 +250,7 @@ export const runOne = (spec: RunSpec): RunResult => {
         if (e.type === 'clue' && e.identified) mark('first-identified', e.at);
       }
       for (const r of rec.away.contracts) {
+        if (r.success && r.location === 'ruin') mark('first-ruin', r.at);
         contracts.push({
           hours: (r.at - start) / HOUR,
           tier: r.tier,
@@ -262,6 +305,8 @@ export const runOne = (spec: RunSpec): RunResult => {
           rec.at <= start + OPENING_LENGTH,
         cycle: prevCycle,
       });
+      // Trust as each cycle ended: the stand's own step is already in the state here.
+      if (s.cycle.number !== prevCycle) trust.push({ cycle: prevCycle, levels: levelsNow(s) });
       prevAge = s.cycle.age;
       prevCycle = s.cycle.number;
       for (const r of RESOURCE_IDS) peaks[r] = Math.max(peaks[r], s.resources[r]);
@@ -275,6 +320,35 @@ export const runOne = (spec: RunSpec): RunResult => {
     null,
   );
   if (best) moments['best-last-stand'] = best.hours;
+  trust.push({ cycle: state.cycle.number, levels: levelsNow(state) });
+  const risen = (levels: Readonly<Record<string, string>>): number =>
+    VILLAGE_IDS.filter(
+      (v) =>
+        TRUST_LEVELS.indexOf((levels[v] ?? 'cold') as (typeof TRUST_LEVELS)[number]) >
+        TRUST_LEVELS.indexOf(startingTrust[v]),
+    ).length;
+  const hoursOf = (at: number): number => (at - start) / HOUR;
+  const story: StoryRecord = {
+    documents: state.story.documents.map((d) => ({
+      id: d.id,
+      cycle: d.cycle,
+      hours: hoursOf(d.at),
+    })),
+    names: state.story.names.map((x) => ({ n: x.n, cycle: x.cycle, hours: hoursOf(x.at) })),
+    letters: state.story.letters.map((l) => ({
+      hunter: l.hunter,
+      slot: l.slot,
+      cycle: l.cycle,
+      hours: hoursOf(l.at),
+    })),
+    bands: state.cycles.flatMap((c) =>
+      c.stand
+        ? [{ cycle: c.number, band: bandFor(c.stand.wavesHeld), waves: c.stand.wavesHeld }]
+        : [],
+    ),
+    trust,
+    trustRoseInCycle1: risen(trust.find((x) => x.cycle === 1)?.levels ?? {}),
+  };
   return {
     spec,
     moments,
@@ -287,6 +361,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     cycleHours: state.cycles.flatMap((c) => (c.stand ? [(c.stand.at - c.startedAt) / HOUR] : [])),
     standSamples,
     contracts,
+    story,
     keepPhase: {
       bountySilver: [...stretches.values()].reduce((n, x) => n + x.bountySilver, 0),
       jobSilver: [...stretches.values()].reduce((n, x) => n + x.jobSilver, 0),

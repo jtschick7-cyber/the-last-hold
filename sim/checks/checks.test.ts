@@ -43,6 +43,7 @@ const run = (
     bastion: null,
     'best-last-stand': null,
     'first-long-night': null,
+    'first-ruin': null,
     ...moments,
   },
   checkIns,
@@ -55,6 +56,14 @@ const run = (
   keepPhase: { bountySilver: 0, jobSilver: 0, provisionsFood: 0, jobFood: 0, byCycle: [] },
   cycleHours: [],
   standSamples: [],
+  story: {
+    documents: [],
+    names: [],
+    letters: [],
+    bands: [],
+    trust: [],
+    trustRoseInCycle1: 0,
+  },
 });
 
 describe('time targets', () => {
@@ -351,5 +360,69 @@ describe('later cycles (GDD §6.2, D111)', () => {
   });
   it('needs two finished cycles in every Monday run', () => {
     expect(laterCyclesCheck.judge([cycles(100)]).pass).toBe(false);
+  });
+});
+
+// v0.5 checks (D168), on made-up runs.
+import { firstRuinCheck } from './first-ruin';
+import { act1Check, act2Check } from './story-acts';
+import { ribbonshadesCheck } from './ribbonshades';
+import { trustMovesCheck } from './trust-moves';
+import { STORY } from '../targets';
+
+const withStory = (story: Partial<RunResult['story']>, seed = 'a'): RunResult => {
+  const r = run('standard', {}, [], 'mon', seed);
+  return { ...r, story: { ...r.story, ...story } };
+};
+const doc = (id: string, cycle: number) => ({ id, cycle, hours: cycle * 50 });
+
+describe('first ruin (D168)', () => {
+  it('is judged from the Keep: within 24 h', () => {
+    const at = (keep: number, ruin: number) => run('standard', { keep, 'first-ruin': ruin });
+    expect(firstRuinCheck.judge([at(10, 30)]).pass).toBe(true);
+    expect(firstRuinCheck.judge([at(10, 40)]).pass).toBe(false);
+    expect(firstRuinCheck.judge([run('standard', { keep: 10 })]).pass).toBe(false); // never
+  });
+});
+
+describe('Act I and Act II land in their cycles (D168)', () => {
+  const act1 = [...STORY.act1.docs.map((d) => doc(d, 1)), doc('D1-07', 2)];
+  const act2 = [...STORY.act2.docs.map((d) => doc(d, 2)), doc('D2-10', 3)];
+  it('Act I: its contract, Rank and stand documents by the end of cycle 1, D1-07 at the next warden', () => {
+    expect(act1Check.judge([withStory({ documents: act1 })]).pass).toBe(true);
+    const late = act1.map((d) => (d.id === 'D1-10' ? doc('D1-10', 2) : d));
+    expect(act1Check.judge([withStory({ documents: late })]).pass).toBe(false);
+    const missing = act1.filter((d) => d.id !== 'D1-07');
+    expect(act1Check.judge([withStory({ documents: missing })]).pass).toBe(false);
+  });
+  it('the reported-only documents never fail it, and are listed', () => {
+    const r = act1Check.judge([withStory({ documents: act1 })]);
+    expect(r.lines.join('\n')).toContain('D1-02');
+    expect(r.lines.join('\n')).toContain('reported only');
+  });
+  it('Act II: every document but Sigrun’s in cycle 2, D2-10 at the next warden', () => {
+    expect(act2Check.judge([withStory({ documents: act2 })]).pass).toBe(true);
+    expect(act2Check.judge([withStory({ documents: act2.slice(1) })]).pass).toBe(false);
+  });
+  it('judges the median over the Monday seeds, per document', () => {
+    const good = (s: string) => withStory({ documents: act1 }, s);
+    const bad = withStory({ documents: [] }, 'x');
+    expect(act1Check.judge([good('a'), good('b'), bad]).pass).toBe(true); // 2 of 3 found each
+  });
+});
+
+describe('Ribbonshade names (D168)', () => {
+  const names = (cycle: number) => STORY.ribbonNames.map((n) => ({ n, cycle, hours: 1 }));
+  it('all six by the end of cycle 3', () => {
+    expect(ribbonshadesCheck.judge([withStory({ names: names(3) })]).pass).toBe(true);
+    expect(ribbonshadesCheck.judge([withStory({ names: names(4) })]).pass).toBe(false);
+    expect(ribbonshadesCheck.judge([withStory({ names: names(2).slice(0, 5) })]).pass).toBe(false);
+  });
+});
+
+describe('trust moves (D168)', () => {
+  it('at least one village rises a step in cycle 1', () => {
+    expect(trustMovesCheck.judge([withStory({ trustRoseInCycle1: 1 })]).pass).toBe(true);
+    expect(trustMovesCheck.judge([withStory({ trustRoseInCycle1: 0 })]).pass).toBe(false);
   });
 });
