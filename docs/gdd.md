@@ -986,7 +986,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 
 - **40 names, each from exactly one source** (`lore-secrets.md` §8, §20): act documents 28, Ribbonshades 6, hunter letters 5, Sigrun's confession 1.
 - **A name is found** when the document, defeat or letter that carries it is found. Found names are kept forever.
-- **Ribbonshades** (§8.3): each Ribbonshade defeated carries the next of the six Ribbonshade names in a fixed order, the first being Jaro's (roll #39), until all six are found. After that, a Ribbonshade carries a ribbon with no name. The scene line comes with the contract result.
+- **Ribbonshades** (§8.3): each Ribbonshade defeated carries the next of the six Ribbonshade names in a fixed order, the first being Jaro's (roll #39), until all six are found. After that, a Ribbonshade carries a ribbon with no name. The scene line comes with the contract result. **Until all six names are found, half of the ruin contracts that can hold a Ribbonshade (tiers 2–4) are one** (`ruin.ribbonshadeShare`, Q17, D190); the other ruin creatures still appear, and once the six are found the ordinary mix returns.
 
 #### 5.14.5 Wardens
 
@@ -1096,7 +1096,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.4 |
 | Later cycles | Each ≥ 15% faster than the first, with a floor of 2 days **[JC]** *(D134: was "than the one before"; after cycle 2, cycles settle at about 3 days)*. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.4 |
 | Act I lands in its cycle *(D168)* | Every Act I document with a contract, Rank or stand condition found by the end of cycle 1; D1-07 at the next warden (D1-02 and D1-05 reported only) | v0.5 |
-| Act II lands in its cycle *(D168)* | Every Act II document except Sigrun's confession found in cycle 2 (D2-08 reported only) | v0.5 |
+| Act II lands in its cycle *(D168, Q17)* | D2-01, D2-02, D2-07 and D2-09 found in cycle 2; the 2nd to 5th ruin documents (D2-03 to D2-06) by the end of cycle 3; D2-10 with the next warden (D2-08 reported only) | v0.5 |
 | First ruin contract won *(D168)* | ≤ 24 h after the Keep | v0.5 |
 | All six Ribbonshade names *(D168)* | By the end of cycle 3 | v0.5 |
 | A village's trust rises *(D168)* | In cycle 1 | v0.5 |
@@ -1255,6 +1255,7 @@ Every constant here is tunable (D166).
 | Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand adds one step to every village | `trust.stepContracts` = [10, 15, 20, 25] | 5.14.6 |
 | Hunter letters | at the highest level ever reached | `letters.levels` = [5, 8] | 5.14.7 |
 | Runed sub-hit | `f × Might_eff × variance × crit × resist[Rune]`, no Armor | `gear.runedFraction` = 0.25 | 5.3.6 |
+| Ribbonshade share | the share of ruin contracts (tiers 2–4) that is a Ribbonshade while a Ribbonshade name is still missing | `ruin.ribbonshadeShare` = 0.5 | 5.14.4 |
 
 Trait and ability numbers (Shield-companion, Old Wright, and the Cursed creatures' abilities) live with their content, like every earlier trait and ability (§8.3, §8.5). The Wright's Blade's Might and cost live with the gear content (§5.3.6).
 

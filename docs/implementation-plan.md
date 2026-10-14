@@ -661,7 +661,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 | Check | Target |
 |---|---|
 | Act I lands in its cycle | Every Act I document with a contract, Rank or stand condition (D1-01, -03, -04, -06, -09, -10) found by the end of cycle 1; D1-07 at the next warden. D1-02 and D1-05 reported only |
-| Act II lands in its cycle | D2-01 to D2-07, D2-09 and D2-10 found in cycle 2; D2-08 (Sigrun) reported only |
+| Act II lands in its cycle | D2-01, D2-02, D2-07 and D2-09 found in cycle 2; D2-03 to D2-06 (the 2nd to 5th ruin win) by the end of cycle 3 (Q17, D190); D2-10 at the next warden; D2-08 (Sigrun) reported only |
 | Ruins show up | First ruin contract won ≤ 24 h after the Keep |
 | Ribbonshade names | All six found by the end of cycle 3 |
 | Trust moves | At least one village rises a step in cycle 1 |

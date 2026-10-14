@@ -148,7 +148,7 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
   },
   {
     id: 'act-2',
-    text: 'Act II lands in its cycle: every document but Sigrun’s confession found in cycle 2, and the next warden’s by the start of cycle 3',
+    text: 'Act II lands in its cycle: its Rank and stand documents and its first two found in cycle 2, the 2nd to 5th ruin documents by the end of cycle 3, and the next warden’s by the start of cycle 3',
     bounds: [],
     enforcedFrom: 'v0.5',
   },
@@ -190,7 +190,10 @@ export const STORY = {
   },
   act2: {
     byCycle: 2,
-    docs: ['D2-01', 'D2-02', 'D2-03', 'D2-04', 'D2-05', 'D2-06', 'D2-07', 'D2-09'],
+    docs: ['D2-01', 'D2-02', 'D2-07', 'D2-09'],
+    // Owner-approved change (Q17, D190): the 2nd to 5th ruin win count ruin wins across the
+    // act, and a cycle brings only a few ruins, so they are due by the end of cycle 3.
+    later: { docs: ['D2-03', 'D2-04', 'D2-05', 'D2-06'], byCycle: 3 },
     nextWarden: { doc: 'D2-10', byCycle: 3 },
     reportedOnly: ['D2-08'],
   },
