@@ -28,7 +28,14 @@ export const hunterKit = (
   }
   const e = def?.effect;
   const potion: HunterPotion | null =
-    def && e && (e.kind === 'heal' || e.kind === 'armorUntilAction' || e.kind === 'speedWholeFight')
+    def &&
+    e &&
+    (e.kind === 'heal' ||
+      e.kind === 'armorUntilAction' ||
+      e.kind === 'speedWholeFight' ||
+      e.kind === 'fireTaken' ||
+      e.kind === 'hitChance' ||
+      e.kind === 'steadfast')
       ? { id: def.id, name: def.name, effect: e, power, used: false }
       : null;
   return { oilFamily: oilEffect?.kind === 'oil' ? oilEffect.family : null, potion };
@@ -53,6 +60,32 @@ export const startOfFight = (f: Fight): void => {
         text: () => `${h.name} drinks ${p.name} (+${percent(bonus)} Speed for the fight)`,
         rolls: [],
       });
+    } else if (p.effect.kind === 'fireTaken') {
+      // GDD §5.8.5: Coldwater Draught, drunk at the start; Herbwise strengthens it.
+      const cut = p.effect.takenCut * (1 + p.power);
+      h.fireTakenPotion += cut;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () => `${h.name} drinks ${p.name} (−${percent(cut)} Fire damage taken for the fight)`,
+        rolls: [],
+      });
+    } else if (p.effect.kind === 'hitChance') {
+      // GDD §5.8.5: Owl-Eye Drops, put in at the start; the bonus is points of hit chance.
+      const points = p.effect.hitChance * (1 + p.power);
+      h.hitBonus += points;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () =>
+          `${h.name} uses ${p.name} (+${Math.round(points * 1000) / 10} points to hit for the fight)`,
+        rolls: [],
+      });
+    } else if (p.effect.kind === 'steadfast') {
+      // Held until an ability would cost the holder an action; Spoil can still ruin it (D92).
+      h.steadfastLeft = p.effect.uses;
     } else if (p.effect.kind === 'armorUntilAction') {
       const bonus = p.effect.armorBonus * (1 + p.power);
       h.statusPct.armor += bonus;
@@ -119,6 +152,16 @@ export const startOfFight = (f: Fight): void => {
         amount,
         targetHealth: m.health,
       });
+    } else if (e.kind === 'smoke') {
+      // GDD §5.8.5: Poppy Smoke, no damage type: the monster loses its next action(s).
+      m.lostActions += e.lostActions;
+      emit(f, {
+        actor: 'party',
+        kind: 'bomb',
+        text: () =>
+          `The party throws a ${consumables[id].name}: the ${m.name} loses its next ${e.lostActions === 1 ? 'action' : `${e.lostActions} actions`}`,
+        rolls: [],
+      });
     } else if (e.kind === 'saltburst') {
       f.saltburstArmed = true;
       emit(f, {
@@ -173,6 +216,7 @@ export const spoilHit = (target: Combatant, monster: Combatant): string | null =
   const p = target.potion;
   if (!p || p.used) return null;
   p.used = true;
+  target.steadfastLeft = 0; // a ruined Steadfast Draught keeps nothing (v0.6)
   return `${monster.name}'s Spoil ruins ${target.name}'s ${p.name}`;
 };
 

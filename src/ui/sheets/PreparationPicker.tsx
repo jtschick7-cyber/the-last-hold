@@ -151,11 +151,13 @@ export const PreparationPicker = ({
         const note =
           e.kind === 'saltburst'
             ? 'cancels the monster’s first ability'
-            : identity.identified && identity.monster
-              ? bombIsWeak(b, identity.monster)
-                ? 'weak to it ✔'
-                : 'not especially weak to it'
-              : 'weakness depends on what it is';
+            : e.kind === 'smoke'
+              ? 'the monster loses its next action'
+              : identity.identified && identity.monster
+                ? bombIsWeak(b, identity.monster)
+                  ? 'weak to it ✔'
+                  : 'not especially weak to it'
+                : 'weakness depends on what it is';
         return (
           <div key={`${b}${i}`} class={`${styles.small} ${styles.dim}`}>
             {consumables[b].name}: {note}

@@ -20,7 +20,7 @@ export const bombStock = (state: GameState): Partial<Record<ConsumableId, number
   const out: Partial<Record<ConsumableId, number>> = {};
   for (const id of CONSUMABLE_IDS) {
     const k = consumables[id].effect.kind;
-    if ((k === 'burn' || k === 'chill' || k === 'saltburst') && state.stores[id] > 0)
+    if ((k === 'burn' || k === 'chill' || k === 'saltburst' || k === 'smoke') && state.stores[id] > 0)
       out[id] = state.stores[id];
   }
   return out;

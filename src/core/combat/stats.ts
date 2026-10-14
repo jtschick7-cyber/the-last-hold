@@ -76,6 +76,7 @@ export const hitChance = (
   let chance = K.hitChance;
   if (attacker.side === 'hunter') {
     chance -= ctx.hitCut;
+    chance += attacker.hitBonus; // Owl-Eye Drops (v0.6)
     for (const h of party) {
       for (const e of h.traits) {
         if (e.kind === 'partyHitOnLocation' && e.location === ctx.location) chance += e.amount;
@@ -121,6 +122,7 @@ export const takenReduction = (
       if (e.kind === 'damageType' && e.type === 'fire') sum += -e.taken;
     }
     sum += defender.fireTakenReduction;
+    sum += defender.fireTakenPotion; // Coldwater Draught (v0.6)
   }
   const cap = K.takenCap;
   return sum > cap ? cap : sum;

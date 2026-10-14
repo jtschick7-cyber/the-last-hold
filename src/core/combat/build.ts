@@ -20,6 +20,9 @@ const kit = {
   burnAmount: 0,
   chillLeft: 0,
   abilitiesBlocked: 0,
+  hitBonus: 0,
+  fireTakenPotion: 0,
+  steadfastLeft: 0,
   tonicLeft: 0,
   extraTaken: 0,
 } as const;

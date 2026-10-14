@@ -83,8 +83,9 @@ export const standVolley = (defenses: StandInput['defenses']): number => {
 };
 
 /**
- * The bombs for one wave (D115): those the species is weak to first, in content
- * order, then one Saltburst (a second would do nothing), up to `prep.bombSlots`.
+ * The bombs for one wave (D115, D201): those the species is weak to first, in content
+ * order, then one Saltburst (a second would do nothing), then one Poppy Smoke (v0.6),
+ * up to `prep.bombSlots`.
  */
 export const waveBombs = (
   monster: MonsterId,
@@ -106,6 +107,14 @@ export const waveBombs = (
   for (const id of CONSUMABLE_IDS) {
     if (picks.length >= slots) break;
     if (consumables[id].effect.kind === 'saltburst' && (stock[id] ?? 0) > 0) {
+      picks.push(id);
+      stock[id] = (stock[id] ?? 0) - 1;
+      break;
+    }
+  }
+  for (const id of CONSUMABLE_IDS) {
+    if (picks.length >= slots) break;
+    if (consumables[id].effect.kind === 'smoke' && (stock[id] ?? 0) > 0) {
       picks.push(id);
       stock[id] = (stock[id] ?? 0) - 1;
       break;
