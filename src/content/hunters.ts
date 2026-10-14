@@ -79,15 +79,15 @@ export interface PortraitSpec {
   readonly face: 'broad' | 'oval' | 'narrow' | 'square';
   readonly hair: 'none' | 'short' | 'long' | 'braid' | 'cropped';
   readonly hairColor: 'black' | 'brown' | 'auburn' | 'blond' | 'grey' | 'white';
-  readonly beard: 'none' | 'stubble' | 'short' | 'full';
-  readonly headgear: 'none' | 'cap' | 'hood' | 'scarf' | 'band';
+  readonly beard: 'none' | 'stubble' | 'short' | 'full' | 'braided';
+  readonly headgear: 'none' | 'cap' | 'hood' | 'scarf' | 'band' | 'knit';
   readonly headgearColor: 'brown' | 'green' | 'blue' | 'red' | 'grey' | 'violet';
-  readonly collar: 'cloth' | 'fur' | 'leather' | 'plate' | 'mail';
+  readonly collar: 'cloth' | 'fur' | 'leather' | 'scarred-leather' | 'plate' | 'mail';
   readonly clothColor: 'brown' | 'green' | 'blue' | 'red' | 'grey' | 'violet';
   readonly weapon:
     'axe' | 'boathook' | 'staff' | 'spear' | 'satchel' | 'shovel' | 'hammer' | 'kettle' | 'knife';
-  /** Soot on the face (Halvar), a scar, and similar single marks. */
-  readonly mark?: 'soot' | 'scar' | 'frost';
+  /** Soot on the face (Halvar), a scar, and similar single marks; `rune` is drawn on the axe haft (Arvid). */
+  readonly mark?: 'soot' | 'scar' | 'frost' | 'rune';
 }
 
 export interface HunterDef {

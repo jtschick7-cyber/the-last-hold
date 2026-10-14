@@ -20,7 +20,6 @@ const cases = [
     name: `${id}.png`,
     drawn: () => drawHunter(hunters[id].portrait).toPng(),
   })),
-  // The Cursed (v0.5) are drawn in plan T5.13; until then they are placeholders (below).
   ...MONSTER_IDS.filter(hasDrawing).map((id) => ({
     row: monsterPortraitId(id),
     name: `monster-${id}.png`,
@@ -28,17 +27,43 @@ const cases = [
   })),
 ];
 
+describe("Arvid's portrait (GDD §8.5, plan T5.13)", () => {
+  const spec = hunters.arvid.portrait;
+  it('uses his look: braided beard, knit cap, scarred leather collar, a rune-mark on the haft', () => {
+    expect([spec.beard, spec.headgear, spec.collar, spec.mark]).toEqual([
+      'braided',
+      'knit',
+      'scarred-leather',
+      'rune',
+    ]);
+  });
+
+  it('draws each new part: changing any one of them changes the picture', () => {
+    const base = drawHunter(spec).toPng();
+    for (const change of [
+      { beard: 'full' },
+      { headgear: 'cap' },
+      { collar: 'leather' },
+      { mark: 'scar' },
+    ] as const)
+      expect(
+        drawHunter({ ...spec, ...change })
+          .toPng()
+          .equals(base),
+        JSON.stringify(change),
+      ).toBe(false);
+  });
+});
+
 describe('generated portraits', () => {
-  it('only the four Cursed wait for their portraits (plan T5.13), as placeholders', () => {
-    const pending = MONSTER_IDS.filter((id) => !hasDrawing(id));
-    expect(pending).toEqual(['gloam-moths', 'ribbonshade', 'anvil-wight', 'rimewrought']);
-    for (const id of pending)
-      expect(assetById.get(monsterPortraitId(id))?.source).toBe('placeholder');
+  it('every species has a drawing, the four Cursed (plan T5.13) included, and none is a placeholder', () => {
+    expect(MONSTER_IDS.filter((id) => !hasDrawing(id))).toEqual([]);
+    for (const id of ['gloam-moths', 'ribbonshade', 'anvil-wight', 'rimewrought'] as const)
+      expect(assetById.get(monsterPortraitId(id))?.source).toBe('generated');
   });
 
   it('has a manifest row for each hunter and species, pointing at its file', () => {
-    const pending = MONSTER_IDS.filter((id) => !hasDrawing(id));
-    expect(cases).toHaveLength(HUNTER_IDS.length + MONSTER_IDS.length - pending.length);
+    expect(cases).toHaveLength(HUNTER_IDS.length + MONSTER_IDS.length);
     for (const c of cases) {
       const row = assetById.get(c.row);
       expect(row?.source, c.row).toBe('generated');

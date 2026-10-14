@@ -243,6 +243,26 @@ export const recipes: readonly Recipe[] = [
     layers: [[[tile]]],
   })),
 
+  // v0.5 icons, 16 px, from the 1-Bit Pack (plan T5.13): the Wright's Blade (a broad
+  // sword), the Ribbonshade's ribbon (a small red pennant), and four document types: a
+  // letter (a scroll with lines), a journal page (a marked parchment), a ledger page (a
+  // scroll with a grid) and a testament (a ruled page).
+  ...(
+    [
+      ['gear', 'wrights-blade', 427],
+      ['story', 'ribbon', 409],
+      ['doc', 'letter', 768],
+      ['doc', 'journal', 767],
+      ['doc', 'ledger', 769],
+      ['doc', 'testament', 497],
+    ] as const
+  ).map(([group, id, tile]): Recipe => ({
+    id: `icon.${group}.${id}`,
+    file: `icons/${group}-${id}.png`,
+    sheet: 'bit',
+    layers: [[[tile]]],
+  })),
+
   // Hold scenes, 160 × 64 (10 × 4 tiles): the hamlet among the ruins, then the
   // Keep with its restored wall and gatehouse (setting-primer §6.5).
   {

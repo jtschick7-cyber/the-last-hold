@@ -6,6 +6,7 @@
 
 import type { FamilyId } from '../src/content/damage';
 import { monsters, type MonsterId } from '../src/content/monsters';
+import { anvilWight, gloamMoths, ribbonshade, rimewrought } from './draw-cursed';
 import { C, Canvas, seedRolls } from './pixel';
 
 const CX = 32;
@@ -15,7 +16,7 @@ const BACKDROP: Record<FamilyId, readonly [string, string, string]> = {
   'field-and-forest-spirits': [C.pine, C.moss, C.grass],
   'restless-dead': [C.plum, C.night, C.slate],
   'water-spirits': [C.night, C.blue, C.cyan],
-  cursed: [C.ink, C.wine, C.rust], // v0.5; the Cursed's portraits come with T5.13
+  cursed: [C.ink, C.wine, C.rust], // v0.5 (T5.13)
 };
 
 /** Two matching eyes, mirrored about the middle. */
@@ -376,7 +377,6 @@ const nix = (c: Canvas): void => {
   });
 };
 
-/** The Cursed (v0.5) have no drawing until plan T5.13; their assets are placeholders. */
 const DRAW: Partial<Record<MonsterId, (c: Canvas) => void>> = {
   wolf,
   kikimora,
@@ -390,6 +390,10 @@ const DRAW: Partial<Record<MonsterId, (c: Canvas) => void>> = {
   strzyga,
   huldra,
   nix,
+  'gloam-moths': gloamMoths,
+  ribbonshade,
+  'anvil-wight': anvilWight,
+  rimewrought,
 };
 
 export const hasDrawing = (id: MonsterId): boolean => DRAW[id] !== undefined;

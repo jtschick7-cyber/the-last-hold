@@ -1,4 +1,4 @@
-import { hunterPortraitId } from '../../content/assets';
+import { hunterPortraitId, WRIGHTS_BLADE_ICON } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { traits } from '../../content/traits';
 import { formatDuration, formatNumber } from '../../core/format';
@@ -35,7 +35,9 @@ const Slot = ({ id, slot }: { id: HunterId; slot: 'weapon' | 'armor' }) => {
   return (
     <div class={styles.row}>
       <span class={styles.grow}>
-        {slot === 'weapon' ? 'Weapon' : 'Armor'}: <strong>{current ? current.name : '—'}</strong>
+        {slot === 'weapon' ? 'Weapon' : 'Armor'}:{' '}
+        {current?.id === 'wrights-blade' && <Sprite id={WRIGHTS_BLADE_ICON} />}{' '}
+        <strong>{current ? current.name : '—'}</strong>
         {next && (
           <div class={`${styles.small} ${styles.dim}`}>
             Next: {next.name}

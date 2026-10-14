@@ -41,7 +41,7 @@ const FACE: Record<PortraitSpec['face'], { rx: number; ry: number }> = {
 const CX = 32;
 const CY = 26;
 
-const weapon = (c: Canvas, w: PortraitSpec['weapon']): void => {
+const weapon = (c: Canvas, w: PortraitSpec['weapon'], mark?: PortraitSpec['mark']): void => {
   const pole = (x0: number, y0: number, x1: number, y1: number, color: string): void => {
     c.line(x0, y0, x1, y1, C.ink, 4);
     c.line(x0 + 1, y0, x1 + 1, y1, color, 2);
@@ -52,6 +52,13 @@ const weapon = (c: Canvas, w: PortraitSpec['weapon']): void => {
       c.ellipse(52, 13, 7, 8, C.ink);
       c.ellipse(52, 13, 5.5, 6.5, C.ash);
       c.ellipse(54, 14, 3, 5, C.frost);
+      // A faint rune cut into the haft (Arvid, GDD §8.5).
+      if (mark === 'rune') {
+        for (let y = 33; y <= 40; y++) c.set(48.2 - (y - 33) * 0.07, y, C.dusk);
+        c.set(47, 35, C.dusk);
+        c.set(49, 37, C.dusk);
+        c.set(47, 39, C.dusk);
+      }
       break;
     case 'boathook':
       pole(52, 6, 47, 62, C.brownDark);
@@ -117,6 +124,15 @@ const torso = (c: Canvas, s: PortraitSpec): void => {
       c.ellipse(CX, 47, 16, 5.5, C.ink);
       c.ellipse(CX, 47, 15, 4.5, C.brownDark);
       for (const x of [22, 27, 32, 37, 42]) c.set(x, 49, C.gold);
+      break;
+    case 'scarred-leather':
+      c.ellipse(CX, 47, 16, 5.5, C.ink);
+      c.ellipse(CX, 47, 15, 4.5, C.brownDark);
+      for (const x of [22, 27, 32, 37, 42]) c.set(x, 49, C.gold);
+      // Old scars across the leather.
+      c.line(21, 44, 25, 49, C.clay, 1);
+      c.line(34, 43, 38, 48, C.clay, 1);
+      c.line(41, 45, 43, 49, C.sand, 1);
       break;
     case 'plate':
       c.ellipse(CX, 47, 17, 6, C.ink);
@@ -267,8 +283,8 @@ const head = (c: Canvas, s: PortraitSpec): void => {
         c.set(x, y, hair[2]);
     }
   }
-  if (s.beard === 'short' || s.beard === 'full') {
-    const drop = s.beard === 'full' ? 7 : 2;
+  if (s.beard === 'short' || s.beard === 'full' || s.beard === 'braided') {
+    const drop = s.beard === 'full' ? 7 : s.beard === 'braided' ? 3 : 2;
     for (let y = CY + 4; y <= CY + ry + drop; y++) {
       for (let x = CX - rx - 1; x <= CX + rx + 1; x++) {
         const fy = (y - CY) / (ry + drop);
@@ -280,14 +296,32 @@ const head = (c: Canvas, s: PortraitSpec): void => {
     }
     c.rect(CX - 3, CY + 9, 7, 1, C.brown);
   }
+  // Two braids hang from the chin, tied off with a leather thong.
+  if (s.beard === 'braided') {
+    for (const side of [-1, 1]) {
+      const x = CX + side * 6;
+      for (let i = 0; i < 6; i++) {
+        c.ellipse(x, CY + ry + 4 + i * 2.6, 2.6, 2, C.ink);
+        c.ellipse(x, CY + ry + 4 + i * 2.6, 1.9, 1.4, hair[i % 2 === 0 ? 0 : 1]);
+      }
+      c.rect(x - 1, CY + ry + 4 + 6 * 2.6 - 1, 3, 2, C.rust);
+    }
+  }
 
   // Headgear in front.
-  if (s.headgear === 'cap') {
+  if (s.headgear === 'cap' || s.headgear === 'knit') {
     c.ellipse(CX, CY - 10, rx + 2, 9, C.ink);
     c.ellipse(CX, CY - 10, rx + 1, 8, gear[1]);
     c.rect(CX - rx - 1, CY - 7, rx * 2 + 3, 3, C.ink);
     c.rect(CX - rx, CY - 7, rx * 2 + 1, 2, gear[2]);
     c.rect(CX - rx + 3, CY - 16, 8, 2, gear[0]);
+  }
+  // A fisherman's knit cap: ribbing up the crown, and a thick rolled brim.
+  if (s.headgear === 'knit') {
+    for (let x = CX - rx + 1; x <= CX + rx - 1; x += 2) c.line(x, CY - 17, x, CY - 9, gear[2], 1);
+    c.rect(CX - rx - 1, CY - 8, rx * 2 + 3, 4, C.ink);
+    c.rect(CX - rx, CY - 8, rx * 2 + 1, 3, gear[0]);
+    for (let x = CX - rx; x <= CX + rx; x += 2) c.set(x, CY - 7, gear[2]);
   }
   if (s.headgear === 'scarf') {
     c.rect(CX - rx - 1, CY - 11, rx * 2 + 3, 7, C.ink);
@@ -324,7 +358,7 @@ export const drawHunter = (s: PortraitSpec): Canvas => {
   c.fill(C.plum);
   c.ellipse(CX, 30, 27, 29, C.violet);
   c.ellipse(CX, 30, 21, 23, C.slate);
-  if (s.weapon !== 'satchel' && s.weapon !== 'knife') weapon(c, s.weapon);
+  if (s.weapon !== 'satchel' && s.weapon !== 'knife') weapon(c, s.weapon, s.mark);
   torso(c, s);
   head(c, s);
   // Over the hair and collar: the strap crosses the shoulder in front.

@@ -631,7 +631,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### F. Art
 
-- [ ] **T5.13 Art** (the D59 method).
+- [x] **T5.13 Art** (the D59 method). *(Built 2026-10-14, D187; the owner reviews it in the playtest.)*
   - Portraits for the four Cursed creatures (a new family template) and Arvid (the portrait generator, from his look in GDD §8.5).
   - Icons for the Wright's Blade, the ribbon and the document types (letter, journal, ledger, testament).
   - 👤 Review.

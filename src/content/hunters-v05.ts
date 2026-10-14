@@ -43,20 +43,19 @@ export const arvid: HunterDef = {
   recruitPrice: 0,
   story: true,
   // GDD §8.5: a grey beard in two braids, a fisherman's knit cap, a scarred leather
-  // collar, a faint rune-mark on the axe haft. The braids and the rune-mark need
-  // new portrait parts; T5.13 draws them.
+  // collar, a faint rune-mark on the axe haft (new portrait parts, drawn in T5.13).
   portrait: {
     skin: 'light',
     face: 'square',
     hair: 'short',
     hairColor: 'grey',
-    beard: 'full',
-    headgear: 'cap',
+    beard: 'braided',
+    headgear: 'knit',
     headgearColor: 'grey',
-    collar: 'leather',
+    collar: 'scarred-leather',
     clothColor: 'blue',
     weapon: 'axe',
-    mark: 'scar',
+    mark: 'rune',
   },
   bio: "Velkvik net-mender, fifty-one, with a runed axe he won't talk about. Says he's too old for this. Hasn't missed a fight.",
   sketch:

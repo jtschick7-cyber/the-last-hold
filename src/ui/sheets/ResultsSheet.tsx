@@ -1,5 +1,5 @@
 import { hunters } from '../../content/hunters';
-import { monsterPortraitId } from '../../content/assets';
+import { monsterPortraitId, RIBBON_ICON } from '../../content/assets';
 import { ingredients, type IngredientId } from '../../content/ingredients';
 import { monsters } from '../../content/monsters';
 import { formatDuration, formatNumber } from '../../core/format';
@@ -60,6 +60,11 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
           {Object.entries(r.reagents)
             .map(([k, n]) => `${n} ${ingredients[k as IngredientId].name.toLowerCase()}`)
             .join(', ')}
+        </div>
+      )}
+      {(r.found ?? []).some((k) => k.startsWith('ribbon:')) && (
+        <div>
+          <Sprite id={RIBBON_ICON} />
         </div>
       )}
       {foundLines(game(), r.found ?? []).map((line) => (

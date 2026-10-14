@@ -13,6 +13,8 @@ import { letterKey } from '../../core/story/letters';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
+import { docIconId } from '../../content/assets';
+import { Sprite } from '../widgets/Sprite';
 import { BestiaryScreen } from './BestiaryScreen';
 
 // GDD §5.14.3, §9.14 (D150): once Ilse arrives, the Bestiary tab becomes the
@@ -110,6 +112,9 @@ export const openLetter = (l: ShelfLetter): void => {
   openSheet(`From ${l.from}`, () => <LetterReader letter={l} />);
 };
 
+/** A document's type, for its icon. */
+const typeOf = (id: string): string | undefined => allDocuments.find((d) => d.id === id)?.type;
+
 const New = () => <span class={styles.badge}>new</span>;
 
 const Library = () => {
@@ -130,6 +135,9 @@ const Library = () => {
                 {t.rows.map((r) => (
                   <li key={r.id}>
                     <button type="button" class={styles.linkRow} onClick={() => openDocument(r.id)}>
+                      {docIconId(typeOf(r.id) ?? '') && (
+                        <Sprite id={docIconId(typeOf(r.id) ?? '') ?? ''} />
+                      )}
                       <span class={styles.grow}>
                         <strong>{r.heading}</strong>
                         <span class={`${styles.small} ${styles.dim}`}> · {r.witness}</span>
