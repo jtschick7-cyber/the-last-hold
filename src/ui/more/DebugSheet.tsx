@@ -157,6 +157,13 @@ export const DebugSheet = () => {
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.addArvid' })}>
           Add Arvid
         </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.runV05Arrival' })}
+        >
+          Meet Ilse again
+        </button>
       </div>
       {note && <p class={styles.small}>{note}</p>}
       <h3 class={styles.cardTitle} style={{ marginTop: 'var(--space-3)' }}>

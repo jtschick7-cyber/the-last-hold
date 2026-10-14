@@ -11,6 +11,7 @@ import { HuntersScreen } from '../screens/HuntersScreen';
 import { MoreScreen } from '../screens/MoreScreen';
 import { InstallSheet } from '../more/InfoSheets';
 import { ArrivalView } from '../sheets/ArrivalView';
+import { V05ArrivalView } from '../sheets/V05ArrivalView';
 import { AwayView } from '../sheets/AwaySheet';
 import styles from '../styles/ui.module.css';
 import { ResourceBar } from '../widgets/ResourceBar';
@@ -130,7 +131,7 @@ export const App = () => {
 
   // Scenes play once, when their moment comes (setting-primer §6.6); not during the arrival.
   useEffect(() => {
-    if (version.value > 0 && !game().arrivalDue) playScenes();
+    if (version.value > 0 && !game().arrivalDue && !game().story.arrivalDue) playScenes();
   }, [version.value, sheets.value.length]);
 
   useEffect(() => {
@@ -151,12 +152,15 @@ export const App = () => {
   const progress = catchUpProgress.value;
   // GDD §5.9.8: while the v0.4 arrival is due, it takes the Hold's place; only More stays.
   const arrival = game().arrivalDue;
-  const shown: readonly Tab[] = arrival
-    ? ['hold', 'more']
-    : tabsFor(
-        game().board.opened,
-        Object.keys(game().bestiary).length > 0 || game().story.ilseAt !== null,
-      );
+  // GDD §5.14.1: then, for a save from before v0.5, Ilse's arrival does the same.
+  const meetIlse = !arrival && game().story.arrivalDue;
+  const shown: readonly Tab[] =
+    arrival || meetIlse
+      ? ['hold', 'more']
+      : tabsFor(
+          game().board.opened,
+          Object.keys(game().bestiary).length > 0 || game().story.ilseAt !== null,
+        );
   const screen = shown.includes(tab.value) ? tab.value : 'hold';
   const unread = game().results.length;
   const archive = archiveTab(game());
@@ -167,7 +171,13 @@ export const App = () => {
       <main class={css.main}>
         <Notices />
         <ErrorBoundary>
-          {arrival && screen === 'hold' ? <ArrivalView /> : SCREENS[screen]()}
+          {arrival && screen === 'hold' ? (
+            <ArrivalView />
+          ) : meetIlse && screen === 'hold' ? (
+            <V05ArrivalView />
+          ) : (
+            SCREENS[screen]()
+          )}
         </ErrorBoundary>
       </main>
       <nav class={css.tabs} aria-label="Screens">

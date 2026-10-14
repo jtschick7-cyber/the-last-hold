@@ -8,6 +8,7 @@ import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { HearthView } from './HearthView';
+import { RollOfWardens } from './RollOfWardens';
 import { StandView } from './StandSheet';
 import { standProblem } from '../../core/commands/stand';
 
@@ -54,6 +55,7 @@ export const AgeSheet = () => {
           </button>
         )}
         <HearthView />
+        <RollOfWardens />
       </div>
     );
   }
@@ -109,6 +111,7 @@ export const AgeSheet = () => {
         Rank up to {ages[status.to].name}
       </button>
       <HearthView />
+      <RollOfWardens />
     </div>
   );
 };

@@ -178,6 +178,8 @@ export interface StandRecord {
   relicsFound: RelicId[];
   /** The v0.4 arrival's stand (GDD §5.9.8). */
   arrival: boolean;
+  /** Trust steps a Triumphant stand brought (`trust:village:level`, GDD §5.14.6); [] before v0.5's stands (D183). */
+  trustSteps: string[];
   /** The result sheet has been seen. */
   seen: boolean;
 }

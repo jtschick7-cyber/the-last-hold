@@ -195,6 +195,7 @@ describe('wave logs from the saved record (technical design §5.3)', () => {
       embers: { waves: 0, trophies: 0, total: 0 },
       relicsFound: [],
       arrival: false,
+      trustSteps: [],
       seen: false,
     };
     expect(replayStand(record)).toEqual(made);

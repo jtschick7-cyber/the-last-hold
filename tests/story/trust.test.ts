@@ -10,6 +10,7 @@ import { createNewGame } from '../../src/core/state/new-game';
 import type { ContractInstance } from '../../src/core/state/game-state';
 import { bandFor } from '../../src/core/story/band';
 import {
+  parseTrustKey,
   stepNeed,
   triumphantStand,
   trustBreakdown,
@@ -112,5 +113,17 @@ describe('trust changes no number in v0.5 (D147)', () => {
     for (let i = 0; i < 5; i++) triumphantStand(sworn);
     expect(holdBounty(sworn, 3, [[]], false)).toEqual(holdBounty(cold, 3, [[]], false));
     expect(provisions(sworn, 3, 3)).toEqual(provisions(cold, 3, 3));
+  });
+});
+
+describe('trust step keys (T5.11b1)', () => {
+  it('read back into a village and a level, and reject anything else', () => {
+    expect(parseTrustKey('trust:kozly-hollow:wary')).toEqual({
+      village: 'kozly-hollow',
+      level: 'wary',
+    });
+    expect(parseTrustKey('trust:nowhere:wary')).toBeNull();
+    expect(parseTrustKey('doc:D1-01')).toBeNull();
+    expect(parseTrustKey('trust:mirograd:hopeful:extra')).toBeNull();
   });
 });

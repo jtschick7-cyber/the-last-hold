@@ -7,7 +7,7 @@ import { INGREDIENT_IDS, type IngredientId } from '../../content/ingredients';
 import { JOB_IDS } from '../../content/jobs';
 import { MONSTER_IDS, type MonsterId } from '../../content/monsters';
 import { RESOURCE_IDS } from '../../content/resources';
-import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
+import { ALL_SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { VILLAGE_IDS, type VillageId } from '../../content/villages';
 import { failure, success, type Result } from '../result';
 import {
@@ -74,7 +74,7 @@ const settingsFrom = (v: unknown, warnings: string[]): Settings => {
 const scenesSeen = (v: unknown, warnings: string[]): SceneId[] => {
   const out: SceneId[] = [];
   for (const x of arr(v, 'scenes')) {
-    if (!(SCENE_IDS as readonly unknown[]).includes(x))
+    if (!(ALL_SCENE_IDS as readonly unknown[]).includes(x))
       warnings.push(`Dropped unknown scene "${String(x)}".`);
     else if (!out.includes(x as SceneId)) out.push(x as SceneId);
   }

@@ -72,6 +72,13 @@ const stand = (v: unknown, where: string, warnings: string[]): StandRecord => {
     },
     relicsFound: relicList(o.relicsFound, `${where}.relicsFound`),
     arrival: bool(o.arrival, `${where}.arrival`),
+    // D183: stands saved before this field existed brought no recorded steps.
+    trustSteps:
+      o.trustSteps === undefined
+        ? []
+        : arr(o.trustSteps, `${where}.trustSteps`).map((k, i) =>
+            str(k, `${where}.trustSteps[${i}]`),
+          ),
     seen: bool(o.seen, `${where}.seen`),
   };
 };

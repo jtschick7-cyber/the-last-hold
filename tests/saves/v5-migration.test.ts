@@ -9,7 +9,7 @@ import { encodeSaveFile, loadEnvelope, makeEnvelope } from '../../src/core/save'
 import { migrations } from '../../src/core/save/migrations';
 import { createNewGame } from '../../src/core/state/new-game';
 import { shiftClock } from '../../src/core/state/shift';
-import type { GameState } from '../../src/core/state/game-state';
+import type { GameState, StandRecord } from '../../src/core/state/game-state';
 
 const FIXTURES = new URL('./fixtures/', import.meta.url);
 const readFixture = (f: string): { schemaVersion: number; state: Record<string, unknown> } =>
@@ -23,6 +23,8 @@ const load = (env: unknown): GameState => {
   expect(r.value.warnings).toEqual([]);
   return r.value.state;
 };
+
+const withoutSteps = ({ trustSteps: _t, ...stand }: StandRecord) => stand;
 
 describe('the v4 → v5 migration (plan T5.3)', () => {
   const old = readFixture('v4-owner.json');
@@ -39,7 +41,13 @@ describe('the v4 → v5 migration (plan T5.3)', () => {
     for (const key of Object.keys(before) as (keyof GameState)[]) {
       if (key === 'meta') expect({ ...after.meta, schemaVersion: 4 }).toEqual(before.meta);
       else if (key === 'cycles')
-        expect(after.cycles.map(({ act: _a, warden: _w, ...rest }) => rest)).toEqual(before.cycles);
+        // v5 adds `act` and `warden` to each cycle, and an empty `trustSteps` to a recorded stand (D183).
+        expect(
+          after.cycles.map(({ act: _a, warden: _w, ...rest }) => ({
+            ...rest,
+            stand: rest.stand ? withoutSteps(rest.stand) : rest.stand,
+          })),
+        ).toEqual(before.cycles);
       else expect(after[key], key).toEqual(before[key]);
     }
   });

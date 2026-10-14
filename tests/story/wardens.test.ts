@@ -95,3 +95,12 @@ describe('inscriptions (D160)', () => {
     expect(ages.bastion.ageUp?.restores.inscription).toBe(inscriptions.bastion);
   });
 });
+
+describe('Suggest with names already in other fields (T5.11b1, D183)', () => {
+  it('never offers a name another field already holds', () => {
+    const s = createNewGame('suggest-taken', T0);
+    const first = suggestWardenName(s, 0);
+    for (let press = 0; press < 40; press++)
+      expect(suggestWardenName(s, press, [first])).not.toBe(first);
+  });
+});

@@ -24,9 +24,13 @@ export const cleanWardenName = (raw: string): string | null | 'too-long' => {
   return name === '' ? null : name;
 };
 
-/** Suggest: a name from the list, by the game seed and a press count, never one already carved. */
-export const suggestWardenName = (state: GameState, press: number): string => {
-  const used = new Set(state.cycles.map((c) => c.warden).filter((w) => w !== null));
+/** Suggest: a name from the list, by the game seed and a press count, never one already carved or in another field (`taken`). */
+export const suggestWardenName = (
+  state: GameState,
+  press: number,
+  taken: readonly string[] = [],
+): string => {
+  const used = new Set([...state.cycles.map((c) => c.warden).filter((w) => w !== null), ...taken]);
   const free = wardenNames.filter((n) => !used.has(n));
   const pool = free.length > 0 ? free : wardenNames;
   const r = seeded(streamSeed(state.meta.gameSeed, 'warden', state.cycle.number, press)).next();

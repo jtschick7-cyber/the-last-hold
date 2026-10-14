@@ -156,6 +156,7 @@ describe('v4 state (technical design §5.2, D113)', () => {
       embers: { waves: 30, trophies: 12, total: 42 },
       relicsFound: ['plough-share'],
       arrival: true,
+      trustSteps: [],
       seen: false,
     };
     expect(load(JSON.parse(encodeSaveFile(makeEnvelope(s, 0))))).toEqual(s);

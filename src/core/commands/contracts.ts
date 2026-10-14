@@ -1,5 +1,5 @@
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
-import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
+import { ALL_SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { slotFreed } from '../contracts/board';
 import { computeOdds } from '../contracts/odds';
 import { monsterFor, oddsTarget } from '../investigation/knowledge';
@@ -80,7 +80,7 @@ export const decline = (state: GameState, contractId: string): ApplyResult => {
 
 /** A scene was shown: remember it so it plays once. Harmless to repeat. */
 export const markSeen = (state: GameState, scene: SceneId): ApplyResult => {
-  if (!(SCENE_IDS as readonly string[]).includes(scene))
+  if (!(ALL_SCENE_IDS as readonly string[]).includes(scene))
     return refuse('That scene does not exist.');
   if (!state.scenes.includes(scene)) state.scenes.push(scene);
   return ok;

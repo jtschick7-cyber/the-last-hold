@@ -12,6 +12,15 @@ import type { GameState } from '../state/game-state';
 export const trustKey = (village: VillageId, level: TrustLevel): string =>
   `trust:${village}:${level}`;
 
+/** A `trust:village:level` key read back, or null for any other key. */
+export const parseTrustKey = (key: string): { village: VillageId; level: TrustLevel } | null => {
+  const [tag, village, level, extra] = key.split(':');
+  if (tag !== 'trust' || extra !== undefined) return null;
+  const v = VILLAGE_IDS.find((x) => x === village);
+  const l = TRUST_LEVELS.find((x) => x === level);
+  return v && l ? { village: v, level: l } : null;
+};
+
 /** Contracts needed to rise from a level; null at Sworn. */
 export const stepNeed = (level: TrustLevel): number | null => {
   const steps = constantAt('trust.stepContracts').value as readonly number[];

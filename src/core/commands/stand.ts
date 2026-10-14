@@ -86,6 +86,7 @@ export const makeStand = (
     embers: { waves: payout.waves, trophies: payout.trophies, total: payout.value },
     relicsFound: found,
     arrival: state.arrivalDue,
+    trustSteps: [],
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];
@@ -94,7 +95,8 @@ export const makeStand = (
   for (const id of found) state.relics.push({ id, cycle: state.cycle.number });
   // GDD §5.14.9: the stand closes the act (its testament on the result sheet), and a
   // Triumphant one raises every village's trust a step (D146).
-  if (bandFor(result.wavesHeld) === 'triumphant') triumphantStand(state);
+  // The steps are kept on the record so the result sheet can show them whenever it is opened (D183).
+  if (bandFor(result.wavesHeld) === 'triumphant') stand.trustSteps = triumphantStand(state);
   standDocuments(state);
   // 4–5. The reset and the new cycle; the next warden's arrival closes the act's scene.
   resetForNewCycle(state);

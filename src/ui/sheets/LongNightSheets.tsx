@@ -10,8 +10,11 @@ import { RULES_VERSION } from '../../core/rules-version';
 import { replayStand } from '../../core/stand/replay';
 import type { GameState, StandRecord } from '../../core/state/game-state';
 import { rosterCap } from '../../core/systems/hunters';
+import { WardenNameField } from '../widgets/WardenNameField';
+import { BandLine, ResidentsAndTrust, Testament, WardenScenes } from './LongNightStory';
 import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
+import { actClosing } from '../../core/story/documents';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { Sprite } from '../widgets/Sprite';
@@ -64,7 +67,7 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
   );
 };
 
-const Result = ({ stand }: { stand: StandRecord }) => {
+export const StandResultView = ({ stand }: { stand: StandRecord }) => {
   const payout = embersPayout({
     rank: stand.rank,
     waves: stand.wavesHeld,
@@ -80,6 +83,7 @@ const Result = ({ stand }: { stand: StandRecord }) => {
         The walls held <strong>{stand.wavesHeld}</strong> {stand.wavesHeld === 1 ? 'wave' : 'waves'}
         .
       </p>
+      <BandLine stand={stand} />
       <p>
         <Sprite id={EMBERS_ICON} /> Embers:{' '}
         <Num text={formatNumber(stand.embers.total)} breakdown={() => payout.breakdown} marked />
@@ -94,6 +98,7 @@ const Result = ({ stand }: { stand: StandRecord }) => {
           ))}
         </ul>
       )}
+      <ResidentsAndTrust stand={stand} />
       <p class={styles.small}>
         <strong>Pechko:</strong> “The walls fell. The hearth didn't. Someone will come.”
       </p>
@@ -114,8 +119,10 @@ const Result = ({ stand }: { stand: StandRecord }) => {
   );
 };
 
-const NewWarden = ({ s }: { s: GameState }) => {
+const NewWarden = ({ s, stand }: { s: GameState; stand: StandRecord }) => {
   const [note, setNote] = useState<string | null>(null);
+  // GDD §5.14.5: the new warden's name; typed freely, kept as the player left it here.
+  const [name, setName] = useState(s.cycles[s.cycles.length - 1]?.warden ?? '');
   const cap = rosterCap(s).value;
   const owned = Object.keys(s.hunters) as HunterId[];
   return (
@@ -123,6 +130,15 @@ const NewWarden = ({ s }: { s: GameState }) => {
       <p>
         <em>“Seasons pass. Someone new walks up the road, hands warm in the cold.”</em>
       </p>
+      <WardenNameField
+        label="Name the new warden"
+        value={name}
+        onChange={(v) => {
+          setName(v);
+          dispatch({ type: 'warden.name', cycle: s.cycle.number, name: v });
+        }}
+      />
+      <WardenScenes stand={stand} />
       <p class={styles.small}>
         Choose your {cap} active hunters ({s.roster.active.length}/{cap}); everyone else waits in
         the reserve.
@@ -165,6 +181,8 @@ export const LongNightView = () => {
   const [step, setStep] = useState(0);
   const last = lastStand(s);
   if (!last) return <p>No Last Stand yet.</p>;
+  // GDD §5.14.9: the act that cycle told closes with its testament.
+  const act = s.cycles.find((c) => c.number === last.cycle)?.act ?? null;
   const next = (): void => {
     if (step < STEPS - 1) setStep(step + 1);
     else {
@@ -174,14 +192,10 @@ export const LongNightView = () => {
   };
   return (
     <div>
-      {step === 0 && <Result stand={last.stand} />}
-      {step === 1 && (
-        <p>
-          <em>The story continues in a later version.</em>
-        </p>
-      )}
+      {step === 0 && <StandResultView stand={last.stand} />}
+      {step === 1 && <Testament act={actClosing(act)} />}
       {step === 2 && <HearthView />}
-      {step === 3 && <NewWarden s={s} />}
+      {step === 3 && <NewWarden s={s} stand={last.stand} />}
       <button type="button" class={styles.btnPrimary} style={{ width: '100%' }} onClick={next}>
         {step < STEPS - 1 ? 'Next' : `Begin cycle ${s.cycle.number}`}
       </button>
