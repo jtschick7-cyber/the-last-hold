@@ -998,7 +998,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 
 - **Levels:** Cold → Wary → Hopeful → Trusting → Sworn. Each village keeps its v0.2 starting level (`setting-primer.md` §3).
 - **Rising** (D146): each contract won for a village counts toward its next step: 10 to leave Cold, then 15, 20 and 25 (`trust.stepContracts`). **Each Triumphant stand raises every village one step**, and progress already counted toward the next step carries over. Trust **never drops**. A Long Night keeps it.
-- **What it does** (D147): words only. It sets the tone of that village's notices (from v0.2) and of resident lines, and some documents wait for a village's trust (Act I: D1-02, Kozly Hollow at Wary). Trust changes no number in v0.5; rewards wait for the Thanes' Moot (v0.10).
+- **What it does** (D147): words only. It sets the tone of that village's notices (from v0.2; from v0.5, once a village trusts the hold more than it did at the start, its notices close with that level's line, D180) and of resident lines, and some documents wait for a village's trust (Act I: D1-02, Kozly Hollow at Wary). Trust changes no number in v0.5; rewards wait for the Thanes' Moot (v0.10).
 - **Shown** on the Contracts board's **Villages** panel (§9.14): each village's level, its one-line description, and its progress, with a breakdown on long-press (contracts won toward each step, Triumphant stands). A step up gets one line on the away sheet or the result sheet: *"Mirograd trusts the hold a little more: Hopeful."*
 
 #### 5.14.7 Hunter letters

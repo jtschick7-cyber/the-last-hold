@@ -234,6 +234,7 @@ describe('acts (GDD §5.14.1)', () => {
     const fell = { ...contract('velkvik', 'ruin') };
     const low = { ...contract('kozly-hollow', 'ruin') };
     expect(noticeFor(fell, 'seed', 2).text.endsWith(kamenfellNoticeEnd)).toBe(true);
+    expect(noticeFor(fell, 'seed', 2, 'trusting').text).toContain(kamenfellNoticeEnd);
     expect(noticeFor(fell, 'seed', 1).text).not.toContain('Kamenfell');
     expect(noticeFor(low, 'seed', 2).text).not.toContain('Kamenfell');
   });

@@ -602,7 +602,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 - [x] **T5.7 Names and Ribbonshades.** *(Readings in D179; the gate test is `tests/story/names.test.ts`.)*
   - A name is found with its source. Ribbonshades give the six names in their fixed order, Jaro's first, with the scene and Halina's note; after six, a ribbon with no name.
   - **The true-ending gate test:** all 40 names have exactly one source, and none is Delve-only, event-only or missable (`lore-secrets.md` §8).
-- [ ] **T5.8 Trust.**
+- [x] **T5.8 Trust.** *(D180; the notices' closing lines go to the owner with T5.12.)*
   - Contract progress, steps (`trust.stepContracts`), a step from each Triumphant stand, carry-over, never down.
   - Notices read the trust level; trust-gated documents; the breakdown; the away-sheet line.
 - [ ] **T5.9 Wardens, bands and letters.**
@@ -627,7 +627,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### E. Writing
 
-- [ ] **T5.12 Letters and lists.** 👤 Draft the 17 letters without names (`lore-secrets.md` §23 voice) and the warden-name list, for the owner's approval.
+- [ ] **T5.12 Letters and lists.** 👤 Draft the 17 letters without names (`lore-secrets.md` §23 voice) and the warden-name list, for the owner's approval; with them, the four trust closing lines for notices (D180).
 
 ### F. Art
 

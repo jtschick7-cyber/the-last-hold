@@ -27,6 +27,18 @@ export const startingTrust: Readonly<Record<VillageId, TrustLevel>> = {
   ravenfell: 'cold',
 };
 
+/**
+ * A notice's closing line once a village trusts the hold more than it did at the start
+ * (owner's choice, D180; drafts for the owner's review in T5.12). Cold has none.
+ */
+export const trustClosingLines: Readonly<Record<TrustLevel, string | null>> = {
+  cold: null,
+  wary: "We'll pay what's fair, and we'll count it.",
+  hopeful: "We've kept back some bread for your hunters.",
+  trusting: 'We sent for you first.',
+  sworn: 'Whatever the hold needs from us, say it.',
+};
+
 /** lore-secrets §24: one line on the away sheet or the result sheet when a village rises. */
 export const trustStepLine = (village: string, level: TrustLevel): string =>
   `${village} trusts the hold a little more: ${trustLevels[level].label}.`;

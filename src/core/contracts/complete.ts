@@ -14,6 +14,7 @@ import { holdBounty, trophies, xpPerHunter } from './rewards';
 import { contractXpBonus } from '../long-night/bonuses';
 import { recordWin, sweepDocuments } from '../story/documents';
 import { defeatRibbonshade } from '../story/names';
+import { winForVillage } from '../story/trust';
 import { deathSeed, fightSeed } from './seeds';
 
 // GDD §5.4.3 (B9): rewards, injuries and XP apply the moment a contract's timer
@@ -129,6 +130,8 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   // GDD §5.4.3, §5.14.2: a success can bring documents and names; a failure never does.
   const found = success ? [...recordWin(state, contract), ...sweepDocuments(state)] : [];
   if (success && contract.monster === 'ribbonshade') found.push(...defeatRibbonshade(state));
+  // GDD §5.14.6: after the documents (a trust-gated one reads trust before this win, D178).
+  if (success) found.push(...winForVillage(state, contract.village));
 
   const ref: FightRef = {
     contractId: contract.id,
