@@ -627,7 +627,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### E. Writing
 
-- [ ] **T5.12 Letters and lists.** 👤 Draft the 17 letters without names (`lore-secrets.md` §23 voice) and the warden-name list, for the owner's approval; with them, the four trust closing lines for notices (D180).
+- [x] **T5.12 Letters and lists.** *(Done 2026-10-14: the owner approved everything as drafted, D185, D186.)* 👤 Draft the 17 letters without names (`lore-secrets.md` §23 voice) and the warden-name list, for the owner's approval; with them, the four trust closing lines for notices (D180).
 
 ### F. Art
 
