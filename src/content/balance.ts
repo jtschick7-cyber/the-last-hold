@@ -36,7 +36,7 @@ export const balance = {
     food: tunable(6, 'perMinute'),
     wood: tunable(4, 'perMinute'),
     iron: tunable(2, 'perMinute'),
-    silver: tunable(0.24, 'perMinute'),
+    silver: tunable(0.22, 'perMinute'),
   },
   silverSeam: { max: locked(2) },
   mill: { perLevel: tunable(0.25) },
@@ -104,7 +104,7 @@ export const balance = {
     growth: tunable(2.2),
     // Q9 (D81): from the Keep, each hunter's provisions are at least this many minutes
     // of the hold's food capacity (Q11). Hamlet 0: the first contracts stay at the flat base.
-    incomeMinutes: tunable({ hamlet: 0, keep: 1, citadel: 4.1, bastion: 2.5 }), // D106
+    incomeMinutes: tunable({ hamlet: 0, keep: 1, citadel: 4.4, bastion: 2.5 }), // D106, D189
   },
   monster: {
     statGrowth: tunable(1.35),

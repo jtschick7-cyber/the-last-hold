@@ -12,4 +12,6 @@ export const FAST_UNTIL_TARGETS = [
   // v0.4 (D130): joined once tuning put them on target (T4.15).
   'citadel',
   'bastion',
+  // v0.5 (D188): joined once tuning put it on target (T5.16).
+  'first-ruin',
 ] as const;
