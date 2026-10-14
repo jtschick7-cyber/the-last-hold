@@ -10,7 +10,8 @@ import { standProblem } from '../src/core/commands/stand';
 import { standKit } from '../src/core/policies/long-night';
 import { suggestSix } from '../src/core/stand/suggest';
 import { ageIndex } from '../src/core/systems/ages';
-import { bandFor } from '../src/core/story/band';
+import { propertiesFound } from '../src/core/alchemy/book';
+import { skillLevels } from '../src/core/skills/skills';
 import { startingTrust, TRUST_LEVELS } from '../src/content/story/trust';
 import { VILLAGE_IDS } from '../src/content/villages';
 
@@ -143,6 +144,22 @@ export interface StoryRecord {
   readonly trustRoseInCycle1: number;
 }
 
+/**
+ * What alchemy discovery and the warden skills did over a run (GDD §6.2 v0.6, D216; plan T6.12).
+ * Properties found and skill levels are read as each cycle ends; the last entry is the end of the run.
+ */
+export interface DiscoveryRecord {
+  /** Hours to the Alchemist's Hut, or null if it was never built. */
+  readonly hutHours: number | null;
+  /** Hours to the first new brew becoming makeable (an experiment's "Discovered"), or null. */
+  readonly firstNewBrewHours: number | null;
+  readonly cycles: readonly {
+    readonly cycle: number;
+    readonly properties: number;
+    readonly skills: Readonly<Record<string, number>>;
+  }[];
+}
+
 export interface RunResult {
   readonly spec: RunSpec;
   /** Hours from the start to each GDD §6.2 moment, or null if never reached. */
@@ -162,6 +179,7 @@ export interface RunResult {
   readonly contracts: readonly ContractRecord[];
   readonly keepPhase: KeepPhase;
   readonly story: StoryRecord;
+  readonly discovery: DiscoveryRecord;
 }
 
 const largest = (value: unknown): number => {
@@ -208,6 +226,15 @@ export const runOne = (spec: RunSpec): RunResult => {
   let prevCycle = state.cycle.number;
   const standSamples: StandSample[] = [];
   const trust: { cycle: number; levels: Record<string, string> }[] = [];
+  let hutHours: number | null = null;
+  let firstNewBrewHours: number | null = null;
+  const discoveryCycles: { cycle: number; properties: number; skills: Record<string, number> }[] =
+    [];
+  const discoveryNow = (cycle: number, s: GameState) => ({
+    cycle,
+    properties: propertiesFound(s),
+    skills: { ...skillLevels(s) },
+  });
   const levelsNow = (s: GameState): Record<string, string> =>
     Object.fromEntries(VILLAGE_IDS.map((v) => [v, s.story.trust[v].level]));
 
@@ -246,6 +273,12 @@ export const runOne = (spec: RunSpec): RunResult => {
       }
       if (Object.keys(s.hunters).length >= 4) mark('roster-4', rec.at);
       if (s.buildings['hunters-lodge'] >= 1) mark('hunters-lodge', rec.at);
+      if (hutHours === null && s.buildings['alchemists-hut'] >= 1)
+        hutHours = (rec.at - start) / HOUR;
+      for (const e of rec.away.events) {
+        if (e.type === 'experiment' && e.discovered.length > 0 && firstNewBrewHours === null)
+          firstNewBrewHours = (e.at - start) / HOUR;
+      }
       for (const e of rec.away.events) {
         if (e.type === 'clue' && e.identified) mark('first-identified', e.at);
       }
@@ -306,7 +339,10 @@ export const runOne = (spec: RunSpec): RunResult => {
         cycle: prevCycle,
       });
       // Trust as each cycle ended: the stand's own step is already in the state here.
-      if (s.cycle.number !== prevCycle) trust.push({ cycle: prevCycle, levels: levelsNow(s) });
+      if (s.cycle.number !== prevCycle) {
+        trust.push({ cycle: prevCycle, levels: levelsNow(s) });
+        discoveryCycles.push(discoveryNow(prevCycle, s));
+      }
       prevAge = s.cycle.age;
       prevCycle = s.cycle.number;
       for (const r of RESOURCE_IDS) peaks[r] = Math.max(peaks[r], s.resources[r]);
@@ -321,6 +357,7 @@ export const runOne = (spec: RunSpec): RunResult => {
   );
   if (best) moments['best-last-stand'] = best.hours;
   trust.push({ cycle: state.cycle.number, levels: levelsNow(state) });
+  discoveryCycles.push(discoveryNow(state.cycle.number, state));
   const risen = (levels: Readonly<Record<string, string>>): number =>
     VILLAGE_IDS.filter(
       (v) =>
@@ -343,7 +380,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     })),
     bands: state.cycles.flatMap((c) =>
       c.stand
-        ? [{ cycle: c.number, band: bandFor(c.stand.wavesHeld), waves: c.stand.wavesHeld }]
+        ? [{ cycle: c.number, band: c.stand.band, waves: c.stand.wavesHeld }] // the recorded band (D194)
         : [],
     ),
     trust,
@@ -362,6 +399,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     standSamples,
     contracts,
     story,
+    discovery: { hutHours, firstNewBrewHours, cycles: discoveryCycles },
     keepPhase: {
       bountySilver: [...stretches.values()].reduce((n, x) => n + x.bountySilver, 0),
       jobSilver: [...stretches.values()].reduce((n, x) => n + x.jobSilver, 0),

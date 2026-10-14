@@ -135,14 +135,17 @@ export const brewMoves = (s: GameState, act: Act): number => {
 };
 
 /**
- * GDD §6.1 (v0.6, D215): any kettle not needed for its usual brews runs an experiment: the
+ * GDD §6.1 (v0.6, D215, D235): each kettle runs an experiment behind its usual brews: the
  * untried pair with the most hidden properties left (herbs and gifts before monster drops
  * on a tie), from ingredients it holds more than the usual brews need. Returns the moves made.
  */
 export const experimentMoves = (s: GameState, act: Act): number => {
   let n = 0;
   const units = num('experiment.units');
-  while (s.queues.brewing.length < brewSlots(s)) {
+  // A kettle's brew takes 10 minutes, so a check-in's brews leave it idle until the next one:
+  // each kettle gets one experiment queued behind them (the queue is unlimited, GDD §5.7).
+  const running = (): number => s.queues.brewing.filter((j) => j.kind === 'experiment').length;
+  while (running() < brewSlots(s)) {
     const stocked = INGREDIENT_IDS.filter((id) => s.stores[id] >= units + KEEP_STOCK);
     const pairs = stocked
       .flatMap((a, i) => stocked.slice(i + 1).map((b) => [a, b] as const))

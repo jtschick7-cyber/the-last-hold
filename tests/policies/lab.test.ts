@@ -244,7 +244,7 @@ describe('the v0.6 rules (GDD §6.1, D215)', () => {
     });
   });
 
-  it('keeps enough stock for the usual brews, skips tried pairs, and never fills a busy kettle', () => {
+  it('keeps enough stock for the usual brews and skips pairs already in a kettle', () => {
     const s = rich();
     s.buildings['alchemists-hut'] = 2;
     for (const k of Object.keys(s.stores)) s.stores[k as keyof typeof s.stores] = 0;
@@ -253,9 +253,28 @@ describe('the v0.6 rules (GDD §6.1, D215)', () => {
     s.stores.mugwort = 4;
     expect(experimentMoves(s, actOn(s).act)).toBe(1);
     expect(s.queues.brewing[0]).toMatchObject({ kind: 'experiment', a: 'mugwort', b: 'juniper' });
-    // Both kettles busy after the second move? Only one pair is left, so it stops.
+    // Two kettles, but only one pair is left to try.
     expect(experimentMoves(s, actOn(s).act)).toBe(0);
     expect(s.queues.brewing).toHaveLength(1);
+  });
+
+  it('queues one experiment per kettle behind the usual brews, never more (D235)', () => {
+    const s = rich();
+    s.buildings['alchemists-hut'] = 1;
+    for (const k of Object.keys(s.stores)) s.stores[k as keyof typeof s.stores] = 0;
+    s.stores.yarrow = 6;
+    s.stores.mugwort = 6;
+    s.stores.juniper = 6;
+    s.stores.pitch = 6;
+    s.queues.brewing.push({
+      kind: 'brew',
+      item: 'fire-pot',
+      doneAt: null,
+      paid: { ingredients: {}, resources: {} },
+    });
+    expect(experimentMoves(s, actOn(s).act)).toBe(1);
+    expect(s.queues.brewing.map((j) => j.kind)).toEqual(['brew', 'experiment']);
+    expect(experimentMoves(s, actOn(s).act)).toBe(0); // one kettle, one experiment
   });
 
   it('does nothing without a Hut, and when nothing is left to learn', () => {
