@@ -113,3 +113,62 @@ test('Start Act III brings Arvid and D3-01; the Rank screen shows the ember', as
   await shot(page, 'rank-ember');
   expect(errors).toEqual([]);
 });
+
+// Plan T6.9b follow-up: the way every real player meets Arvid. The stand that closes Act II
+// begins Act III, and the new-warden sheet then says so: Ilse's line names him, D3-01 plays,
+// and the ember line lists the skills. The stand that closes Act I does none of that.
+test('the new-warden sheet brings Arvid when Act III begins', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('./?debug');
+  await begin(page, 'Mira');
+
+  const standAndNewWarden = async (warden: string, next: string) => {
+    await tab(page, 'More').click();
+    await page.getByRole('button', { name: /^Debug/ }).click();
+    await page.getByRole('button', { name: 'Unlock Bastion', exact: true }).click();
+    await page.getByRole('button', { name: 'Close' }).first().click();
+    await onwardAll(page);
+    await tab(page, 'Hold').click();
+    await page.getByRole('button', { name: 'Rank ▸' }).click();
+    await page.getByRole('button', { name: 'Make the Last Stand' }).click();
+    await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 15_000 });
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
+    await page.getByRole('button', { name: 'Go up to the walls' }).click();
+    const night = page.getByRole('dialog', { name: 'The Long Night' });
+    await expect(night.getByText(/The walls held/)).toBeVisible();
+    for (let i = 0; i < 3; i++) await night.getByRole('button', { name: 'Next' }).click();
+    await night.getByRole('textbox').fill(warden);
+    return { night, next };
+  };
+
+  // Act I's stand: no Arvid.
+  const first = await standAndNewWarden('Tamsin', 'Begin cycle 2');
+  await expect(first.night.getByText(/Ilse is back from Velkvik with the archive/)).toBeVisible();
+  await expect(first.night.getByText(/an old man with a net-needle/)).toHaveCount(0);
+  await expect(first.night.getByText(/Netmender. You got old./)).toHaveCount(0);
+  await first.night.getByRole('button', { name: first.next }).click();
+  await onwardAll(page);
+
+  // Act II's stand: Act III begins.
+  const second = await standAndNewWarden('Brage', 'Begin cycle 3');
+  const night = second.night;
+  await expect(
+    night.getByText(
+      'Ilse is back from Velkvik with the archive, and an old man with a net-needle and an axe.',
+    ),
+  ).toBeVisible();
+  await expect(night.getByText(/Netmender. You got old./)).toBeVisible();
+  await expect(
+    night.getByText(/The ember remembers: Alchemy \d+ · Smithing \d+ · Lore \d+ · Command \d+\./),
+  ).toBeVisible();
+  await shot(page, 'new-warden-arvid');
+  await night.getByRole('button', { name: second.next }).click();
+  await onwardAll(page);
+
+  // He is in the Archive now, and not as news the player already read.
+  await tab(page, 'Archive').click();
+  await page.getByRole('button', { name: 'Library' }).click();
+  await expect(page.getByRole('button', { name: /The net-mender/ })).toBeVisible();
+  expect(errors).toEqual([]);
+});

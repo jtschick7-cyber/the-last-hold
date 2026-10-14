@@ -3,6 +3,7 @@ import { consumables, type ConsumableId } from '../../content/consumables';
 import { ingredients, type IngredientId } from '../../content/ingredients';
 import { families } from '../../content/damage';
 import { monsters, type MonsterId } from '../../content/monsters';
+import { brewSummary } from '../../core/alchemy/brew-text';
 import { num } from '../../core/balance-access';
 import { oilMatches } from '../../core/contracts/prep';
 import type { CandidateView, ContractIdentity } from '../../core/investigation/view';
@@ -45,14 +46,14 @@ export const recipeText = (id: ConsumableId): string => {
 };
 
 /** What a chosen oil does against this contract: the species, or each candidate (GDD §5.7). */
-export const oilNote = (oil: ConsumableId, v: ContractIdentity): string => {
+export const oilNote = (oil: ConsumableId, v: ContractIdentity, alchemy = 0): string => {
   const def = consumables[oil];
   const e = def.effect;
   if (e.kind !== 'oil') return '';
   const family = families[e.family].name;
   if (v.identified && v.monster) {
     return oilMatches(oil, v.monster)
-      ? `${def.name}: ${def.summary.replace(/^\+/, '+')}`
+      ? `${def.name}: ${brewSummary(alchemy, oil).text}`
       : `${def.name}: no effect (target: ${families[monsters[v.monster].family].name})`;
   }
   const works = v.candidates.filter((c) => oilMatches(oil, c.monster));

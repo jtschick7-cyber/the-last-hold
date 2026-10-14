@@ -577,3 +577,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** the owner plays the preview: the v0.6 checklist is in the plan. Then, only after "the playtest passed": merge, tag, `sim:accept`, update statuses.
 - **Open questions:** none. **Proposed rows:** D239, D240.
 - **Not done / deferred:** as in the session 2 entry (Hut brew text without Alchemy potency; no e2e for the on-load card or the new-warden Arvid line; the nine older brews have no icons). The suite is touchy: a small change to a number can move one of the ruin or economy rows, as before.
+
+## 2026-10-14 — v0.6 follow-ups before the playtest (D241)
+- **Brew text shows Alchemy's boost:** the Hut's recipe rows and the launch sheet's oil note now say the numbers the fight uses (for example "+39.2% damage" at Alchemy 4), with a breakdown on long-press. Tested at level 0 (reads as before, for all 15 brews) and level 4.
+- **Playwright for the new-warden sheet:** the Act I stand shows no Arvid; the Act II stand shows Ilse's line with him, D3-01 and the ember line (`tests/e2e/alchemy-skills.spec.ts`). All 11 phone tests pass; `npm run check` and the full `npm run sim:check` are green.
+- **Still deferred:** the on-load Arvid card has no UI test; the nine older brews have no icons (left for the v1.0 art pass); no Playwright for the Hut's boosted text (needs Alchemy XP the debug panel can't give; the core is tested).

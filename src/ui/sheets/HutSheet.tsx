@@ -2,6 +2,10 @@ import { useState } from 'preact/hooks';
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
 import { INGREDIENT_IDS, ingredients, type IngredientId } from '../../content/ingredients';
 import { experimentProblem, knownRecipes } from '../../core/alchemy/book';
+import { brewSummary } from '../../core/alchemy/brew-text';
+import { skillLevel } from '../../core/skills/skills';
+import type { Breakdown } from '../../core/breakdown/breakdown';
+import { Num } from '../widgets/Num';
 import { brewSlots, experimentMs, kettlesBusy } from '../../core/alchemy/brewing';
 import { gardenCount, nextGardenTime } from '../../core/alchemy/garden';
 import {
@@ -41,6 +45,7 @@ const BrewRow = ({ s, id }: { s: GameState; id: ConsumableId }) => {
   const why = recipeShortfall(s, recipe);
   const def = consumables[id];
   const icon = brewIconId(id);
+  const summary = brewSummary(skillLevel(s, 'alchemy'), id);
   return (
     <li
       class={`${styles.row} ${styles.divider}`}
@@ -50,7 +55,13 @@ const BrewRow = ({ s, id }: { s: GameState; id: ConsumableId }) => {
       <span class={styles.grow}>
         <strong>{def.name}</strong>
         <br />
-        <span class={`${styles.small} ${styles.dim}`}>{def.summary}</span>
+        {summary.breakdown ? (
+          <span class={styles.small}>
+            <Num text={summary.text} breakdown={() => summary.breakdown as Breakdown} marked />
+          </span>
+        ) : (
+          <span class={`${styles.small} ${styles.dim}`}>{summary.text}</span>
+        )}
         <br />
         {recipes.length > 1 ? (
           <select
