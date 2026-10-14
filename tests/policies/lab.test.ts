@@ -258,6 +258,22 @@ describe('the v0.6 rules (GDD §6.1, D215)', () => {
     expect(s.queues.brewing).toHaveLength(1);
   });
 
+  it('lets a drop that no usual recipe uses go down to nothing, but keeps stock of the ones that are used', () => {
+    const s = rich();
+    s.buildings['alchemists-hut'] = 1;
+    for (const k of Object.keys(s.stores)) s.stores[k as keyof typeof s.stores] = 0;
+    s.stores['wolf-fang'] = 1;
+    s.stores['noon-poppy'] = 1;
+    s.stores['grave-dust'] = 2; // Grave Oil uses it: 2 is not enough to spare one
+    expect(experimentMoves(s, actOn(s).act)).toBe(1);
+    expect(s.queues.brewing[0]).toMatchObject({
+      kind: 'experiment',
+      a: 'wolf-fang',
+      b: 'noon-poppy',
+    });
+    expect(s.stores['grave-dust']).toBe(2);
+  });
+
   it('queues one experiment per kettle behind the usual brews, never more (D235)', () => {
     const s = rich();
     s.buildings['alchemists-hut'] = 1;

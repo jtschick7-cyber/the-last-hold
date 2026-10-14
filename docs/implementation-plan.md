@@ -737,7 +737,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 #### G. Simulator
 - [x] **T6.11 Policy rules** *(Done as D234.)* (GDD §6.1, D215): experiments in spare kettles; the new brews in the kit; Arvid used through the roster rule.
 - [x] **T6.12 Checks** *(Done as D235 and D236: the rows are in their own commit; the milestone is v0.6. With the policy fixed the full suite shows the remaining misses for T6.13.)* The v0.6 rows in `sim/targets.ts` in **their own commit** (owner-approved, D216); the milestone becomes v0.6; the reported lines (bands per cycle, skill levels, properties found). No new simulated runs: the new checks read the existing runs (D196).
-- [ ] **T6.13 Tuning** (tunables only) against every check. Likely levers: `skill.*` XP values (for "skills pace"), `band.*`, `trust.stepContracts` and `trust.triumphantContracts` (for "trust rises in cycle 1" against "no Sworn before cycle 4"), `experiment.time`. If no reasonable values pass, stop and ask.
+- [?] **T6.13 Tuning** *(Partly done as D237; Q19 asks about the recipe book row and the later-cycles row.)* (tunables only) against every check. Likely levers: `skill.*` XP values (for "skills pace"), `band.*`, `trust.stepContracts` and `trust.triumphantContracts` (for "trust rises in cycle 1" against "no Sworn before cycle 4"), `experiment.time`. If no reasonable values pass, stop and ask.
 
 ### v0.6 acceptance criteria
 1. Experiments reveal properties by the rule, never waste a pair, and the book persists through the Long Night; every brew is makeable (content test).

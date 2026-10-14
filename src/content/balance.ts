@@ -218,7 +218,7 @@ export const balance = {
   band: { heldFrom: tunable(12), triumphantFrom: tunable(15) },
   // Contracts won for a village to rise from Cold, Wary, Hopeful and Trusting (D146).
   // A Triumphant stand counts as `triumphantContracts` of them for every village (D195).
-  trust: { stepContracts: tunable([10, 15, 20, 25]), triumphantContracts: tunable(10) },
+  trust: { stepContracts: tunable([8, 15, 20, 25]), triumphantContracts: tunable(10) },
   // Hunter letters at these levels, counting the highest level ever reached (D155).
   letters: { levels: tunable([5, 8]) },
   // Until all six Ribbonshade names are found, this share of ruin contracts is a Ribbonshade (Q17, D190).
@@ -235,11 +235,11 @@ export const balance = {
       alchemy: tunable({ brew: 1, experiment: 3, property: 10 }),
       smithing: tunable({ gearPerTier: 2, smithyLevel: 2 }),
       lore: tunable({ clue: 1, knowledgeLevel: 5, document: 5 }),
-      command: tunable({ contractPerTier: 1, wave: 1 }),
+      command: tunable({ contractPerTier: 2, wave: 1 }),
     },
     // Per level (D205): brews stronger, gear cheaper, clues quicker, contract XP higher.
     alchemyPotency: tunable(0.03),
-    smithingCost: tunable(0.0175),
+    smithingCost: tunable(0.025),
     loreClueTime: tunable(0.04),
     commandXp: tunable(0.04),
   },

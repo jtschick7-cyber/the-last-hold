@@ -21,7 +21,7 @@ import {
 const T0 = Date.UTC(2026, 9, 14, 8);
 
 describe('trust (GDD §5.14.6)', () => {
-  it('starts at each village’s primer level, with steps of 10, 15, 20 and 25 contracts', () => {
+  it('starts at each village’s primer level, with steps of 8, 15, 20 and 25 contracts', () => {
     const s = createNewGame('trust', T0);
     expect(VILLAGE_IDS.map((v) => s.story.trust[v].level)).toEqual([
       'wary',
@@ -32,17 +32,17 @@ describe('trust (GDD §5.14.6)', () => {
     ]);
     expect(
       ['cold', 'wary', 'hopeful', 'trusting', 'sworn'].map((l) => stepNeed(l as never)),
-    ).toEqual([10, 15, 20, 25, null]);
+    ).toEqual([8, 15, 20, 25, null]);
   });
 
-  it('ten Kozly Hollow wins leave Cold, with one line for the step', () => {
+  it('eight Kozly Hollow wins leave Cold, with one line for the step', () => {
     const s = createNewGame('trust', T0);
-    for (let i = 0; i < 9; i++) expect(winForVillage(s, 'kozly-hollow')).toEqual([]);
+    for (let i = 0; i < 7; i++) expect(winForVillage(s, 'kozly-hollow')).toEqual([]);
     expect(winForVillage(s, 'kozly-hollow')).toEqual(['trust:kozly-hollow:wary']);
     expect(s.story.trust['kozly-hollow']).toEqual({
       level: 'wary',
       progress: 0,
-      won: 10,
+      won: 8,
       triumphs: 0,
     });
   });
@@ -51,14 +51,14 @@ describe('trust (GDD §5.14.6)', () => {
     const s = createNewGame('trust', T0);
     for (let i = 0; i < 6; i++) winForVillage(s, 'kozly-hollow');
     const keys = triumphantStand(s);
-    // Cold needs 10: Kozly Hollow (6 + 10 = 16) and Ravenfell (10) rise; the rest only gain progress.
+    // Cold needs 8: Kozly Hollow (6 + 10 = 16, left 8) and Ravenfell (10, left 2) rise; the rest only gain progress.
     expect(keys).toEqual(['trust:kozly-hollow:wary', 'trust:ravenfell:wary']);
     expect(s.story.trust['kozly-hollow']).toMatchObject({
       level: 'wary',
-      progress: 6, // 16 − 10 carried over
+      progress: 8, // 16 − 8 carried over
       triumphs: 1,
     });
-    expect(s.story.trust.ravenfell).toMatchObject({ level: 'wary', progress: 0, triumphs: 1 });
+    expect(s.story.trust.ravenfell).toMatchObject({ level: 'wary', progress: 2, triumphs: 1 });
     expect(s.story.trust['dubno-ford']).toMatchObject({ level: 'wary', progress: 10 });
     expect(s.story.trust.velkvik).toMatchObject({ level: 'wary', progress: 10 });
     expect(s.story.trust.mirograd).toMatchObject({ level: 'hopeful', progress: 10 });
@@ -99,7 +99,7 @@ describe('trust (GDD §5.14.6)', () => {
     for (let i = 0; i < 6; i++) winForVillage(s, 'kozly-hollow');
     const b = trustBreakdown(s, 'kozly-hollow');
     expect(b.value).toBe(6);
-    expect(b.breakdown.formula).toBe('6 of 10 contracts toward Wary');
+    expect(b.breakdown.formula).toBe('6 of 8 contracts toward Wary');
     expect(b.breakdown.children?.map((c) => c.value)).toEqual([6, 0]);
   });
 
