@@ -432,7 +432,7 @@ In v0.1–v0.3, the Keep is the end of content. The Rank screen shows the next R
 | Unlocks | Walls and Watchtower (§5.9.2) | the Last Stand (§5.9.3) |
 | Restores | **the old Forge Hall**: *"The roof is back on the old Forge Hall. Its forges are cold."* | **a sealed stair going down**: *"Under the Bastion floor, a stair goes down to a sealed door."* |
 
-- Every number is a tunable starting value (requirements and costs live with the Ranks in the content, D44), except the roster bonus and the tier cap, which are locked. The simulator tunes the costs to the targets: Citadel on day 2, Bastion on day 3 (§6.2).
+- Every number is a tunable starting value (requirements and costs live with the Ranks in the content, D44), except the roster bonus and the tier cap, which are locked. The simulator tunes the costs to the targets: Citadel on day 2, Bastion on days 3–4 (§6.2, D137).
 - The restorations show no inscription until v0.5 (`setting-primer.md` §6.5).
 - A hunter who carries a level above the current Rank's cap (§5.9.7) keeps it; the cap only stops new levels.
 
@@ -1013,7 +1013,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | First species Identified through investigation | ≤ 2 h after the Hunter's Lodge is built | v0.3 |
 | First species Studied (4 kills) | Days 2–3 | v0.3 |
 | Citadel reached | Day 2 | v0.4 |
-| Bastion reached; Last Stand available | Day 3 | v0.4 |
+| Bastion reached; Last Stand available | Days 3–4 *(D137: was day 3)* | v0.4 |
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.4 |
 | **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.4 |
 | Later cycles | Each ≥ 15% faster than the first, with a floor of 2 days **[JC]** *(D134: was "than the one before"; after cycle 2, cycles settle at about 3 days)*. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.4 |

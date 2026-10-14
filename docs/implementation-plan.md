@@ -505,7 +505,7 @@ G9 (Records screen, CSV/JSON export) was **not taken** (D31). Nothing is schedul
 | Check | Target |
 |---|---|
 | Citadel reached | Day 2 (24–48 h) |
-| Bastion reached; Last Stand available | Day 3 (48–72 h) |
+| Bastion reached; Last Stand available | Days 3–4 (48–96 h, D137) |
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 |
 | First Long Night | Days 3–5 (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) |
 | Later cycles | Each ≥ 15% faster than the first, floor 2 days (D134) |

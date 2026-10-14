@@ -101,8 +101,9 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
   },
   {
     id: 'bastion',
-    text: 'Bastion reached; Last Stand available: day 3',
-    bounds: [{ policy: 'standard', minHours: 48, maxHours: 72 }],
+    // Owner-approved change (D137): was day 3 (48–72 h).
+    text: 'Bastion reached; Last Stand available: days 3–4',
+    bounds: [{ policy: 'standard', minHours: 48, maxHours: 96 }],
     enforcedFrom: 'v0.4',
   },
   {
