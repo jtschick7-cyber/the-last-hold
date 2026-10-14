@@ -87,6 +87,8 @@ export const makeStand = (
     relicsFound: found,
     arrival: state.arrivalDue,
     trustSteps: [],
+    band: bandFor(result.wavesHeld),
+    alchemy: 0, // the warden's Alchemy level, frozen here from T6.6 (D206)
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];

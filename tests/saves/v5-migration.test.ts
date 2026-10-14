@@ -24,7 +24,8 @@ const load = (env: unknown): GameState => {
   return r.value.state;
 };
 
-const withoutSteps = ({ trustSteps: _t, ...stand }: StandRecord) => stand;
+// v5 adds an empty `trustSteps` to a recorded stand (D183); v6 adds `band` and `alchemy` (D194, D206).
+const withoutSteps = ({ trustSteps: _t, band: _b, alchemy: _a, ...stand }: StandRecord) => stand;
 
 describe('the v4 → v5 migration (plan T5.3)', () => {
   const old = readFixture('v4-owner.json');
@@ -48,6 +49,16 @@ describe('the v4 → v5 migration (plan T5.3)', () => {
             stand: rest.stand ? withoutSteps(rest.stand) : rest.stand,
           })),
         ).toEqual(before.cycles);
+      else if (key === 'stores')
+        // v6 adds a slot for each of the six new brews, empty.
+        expect(
+          Object.fromEntries(Object.entries(after.stores).filter(([k]) => k in before.stores)),
+        ).toEqual(before.stores);
+      else if (key === 'log')
+        // v6 adds the Alchemy level, 0, to each fight record (D206).
+        expect(after.log.recentFights.map(({ alchemy: _a, ...f }) => f)).toEqual(
+          before.log.recentFights,
+        );
       else expect(after[key], key).toEqual(before[key]);
     }
   });

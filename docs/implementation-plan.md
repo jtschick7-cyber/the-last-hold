@@ -707,7 +707,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 - [x] **T6.1b Content: the story.** *(Done: content and its tests; the core machinery for D3-01's and D3-08's conditions, Arvid's arrival and the on-load start is T6.7.)*
   - Act III in `src/content/story/` (every document's condition and text word for word from `lore-secrets.md` §26, the arrival lines, the "Yrsa's choice" Accounts event with its excerpts, D3-08); Arvid's unlock changed to "arrives with Ilse when Act III begins"; a test against `lore-secrets.md` §26 word for word, and the true-ending gate's counts with the new sources.
 - [x] **T6.2 Names.** Collision search (GDD §2.3, D173 rule) for Hidebane Oil, Wright's Oil, Coldwater Draught, Owl-Eye Drops, Steadfast Draught, Poppy Smoke (backups ready: Forgebane Oil, Hearthward Draught), Torvald Aslaksson, Hrefna Sigvaldsdóttir, Běla Dvorská, Sindri Eyvindsson. Alchemy, Smithing, Lore and Command are generic (D208). Add all to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
-- [ ] **T6.3 Migration v5 → v6**, using the **owner's real v0.5 save** as the fixture, with a round-trip test. New saved state:
+- [x] **T6.3 Migration v5 → v6** *(Done as D224. Fixtures `v5-owner.json` and `v6.json`; the Alchemy level is saved as 0 until T6.6 fills it in, and the readers of a stand's band switch to the recorded one in T6.8.)*, using the **owner's real v0.5 save** as the fixture, with a round-trip test. New saved state:
   - the recipe book (properties revealed per ingredient: the 15 from the start; pairs tried);
   - warden skill XP (all 0 for an old save, D205);
   - experiment jobs in the brewing queue;

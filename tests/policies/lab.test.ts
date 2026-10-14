@@ -83,7 +83,10 @@ describe('investigating, brewing and preparing', () => {
     s.buildings['alchemists-hut'] = 2;
     for (const k of INGREDIENT_IDS) s.stores[k] = 20;
     expect(brewMoves(s, actOn(s).act)).toBe(2);
-    expect(s.queues.brewing.map((j) => j.item)).toEqual(['grave-oil', 'grave-oil']); // up to 3 of each oil
+    expect(s.queues.brewing.map((j) => (j.kind === 'brew' ? j.item : j.kind))).toEqual([
+      'grave-oil',
+      'grave-oil',
+    ]); // up to 3 of each oil
     expect(brewMoves(s, actOn(s).act)).toBe(0);
   });
 
@@ -97,7 +100,7 @@ describe('investigating, brewing and preparing', () => {
     s.stores['thornbane-oil'] = 3;
     s.stores.pitch = 5;
     expect(brewMoves(s, actOn(s).act)).toBe(1);
-    expect(s.queues.brewing[0]?.item).toBe('fire-pot');
+    expect(s.queues.brewing[0]).toMatchObject({ kind: 'brew', item: 'fire-pot' });
   });
 
   it('carries the matching oil, a bomb the species is weak to, and a Mending Draught, when it can name the species', () => {

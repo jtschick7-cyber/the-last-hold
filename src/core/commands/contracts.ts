@@ -64,6 +64,7 @@ export const launch = (
     reckless: odds.reckless,
     prep: structuredClone(prep),
     knowledge: monsterFor(state, contract).knowledge,
+    alchemy: 0, // the warden's Alchemy level, frozen here from T6.6 (D206)
     winChance: odds.winChance,
   });
   return ok;

@@ -1,5 +1,6 @@
 import { failure, success, type Result } from '../result';
 import { SCHEMA_VERSION } from '../state/game-state';
+import { v5ToV6 } from './migration-v6';
 
 // Technical design §9.4: migrations[n] upgrades a version-n state to n + 1.
 // They're pure functions on plain JSON. Every schema change MUST add a
@@ -237,6 +238,7 @@ export const migrations: Readonly<Record<number, Migration>> = {
 
   3: v3ToV4,
   4: v4ToV5,
+  5: v5ToV6,
 };
 
 export const NEWER_VERSION = 'This save is from a newer version of the game.';

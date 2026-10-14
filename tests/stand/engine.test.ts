@@ -196,6 +196,8 @@ describe('wave logs from the saved record (technical design §5.3)', () => {
       relicsFound: [],
       arrival: false,
       trustSteps: [],
+      band: 'broken' as const,
+      alchemy: 0,
       seen: false,
     };
     expect(replayStand(record)).toEqual(made);

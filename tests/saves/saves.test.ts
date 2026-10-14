@@ -430,7 +430,7 @@ describe('the v2 → v3 migration (plan T3.4)', () => {
   });
 
   it('starts with empty stores and queues, and no garden clock', () => {
-    expect(Object.keys(after.stores)).toHaveLength(21);
+    expect(Object.keys(after.stores)).toHaveLength(27); // v3 had 21; v6 adds the six new brews
     expect(Object.values(after.stores).every((n) => n === 0)).toBe(true);
     expect(after.queues).toEqual({ brewing: [], investigation: [] });
     expect(after.garden).toEqual({ nextAt: null });
@@ -440,15 +440,25 @@ describe('the v2 → v3 migration (plan T3.4)', () => {
     const g = createNewGame('seed', 0);
     expect(g.bestiary).toEqual({});
     expect(g.queues).toEqual({ brewing: [], investigation: [] });
-    expect(Object.keys(g.stores)).toHaveLength(21);
+    expect(Object.keys(g.stores)).toHaveLength(27); // 15 consumables and 12 ingredients (v6)
   });
 
   it('the debug time skip moves the new timers with the clock', () => {
     const s = structuredClone(after);
     s.garden.nextAt = 1_000;
     s.queues.brewing = [
-      { item: 'fire-pot', doneAt: 2_000 },
-      { item: 'saltburst', doneAt: null },
+      {
+        kind: 'brew',
+        item: 'fire-pot',
+        doneAt: 2_000,
+        paid: { ingredients: { pitch: 1 }, resources: { wood: 1 } },
+      },
+      {
+        kind: 'brew',
+        item: 'saltburst',
+        doneAt: null,
+        paid: { ingredients: { 'rime-salt': 2 }, resources: { silver: 1 } },
+      },
     ];
     s.queues.investigation = [{ contractId: 'c1', nextClueAt: 3_000 }];
     shiftClock(s, 500);

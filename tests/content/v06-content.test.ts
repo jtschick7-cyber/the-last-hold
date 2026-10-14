@@ -4,8 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { balance } from '../../src/content/balance';
-import { V06_BREW_IDS, v06Brews, type BrewId } from '../../src/content/brews-v06';
-import { CONSUMABLE_IDS, consumables } from '../../src/content/consumables';
+import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../src/content/consumables';
 import { families } from '../../src/content/damage';
 import { INGREDIENT_IDS, ingredients } from '../../src/content/ingredients';
 import { ingredientProperties } from '../../src/content/properties';
@@ -22,11 +21,10 @@ const section = (from: string, to: string): string => {
   return gdd.slice(a, gdd.indexOf(to, a));
 };
 
-const ALL_BREWS: readonly BrewId[] = [...CONSUMABLE_IDS, ...V06_BREW_IDS];
-const brewName = (id: BrewId): string =>
-  id in v06Brews
-    ? v06Brews[id as keyof typeof v06Brews].name
-    : consumables[id as keyof typeof consumables].name;
+const ALL_BREWS: readonly ConsumableId[] = CONSUMABLE_IDS;
+const V06_BREW_IDS = CONSUMABLE_IDS.slice(9);
+const v06Brews = consumables;
+const brewName = (id: ConsumableId): string => consumables[id].name;
 
 describe('the properties table (GDD §8.6, D197, D202)', () => {
   const rows = section('### 8.6 Ingredients', '### 8.7 Consumables')
@@ -62,14 +60,11 @@ describe('the properties table (GDD §8.6, D197, D202)', () => {
   });
 
   it('makes every brew: 2+ carriers for oils and potions, 1+ for bombs', () => {
-    const carriers = (b: BrewId): number =>
+    const carriers = (b: ConsumableId): number =>
       INGREDIENT_IDS.filter((i) => ingredientProperties[i].some((x) => x.brew === b)).length;
     let total = 0;
     for (const b of ALL_BREWS) {
-      const kind =
-        b in v06Brews
-          ? v06Brews[b as keyof typeof v06Brews].kind
-          : consumables[b as keyof typeof consumables].kind;
+      const kind = consumables[b].kind;
       expect(carriers(b), b).toBeGreaterThanOrEqual(kind === 'bomb' ? 1 : 2);
       expect(carriers(b), b).toBeLessThanOrEqual(3);
       total += carriers(b);
@@ -80,7 +75,8 @@ describe('the properties table (GDD §8.6, D197, D202)', () => {
   it('opens the book with exactly the properties the nine v0.3 recipes prove (15)', () => {
     const proved = new Set<string>();
     for (const id of CONSUMABLE_IDS)
-      for (const ing of Object.keys(consumables[id].recipe.ingredients)) proved.add(`${ing}/${id}`);
+      for (const ing of Object.keys(consumables[id].recipe?.ingredients ?? {}))
+        proved.add(`${ing}/${id}`);
     const known = new Set<string>();
     for (const id of INGREDIENT_IDS)
       for (const x of ingredientProperties[id]) if (x.known) known.add(`${id}/${x.brew}`);
@@ -121,8 +117,9 @@ describe('the six new brews (GDD §5.8.5, D201)', () => {
     expect(v06Brews['poppy-smoke'].effect).toEqual({ kind: 'smoke', lostActions: 1 });
   });
 
-  it("don't join the saved-state id list yet (T6.3)", () => {
-    for (const id of V06_BREW_IDS) expect(CONSUMABLE_IDS as readonly string[]).not.toContain(id);
+  it('join the saved-state id list after the nine v0.3 items, with no recipe to start (T6.3)', () => {
+    expect(V06_BREW_IDS).toHaveLength(6);
+    for (const id of V06_BREW_IDS) expect(consumables[id].recipe, id).toBeNull();
   });
 });
 

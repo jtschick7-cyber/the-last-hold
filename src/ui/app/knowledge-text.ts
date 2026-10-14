@@ -34,6 +34,7 @@ export const ingredientName = (id: IngredientId): string => ingredients[id].name
 /** "2 grave dust · 1 juniper · 1 wood" */
 export const recipeText = (id: ConsumableId): string => {
   const r = consumables[id].recipe;
+  if (!r) return '';
   const parts = [
     ...Object.entries(r.ingredients).map(
       ([k, n]) => `${n} ${ingredientName(k as IngredientId).toLowerCase()}`,

@@ -1,6 +1,6 @@
 import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
-import type { ConsumableId } from '../../content/consumables';
+import type { ConsumableId, Recipe } from '../../content/consumables';
 import type { LocationId } from '../../content/damage';
 import type { GearId } from '../../content/gear';
 import type { HunterId } from '../../content/hunters';
@@ -13,6 +13,8 @@ import type { SceneId } from '../../content/text/scenes';
 import type { VillageId } from '../../content/villages';
 import type { UpgradeId } from '../../content/warden-upgrades';
 import type { HunterSnapshot } from '../combat';
+import type { Band } from '../../content/story/scenes';
+import type { RecipeBook, SkillXp } from './book-state';
 import type { StoryState } from './story-state';
 import type { InjuryKind } from '../contracts/injury';
 
@@ -21,8 +23,10 @@ import type { InjuryKind } from '../contracts/injury';
 // and preparation (plan T3.4); v4 adds Citadel and Bastion, Walls and Watchtower, Threat,
 // Embers, warden upgrades, relics, the v0.4 arrival and the cycle history (plan T4.3, D113);
 // v5 adds the story: acts, documents, names, letters, trust, Ilse, warden names and the
-// v0.5 arrival (plan T5.3). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 5;
+// v0.5 arrival (plan T5.3); v6 adds the recipe book, warden skills, experiments in the
+// kettles, the Alchemy level frozen on fights and stands, and each stand's band (plan
+// T6.3, D218). Times are epoch milliseconds.
+export const SCHEMA_VERSION = 6;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -78,6 +82,8 @@ export interface RunningContract {
   prep: Preparation;
   /** The species' knowledge level when the party set out, frozen so a replay never changes (GDD §5.6.2). */
   knowledge: number;
+  /** v6: the warden's Alchemy level when the party set out, frozen like knowledge (GDD §5.8.6, D206); 0 before v0.6. */
+  alchemy: number;
 }
 
 export interface ContractResult {
@@ -115,6 +121,8 @@ export interface FightRef {
   rulesVersion: number;
   at: number;
   prep: Preparation;
+  /** v6: the Alchemy level the fight was made at (D206); 0 for fights before v0.6. */
+  alchemy: number;
 }
 
 export interface FallenRecord {
@@ -136,11 +144,29 @@ export interface SpeciesKnowledge {
   kills: number;
 }
 
-/** A brew in the Alchemist's Hut. `doneAt` is null while it waits for a free kettle. */
+/**
+ * A brew in the Alchemist's Hut. `doneAt` is null while it waits for a free kettle.
+ * `paid` is what the queued recipe cost, so a cancel refunds exactly that even when the
+ * book later knows other recipes for the same brew (GDD §5.8.2).
+ */
 export interface BrewJob {
+  kind: 'brew';
   item: ConsumableId;
   doneAt: number | null;
+  paid: Recipe;
 }
+
+/** An experiment in a kettle (GDD §5.8.3): `units` of each ingredient were paid. */
+export interface ExperimentJob {
+  kind: 'experiment';
+  a: IngredientId;
+  b: IngredientId;
+  units: number;
+  doneAt: number | null;
+}
+
+/** Brews and experiments share the kettles, in one queue. */
+export type KettleJob = BrewJob | ExperimentJob;
 
 /** A Lodge slot at work on a contract; the next clue is revealed at `nextClueAt`. */
 export interface InvestigationSlot {
@@ -180,6 +206,10 @@ export interface StandRecord {
   arrival: boolean;
   /** Trust steps a Triumphant stand brought (`trust:village:level`, GDD §5.14.6); [] before v0.5's stands (D183). */
   trustSteps: string[];
+  /** v6: the band it earned, with the thresholds in force when it was made (D194). */
+  band: Band;
+  /** v6: the Alchemy level it was made at (D206); 0 for stands before v0.6. */
+  alchemy: number;
   /** The result sheet has been seen. */
   seen: boolean;
 }
@@ -258,7 +288,7 @@ export interface GameState {
   bestiary: Partial<Record<MonsterId, SpeciesKnowledge>>;
   /** Consumables and reagents in the hold's stores (GDD §5.7, §8.6). */
   stores: Record<ConsumableId | IngredientId, number>;
-  queues: { brewing: BrewJob[]; investigation: InvestigationSlot[] };
+  queues: { brewing: KettleJob[]; investigation: InvestigationSlot[] };
   /** The Herb Garden's next harvest; null until a garden stands (GDD §5.7). */
   garden: { nextAt: number | null };
   running: RunningContract[];
@@ -282,6 +312,10 @@ export interface GameState {
   cycles: CycleRecord[];
   /** The story (v5, GDD §5.14). */
   story: StoryState;
+  /** The recipe book (v6, GDD §5.8.4). Kept forever. */
+  book: RecipeBook;
+  /** Warden skill XP (v6, GDD §5.8.6). Kept forever. */
+  skills: SkillXp;
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;

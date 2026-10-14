@@ -100,32 +100,42 @@ describe('ingredients (GDD §8.6)', () => {
 });
 
 describe('consumables (GDD §5.7)', () => {
-  it('has 9 items: 3 oils, 3 potions, 3 bombs', () => {
-    expect(CONSUMABLE_IDS).toHaveLength(9);
-    const count = (k: string): number =>
-      CONSUMABLE_IDS.filter((c) => consumables[c].kind === k).length;
-    expect([count('oil'), count('potion'), count('bomb')]).toEqual([3, 3, 3]);
+  // GDD §5.7: the nine v0.3 items come first in the list; v0.6 adds six (§5.8.5).
+  const V03 = CONSUMABLE_IDS.slice(0, 9);
+
+  it('has 9 items from v0.3: 3 oils, 3 potions, 3 bombs; v0.6 makes 15', () => {
+    expect(CONSUMABLE_IDS).toHaveLength(15);
+    const count = (ids: readonly (typeof CONSUMABLE_IDS)[number][], k: string): number =>
+      ids.filter((c) => consumables[c].kind === k).length;
+    expect([count(V03, 'oil'), count(V03, 'potion'), count(V03, 'bomb')]).toEqual([3, 3, 3]);
+    expect([5, 6, 4]).toEqual(['oil', 'potion', 'bomb'].map((k) => count(CONSUMABLE_IDS, k)));
     for (const id of CONSUMABLE_IDS) expect(consumables[id].id).toBe(id);
+  });
+
+  it('gives the v0.3 items their recipes and leaves the v0.6 ones to be discovered', () => {
+    for (const id of V03) expect(consumables[id].recipe, id).not.toBeNull();
+    for (const id of CONSUMABLE_IDS.slice(9)) expect(consumables[id].recipe, id).toBeNull();
   });
 
   it('recipes use real ingredients and resources, in the GDD §5.7 amounts', () => {
     for (const c of Object.values(consumables)) {
+      if (!c.recipe) continue;
       for (const i of Object.keys(c.recipe.ingredients))
         expect(INGREDIENT_IDS as readonly string[], c.id).toContain(i);
       for (const r of Object.keys(c.recipe.resources))
         expect(RESOURCE_IDS as readonly string[], c.id).toContain(r);
     }
-    expect(consumables['grave-oil'].recipe.ingredients).toEqual({ 'grave-dust': 2, juniper: 1 });
+    expect(consumables['grave-oil'].recipe?.ingredients).toEqual({ 'grave-dust': 2, juniper: 1 });
     expect(consumables.saltburst.recipe).toEqual({
       ingredients: { 'rime-salt': 2 },
       resources: { silver: 1 },
     });
-    expect(consumables['fire-pot'].recipe.resources).toEqual({ wood: 1 });
+    expect(consumables['fire-pot'].recipe?.resources).toEqual({ wood: 1 });
   });
 
   it('every recipe is brewable from sources that exist in the game', () => {
     for (const c of Object.values(consumables))
-      for (const i of Object.keys(c.recipe.ingredients))
+      for (const i of Object.keys(c.recipe?.ingredients ?? {}))
         expect(INGREDIENT_IDS as readonly string[], `${c.id}: ${i}`).toContain(i);
   });
 
@@ -134,7 +144,7 @@ describe('consumables (GDD §5.7)', () => {
       const e = consumables[c].effect;
       return e.kind === 'oil' ? [e.family] : [];
     });
-    expect(new Set(fams).size).toBe(3);
+    expect(new Set(fams).size).toBe(5); // v0.3's three, then Beasts & Wilds and the Cursed (v0.6)
     for (const f of fams) {
       expect(f in families).toBe(true);
       expect(MONSTER_IDS.some((m) => monsters[m].family === f)).toBe(true);

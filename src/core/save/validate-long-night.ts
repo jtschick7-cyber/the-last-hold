@@ -22,6 +22,7 @@ import {
   str,
   type Obj,
 } from './guards';
+import { alchemyLevel, band } from './validate-alchemy';
 import { wardenName } from './validate-story';
 
 // Technical design §5.2 (v4, D113): the Long Night's part of the save guard.
@@ -79,6 +80,8 @@ const stand = (v: unknown, where: string, warnings: string[]): StandRecord => {
         : arr(o.trustSteps, `${where}.trustSteps`).map((k, i) =>
             str(k, `${where}.trustSteps[${i}]`),
           ),
+    band: band(o.band, `${where}.band`),
+    alchemy: alchemyLevel(o.alchemy, `${where}.alchemy`),
     seen: bool(o.seen, `${where}.seen`),
   };
 };

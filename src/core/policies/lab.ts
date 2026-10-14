@@ -92,7 +92,7 @@ export const brewMoves = (s: GameState, act: Act): number => {
   let n = 0;
   while (s.queues.brewing.length < brewSlots(s)) {
     const queued = (id: ConsumableId): number =>
-      s.queues.brewing.filter((j) => j.item === id).length;
+      s.queues.brewing.filter((j) => j.kind === 'brew' && j.item === id).length;
     const item = WANT.find(([id, cap]) => s.stores[id] + queued(id) < cap);
     if (!item) break;
     // Try the wanted items in order until one can be paid for.

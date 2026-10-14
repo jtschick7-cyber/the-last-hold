@@ -14,6 +14,7 @@ import styles from '../styles/ui.module.css';
 
 const missing = (s: GameState, id: ConsumableId): string | null => {
   const r = consumables[id].recipe;
+  if (!r) return 'recipe not discovered yet';
   for (const [k, n] of Object.entries(r.ingredients))
     if (s.stores[k as IngredientId] < (n ?? 0))
       return `needs ${ingredientName(k as IngredientId).toLowerCase()} (have ${s.stores[k as IngredientId]})`;
@@ -41,7 +42,10 @@ export const HutView = () => {
           {s.queues.brewing.map((j, i) => (
             <li key={i} class={`${styles.row} ${styles.divider}`}>
               <span class={styles.grow}>
-                ⏱ {consumables[j.item].name}{' '}
+                ⏱{' '}
+                {j.kind === 'brew'
+                  ? consumables[j.item].name
+                  : `Experiment: ${ingredients[j.a].name} + ${ingredients[j.b].name}`}{' '}
                 <span class={styles.dim}>
                   {j.doneAt === null
                     ? 'waiting'
@@ -81,7 +85,7 @@ export const HutView = () => {
       )}
       <h3 class={styles.cardTitle}>Recipes</h3>
       <ul class={styles.list}>
-        {CONSUMABLE_IDS.map((id) => {
+        {CONSUMABLE_IDS.filter((id) => consumables[id].recipe !== null).map((id) => {
           const def = consumables[id];
           const why = missing(s, id);
           return (

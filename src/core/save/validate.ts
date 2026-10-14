@@ -13,7 +13,6 @@ import { failure, success, type Result } from '../result';
 import {
   arr,
   bool,
-  consumableId,
   count,
   finite,
   gear,
@@ -33,6 +32,7 @@ import {
   type Obj,
 } from './guards';
 import { storyFrom } from './validate-story';
+import { alchemyLevel, bookFrom, kettleJob, skillsFrom } from './validate-alchemy';
 import { longNightFrom } from './validate-long-night';
 import type {
   ContractInstance,
@@ -166,6 +166,7 @@ const running = (v: unknown, where: string): RunningContract => {
     winChance: unit(o.winChance, `${where}.winChance`),
     prep: preparation(o.prep, `${where}.prep`),
     knowledge: knowledgeLevel(o.knowledge, `${where}.knowledge`),
+    alchemy: alchemyLevel(o.alchemy, `${where}.alchemy`),
   };
 };
 
@@ -228,6 +229,7 @@ const fightRef = (v: unknown, where: string): FightRef => {
     rulesVersion: count(o.rulesVersion, `${where}.rulesVersion`),
     at: finite(o.at, `${where}.at`),
     prep: preparation(o.prep, `${where}.prep`),
+    alchemy: alchemyLevel(o.alchemy, `${where}.alchemy`),
   };
 };
 
@@ -332,13 +334,9 @@ const check = (raw: unknown, warnings: string[]): GameState => {
     bestiary: bestiaryFrom(s.bestiary, warnings),
     stores: idRecord(s.stores, [...CONSUMABLE_IDS, ...INGREDIENT_IDS], 'stores', count, warnings),
     queues: {
-      brewing: arr(queuesRaw.brewing, 'queues.brewing').map((j, i) => {
-        const r = obj(j, `queues.brewing[${i}]`);
-        return {
-          item: consumableId(r.item, `queues.brewing[${i}].item`),
-          doneAt: orNull(r.doneAt, (x) => finite(x, `queues.brewing[${i}].doneAt`)),
-        };
-      }),
+      brewing: arr(queuesRaw.brewing, 'queues.brewing').map((j, i) =>
+        kettleJob(j, `queues.brewing[${i}]`),
+      ),
       investigation: arr(queuesRaw.investigation, 'queues.investigation').map((j, i) => {
         const r = obj(j, `queues.investigation[${i}]`);
         return {
@@ -374,6 +372,8 @@ const check = (raw: unknown, warnings: string[]): GameState => {
     },
     ...longNightFrom(s, cycleNumber, warnings),
     story: storyFrom(s, warnings),
+    book: bookFrom(s.book, warnings),
+    skills: skillsFrom(s.skills, warnings),
     settings: settingsFrom(s.settings, warnings),
   };
 };

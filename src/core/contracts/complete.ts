@@ -146,6 +146,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     rulesVersion: RULES_VERSION,
     at,
     prep: run.prep,
+    alchemy: run.alchemy,
   };
   state.log.recentFights.push(ref);
   if (state.log.recentFights.length > FIGHTS_KEPT) state.log.recentFights.shift();

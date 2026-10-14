@@ -1,7 +1,7 @@
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
 import { num } from '../balance-access';
-import type { GameState } from '../state/game-state';
+import type { BrewJob, GameState } from '../state/game-state';
 import { MS_PER_SECOND } from '../time';
 import { brewCut } from '../long-night/bonuses';
 
@@ -52,6 +52,10 @@ export interface BrewDone {
   at: number;
 }
 
+/** A brew is still the only kind of kettle job a player can queue until experiments (T6.4). */
+export const brewJobs = (state: GameState): BrewJob[] =>
+  state.queues.brewing.filter((j): j is BrewJob => j.kind === 'brew');
+
 /** Finishes the soonest brew into the stores and starts the next. The clock is at its time. */
 export const applyBrew = (state: GameState): BrewDone | null => {
   let index = -1;
@@ -64,10 +68,12 @@ export const applyBrew = (state: GameState): BrewDone | null => {
   const job = state.queues.brewing[index];
   if (!job) return null;
   state.queues.brewing.splice(index, 1);
-  state.stores[job.item] += 1;
   startBrews(state);
+  // An experiment's result (GDD §5.8.3) is T6.4; nothing can queue one before then.
+  if (job.kind === 'experiment') return null;
+  state.stores[job.item] += 1;
   return { item: job.item, at: state.time };
 };
 
-/** What a recipe costs to queue, for refunds and the UI. */
+/** The recipe the book starts with, or null for a v0.6 brew that must be discovered first. */
 export const recipeOf = (item: ConsumableId) => consumables[item].recipe;

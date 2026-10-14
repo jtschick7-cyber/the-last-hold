@@ -1,5 +1,5 @@
 import type { IngredientId } from './ingredients';
-import type { BrewId } from './brews-v06';
+import type { ConsumableId as BrewId } from './consumables';
 
 // GDD §5.8.1 and §8.6 (v0.6, D197, D202): every ingredient carries 3 hidden
 // properties, each named by the brew it makes. The table is content, the same in
