@@ -12,9 +12,13 @@ export const begin = async (page: Page, name?: string): Promise<void> => {
 export const tab = (page: Page, name: string) =>
   page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
 
-/** Closes whichever scene sheets are open (each has an "Onward" button). */
+/**
+ * Closes whichever scene sheets are open (each has an "Onward" button). Scenes appear a
+ * moment after the state that triggers them, so it waits briefly before each look.
+ */
 export const onwardAll = async (page: Page): Promise<void> => {
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
+    await page.waitForTimeout(400);
     const o = page.getByRole('button', { name: 'Onward' });
     if (!(await o.isVisible().catch(() => false))) return;
     await o.click();

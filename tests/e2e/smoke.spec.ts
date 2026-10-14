@@ -99,10 +99,7 @@ test('make the Last Stand at Bastion and start a new cycle', async ({ page }) =>
   await begin(page);
   const tab = (name: string) =>
     page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
-  const onward = async () => {
-    const o = page.getByRole('button', { name: 'Onward' });
-    if (await o.isVisible().catch(() => false)) await o.click();
-  };
+  const onward = () => onwardAll(page);
   await tab('More').click();
   await page.getByRole('button', { name: /^Debug/ }).click();
   await page.getByRole('button', { name: 'Unlock Bastion', exact: true }).click();
@@ -145,10 +142,7 @@ test('the v0.4 arrival: a Keep save faces its first Long Night, then starts over
   await begin(page);
   const tab = (name: string) =>
     page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
-  const onward = async () => {
-    const o = page.getByRole('button', { name: 'Onward' });
-    if (await o.isVisible().catch(() => false)) await o.click();
-  };
+  const onward = () => onwardAll(page);
   await tab('More').click();
   await page.getByRole('button', { name: /^Debug/ }).click();
   await page.getByRole('button', { name: 'Unlock Keep', exact: true }).click();
