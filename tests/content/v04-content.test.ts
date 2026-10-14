@@ -5,6 +5,7 @@ import { AGE_IDS, ages, type AgeId } from '../../src/content/ages';
 import { buildings, DEFENSE_IDS, type BuildingId } from '../../src/content/buildings';
 import { RELIC_IDS, relics } from '../../src/content/relics';
 import { UPGRADE_IDS, upgrades } from '../../src/content/warden-upgrades';
+import { inscriptions } from '../../src/content/story/scenes';
 import { constantAt, num } from '../../src/core/balance-access';
 
 const V04_AGES = ['citadel', 'bastion'] as const;
@@ -56,14 +57,14 @@ describe('Citadel and Bastion (GDD §5.1.3, D106)', () => {
       expect(capIn(id as BuildingId, 'citadel'), id).toBeGreaterThanOrEqual(level ?? 0);
   });
 
-  it('restore neutral text and carry no inscription (setting-primer §6.5)', () => {
+  it('restore neutral text; from v0.5 their inscriptions are appended (setting-primer §6.5, D160)', () => {
     expect(up('citadel').restores.description).toBe(
       'The roof is back on the old Forge Hall. Its forges are cold.',
     );
     expect(up('bastion').restores.description).toBe(
       'Under the Bastion floor, a stair goes down to a sealed door.',
     );
-    for (const id of V04_AGES) expect(up(id).restores.inscription).toBeUndefined();
+    for (const id of V04_AGES) expect(up(id).restores.inscription).toBe(inscriptions[id]);
   });
 
   it('follow the Keep in Rank order, and every Rank has its balance entries', () => {

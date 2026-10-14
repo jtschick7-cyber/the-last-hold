@@ -97,4 +97,7 @@ export const wornFirstLine = 'A first line, worn smooth. Pechko dusts it every m
 /** A blank name, carved for an earlier warden on a pre-v0.5 save's arrival (D152). */
 export const blankWarden = 'the warden before';
 export const keepingTheHearth = 'keeping the hearth';
+/** D153: cycle n covers years 300 + 3(n − 1) to 300 + 3n of the order. */
+export const ROLL_FIRST_YEAR = 300;
+export const YEARS_PER_WARDEN = 3;
 export const WARDEN_NAME_MAX = 24;

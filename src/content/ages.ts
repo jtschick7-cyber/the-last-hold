@@ -1,3 +1,4 @@
+import { inscriptions } from './story/scenes';
 import type { BalanceKey } from './balance';
 import type { BuildingId } from './buildings';
 import type { ResourceBundle } from './resources';
@@ -26,7 +27,7 @@ export interface AgeUp {
   readonly restores: {
     readonly summary: string;
     readonly description: string;
-    /** Citadel and Bastion have none until v0.5 (setting-primer §6.5). */
+    /** The Keep's from v0.1; Citadel and Bastion's from v0.5 (D160, lore-secrets §11). */
     readonly inscription?: string;
   };
 }
@@ -65,6 +66,7 @@ export const ages: Readonly<Record<AgeId, AgeDef>> = {
       restores: {
         summary: 'The old Forge Hall',
         description: 'The roof is back on the old Forge Hall. Its forges are cold.',
+        inscription: inscriptions.citadel, // v0.5 (D160)
       },
     },
   },
@@ -79,6 +81,7 @@ export const ages: Readonly<Record<AgeId, AgeDef>> = {
       restores: {
         summary: 'A sealed stair going down',
         description: 'Under the Bastion floor, a stair goes down to a sealed door.',
+        inscription: inscriptions.bastion, // v0.5 (D160)
       },
     },
   },

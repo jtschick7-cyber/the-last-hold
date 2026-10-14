@@ -7,6 +7,7 @@ import type { GameState } from '../state/game-state';
 import { freshHunter } from '../state/hunters-state';
 import { shiftClock } from '../state/shift';
 import { sweepDocuments } from '../story/documents';
+import { noteAllPeaks } from '../story/letters';
 import { rosterCap } from '../systems/hunters';
 import { ok, refuse, type ApplyResult } from './types';
 
@@ -111,7 +112,7 @@ export const addArvid = (state: GameState): ApplyResult => {
   if (state.hunters.arvid) return refuse('Arvid is already at the hold.');
   state.hunters.arvid = freshHunter();
   if (state.roster.active.length < rosterCap(state).value) state.roster.active.push('arvid');
-  state.story.peakLevels.arvid = Math.max(state.story.peakLevels.arvid ?? 0, 1);
+  noteAllPeaks(state);
   state.meta.debugUsed = true;
   return ok;
 };

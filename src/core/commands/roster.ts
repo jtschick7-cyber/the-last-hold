@@ -14,6 +14,7 @@ import {
   rosterCap,
 } from '../systems/hunters';
 import { sweepDocuments } from '../story/documents';
+import { noteAllPeaks } from '../story/letters';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.3.1 (recruitment, active roster and reserve) and §5.3.6 (gear).
@@ -35,6 +36,7 @@ export const recruit = (state: GameState, id: HunterId): ApplyResult => {
   state.hunters[id] = { ...freshHunter(), level: returnLevel(state, id) };
   if (state.roster.active.length < rosterCap(state).value) state.roster.active.push(id);
   sweepDocuments(state); // D2-08: Sigrun's confession comes when she's recruited, if after Bastion
+  noteAllPeaks(state); // a returning hunter's kept level counts toward their letters
   return ok;
 };
 

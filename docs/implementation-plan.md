@@ -605,7 +605,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 - [x] **T5.8 Trust.** *(D180; the notices' closing lines go to the owner with T5.12.)*
   - Contract progress, steps (`trust.stepContracts`), a step from each Triumphant stand, carry-over, never down.
   - Notices read the trust level; trust-gated documents; the breakdown; the away-sheet line.
-- [ ] **T5.9 Wardens, bands and letters.**
+- [x] **T5.9 Wardens, bands and letters.** *(Readings in D181.)*
   - The band from waves held.
   - Warden names (24 characters, Suggest) and the Roll of Wardens data (years formula, worn first line).
   - Letters at levels 5 and 8 from the highest level ever reached.

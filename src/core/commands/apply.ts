@@ -1,3 +1,4 @@
+import { nameWarden } from './wardens';
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { collect, decline, launch, markSeen } from './contracts';
@@ -93,6 +94,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return unlockAge(state, cmd.age);
     case 'debug.addArvid':
       return addArvid(state);
+    case 'warden.name':
+      return nameWarden(state, cmd.cycle, cmd.name);
     default:
       return refuse('Unknown command.');
   }

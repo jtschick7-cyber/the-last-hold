@@ -72,6 +72,8 @@ export type Command =
   | { type: 'debug.setSeed'; seed: string }
   | { type: 'debug.addEmbers'; amount: number }
   /** GDD §5.9.8: makes this save face the v0.4 arrival, as a pre-v0.4 save does. */
+  /** GDD §5.14.5 (D152): name (or rename, from the Roll) the warden of a cycle; empty clears it. */
+  | { type: 'warden.name'; cycle: number; name: string }
   | { type: 'debug.runArrival' }
   /** Plan T5.5: Arvid can't arrive in v0.5 (Act III isn't written), so this adds him. */
   | { type: 'debug.addArvid' }
