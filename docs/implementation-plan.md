@@ -688,7 +688,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 
 ### v0.6 — Alchemy discovery & skills through use
 
-**Status:** in progress *(fleshed out 2026-10-14, D193–D220)*
+**Status:** complete *(fleshed out 2026-10-14, D193–D220; playtest passed 2026-10-14, D242)*
 
 **Goal:** alchemy becomes discovery: hidden properties, experiments and a recipe book, with six new brews that answer named gaps; four warden skills that grow with use and survive the Long Night; Act III and Arvid's arrival; and the v0.5 lessons applied to bands and trust.
 **Reads:** GDD §4.1, §5.7, §5.8, §5.9.3, §5.9.7, §5.14.1, §5.14.3, §5.14.6, §5.14.8–5.14.9, §6.1–6.3 and §6.5 (v0.6 lines), §7.7, §7.8, §8.5–8.7, §9.9, §9.11, §9.13; `lore-secrets.md` §10, §20, §26; technical design §5.2, §7.2, §13.
@@ -765,14 +765,14 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: bands per cycle, skill levels per cycle, properties found per cycle.
 
 ### v0.6 owner playtest checklist 👤 (on the preview build)
-- [ ] An experiment session (a few pairs, come back) feels like discovery, not a chore.
-- [ ] The book is easy to read; you can tell what to try next.
-- [ ] At least one new brew changes a contract decision (check "unprepared would be X%").
-- [ ] Skills are visible and their bonuses make sense in breakdowns.
-- [ ] Your save migrated smoothly; your old stands kept their bands on the Roll.
-- [ ] Held feels like a good night and Triumphant like an earned one.
-- [ ] (Via debug "Start Act III", or if you reach it) Arvid's arrival and Act III's documents read well, one wrongness each.
-- [ ] Screenshot pass and new art review.
+- [x] An experiment session (a few pairs, come back) feels like discovery, not a chore.
+- [x] The book is easy to read; you can tell what to try next.
+- [x] At least one new brew changes a contract decision (check "unprepared would be X%").
+- [x] Skills are visible and their bonuses make sense in breakdowns.
+- [x] Your save migrated smoothly; your old stands kept their bands on the Roll.
+- [x] Held feels like a good night and Triumphant like an earned one.
+- [x] (Via debug "Start Act III", or if you reach it) Arvid's arrival and Act III's documents read well, one wrongness each.
+- [x] Screenshot pass and new art review.
 
 **Out of scope:** hunter use-skills (v0.8 flesh-out); three-ingredient brews; Acts IV–VI; the Deep family; Ember-echoes; trust rewards; the extras not taken (D213).
 

@@ -582,3 +582,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Brew text shows Alchemy's boost:** the Hut's recipe rows and the launch sheet's oil note now say the numbers the fight uses (for example "+39.2% damage" at Alchemy 4), with a breakdown on long-press. Tested at level 0 (reads as before, for all 15 brews) and level 4.
 - **Playwright for the new-warden sheet:** the Act I stand shows no Arvid; the Act II stand shows Ilse's line with him, D3-01 and the ember line (`tests/e2e/alchemy-skills.spec.ts`). All 11 phone tests pass; `npm run check` and the full `npm run sim:check` are green.
 - **Still deferred:** the on-load Arvid card has no UI test; the nine older brews have no icons (left for the v1.0 art pass); no Playwright for the Hut's boosted text (needs Alchemy XP the debug panel can't give; the core is tested).
+
+## 2026-10-14 — v0.6 complete
+- **The owner's playtest passed** (on the preview build, with D239–D241 in it). Plan §0.3 followed: baseline accepted (`sim:accept`, 35 of 35 checks on 5 seeds), plan status `complete`, checklist ticked, decisions row D242.
+- **Merge and tag:** pull request from `milestone/v0.6` into `main`, then tag `v0.6.0` on the merge commit.
+- **Still Proposed:** D239 (noon poppy gift at Velkvik; the owner's example was Kozly Hollow), D240, D241. The owner can accept or change them.
+- **Next:** the v0.7 (Delves) flesh-out session in chat (plan §0.4); Claude Code does not start it before that. One thing for that session: Act IV must be written before the owner's save enters Act III (D220); the owner's cycle count decides how soon.
+- **Deferred, carried over:** the on-load Arvid card has no UI test; the nine older brews have no icons (v1.0 art pass).

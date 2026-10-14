@@ -1,5 +1,5 @@
 {
-  "milestone": "v0.5",
+  "milestone": "v0.6",
   "rulesVersion": 3,
   "groups": {
     "opening/mon": {
@@ -12,7 +12,7 @@
       "roster-4": 27,
       "first-tier-3": 40,
       "hunters-lodge": 14,
-      "first-identified": 14.5,
+      "first-identified": 14.48,
       "first-studied": 30,
       "citadel": 48,
       "bastion": 96,
@@ -30,12 +30,12 @@
       "roster-4": 32,
       "first-tier-3": 51,
       "hunters-lodge": 24,
-      "first-identified": 24.5,
+      "first-identified": 24.48,
       "first-studied": 33,
       "citadel": 70,
       "bastion": 94,
-      "best-last-stand": 97,
-      "first-long-night": 103,
+      "best-last-stand": 94,
+      "first-long-night": 99.5,
       "first-ruin": 47
     },
     "standard/mon": {
@@ -48,7 +48,7 @@
       "roster-4": 27,
       "first-tier-3": 40,
       "hunters-lodge": 14,
-      "first-identified": 14.5,
+      "first-identified": 14.48,
       "first-studied": 30,
       "citadel": 48,
       "bastion": 96,
@@ -66,12 +66,12 @@
       "roster-4": 32,
       "first-tier-3": 51,
       "hunters-lodge": 24,
-      "first-identified": 24.5,
+      "first-identified": 24.48,
       "first-studied": 33,
       "citadel": 70,
       "bastion": 94,
-      "best-last-stand": 97,
-      "first-long-night": 103,
+      "best-last-stand": 94,
+      "first-long-night": 99.5,
       "first-ruin": 47
     },
     "light/mon": {
@@ -84,8 +84,8 @@
       "roster-4": 48,
       "first-tier-3": 64,
       "hunters-lodge": 29.5,
-      "first-identified": 30.5,
-      "first-studied": 78,
+      "first-identified": 30.46,
+      "first-studied": 72.5,
       "citadel": 62,
       "bastion": 110,
       "best-last-stand": 110,
@@ -102,7 +102,7 @@
       "roster-4": 46,
       "first-tier-3": 62,
       "hunters-lodge": 27.5,
-      "first-identified": 28.5,
+      "first-identified": 28.46,
       "first-studied": 70.5,
       "citadel": 70,
       "bastion": 99.5,
@@ -120,12 +120,12 @@
       "roster-4": 24,
       "first-tier-3": 30,
       "hunters-lodge": 14,
-      "first-identified": 14.5,
+      "first-identified": 14.48,
       "first-studied": 17,
       "citadel": 48,
-      "bastion": 72,
-      "best-last-stand": 72,
-      "first-long-night": 76,
+      "bastion": 78,
+      "best-last-stand": 78,
+      "first-long-night": 82,
       "first-ruin": 25
     },
     "heavy/sat": {
@@ -138,12 +138,12 @@
       "roster-4": 24,
       "first-tier-3": 36,
       "hunters-lodge": 14,
-      "first-identified": 14.5,
+      "first-identified": 14.48,
       "first-studied": 23,
       "citadel": 46,
-      "bastion": 76,
-      "best-last-stand": 76,
-      "first-long-night": 80,
+      "bastion": 80,
+      "best-last-stand": 82,
+      "first-long-night": 84,
       "first-ruin": 25
     }
   },
@@ -175,6 +175,13 @@
     "act-1": true,
     "act-2": true,
     "ribbonshades": true,
-    "trust-moves": true
+    "trust-moves": true,
+    "first-new-brew": true,
+    "recipe-book": true,
+    "skills-start": true,
+    "skills-pace": true,
+    "act-3": true,
+    "arvid-letter": true,
+    "trust-arc": true
   }
 }
