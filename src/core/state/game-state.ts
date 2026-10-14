@@ -100,6 +100,8 @@ export interface ContractResult {
   reagents: Partial<Record<IngredientId, number>>;
   /** A matching oil plus a weak-type bomb or a cancelling Saltburst (GDD §5.7). */
   wellPrepared: boolean;
+  /** v5: the story items this success brought (`doc:D1-04`, `name:39`; GDD §5.14.2). */
+  found?: string[];
 }
 
 /** What it takes to replay a fight: seed and inputs, not the log (technical design §5.3). */

@@ -227,6 +227,14 @@ describe('the Long Night (GDD §5.9.7)', () => {
     });
   });
 
+  it('v0.5 (GDD §5.14.9): the stand brings the Act I testament, and the new warden its closing scene', () => {
+    const doc = (id: string) => s.story.documents.find((d) => d.id === id);
+    expect(doc('D1-06')).toMatchObject({ cycle: 1, via: 'stand' });
+    expect(doc('D1-07')).toMatchObject({ cycle: 2, via: 'warden' });
+    // The contract still running finished first and was won, bringing Act I's first letter.
+    expect(doc('D1-01')).toMatchObject({ cycle: 1, via: 'contract' });
+  });
+
   it('the stand causes no injuries and no deaths', () => {
     expect(s.fallen).toHaveLength(before.fallen.length);
     expect(Object.keys(s.hunters)).toHaveLength(Object.keys(before.hunters).length);

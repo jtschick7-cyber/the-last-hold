@@ -13,6 +13,7 @@ import {
   returnLevel,
   rosterCap,
 } from '../systems/hunters';
+import { sweepDocuments } from '../story/documents';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.3.1 (recruitment, active roster and reserve) and §5.3.6 (gear).
@@ -33,6 +34,7 @@ export const recruit = (state: GameState, id: HunterId): ApplyResult => {
   // GDD §5.9.7: a hunter back from the Hall of the Fallen keeps half their levels.
   state.hunters[id] = { ...freshHunter(), level: returnLevel(state, id) };
   if (state.roster.active.length < rosterCap(state).value) state.roster.active.push(id);
+  sweepDocuments(state); // D2-08: Sigrun's confession comes when she's recruited, if after Bastion
   return ok;
 };
 

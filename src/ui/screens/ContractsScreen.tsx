@@ -1,3 +1,4 @@
+import { currentAct } from '../../core/story/documents';
 import { hunters } from '../../content/hunters';
 import { monsters } from '../../content/monsters';
 import { num } from '../../core/balance-access';
@@ -22,7 +23,7 @@ const durationOf = (c: ContractInstance): number => contractDuration(game(), c.t
 
 const Open = ({ c }: { c: ContractInstance }) => {
   const s = game();
-  const notice = noticeFor(c, s.meta.gameSeed);
+  const notice = noticeFor(c, s.meta.gameSeed, currentAct(s));
   const pay = holdBounty(s, c.tier, []).value;
   return (
     <li class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>

@@ -205,6 +205,9 @@ const result = (v: unknown, where: string): ContractResult => {
     }),
     reagents: reagentCounts(o.reagents, `${where}.reagents`),
     wellPrepared: bool(o.wellPrepared, `${where}.wellPrepared`),
+    ...(o.found === undefined
+      ? {}
+      : { found: arr(o.found, `${where}.found`).map((x, i) => str(x, `${where}.found[${i}]`)) }),
   };
 };
 

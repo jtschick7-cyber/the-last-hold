@@ -6,6 +6,7 @@ import { catchUpNow } from '../sim/offline';
 import type { GameState } from '../state/game-state';
 import { freshHunter } from '../state/hunters-state';
 import { shiftClock } from '../state/shift';
+import { sweepDocuments } from '../story/documents';
 import { rosterCap } from '../systems/hunters';
 import { ok, refuse, type ApplyResult } from './types';
 
@@ -78,6 +79,7 @@ export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
   state.cycle.age = age;
   const record = state.cycles[state.cycles.length - 1];
   if (record && record.ranks[age] === undefined) record.ranks[age] = state.time; // D113
+  sweepDocuments(state);
   state.meta.debugUsed = true;
   return ok;
 };

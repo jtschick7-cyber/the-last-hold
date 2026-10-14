@@ -593,7 +593,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### C. Story systems
 
-- [ ] **T5.6 Acts and documents.**
+- [x] **T5.6 Acts and documents.** *(Readings in D178; the row-by-row test is `tests/story/documents.test.ts`.)*
   - One act per cycle; counters per act; an unwritten act closes with "The story continues in a later version."
   - In Act II, fell villages' ruin notices end "…up at the old Kamenfell outpost." (moved here from T5.4, D176).
   - Every condition kind (§5.14.2), and delivery: contract results, Rank-up sheets, the stand result, scenes.
