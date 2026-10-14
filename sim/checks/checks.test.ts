@@ -387,7 +387,11 @@ describe('first ruin (D168)', () => {
 
 describe('Act I and Act II land in their cycles (D168)', () => {
   const act1 = [...STORY.act1.docs.map((d) => doc(d, 1)), doc('D1-07', 2)];
-  const act2 = [...STORY.act2.docs.map((d) => doc(d, 2)), doc('D2-10', 3)];
+  const act2 = [
+    ...STORY.act2.docs.map((d) => doc(d, 2)),
+    ...STORY.act2.later.docs.map((d) => doc(d, 3)),
+    doc('D2-10', 3),
+  ];
   it('Act I: its contract, Rank and stand documents by the end of cycle 1, D1-07 at the next warden', () => {
     expect(act1Check.judge([withStory({ documents: act1 })]).pass).toBe(true);
     const late = act1.map((d) => (d.id === 'D1-10' ? doc('D1-10', 2) : d));
@@ -400,7 +404,12 @@ describe('Act I and Act II land in their cycles (D168)', () => {
     expect(r.lines.join('\n')).toContain('D1-02');
     expect(r.lines.join('\n')).toContain('reported only');
   });
-  it('Act II: every document but Sigrun’s in cycle 2, D2-10 at the next warden', () => {
+  it('Act II’s 2nd to 5th ruin documents are due by the end of cycle 3 (Q17)', () => {
+    expect(act2Check.judge([withStory({ documents: act2 })]).pass).toBe(true);
+    const slow = act2.map((d) => (d.id === 'D2-06' ? doc('D2-06', 4) : d));
+    expect(act2Check.judge([withStory({ documents: slow })]).pass).toBe(false);
+  });
+  it('Act II: its Rank, stand and first documents in cycle 2, D2-10 at the next warden', () => {
     expect(act2Check.judge([withStory({ documents: act2 })]).pass).toBe(true);
     expect(act2Check.judge([withStory({ documents: act2.slice(1) })]).pass).toBe(false);
   });

@@ -12,6 +12,8 @@ import type { Check, CheckResult } from './types';
 interface ActRows {
   readonly byCycle: number;
   readonly docs: readonly string[];
+  /** Documents that count across the act and are due a cycle or two later (Q17). */
+  readonly later?: { readonly docs: readonly string[]; readonly byCycle: number };
   readonly nextWarden: { readonly doc: string; readonly byCycle: number };
   readonly reportedOnly: readonly string[];
 }
@@ -36,6 +38,7 @@ const actCheck = (id: 'act-1' | 'act-2', act: ActRows): Check => {
         const medianCycle = (doc: string): number => median(rs.map((r) => foundIn(r, doc)));
         const judged = [
           ...act.docs.map((doc) => ({ doc, by: act.byCycle })),
+          ...(act.later?.docs ?? []).map((doc) => ({ doc, by: act.later?.byCycle ?? act.byCycle })),
           { doc: act.nextWarden.doc, by: act.nextWarden.byCycle },
         ];
         const rows = judged.map(({ doc, by }) => ({ doc, by, at: medianCycle(doc) }));
