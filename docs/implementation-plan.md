@@ -599,7 +599,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
   - Every condition kind (§5.14.2), and delivery: contract results, Rank-up sheets, the stand result, scenes.
   - Documents stay obtainable in later cycles.
   - **A test for every Act I and Act II document's condition,** row by row against `lore-secrets.md` §21–§22.
-- [ ] **T5.7 Names and Ribbonshades.**
+- [x] **T5.7 Names and Ribbonshades.** *(Readings in D179; the gate test is `tests/story/names.test.ts`.)*
   - A name is found with its source. Ribbonshades give the six names in their fixed order, Jaro's first, with the scene and Halina's note; after six, a ribbon with no name.
   - **The true-ending gate test:** all 40 names have exactly one source, and none is Delve-only, event-only or missable (`lore-secrets.md` §8).
 - [ ] **T5.8 Trust.**
