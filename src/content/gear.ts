@@ -1,3 +1,4 @@
+import type { AgeId } from './ages';
 import type { BuildingId } from './buildings';
 import type { ResourceBundle } from './resources';
 
@@ -104,4 +105,31 @@ export const gear: Readonly<Record<GearId, GearDef>> = {
     cost: { iron: 600, silver: 150 },
     requires: smithy(6),
   },
+};
+
+// ---- v0.5: the Wright's Blade (GDD §5.3.6, D159; renamed D170) ----
+// The fourth weapon tier: keeps the Silver sub-hit and adds a Rune sub-hit of the
+// same size (gear.runedFraction). Needs the Citadel (the Forge Hall) as well as
+// Smithy 8. Content only (plan T5.1): it joins GEAR_IDS in T5.5, after the v4 → v5
+// migration (T5.3), because a hunter's gear is saved state.
+export interface WrightsBladeDef extends Omit<GearDef, 'id'> {
+  readonly id: 'wrights-blade';
+  /** A Rune sub-hit beside the Silver one (GDD §5.3.6). */
+  readonly runeSubHit: true;
+  readonly requiresAge: AgeId;
+}
+
+export const wrightsBlade: WrightsBladeDef = {
+  id: 'wrights-blade',
+  name: "Wright's Blade",
+  slot: 'weapon',
+  tier: 4,
+  might: 12,
+  armor: 0,
+  silverSubHit: true,
+  runeSubHit: true,
+  fireTakenReduction: 0,
+  cost: { iron: 600, silver: 300 },
+  requires: smithy(8),
+  requiresAge: 'citadel',
 };

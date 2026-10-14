@@ -156,7 +156,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | v0.2 | Check-in with contracts (tier 1 from Hamlet, G6), hunters, combat logs |
 | v0.3 | Contracts gain investigation, the bestiary, and preparation |
 | v0.4 | Cycle loop: Threat, Last Stand, Long Night, Embers, relics, Citadel and Bastion *(⚑ P3: moved ahead of alchemy discovery)* |
-| v0.5 | Act I and the story systems: documents, the Archivist, warden naming, the Roll of Wardens, letters, village trust; ruin contracts, Rune damage and the Runed Blade *(⚑ P2: split from the Long Night; detail §5.14)* |
+| v0.5 | Act I and the story systems: documents, the Archivist, warden naming, the Roll of Wardens, letters, village trust; ruin contracts, Rune damage and the Wright's Blade *(⚑ P2: split from the Long Night; detail §5.14)* |
 | v0.6 | Session loop begins (alchemy experiments) |
 | v0.7 | Session loop gains Delves |
 | v0.8–v0.10 | Meta loop deepens: stars and talents (v0.8), events (v0.9), Orders (v0.10) |
@@ -523,7 +523,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 There are six types: **Steel, Silver, Fire, Frost, Rune, Venom**.
 - Each hunter has one innate damage type, from their weapon style.
 - Each monster has a resistance multiplier per type. 1.0 is neutral; below 1 resists; above 1 is weak. The values are shown once the monster is Identified (§5.6).
-- **Rune** damage belongs to the Emberwright lore. From v0.5 it comes from the Runed Blade's sub-hit (§5.3.6) and from Arvid Netmender (§8.5); it's the Cursed family's common weakness (§8.3).
+- **Rune** damage belongs to the Emberwright lore. From v0.5 it comes from the Wright's Blade's sub-hit (§5.3.6) and from Arvid Netmender (§8.5); it's the Cursed family's common weakness (§8.3).
 
 #### 5.3.5 Traits
 
@@ -548,12 +548,12 @@ Gear is **upgraded in place** **[JC]**. Each hunter has a weapon slot and an arm
 | Iron Blade | +4 Might | 60 iron | Smithy 1 |
 | Steel Blade | +9 Might | 250 iron, 50 wood | Smithy 3 |
 | Silvered Blade | +9 Might. Each hit also deals a separate **Silver sub-hit**: `0.25 × Might_eff × variance × crit` × the target's Silver resistance. Armor doesn't apply, and it's logged as its own line *(⚑ revision B3 [JC])* | 250 iron, 120 silver | Smithy 5 |
-| **Runed Blade** *(v0.5, D159)* | +12 Might. Keeps the Silver sub-hit and adds a **Rune sub-hit** of the same size: `0.25 × Might_eff × variance × crit` × the target's Rune resistance, no Armor, its own log line | 600 iron, 300 silver | Smithy 8 and the Citadel (the Forge Hall) |
+| **Wright's Blade** *(v0.5, D159; was "Runed Blade", D170)* | +12 Might. Keeps the Silver sub-hit and adds a **Rune sub-hit** of the same size: `0.25 × Might_eff × variance × crit` × the target's Rune resistance, no Armor, its own log line | 600 iron, 300 silver | Smithy 8 and the Citadel (the Forge Hall) |
 | Hide Armor | +2 Armor | 40 wood, 30 food | Smithy 1 |
 | Mail | +5 Armor | 300 iron | Smithy 3 |
 | Emberwright Plate | +8 Armor, −10% Fire damage taken | 600 iron, 150 silver | Smithy 6 |
 
-The Runed Blade (v0.5) is the fourth weapon tier, strictly better than the Silvered Blade, so upgrading in place still works. Like all gear it resets at the Long Night (A4).
+The Wright's Blade (v0.5) is the fourth weapon tier, strictly better than the Silvered Blade, so upgrading in place still works. Like all gear it resets at the Long Night (A4).
 
 #### 5.3.7 Injury and death (D07)
 
@@ -1072,7 +1072,7 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **The stand** *(v0.4)*: from Bastion, runs a quick preview (20 practice stands) at every check-in and stands at the first check-in where Embers per day of the cycle is lower than at the one before. It takes the suggested six; each hunter carries the oil for the family most common in the first 12 waves; Mending Draughts for as many hunters as it has; bombs are automatic. Light and Heavy use the same rule.
 - **Embers** *(v0.4)*: buys the cheapest affordable warden upgrade (ties by list order), and keeps the default three active hunters in each new cycle.
 - **The roster** *(v0.5, D167)*: whenever the active roster has room, it fills it from the reserve, highest levels first.
-- **The Runed Blade** *(v0.5, D167)*: bought like any gear upgrade. Ruin contracts are ordinary contracts to it; story items are never a goal.
+- **The Wright's Blade** *(v0.5, D167)*: bought like any gear upgrade. Ruin contracts are ordinary contracts to it; story items are never a goal.
 
 ### 6.2 Targets
 
@@ -1247,16 +1247,16 @@ Every constant here is tunable unless marked locked.
 
 ### 7.7 The story *(v0.5, D144–D166)*
 
-**Keys to add in T5.1.** This table lists the v0.5 keys with their starting values in separate columns. T5.1 rewrites each row into the `key` = value form above, in the same commit that adds the keys to `balance.ts`, so `npm run check` (which matches §7 against `balance.ts` both ways) stays green until then. All are tunable.
+Every constant here is tunable (D166).
 
-| Formula | Expression | Key | Starting value | § |
-|---|---|---|---|---|
-| Stand band | Broken below `heldFrom`; Held below `triumphantFrom`; Triumphant from it | `band.heldFrom`, `band.triumphantFrom` | 9, 12 waves | 5.14.8 |
-| Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand adds one step to every village | `trust.stepContracts` | [10, 15, 20, 25] | 5.14.6 |
-| Hunter letters | at the highest level ever reached | `letters.levels` | [5, 8] | 5.14.7 |
-| Runed sub-hit | `f × Might_eff × variance × crit × resist[Rune]`, no Armor | `gear.runedFraction` | 0.25 | 5.3.6 |
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Stand band | Broken below `heldFrom`; Held below `triumphantFrom`; Triumphant from it | `band.heldFrom` = 9, `band.triumphantFrom` = 12 (waves) | 5.14.8 |
+| Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand adds one step to every village | `trust.stepContracts` = [10, 15, 20, 25] | 5.14.6 |
+| Hunter letters | at the highest level ever reached | `letters.levels` = [5, 8] | 5.14.7 |
+| Runed sub-hit | `f × Might_eff × variance × crit × resist[Rune]`, no Armor | `gear.runedFraction` = 0.25 | 5.3.6 |
 
-Trait and ability numbers (Shield-companion, Old Wright, and the Cursed creatures' abilities) live with their content, like every earlier trait and ability (§8.3, §8.5). The Runed Blade's Might and cost live with the gear content (§5.3.6).
+Trait and ability numbers (Shield-companion, Old Wright, and the Cursed creatures' abilities) live with their content, like every earlier trait and ability (§8.3, §8.5). The Wright's Blade's Might and cost live with the gear content (§5.3.6).
 
 ---
 
@@ -1968,6 +1968,6 @@ Each one is also marked **[JC]** where it appears.
 7. **Wardens are named, with Suggest;** the Roll starts with a worn line, legible in Act IV. (§5.14.5)
 8. **Letters at levels 5 and 8 (was 10), from the highest level ever reached;** every hunter has two. (§5.14.7)
 9. **Ruins from the Keep at tier 2+,** from Kozly Hollow, Velkvik and Ravenfell; four Cursed creatures. (§5.4.1, §8.3)
-10. **The Runed Blade** is the fourth weapon tier and keeps the Silver sub-hit. (§5.3.6)
+10. **The Wright's Blade** is the fourth weapon tier and keeps the Silver sub-hit. (§5.3.6)
 11. **Arvid Netmender** (was Stonebrow): a Rune Vanguard, free, from Act III. (§8.5)
 12. **The Deep family waits** for the acts that explain it. (§5.6.1)

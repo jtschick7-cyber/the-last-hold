@@ -402,4 +402,48 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'clear',
     note: 'Replaces "Long Watch", another name for the Deathwatch in Warhammer 40K (D116). "Night Lamp" is a Witcher 3 item.',
   },
+  // v0.5 mechanics content (plan T5.1a). Cleared at the v0.5 flesh-out (D154, D158).
+  ...['Gloam-moths', 'Ribbonshade', 'Anvil-wight', 'Rimewrought'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-14',
+    result: 'clear',
+    note: 'Original Cursed creature; searched at the v0.5 flesh-out (D158).',
+  })),
+  ...['Arvid Netmender', 'Shield-companion', 'Old Wright'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-14',
+    result: 'clear',
+    note: 'Searched at the v0.5 flesh-out (D154). Shield-companion is only a Pathfinder spell, not an influence.',
+  })),
+  {
+    name: 'Arvid',
+    checked: '2026-10-14',
+    result: 'clear',
+    note: 'Short form of Arvid Netmender (D154); a real Nordic given name.',
+  },
+  // Web search against the influences, 2026-10-14 (plan T5.1a, T5.2).
+  {
+    name: "Wright's Blade",
+    checked: '2026-10-14',
+    result: 'clear',
+    note: 'Replaces "Runed Blade": Warcraft has "Eternium Runed Blade" and "Maladath, Runed Blade of the Black Flight", and "runeblade" is a Warcraft weapon type (owner, D170).',
+  },
+  ...['Lightless', 'Seal-burn', 'Unthawed'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-14',
+    result: 'clear',
+    note: 'Ability name; searched against the influences, no match (Lightless is only Path of Exile monsters and indie games).',
+  })),
+  {
+    name: 'Re-forge',
+    checked: '2026-10-14',
+    result: 'generic',
+    note: 'An everyday word. Warcraft had a "Reforging" stat system (removed) and Witcher 3 Remastered calls its transmog "Reforge"; neither is a monster ability (D170, Proposed).',
+  },
+  {
+    name: 'Cursed',
+    checked: '2026-10-14',
+    result: 'generic',
+    note: 'Family name; an everyday word.',
+  },
 ];

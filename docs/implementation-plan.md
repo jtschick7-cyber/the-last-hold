@@ -536,9 +536,9 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### v0.5 — The Long Night: Act I and the story systems
 
-**Status:** not started *(fleshed out 2026-10-14, D144–D169)*
+**Status:** in progress *(fleshed out 2026-10-14, D144–D169)*
 
-**Goal:** the story arrives. Acts I and II, documents and Ilse's Archive, the forty names, warden naming and the Roll of Wardens, hunter letters, village trust on screen, the stand's band, the Citadel and Bastion inscriptions; and the mechanics the story needs: ruin contracts with four Cursed creatures, Rune damage, the Runed Blade and Arvid Netmender. Existing saves start Act I at once (D149).
+**Goal:** the story arrives. Acts I and II, documents and Ilse's Archive, the forty names, warden naming and the Roll of Wardens, hunter letters, village trust on screen, the stand's band, the Citadel and Bastion inscriptions; and the mechanics the story needs: ruin contracts with four Cursed creatures, Rune damage, the Wright's Blade and Arvid Netmender. Existing saves start Act I at once (D149).
 **Reads:** GDD §5.1.3 (restores), §5.3.4, §5.3.6, §5.4.1, §5.4.3, §5.6.1, §5.9.3, §5.9.7, §5.14, §6.1–6.3 and §6.5 (v0.5 lines), §7.7, §8.2–§8.6, §9.11, §9.14, the v0.5 judgment calls; `lore-secrets.md` §8, §10–§12, §15, §20–§25; `setting-primer.md` (voice); technical design §5.2, §7.2, §9.4, §13.
 
 **Before you start 👤**
@@ -549,16 +549,18 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 | **Export your real v0.4 save** (More → Save & Data → Copy save code) and paste it into a session | T5.3 (the migration fixture) and T5.10 (the arrival test) | Before T5.3 |
 | Decide any name collisions the search finds | T5.2 | When asked |
 | Approve the 17 drafted letters and the warden-name list | T5.12 | When asked |
-| Review the new art (the four Cursed creatures, Arvid, the Runed Blade, the Archive icons) | T5.13 | In the playtest |
+| Review the new art (the four Cursed creatures, Arvid, the Wright's Blade, the Archive icons) | T5.13 | In the playtest |
 
 ### A. Content and state
 
-- [ ] **T5.1 Content and keys.** *(Split if it runs long: T5.1a mechanics content, T5.1b story content.)*
-  - The v0.5 keys from GDD §7.7 into `balance.ts`, all tunable, and the §7.7 rows rewritten into the `key` = value form in the same commit (D166).
-  - The four Cursed creatures (stats, resistances, abilities, clue tags and texts, drops) and the ruin row of the coverage table, with the content-validation test (§8.3.1) covering ruins.
-  - The ruin tag on Kozly Hollow, Velkvik and Ravenfell; the Runed Blade; Arvid Netmender and his two traits.
-  - Story content in `src/content/`: acts, every Act I and II document with its condition and text, the forty names with their sources and hints, the five name-bearing letters (and slots for the other 17), the residents' band lines, the trust text, the inscriptions, and the warden-name list.
-  - A test against the GDD and `lore-secrets.md` tables.
+- [ ] **T5.1 Content and keys.** *(Split, as planned: T5.1a mechanics content, T5.1b story content.)*
+  - [x] **T5.1a Keys and mechanics content.**
+    - The v0.5 keys from GDD §7.7 into `balance.ts`, all tunable, and the §7.7 rows rewritten into the `key` = value form in the same commit (D166).
+    - The four Cursed creatures (stats, resistances, abilities, clue tags and texts, drops) and the ruin row of the coverage table, checked against the GDD in `tests/content/v05-content.test.ts` (the live coverage test covers ruins once they join the board, T5.4).
+    - The ruin tag on Kozly Hollow, Velkvik and Ravenfell; the Wright's Blade (was "Runed Blade", D170); Arvid Netmender and his two traits. Outside the saved-state id lists until their wiring tasks (D171).
+  - [ ] **T5.1b Story content.**
+    - Story content in `src/content/`: acts, every Act I and II document with its condition and text, the forty names with their sources and hints, the five name-bearing letters (and slots for the other 17), the residents' band lines, the trust text, the inscriptions, and the warden-name list.
+    - A test against the GDD and `lore-secrets.md` tables.
   - Wiring that changes saved state waits for T5.3.
 - [ ] **T5.2 Names.** Collision search (GDD §2.3) for every new proper noun:
   - the 36 new roll names;
@@ -585,7 +587,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
   - The creatures join the Last Stand's waves at their tiers.
   - **Contract fights and every golden fight unchanged.** If a golden changes, stop and ask; bump `rulesVersion` only with the owner's OK.
 - [ ] **T5.5 Rune.**
-  - The Runed Blade: Citadel and Smithy 8; the Rune sub-hit on its own log line; the breakdowns.
+  - The Wright's Blade: Citadel and Smithy 8; the Rune sub-hit on its own log line; the breakdowns.
   - Arvid's traits (Shield-companion as taken%, within the 75% cap; Old Wright).
   - Arvid's unlock: when Act III begins. He can't arrive in v0.5, so a debug action adds him for testing.
 
@@ -630,12 +632,12 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 - [ ] **T5.13 Art** (the D59 method).
   - Portraits for the four Cursed creatures (a new family template) and Arvid (the portrait generator, from his look in GDD §8.5).
-  - Icons for the Runed Blade, the ribbon and the document types (letter, journal, ledger, testament).
+  - Icons for the Wright's Blade, the ribbon and the document types (letter, journal, ledger, testament).
   - 👤 Review.
 
 ### G. Simulator
 
-- [ ] **T5.14 Policy rules** (GDD §6.1, D167): refill the active roster from the reserve whenever there's room (highest levels first); buy the Runed Blade like any gear; report bands, letters reached, trust levels and names found per cycle.
+- [ ] **T5.14 Policy rules** (GDD §6.1, D167): refill the active roster from the reserve whenever there's room (highest levels first); buy the Wright's Blade like any gear; report bands, letters reached, trust levels and names found per cycle.
 - [ ] **T5.15 Checks and speed.**
   - The v0.5 rows in `sim/targets.ts` (owner-approved, D168; their own commit); the milestone becomes v0.5.
   - **The suite runs in parallel,** one run per core (D169), with a test that the parallel report matches a sequential one.
@@ -648,7 +650,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 2. A pre-v0.5 save meets Ilse on load, names its earlier wardens, and starts Act I, tested on the owner's real v0.4 save.
 3. All 40 names have exactly one source, none missable (test); the Names view shows found and missing names with hints.
 4. Trust rises, never falls, and explains itself; it changes no numbers.
-5. Ruin contracts, the four Cursed creatures, the Runed Blade and Arvid work, with breakdowns and readable logs.
+5. Ruin contracts, the four Cursed creatures, the Wright's Blade and Arvid work, with breakdowns and readable logs.
 6. Every stand has a band; the Roll of Wardens shows every warden.
 7. Contract fights for v0.4 species and every golden fight are unchanged.
 8. Every earlier check passes; the full suite runs in ≤ 5 min.
@@ -673,7 +675,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 - [ ] Act I's documents read well, arrive at sensible moments, and each has one wrongness, not more.
 - [ ] Your save started Act I smoothly, and naming your earlier wardens felt right.
 - [ ] The Names view makes you want to find the next one; the hints are fair.
-- [ ] Ruins and the Cursed feel different from the folklore monsters; the Runed Blade feels worth it.
+- [ ] Ruins and the Cursed feel different from the folklore monsters; the Wright's Blade feels worth it.
 - [ ] Trust is easy to read; the band on your stand felt fair.
 - [ ] The Roll of Wardens and the inscriptions land.
 - [ ] Screenshot pass and new art review.

@@ -73,3 +73,8 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     gifts: ['rime-salt'],
   },
 };
+
+// GDD §8.2 (v0.5, D157): ruin joins these villages' location tags. Like barrows,
+// ruins are never generated in the Hamlet or at tier 1. Content only (plan T5.1):
+// the tag joins each village's `locations` in T5.4, with the Cursed creatures.
+export const RUIN_VILLAGES: readonly VillageId[] = ['kozly-hollow', 'velkvik', 'ravenfell'];
