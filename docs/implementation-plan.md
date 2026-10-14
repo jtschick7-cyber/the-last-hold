@@ -643,7 +643,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
   - The v0.5 rows in `sim/targets.ts` (owner-approved, D168; their own commit); the milestone becomes v0.5.
   - **The suite runs in parallel,** one run per core (D169), with a test that the parallel report matches a sequential one.
   - Full suite ≤ 5 min in CI.
-- [?] **T5.16 Tuning** *(Mostly done, D189: two checks, Act II and the Ribbonshade names, can't pass by tuning; the question is Q17, `docs/questions.md`.)* (tunables only) against every check; likely levers are the ruin creatures' numbers and the trust steps. If no reasonable values pass, stop and ask.
+- [x] **T5.16 Tuning** *(Done 2026-10-14, D189–D191: two tunables moved, Ribbonshades favoured in ruins, two target rows moved a cycle with the owner's approval, Q17 and Q18. Every check passes; the full suite takes about 2.3 minutes.)* (tunables only) against every check; likely levers are the ruin creatures' numbers and the trust steps. If no reasonable values pass, stop and ask.
 
 ### v0.5 acceptance criteria
 
@@ -661,9 +661,9 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 | Check | Target |
 |---|---|
 | Act I lands in its cycle | Every Act I document with a contract, Rank or stand condition (D1-01, -03, -04, -06, -09, -10) found by the end of cycle 1; D1-07 at the next warden. D1-02 and D1-05 reported only |
-| Act II lands in its cycle | D2-01, D2-02, D2-07 and D2-09 found in cycle 2; D2-03 to D2-06 (the 2nd to 5th ruin win) by the end of cycle 3 (Q17, D190); D2-10 at the next warden; D2-08 (Sigrun) reported only |
+| Act II lands in its cycle | D2-01, D2-02, D2-07 and D2-09 found in cycle 2; D2-03 to D2-06 (the 2nd to 5th ruin win) by the end of cycle 4 (Q17, Q18, D191); D2-10 at the next warden; D2-08 (Sigrun) reported only |
 | Ruins show up | First ruin contract won ≤ 24 h after the Keep |
-| Ribbonshade names | All six found by the end of cycle 3 |
+| Ribbonshade names | All six found by the end of cycle 4 (Q18, D191) |
 | Trust moves | At least one village rises a step in cycle 1 |
 | All earlier checks | Pass |
 | Suite time | ≤ 5 min in CI (parallel, D169) |

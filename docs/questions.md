@@ -163,7 +163,7 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a). It is the smallest change and keeps "Studied is a few wins, Mastered is a lot" intact. (d) is also reasonable if you like a quick first taste of the bestiary.
 - **Answer (owner):** 2026-10-13: option (a), Studied at **4 kills** (D99). First Studied now comes at 28 h (Monday median of 5) and 33 h (Saturday); the check is no longer pending.
 
-### Q17 — Ruins don't come often enough for Act II's documents or the Ribbonshade names (blocks the last part of T5.16) — open
+### Q17 — Ruins don't come often enough for Act II's documents or the Ribbonshade names (blocks the last part of T5.16) — answered
 - **What the full simulator suite shows** (Standard player, Monday, 5 seeds, after the tuning below): every check passes except two. **Act II lands in its cycle** fails: D2-03 to D2-06 are the 2nd to 5th ruin contract won after Act II begins, and the median player wins about **one** ruin contract per cycle, so they arrive in cycle 3 (D2-03, D2-04, D2-05) and cycle 4 (D2-06), not cycle 2. **All six Ribbonshade names by the end of cycle 3** fails: the median run never finds all six (one probe had defeated three Ribbonshades by cycle 5).
 - **Why tuning can't fix it:** a cycle lasts about 3 days, and the board delivers about 20 contracts in one (a new one every 2 hours; the pace, the cap and the tier unlocks are locked, plan §0.6). A ruin is picked for about 1 contract in 5 from tier 2 up (a village's location tags, D157; there is no tunable for it), so a cycle sees only 3–4 ruins, and four creatures share them (a Ribbonshade is about one in three). Five ruin wins, or six Ribbonshade defeats in three cycles, would need roughly half of all contracts to be ruins. That would change what the board is.
 - **Options:**
@@ -173,4 +173,10 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
   - (d) **Change the content instead:** lower the ruin-win counts for D2-03 to D2-06 (for example 2nd, 2nd, 3rd, 3rd) and favour Ribbonshades as in (c). Touches the Act II documents you approved.
 - **Recommendation:** (c). It keeps the board's feel and the documents' text, finds the Ribbonshade names about two a cycle (all six by the end of cycle 3), and lets Act II's later documents arrive over its cycle and the next, which suits a story told in pieces.
 - **What I did meanwhile (tunables only):** `rate.silver` 0.24 → 0.22 and `provisions.incomeMinutes.citadel` 4.1 → 4.4 (D189), which put "contracts own the silver" (one Saturday seed was at 68.8%) and "provisions matter" back inside their bounds, and the first-ruin row joined the fast set. Every other check passes; the full suite takes about 2.3 minutes in parallel (was 4.5–6 minutes).
-- **Answer (owner):**
+- **Answer (owner):** 2026-10-14: option (c) (D190). It helped but wasn't enough: the six names came by cycle 4 and D2-06 in cycle 4. See Q18.
+
+### Q18 — Ruin supply: the two checks still miss by one cycle (follow-up to Q17) — answered
+- **What happened:** after the Ribbonshade change, the full suite passes except Act II's last ruin document (D2-06, cycle 4, due by 3) and the six names (cycle 4, due by 3). Raising the Ribbonshade share to 70% and 90% gave the same results: the limit is how many ruin contracts the board posts.
+- **Options:** (a) move both deadlines one cycle (rows in `sim/targets.ts`); (b) post more ruins (about 1 in 4 instead of 1 in 5), then re-tune; (c) lower two Act II document counts.
+- **Recommendation:** (a).
+- **Answer (owner):** (a), 2026-10-14 (D191). Both rows now read "by the end of cycle 4"; every check passes.
