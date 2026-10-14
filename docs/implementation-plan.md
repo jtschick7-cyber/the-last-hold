@@ -617,7 +617,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### D. UI
 
-- [ ] **T5.11a The Archive.**
+- [x] **T5.11a The Archive.** *(Data in `core/story/archive.ts`; screen and reader in `ui/screens/ArchiveScreen.tsx`; checked in the browser with T5.11b.)*
   - The tab renames when Ilse arrives.
   - Bestiary, Library (with the letters shelf), Accounts, Names; the reader; badges.
 - [ ] **T5.11b Story across the game.**

@@ -1,4 +1,4 @@
-import { arriveV05, nameWarden, runV05Arrival } from './wardens';
+import { arriveV05, nameWarden, readArchive, runV05Arrival } from './wardens';
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { collect, decline, launch, markSeen } from './contracts';
@@ -100,6 +100,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return arriveV05(state, cmd.names);
     case 'debug.runV05Arrival':
       return runV05Arrival(state);
+    case 'archive.read':
+      return readArchive(state, cmd.key);
     default:
       return refuse('Unknown command.');
   }

@@ -2,6 +2,8 @@ import { signal } from '@preact/signals';
 import { useEffect } from 'preact/hooks';
 import { buildInfo } from '../../platform/build-info';
 import type { UpdateHandle } from '../../platform/service-worker';
+import { archiveTab } from '../../core/story/archive';
+import { ArchiveScreen } from '../screens/ArchiveScreen';
 import { BestiaryScreen } from '../screens/BestiaryScreen';
 import { ContractsScreen } from '../screens/ContractsScreen';
 import { HoldScreen } from '../screens/HoldScreen';
@@ -55,7 +57,8 @@ const SCREENS: Record<Tab, () => preact.JSX.Element> = {
   hold: () => <HoldScreen />,
   contracts: () => <ContractsScreen />,
   hunters: () => <HuntersScreen />,
-  bestiary: () => <BestiaryScreen />,
+  // GDD §5.14.3 (D150): the Bestiary tab becomes the Archive once Ilse arrives.
+  bestiary: () => (archiveTab(game()).open ? <ArchiveScreen /> : <BestiaryScreen />),
   more: () => <MoreScreen />,
 };
 
@@ -150,9 +153,13 @@ export const App = () => {
   const arrival = game().arrivalDue;
   const shown: readonly Tab[] = arrival
     ? ['hold', 'more']
-    : tabsFor(game().board.opened, Object.keys(game().bestiary).length > 0);
+    : tabsFor(
+        game().board.opened,
+        Object.keys(game().bestiary).length > 0 || game().story.ilseAt !== null,
+      );
   const screen = shown.includes(tab.value) ? tab.value : 'hold';
   const unread = game().results.length;
+  const archive = archiveTab(game());
   return (
     <div class={css.app}>
       <Ribbon />
@@ -172,8 +179,9 @@ export const App = () => {
             aria-current={tab.value === t ? 'page' : undefined}
             onClick={() => (tab.value = t)}
           >
-            {TAB_LABEL[t]}
+            {t === 'bestiary' && archive.open ? 'Archive' : TAB_LABEL[t]}
             {t === 'contracts' && unread > 0 ? ` (${unread})` : ''}
+            {t === 'bestiary' && archive.open && archive.unread > 0 ? ` (${archive.unread})` : ''}
           </button>
         ))}
       </nav>

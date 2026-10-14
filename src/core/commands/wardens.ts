@@ -37,3 +37,10 @@ export const runV05Arrival = (state: GameState): ApplyResult => {
   state.meta.debugUsed = true;
   return ok;
 };
+
+/** GDD §5.14.2: an opened Archive item loses its badge. */
+export const readArchive = (state: GameState, key: string): ApplyResult => {
+  if (!state.story.unread.includes(key)) return refuse('Nothing new there.');
+  state.story.unread = state.story.unread.filter((k) => k !== key);
+  return ok;
+};

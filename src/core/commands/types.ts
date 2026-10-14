@@ -77,6 +77,8 @@ export type Command =
   /** GDD §5.14.1 (D149): a pre-v0.5 save meets Ilse and names its earlier wardens, by cycle. */
   | { type: 'story.arrive'; names: Record<number, string> }
   | { type: 'debug.runV05Arrival' }
+  /** GDD §5.14.2: an Archive item has been opened; its badge goes. */
+  | { type: 'archive.read'; key: string }
   | { type: 'debug.runArrival' }
   /** Plan T5.5: Arvid can't arrive in v0.5 (Act III isn't written), so this adds him. */
   | { type: 'debug.addArvid' }
