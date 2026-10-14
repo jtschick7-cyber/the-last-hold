@@ -728,7 +728,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 - [x] **T6.8 Bands and trust** *(Done as D230; "Held from 12 · Triumphant from 15" on the stand screen was already there.)*. Thresholds 12 / 15 from `balance.ts`; a Triumphant stand adds `trust.triumphantContracts` progress to every village (carry-over, Sworn stops counting; each step it completes gets its line); past stands keep their recorded band (Roll of Wardens, result sheets).
 
 #### E. UI
-- [ ] **T6.9a The Hut.** Brew, Experiment and Book sections (GDD §9.9); discovery lines on the away sheet and results.
+- [x] **T6.9a The Hut** *(Done as D231; the Playwright smoke for it is with T6.9b.)*. Brew, Experiment and Book sections (GDD §9.9); discovery lines on the away sheet and results.
 - [ ] **T6.9b Skills and Act III on screen.** "What the ember remembers" on the Rank screen with breakdowns; the skill lines on the away sheet and new-warden sheet; Arvid's arrival and the Act III scenes; "Held from 12 · Triumphant from 15" on the stand screen. **Extend the Playwright smoke:** debug → queue an experiment → skip time → a property revealed in the Book; and debug "Start Act III" → Arvid arrives → D3-01. Screenshot pass at phone size.
 
 #### F. Art

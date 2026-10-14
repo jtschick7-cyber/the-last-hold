@@ -3,6 +3,7 @@ import { RESOURCE_IDS } from '../../content/resources';
 import { lineTriggerRules, residentLines } from '../../content/text/lines';
 import { residents } from '../../content/residents';
 import { hunters, type HunterId } from '../../content/hunters';
+import { experimentLines } from '../../core/alchemy/hut-view';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { AwaySummary } from '../../core/sim';
 import styles from '../styles/ui.module.css';
@@ -50,6 +51,19 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
             .map((e) => (e.type === 'brew' ? consumables[e.item as ConsumableId].name : ''))
             .join(', ')}
         </p>
+      )}
+      {summary.events.some((e) => e.type === 'experiment') && (
+        <div class={styles.small}>
+          {summary.events.flatMap((e) =>
+            e.type === 'experiment'
+              ? experimentLines((id) => consumables[id].name, e).map((line, i) => (
+                  <p key={`${e.at}:${i}`} class={styles.good}>
+                    {line}
+                  </p>
+                ))
+              : [],
+          )}
+        </div>
       )}
       {summary.events.some((e) => e.type === 'clue') && (
         <p class={styles.small}>

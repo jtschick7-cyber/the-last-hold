@@ -1,4 +1,6 @@
 import { signal } from '@preact/signals';
+import { consumables } from '../../content/consumables';
+import { experimentLines } from '../../core/alchemy/hut-view';
 import { apply, type ApplyResult, type Command } from '../../core/commands';
 import { advance, catchUp, type AwaySummary } from '../../core/sim';
 import type { GameState } from '../../core/state/game-state';
@@ -34,6 +36,9 @@ const AWAY_SHEET_FROM_MS = 5 * 60 * 1000;
 export const version = signal(0);
 export const catchUpProgress = signal<{ done: number; total: number } | null>(null);
 export const awaySummary = signal<AwaySummary | null>(null);
+/** GDD §9.9: what experiments showed since the game opened (live play only), newest last. */
+export const hutNews = signal<string[]>([]);
+const HUT_NEWS_KEEP = 4;
 /** Shown instead of the game when a save can't safely be used. */
 export const blocked = signal<string | null>(null);
 /** Problems from loading (quarantined saves, repairs), for the player to see once. */
@@ -52,6 +57,15 @@ export interface Report {
 const REPORTS_KEEP = 3;
 
 let state: GameState | null = null;
+
+/** Live time passing: remembers what experiments showed, so the Hut can say so. */
+const advanceLive = (s: GameState, t: number): void => {
+  const log = advance(s, t);
+  const lines = log.events.flatMap((e) =>
+    e.type === 'experiment' ? experimentLines((id) => consumables[id].name, e) : [],
+  );
+  if (lines.length > 0) hutNews.value = [...hutNews.value, ...lines].slice(-HUT_NEWS_KEEP);
+};
 let store: SaveStore | null = null;
 let channelStorage: ChannelStorage | null = null;
 let canSave = true;
@@ -107,7 +121,7 @@ export const saveNow = (): boolean => {
 export const dispatch = (cmd: Command): ApplyResult => {
   const s = game();
   const t = now();
-  advance(s, t);
+  advanceLive(s, t);
   const result = apply(s, cmd, t);
   bump();
   if (result.ok) saveNow();
@@ -178,7 +192,7 @@ export const startGame = async (): Promise<void> => {
 
   setInterval(() => {
     if (document.visibilityState !== 'visible' || catchUpProgress.value) return;
-    advance(game(), now());
+    advanceLive(game(), now());
     bump();
   }, LIVE_TICK_MS);
 
@@ -186,7 +200,7 @@ export const startGame = async (): Promise<void> => {
     if (document.visibilityState !== 'visible' || catchUpProgress.value) return;
     if (now() - game().time >= CATCH_UP_FROM_MS) void runCatchUp();
     else {
-      advance(game(), now());
+      advanceLive(game(), now());
       bump();
     }
   });
