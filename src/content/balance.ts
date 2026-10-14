@@ -220,6 +220,8 @@ export const balance = {
   trust: { stepContracts: tunable([10, 15, 20, 25]) },
   // Hunter letters at these levels, counting the highest level ever reached (D155).
   letters: { levels: tunable([5, 8]) },
+  // Until all six Ribbonshade names are found, this share of ruin contracts is a Ribbonshade (Q17, D190).
+  ruin: { ribbonshadeShare: tunable(0.5) },
 } as const;
 
 export type Balance = typeof balance;
