@@ -589,3 +589,18 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **D239–D241 accepted by the owner (D243).**
 - **Next:** the v0.7 (Delves) flesh-out session in chat (plan §0.4); Claude Code does not start it before that. One thing for that session: Act IV must be written before the owner's save enters Act III (D220); the owner's cycle count decides how soon.
 - **Deferred, carried over:** the on-load Arvid card has no UI test; the nine older brews have no icons (v1.0 art pass).
+
+## 2026-10-14 — session end: v0.6.0 shipped; the v0.7/v0.8 flesh-out is next (in Claude chat)
+- **State:** `main` is at the v0.6 merge commit `2cde36c` (pull request #8), tagged **`v0.6.0`** (the owner pushed the tag: cloud sessions can't push tags, so tags are the owner's step). Every CI job was green; `sim/baseline.json` holds v0.6's accepted baseline (35 of 35 checks). Plan: v0.1–v0.6 `complete`; v0.7 onward `not started`. Decisions D228–D243 are all Decided. No open questions (last: Q19, answered). The preview build still serves `milestone/v0.6` until a `milestone/v0.7` branch is pushed.
+- **What the owner is doing next:** the **v0.7 (Delves) full + v0.8 (Hunter depth) lighter flesh-out**, in a Claude chat, not in Claude Code (plan §0.4). The prompt and the list of attachments are in `docs/flesh-out/v0.7-v0.8-prompt.md`. It includes **Act IV, written in full** (it must exist before the owner's save enters Act III, D220; the roll already fixes its six names, #21, #22, #24, #25, #26, #27).
+- **Claude Code must not start v0.7** until the flesh-out output is in the repo. When the owner brings it back (files `OUT-1` to `OUT-7`, saved under `docs/flesh-out/v0.7/`), the next Claude Code session should:
+  1. Read `CLAUDE.md`, this entry, the plan and the outputs; run `npm ci` and `npm run check`.
+  2. Apply `OUT-1` (decisions, from **D244**) and `OUT-3` (lore: Act IV is §28, judgment calls §29), `OUT-2` (GDD edits) and `OUT-4` (the plan's v0.7 and v0.8 sections) **in one docs commit**, checking each against the repo. Next question number is **Q20**; next lore section **§28**; next task **T7.1**.
+  3. **Keep `npm run check` green while doing it:** the balance test reads the GDD's §7 tables, so new constants must be written without the `` `key` = value `` form until the task that adds them to `balance.ts` (this is what the v0.6 sessions did); the v0.6 handoff explains it.
+  4. Run the **name collision search** on `OUT-6` (the GDD §2.3 influences), add the names to `tests/content/names.ts`, and put anything unsearchable in `questions.md`.
+  5. Put anything still open in `questions.md` and mark the task `[?]`; then start v0.7 on a new branch `milestone/v0.7` (the preview follows the most recently pushed `milestone/*` branch) with T7.1.
+- **Lessons from v0.6 worth carrying into v0.7:**
+  - The simulator suite is touchy: a small change to a number (even the Smithing cost) can flip a ruin or economy row. After any rules or policy change, run the whole `npm run sim:check` (about 2 minutes) rather than trusting the fast set; a sweep over one tunable is the way to find a plateau (D228, D237, D240).
+  - Tunables only for balance (CLAUDE.md); structural misses go to `questions.md` with options (Q19 was one: it was fixed with a content source, D239).
+  - Cloud sessions: git pushes to branches work; tag pushes don't. The GitHub tools open and merge pull requests.
+- **Deferred, carried over:** the on-load Arvid card (old saves only) has no browser test; the nine older brews have no icons (the v1.0 art pass); the Hut's live discovery lines aren't saved (session only).
