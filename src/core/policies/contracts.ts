@@ -1,3 +1,5 @@
+import { skillLevel } from '../skills/skills';
+import { gearCost } from '../skills/hooks';
 import type { HunterId } from '../../content/hunters';
 import type { Command } from '../commands';
 import { computeOdds } from '../contracts/odds';
@@ -10,7 +12,14 @@ import { availableHunters, candidates, nextGear, rosterCap, snapshotOf } from '.
 import type { Bundle } from './goals';
 import { contractIdentity } from '../investigation/view';
 import { investigationSlots } from '../investigation/lodge';
-import { brewMoves, investigateMoves, labBuildings, labFirstSetBuilt, prepFor } from './lab';
+import {
+  brewMoves,
+  experimentMoves,
+  investigateMoves,
+  labBuildings,
+  labFirstSetBuilt,
+  prepFor,
+} from './lab';
 import { ageIndex } from '../systems/ages';
 import { hunters } from '../../content/hunters';
 import { traits } from '../../content/traits';
@@ -51,6 +60,7 @@ const oddsFor = (
     location: c.location,
     rank: s.cycle.age,
     prep,
+    alchemy: skillLevel(s, 'alchemy'),
     samples: PROBE_SAMPLES,
   }).winChance;
 };
@@ -101,8 +111,9 @@ const equip = (s: GameState, act: Act, reserve: Bundle): number => {
     for (const slot of ['weapon', 'armor'] as const) {
       const next = nextGear(h, slot);
       if (!next) continue;
+      const price = gearCost(s, next).cost;
       const clear = (['food', 'wood', 'iron', 'silver'] as const).every(
-        (r) => s.resources[r] - (next.cost[r] ?? 0) >= reserve[r],
+        (r) => s.resources[r] - price[r] >= reserve[r],
       );
       if (clear && act({ type: 'gear.upgrade', hunter: id, slot })) n += 1;
     }
@@ -152,6 +163,7 @@ export const contractMoves = (
     actions += recruit(s, act, silverHold) + equip(s, act, held) + labBuildings(s, act, held);
   refillRoster(s, act);
   actions += brewMoves(s, act);
+  actions += experimentMoves(s, act);
   for (const c of [...s.board.open].sort(byValue)) {
     const free = availableHunters(s);
     if (free.length === 0) break;

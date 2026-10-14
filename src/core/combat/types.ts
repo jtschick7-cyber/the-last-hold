@@ -59,6 +59,8 @@ export interface FightInput {
   /** What the party carries (GDD §5.7); absent means nothing. */
   readonly prep?: Preparation;
   readonly stand?: StandWaveOptions;
+  /** The warden's Alchemy level, frozen at launch (GDD §5.8.6, D206): brews are 3% stronger per level. Absent means 0. */
+  readonly alchemy?: number;
 }
 
 /** A potion a hunter carries (GDD §5.7). `used` is true once it has fired or been ruined. */
@@ -67,7 +69,10 @@ export interface HunterPotion {
   readonly name: string;
   readonly effect: Extract<
     ConsumableEffect,
-    { kind: 'heal' | 'armorUntilAction' | 'speedWholeFight' }
+    {
+      kind:
+        'heal' | 'armorUntilAction' | 'speedWholeFight' | 'fireTaken' | 'hitChance' | 'steadfast';
+    }
   >;
   /** 0.25 more power with Herbwise (potionPower). */
   readonly power: number;
@@ -134,6 +139,12 @@ export interface Combatant {
   chillLeft: number;
   /** Saltburst: the monster's next actions in which abilities do nothing. */
   abilitiesBlocked: number;
+  /** Owl-Eye Drops (v0.6): added to the hunter's hit chance for the whole fight. */
+  hitBonus: number;
+  /** Coldwater Draught (v0.6): taken% against Fire for the whole fight. */
+  fireTakenPotion: number;
+  /** Steadfast Draught (v0.6): ability-caused lost actions still to be kept. */
+  steadfastLeft: number;
   /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
   extraTaken: number;
   /** Rimewrought's Unthawed has stripped its Armor (GDD §8.3, v0.5). */

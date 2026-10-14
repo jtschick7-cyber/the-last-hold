@@ -25,9 +25,24 @@ const lowestBy = (
   return best;
 };
 
-const lose = (c: Combatant, n = 1): void => {
-  c.lostActions += n;
+/**
+ * Costs `c` an action, unless a Steadfast Draught keeps it (GDD §5.8.5: the first time a
+ * monster's ability would cost the holder an action, it doesn't; the ability's other
+ * effects still apply). True when the action is lost.
+ */
+const lose = (c: Combatant): boolean => {
+  const p = c.potion;
+  if (c.steadfastLeft > 0 && p && !p.used) {
+    c.steadfastLeft -= 1;
+    if (c.steadfastLeft === 0) p.used = true;
+    return false;
+  }
+  c.lostActions += 1;
+  return true;
 };
+
+/** The log words for an action a Steadfast Draught kept. */
+const keeps = (c: Combatant): string => `their ${c.potion?.name ?? 'potion'} keeps their action`;
 
 /** Effects that fire when an attack by `attacker` hits; returns log notes. */
 export const afterOwnHit = (
@@ -73,16 +88,21 @@ export const afterOwnHit = (
       }
       case 'barrowGrip':
         if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Barrow-Grip')) {
-          lose(target);
-          notes.push(`${target.name} is held (loses their next action)`);
+          notes.push(
+            lose(target)
+              ? `${target.name} is held (loses their next action)`
+              : `${target.name} is held, but ${keeps(target)}`,
+          );
         }
         break;
       case 'dragUnder':
         if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Drag Under')) {
-          lose(target);
+          const lost = lose(target);
           target.nextHitTakenMult = a.nextHitMult;
           notes.push(
-            `${target.name} is dragged under (loses their next action, takes ×${a.nextHitMult} next)`,
+            lost
+              ? `${target.name} is dragged under (loses their next action, takes ×${a.nextHitMult} next)`
+              : `${target.name} is dragged under, but ${keeps(target)} (takes ×${a.nextHitMult} next)`,
           );
         }
         break;
@@ -158,12 +178,15 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
           const victim = standingHunters[idx];
           if (f.logging) notes.push(`Pick ${pick.toFixed(3)} → ${victim?.name ?? 'nobody'}`);
           if (victim) {
-            lose(victim);
+            const lost = lose(victim);
             emit(f, {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
-              text: () => `${m.name} leads ${victim.name} astray (loses their next action)`,
+              text: () =>
+                lost
+                  ? `${m.name} leads ${victim.name} astray (loses their next action)`
+                  : `${m.name} leads ${victim.name} astray, but ${keeps(victim)}`,
               rolls: used,
               rollNotes: notes,
             });
@@ -183,14 +206,16 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Drowning Song')) {
           const victim = lowestBy(standingHunters, armorEff, false);
           if (victim) {
-            lose(victim);
+            const lost = lose(victim);
             skipAttack = true;
             emit(f, {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
               text: () =>
-                `${m.name} sings, and ${victim.name} is charmed (loses their next action)`,
+                lost
+                  ? `${m.name} sings, and ${victim.name} is charmed (loses their next action)`
+                  : `${m.name} sings, and ${victim.name} is charmed, but ${keeps(victim)}`,
               rolls: [],
             });
           }
@@ -200,14 +225,14 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Enthrall')) {
           const victim = lowestBy(standingHunters, mightEff, true);
           if (victim) {
-            lose(victim);
+            const lost = lose(victim);
             const healed = heal(m, roundHalfUp(m.maxHealth * a.healFraction));
             emit(f, {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
               text: () =>
-                `${m.name} enthralls ${victim.name} (loses their next action), +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+                `${m.name} enthralls ${victim.name} (${lost ? 'loses their next action' : keeps(victim)}), +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
               rolls: [],
               amount: healed,
               targetHealth: m.health,

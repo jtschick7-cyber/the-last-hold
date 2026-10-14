@@ -51,6 +51,16 @@ describe('the v3 → v4 migration (plan T4.3)', () => {
       'settings',
     ] as const) {
       if (key === 'meta') expect({ ...after.meta, schemaVersion: 3 }).toEqual(before.meta);
+      else if (key === 'stores')
+        // v6 adds a slot for each of the six new brews, empty.
+        expect(
+          Object.fromEntries(Object.entries(after.stores).filter(([k]) => k in before.stores)),
+        ).toEqual(before.stores);
+      else if (key === 'log')
+        // v6 adds the Alchemy level, 0, to each fight record (D206).
+        expect(after.log.recentFights.map(({ alchemy: _a, ...f }) => f)).toEqual(
+          before.log.recentFights,
+        );
       else expect(after[key], key).toEqual(before[key]);
     }
   });
@@ -157,6 +167,8 @@ describe('v4 state (technical design §5.2, D113)', () => {
       relicsFound: ['plough-share'],
       arrival: true,
       trustSteps: [],
+      band: 'broken',
+      alchemy: 0,
       seen: false,
     };
     expect(load(JSON.parse(encodeSaveFile(makeEnvelope(s, 0))))).toEqual(s);

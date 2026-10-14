@@ -1,3 +1,4 @@
+import { noteDocument } from '../skills/hooks';
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
 import { letters, type LetterSlot } from '../../content/story/letters';
 import { constantAt } from '../balance-access';
@@ -25,6 +26,7 @@ export const notePeak = (state: GameState, hunter: HunterId, level: number): str
     if (state.story.letters.some((l) => l.hunter === hunter && l.slot === slot)) return;
     state.story.letters.push({ hunter, slot, cycle: state.cycle.number, at: state.time });
     state.story.unread.push(letterKey(hunter, slot));
+    noteDocument(state); // Lore: a letter counts like a document (GDD §5.8.6)
     keys.push(letterKey(hunter, slot));
     const name = letters.find((l) => l.hunter === hunter && l.slot === slot)?.name;
     if (name !== undefined) {

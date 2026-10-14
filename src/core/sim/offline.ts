@@ -1,3 +1,5 @@
+import { skillLevels } from '../skills/skills';
+import type { SkillId } from '../../content/skills';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { num } from '../balance-access';
 import type { ContractResult, GameState } from '../state/game-state';
@@ -32,6 +34,8 @@ export interface AwaySummary {
   /** Contracts that arrived on the board while away. */
   arrivals: number;
   events: AdvanceEvent[];
+  /** Warden skill levels before and after (GDD §5.8.6); the UI words any rise. Absent in older reports. */
+  skills?: { before: Record<SkillId, number>; after: Record<SkillId, number> };
 }
 
 export interface CatchUpProgress {
@@ -47,6 +51,7 @@ export interface CatchUpProgress {
 export function* catchUp(state: GameState, now: number): Generator<CatchUpProgress, AwaySummary> {
   const before = { ...state.resources };
   const settledBefore = state.stats.peasantsSettled;
+  const skillsBefore = skillLevels(state);
   const backwardClock = now < state.meta.clockHighWater;
   const away = backwardClock ? 0 : Math.max(0, now - state.time);
   const cap = offlineCap(state).value * MS_PER_SECOND;
@@ -93,6 +98,7 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
     recovered: events.flatMap((e) => (e.type === 'recovered' ? [e.hunter] : [])),
     arrivals: events.filter((e) => e.type === 'arrival').length,
     events,
+    skills: { before: skillsBefore, after: skillLevels(state) },
   };
 }
 

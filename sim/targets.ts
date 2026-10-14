@@ -5,7 +5,7 @@
 
 import type { PolicyId } from '../src/core/policies';
 
-export const MILESTONES = ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v0.5', 'v0.7'] as const;
+export const MILESTONES = ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v0.5', 'v0.6', 'v0.7'] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
 export interface Bound {
@@ -164,6 +164,49 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.5',
   },
+  // v0.6 (GDD §6.2, D216: owner-approved rows).
+  {
+    id: 'first-new-brew',
+    text: 'First new brew discovered: ≤ 24 h after the Alchemist’s Hut is built',
+    bounds: [],
+    enforcedFrom: 'v0.6',
+  },
+  {
+    id: 'recipe-book',
+    text: 'Recipe book complete (36 of 36 properties) by the end of cycle 3',
+    bounds: [],
+    enforcedFrom: 'v0.6',
+  },
+  {
+    id: 'skills-start',
+    text: 'Skills start moving: every warden skill at level ≥ 1 by the end of cycle 1',
+    bounds: [],
+    enforcedFrom: 'v0.6',
+  },
+  {
+    id: 'skills-pace',
+    text: 'Skills pace: at the end of cycle 3, every warden skill is between level 4 and 8',
+    bounds: [],
+    enforcedFrom: 'v0.6',
+  },
+  {
+    id: 'act-3',
+    text: 'Act III lands in its cycle: D3-01 to D3-06 by the end of cycle 3, D3-07 with the next warden (D3-08 reported only)',
+    bounds: [],
+    enforcedFrom: 'v0.6',
+  },
+  {
+    id: 'arvid-letter',
+    text: 'Arvid’s level-5 letter (Leif, #34) by the end of cycle 4',
+    bounds: [],
+    enforcedFrom: 'v0.6',
+  },
+  {
+    id: 'trust-arc',
+    text: 'Trust keeps an arc: no village reaches Sworn before cycle 4 (none Sworn at the end of cycle 3)',
+    bounds: [],
+    enforcedFrom: 'v0.6',
+  },
   {
     id: 'idle-only',
     text: 'Idle-only vs Standard: first-time completion of all content ≤ 1.3× slower',
@@ -197,10 +240,36 @@ export const STORY = {
     nextWarden: { doc: 'D2-10', byCycle: 3 },
     reportedOnly: ['D2-08'],
   },
+  /** Act III (v0.6, D216): D3-01 to D3-06 by the end of cycle 3, D3-07 with the next warden. */
+  act3: {
+    byCycle: 3,
+    docs: ['D3-01', 'D3-02', 'D3-03', 'D3-04', 'D3-05', 'D3-06'],
+    nextWarden: { doc: 'D3-07', byCycle: 4 },
+    reportedOnly: ['D3-08'],
+  },
   /** The six Ribbonshade names (roll numbers, in their fixed order) by the end of cycle 3. */
   ribbonNames: [39, 15, 16, 17, 19, 20],
   // Owner-approved change (Q18, D191): was cycle 3; a cycle brings only a few ruins.
   ribbonsByCycle: 4,
+} as const;
+
+/**
+ * GDD §6.2 (v0.6, D216): the discovery, skill and arc rows. Judged on the median over the
+ * Monday Standard seeds; Saturday is reported only, as for every time target (D62).
+ */
+export const V06 = {
+  /** First new brew discovered within this many hours of the Hut being built. */
+  newBrewHours: 24,
+  /** Every one of the 36 properties found by the end of this cycle. */
+  bookByCycle: 3,
+  /** Every skill at level ≥ 1 by the end of this cycle. */
+  skillsStartByCycle: 1,
+  /** Every skill between `min` and `max` at the end of this cycle. */
+  skillsPace: { cycle: 3, min: 4, max: 8 },
+  /** Arvid's level-5 letter (slot 0) by the end of this cycle. */
+  arvidLetterByCycle: 4,
+  /** No village Sworn at the end of the cycle before this one. */
+  noSwornBeforeCycle: 4,
 } as const;
 
 /** GDD §6.3: engagement checks, judged on every seed (technical design §13.3). */

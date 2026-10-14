@@ -181,7 +181,7 @@ describe('Arvid Netmender (GDD §8.5, D154)', () => {
     expect(arvid).toMatchObject({ role: 'vanguard', damage: 'rune', origin: 'highland' });
     expect(arvid.recruitPrice).toBe(0);
     expect(arvid.story).toBe(true);
-    expect(arvid.unlock).toEqual({ kind: 'actBegins', act: 3 });
+    expect(arvid.unlock).toEqual({ kind: 'arrivesWithIlse', act: 3 });
   });
 
   it('is within the role spread of a Vanguard (±10% or 1 point)', () => {
@@ -209,9 +209,10 @@ describe('Arvid Netmender (GDD §8.5, D154)', () => {
 
 describe('the v0.5 balance keys (GDD §7.7, D166)', () => {
   it('have the GDD starting values, all tunable', () => {
-    expect(balance.band.heldFrom).toMatchObject({ value: 9, locked: false });
-    expect(balance.band.triumphantFrom).toMatchObject({ value: 12, locked: false });
-    expect(balance.trust.stepContracts).toMatchObject({ value: [10, 15, 20, 25], locked: false });
+    // D194 (v0.6) moved the bands from 9 / 12 to 12 / 15.
+    expect(balance.band.heldFrom).toMatchObject({ value: 12, locked: false });
+    expect(balance.band.triumphantFrom).toMatchObject({ value: 15, locked: false });
+    expect(balance.trust.stepContracts).toMatchObject({ value: [8, 15, 20, 25], locked: false });
     expect(balance.letters.levels).toMatchObject({ value: [5, 8], locked: false });
     expect(balance.gear.runedFraction.locked).toBe(false);
   });

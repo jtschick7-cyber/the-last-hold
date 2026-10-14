@@ -3,9 +3,11 @@ import { RESOURCE_IDS } from '../../content/resources';
 import { lineTriggerRules, residentLines } from '../../content/text/lines';
 import { residents } from '../../content/residents';
 import { hunters, type HunterId } from '../../content/hunters';
+import { experimentLines } from '../../core/alchemy/hut-view';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { AwaySummary } from '../../core/sim';
 import styles from '../styles/ui.module.css';
+import { levelUpLines } from '../app/lines';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { ResultsView } from './ResultsSheet';
 
@@ -51,6 +53,25 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
             .join(', ')}
         </p>
       )}
+      {summary.events.some((e) => e.type === 'experiment') && (
+        <div class={styles.small}>
+          {summary.events.flatMap((e) =>
+            e.type === 'experiment'
+              ? experimentLines((id) => consumables[id].name, e).map((line, i) => (
+                  <p key={`${e.at}:${i}`} class={styles.good}>
+                    {line}
+                  </p>
+                ))
+              : [],
+          )}
+        </div>
+      )}
+      {summary.skills &&
+        levelUpLines(summary.skills.before, summary.skills.after).map((line) => (
+          <p key={line} class={`${styles.small} ${styles.good}`}>
+            {line}
+          </p>
+        ))}
       {summary.events.some((e) => e.type === 'clue') && (
         <p class={styles.small}>
           {summary.events.filter((e) => e.type === 'clue').length} clues came in at the Lodge.

@@ -24,6 +24,8 @@ export interface SuggestInput {
   readonly maxParty: number;
   /** What the party would carry; hunters outside a candidate party are simply not in it. */
   readonly prep?: Preparation;
+  /** The warden's Alchemy level (GDD §5.8.6). */
+  readonly alchemy?: number;
 }
 
 export interface Suggestion {
@@ -82,6 +84,7 @@ export const suggestParty = (input: SuggestInput): Suggestion | null => {
         rolls: bank(i),
         log: false,
         prep: input.prep,
+        alchemy: input.alchemy,
       });
       if (r.result === 'win') w += 1;
     }
@@ -136,4 +139,5 @@ const oddsInput = (input: SuggestInput, party: HunterSnapshot[]): OddsInput => (
   monster: input.monster,
   location: input.location,
   rank: input.rank,
+  alchemy: input.alchemy,
 });

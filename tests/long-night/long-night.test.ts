@@ -47,13 +47,23 @@ const bastion = (): GameState => {
   s.bestiary.wolf = { level: 3, kills: 5 };
   s.stores['fire-pot'] = 3;
   s.stores.yarrow = 7;
-  s.queues.brewing = [{ item: 'saltburst', doneAt: null }];
+  s.queues.brewing = [
+    {
+      kind: 'brew',
+      item: 'saltburst',
+      doneAt: null,
+      paid: { ingredients: { 'rime-salt': 2 }, resources: { silver: 1 } },
+    },
+  ];
   s.garden.nextAt = T0 + HOUR;
   s.threat = 30;
   s.stats.trophies = 25;
   s.stats.contractsWon = 40;
   s.embers = 5;
   s.upgrades['kept-coals'] = 1;
+  s.book.properties['wolf-fang'] = [1]; // a discovery, and a pair tried
+  s.book.tried = ['wolf-fang+yarrow'];
+  s.skills.lore = 45;
   s.relics = [{ id: 'tally-stick', cycle: 1 }];
   s.scenes = ['vow'];
   s.settings = { ...s.settings, theme: 'light' };
@@ -183,6 +193,14 @@ describe('the Long Night (GDD §5.9.7)', () => {
       t.resources.silver = 1e6;
       expect(run(t, { type: 'hunter.recruit', hunter: 'stanko' }).ok).toBe(true);
       expect(t.hunters.stanko?.level).toBe(5);
+    });
+
+    it('the recipe book and the warden skills (GDD §5.9.7, v0.6)', () => {
+      expect(s.book).toEqual(before.book);
+      // Kept, never reset: the stand itself earns Command XP (a wave held, GDD §5.8.6).
+      for (const id of Object.keys(before.skills) as (keyof typeof before.skills)[])
+        expect(s.skills[id], id).toBeGreaterThanOrEqual(before.skills[id]);
+      expect(s.skills.lore).toBeGreaterThanOrEqual(45); // and the stand's documents add to it
     });
 
     it('the bestiary, Embers, relics, warden upgrades', () => {

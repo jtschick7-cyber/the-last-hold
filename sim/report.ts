@@ -88,6 +88,26 @@ export const storyLines = (runs: readonly RunResult[]): string[] =>
       );
     });
 
+/** Reported, not judged (GDD §6.2 v0.6): properties found and skill levels as each cycle ended. */
+export const discoveryLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.spec.policy === 'standard')
+    .map((r) => {
+      const d = r.discovery;
+      const cycles = d.cycles
+        .map(
+          (c) =>
+            `cycle ${c.cycle}: ${c.properties}/36 properties, skills ` +
+            Object.values(c.skills).join('/'),
+        )
+        .join('; ');
+      const brew =
+        d.hutHours === null || d.firstNewBrewHours === null
+          ? 'no new brew discovered'
+          : `first new brew ${hoursText(d.firstNewBrewHours - d.hutHours)} after the Hut`;
+      return `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${brew}; ${cycles}`;
+    });
+
 export const markdown = (report: Report, previous: Baseline | null): string => {
   const out: string[] = [
     `# Simulator report: ${report.name}`,
@@ -104,6 +124,12 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
     for (const line of c.lines) out.push(`  - ${line}`);
   }
   out.push('', '## Story (reported only)', '', ...storyLines(report.runs));
+  out.push(
+    '',
+    '## Discovery and skills (reported only; skills are alchemy/smithing/lore/command)',
+    '',
+    ...discoveryLines(report.runs),
+  );
   out.push('', '## Times to each moment (median over seeds)', '');
   out.push(`| Run | ${MOMENTS.join(' | ')} |`, `|---|${MOMENTS.map(() => '---').join('|')}|`);
   for (const [k, ms] of Object.entries(report.baseline.groups)) {

@@ -175,7 +175,7 @@ interface GameState {
   results: ContractResult[]                      // unread results (rewards already applied, GDD §5.4.3)
   bestiary: Record<MonsterId, { level: 0|1|2|3|4; kills: number }>   // v0.3
   stores: Record<ConsumableId | IngredientId, number>                // v0.3
-  queues: { brewing: BrewJob[]; investigation: InvestigationSlot[] } // v0.3
+  queues: { brewing: KettleJob[]; investigation: InvestigationSlot[] } // v0.3; v0.6: brews and experiments
   threat: number                                 // v0.4; counts only once arrivalDue is false
   embers: number                                 // v0.4; unspent
   upgrades: Record<UpgradeId, number>            // v0.4; warden upgrade levels
@@ -183,6 +183,8 @@ interface GameState {
   arrivalDue: boolean                            // v0.4; a pre-v0.4 save still faces its first Long Night
   cycles: CycleRecord[]                          // v0.4; one short entry per cycle
   story: StoryState                              // v0.5; acts, documents, names, letters, trust (below)
+  book: RecipeBook                               // v0.6; revealed properties per ingredient, pairs tried
+  skills: Record<SkillId, number>                // v0.6; warden skill XP (the level is derived)
   stats: LifetimeStats                           // trophies this cycle, totals
   log: { recentFights: FightRef[] }              // seeds + inputs, not full logs (§5.3)
   settings: Settings
@@ -191,6 +193,7 @@ interface GameState {
 
 - **Cycle history** *(v0.4, D113)*: each `CycleRecord` holds when the cycle started, when each Rank was reached, when the stand was made, waves held, the Embers breakdown, the relics found, and the stand's inputs (party snapshots, preparation, defense levels, Threat, seed), so its wave logs can be rebuilt like contract fights (§5.3). About 200 bytes per cycle; v0.5's Roll of Wardens reads it. The stand's wave list is not stored: it comes from the stand seed. Walls and Watchtower are ordinary entries in `buildings`.
 - **The story** *(v0.5, plan T5.3)*: each `CycleRecord` also holds the **act** it tells (null for cycles before v0.5, and for a cycle still owed the v0.4 arrival) and the **warden's name** (up to 24 characters; null until named). `StoryState` holds: the v0.5 arrival flag; when Ilse arrived; one `ActProgress` per act begun (its cycle, start time, and the counters that run from then: wins, wins by village, ruin wins); documents found (id, cycle, time, how); names found (roll number, cycle, time) and the count of Ribbonshades defeated; each hunter's **highest level ever** (letters read it, D155); letters reached; each village's trust (level, progress toward the next step, wins counted, Triumphant stands); and the unread Archive items for the badge. Nothing in it resets at the Long Night. The v4 → v5 migration starts Act I in the current cycle (D149), or with the cycle after a pending v0.4 arrival; it sets each hunter's highest level from their level now or at death, and every village to its starting trust.
+- **Alchemy discovery and skills** *(v0.6, plan T6.3, D218)*: `book` holds, for each ingredient, which of its three properties (by index in the §8.6 order) are revealed, and the pairs already tried (`a+b`, in ingredient-list order). It opens with the 15 properties the nine v0.3 recipes prove. `skills` holds XP per warden skill; levels are derived. Both are kept through the Long Night. The kettle queue holds `KettleJob`s: a **brew** records the recipe it was paid with (`paid`), so a cancel refunds exactly that whichever recipes the book knows later; an **experiment** records its two ingredients and the units paid. `RunningContract`, `FightRef` and `StandRecord` carry the **Alchemy level** frozen at launch (0 for anything made before v0.6, so every replay is unchanged, D206); a `StandRecord` also carries its **band**, so a stand keeps the band it earned under the thresholds of its day (D194). The six new brews have empty store slots. The v5 → v6 migration (`save/migration-v6.ts`) holds frozen copies of the v0.3 recipes, the 15 known properties and the old thresholds (9 and 12) so later content changes never rewrite an old save.
 - **Derived values are never stored:** rates, the active-roster cap, odds. They come from **selectors** (`core/state/selectors.ts`). Each selector that feeds a visible number also returns a `Breakdown` tree (§5.4).
 - **Fight logs are not stored.** A `FightRef` holds the seed and the inputs (party, preparation, monster instance), and the log is **regenerated on demand** by re-running the fight. This keeps saves small and proves determinism every time a log opens.
 

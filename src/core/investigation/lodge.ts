@@ -1,3 +1,5 @@
+import { noteClue } from '../skills/hooks';
+import { skillBonus } from '../skills/skills';
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { traits } from '../../content/traits';
 import { hunters } from '../../content/hunters';
@@ -53,13 +55,16 @@ export const clueDuration = (
   const trackerMult = tracked ? 1 - trackerCut() : 1;
   const whistle = clueCut(state);
   const relicMult = 1 - whistle.value;
-  const value = Math.round(base * studiedMult * trackerMult * relicMult);
+  // Lore (GDD §5.8.6): after Studied, Tracker and the Bone Whistle.
+  const lore = skillBonus(state, 'lore');
+  const loreMult = 1 - lore.value;
+  const value = Math.round(base * studiedMult * trackerMult * relicMult * loreMult);
   return {
     value,
     breakdown: {
       label: 'Time per clue',
       value,
-      formula: `${base / MS_PER_SECOND / 60} min × ${studiedMult} × ${trackerMult} × ${relicMult}`,
+      formula: `${base / MS_PER_SECOND / 60} min × ${studiedMult} × ${trackerMult} × ${relicMult} × ${loreMult}`,
       children: [
         { label: 'Base time', value: base, key: 'clue.time' },
         {
@@ -69,6 +74,7 @@ export const clueDuration = (
         },
         { label: 'Tracker idle at the hold', value: trackerMult },
         whistle.breakdown,
+        lore.breakdown,
       ],
     },
   };
@@ -104,6 +110,7 @@ export const applyClue = (state: GameState): ClueApplied | null => {
     return null;
   }
   contract.revealed += 1;
+  noteClue(state); // Lore (GDD §5.8.6)
   const identified = isIdentified(state.meta.gameSeed, contract);
   if (identified) {
     raiseTo(state, contract.monster, 2);

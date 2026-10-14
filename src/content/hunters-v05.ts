@@ -38,7 +38,7 @@ export const arvid: HunterDef = {
   damage: 'rune',
   origin: 'highland',
   traits: ['shield-companion', 'old-wright'],
-  unlock: { kind: 'actBegins', act: 3 },
+  unlock: { kind: 'arrivesWithIlse', act: 3 },
   stats: { health: 175, might: 12, armor: 9, speed: 7 },
   recruitPrice: 0,
   story: true,

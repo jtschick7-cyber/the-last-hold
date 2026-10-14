@@ -1,4 +1,5 @@
 import { signal } from '@preact/signals';
+import { emberRemembersMore, skills, SKILL_IDS, type SkillId } from '../../content/skills';
 import { residents } from '../../content/residents';
 import { lineTriggerRules, residentLines, type LineTrigger } from '../../content/text/lines';
 
@@ -42,3 +43,12 @@ export const noticeChanges = (before: Watched, after: Watched): void => {
   if (milestone !== undefined) return say('peasant-milestone', milestone);
   if (before.idle === 0 && after.idle > 0) return say('idle-peasants', after.idle);
 };
+
+/** GDD §5.8.6: one line for every skill whose level rose between two readings. */
+export const levelUpLines = (
+  before: Readonly<Record<SkillId, number>>,
+  after: Readonly<Record<SkillId, number>>,
+): string[] =>
+  SKILL_IDS.flatMap((id) =>
+    after[id] > before[id] ? [emberRemembersMore(skills[id].name, after[id])] : [],
+  );

@@ -1,3 +1,4 @@
+import { noteDocument } from '../skills/hooks';
 import { knowledgeLevels } from '../../content/knowledge';
 import { allDocuments, LAST_WRITTEN_ACT, UNWRITTEN_ACT_LINE } from '../../content/story/acts';
 import type { DocumentCondition, DocumentDef } from '../../content/story/documents';
@@ -43,6 +44,7 @@ export const findDocument = (state: GameState, doc: DocumentDef, via: FoundVia):
   state.story.documents.push({ id: doc.id, cycle: state.cycle.number, at: state.time, via });
   state.story.unread.push(docKey(doc.id));
   if (state.story.ilseAt === null) state.story.ilseAt = state.time;
+  noteDocument(state); // Lore (GDD §5.8.6)
   const keys = [docKey(doc.id)];
   for (const n of doc.names) {
     const k = findName(state, n);
@@ -79,6 +81,12 @@ const standingMet = (state: GameState, doc: DocumentDef, p: ActProgress): boolea
     case 'actStand':
     case 'nextWarden':
       return false;
+    case 'arvidArrives':
+      // Judged when he arrives (core/story/act3.ts), never by a sweep.
+      return false;
+    case 'huntersTogether':
+      // D213: both at the hold, once the act has begun, after the earlier scene is found.
+      return c.hunters.every((h) => state.hunters[h] !== undefined) && isFound(state, c.after);
   }
 };
 
@@ -89,6 +97,8 @@ const VIA: Readonly<Record<DocumentCondition['kind'], FoundVia>> = {
   hunterAtRank: 'roster',
   actStand: 'stand',
   nextWarden: 'warden',
+  arvidArrives: 'warden',
+  huntersTogether: 'roster',
 };
 
 /**
@@ -97,10 +107,15 @@ const VIA: Readonly<Record<DocumentCondition['kind'], FoundVia>> = {
  */
 export const sweepDocuments = (state: GameState, via?: FoundVia): string[] => {
   const keys: string[] = [];
-  for (const doc of allDocuments) {
-    const p = progressOf(state, doc.act);
-    if (!p || isFound(state, doc.id) || !standingMet(state, doc, p)) continue;
-    keys.push(...findDocument(state, doc, via ?? VIA[doc.condition.kind]));
+  // Repeats while something new turns up: a document can be the `after` of another (D3-08).
+  for (let again = true; again;) {
+    again = false;
+    for (const doc of allDocuments) {
+      const p = progressOf(state, doc.act);
+      if (!p || isFound(state, doc.id) || !standingMet(state, doc, p)) continue;
+      keys.push(...findDocument(state, doc, via ?? VIA[doc.condition.kind]));
+      again = true;
+    }
   }
   return keys;
 };

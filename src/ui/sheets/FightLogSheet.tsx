@@ -17,6 +17,7 @@ const replay = (ref: FightRef) =>
     location: ref.location,
     rolls: seeded(ref.seed),
     prep: ref.prep,
+    alchemy: ref.alchemy,
   });
 
 const COLLAPSE_EVERY = 50;

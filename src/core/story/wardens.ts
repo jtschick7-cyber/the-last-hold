@@ -11,7 +11,6 @@ import {
 import { wardenNames } from '../../content/story/wardens';
 import { seeded, streamSeed } from '../rng';
 import type { GameState } from '../state/game-state';
-import { bandFor } from './band';
 
 // GDD §5.14.5 (D152, D153): wardens are named (24 characters, Suggest) and carved
 // on the Roll of Wardens, one line each; GDD §5.14.8: the stand's band and the
@@ -62,7 +61,8 @@ export const rollOfWardens = (state: GameState): WardenLine[] =>
       fromYear: ROLL_FIRST_YEAR + YEARS_PER_WARDEN * (c.number - 1),
       toYear: ROLL_FIRST_YEAR + YEARS_PER_WARDEN * c.number,
       ranks: (Object.keys(ages) as AgeId[]).filter((a) => c.ranks[a] !== undefined),
-      stand: c.stand ? { band: bandFor(c.stand.wavesHeld), waves: c.stand.wavesHeld } : null,
+      // The band recorded with the stand, made under the thresholds then in force (D194).
+      stand: c.stand ? { band: c.stand.band, waves: c.stand.wavesHeld } : null,
       relics: c.stand?.relicsFound ?? [],
       current,
     };

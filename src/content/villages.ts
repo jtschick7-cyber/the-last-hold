@@ -61,7 +61,7 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     region: 'Highland fjord village',
     locations: ['river', 'barrow', 'ruin'],
     head: { name: 'Gunnar Ravnsson', title: 'Thane' },
-    gifts: ['rime-salt', 'pitch'],
+    gifts: ['rime-salt', 'pitch', 'noon-poppy'], // noon poppy: Q19, D239
   },
   ravenfell: {
     id: 'ravenfell',

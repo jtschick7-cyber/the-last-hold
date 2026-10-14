@@ -214,14 +214,35 @@ export const balance = {
   },
 
   // ---- GDD §7.7 The story (v0.5, D144–D166) ----
-  // Waves held from which a stand is Held, and Triumphant (D145).
-  band: { heldFrom: tunable(9), triumphantFrom: tunable(12) },
+  // Waves held from which a stand is Held, and Triumphant (D145; 12 and 15 from v0.6, D194).
+  band: { heldFrom: tunable(12), triumphantFrom: tunable(15) },
   // Contracts won for a village to rise from Cold, Wary, Hopeful and Trusting (D146).
-  trust: { stepContracts: tunable([10, 15, 20, 25]) },
+  // A Triumphant stand counts as `triumphantContracts` of them for every village (D195).
+  trust: { stepContracts: tunable([8, 15, 20, 25]), triumphantContracts: tunable(10) },
   // Hunter letters at these levels, counting the highest level ever reached (D155).
   letters: { levels: tunable([5, 8]) },
   // Until all six Ribbonshade names are found, this share of ruin contracts is a Ribbonshade (Q17, D190).
   ruin: { ribbonshadeShare: tunable(0.5) },
+
+  // ---- GDD §7.8 Alchemy discovery & skills (v0.6, D193–D220) ----
+  experiment: { time: tunable(10 * MIN, 'seconds'), units: tunable(1) }, // 10 min, 1 unit each
+  skill: {
+    maxLevel: locked(10), // D217
+    // Level L → L+1 costs xpBase × xpGrowth^L XP (D205).
+    xpBase: tunable(20),
+    xpGrowth: tunable(1.6),
+    xp: {
+      alchemy: tunable({ brew: 1, experiment: 3, property: 10 }),
+      smithing: tunable({ gearPerTier: 2, smithyLevel: 2 }),
+      lore: tunable({ clue: 1, knowledgeLevel: 5, document: 5 }),
+      command: tunable({ contractPerTier: 2, wave: 1 }),
+    },
+    // Per level (D205): brews stronger, gear cheaper, clues quicker, contract XP higher.
+    alchemyPotency: tunable(0.03),
+    smithingCost: tunable(0.021),
+    loreClueTime: tunable(0.04),
+    commandXp: tunable(0.04),
+  },
 } as const;
 
 export type Balance = typeof balance;

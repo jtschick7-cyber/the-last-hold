@@ -23,8 +23,16 @@ import { roster4Check } from './roster-4';
 import { somethingToDoCheck } from './something-to-do';
 import { firstRuinCheck } from './first-ruin';
 import { ribbonshadesCheck } from './ribbonshades';
-import { act1Check, act2Check } from './story-acts';
+import { act1Check, act2Check, act3Check } from './story-acts';
 import { trustMovesCheck } from './trust-moves';
+import {
+  arvidLetterCheck,
+  firstNewBrewCheck,
+  recipeBookCheck,
+  skillsPaceCheck,
+  skillsStartCheck,
+  trustArcCheck,
+} from './v06';
 import type { Check } from './types';
 
 export type { Check, CheckResult } from './types';
@@ -63,4 +71,12 @@ export const CHECKS: readonly Check[] = [
   act2Check,
   ribbonshadesCheck,
   trustMovesCheck,
+  // v0.6 (D216)
+  firstNewBrewCheck,
+  recipeBookCheck,
+  skillsStartCheck,
+  skillsPaceCheck,
+  act3Check,
+  arvidLetterCheck,
+  trustArcCheck,
 ];

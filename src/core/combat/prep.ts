@@ -28,7 +28,14 @@ export const hunterKit = (
   }
   const e = def?.effect;
   const potion: HunterPotion | null =
-    def && e && (e.kind === 'heal' || e.kind === 'armorUntilAction' || e.kind === 'speedWholeFight')
+    def &&
+    e &&
+    (e.kind === 'heal' ||
+      e.kind === 'armorUntilAction' ||
+      e.kind === 'speedWholeFight' ||
+      e.kind === 'fireTaken' ||
+      e.kind === 'hitChance' ||
+      e.kind === 'steadfast')
       ? { id: def.id, name: def.name, effect: e, power, used: false }
       : null;
   return { oilFamily: oilEffect?.kind === 'oil' ? oilEffect.family : null, potion };
@@ -43,7 +50,7 @@ export const startOfFight = (f: Fight): void => {
     const p = h.potion;
     if (!p) continue;
     if (p.effect.kind === 'speedWholeFight') {
-      const bonus = p.effect.speedBonus * (1 + p.power);
+      const bonus = p.effect.speedBonus * (1 + p.power) * f.potency;
       h.statPct.speed += bonus;
       h.speed = speedEff(h);
       p.used = true;
@@ -53,8 +60,34 @@ export const startOfFight = (f: Fight): void => {
         text: () => `${h.name} drinks ${p.name} (+${percent(bonus)} Speed for the fight)`,
         rolls: [],
       });
+    } else if (p.effect.kind === 'fireTaken') {
+      // GDD §5.8.5: Coldwater Draught, drunk at the start; Herbwise strengthens it.
+      const cut = p.effect.takenCut * (1 + p.power) * f.potency;
+      h.fireTakenPotion += cut;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () => `${h.name} drinks ${p.name} (−${percent(cut)} Fire damage taken for the fight)`,
+        rolls: [],
+      });
+    } else if (p.effect.kind === 'hitChance') {
+      // GDD §5.8.5: Owl-Eye Drops, put in at the start; the bonus is points of hit chance.
+      const points = p.effect.hitChance * (1 + p.power) * f.potency;
+      h.hitBonus += points;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () =>
+          `${h.name} uses ${p.name} (+${Math.round(points * 1000) / 10} points to hit for the fight)`,
+        rolls: [],
+      });
+    } else if (p.effect.kind === 'steadfast') {
+      // Held until an ability would cost the holder an action; Spoil can still ruin it (D92).
+      h.steadfastLeft = p.effect.uses;
     } else if (p.effect.kind === 'armorUntilAction') {
-      const bonus = p.effect.armorBonus * (1 + p.power);
+      const bonus = p.effect.armorBonus * (1 + p.power) * f.potency;
       h.statusPct.armor += bonus;
       h.tonicLeft = p.effect.untilAction;
       p.used = true;
@@ -68,6 +101,7 @@ export const startOfFight = (f: Fight): void => {
     }
   }
   const m = f.monster;
+  const shown = (x: number): number => Math.round(x * f.potency * 100) / 100;
   if (f.volley > 0) {
     // GDD §5.9.2: Steel that ignores Armor, like a bomb (no oil, trait or knowledge bonus).
     const resist = m.resist ? m.resist.steel : 1;
@@ -89,7 +123,7 @@ export const startOfFight = (f: Fight): void => {
     const e = consumables[id].effect;
     if (e.kind === 'burn' || e.kind === 'chill') {
       const resist = m.resist ? m.resist[e.damageType] : 1;
-      const dealt = e.initial * resist;
+      const dealt = e.initial * f.potency * resist;
       const amount = finalDamage(dealt, m, resist, false, 0, 1);
       hurt(m, amount);
       // A Fire Pot is a Fire hit: it cracks a Rimewrought's rime (Unthawed, D176).
@@ -98,7 +132,7 @@ export const startOfFight = (f: Fight): void => {
       if (e.kind === 'burn') {
         // A status with the same name refreshes rather than stacks (GDD §5.0).
         m.burnLeft = e.actions;
-        m.burnAmount = e.perAction;
+        m.burnAmount = e.perAction * f.potency;
       } else {
         m.chillLeft = e.actions;
         m.statusPct.speed = -e.speedCut;
@@ -110,14 +144,24 @@ export const startOfFight = (f: Fight): void => {
         actor: 'party',
         kind: 'bomb',
         text: () =>
-          `The party throws a ${consumables[id].name} — ${e.damageType[0]?.toUpperCase()}${e.damageType.slice(1)} ${e.initial}` +
+          `The party throws a ${consumables[id].name} — ${e.damageType[0]?.toUpperCase()}${e.damageType.slice(1)} ${shown(e.initial)}` +
           `${resist === 1 ? '' : resist === 0 ? ' immune' : ` ×${resist} resist`} = ${amount}` +
-          `${slow ? `, and the ${m.name} slows (−${percent(e.speedCut)} Speed for ${e.actions} actions)` : `, and the ${m.name} burns (${e.perAction} Fire on each of its next ${e.actions} actions)`}` +
+          `${slow ? `, and the ${m.name} slows (−${percent(e.speedCut)} Speed for ${e.actions} actions)` : `, and the ${m.name} burns (${shown(e.perAction)} Fire on each of its next ${e.actions} actions)`}` +
           `${cracked ? `; ${cracked}` : ''}` +
           ` · ${m.name} ${m.health}/${m.maxHealth}`,
         rolls: [],
         amount,
         targetHealth: m.health,
+      });
+    } else if (e.kind === 'smoke') {
+      // GDD §5.8.5: Poppy Smoke, no damage type: the monster loses its next action(s).
+      m.lostActions += e.lostActions;
+      emit(f, {
+        actor: 'party',
+        kind: 'bomb',
+        text: () =>
+          `The party throws a ${consumables[id].name}: the ${m.name} loses its next ${e.lostActions === 1 ? 'action' : `${e.lostActions} actions`}`,
+        rolls: [],
       });
     } else if (e.kind === 'saltburst') {
       f.saltburstArmed = true;
@@ -156,7 +200,10 @@ export const checkPotion = (f: Fight, h: Combatant): void => {
   if (!p || p.used || p.effect.kind !== 'heal' || h.health <= 0) return;
   if (h.health >= h.maxHealth * p.effect.belowHealth) return;
   p.used = true;
-  const healed = heal(h, roundHalfUp(h.maxHealth * p.effect.healFraction * (1 + p.power)));
+  const healed = heal(
+    h,
+    roundHalfUp(h.maxHealth * p.effect.healFraction * (1 + p.power) * f.potency),
+  );
   emit(f, {
     actor: h.id,
     kind: 'prep',
@@ -173,6 +220,7 @@ export const spoilHit = (target: Combatant, monster: Combatant): string | null =
   const p = target.potion;
   if (!p || p.used) return null;
   p.used = true;
+  target.steadfastLeft = 0; // a ruined Steadfast Draught keeps nothing (v0.6)
   return `${monster.name}'s Spoil ruins ${target.name}'s ${p.name}`;
 };
 

@@ -181,7 +181,8 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Reagents** | Ingredients | Contracts; herb garden; Delves | Alchemy: oils, potions, bombs | No | v0.3 |
 | **Gear** | Items | Smithy (iron + silver + wood) | Equipped by hunters | No (relics are the persistent gear) | v0.2 |
 | **Oils / Potions / Bombs** | Consumables | Alchemist's hut, from reagents | Contract preparation | No | v0.3 |
-| **Knowledge** | Unlocks | Investigating and killing monsters; alchemy experiments | Never spent; reduces investigation time and raises odds | **Yes** | v0.3 |
+| **Knowledge** | Unlocks | Investigating and killing monsters; alchemy experiments **(the recipe book, v0.6, §5.8)** | Never spent; reduces investigation time and raises odds | **Yes** | v0.3 |
+| **Warden skills** | Progress | Doing their activity: brewing and experiments, gear work, investigation and reading, winning contracts and holding waves (§5.8.6) | Never spent; small permanent bonuses | **Yes** ("carried in the ember") | v0.6 |
 | **Threat** | Pressure meter | Rises with the Rank's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.4 |
 | **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades | **Yes** | v0.4 |
 | **Relics** | Persistent items | Last Stand wave milestones (§5.9.6); Delves (v0.7) | The hold (v0.4: every relic owned works); hunters (v0.8) | **Yes** | v0.4 / v0.8 *(⚑ v0.4 flesh-out, D111)* |
@@ -426,7 +427,7 @@ In v0.1–v0.3, the Keep is the end of content. The Rank screen shows the next R
 | Mill, Sawpit, Smithy level cap | 15 | 20 |
 | Hunter level cap | 15 | 20 |
 | Bounty multiplier | ×3.5 *(D138)* | ×3 *(D138)* |
-| Provisions (`provisions.incomeMinutes`) | 4.1 *(D138)* | 2.5 *(D138)* |
+| Provisions (`provisions.incomeMinutes`) | 4.4 *(D189)* | 2.5 *(D138)* |
 | Active roster | +2 | +2 |
 | Highest contract tier | 5 | 5 |
 | Unlocks | Walls and Watchtower (§5.9.2) | the Last Stand (§5.9.3) |
@@ -607,7 +608,7 @@ Each contract has:
    - **Death chance** per hunter (Reckless contracts only).
    - **Expected rewards.**
    - **"Why?"** opens the summary math: party damage per 100 ticks vs monster Health, and monster damage per 100 ticks vs the party's effective Health.
-4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1 in the Keep (D85), 4.1 in the Citadel and 2.5 in Bastion (D106, D138; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
+4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1 in the Keep (D85), **4.4** in the Citadel (D189) and 2.5 in Bastion (D106, D138; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
 5. Launch. The hunters are busy for the contract's duration.
 
 The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 500 preview simulations use different derived seeds, so the preview never reveals the real roll.
@@ -715,7 +716,7 @@ Logs are kept for the last 50 contracts. Any listed contract's log can be regene
 | Water Spirits | rusalka, vodyanoy, nix | drownings, music at night, wet footprints |
 | Field & Forest Spirits | leshy, poludnitsa, huldra, kikimora | lost travelers, heatstroke at noon, livestock trouble |
 | Cursed *(ruins, v0.5)* | Gloam-moths, Ribbonshade, Anvil-wight, Rimewrought (originals, §8.3) | ruin sites, old Emberwright marks |
-| Deep *(v0.5+)* | the Unlit's spawn | — (lore-gated) |
+| Deep *(later acts or Delves, D161)* | the Unlit's spawn | — (lore-gated) |
 
 #### 5.6.2 Knowledge levels (per species)
 
@@ -755,7 +756,7 @@ From v0.3, a contract can post an **unknown monster**. The player sees:
 ### 5.7 Preparation (v0.3)
 
 The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from reagents.
-- v0.3 recipes are **fixed and known**. Discovery arrives in v0.6.
+- The nine v0.3 recipes are known from the start; from v0.6 they are the recipe book's starting recipes, and discovery adds the rest (§5.8).
 - Each brew takes 10 min, one at a time per Hut level. Several can be queued.
 - Finished consumables go into the hold's stores.
 
@@ -781,19 +782,88 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 | Frost Pot | Bomb | At tick 1: 30 Frost damage, then −30% Speed for the monster's next 3 actions | 1 rime salt + 1 wood |
 | Saltburst | Bomb | Triggers on the monster's first ability: cancels it and blocks abilities for the monster's next 3 actions | 2 rime salt + 1 silver (resource) |
 
+*v0.6 adds six brews (§5.8.5); 15 in all.*
+
 - **Mismatched oils do nothing.** The odds panel shows "Grave Oil: no effect (target is a Water Spirit)." Against an unidentified monster, it shows the oil's effect for each remaining candidate.
-- **Well prepared** means the contract succeeded with a matching oil on at least one hunter, plus at least one bomb whose damage type the monster is weak to *or* a Saltburst that cancelled an ability. A well-prepared success pays bounty × 1.5 and +1 trophy (§5.4.3).
+- **Well prepared** means the contract succeeded with a matching oil on at least one hunter (any family oil, including the v0.6 oils, §5.8.5), plus at least one bomb whose damage type the monster is weak to *or* a Saltburst that cancelled an ability. A well-prepared success pays bounty × 1.5 and +1 trophy (§5.4.3).
 - **Herb Garden** (Keep, count building, cost 300 wood, 100 food): grows common herbs (yarrow, mugwort, juniper) at 1 per 10 min each. Monster reagents come only from contracts.
 - The full ingredient list is in §8.
 
 ---
 
-### 5.8 Alchemy discovery & skills through use *(v0.6, outline)*
+### 5.8 Alchemy discovery & skills through use *(v0.6; ⚑ v0.6 flesh-out, D193–D220)*
 
-- **Hidden effects.** Each ingredient has 4 hidden effects. Brewing 2–3 ingredients that share an effect produces a brew with that effect. The first discovery of an effect is logged, and the recipe book fills in.
-- **Experiments** cost ingredients and time. A failed combination still reveals one effect of each ingredient used, so experimenting is never wasted.
-- **Warden skills** improve through use: Alchemy, Smithing, Lore, and Command. Each grows from its activity, with a small permanent bonus per level that survives the Long Night **[JC]**.
-- **Open questions:** whether hunters also have use-based skills (per damage type); how many effects there are in total; whether the v0.3 fixed recipes become discovered recipes.
+#### 5.8.1 Properties *(D197)*
+- Every ingredient carries **3 hidden properties**. Each property belongs to exactly one brew and is shown under that brew's name ("Grave Oil"). The table is §8.6. It is **the same in every game** (content, not seeded), so every brew can be guaranteed makeable.
+- 12 ingredients × 3 = **36 properties**. The book opens with the **15** that the nine v0.3 recipes prove (D200); **21** are hidden at the start, including all three of wolf fang's and noon poppy's.
+- *Kept distinct from Skyrim's alchemy on purpose (GDD §2.3):* three properties, not four; pairs only; experiments are kettle tests, never eating an ingredient; property names are our brews, never "Fortify / Restore / Resist / Damage X".
+
+#### 5.8.2 Recipes *(D198)*
+- **A recipe is known** when the book shows enough carriers of a brew's property:
+  - **Oils and potions:** two different ingredients known to carry it.
+  - **Bombs:** one ingredient known to carry it.
+- **Recipe shapes** (the v0.3 shapes, kept):
+
+| Brew kind | Shape |
+|---|---|
+| Oil, potion | 3 units from two different carriers: **2 of one and 1 of the other**, either way round (the player picks the split at Brew) |
+| Fire Pot, Frost Pot, Poppy Smoke | 1 unit of a carrier + 1 wood |
+| Saltburst | 2 units of carriers (any mix) + 1 silver |
+
+- The nine v0.3 recipes are exactly these shapes, so they are simply the first recipes the book knows. Every other known pair is an **alternate recipe** (e.g. a Fire Pot from thornwood, a Frost Pot from river pearl).
+- Brewing is unchanged from v0.3 (§5.7, D91): one brew per kettle (kettles = Hut level), `brew.time` each, paid when queued, cancel refunds in full, queue unlimited.
+
+#### 5.8.3 Experiments *(D199)*
+- An **experiment** puts **1 unit each of two different ingredients** in a kettle for `experiment.time` (10 min), queued like a brew (paid when queued, cancel refunds). The Copper Still shortens it like a brew.
+- **Result, when it finishes:**
+  - If the two share any properties, **every shared property** is revealed on both.
+  - If they share none, **the first hidden property of each** (in the §8.6 order) is revealed. An ingredient with nothing hidden reveals nothing.
+  - An experiment teaches only: **no brew comes out.**
+- A pair already tried, or a pair with nothing left to learn on either side, can't be queued (the picker says why).
+- When a reveal makes a brand-new brew's recipe known, the result says so: *"Discovered: Hidebane Oil."* (away sheet, Hut, results).
+
+#### 5.8.4 The recipe book *(D204)*
+- Lives in the **Alchemist's Hut** (§9.9): a grid of the 12 ingredients × 3 property slots ("?" while hidden), the pairs already tried, and every brew with its known recipes.
+- **Kept forever** (in the story, Ilse keeps a copy in the archive, `lore-secrets.md` §7). Count shown: *"Properties found: 23 of 36."*
+
+#### 5.8.5 The v0.6 brews *(D201; names D203, subject to the T6.2 search)*
+
+| Brew | Kind | Effect (numbers tunable, in content) | Answers |
+|---|---|---|---|
+| **Hidebane Oil** | Oil | +35% damage vs Beasts & Wilds (`oil.familyBonus`) | Gaunt Wolf, Bies; makes well-prepared possible vs the family |
+| **Wright's Oil** | Oil | +35% damage vs the Cursed | All four Cursed; makes well-prepared possible vs the family |
+| **Coldwater Draught** | Potion | The holder takes −40% Fire damage for the whole fight (taken%, inside the 75% cap) | Noon Heat, Seal-burn |
+| **Owl-Eye Drops** | Potion | The holder's hit chance +10 points for the whole fight | Lightless |
+| **Steadfast Draught** | Potion | The first time a monster's ability would cost the holder an action, it doesn't; the ability's other effects still apply | Barrow-Grip, Drowning Song, Enthrall, Lead Astray, Drag Under's grab |
+| **Poppy Smoke** | Bomb (1 carrier + 1 wood) | At tick 1, the monster loses its next action | Fast monsters; a breather |
+
+- **Well prepared:** the two new oils are matching oils like the v0.3 ones. Poppy Smoke has no damage type, so it never counts as a bomb the monster is weak to.
+- **Herbwise** multiplies Coldwater (−50%) and Owl-Eye (+12.5 points); Steadfast has no number, so Herbwise does nothing for it (shown).
+- **Spoil** can ruin a Steadfast Draught that hasn't fired (D92's rule); Coldwater and Owl-Eye are drunk at the start.
+- **Saltburst** doesn't cancel the new brews' effects (they are the party's, not the monster's).
+- **In the Last Stand:** potions fire once in the whole stand (Coldwater and Owl-Eye last wave 1 only, like Quickfoot, D120); Steadfast fires once in the stand; automatic bombs per wave are: those the wave is weak to, then one Saltburst, then one Poppy Smoke (up to `prep.bombSlots`).
+- **Fights:** Steadfast and Poppy Smoke are new fight rules; the other four reuse the oil, taken% and hit-chance rules. Old fights and every golden fight replay unchanged, so `rulesVersion` stays 3; if a golden changes, stop and ask (D218).
+
+#### 5.8.6 Warden skills *(D205–D208)*
+- **Four skills: Alchemy, Smithing, Lore, Command.** Each runs **0–10** (`skill.maxLevel`, locked), rises by doing its activity, and is **kept forever** ("carried in the ember", `lore-secrets.md` §7). Level L → L+1 costs `skill.xpBase × skill.xpGrowth^L` XP.
+
+| Skill | XP from (tunable) | Gives, per level |
+|---|---|---|
+| **Alchemy** | brew finished 1 · experiment 3 · property revealed 10 | Brews **+3% stronger** (to +30%): every number in a brew's effect (oil bonus, heal, Armor, Speed, Coldwater, Owl-Eye, bomb damage and burn). Counts of actions (Saltburst's block, Steadfast, Poppy Smoke, durations) don't change. Multiplies with Herbwise. |
+| **Smithing** | gear upgrade: its tier × 2 · Smithy level built 2 | Gear upgrades cost **2.1% less** per level (to −21%; D240), every resource including silver |
+| **Lore** | clue revealed 1 · species reaching a knowledge level 5 · document or letter found 5 | Clues take **4% less time** (to −40%), after Studied, Tracker and the Bone Whistle |
+| **Command** | contract won: its tier · wave held in the Last Stand 1 | Hunters earn **+4% contract XP** (to +40%), adding with Drill Yard and the Tally Stick |
+
+- **Only Alchemy changes fight numbers** (D206). Its level is **frozen at launch** on the running contract, on the fight record and on the stand record, as knowledge is (D90), so a later level never changes a replay. The odds panel uses the current level.
+- **No skill touches silver income** (G1). Smithing lowers silver *costs* of gear only.
+- **Breakdowns:** each skill is its own named line ("Lore 4: −16%"). No new bonus bucket in §5.0.
+- **Shown** on the Rank screen in the Hearth Hall, beside The Hearth and the Roll of Wardens, under *"What the ember remembers"*: level, progress to the next, the bonus, long-press for the breakdown. A level-up gets one line on the away sheet or results: *"The ember remembers more: Lore 3."* The new-warden sheet lists them: *"The ember remembers: Alchemy 4 · Smithing 2 · Lore 3 · Command 5."*
+- **Saves from before v0.6 start every skill at 0** (the save doesn't keep enough history to credit them fairly).
+- **Pacing target:** level 10 around cycles 5–6, alongside Acts V–VI (§6.2 rows).
+- **Names:** plain English (D208). "Alchemy" and "Smithing" are also Skyrim skill names; they are generic words (§2.3), and the system's shape differs (one set for the hold, kept through the reset).
+
+#### 5.8.7 Hunters don't get use-skills *(D207)*
+Hunters grow by level now and by ranks, stars and talents in v0.8 (§5.11). Per-hunter use-skills (e.g. per damage type) are not in v0.6; the idea goes to the v0.8 flesh-out.
 
 ### 5.9 The Long Night *(v0.4 mechanics, v0.5 story)*
 
@@ -829,7 +899,7 @@ From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat
   - Each wave's species is picked from those whose tier range includes the wave's tier (above tier 5: those that reach tier 5).
   - Threat makes every wave stronger (§5.9.1).
 - **The party:** up to **6** active hunters *(locked)*. A suggested six fills the slots: the highest levels, with at least one Vanguard and one Mender; any can be swapped. Injured hunters can join (recovery timers are ignored). Contracts still running finish on the spot with their real result before the stand begins (§5.9.7).
-- **Preparation:** one oil and one potion per hunter for the whole stand, chosen with the contract pickers. Bombs are thrown automatically from the stores, up to 2 per wave (`prep.bombSlots`): bombs the wave's species is weak to first, then Saltbursts. The stores reset after the Long Night anyway.
+- **Preparation:** one oil and one potion per hunter for the whole stand, chosen with the contract pickers. Bombs are thrown automatically from the stores, up to 2 per wave (`prep.bombSlots`): bombs the wave's species is weak to first, then one Saltburst, then one Poppy Smoke (v0.6). The stores reset after the Long Night anyway.
 - **The fight:** one wave at a time, using the contract fight rules (§5.5), with these differences:
   - Hunters keep their Health between waves. Before each new wave, every standing hunter recovers 20% of max Health. Downed hunters stay down for the rest of the stand.
   - The Watchtower's volley and the bombs land at tick 1; Walls (and the Iron Shutter relic) reduce damage taken.
@@ -872,8 +942,8 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 | Resets (to the §5.1.4 start, plus warden upgrades) | Kept |
 |---|---|
 | Rank (back to Hamlet), every building, resources, peasants | Every hunter you've hired, and part of their levels |
-| The contract board, tier unlocks, unread results | The bestiary: knowledge, kills, Mastered auto-identify |
-| Stores (consumables and reagents), the brewing queue, Lodge slots | Embers, relics, warden upgrades |
+| The contract board, tier unlocks, unread results | The bestiary: knowledge, kills, Mastered auto-identify; **the recipe book (v0.6)** |
+| Stores (consumables and reagents), the brewing queue, Lodge slots | Embers, relics, warden upgrades, **warden skills (v0.6)** |
 | Gear (A4), injuries, Threat, trophies this cycle (after conversion) | Candidates you haven't hired yet (unlocks are lifetime) |
 | | The Hall of the Fallen, Reports and fight replays, scenes already seen, settings, lifetime stats, the cycle number (+1), the cycle history |
 
@@ -955,7 +1025,8 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 - **One act per cycle.** An act starts when its cycle starts and closes with that cycle's Last Stand. Its documents stay obtainable forever after: a condition met in any later cycle still delivers the document.
 - **New games:** Act I starts with cycle 1.
 - **Saves from before v0.5** (D149): Act I starts at once, in the current cycle, after any v0.4 arrival. Every document whose condition is already behind the save (a Rank already reached, a species already Mastered) is found on load, in Ilse's arrival scene (§5.14.3). The rest wait for their conditions. This cycle's stand closes Act I.
-- **An act that isn't written yet** (from Act III, until v0.6): its cycle has no act documents, and its Long Night shows *"The story continues in a later version."* Ruins, Ribbonshade names and hunter letters carry on, because they aren't tied to an act. When the act ships, it starts in the current cycle (P4), and the next ones follow one per cycle.
+- **An act that isn't written yet** (from Act IV): its cycle has no act documents, and its Long Night shows *"The story continues in a later version."* Ruins, Ribbonshade names and hunter letters carry on, because they aren't tied to an act. When the act ships, it starts in the current cycle (P4), and the next ones follow one per cycle.
+- **Act III (v0.6, D214):** a save already in Act I or II reaches Act III normally, the cycle after Act II's stand. A save whose current cycle has no act starts Act III **on load**: Arvid arrives (*"Ilse comes up the road early, with an old man carrying a net-needle and an axe."*), D3-01 plays, and Act III's Rank documents already behind the save this cycle (D3-04, D3-05) are found then.
 - **Act counters** start fresh with each act: "the 2nd Mirograd contract won after Act I begins" counts from that act's start, and counts in any later cycle until it's met.
 
 #### 5.14.2 Documents
@@ -975,11 +1046,11 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 
 - **Ilse Marrow arrives with the first document** (D151): the first contract won after Act I begins brings D1-01, Marta's letter, and Ilse walks up with it. Then the **Bestiary tab becomes the Archive** (D150). Before that, the tab is the Bestiary as in v0.3.
 - **Saves from before v0.5** meet her on load (§5.14.1). Her scene hands over everything already found.
-- **Later cycles:** she's back with the new warden. The new-warden sheet says *"Ilse is back from Velkvik with the archive."*
+- **Later cycles:** she's back with the new warden. The new-warden sheet says *"Ilse is back from Velkvik with the archive."* When Act III begins, the line reads *"Ilse is back from Velkvik with the archive, and an old man with a net-needle and an axe."* (Arvid, §8.5, D211).
 - **The Archive tab** has four sections:
   - **Bestiary:** the v0.3 screen, unchanged.
   - **Library:** every document found, grouped by act, then by type, newest first. Each opens in a reader, with any note of Ilse's under it. Letters from hunters (§5.14.7) have their own shelf.
-  - **Accounts:** for each key event (Act I: the Night of the Fall, the apprentices; Act II adds the bell), every account found, side by side, each labeled with its witness. Nothing is marked true.
+  - **Accounts:** for each key event (Act I: the Night of the Fall, the apprentices; Act II adds the bell; Act III adds **Yrsa's choice**), every account found, side by side, each labeled with its witness. Nothing is marked true.
   - **Names:** *"Names found: 12 of 40."* A row for each of the 40, in order. A found name shows its village and year (*"Eirik Varn — Velkvik — onward, year 272 of the order."*); a missing one shows *"— a name not yet found —"* and its hint (`lore-secrets.md` §20).
 
 #### 5.14.4 Names
@@ -997,7 +1068,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 #### 5.14.6 Village trust
 
 - **Levels:** Cold → Wary → Hopeful → Trusting → Sworn. Each village keeps its v0.2 starting level (`setting-primer.md` §3).
-- **Rising** (D146): each contract won for a village counts toward its next step: 10 to leave Cold, then 15, 20 and 25 (`trust.stepContracts`). **Each Triumphant stand raises every village one step**, and progress already counted toward the next step carries over. Trust **never drops**. A Long Night keeps it.
+- **Rising** (D146): each contract won for a village counts toward its next step: 8 to leave Cold, then 15, 20 and 25 (`trust.stepContracts`; the first was 10 until D237). **Each Triumphant stand counts as `trust.triumphantContracts` (10) contracts toward every village's next step** (D195; was a whole step, D146). Progress carries over; a Sworn village stops counting. Trust **never drops**, and a Long Night keeps it.
 - **What it does** (D147): words only. It sets the tone of that village's notices (from v0.2; from v0.5, once a village trusts the hold more than it did at the start, its notices close with that level's line, D180) and of resident lines, and some documents wait for a village's trust (Act I: D1-02, Kozly Hollow at Wary). Trust changes no number in v0.5; rewards wait for the Thanes' Moot (v0.10).
 - **Shown** on the Contracts board's **Villages** panel (§9.14): each village's level, its one-line description, and its progress, with a breakdown on long-press (contracts won toward each step, Triumphant stands). A step up gets one line on the away sheet or the result sheet: *"Mirograd trusts the hold a little more: Hopeful."*
 
@@ -1009,17 +1080,17 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 
 #### 5.14.8 The stand's band and the residents
 
-- **Every stand gets a band** from the waves it held (D145): **Broken** at 8 or fewer, **Held** at 9–11, **Triumphant** at 12 or more (`band.heldFrom`, `band.triumphantFrom`). The arrival stand uses the same thresholds.
-- **The stand screen** shows the thresholds next to the preview: *"Held from 9 waves · Triumphant from 12"*.
+- **Every stand gets a band** from the waves it held (D145): **Broken** at 11 or fewer, **Held** at 12–14, **Triumphant** at 15 or more (`band.heldFrom` 12, `band.triumphantFrom` 15; D194, were 9 and 12; both still relic milestones). **A stand keeps the band it earned:** stands made before v0.6 keep the band they were given then (the v6 migration records it). The arrival stand uses the same thresholds.
+- **The stand screen** shows the thresholds next to the preview: *"Held from 12 waves · Triumphant from 15"*.
 - **The result sheet** shows the band, then one line each from Pechko and Brana for that band (`lore-secrets.md` §24), picked by the stand seed. Any trust steps follow, then the act's testament. Pechko's closing line (*"The walls fell. The hearth didn't. Someone will come."*) stays.
 - The band is carved on the Roll of Wardens.
 
 #### 5.14.9 What the Long Night shows, from v0.5
 
 1. The stand's result: waves held, the band, the Embers breakdown, any relic, the residents' lines, any trust steps.
-2. The act's testament (Act I: D1-06; Act II: D2-09), or *"The story continues in a later version."* if the act isn't written.
+2. The act's testament (Act I: D1-06; Act II: D2-09; Act III: D3-06), or *"The story continues in a later version."* if the act isn't written.
 3. The Hearth.
-4. The new-warden sheet: the warden's name, any resident scene of the act's close (Act I: D1-07 *"Welcome back"*; Act II: D2-10), Ilse's return, and the choice of 3 active hunters.
+4. The new-warden sheet: the warden's name, any resident scene of the act's close (Act I: D1-07 *"Welcome back"*; Act II: D2-10; Act III: D3-07), Ilse's return (with Arvid when Act III begins, then D3-01), and the choice of 3 active hunters.
 
 ---
 
@@ -1073,6 +1144,9 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **Embers** *(v0.4)*: buys the cheapest affordable warden upgrade (ties by list order), and keeps the default three active hunters in each new cycle.
 - **The roster** *(v0.5, D167)*: whenever the active roster has room, it fills it from the reserve, highest levels first.
 - **The Wright's Blade** *(v0.5, D167)*: bought like any gear upgrade. Ruin contracts are ordinary contracts to it; story items are never a goal.
+- **Experiments** *(v0.6)*: each kettle runs one experiment behind its usual brews (D235): the untried pair with the most hidden properties left, herbs and gifts before monster drops, from what its brews leave in the stores (D239).
+- **The v0.6 brews** *(v0.6)*: Hidebane Oil vs Beasts & Wilds and Wright's Oil vs the Cursed, like the other oils; Coldwater vs the Poludnitsa and the Ribbonshade, Owl-Eye vs Gloam-moths, Steadfast vs any species with an ability that costs an action: the counter-potion on the Vanguard, the Mending Draught on the next hunter. Bombs: weak-to first, then a Saltburst, then Poppy Smoke.
+- **Skills** need no decisions. **Arvid** joins at the start of Act III; the roster rule (D167) uses him.
 
 ### 6.2 Targets
 
@@ -1100,7 +1174,18 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | First ruin contract won *(D168)* | ≤ 24 h after the Keep | v0.5 |
 | All six Ribbonshade names *(D168, Q18)* | By the end of cycle 4 | v0.5 |
 | A village's trust rises *(D168)* | In cycle 1 | v0.5 |
+| First new brew discovered | ≤ 24 h after the Alchemist's Hut is built | v0.6 |
+| Recipe book complete (36 of 36 properties) | By the end of cycle 3 | v0.6 |
+| Skills start moving | Every warden skill at level ≥ 1 by the end of cycle 1 | v0.6 |
+| Skills pace | At the end of cycle 3, every warden skill is between level 4 and 8 | v0.6 |
+| Act III lands in its cycle | D3-01 to D3-06 by the end of cycle 3; D3-07 with the next warden; D3-08 reported only | v0.6 |
+| Arvid's level-5 letter (Leif, #34) | By the end of cycle 4 | v0.6 |
+| Trust keeps an arc | No village reaches Sworn before the end of cycle 4 | v0.6 |
 | Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.7 |
+
+Reported only (v0.6): the stand band per cycle (with waves), skill levels per cycle, properties found per cycle.
+
+*Trust rises in cycle 1* (v0.5) and *no Sworn before the end of cycle 4* pull in opposite directions; both are met by tunables (`band.*`, `trust.stepContracts`, `trust.triumphantContracts`). If no reasonable values pass, stop and ask.
 
 ### 6.3 Engagement checks (simulator)
 
@@ -1192,7 +1277,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Board refill | 1 per interval, up to the cap; declining is free | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
 | Board opens | when the first Mine is built (G6) | — | 5.4.1 |
 | Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5, citadel 5, bastion 5 } *(locked; new entries D106)* | 5.4.1 |
-| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1, citadel 4.1, bastion 2.5 } *(D82, D85, D106, D138)* | 5.4.2 |
+| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1, citadel 4.4, bastion 2.5 } *(D82, D85, D106, D138, D189)* | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
 | Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 91 *(⚑ v0.2 tuning: 60 → 72, D76; 72 → 78, D82; v0.4: 78 → 91, D138)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.1, citadel 3.5, bastion 3 } *(D106, D138)* | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
@@ -1251,13 +1336,27 @@ Every constant here is tunable (D166).
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Stand band | Broken below `heldFrom`; Held below `triumphantFrom`; Triumphant from it | `band.heldFrom` = 9, `band.triumphantFrom` = 12 (waves) | 5.14.8 |
-| Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand adds one step to every village | `trust.stepContracts` = [10, 15, 20, 25] | 5.14.6 |
+| Stand band | Broken below `heldFrom`; Held below `triumphantFrom`; Triumphant from it | `band.heldFrom` = 12, `band.triumphantFrom` = 15 (waves) *(D194; were 9 and 12)* | 5.14.8 |
+| Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand counts as `trust.triumphantContracts` contracts for every village | `trust.stepContracts` = [8, 15, 20, 25] *(D237; first was 10)*, `trust.triumphantContracts` = 10 *(D195)* | 5.14.6 |
 | Hunter letters | at the highest level ever reached | `letters.levels` = [5, 8] | 5.14.7 |
 | Runed sub-hit | `f × Might_eff × variance × crit × resist[Rune]`, no Armor | `gear.runedFraction` = 0.25 | 5.3.6 |
 | Ribbonshade share | the share of ruin contracts (tiers 2–4) that is a Ribbonshade while a Ribbonshade name is still missing | `ruin.ribbonshadeShare` = 0.5 | 5.14.4 |
 
 Trait and ability numbers (Shield-companion, Old Wright, and the Cursed creatures' abilities) live with their content, like every earlier trait and ability (§8.3, §8.5). The Wright's Blade's Might and cost live with the gear content (§5.3.6).
+
+### 7.8 Alchemy discovery & skills *(v0.6, D193–D220)*
+
+Every constant here is tunable unless marked locked.
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Experiment | 1 unit of each of two ingredients; takes the time (× Copper Still) | `experiment.time` = 10 min, `experiment.units` = 1 | 5.8.3 |
+| Skill level | level L → L+1 costs `b × g^L` XP; 0–10 | `skill.maxLevel` = 10 **(locked)**, `skill.xpBase` = 20, `skill.xpGrowth` = 1.6 | 5.8.6 |
+| Skill XP | per activity | `skill.xp.alchemy` = { brew 1, experiment 3, property 10 }, `skill.xp.smithing` = { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` = { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` = { contractPerTier 2, wave 1 } *(D237; was 1)* | 5.8.6 |
+| Skill bonuses | per level | `skill.alchemyPotency` = 0.03, `skill.smithingCost` = 0.021 *(D240; was 0.04, D228, D237)*, `skill.loreClueTime` = 0.04, `skill.commandXp` = 0.04 | 5.8.6 |
+
+Brew numbers live with their content, like every consumable (§5.8.5): Coldwater 0.40 Fire taken; Owl-Eye 0.10 hit chance; Steadfast 1 use; Poppy Smoke 1 lost action; the new oils use `oil.familyBonus`. The properties table is content (§8.6).
+
 
 ---
 
@@ -1288,7 +1387,7 @@ The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.4 (Keep unles
 | Dubno Ford | Lowland river crossing | river, field | honeycomb, hare's foot |
 | Kozly Hollow | Lowland goatherd village in the old wood | forest, field, ruin *(v0.5)* | honeycomb, pitch |
 | Mirograd | Lowland market town (the largest) | field, river | hare's foot, pitch |
-| Velkvik | Highland fjord village | river, barrow, ruin *(v0.5)* | rime salt, pitch |
+| Velkvik | Highland fjord village | river, barrow, ruin *(v0.5)* | rime salt, pitch, noon poppy *(D239)* |
 | Ravenfell | Highland hamlet among the barrow-hills | barrow, forest, ruin *(v0.5)* | rime salt |
 
 A contract's location tag comes from its village. **Each success also gives one gift reagent** from that village (v0.3+). **Ruin** (v0.5, D157) joins three villages' tags; like barrows, ruins are never generated in the Hamlet or at tier 1, so a village whose only possible tags are ruled out picks from the rest.
@@ -1472,40 +1571,42 @@ Individual hunters vary from the role baseline by up to ±10% or 1 point per sta
 | Shield-companion | While this Vanguard is standing, the party member with the lowest % Health takes −15% damage (taken%; ties by party slot) | v0.5 *(Arvid)* |
 | Old Wright | +20% Might vs the Cursed family | v0.5 *(Arvid)* |
 
-**v0.5 adds Arvid Netmender** *(⚑ lore C4; D154: "Stonebrow" is a Warcraft surname)*, a story hunter:
+**v0.5 adds Arvid Netmender** *(⚑ lore C4; D154: "Stonebrow" is a Warcraft surname)*, a story hunter **who arrives in play from v0.6 (Act III)**:
 
 | Hunter | Role | Damage | Origin | Traits | Unlock | Stats (H/M/A/S) | Sketch |
 |---|---|---|---|---|---|---|---|
-| **Arvid Netmender** *(v0.5)* | Vanguard | Rune | Highland | Shield-companion, Old Wright | When Act III begins (he ships with v0.5 but can't arrive before Act III is written, v0.6) | 175/12/9/7 | Velkvik net-mender, 51, who keeps a runed axe he won't talk about. Says he's too old for this. Hasn't missed a fight. |
+| **Arvid Netmender** *(v0.5)* | Vanguard | Rune | Highland | Shield-companion, Old Wright | **Arrives with Ilse when Act III begins** (v0.6, D211): he joins the roster directly (active if there's room, otherwise the reserve), at **the level of your highest-level hunter at that moment** (after any Long Night halving), within the Rank's level cap | 175/12/9/7 | Velkvik net-mender, 51, who keeps a runed axe he won't talk about. Says he's too old for this. Hasn't missed a fight. |
 
 Portrait: a grey beard in two braids, a fisherman's knit cap, a scarred leather collar, a faint rune-mark on the axe haft. Every hunter has two letters from v0.5 (§5.14.7).
 
 **v0.3 adds 2 hunters:** Stanko Sleepless (a Wolf-friend Striker with Venom damage) and Herdis Strayfinder (a Tracker Mender), defined by the owner (Q12, D101). That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
 
-### 8.6 Ingredients (v0.3)
+### 8.6 Ingredients (v0.3; properties v0.6, D202)
 
-Each ingredient also has **4 hidden effects**, defined in v0.6 for alchemy discovery.
+Each ingredient carries **3 hidden properties** (§5.8.1). **Bold** = proved by a v0.3 recipe and known from the start (15); the rest are found by experiment (21). Each property is named by the brew it makes.
 
-| Ingredient | Source | Used in (v0.3 recipes) |
+| Ingredient | Source | Properties |
 |---|---|---|
-| Yarrow | Herb Garden | Drowned-Bane Oil, Mending Draught |
-| Mugwort | Herb Garden | Thornbane Oil, Quickfoot Tincture |
-| Juniper | Herb Garden | Grave Oil, Hardwood Tonic |
-| Honeycomb | Gift: Dubno Ford, Kozly Hollow | Mending Draught |
-| Hare's foot | Gift: Dubno Ford, Mirograd | Quickfoot Tincture |
-| Pitch | Gift: Kozly Hollow, Mirograd, Velkvik | Fire Pot |
-| Rime salt | Gift: Velkvik, Ravenfell; drop: Draugr, Rimewrought *(v0.5)* | Frost Pot, Saltburst |
-| Grave dust | Drop: Upyr, Draugr, Strzyga, Ribbonshade, Anvil-wight *(v0.5)* | Grave Oil |
-| River pearl | Drop: Rusalka, Vodyanoy, Nix | Drowned-Bane Oil |
-| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra, Gloam-moths *(v0.5)* | Thornbane Oil, Hardwood Tonic |
-| Wolf fang | Drop: Gloam Wolf | — *(reserved for v0.6 discovery)* |
-| Noon poppy | Drop: Poludnitsa | — *(reserved for v0.6 discovery)* |
+| Yarrow | Herb Garden | **Drowned-Bane Oil** · **Mending Draught** · Hardwood Tonic |
+| Mugwort | Herb Garden | **Thornbane Oil** · **Quickfoot Tincture** · Steadfast Draught |
+| Juniper | Herb Garden | **Grave Oil** · **Hardwood Tonic** · Steadfast Draught |
+| Honeycomb | Gift: Dubno Ford, Kozly Hollow | **Mending Draught** · Owl-Eye Drops · Poppy Smoke |
+| Hare's foot | Gift: Dubno Ford, Mirograd | **Quickfoot Tincture** · Hidebane Oil · Owl-Eye Drops |
+| Pitch | Gift: Kozly Hollow, Mirograd, Velkvik | **Fire Pot** · Wright's Oil · Drowned-Bane Oil |
+| Rime salt | Gift: Velkvik, Ravenfell; drop: Draugr, Rimewrought *(v0.5)* | **Frost Pot** · **Saltburst** · Grave Oil |
+| Grave dust | Drop: Upyr, Draugr, Strzyga, Ribbonshade, Anvil-wight *(v0.5)* | **Grave Oil** · Wright's Oil · Saltburst |
+| River pearl | Drop: Rusalka, Vodyanoy, Nix | **Drowned-Bane Oil** · Coldwater Draught · Frost Pot |
+| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra, Gloam-moths *(v0.5)* | **Thornbane Oil** · **Hardwood Tonic** · Fire Pot |
+| Wolf fang | Drop: Gaunt Wolf | Hidebane Oil · Owl-Eye Drops · Steadfast Draught |
+| Noon poppy | Gift: Velkvik *(Q19, D239)*; drop: Poludnitsa | Coldwater Draught · Poppy Smoke · Mending Draught |
+
+Carriers per brew (2–3 each): Grave Oil 3, Drowned-Bane 3, Thornbane 2, Mending 3, Hardwood 3, Quickfoot 2, Fire Pot 2, Frost Pot 2, Saltburst 2, Hidebane 2, Wright's Oil 2, Coldwater 2, Owl-Eye 3, Steadfast 3, Poppy Smoke 2 = 36. No two ingredients have the same three. **Content test (T6.1):** every brew has ≥ 2 carriers (≥ 1 for bombs), each ingredient exactly 3 distinct properties, and the 15 bold ones are exactly the v0.3 recipes'.
 
 **Drop rate:** each success yields `tier` units of that monster's drop, plus 1 gift reagent from the village.
 
 ### 8.7 Consumables
 
-See the table in §5.7 (9 items in v0.3).
+See the table in §5.7 (9 items in v0.3) and §5.8.5 (6 more in v0.6): 15 in all.
 
 ### 8.8 Patrons *(v0.7, outline only; six, per lore L8)*
 
@@ -1557,7 +1658,7 @@ Found at Last Stand wave milestones (§5.9.6). Bonuses go in the relic bucket; n
 3. **Odds preview raised from 200 to 500 simulated fights.** This keeps the displayed margin within ±4.4 points. *(Small edit to approved §5.4.2.)*
 4. **Monster tier scaling is relative to each monster's base tier,** and Armor scales more slowly (1.15 per tier) than Health and Might (1.35). *(Small edit to approved §5.4.1.)*
 5. **"Leshy bark" renamed to "thornwood"** and dropped by three monsters, so the forest oil is available from tier 1. *(Small edit to approved §5.7.)*
-6. **Village gifts:** each success also gives a village-specific reagent. This is how honeycomb, hare's foot, pitch, and rime salt enter the game.
+6. **Village gifts:** each success also gives a village-specific reagent. This is how honeycomb, hare's foot, pitch, and rime salt enter the game; from v0.6 Velkvik also gifts noon poppy (Q19, D239).
 7. **Preparation-matters check:** matched preparation must raise the odds by at least 15 points. This is the main simulator guard on the Witcher influence.
 8. **Silver check:** at least 70% of silver income must come from bounties once contracts unlock.
 9. **The hunter roster and stats in §8.5,** including Sigrun Halfhand as an Emberwright lore hook.
@@ -1789,6 +1890,10 @@ The Hut opens from its building row on the Hold screen.
 └──────────────────────────────────┘
 ```
 
+**From v0.6:**
+- Three sections: **Brew** (as in v0.3, every known recipe of each brew, the 2:1 split picker), **Experiment** (two ingredient pickers, the cost "1 each · 10m", what's still hidden on each, "already tried" or "nothing left to learn" when refused), **Book** (the 12 × 3 grid with "?" for hidden properties, the count "Properties found: N of 36", each brew with its known recipes).
+- A discovery shows as *"Discovered: Hidebane Oil."* on the Hut, the away sheet and results.
+
 ### 9.10 More menu
 
 | Item | Contents | From |
@@ -1832,6 +1937,7 @@ The Hut opens from its building row on the Hold screen.
 | v0.3 | + Bestiary (grid, entries), investigation on the board and launch sheet, preparation on the launch sheet, Alchemist's Hut |
 | v0.4 | + Threat meter, Citadel and Bastion on the Rank screen, defenses, The Hearth (upgrades and relics), the Last Stand screen, the Long Night sheets, the arrival sheet (§9.13) |
 | v0.5 | + the Archive tab (Bestiary, Library, Accounts, Names), the document reader, story scenes, the Villages panel, letters on the hunter sheet, warden naming, the Roll of Wardens, bands on the stand screens (§9.14) |
+| v0.6 | + the Hut's Experiment and Book sections; "What the ember remembers" (warden skills) on the Rank screen; skill lines on the away sheet and new-warden sheet; Arvid's arrival; Act III's documents and scenes |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -1859,7 +1965,7 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 ### 9.13 Long Night screens *(v0.4, D107–D112, D115)*
 
 - **Threat meter** (Hold screen, from the Keep): the value and "+X per hour now". Long-press for the breakdown: the Rank's rate, what defenses take off, contracts completed and failed.
-- **Rank screen** (Hearth Hall): Citadel and Bastion Rank-ups with requirements and costs; the restoration sheet without an inscription (v0.5 adds them); **The Hearth** (Embers on hand, the warden upgrades, the relics you own); from Bastion, **Make the Last Stand**.
+- **Rank screen** (Hearth Hall): Citadel and Bastion Rank-ups with requirements and costs; the restoration sheet without an inscription (v0.5 adds them); **The Hearth** (Embers on hand, the warden upgrades, the relics you own); from Bastion, **Make the Last Stand**; from v0.6, **What the ember remembers**: the four warden skills (§5.8.6).
 - **Last Stand screen:** the wave list (the first 12; "?" for species not yet Identified); six slots with the suggested six; one oil and one potion per hunter; bombs shown as "thrown automatically from stores"; the preview (expected waves with a range; Embers now with the breakdown and per day of the cycle; Threat by tomorrow; Embers tomorrow, labeled as an estimate); **Start**, with a confirmation that says the Long Night follows.
 - **The Long Night sheets**, in order (§5.9.7): the stand's result, with a link to each wave's log; the closing line; The Hearth; the new-warden sheet with the choice of 3 active hunters.
 - **Arrival sheet** (old saves only, §5.9.8).
@@ -1972,3 +2078,14 @@ Each one is also marked **[JC]** where it appears.
 10. **The Wright's Blade** is the fourth weapon tier and keeps the Silver sub-hit. (§5.3.6)
 11. **Arvid Netmender** (was Stonebrow): a Rune Vanguard, free, from Act III. (§8.5)
 12. **The Deep family waits** for the acts that explain it. (§5.6.1)
+
+## Judgment calls added in the v0.6 flesh-out (D193–D220)
+
+1. **Bands 12 / 15, and a Triumphant stand is worth 10 contracts of trust** for every village; stands keep the band they earned. (§5.14.6, §5.14.8)
+2. **Three properties per ingredient, fixed in content, pairs only;** experiments teach and never brew. (§5.8.1–5.8.3)
+3. **The nine v0.3 recipes stay known;** the book opens with 15 of 36 properties. (§5.8.1)
+4. **Six new brews,** each answering a named gap; two are new fight rules (Steadfast, Poppy Smoke). (§5.8.5)
+5. **Four warden skills, 0–10, kept forever; only Alchemy touches fights** and is frozen at launch. (§5.8.6)
+6. **No hunter use-skills** before v0.8. (§5.8.7)
+7. **Arvid arrives with Ilse when Act III begins,** at your highest hunter's level. (§8.5)
+8. **Act III reveals the vow's second half** in Arvid's testament. (`lore-secrets.md` §26)

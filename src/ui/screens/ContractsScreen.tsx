@@ -74,7 +74,7 @@ export const ContractsScreen = () => {
   const collect = (): void => {
     const results = [...s.results];
     if (dispatch({ type: 'results.collect' }).ok) {
-      openSheet('Contracts finished', () => <ResultsView results={results} />);
+      openSheet('Contracts finished', () => <ResultsView results={results} ember />);
     }
   };
   return (

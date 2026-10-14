@@ -56,13 +56,17 @@ const docText = (d: DocumentDef): string =>
     ...d.body,
     d.signature ?? '',
     ...(d.table?.rows.map((r) => r.join(' ')) ?? []),
+    d.attachment?.preface ?? '',
+    ...(d.attachment?.body ?? []),
   ].join('\n');
 const flat = (s: string): string => s.replace(/\s+/g, ' ').replace(/\*/g, '').trim();
 
-/** lore §21.1 and §22.1: the documents tables, as [id, title, type, witness, arrives, where, names]. */
+/** lore §21.1, §22.1 and §26.1: the documents tables, as [id, title, type, witness, arrives, where, names]. */
 const tableRows = (): string[][] =>
-  lore
-    .slice(lore.indexOf('## 21. '), lore.indexOf('## 23. '))
+  (
+    lore.slice(lore.indexOf('## 21. '), lore.indexOf('## 23. ')) +
+    lore.slice(lore.indexOf('## 26. '), lore.indexOf('## 27. '))
+  )
     .split('\n')
     .filter((l) => /^\| D\d-\d\d/.test(l))
     .map((l) =>
@@ -72,13 +76,13 @@ const tableRows = (): string[][] =>
         .map((c) => c.replace(/\*\(new\)\*/, '').trim()),
     );
 
-describe('Acts I and II (lore-secrets §21, §22)', () => {
+describe('Acts I, II and III (lore-secrets §21, §22, §26)', () => {
   const rows = tableRows().filter((r) => r[0] !== 'D1-08'); // D1-08 waits for Delves (v0.7)
 
   it('have every document of the tables, and no other', () => {
     expect(allDocuments.map((d) => d.id).sort()).toEqual(rows.map((r) => r[0]).sort());
-    expect(acts.map((a) => a.act)).toEqual([1, 2]);
-    expect(LAST_WRITTEN_ACT).toBe(2);
+    expect(acts.map((a) => a.act)).toEqual([1, 2, 3]);
+    expect(LAST_WRITTEN_ACT).toBe(3);
     for (const a of acts) for (const d of a.documents) expect(d.act, d.id).toBe(a.act);
   });
 
@@ -89,6 +93,7 @@ describe('Acts I and II (lore-secrets §21, §22)', () => {
       Testament: 'testament',
       'Field note': 'field-note',
       'Resident scene': 'scene',
+      'Resident scene + ledger strip': 'scene',
       Journal: 'journal',
     };
     for (const [id, title, type, witness] of rows) {
@@ -130,6 +135,18 @@ describe('Acts I and II (lore-secrets §21, §22)', () => {
     expect(c('D2-08')).toEqual({ kind: 'hunterAtRank', hunter: 'sigrun', age: 'bastion' });
     expect(c('D2-09')).toEqual({ kind: 'actStand' });
     expect(c('D2-10')).toEqual({ kind: 'nextWarden' });
+    expect(c('D3-01')).toEqual({ kind: 'arvidArrives' });
+    expect(c('D3-02')).toEqual({ kind: 'contractWon', nth: 1, village: 'velkvik' });
+    expect(c('D3-03')).toEqual({ kind: 'contractWon', nth: 2, village: 'velkvik' });
+    expect(c('D3-04')).toEqual({ kind: 'rankReached', age: 'citadel' });
+    expect(c('D3-05')).toEqual({ kind: 'rankReached', age: 'bastion' });
+    expect(c('D3-06')).toEqual({ kind: 'actStand' });
+    expect(c('D3-07')).toEqual({ kind: 'nextWarden' });
+    expect(c('D3-08')).toEqual({
+      kind: 'huntersTogether',
+      hunters: ['arvid', 'sigrun'],
+      after: 'D2-08',
+    });
   });
 
   it('have the lore texts word for word', () => {
@@ -142,10 +159,18 @@ describe('Acts I and II (lore-secrets §21, §22)', () => {
       }
       const section = loreSection(`##### ${d.id} `);
       const text = flat(quoted(section).replace(/\| ?/g, ' ').replace(/---/g, ''));
-      for (const part of [...d.body, d.signature ?? '', ...(d.preface ?? '').split('\n')])
+      for (const part of [
+        ...d.body,
+        d.signature ?? '',
+        ...(d.preface ?? '').split('\n'),
+        ...(d.attachment?.preface ?? '').split('\n'),
+        ...(d.attachment?.body ?? []),
+      ])
         expect(text, `${d.id}: ${part.slice(0, 40)}`).toContain(flat(part.replace(/\n/g, ' ')));
       for (const r of d.table?.rows ?? []) for (const cell of r) expect(text, d.id).toContain(cell);
       if (d.ilseNote) expect(flat(section), d.id).toContain(flat(d.ilseNote));
+      if (d.attachment?.ilseNote)
+        expect(flat(section), d.id).toContain(flat(d.attachment.ilseNote));
     }
   });
 

@@ -1,3 +1,4 @@
+import { skillLevel } from '../skills/skills';
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
 import { ALL_SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { slotFreed } from '../contracts/board';
@@ -46,6 +47,7 @@ export const launch = (
     location: contract.location,
     rank: state.cycle.age,
     prep,
+    alchemy: skillLevel(state, 'alchemy'),
   });
   if (odds.reckless && !confirmReckless) {
     return refuse('This contract is Reckless: the hunters could die. Confirm to send them anyway.');
@@ -64,6 +66,7 @@ export const launch = (
     reckless: odds.reckless,
     prep: structuredClone(prep),
     knowledge: monsterFor(state, contract).knowledge,
+    alchemy: skillLevel(state, 'alchemy'), // frozen here (D206)
     winChance: odds.winChance,
   });
   return ok;

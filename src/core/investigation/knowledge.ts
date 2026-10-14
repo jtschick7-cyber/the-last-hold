@@ -1,5 +1,6 @@
 import { type MonsterId } from '../../content/monsters';
 import { num } from '../balance-access';
+import { noteKnowledgeLevels } from '../skills/hooks';
 import type { MonsterInstance } from '../combat';
 import { candidatesFor } from '../contracts/candidates';
 import type { ContractInstance, GameState } from '../state/game-state';
@@ -15,8 +16,13 @@ export const levelOf = (state: GameState, monster: MonsterId): Level =>
 /** Raises a species to at least `level` (1 Sighted or 2 Identified); never lowers it. */
 export const raiseTo = (state: GameState, monster: MonsterId, level: 1 | 2): void => {
   const entry = state.bestiary[monster];
-  if (!entry) state.bestiary[monster] = { level, kills: 0 };
-  else if (entry.level < level) entry.level = level;
+  if (!entry) {
+    state.bestiary[monster] = { level, kills: 0 };
+    noteKnowledgeLevels(state, level); // Lore (GDD §5.8.6): each level a species reaches
+  } else if (entry.level < level) {
+    noteKnowledgeLevels(state, level - entry.level);
+    entry.level = level;
+  }
 };
 
 /**
@@ -57,7 +63,10 @@ export const recordFight = (state: GameState, monster: MonsterId, won: boolean):
       : entry.kills >= num('knowledge.studiedKills')
         ? 3
         : 2;
-  if (level > entry.level) entry.level = level;
+  if (level > entry.level) {
+    noteKnowledgeLevels(state, level - entry.level);
+    entry.level = level;
+  }
 };
 
 /**

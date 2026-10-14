@@ -64,6 +64,7 @@ const run = (
     trust: [],
     trustRoseInCycle1: 0,
   },
+  discovery: { hutHours: null, firstNewBrewHours: null, cycles: [] },
 });
 
 describe('time targets', () => {

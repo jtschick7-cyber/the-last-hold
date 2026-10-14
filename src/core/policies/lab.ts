@@ -1,9 +1,13 @@
 import type { BuildingId } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
+import { hunters, type HunterId } from '../../content/hunters';
+import { INGREDIENT_IDS, ingredients, type IngredientSource } from '../../content/ingredients';
+import { monsters, type MonsterId } from '../../content/monsters';
 import type { Command } from '../commands';
 import { bombIsWeak, oilMatches } from '../contracts/prep';
 import { contractIdentity } from '../investigation/view';
 import { investigationSlots } from '../investigation/lodge';
+import { experimentProblem, hiddenIndexes } from '../alchemy/book';
 import { brewSlots } from '../alchemy/brewing';
 import { num } from '../balance-access';
 import type { ContractInstance, GameState, Preparation } from '../state/game-state';
@@ -46,7 +50,30 @@ const WANT: readonly [ConsumableId, number][] = [
   ['mending-draught', 2],
   ['saltburst', 1],
   ['quickfoot-tincture', 1],
+  // v0.6 (D215): the new brews, once the book knows them (a refused brew just moves on).
+  ['hidebane-oil', 3],
+  ['wrights-oil', 3],
+  ['coldwater-draught', 1],
+  ['owl-eye-drops', 1],
+  ['steadfast-draught', 1],
+  ['poppy-smoke', 1],
 ];
+
+const SOURCE_RANK: Record<IngredientSource, number> = {
+  'herb-garden': 0,
+  'village-gift': 1,
+  'monster-drop': 2,
+};
+
+/** The v0.6 potion that answers a species, or null (GDD §5.8.5 "Answers"). */
+const counterPotion = (monster: MonsterId): ConsumableId | null => {
+  const kinds = new Set(monsters[monster].abilities.map((a) => a.kind));
+  if (kinds.has('noonHeat') || kinds.has('sealBurn')) return 'coldwater-draught';
+  if (kinds.has('lightless')) return 'owl-eye-drops';
+  for (const k of ['barrowGrip', 'drowningSong', 'enthrall', 'leadAstray', 'dragUnder'])
+    if (kinds.has(k as never)) return 'steadfast-draught';
+  return null;
+};
 
 /** The next step of BUILD_ORDER the hold hasn't reached yet, or null when it has them all. */
 const nextStep = (s: GameState): BuildingId | null => {
@@ -92,7 +119,7 @@ export const brewMoves = (s: GameState, act: Act): number => {
   let n = 0;
   while (s.queues.brewing.length < brewSlots(s)) {
     const queued = (id: ConsumableId): number =>
-      s.queues.brewing.filter((j) => j.item === id).length;
+      s.queues.brewing.filter((j) => j.kind === 'brew' && j.item === id).length;
     const item = WANT.find(([id, cap]) => s.stores[id] + queued(id) < cap);
     if (!item) break;
     // Try the wanted items in order until one can be paid for.
@@ -100,6 +127,37 @@ export const brewMoves = (s: GameState, act: Act): number => {
       ([id, cap]) => s.stores[id] + queued(id) < cap && act({ type: 'brew.queue', item: id }),
     );
     if (!ok) break;
+    n += 1;
+  }
+  return n;
+};
+
+/**
+ * GDD §6.1 (v0.6, D215, D235): each kettle runs an experiment behind its usual brews: the
+ * untried pair with the most hidden properties left (herbs and gifts before monster drops
+ * on a tie), from what the check-in's brews left in the stores (they were queued first, so
+ * they have had their share: D239). Returns the moves made.
+ */
+export const experimentMoves = (s: GameState, act: Act): number => {
+  let n = 0;
+  const units = num('experiment.units');
+  // A kettle's brew takes 10 minutes, so a check-in's brews leave it idle until the next one:
+  // each kettle gets one experiment queued behind them (the queue is unlimited, GDD §5.7).
+  const running = (): number => s.queues.brewing.filter((j) => j.kind === 'experiment').length;
+  while (running() < brewSlots(s)) {
+    const stocked = INGREDIENT_IDS.filter((id) => s.stores[id] >= units);
+    const pairs = stocked
+      .flatMap((a, i) => stocked.slice(i + 1).map((b) => [a, b] as const))
+      .filter(([a, b]) => experimentProblem(s, a, b) === null)
+      .map(([a, b]) => ({
+        a,
+        b,
+        hidden: hiddenIndexes(s, a).length + hiddenIndexes(s, b).length,
+        source: Math.max(SOURCE_RANK[ingredients[a].source], SOURCE_RANK[ingredients[b].source]),
+      }))
+      .sort((x, y) => y.hidden - x.hidden || x.source - y.source);
+    const best = pairs[0];
+    if (!best || !act({ type: 'experiment.queue', a: best.a, b: best.b })) break;
     n += 1;
   }
   return n;
@@ -136,11 +194,20 @@ export const prepFor = (
         prep.bombs.push(bomb);
     }
     if (prep.bombs.length === 0 && left('saltburst')) prep.bombs.push('saltburst');
+    // v0.6 (D215): Poppy Smoke fills a slot that is left.
+    if (prep.bombs.length < slots && left('poppy-smoke')) prep.bombs.push('poppy-smoke');
   } else if (left('saltburst')) {
     prep.bombs.push('saltburst');
   }
-  const first = party[0];
-  if (first && left('mending-draught'))
-    prep.potions[first as keyof Preparation['potions']] = 'mending-draught';
+  // The counter-potion for the species goes on the Vanguard; the Mending Draught on the
+  // next hunter, or the first when there is no counter-potion (GDD §6.1, D215).
+  const counter = v.identified && v.monster ? counterPotion(v.monster) : null;
+  if (counter && left(counter)) {
+    const vanguard = party.find((h) => hunters[h as HunterId]?.role === 'vanguard') ?? party[0];
+    if (vanguard) prep.potions[vanguard as keyof Preparation['potions']] = counter;
+  }
+  const next = party.find((h) => prep.potions[h as keyof Preparation['potions']] === undefined);
+  if (next && left('mending-draught'))
+    prep.potions[next as keyof Preparation['potions']] = 'mending-draught';
   return prep;
 };

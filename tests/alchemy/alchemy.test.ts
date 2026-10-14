@@ -55,7 +55,14 @@ describe('the Alchemist’s Hut (GDD §5.7)', () => {
     expect(run(s, { type: 'brew.queue', item: 'fire-pot' }).ok).toBe(true);
     expect(s.stores.pitch).toBe(19);
     expect(s.resources.wood).toBe(wood - 1);
-    expect(s.queues.brewing).toEqual([{ item: 'fire-pot', doneAt: s.time + BREW }]);
+    expect(s.queues.brewing).toEqual([
+      {
+        kind: 'brew',
+        item: 'fire-pot',
+        doneAt: s.time + BREW,
+        paid: { ingredients: { pitch: 1 }, resources: { wood: 1 } },
+      },
+    ]);
     expect(kettlesBusy(s)).toBe(1);
   });
 
@@ -63,12 +70,18 @@ describe('the Alchemist’s Hut (GDD §5.7)', () => {
     for (const id of CONSUMABLE_IDS) {
       const s = hut(1);
       const before = structuredClone({ stores: s.stores, resources: s.resources });
+      const recipe = consumables[id].recipe;
+      if (!recipe) {
+        // A v0.6 brew has no recipe until the book discovers one (T6.4).
+        expect(run(s, { type: 'brew.queue', item: id }).ok, id).toBe(false);
+        continue;
+      }
       expect(run(s, { type: 'brew.queue', item: id }).ok, id).toBe(true);
-      for (const [k, n] of Object.entries(consumables[id].recipe.ingredients))
+      for (const [k, n] of Object.entries(recipe.ingredients))
         expect(s.stores[k as IngredientId], `${id} ${k}`).toBe(
           before.stores[k as IngredientId] - (n ?? 0),
         );
-      for (const [r, n] of Object.entries(consumables[id].recipe.resources))
+      for (const [r, n] of Object.entries(recipe.resources))
         expect(s.resources[r as keyof typeof s.resources]).toBe(
           before.resources[r as keyof typeof s.resources] - (n ?? 0),
         );
@@ -124,7 +137,14 @@ describe('the Alchemist’s Hut (GDD §5.7)', () => {
     expect(run(s, { type: 'brew.cancel', index: 0 }).ok).toBe(true);
     expect(s.stores.pitch).toBe(20);
     expect(s.resources.wood).toBe(wood + 1); // the fire pot's wood comes back
-    expect(s.queues.brewing).toEqual([{ item: 'frost-pot', doneAt: s.time + BREW }]);
+    expect(s.queues.brewing).toEqual([
+      {
+        kind: 'brew',
+        item: 'frost-pot',
+        doneAt: s.time + BREW,
+        paid: { ingredients: { 'rime-salt': 1 }, resources: { wood: 1 } },
+      },
+    ]);
     expect(run(s, { type: 'brew.cancel', index: 5 }).ok).toBe(false);
   });
 

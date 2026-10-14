@@ -6,8 +6,8 @@ import type { VillageId } from '../villages';
 import type { TrustLevel } from './trust';
 
 // GDD §5.14.2 (D148): documents arrive on fixed conditions, never by chance. The
-// texts and conditions are lore-secrets §21 (Act I) and §22 (Act II), word for
-// word. Core (T5.6) reads the conditions; the Archive (T5.11a) shows the text.
+// texts and conditions are lore-secrets §21 (Act I), §22 (Act II) and §26 (Act III), word
+// for word. Core (T5.6) reads the conditions; the Archive (T5.11a) shows the text.
 
 /** lore-secrets §15.1. Ember-echoes arrive with Delves (v0.7). */
 export const DOCUMENT_TYPES = [
@@ -51,7 +51,15 @@ export type DocumentCondition =
   /** The act's Last Stand: shown on the stand's result sheet. */
   | { readonly kind: 'actStand' }
   /** The next warden's arrival: the new-warden sheet, after naming. */
-  | { readonly kind: 'nextWarden' };
+  | { readonly kind: 'nextWarden' }
+  /** Arvid arrives with Ilse when Act III begins (lore §26, D211, D214). */
+  | { readonly kind: 'arvidArrives' }
+  /** Two hunters are both on the roster, in the act's cycle or later, once `after` is found (D213). */
+  | {
+      readonly kind: 'huntersTogether';
+      readonly hunters: readonly [HunterId, HunterId];
+      readonly after: string;
+    };
 
 /** A ledger page's table (D1-03). */
 export interface DocumentTable {
@@ -78,4 +86,12 @@ export interface DocumentDef {
   readonly ilseNote?: string;
   /** Roll numbers of the names it carries (lore-secrets §20). */
   readonly names: readonly number[];
+  /** A second item handed over with it, filed beside it in the Library (D3-05's ledger strip). */
+  readonly attachment?: {
+    readonly heading: string;
+    readonly type: DocumentType;
+    readonly preface?: string;
+    readonly body: readonly string[];
+    readonly ilseNote?: string;
+  };
 }

@@ -9,7 +9,7 @@ import {
   type HunterUnlock,
 } from '../../content/hunters';
 import { knowledgeLevels } from '../../content/knowledge';
-import { actNumeral, LAST_WRITTEN_ACT } from '../../content/story/acts';
+import { actNumeral } from '../../content/story/acts';
 import { monsters } from '../../content/monsters';
 import { traits } from '../../content/traits';
 import { constantAt, num } from '../balance-access';
@@ -174,9 +174,10 @@ export const unlockMet = (state: GameState, unlock: HunterUnlock): boolean => {
       return (state.bestiary[unlock.monster]?.level ?? 0) >= knowledgeLevels[unlock.level].number;
     case 'bountySilverEarned':
       return state.stats.bountySilver >= unlock.amount;
-    case 'actBegins':
-      // GDD §8.5: Arvid comes when Act III begins, and an act begins only once it's written.
-      return unlock.act <= LAST_WRITTEN_ACT && state.story.acts.some((a) => a.act >= unlock.act);
+    case 'arrivesWithIlse':
+      // GDD §8.5 (D211): Arvid is never recruited. He joins the roster when Act III begins
+      // (core/story/act3.ts), so he is never a candidate.
+      return false;
   }
 };
 
@@ -200,8 +201,8 @@ export const describeUnlock = (unlock: HunterUnlock): string => {
       return `${monsters[unlock.monster].name} reaches ${knowledgeLevels[unlock.level].name}`;
     case 'bountySilverEarned':
       return `Earn ${unlock.amount.toLocaleString('en-US')} silver in bounties`;
-    case 'actBegins':
-      return `Arrives when Act ${actNumeral(unlock.act)} begins`;
+    case 'arrivesWithIlse':
+      return `Arrives with Ilse when Act ${actNumeral(unlock.act)} begins`;
   }
 };
 

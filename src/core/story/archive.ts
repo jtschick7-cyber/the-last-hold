@@ -49,12 +49,17 @@ export const describeCondition = (doc: DocumentDef): string => {
       return `${act}'s Last Stand`;
     case 'nextWarden':
       return `the warden after ${act}`;
+    case 'arvidArrives':
+      return `Arvid's arrival with Ilse when ${act} begins`;
+    case 'huntersTogether':
+      return `${c.hunters.map((h) => hunters[h].shortName).join(' and ')} both at the hold`;
   }
 };
 
 /** "Found: the 2nd Mirograd contract won in Act I, cycle 1." */
 export const foundLine = (doc: DocumentDef, found: FoundDocument): string =>
-  found.via === 'arrival'
+  // Arvid's own scene reads its condition even when found on load (D214).
+  found.via === 'arrival' && doc.condition.kind !== 'arvidArrives'
     ? `Found: brought by Ilse when she came, cycle ${found.cycle}.`
     : `Found: ${describeCondition(doc)}, cycle ${found.cycle}.`;
 

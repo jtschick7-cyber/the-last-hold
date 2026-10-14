@@ -26,6 +26,8 @@ export interface Fight {
   readonly bombs: readonly ConsumableId[];
   /** Watchtower volley at tick 1 (Last Stand only); 0 in contract fights. */
   readonly volley: number;
+  /** Alchemy: how much stronger every brew number is this fight (1 at level 0, GDD §5.8.6). */
+  readonly potency: number;
 }
 
 /** A log line whose text is built only if the fight is being logged. */

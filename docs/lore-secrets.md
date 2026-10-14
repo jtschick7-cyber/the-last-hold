@@ -255,7 +255,7 @@ Each Long Night opens a new act with a new **witness**. An act's documents unloc
 | Ostap | First successful contract (Hamlet) | Present throughout |
 | Toma | 2,000 silver earned in bounties | Present throughout |
 | Sigrun | Smithy level 5 (Keep) | Act II |
-| **Arvid** | **Ships with v0.5 content; unlocks when Act III begins** **[JC]** | Act III |
+| **Arvid** | **Arrives with Ilse when Act III begins (v0.6, D211), at your highest hunter's level** | Act III |
 
 **The roster pattern** (lore C5): every hunter has a home band, a one-line backstory, and optionally a personal link to the Sending or the Fall. **Personal letters unlock at levels 5 and 8 (the highest level ever reached), from v0.5 on** *(D155: was 5 and 10)*. Five of them carry names.
 
@@ -352,13 +352,12 @@ About 9–12 documents per act. **Texts are written just before each act's miles
 | D1-08 | I | Ember-echo: the Pale Smith | Ember-echo | Askel | Delve (v0.7) | "I lit the first fire. I thought it would be enough." |
 | D2-xx | II | Tomek's journal (5 pages) | Journal | Tomek | Kamenfell ruin contracts | The apprentice year; the bell |
 | D2-xx | II | Sigrun's confession | Resident scene | Sigrun | Sigrun recruited, in Act II | The 40th name |
-| D3-xx | III | Arvid's account (3 parts) | Testament | Arvid | Velkvik contracts; Last Stand | The Night from below |
-| D3-xx | III | The page with Eirik's name | Ledger page | The clerk | Last Stand milestone | Why Yrsa acted |
+| D3-01–D3-08 | III | Written in full in §26 | — | — | — | — |
 | D4-xx | IV | Dobrava's ledger and testament | Ledger + testament | Dobrava | Bestiary and Last Stand milestones | The reasons; the binding; the vigil |
 | D5-xx | V | Letters from the Deep | Letter | Yrsa (written ~Y281) | The Last Stand (plot); Delves (depth only) | The dross truth |
 | D6-xx | VI | What the rift says | Testament | The Unlit | Last Stand | Wants to be remembered |
 
-**Acts I and II are written in full in §21–§22** (v0.5 flesh-out, D163–D164); those tables replace the D1 and D2 rows above. Later acts keep their rows as the plan until written.
+**Acts I, II and III are written in full in §21, §22 and §26** (D163–D164, D209–D214); those tables replace the D1, D2 and D3 rows above. Later acts keep their rows as the plan until written.
 
 ### 15.3 Archivist features (v0.5)
 
@@ -464,14 +463,14 @@ The full original text of decision **D32**, trimmed from `docs/decisions.md` und
 | 27 | 252 | Štěpán Koláček | Mirograd | Act IV | Someone kept a second ledger. |
 | 28 | 254 | Lubomír Přívozník | Dubno Ford | **Letter: Ostap, level 5** | Old Ostap had a friend at the ford, once. |
 | 29 | 256 | Ivka Rohová | Kozly Hollow | **Letter: Toma, level 5** | Toma Kettle sold someone his last blue thread. |
-| 30 | 258 | Finn Aslaksson | Velkvik | Act III | A Velkvik net-mender knows more than he says. |
+| 30 | 258 | Finn Aslaksson | Velkvik | Act III (D3-04, Arvid's account II) | A Velkvik net-mender knows more than he says. |
 | 31 | 260 | Tadeáš Kopecký | Kozly Hollow | **Letter: Ostap, level 8** | Old Ostap set a broken arm, the winter before a feast. |
-| 32 | 262 | Ulf Sigvaldsson | Ravenfell | Act III | A Velkvik net-mender knows more than he says. |
-| 33 | 264 | Hana Dvorská | Mirograd | Act III | A Velkvik net-mender knows more than he says. |
+| 32 | 262 | Ulf Sigvaldsson | Ravenfell | Act III (D3-04, Arvid's account II) | A Velkvik net-mender knows more than he says. |
+| 33 | 264 | Hana Dvorská | Mirograd | Act III (D3-04, Arvid's account II) | A Velkvik net-mender knows more than he says. |
 | 34 | 266 | Leif Sveinsson | Velkvik | **Letter: Arvid, level 5** | A hunter who hasn't come to the hold yet had a friend called Leif. |
 | 35 | 268 | **Tomek Lis** | Kozly Hollow | Act II (his journal) | A journal was left behind in the fells. |
-| 36 | 270 | Tova Eyvindsdóttir | Velkvik | Act III | A Velkvik net-mender knows more than he says. |
-| 37 | 272 | **Eirik Varn** | Velkvik | Act III (the page with his name) | Someone tore a page out of a ledger. |
+| 36 | 270 | Tova Eyvindsdóttir | Velkvik | Act III (D3-04, Arvid's account II) | A Velkvik net-mender knows more than he says. |
+| 37 | 272 | **Eirik Varn** | Velkvik | **Act III (D3-05, the strip)** | Someone tore a page out of a ledger. |
 | 38 | 274 | Ylva Ketilsdóttir | Ravenfell | **Letter: Sigrun, level 5** | Sigrun Halfhand had a cousin. She doesn't talk about her. |
 | 39 | 276 | **Jaro Studnička** | Mirograd | **Ribbonshade** (the first one defeated) | A mother in Mirograd still writes to the hold. |
 | 40 | 278 | **Sigrun Ormsdóttir** | Ravenfell | **Sigrun's confession** (Act II) | Halfhand won't say the vow. Ask her again later. |
@@ -486,7 +485,7 @@ The full original text of decision **D32**, trimmed from `docs/decisions.md` und
    - Sigrun: her cousin Ylva, Sent four years before her own turn.
    - Arvid: his childhood friend Leif, who "went up first" when they were boys. Arvid's own *level 8* letter carries no name.
 4. **Act II's six:** Tomek, plus five older names cut into a bunk-room beam at Kamenfell by the apprentices themselves ("We cut our names so the next ones know we were here").
-5. **Later acts' names are fixed now** but written into their documents when those acts are written. Act III's five come from the torn ledger page (years 258–272) and Arvid's account; Act IV's six from Dobrava's second ledger; Act V's four from Yrsa's letters; Act VI's three are the first three Sent, whom no one alive remembers.
+5. **Later acts' names are fixed now** but written into their documents when those acts are written. Act III's five come from Arvid's account II (four: each was the brother, sister or twin of a Wright who went down with Yrsa) and the strip Yrsa tore from the ledger (Eirik). The full page she read, 258–272, is lost in the Deep, so no other name has two sources; Act IV's six from Dobrava's second ledger; Act V's four from Yrsa's letters; Act VI's three are the first three Sent, whom no one alive remembers.
 6. **Sigrun's patronymic** is Ormsdóttir; her cousin Ylva is Ketilsdóttir (different fathers).
 
 ---
@@ -890,3 +889,156 @@ When a village rises, the away sheet and the result sheet say so in one line: *"
 6. **Hallvard and his father rang the Kamenfell bell 39 times between them.**
 7. **Letters are written to the warden at Ilse's asking.**
 8. **The Deep family (§12.2) waits for Act IV–V or Delves** (D161).
+
+## 26. Act III: The Night, in full *(v0.6 flesh-out, D209–D214)*
+
+**Witness:** Arvid Netmender, Yrsa's shield-companion, now a grey fisherman in Velkvik. **He believes:** "Yrsa was right."
+**What the player learns:** Eirik's name; Yrsa's choice; the Night from below.
+**Closing reveal:** the betrayal was a rebellion; the order broke faith first. No text says it outright: the page, the people who stood up, and the vow's second half say it together.
+**When Act III runs:** the cycle after Act II's stand (or on load for a save in a no-act cycle, D214). Its documents stay obtainable forever after.
+
+#### 1. The documents and when each one arrives
+
+| ID | Title | Type | Witness | Arrives when… | Where | Names |
+|---|---|---|---|---|---|---|
+| D3-01 | The net-mender | Resident scene | Pechko, Arvid | Arvid arrives (the new-warden sheet as Act III begins, after Ilse's line; or on load, D214) | Long Night / Hamlet | — |
+| D3-02 | He's gone up to you | Letter | Thane Gunnar Ravnsson | The 1st Velkvik contract won in Act III | Hamlet or Keep | — |
+| D3-03 | Arvid's account, I: the Varns | Testament | Arvid | The 2nd Velkvik contract won in Act III | Keep | — |
+| D3-04 | Arvid's account, II: the page | Testament | Arvid | The Citadel is reached in Act III's cycle or later (in the Forge Hall) | Citadel | **4** (#30, #32, #33, #36) |
+| D3-05 | One line | Resident scene + ledger strip | Arvid; the order's clerk | Bastion is reached in Act III's cycle or later (at the sealed door) | Bastion | **1** (#37 Eirik) |
+| D3-06 | The Night from below | Testament | Arvid | Act III's Last Stand: on the result sheet | The stand | — |
+| D3-07 | Two bowls | Resident scene | Pechko | The next warden arrives | Long Night | — |
+| D3-08 | The gate | Resident scene | Arvid, Sigrun | Arvid and Sigrun both at the hold, in Act III's cycle or later, after D2-08 has been found; plays the next time the Hold screen opens | Any | — |
+
+- **Five names** in Act III's documents (lore §8). Arvid's level-5 letter (Leif, #34) is a letter name, counted separately.
+- **Conditions avoid ruin counts** (v0.5 lesson: ruins are scarce, D193); Velkvik wins are about 4 a cycle, so the 1st and 2nd are safe.
+- **The rebels** (new people, D209): Torvald Aslaksson, Hrefna Sigvaldsdóttir, Běla Dvorská, Sindri Eyvindsson: the four Wrights who stood up with Arvid. Each had someone on the page; their names carry the link. They died on the stair.
+
+#### 2. The texts
+
+**Arvid's arrival line** (new-warden sheet, Act III): *"Ilse is back from Velkvik with the archive, and an old man with a net-needle and an axe."* (On load, D214: *"Ilse comes up the road early, with an old man carrying a net-needle and an axe."*)
+
+##### D3-01 — The net-mender
+> *Arvid stops in the Hearth Hall doorway and comes no further. Pechko comes out from behind the stove and looks at him a long while.*
+>
+> *"Netmender. You got old."*
+>
+> *"You didn't."*
+>
+> *"Sit. The stool's the same."*
+
+##### D3-02 — He's gone up to you
+> *Warden —*
+>
+> *Arvid Netmender has gone up to you with your archivist. I'll tell you what Velkvik knows of him, which is less than you'd think for a man we've had back twenty-six years.*
+>
+> *He went up to the order the same spring as the Varn boy. The morning after the sky went out, he came down off the fell alone, with his hands black from the cold and no hammer, and he hasn't said a word about that night since. Not in my hall, not in his cups, not to his own sister.*
+>
+> *The lowlands say no Wright came down from the hold that night. One did. He came down our side.*
+>
+> *— Gunnar Ravnsson, thane of Velkvik*
+
+##### D3-03 — Arvid's account, I: the Varns
+> *Warden — Ilse wants the Night written down. I'll start further back, because the Night makes no sense without the Varns.*
+>
+> *Yrsa was five years older than me and could row the fjord in a gale; you'll have heard that. Her brother Eirik was a year younger than me and couldn't row to save his life. He drew. Boats, birds, the thane's dog. He drew me once and gave me bigger ears than I have.*
+>
+> *He and I went up to Kamenfell the same spring. He was chosen before the snow was off the roof. They rang the bell, and he went off in the cart before light, so as not to make a fuss.*
+>
+> *Yrsa was Hearthblade by then. She sat up at the Stanholm gate three nights running, to see him once on his way south. The cart never came through. They told her it had gone the long way round.*
+>
+> *She believed that for eight years. So did I.*
+>
+> *— Arvid*
+
+##### D3-04 — Arvid's account, II: the page
+> *Warden — This is the hall where she read it to us. They've put the roof back. It looks smaller.*
+>
+> *A winter night in 280. Most of the Wrights were at supper. Yrsa came in with a page torn out of a book, stood on the anvil step and read it. Every line: a year, a name, a village, and the same one word.*
+>
+> *When she finished, five of us stood up. I'll set down who, and who they had on that page, because they'd want it written:*
+>
+> *Torvald Aslaksson, for his brother, Finn Aslaksson, of Velkvik, the spring of 258.*
+> *Hrefna Sigvaldsdóttir, for her brother, Ulf Sigvaldsson, of Ravenfell, 262.*
+> *Běla Dvorská, for her sister, Hana Dvorská, of Mirograd, 264.*
+> *Sindri Eyvindsson, for his twin, Tova Eyvindsdóttir, of Velkvik, 270.*
+> *And me. I had mine.*
+>
+> *The last line on the page was her brother's.*
+>
+> *Everyone who stood up had someone on it. The ones who stayed in their seats didn't.*
+>
+> *— Arvid*
+
+##### D3-05 — One line
+Scene, at the sealed door:
+> *Arvid stands at the foot of the Bastion stair, in front of the door with its thirty-nine ribbons. He takes a strip of paper out of his net-needle case and holds it out without looking at it.*
+>
+> *"She tore his line off the foot of the page and kept it in her glove. At the top of this stair she put it in my hand. 'If I'm not up by morning, somebody should know his name.'*
+>
+> *"She wasn't up by morning. Put it in the book."*
+
+The document (ledger page, in the Library):
+> **A STRIP FROM THE FOOT OF A LEDGER PAGE**
+> *272 · Eirik Varn · Velkvik · ribboned · onward*
+
+Ilse's note: *"The same clerk's hand as the Mirograd roll. I never did get an answer from the south about 'onward'. — I.M."*
+
+##### D3-06 — The Night from below *(testament; on the Act III stand's result sheet)*
+> *Ilse says a testament should be plain. Here it is plain.*
+>
+> *We went down the stair under the hold after midnight, six of us, with lanterns. The door at the bottom wasn't sealed then. Past it there's a hearth the size of a hall, with rings cut in the floor around it and chains of runes running in from the rings like the spokes of a wheel. It was warm down there. Kitchen-warm. I'd been a Wright seven years and never known it was there.*
+>
+> *At the top of the stair Yrsa stopped us and said the vow. All of it. "The fire for the folk; the folk never for the fire." She said the second half had been cut off the anvil before any of us was born.*
+>
+> *Then we took our hammers to the chains.*
+>
+> *When the last one broke, the warmth went out of the room like a door opening in winter, and something came up out of the floor that was only cold. Yrsa sent us back up the stair. She took a lantern and went the other way.*
+>
+> *Torvald and Hrefna held the stair. Sindri and Běla got me to the top. I don't know how far behind me they were. I went over the wall at first light and down the fell to Velkvik, and nobody asked me anything, and I didn't tell.*
+>
+> *Yrsa was right. I've never said that aloud in Velkvik. I'm saying it here.*
+>
+> *— Arvid Netmender, once a Wright of Stanholm*
+
+##### D3-07 — Two bowls *(on the new-warden sheet, after naming)*
+> *That night Pechko sets out two bowls by the stove instead of one, and puts Arvid on the good stool.*
+>
+> *"He told you, then," he says to you, not to Arvid. "Good. I've carried it long enough by myself."*
+>
+> *Arvid looks at him. Pechko bangs the stove door.*
+
+##### D3-08 — The gate
+> *Sigrun and Arvid are mending a net by the gatehouse. Neither is talking. Then Arvid says, without looking up:*
+>
+> *"I had the gate, the spring of 278. A girl came across the yard at a run, past midnight, holding one hand in the other. I opened the gate."*
+>
+> *"I know," Sigrun says. "I've waited nearly thirty years for you to say so."*
+>
+> *"I didn't ask why. I should have asked why."*
+>
+> *Sigrun ties off the knot. "Then you'd only have carried it two years longer."*
+
+#### 3. The Accounts view in Act III
+
+| Event | Accounts added |
+|---|---|
+| **The apprentices** | Arvid I (D3-03), the strip (D3-05) |
+| **The Night of the Fall** | Arvid's testament (D3-06) |
+| **Yrsa's choice** *(new)* | Gunnar (D1-09), Věra (D1-02), Arvid II (D3-04), Arvid's testament (D3-06) |
+
+#### 4. Notes
+1. **One wrongness each:** Pechko knows Arvid (D3-01); one Wright came down, the fells' side (D3-02); the cart never came through the gate (D3-03); everyone who stood up had someone on the page (D3-04); no answer from the south about "onward" (D3-05); the vow's second half (D3-06, D212); Pechko has carried it (D3-07); Arvid opened the gate and never asked (D3-08).
+2. **Single sources kept:** Arvid says "I had mine" (Leif stays his letter); "her brother's" line leaves Eirik's full name to the strip; the full page is lost in the Deep.
+3. **Timeline:** Arvid born 255, at Kamenfell spring 272 with Eirik (born 256), a Wright from 273, seven years a Wright by the Night (280, winter, which fits Marta's "buried in the spring"). Yrsa born 250, five years older.
+4. **Avoid-list check:** no ash, cinder, kindle, hollow (except Kozly Hollow), tithe, bonfire or throne. The seal is a hearth in rings with chains of runes, never people "fed" to a throne.
+5. **New names for the search (T6.2):** Torvald Aslaksson, Hrefna Sigvaldsdóttir, Běla Dvorská, Sindri Eyvindsson ("Sindri" is a *God of War* dwarf: not an influence; allowed under D173).
+6. **Extras not taken** (D213): a Kozly Hollow "let it stay dark" letter (Quencher seed), an Anvil-wight field note, Toma's wrong theories. Kept as ideas for later acts.
+
+## 27. Judgment calls from the v0.6 flesh-out
+
+1. **The rebels each had someone on the page.**
+2. **Eirik's name comes on a torn strip;** the full page is lost.
+3. **Act III reveals the vow's second half.**
+4. **Arvid arrives with Ilse at your highest hunter's level.**
+5. **Arvid and Sigrun's gate scene.**

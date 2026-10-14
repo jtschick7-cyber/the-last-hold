@@ -9,6 +9,7 @@ import { num } from '../../core/balance-access';
 import { bombIsWeak, isWellPrepared, prepCounts } from '../../core/contracts/prep';
 import type { ContractIdentity } from '../../core/investigation/view';
 import type { GameState, Preparation } from '../../core/state/game-state';
+import { skillLevel } from '../../core/skills/skills';
 import { oilNote } from '../app/knowledge-text';
 import styles from '../styles/ui.module.css';
 
@@ -143,7 +144,7 @@ export const PreparationPicker = ({
       ))}
       {[...new Set(oils)].map((oil) => (
         <div key={oil} class={`${styles.small} ${styles.dim}`}>
-          {oilNote(oil, identity)}
+          {oilNote(oil, identity, skillLevel(state, 'alchemy'))}
         </div>
       ))}
       {prep.bombs.map((b, i) => {
@@ -151,11 +152,13 @@ export const PreparationPicker = ({
         const note =
           e.kind === 'saltburst'
             ? 'cancels the monster’s first ability'
-            : identity.identified && identity.monster
-              ? bombIsWeak(b, identity.monster)
-                ? 'weak to it ✔'
-                : 'not especially weak to it'
-              : 'weakness depends on what it is';
+            : e.kind === 'smoke'
+              ? 'the monster loses its next action'
+              : identity.identified && identity.monster
+                ? bombIsWeak(b, identity.monster)
+                  ? 'weak to it ✔'
+                  : 'not especially weak to it'
+                : 'weakness depends on what it is';
         return (
           <div key={`${b}${i}`} class={`${styles.small} ${styles.dim}`}>
             {consumables[b].name}: {note}

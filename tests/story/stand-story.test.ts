@@ -13,6 +13,9 @@ const standAt = (level: number, party: readonly (typeof SIX)[number][]): GameSta
   s.cycle.age = 'bastion';
   s.time = T0;
   for (const h of Object.values(s.hunters)) if (h) h.level = level;
+  // Bands are 12 / 15 from v0.6 (D194): defenses let a strong party reach Triumphant.
+  s.buildings.walls = 10; // bands are 12 / 15 from v0.6 (D194): defenses carry a strong party to Triumphant
+  s.buildings.watchtower = 10;
   expect(
     run(s, { type: 'stand.make', party: [...party], prep: { oils: {}, potions: {} } }).ok,
   ).toBe(true);
@@ -26,15 +29,15 @@ const standOf = (s: GameState) => {
 };
 
 describe('the stand records its trust steps (D183)', () => {
-  it('a Triumphant stand records one step for every village that could rise', () => {
-    const s = standAt(10, SIX);
+  it('a Triumphant stand records the steps it completed, and counts toward every village (D195)', () => {
+    const s = standAt(20, SIX);
     const stand = standOf(s);
     expect(bandFor(stand.wavesHeld)).toBe('triumphant');
-    expect(stand.trustSteps).toHaveLength(VILLAGE_IDS.length);
-    for (const v of VILLAGE_IDS) {
-      expect(stand.trustSteps.some((k) => k.startsWith(`trust:${v}:`))).toBe(true);
-      expect(s.story.trust[v].triumphs).toBe(1);
-    }
+    expect(stand.band).toBe('triumphant');
+    // Ten contracts' progress: only the Cold villages complete a step (10 needed).
+    expect(stand.trustSteps.sort()).toEqual(['trust:kozly-hollow:wary', 'trust:ravenfell:wary']);
+    for (const v of VILLAGE_IDS) expect(s.story.trust[v].triumphs).toBe(1);
+    expect(s.story.trust.mirograd.progress).toBe(10);
   });
 
   it('a Broken stand records none', () => {

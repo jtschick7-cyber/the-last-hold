@@ -1,3 +1,4 @@
+import { noteWavesHeld } from '../skills/hooks';
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
 import { num } from '../balance-access';
 import { applyCompletion } from '../contracts/complete';
@@ -10,7 +11,8 @@ import { arrivalTrophyCap, standInputFor } from '../stand/from-state';
 import { bestWavesEver, relicsFound } from '../stand/relics';
 import type { GameState, Preparation, StandRecord } from '../state/game-state';
 import { bandFor } from '../story/band';
-import { standDocuments, wardenDocuments } from '../story/documents';
+import { arriveArvid } from '../story/act3';
+import { currentAct, standDocuments, wardenDocuments } from '../story/documents';
 import { triumphantStand } from '../story/trust';
 import { ok, refuse, type ApplyResult } from './types';
 
@@ -56,6 +58,7 @@ export const makeStand = (
   spendPrep(state, full);
   const input = standInputFor(state, party, full);
   const result = runStand(input);
+  noteWavesHeld(state, result.wavesHeld); // Command (GDD §5.8.6)
   // 3. Conversion: Embers and relics.
   const payout = embersPayout({
     rank: state.cycle.age,
@@ -87,6 +90,8 @@ export const makeStand = (
     relicsFound: found,
     arrival: state.arrivalDue,
     trustSteps: [],
+    band: bandFor(result.wavesHeld),
+    alchemy: input.alchemy ?? 0, // frozen with the stand (D206)
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];
@@ -96,11 +101,13 @@ export const makeStand = (
   // GDD §5.14.9: the stand closes the act (its testament on the result sheet), and a
   // Triumphant one raises every village's trust a step (D146).
   // The steps are kept on the record so the result sheet can show them whenever it is opened (D183).
-  if (bandFor(result.wavesHeld) === 'triumphant') stand.trustSteps = triumphantStand(state);
+  if (stand.band === 'triumphant') stand.trustSteps = triumphantStand(state);
   standDocuments(state);
   // 4–5. The reset and the new cycle; the next warden's arrival closes the act's scene.
   resetForNewCycle(state);
   wardenDocuments(state);
+  // GDD §8.5 (D211): Arvid arrives with Ilse as Act III begins.
+  if (currentAct(state) === 3) arriveArvid(state, 'warden');
   return ok;
 };
 

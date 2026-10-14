@@ -43,7 +43,11 @@ describe('the Roll of Wardens (D153)', () => {
     if (!first) throw new Error('no cycle');
     first.ranks.keep = T0 + 1;
     first.ranks.citadel = T0 + 2;
-    first.stand = { wavesHeld: 12, relicsFound: ['tally-stick'] } as unknown as StandRecord;
+    first.stand = {
+      wavesHeld: 15,
+      band: 'triumphant',
+      relicsFound: ['tally-stick'],
+    } as unknown as StandRecord;
     s.cycles.push(freshCycleRecord(2, T0 + 3, 2));
     s.cycles[1] = { ...(s.cycles[1] ?? freshCycleRecord(2, T0, 2)), warden: 'Torgny' };
     const lines = rollOfWardens(s);
@@ -54,11 +58,22 @@ describe('the Roll of Wardens (D153)', () => {
       fromYear: 300,
       toYear: 303,
       ranks: ['hamlet', 'keep', 'citadel'],
-      stand: { band: 'triumphant', waves: 12 },
+      stand: { band: 'triumphant', waves: 15 },
       relics: ['tally-stick'],
       current: false,
     });
     expect(lines[1]).toMatchObject({ name: 'Torgny', fromYear: 303, toYear: 306, current: true });
+  });
+});
+
+describe('a past stand keeps its recorded band (D194)', () => {
+  it('the Roll reads the band saved with the stand, not one worked out from today’s thresholds', () => {
+    const s = createNewGame('roll-band', T0);
+    const first = s.cycles[0];
+    if (!first) throw new Error('no cycle');
+    // 10 waves was Held under the old 9 / 12 thresholds; today it would be Broken.
+    first.stand = { wavesHeld: 10, band: 'held', relicsFound: [] } as unknown as StandRecord;
+    expect(rollOfWardens(s)[0]?.stand).toEqual({ band: 'held', waves: 10 });
   });
 });
 

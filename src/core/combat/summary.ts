@@ -13,7 +13,7 @@ import {
   takenReduction,
 } from './stats';
 import type { Combatant, FightInput } from './types';
-import type { FightContext } from './stats';
+import { alchemyPotency, type FightContext } from './stats';
 
 // GDD §5.4.2 "Why?": the summary math behind the odds. It averages the dice
 // (mean variance, crit chance, hit chance) and ignores abilities and healing, so
@@ -29,6 +29,7 @@ const context = (input: FightInput): FightContext => ({
   monsterId: input.monster.monster,
   attacks: monsters[input.monster.monster].attacks,
   hitCut: lightlessCut(input.monster.monster),
+  oilBonus: num('oil.familyBonus') * alchemyPotency(input.alchemy ?? 0),
 });
 
 /** Expected damage of one direct attack, after resist, crit, Armor and taken%. */

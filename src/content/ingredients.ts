@@ -39,7 +39,8 @@ export const ingredients: Readonly<Record<IngredientId, IngredientDef>> = {
   'river-pearl': { id: 'river-pearl', name: 'River pearl', source: 'monster-drop' },
   thornwood: { id: 'thornwood', name: 'Thornwood', source: 'monster-drop' },
   'wolf-fang': { id: 'wolf-fang', name: 'Wolf fang', source: 'monster-drop' },
-  'noon-poppy': { id: 'noon-poppy', name: 'Noon poppy', source: 'monster-drop' },
+  // A Poludnitsa drop, and (Q19, D239) a Velkvik gift, so the book can be finished: it has two sources.
+  'noon-poppy': { id: 'noon-poppy', name: 'Noon poppy', source: 'village-gift' },
 };
 
 /** The three herbs the Herb Garden grows (GDD §5.7). */
