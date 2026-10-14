@@ -4,7 +4,11 @@ import { play } from '../policies/play';
 import { POLICY_IDS, type PolicyId } from '../policies/schedules';
 import { catchUpNow } from '../sim/offline';
 import type { GameState } from '../state/game-state';
+import { freshHunter } from '../state/hunters-state';
 import { shiftClock } from '../state/shift';
+import { sweepDocuments } from '../story/documents';
+import { noteAllPeaks } from '../story/letters';
+import { rosterCap } from '../systems/hunters';
 import { ok, refuse, type ApplyResult } from './types';
 
 // Technical design §15 / GDD §9.10: every debug action is a command, and any of
@@ -76,6 +80,7 @@ export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
   state.cycle.age = age;
   const record = state.cycles[state.cycles.length - 1];
   if (record && record.ranks[age] === undefined) record.ranks[age] = state.time; // D113
+  sweepDocuments(state);
   state.meta.debugUsed = true;
   return ok;
 };
@@ -95,6 +100,19 @@ export const runArrival = (state: GameState): ApplyResult => {
 export const addEmbers = (state: GameState, amount: number): ApplyResult => {
   if (!Number.isInteger(amount) || amount <= 0) return refuse('A whole number of Embers, please.');
   state.embers += amount;
+  state.meta.debugUsed = true;
+  return ok;
+};
+
+/**
+ * Plan T5.5: Arvid unlocks when Act III begins, which v0.5 can't reach, so this adds
+ * him to the roster for testing: active if there's room, else in the reserve.
+ */
+export const addArvid = (state: GameState): ApplyResult => {
+  if (state.hunters.arvid) return refuse('Arvid is already at the hold.');
+  state.hunters.arvid = freshHunter();
+  if (state.roster.active.length < rosterCap(state).value) state.roster.active.push('arvid');
+  noteAllPeaks(state);
   state.meta.debugUsed = true;
   return ok;
 };

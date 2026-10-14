@@ -113,8 +113,8 @@ All content is original. The influences supply *feel*, never names, characters, 
 
 - **Places:** Compounds that mix the two roots: Slavic *-grad, -ov, -no, stan-, vel-* with Nordic *-holm, -fell, -mark, -vik*. Examples: Stanholm, Velkvik, Dubno Ford, Ravenfell.
 - **People:** Lowlanders use Slavic-style given names (Dobrava, Milosz, Vesna). Highlanders use Nordic-style names (Yrsa, Halvar, Bjarna). Many hunters carry an epithet earned in the field ("Halvar Two-Smokes").
-- **The Emberwrights:** Ranks and titles in plain English: Keeper of the Forge, Firstblade, Wright, Apprentice *(⚑ lore L7: "Keeper" replaces Forge-Mother)*.
-- **Lore names in the outline are working names** (Gloamreach, Stanholm, Emberwrights, Hearthseal, the Unlit, Firstblade). They get collision-checked before v0.5. **[JC: the Firstblade's name changes from the outline's placeholder to "Yrsa Varn" to fit the Nordic naming style; the Keeper is "Dobrava Halsten".]**
+- **The Emberwrights:** Ranks and titles in plain English: Keeper of the Forge, Hearthblade, Wright, Apprentice *(⚑ lore L7: "Keeper" replaces Forge-Mother)*.
+- **Lore names in the outline are working names** (Gloamreach, Stanholm, Emberwrights, Hearthseal, the Unlit, Hearthblade). They get collision-checked before v0.5 *("Firstblade" became "Hearthblade": the old title is an Elder Scrolls lore name; Q10, D142)*. **[JC: the Hearthblade's name changes from the outline's placeholder to "Yrsa Varn" to fit the Nordic naming style; the Keeper is "Dobrava Halsten".]**
 
 ---
 
@@ -156,7 +156,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | v0.2 | Check-in with contracts (tier 1 from Hamlet, G6), hunters, combat logs |
 | v0.3 | Contracts gain investigation, the bestiary, and preparation |
 | v0.4 | Cycle loop: Threat, Last Stand, Long Night, Embers, relics, Citadel and Bastion *(⚑ P3: moved ahead of alchemy discovery)* |
-| v0.5 | Act I and the story systems: documents, the Archivist, warden naming, the Roll of Wardens, letters, village trust *(⚑ P2: split from the Long Night)* |
+| v0.5 | Act I and the story systems: documents, the Archivist, warden naming, the Roll of Wardens, letters, village trust; ruin contracts, Rune damage and the Wright's Blade *(⚑ P2: split from the Long Night; detail §5.14)* |
 | v0.6 | Session loop begins (alchemy experiments) |
 | v0.7 | Session loop gains Delves |
 | v0.8–v0.10 | Meta loop deepens: stars and talents (v0.8), events (v0.9), Orders (v0.10) |
@@ -174,7 +174,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Food** | Basic | Farms, fishery; peasants | Settling peasants; **contract provisions** *(⚑ revision G3)* | No | v0.1 |
 | **Wood** | Basic | Woodcutter's camp; peasants | Buildings; bomb casings; arrow shafts | No | v0.1 |
 | **Iron** | Basic | Mine; peasants | Buildings; smithy gear | No | v0.1 |
-| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.24/min each, no bonuses; G1, D138); **contract bounties (main source)** | Silvered gear; recruitment; Rank-ups | No | v0.1 |
+| **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.22/min each, no bonuses; G1, D138, D189); **contract bounties (main source)** | Silvered gear; recruitment; Rank-ups | No | v0.1 |
 | **Peasants** | Population | Houses + food surplus | Assigned to gathering jobs | No | v0.1 |
 | **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; levels partly reset: half the levels above 1 are kept (§5.9.7); **gear resets** *(⚑ revision A4)* | v0.2 |
 | **Trophies** | Per monster family | Contract and Delve kills | Hunter rank-ups (v0.8); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.4 arrival, G8) | v0.2 |
@@ -265,7 +265,7 @@ Every layer has at least one input from another layer and one output to another 
 4. **Event participation:** event milestones are reachable with about 70% participation. *(Superseded by G7: absence can delay an event reward but never forfeit it.)*
 5. **Routine check-in target:** 15 taps or fewer.
 6. **Avoid "jarl"** as too Skyrim-coded; use "thane" or "headman" instead.
-7. **Character names:** Firstblade "Yrsa Varn", Keeper "Dobrava Halsten" *(title renamed in lore L7)*.
+7. **Character names:** Hearthblade "Yrsa Varn" *(the title was Firstblade until D142)*, Keeper "Dobrava Halsten" *(title renamed in lore L7)*.
 8. **Strzyga and Lady Midday are in the creature pool,** with designs drawn from folklore only and no reuse of the games' signature contract plots.
 9. **The domovoi is a friendly resident of the hold,** not a monster.
 10. **Prestige currency is named Embers; Delve currency is named Riftglass.**
@@ -352,7 +352,7 @@ The four basic resources are **food, wood, iron, and silver**. There are no stor
 rate_R = workers_R × baseRate_R × (bucket multipliers, §5.0)
 ```
 
-**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.4). With at most 2 Seams, seam income can never exceed 2 × 0.24/min = **about 690 silver per day** (720 at 0.25/min before D138). Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
+**Silver is capped at the source (G1, D30).** Silver-digger output gets **no building, age, trophy, knowledge or ember bonuses**; only relic and event bonuses apply (none exist before v0.4). With at most 2 Seams, seam income can never exceed 2 × 0.22/min = **about 630 silver per day** (720 at 0.25/min before D138, 690 at 0.24/min before D189). Contract bounties are the main silver source from v0.2 on. *⚑ Revision of approved §5.1.1.*
 
 #### 5.1.2 Buildings
 
@@ -430,10 +430,10 @@ In v0.1–v0.3, the Keep is the end of content. The Rank screen shows the next R
 | Active roster | +2 | +2 |
 | Highest contract tier | 5 | 5 |
 | Unlocks | Walls and Watchtower (§5.9.2) | the Last Stand (§5.9.3) |
-| Restores | **the old Forge Hall**: *"The roof is back on the old Forge Hall. Its forges are cold."* | **a sealed stair going down**: *"Under the Bastion floor, a stair goes down to a sealed door."* |
+| Restores | **the old Forge Hall**: *"The roof is back on the old Forge Hall. Its forges are cold."* From v0.5 (D160): *"Over the great anvil, cut deep: 'The fire for the folk; the folk —'. The rest has been chiseled out."* | **a sealed stair going down**: *"Under the Bastion floor, a stair goes down to a sealed door."* From v0.5 (D160): *"Thirty-nine faded ribbons are tied to its handle."* |
 
 - Every number is a tunable starting value (requirements and costs live with the Ranks in the content, D44), except the roster bonus and the tier cap, which are locked. The simulator tunes the costs to the targets: Citadel on day 2, Bastion on days 3–4 (§6.2, D137).
-- The restorations show no inscription until v0.5 (`setting-primer.md` §6.5).
+- The restorations showed no inscription in v0.4. From v0.5 each carries its inscription (D160, `lore-secrets.md` §11), every cycle; a save already past the Rank sees it on arrival.
 - A hunter who carries a level above the current Rank's cap (§5.9.7) keeps it; the cap only stops new levels.
 
 #### 5.1.4 Starting state
@@ -523,7 +523,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 There are six types: **Steel, Silver, Fire, Frost, Rune, Venom**.
 - Each hunter has one innate damage type, from their weapon style.
 - Each monster has a resistance multiplier per type. 1.0 is neutral; below 1 resists; above 1 is weak. The values are shown once the monster is Identified (§5.6).
-- **Rune** damage is rare before v0.5. It belongs to the Emberwright lore and to runed gear.
+- **Rune** damage belongs to the Emberwright lore. From v0.5 it comes from the Wright's Blade's sub-hit (§5.3.6) and from Arvid Netmender (§8.5); it's the Cursed family's common weakness (§8.3).
 
 #### 5.3.5 Traits
 
@@ -548,11 +548,12 @@ Gear is **upgraded in place** **[JC]**. Each hunter has a weapon slot and an arm
 | Iron Blade | +4 Might | 60 iron | Smithy 1 |
 | Steel Blade | +9 Might | 250 iron, 50 wood | Smithy 3 |
 | Silvered Blade | +9 Might. Each hit also deals a separate **Silver sub-hit**: `0.25 × Might_eff × variance × crit` × the target's Silver resistance. Armor doesn't apply, and it's logged as its own line *(⚑ revision B3 [JC])* | 250 iron, 120 silver | Smithy 5 |
+| **Wright's Blade** *(v0.5, D159; was "Runed Blade", D170)* | +12 Might. Keeps the Silver sub-hit and adds a **Rune sub-hit** of the same size: `0.25 × Might_eff × variance × crit` × the target's Rune resistance, no Armor, its own log line | 600 iron, 300 silver | Smithy 8 and the Citadel (the Forge Hall) |
 | Hide Armor | +2 Armor | 40 wood, 30 food | Smithy 1 |
 | Mail | +5 Armor | 300 iron | Smithy 3 |
 | Emberwright Plate | +8 Armor, −10% Fire damage taken | 600 iron, 150 silver | Smithy 6 |
 
-Runed weapons (Rune damage) arrive with the Emberwright lore in v0.5.
+The Wright's Blade (v0.5) is the fourth weapon tier, strictly better than the Silvered Blade, so upgrading in place still works. Like all gear it resets at the Long Night (A4).
 
 #### 5.3.7 Injury and death (D07)
 
@@ -587,7 +588,7 @@ Each contract has:
 | Village | The giver. Flavor in v0.2; ties into Reputation in v0.10. |
 | Monster | In v0.2, always a known species (identified for free). Unknown monsters arrive in v0.3. |
 | Tier | 1–5 from the Keep on; Citadel and Bastion add no tiers (D106). Each tier above the monster's base tier multiplies Health and Might by 1.35 and Armor by 1.15 (§7). |
-| Location tag | Forest, river, field or barrow; **ruin from v0.5** *(⚑ revision D-2)*. **Barrow contracts start at tier 2** *(⚑ revision A3 [JC])*. Interacts with traits. |
+| Location tag | Forest, river, field or barrow; **ruin from v0.5** *(⚑ revision D-2; D157)*: old Emberwright sites, posted by Kozly Hollow, Velkvik and Ravenfell from the Keep. **Barrow and ruin contracts start at tier 2** *(⚑ revision A3 [JC])*. Interacts with traits. |
 | Party size | Up to 3 hunters at tiers 1–3, up to 4 at tiers 4–5; at most 2 in Hamlet (G6) |
 | Duration | 30 min / 1 h / 2 h / 4 h / 8 h by tier |
 | Bounty | `91 × 1.6^(tier − 1)` silver × `bounty.ageMult` (Hamlet 1.0, Keep 1.1, Citadel 3.5, Bastion 3; D106, D138). The age production bucket does **not** apply to bounties *(⚑ revisions: base was 40, raised with G1; ageMult defined in A6; 72 → 78 in the Q9 tuning (D82): provisions now grow with food income, so fewer contracts go out and each pays a little more; 78 → 91 in the v0.4 tuning, D138)* |
@@ -615,7 +616,7 @@ The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation ID
 
 | Result | Rewards |
 |---|---|
-| **Success** | Full bounty, trophies, XP, reagents (v0.3), lore chance (v0.5) |
+| **Success** | Full bounty, trophies, XP, reagents (v0.3); from v0.5, a document when its condition is met, and a Ribbonshade's name (§5.14) |
 | **Failure** (the party is downed, or 400 ticks pass) | Half XP. In v0.3, any clues gathered are kept as bestiary progress. **No bounty.** |
 | **Well-prepared success** *(v0.3)* | Bounty × 1.5 and +1 trophy **[JC]** |
 
@@ -713,7 +714,7 @@ Logs are kept for the last 50 contracts. Any listed contract's log can be regene
 | Restless Dead | upyr, draugr, strzyga | disturbed graves, bloodless victims, cold spots |
 | Water Spirits | rusalka, vodyanoy, nix | drownings, music at night, wet footprints |
 | Field & Forest Spirits | leshy, poludnitsa, huldra, kikimora | lost travelers, heatstroke at noon, livestock trouble |
-| Cursed *(ruins)* | original creatures | ruin sites, old Emberwright marks |
+| Cursed *(ruins, v0.5)* | Gloam-moths, Ribbonshade, Anvil-wight, Rimewrought (originals, §8.3) | ruin sites, old Emberwright marks |
 | Deep *(v0.5+)* | the Unlit's spawn | — (lore-gated) |
 
 #### 5.6.2 Knowledge levels (per species)
@@ -834,7 +835,7 @@ From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat
   - The Watchtower's volley and the bombs land at tick 1; Walls (and the Iron Shutter relic) reduce damage taken.
   - Location traits (Fen-born, Fell-born, Lantern-bearer) don't apply: the hold isn't a contract location. Family traits, oils and Studied or Mastered bonuses do.
   - A potion fires once in the whole stand, on its usual condition.
-- **The end:** when every hunter is down, or a wave isn't won within the 400-tick limit, the walls fall. **Waves held** is the number of waves won. The stand causes **no injuries and no deaths**.
+- **The end:** when every hunter is down, or a wave isn't won within the 400-tick limit, the walls fall. **Waves held** is the number of waves won, and from v0.5 it gives the stand its **band** (Broken, Held or Triumphant, §5.14.8). The stand causes **no injuries and no deaths**.
 - **The preview** (in the odds worker): 100 practice stands with their own seeds. It shows expected waves (the median, with a 10th–90th percentile range), the Embers the stand would pay now with their breakdown and per day of the cycle, how much Threat rises by tomorrow, and an estimate of tomorrow's Embers, labeled as an estimate (it assumes today's Threat rate and today's average trophies per day). Budget in §6.5.
 - **Logs:** every wave has a fight log, rebuilt on demand from the stand's saved inputs (technical design §5.3).
 
@@ -885,7 +886,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 - **The new cycle** starts in Hamlet from the §5.1.4 starting state, plus any warden upgrades (Full Larder, Young Families).
 - **What you see, in order:**
   1. The stand's result: waves held, the Embers breakdown, any relic. Pechko: *"The walls fell. The hearth didn't. Someone will come."*
-  2. *"The story continues in a later version."* (P4)
+  2. *"The story continues in a later version."* (P4) From v0.5: the act's testament instead, while its act is written (§5.14.9).
   3. The Hearth: spend now or later.
   4. The new-warden sheet: *"Seasons pass. Someone new walks up the road, hands warm in the cold."* You choose your 3 active hunters.
 
@@ -902,7 +903,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 #### 5.9.9 A new warden each cycle
 
 - **A new warden each cycle** *(⚑ lore L4)*: after each Long Night a new warden arrives; **from v0.5** you name them. The **Roll of Wardens** (L9) carves each warden's name, Ranks reached, Last Stand band and relics into the Hearth Hall. From v0.4 the save keeps one short history entry per cycle for it (technical design §5.2, D113).
-- **Story (v0.5):** mystery act 1 plus the first lore documents. Residents react to how the stand went. **Until an act is written, a finished cycle closes with "The story continues in a later version"; when the act ships, its documents unlock in your current cycle** *(⚑ P4 [JC])*.
+- **Story (v0.5):** Acts I and II, documents, names, letters and trust (§5.14). Residents react to how the stand went. **Until an act is written, a finished cycle closes with "The story continues in a later version"; when the act ships, its documents unlock in your current cycle** *(⚑ P4 [JC])*.
 
 ### 5.10 Delves *(v0.7, outline)*
 
@@ -944,6 +945,81 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
   - **The Quenchers:** a present-day faction that **wants the hold's fire put out**. Their story role is in `lore-secrets.md` (v0.5).
 - **Your hunters are the refounded Emberwrights** (L2). Surviving Wrights from the old outposts join you rather than forming a separate Order.
 - **Open questions:** whether Orders are mutually exclusive; whether reputation persists through the Long Night (leaning yes, per §4).
+
+### 5.14 The story *(v0.5: Act I and the story systems; ⚑ v0.5 flesh-out, D144–D166)*
+
+*The story's text and every name live in `lore-secrets.md` (§15 and §20–§24). This section is the machinery. Story numbers are tunable starting values (§7.7) unless marked locked.*
+
+#### 5.14.1 Acts
+
+- **One act per cycle.** An act starts when its cycle starts and closes with that cycle's Last Stand. Its documents stay obtainable forever after: a condition met in any later cycle still delivers the document.
+- **New games:** Act I starts with cycle 1.
+- **Saves from before v0.5** (D149): Act I starts at once, in the current cycle, after any v0.4 arrival. Every document whose condition is already behind the save (a Rank already reached, a species already Mastered) is found on load, in Ilse's arrival scene (§5.14.3). The rest wait for their conditions. This cycle's stand closes Act I.
+- **An act that isn't written yet** (from Act III, until v0.6): its cycle has no act documents, and its Long Night shows *"The story continues in a later version."* Ruins, Ribbonshade names and hunter letters carry on, because they aren't tied to an act. When the act ships, it starts in the current cycle (P4), and the next ones follow one per cycle.
+- **Act counters** start fresh with each act: "the 2nd Mirograd contract won after Act I begins" counts from that act's start, and counts in any later cycle until it's met.
+
+#### 5.14.2 Documents
+
+- **Types** (`lore-secrets.md` §15.1): letter, journal page, ledger page, testament, field note, resident scene. Ember-echoes arrive with Delves (v0.7).
+- **Fixed conditions, no chance** (D148). Each document has one condition: a contract won (by village, by location, or the nth after its act begins), a Rank reached, a species reaching a knowledge level, a village reaching a trust level, a hunter on the roster at a moment, the act's Last Stand, or the next warden's arrival. The full list is `lore-secrets.md` §21–§22.
+- **Delivery.**
+  - A document found during a contract arrives with that contract's result: one line on the away sheet and in the results list, *"A letter came with the bounty: 'My boy writes no letters'."*
+  - A Rank document arrives on the Rank-up sheet.
+  - A testament arrives on the stand's result sheet, after the waves and Embers.
+  - A resident scene plays as a scene sheet, like the Rank-up scenes.
+  - The Archive tab shows a badge until each new item is opened.
+- **Contract results:** a success can bring a document (§5.4.3). Failures never do.
+- **Nothing required can be missed** (`lore-secrets.md` §8): every condition can still be met in every later cycle.
+
+#### 5.14.3 Ilse and the Archive
+
+- **Ilse Marrow arrives with the first document** (D151): the first contract won after Act I begins brings D1-01, Marta's letter, and Ilse walks up with it. Then the **Bestiary tab becomes the Archive** (D150). Before that, the tab is the Bestiary as in v0.3.
+- **Saves from before v0.5** meet her on load (§5.14.1). Her scene hands over everything already found.
+- **Later cycles:** she's back with the new warden. The new-warden sheet says *"Ilse is back from Velkvik with the archive."*
+- **The Archive tab** has four sections:
+  - **Bestiary:** the v0.3 screen, unchanged.
+  - **Library:** every document found, grouped by act, then by type, newest first. Each opens in a reader, with any note of Ilse's under it. Letters from hunters (§5.14.7) have their own shelf.
+  - **Accounts:** for each key event (Act I: the Night of the Fall, the apprentices; Act II adds the bell), every account found, side by side, each labeled with its witness. Nothing is marked true.
+  - **Names:** *"Names found: 12 of 40."* A row for each of the 40, in order. A found name shows its village and year (*"Eirik Varn — Velkvik — onward, year 272 of the order."*); a missing one shows *"— a name not yet found —"* and its hint (`lore-secrets.md` §20).
+
+#### 5.14.4 Names
+
+- **40 names, each from exactly one source** (`lore-secrets.md` §8, §20): act documents 28, Ribbonshades 6, hunter letters 5, Sigrun's confession 1.
+- **A name is found** when the document, defeat or letter that carries it is found. Found names are kept forever.
+- **Ribbonshades** (§8.3): each Ribbonshade defeated carries the next of the six Ribbonshade names in a fixed order, the first being Jaro's (roll #39), until all six are found. After that, a Ribbonshade carries a ribbon with no name. The scene line comes with the contract result. **Until all six names are found, half of the ruin contracts that can hold a Ribbonshade (tiers 2–4) are one** (`ruin.ribbonshadeShare`, Q17, D190); the other ruin creatures still appear, and once the six are found the ordinary mix returns.
+
+#### 5.14.5 Wardens
+
+- **Naming** (D152): the new-warden sheet asks for a name: free text up to 24 characters, with **Suggest**, which offers a name from a short list of Slavic and Nordic given names (collision-checked, `src/content/`). A new game names its first warden in the opening scene. A save from before v0.5 names its earlier wardens once, on arrival; a blank one is carved as *"the warden before"*. Names can be changed later from the Roll.
+- **The Roll of Wardens** (D153) is in the Hearth Hall, on the Rank screen beside The Hearth. Each warden has one line: the name; the years they kept the hearth (cycle n covers years `300 + 3(n − 1)` to `300 + 3n` of the order); the Ranks they reached; the stand's band and waves held; and the relics found. The current warden's line reads *"…keeping the hearth"*.
+- **Above the first warden** is a worn line: *"A first line, worn smooth. Pechko dusts it every morning."* It becomes legible in Act IV.
+
+#### 5.14.6 Village trust
+
+- **Levels:** Cold → Wary → Hopeful → Trusting → Sworn. Each village keeps its v0.2 starting level (`setting-primer.md` §3).
+- **Rising** (D146): each contract won for a village counts toward its next step: 10 to leave Cold, then 15, 20 and 25 (`trust.stepContracts`). **Each Triumphant stand raises every village one step**, and progress already counted toward the next step carries over. Trust **never drops**. A Long Night keeps it.
+- **What it does** (D147): words only. It sets the tone of that village's notices (from v0.2; from v0.5, once a village trusts the hold more than it did at the start, its notices close with that level's line, D180) and of resident lines, and some documents wait for a village's trust (Act I: D1-02, Kozly Hollow at Wary). Trust changes no number in v0.5; rewards wait for the Thanes' Moot (v0.10).
+- **Shown** on the Contracts board's **Villages** panel (§9.14): each village's level, its one-line description, and its progress, with a breakdown on long-press (contracts won toward each step, Triumphant stands). A step up gets one line on the away sheet or the result sheet: *"Mirograd trusts the hold a little more: Hopeful."*
+
+#### 5.14.7 Hunter letters
+
+- **Every hunter has two letters** (D156), at **levels 5 and 8** (D155; `letters.levels`), counting the **highest level the hunter has ever reached**, so the Long Night's halving never takes one away.
+- Letters are written to the warden, at Ilse's asking. They appear on the hunter's detail sheet and on the Library's letters shelf.
+- **Five carry names** (`lore-secrets.md` §20, §23): Ostap at levels 5 and 8, and Toma, Sigrun and Arvid at level 5. All are story hunters, who can't die.
+
+#### 5.14.8 The stand's band and the residents
+
+- **Every stand gets a band** from the waves it held (D145): **Broken** at 8 or fewer, **Held** at 9–11, **Triumphant** at 12 or more (`band.heldFrom`, `band.triumphantFrom`). The arrival stand uses the same thresholds.
+- **The stand screen** shows the thresholds next to the preview: *"Held from 9 waves · Triumphant from 12"*.
+- **The result sheet** shows the band, then one line each from Pechko and Brana for that band (`lore-secrets.md` §24), picked by the stand seed. Any trust steps follow, then the act's testament. Pechko's closing line (*"The walls fell. The hearth didn't. Someone will come."*) stays.
+- The band is carved on the Roll of Wardens.
+
+#### 5.14.9 What the Long Night shows, from v0.5
+
+1. The stand's result: waves held, the band, the Embers breakdown, any relic, the residents' lines, any trust steps.
+2. The act's testament (Act I: D1-06; Act II: D2-09), or *"The story continues in a later version."* if the act isn't written.
+3. The Hearth.
+4. The new-warden sheet: the warden's name, any resident scene of the act's close (Act I: D1-07 *"Welcome back"*; Act II: D2-10), Ilse's return, and the choice of 3 active hunters.
 
 ---
 
@@ -995,6 +1071,8 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **Defenses** *(v0.4)*: from Citadel, raises Walls and the Watchtower in turn (lower one first) whenever a level is affordable with the Rank-up reserve kept.
 - **The stand** *(v0.4)*: from Bastion, runs a quick preview (20 practice stands) at every check-in and stands at the first check-in where Embers per day of the cycle is lower than at the one before. It takes the suggested six; each hunter carries the oil for the family most common in the first 12 waves; Mending Draughts for as many hunters as it has; bombs are automatic. Light and Heavy use the same rule.
 - **Embers** *(v0.4)*: buys the cheapest affordable warden upgrade (ties by list order), and keeps the default three active hunters in each new cycle.
+- **The roster** *(v0.5, D167)*: whenever the active roster has room, it fills it from the reserve, highest levels first.
+- **The Wright's Blade** *(v0.5, D167)*: bought like any gear upgrade. Ruin contracts are ordinary contracts to it; story items are never a goal.
 
 ### 6.2 Targets
 
@@ -1017,6 +1095,11 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.4 |
 | **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.4 |
 | Later cycles | Each ≥ 15% faster than the first, with a floor of 2 days **[JC]** *(D134: was "than the one before"; after cycle 2, cycles settle at about 3 days)*. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.4 |
+| Act I lands in its cycle *(D168)* | Every Act I document with a contract, Rank or stand condition found by the end of cycle 1; D1-07 at the next warden (D1-02 and D1-05 reported only) | v0.5 |
+| Act II lands in its cycle *(D168, Q17)* | D2-01, D2-02, D2-07 and D2-09 found in cycle 2; the 2nd to 5th ruin documents (D2-03 to D2-06) by the end of cycle 4; D2-10 with the next warden (D2-08 reported only) | v0.5 |
+| First ruin contract won *(D168)* | ≤ 24 h after the Keep | v0.5 |
+| All six Ribbonshade names *(D168, Q18)* | By the end of cycle 4 | v0.5 |
+| A village's trust rises *(D168)* | In cycle 1 | v0.5 |
 | Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.7 |
 
 ### 6.3 Engagement checks (simulator)
@@ -1052,7 +1135,7 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Live odds panel** | ≤ 100 ms per update | 500 samples, in the same worker |
 | **Last Stand preview** *(v0.4, D114)* | ≤ 1 s on a mid-range phone | 100 practice stands (`laststand.previewSamples`), in the same worker |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
-| **Simulator: full suite** | ≤ 5 min in CI | All policies and checks |
+| **Simulator: full suite** | ≤ 5 min in CI | All policies and checks; from v0.5 the runs play in parallel, one per core, with identical results (D169) |
 
 A benchmark test enforces the first three on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone.
 
@@ -1072,7 +1155,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Bulk cost (k copies) | `base × r^n × (r^k − 1)/(r − 1)` | — | 5.1.2 |
 | Max affordable | `min over resources of floor(log(1 + f(r−1)/(base·r^n)) / log r)` | — | 5.1.2 |
 | Settle cost | `a × g^P` | `peasant.settleBase` = 20, `peasant.settleGrowth` = 1.15, `peasant.settleMinInterval` = 30 s | 5.1.1 |
-| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.24/min *(D138)* | 5.1.1 |
+| Production | `workers × baseRate × buckets` | `rate.food` = 6/min, `rate.wood` = 4/min, `rate.iron` = 2/min, `rate.silver` = 0.22/min *(D138, D189)* | 5.1.1 |
 | Silver cap | Silver Seams limited; silver-digger output takes only relic and event buckets | `silverSeam.max` = 2 | 5.1.1 |
 | Building bonuses | per level | `mill.perLevel` = 0.25, `sawpit.perLevel` = 0.25, `smithy.ironPerLevel` = 0.20 | 5.1.2 |
 | Rank multiplier | Each Rank from the Keep adds to the age bucket (not silver, G1) | `age.keep.allProduction` = 0.50, `age.citadel.allProduction` = 0.50, `age.bastion.allProduction` = 0.50 *(D106)* | 5.1.3 |
@@ -1162,6 +1245,20 @@ Every constant here is tunable unless marked locked.
 | Warden upgrades | level L costs `c × g^(L−1)` Embers | per upgrade, in the content (§8.9) | 5.9.5 |
 | v0.4 arrival cap | trophies part ≤ share × the cycle-1 median | `longNightArrival.emberCapShare` = 1.2 **(locked)**, `longNightArrival.cycle1MedianEmbers` = 193 (set from the tuned simulator: the median of cycle 1's stand, Standard, Monday, 5 seeds; D112, D138) | 5.9.8 |
 
+### 7.7 The story *(v0.5, D144–D166)*
+
+Every constant here is tunable (D166).
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Stand band | Broken below `heldFrom`; Held below `triumphantFrom`; Triumphant from it | `band.heldFrom` = 9, `band.triumphantFrom` = 12 (waves) | 5.14.8 |
+| Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand adds one step to every village | `trust.stepContracts` = [10, 15, 20, 25] | 5.14.6 |
+| Hunter letters | at the highest level ever reached | `letters.levels` = [5, 8] | 5.14.7 |
+| Runed sub-hit | `f × Might_eff × variance × crit × resist[Rune]`, no Armor | `gear.runedFraction` = 0.25 | 5.3.6 |
+| Ribbonshade share | the share of ruin contracts (tiers 2–4) that is a Ribbonshade while a Ribbonshade name is still missing | `ruin.ribbonshadeShare` = 0.5 | 5.14.4 |
+
+Trait and ability numbers (Shield-companion, Old Wright, and the Cursed creatures' abilities) live with their content, like every earlier trait and ability (§8.3, §8.5). The Wright's Blade's Might and cost live with the gear content (§5.3.6).
+
 ---
 
 ## 8. Starter Content
@@ -1189,12 +1286,12 @@ The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.4 (Keep unles
 | Village | Region | Location tags | Gift reagents |
 |---|---|---|---|
 | Dubno Ford | Lowland river crossing | river, field | honeycomb, hare's foot |
-| Kozly Hollow | Lowland goatherd village in the old wood | forest, field | honeycomb, pitch |
+| Kozly Hollow | Lowland goatherd village in the old wood | forest, field, ruin *(v0.5)* | honeycomb, pitch |
 | Mirograd | Lowland market town (the largest) | field, river | hare's foot, pitch |
-| Velkvik | Highland fjord village | river, barrow | rime salt, pitch |
-| Ravenfell | Highland hamlet among the barrow-hills | barrow, forest | rime salt |
+| Velkvik | Highland fjord village | river, barrow, ruin *(v0.5)* | rime salt, pitch |
+| Ravenfell | Highland hamlet among the barrow-hills | barrow, forest, ruin *(v0.5)* | rime salt |
 
-A contract's location tag comes from its village. **Each success also gives one gift reagent** from that village (v0.3+).
+A contract's location tag comes from its village. **Each success also gives one gift reagent** from that village (v0.3+). **Ruin** (v0.5, D157) joins three villages' tags; like barrows, ruins are never generated in the Hamlet or at tier 1, so a village whose only possible tags are ruled out picks from the rest.
 
 ### 8.3 Monsters
 
@@ -1218,6 +1315,10 @@ A contract's location tag comes from its village. **Each success also gives one 
 | Strzyga | Restless Dead | barrow, field | 4–5 | 240 | 24 | 5 | 13 | 1 |
 | Huldra *(⚑ added, A3)* | Field & Forest Spirits | forest, field | 2–4 | 150 | 15 | 3 | 12 | 1 |
 | Nix *(⚑ added, A3)* | Water Spirits | river | 3–5 | 210 | 19 | 4 | 13 | 1 |
+| Gloam-moths *(v0.5)* | Cursed | ruin | 2–3 | 120 | 6 | 0 | 15 | 3 |
+| Ribbonshade *(v0.5)* | Cursed | ruin | 2–4 | 140 | 14 | 2 | 11 | 1 |
+| Anvil-wight *(v0.5)* | Cursed | ruin | 3–5 | 250 | 21 | 11 | 6 | 1 |
+| Rimewrought *(v0.5)* | Cursed | ruin | 4–5 | 360 | 24 | 14 | 5 | 1 |
 
 **Resistances** (multiplier on incoming damage of each type; **bold** = weakness, ≥ 1.25):
 
@@ -1235,6 +1336,10 @@ A contract's location tag comes from its village. **Each success also gives one 
 | Strzyga | 0.75 | **1.5** | 1.0 | 1.0 | **1.5** | 0.5 |
 | Huldra | 1.0 | **1.25** | **1.25** | 1.0 | 1.0 | 0.75 |
 | Nix | 1.0 | **1.25** | 0.75 | **1.5** | 1.0 | 0.5 |
+| Gloam-moths | 0.75 | 1.0 | **1.75** | 1.0 | 1.0 | **1.25** |
+| Ribbonshade | 1.0 | **1.25** | 0 | **1.75** | 0.75 | 0 |
+| Anvil-wight | 0.5 | 1.0 | 0.5 | 1.0 | **1.75** | 0 |
+| Rimewrought | 0.75 | 0.75 | **1.5** | 0 | **1.5** | 0 |
 
 **Abilities, clue tags, and drops:**
 
@@ -1252,6 +1357,10 @@ A contract's location tag comes from its village. **Each success also gives one 
 | Strzyga | *Second Soul:* the first time it reaches 0 Health, it rises at 40% (once per fight) | grave, bloodless, strange-birth | grave dust | A person born with two souls; after death, one hunts the living |
 | Huldra | *Enthrall:* on its 1st action and every 4th after, the hunter with the highest Might is enthralled: they lose their next action, and the Huldra heals 10% of max Health | stranger, lost, livestock | thornwood | Forest woman with a hidden tail who lures and punishes; keeper of cattle in the deep woods |
 | Nix | *Riverhorse:* on its 1st action, it carries off the lowest-Health hunter, who can't act or be targeted until 3 of the Nix's actions have passed, then returns having lost 20% of max Health. A Saltburst cancels it | drowned, song, horse | river pearl | Shape-shifting water spirit, often a white horse that carries riders into the river |
+| Gloam-moths | *Lightless* (passive): while the swarm stands, every hunter's hit chance is 10 points lower | lightless, swarm, night | thornwood | Original: a swarm that eats light and warmth |
+| Ribbonshade | *Seal-burn* (passive): a hunter who hits it with a direct attack takes 10% of the damage dealt back as Fire, ignoring Armor. Each one carries a name until all six are found (§5.14.4) | ribbon, singed, forge | grave dust | Original: a pitiable shape in an old forge, still wearing an apprentice's ribbon |
+| Anvil-wight | *Re-forge:* every 3rd action, instead of attacking, it restores 10% of max Health. A Saltburst cancels it | hammering, forge, cold | grave dust | Original: a dead Wright, still hammering at a cold anvil |
+| Rimewrought | *Unthawed:* the first Fire hit it takes in a fight strips 30% of its Armor for the rest of the fight (stat%) | cold, iron-tread, forge | rime salt | Original: an old war-construct of the order, frozen by a cold from below |
 
 **Saltburst** cancels the first trigger of any ability marked above and blocks abilities for the monster's next 3 actions (§5.7).
 
@@ -1259,7 +1368,7 @@ A contract's location tag comes from its village. **Each success also gives one 
 
 #### 8.3.1 Coverage: location × tier → candidates *(⚑ added, revision A3)*
 
-Barrow contracts start at tier 2; ruin contracts arrive in v0.5.
+Barrow and ruin contracts start at tier 2; ruin contracts arrive in v0.5 (D157, D158).
 
 | Location | T1 | T2 | T3 | T4 | T5 |
 |---|---|---|---|---|---|
@@ -1267,6 +1376,7 @@ Barrow contracts start at tier 2; ruin contracts arrive in v0.5.
 | Field | Wolf, Kikimora | Wolf, Kikimora, Upyr, Poludnitsa, Huldra | Upyr, Poludnitsa, Bies, Huldra | Poludnitsa, Bies, Strzyga, Huldra | Bies, Strzyga |
 | River | Wolf, Kikimora | Wolf, Kikimora, Rusalka | Rusalka, Vodyanoy, Nix | Vodyanoy, Nix | Vodyanoy, Nix |
 | Barrow | *(not generated)* | Wolf, Upyr | Upyr, Draugr | Draugr, Strzyga | Draugr, Strzyga |
+| Ruin *(v0.5)* | *(not generated)* | Moths, Ribbonshade | Moths, Ribbonshade, Anvil-wight | Ribbonshade, Anvil-wight, Rimewrought | Anvil-wight, Rimewrought |
 
 **Required content-validation test.** For every location × tier cell any village can generate, it checks that:
 1. at least 1 species qualifies;
@@ -1301,6 +1411,13 @@ Each clue tag has several in-world texts. A contract draws one text per revealed
 | strange-birth | "The woman's son was born with two teeth, and he died last winter." |
 | stranger *(⚑ added)* | "A woman no one knew danced at the harvest feast. Three men followed her into the wood." |
 | horse *(⚑ added)* | "A white horse stood by the ford at dusk. The miller's boy climbed on, and it walked into the river." |
+| lightless *(v0.5)* | "Lanterns go out in the old yard, one after another, though there's no wind." |
+| swarm *(v0.5)* | "Something rose off the rafters like smoke, and it was wings." |
+| ribbon *(v0.5)* | "A herd-boy saw a shape at the forge door with a blue ribbon on its sleeve." |
+| singed *(v0.5)* | "The goat that wandered in came out with its coat scorched in the shape of a hand." |
+| forge *(v0.5)* | "The marks on the lintel are the old order's: an anvil with a flame on it." |
+| hammering *(v0.5)* | "You can hear hammering from the ruin at night. Nobody's lit that forge in twenty years." |
+| iron-tread *(v0.5)* | "Footprints in the frost, each one as big as a shield and pressed an inch into rock." |
 
 **Generator rules:**
 1. A contract's candidate list is every species whose locations include the contract's tag and whose tier range covers the contract tier.
@@ -1331,7 +1448,7 @@ Individual hunters vary from the role baseline by up to ±10% or 1 point per sta
 | **Stanko Sleepless** *(v0.3)* | Striker | Venom | Lowland | Wolf-friend, Quick | The Gaunt Wolf reaches Studied | 95/21/3/12 | Sits up nights with a knife dipped in something he keeps in a goat's horn. Nobody in the Hollow has seen him sleep. |
 | **Herdis Strayfinder** *(v0.3)* | Mender | Frost | Highland | Tracker, Hard to kill | Build the Hunter's Lodge | 120/9/4/10 | Can follow a week-old track across bare rock. The iron heel of her crook is rime-salted, an old Ravenfell habit against things that walk at night. |
 
-**Recruitment prices** *(⚑ revision G5)*: Halvar and Zora free; Ostap 150; Herdis 300 *(v0.3)*; Vesna 350; Bjarna 400; Stanko 450 *(v0.3)*; Radek 500; Toma 600; Sigrun 1,200 silver.
+**Recruitment prices** *(⚑ revision G5)*: Halvar, Zora and Arvid *(v0.5)* free; Ostap 150; Herdis 300 *(v0.3)*; Vesna 350; Bjarna 400; Stanko 450 *(v0.3)*; Radek 500; Toma 600; Sigrun 1,200 silver.
 
 **Traits:**
 
@@ -1352,8 +1469,16 @@ Individual hunters vary from the role baseline by up to ±10% or 1 point per sta
 | Herbwise | Potions carried by this hunter are 25% stronger | v0.3 |
 | Wolf-friend | +20% Might vs Beasts & Wilds | v0.3 *(Stanko)* |
 | Tracker | While this hunter is idle at the hold, one Lodge slot reveals clues 25% faster | v0.3 *(Herdis)* |
+| Shield-companion | While this Vanguard is standing, the party member with the lowest % Health takes −15% damage (taken%; ties by party slot) | v0.5 *(Arvid)* |
+| Old Wright | +20% Might vs the Cursed family | v0.5 *(Arvid)* |
 
-**v0.5 adds Arvid Stonebrow** (story hunter, Vanguard; unlocks when Act III begins) *(⚑ lore C4)*.
+**v0.5 adds Arvid Netmender** *(⚑ lore C4; D154: "Stonebrow" is a Warcraft surname)*, a story hunter:
+
+| Hunter | Role | Damage | Origin | Traits | Unlock | Stats (H/M/A/S) | Sketch |
+|---|---|---|---|---|---|---|---|
+| **Arvid Netmender** *(v0.5)* | Vanguard | Rune | Highland | Shield-companion, Old Wright | When Act III begins (he ships with v0.5 but can't arrive before Act III is written, v0.6) | 175/12/9/7 | Velkvik net-mender, 51, who keeps a runed axe he won't talk about. Says he's too old for this. Hasn't missed a fight. |
+
+Portrait: a grey beard in two braids, a fisherman's knit cap, a scarred leather collar, a faint rune-mark on the axe haft. Every hunter has two letters from v0.5 (§5.14.7).
 
 **v0.3 adds 2 hunters:** Stanko Sleepless (a Wolf-friend Striker with Venom damage) and Herdis Strayfinder (a Tracker Mender), defined by the owner (Q12, D101). That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
 
@@ -1369,10 +1494,10 @@ Each ingredient also has **4 hidden effects**, defined in v0.6 for alchemy disco
 | Honeycomb | Gift: Dubno Ford, Kozly Hollow | Mending Draught |
 | Hare's foot | Gift: Dubno Ford, Mirograd | Quickfoot Tincture |
 | Pitch | Gift: Kozly Hollow, Mirograd, Velkvik | Fire Pot |
-| Rime salt | Gift: Velkvik, Ravenfell; drop: Draugr | Frost Pot, Saltburst |
-| Grave dust | Drop: Upyr, Draugr, Strzyga | Grave Oil |
+| Rime salt | Gift: Velkvik, Ravenfell; drop: Draugr, Rimewrought *(v0.5)* | Frost Pot, Saltburst |
+| Grave dust | Drop: Upyr, Draugr, Strzyga, Ribbonshade, Anvil-wight *(v0.5)* | Grave Oil |
 | River pearl | Drop: Rusalka, Vodyanoy, Nix | Drowned-Bane Oil |
-| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra | Thornbane Oil, Hardwood Tonic |
+| Thornwood | Drop: Kikimora, Bies, Leshy, Huldra, Gloam-moths *(v0.5)* | Thornbane Oil, Hardwood Tonic |
 | Wolf fang | Drop: Gloam Wolf | — *(reserved for v0.6 discovery)* |
 | Noon poppy | Drop: Poludnitsa | — *(reserved for v0.6 discovery)* |
 
@@ -1706,6 +1831,7 @@ The Hut opens from its building row on the Hold screen.
 | v0.2 | + Hunters (roster, detail, candidates), Contracts (board, launch sheet, fight log), Hall of the Fallen, gear upgrades |
 | v0.3 | + Bestiary (grid, entries), investigation on the board and launch sheet, preparation on the launch sheet, Alchemist's Hut |
 | v0.4 | + Threat meter, Citadel and Bastion on the Rank screen, defenses, The Hearth (upgrades and relics), the Last Stand screen, the Long Night sheets, the arrival sheet (§9.13) |
+| v0.5 | + the Archive tab (Bestiary, Library, Accounts, Names), the document reader, story scenes, the Villages panel, letters on the hunter sheet, warden naming, the Roll of Wardens, bands on the stand screens (§9.14) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -1737,6 +1863,19 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 - **Last Stand screen:** the wave list (the first 12; "?" for species not yet Identified); six slots with the suggested six; one oil and one potion per hunter; bombs shown as "thrown automatically from stores"; the preview (expected waves with a range; Embers now with the breakdown and per day of the cycle; Threat by tomorrow; Embers tomorrow, labeled as an estimate); **Start**, with a confirmation that says the Long Night follows.
 - **The Long Night sheets**, in order (§5.9.7): the stand's result, with a link to each wave's log; the closing line; The Hearth; the new-warden sheet with the choice of 3 active hunters.
 - **Arrival sheet** (old saves only, §5.9.8).
+
+### 9.14 Story screens *(v0.5, D144–D166)*
+
+- **Archive tab** (replaces the Bestiary tab once Ilse arrives; §5.14.3): four sections in a segmented control: **Bestiary** (the v0.3 screen), **Library**, **Accounts**, **Names**. A badge counts unopened items.
+- **Library:** grouped by act, then type; a letters shelf for hunter letters. Each row: title, witness, where it was found. Tapping opens the **reader**: the text in the body font on a parchment-toned card, any Ilse note under it in italics, and "Found: [condition], [cycle]".
+- **Accounts:** one card per event; tapping shows each account's excerpt side by side (stacked on a phone), each labeled with its witness and a link to the full document.
+- **Names:** *"Names found: N of 40"*, then the 40 rows in order: found rows show name, village and year; missing rows show the hint. No progress bar beyond the count.
+- **Scene sheets** (Ilse's arrival, Sigrun at the door, a Ribbonshade's ribbon, Pechko's closing scenes): the same sheet as Rank-up scenes, one tap to dismiss, kept in the Library.
+- **Villages panel** (Contracts board, above the open contracts, collapsible): one row per village with its trust level, its one-line description and "6 of 10 contracts toward Wary"; long-press for the breakdown.
+- **Hunter detail:** a **Letters** row (levels 5 and 8, locked rows show "at level 5"); a new letter shows a badge.
+- **Warden naming:** a text field (24 characters) with **Suggest**, on the new-warden sheet and, for an old save, on its arrival scene (one field per earlier warden).
+- **Roll of Wardens** (Rank screen, Hearth Hall, below The Hearth): the worn first line, then one line per warden (§5.14.5); tapping a warden's line shows that cycle's stand result.
+- **Stand screen:** the band thresholds next to the preview; **result sheet:** the band, the residents' lines, trust steps and the testament (§5.14.8–§5.14.9).
 
 ---
 
@@ -1818,3 +1957,18 @@ Each one is also marked **[JC]** where it appears.
 4. **Six patrons;** the Unlit appears only after Act V. (§8.8)
 5. **Each Rank-up restores part of old Stanholm.** (§5.1.3)
 6. **Ostap's bio changes in cycle 3.** (§8.5)
+
+## Judgment calls added in the v0.5 flesh-out (D144–D166)
+
+1. **The stand stays a "reach Bastion, go" moment in v0.5;** the timing is looked at again in the v1.0 balance pass. (§5.9.3, D144)
+2. **Bands from fixed wave thresholds:** Broken ≤ 8, Held 9–11, Triumphant ≥ 12. (§5.14.8)
+3. **Trust rises from contracts and Triumphant stands, never drops, and changes no numbers in v0.5.** (§5.14.6)
+4. **Documents arrive on fixed conditions, never by chance,** spread across the Ranks. (§5.14.2)
+5. **Old saves start Act I at once;** Ilse brings what's already behind them. (§5.14.1)
+6. **The Bestiary tab becomes the Archive** when Ilse arrives with the first document. (§5.14.3)
+7. **Wardens are named, with Suggest;** the Roll starts with a worn line, legible in Act IV. (§5.14.5)
+8. **Letters at levels 5 and 8 (was 10), from the highest level ever reached;** every hunter has two. (§5.14.7)
+9. **Ruins from the Keep at tier 2+,** from Kozly Hollow, Velkvik and Ravenfell; four Cursed creatures. (§5.4.1, §8.3)
+10. **The Wright's Blade** is the fourth weapon tier and keeps the Silver sub-hit. (§5.3.6)
+11. **Arvid Netmender** (was Stonebrow): a Rune Vanguard, free, from Act III. (§8.5)
+12. **The Deep family waits** for the acts that explain it. (§5.6.1)

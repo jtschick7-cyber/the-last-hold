@@ -12,6 +12,10 @@ import { MS_PER_SECOND } from '../time';
 import { injuryOutcome, needsDeathRoll, type InjuryOutcome } from './injury';
 import { holdBounty, trophies, xpPerHunter } from './rewards';
 import { contractXpBonus } from '../long-night/bonuses';
+import { recordWin, sweepDocuments } from '../story/documents';
+import { defeatRibbonshade } from '../story/names';
+import { winForVillage } from '../story/trust';
+import { notePeak } from '../story/letters';
 import { deathSeed, fightSeed } from './seeds';
 
 // GDD §5.4.3 (B9): rewards, injuries and XP apply the moment a contract's timer
@@ -124,6 +128,13 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     state.stats.contractsLost += 1;
   }
   applyContractThreat(state, contract.tier, success); // GDD §5.9.1
+  // GDD §5.4.3, §5.14.2: a success can bring documents and names; a failure never does.
+  const found = success ? [...recordWin(state, contract), ...sweepDocuments(state)] : [];
+  if (success && contract.monster === 'ribbonshade') found.push(...defeatRibbonshade(state));
+  // GDD §5.14.6: after the documents (a trust-gated one reads trust before this win, D178).
+  if (success) found.push(...winForVillage(state, contract.village));
+  // GDD §5.14.7: a level-up can reach a hunter's letter, win or lose.
+  for (const u of levelUps) found.push(...notePeak(state, u.hunter, u.level));
 
   const ref: FightRef = {
     contractId: contract.id,
@@ -155,6 +166,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     levelUps,
     reagents,
     wellPrepared,
+    ...(found.length > 0 ? { found } : {}),
   };
   state.results.push(result);
   return result;

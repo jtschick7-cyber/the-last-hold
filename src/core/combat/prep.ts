@@ -2,7 +2,7 @@ import { consumables } from '../../content/consumables';
 import { roundHalfUp } from './build';
 import { emit, type Fight } from './fight-state';
 import { finalDamage, heal, hurt } from './formula';
-import { speedEff } from './stats';
+import { speedEff, unthaw } from './stats';
 import type { Combatant, HunterPotion, HunterSnapshot } from './types';
 import type { Preparation } from '../state/game-state';
 import { traits } from '../../content/traits';
@@ -92,6 +92,8 @@ export const startOfFight = (f: Fight): void => {
       const dealt = e.initial * resist;
       const amount = finalDamage(dealt, m, resist, false, 0, 1);
       hurt(m, amount);
+      // A Fire Pot is a Fire hit: it cracks a Rimewrought's rime (Unthawed, D176).
+      const cracked = e.damageType === 'fire' ? unthaw(m) : null;
       const slow = e.kind === 'chill';
       if (e.kind === 'burn') {
         // A status with the same name refreshes rather than stacks (GDD §5.0).
@@ -111,6 +113,7 @@ export const startOfFight = (f: Fight): void => {
           `The party throws a ${consumables[id].name} — ${e.damageType[0]?.toUpperCase()}${e.damageType.slice(1)} ${e.initial}` +
           `${resist === 1 ? '' : resist === 0 ? ' immune' : ` ×${resist} resist`} = ${amount}` +
           `${slow ? `, and the ${m.name} slows (−${percent(e.speedCut)} Speed for ${e.actions} actions)` : `, and the ${m.name} burns (${e.perAction} Fire on each of its next ${e.actions} actions)`}` +
+          `${cracked ? `; ${cracked}` : ''}` +
           ` · ${m.name} ${m.health}/${m.maxHealth}`,
         rolls: [],
         amount,

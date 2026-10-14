@@ -148,12 +148,6 @@ vite.config.ts.timestamp-*
 # Turbo Repo
 .turbo
 
-# Story spoilers: kept outside the repo until v0.5 (D36). The owner adds this
-# file back at v0.5; remove this line in the same commit.
-docs/lore-secrets.md
-# Original outline (contains the premise twist); kept outside the repo too (D38).
-docs/outline.md
-
 # Simulator reports (regenerated)
 sim/reports/
 dist-preview/

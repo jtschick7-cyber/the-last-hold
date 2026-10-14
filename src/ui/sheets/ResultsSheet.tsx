@@ -1,9 +1,10 @@
 import { hunters } from '../../content/hunters';
-import { monsterPortraitId } from '../../content/assets';
+import { monsterPortraitId, RIBBON_ICON } from '../../content/assets';
 import { ingredients, type IngredientId } from '../../content/ingredients';
 import { monsters } from '../../content/monsters';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { ContractResult } from '../../core/state/game-state';
+import { foundLines } from '../../core/story/found-lines';
 import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { placeName } from '../app/contract-text';
@@ -61,6 +62,16 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
             .join(', ')}
         </div>
       )}
+      {(r.found ?? []).some((k) => k.startsWith('ribbon:')) && (
+        <div>
+          <Sprite id={RIBBON_ICON} />
+        </div>
+      )}
+      {foundLines(game(), r.found ?? []).map((line) => (
+        <div key={line} class={styles.small}>
+          <em>{line}</em>
+        </div>
+      ))}
       {r.levelUps.map((l) => (
         <div key={l.hunter} class={`${styles.small} ${styles.good}`}>
           {hunters[l.hunter].shortName} reached level {l.level}

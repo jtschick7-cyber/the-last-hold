@@ -37,7 +37,15 @@ export interface FightContext {
   readonly monsterId: MonsterId;
   /** The monster's attacks per action. */
   readonly attacks: number;
+  /** Gloam-moths' Lightless: hunters' hit chance is this much lower while it stands (v0.5). */
+  readonly hitCut: number;
 }
+
+/** GDD §8.3 Lightless (a passive): the cut to every hunter's hit chance. */
+export const lightlessCut = (id: MonsterId): number => {
+  for (const a of monsters[id].abilities) if (a.kind === 'lightless') return a.hitChanceCut;
+  return 0;
+};
 
 /**
  * knowledge% bucket (GDD §5.0): the damage bonus against a species the hunters know,
@@ -67,6 +75,7 @@ export const hitChance = (
 ): number => {
   let chance = K.hitChance;
   if (attacker.side === 'hunter') {
+    chance -= ctx.hitCut;
     for (const h of party) {
       for (const e of h.traits) {
         if (e.kind === 'partyHitOnLocation' && e.location === ctx.location) chance += e.amount;
@@ -81,6 +90,16 @@ export const hitChance = (
  * after Armor (GDD §5.0, B2). Only hunters have any (Shieldwall, Fire-touched,
  * Emberwright Plate).
  */
+/** The present party member with the lowest % Health; ties by party slot. */
+const lowestHealth = (party: readonly Combatant[]): Combatant | null => {
+  let best: Combatant | null = null;
+  for (const c of party) {
+    if (!present(c)) continue;
+    if (!best || healthPct(c) < healthPct(best)) best = c;
+  }
+  return best;
+};
+
 export const takenReduction = (
   defender: Combatant,
   type: DamageType,
@@ -89,9 +108,12 @@ export const takenReduction = (
   if (defender.side !== 'hunter') return 0;
   let sum = defender.extraTaken;
   for (const ally of party) {
-    if (ally === defender || !present(ally)) continue;
+    if (!present(ally)) continue;
     for (const e of ally.traits) {
-      if (e.kind === 'alliesTakenWhileStanding') sum += -e.amount;
+      if (e.kind === 'alliesTakenWhileStanding' && ally !== defender) sum += -e.amount;
+      // Shield-companion (v0.5): the lowest % Health member, the holder included (D177).
+      else if (e.kind === 'lowestHealthTakenWhileStanding' && lowestHealth(party) === defender)
+        sum += e.amount;
     }
   }
   if (type === 'fire') {
@@ -105,3 +127,19 @@ export const takenReduction = (
 };
 
 export const monsterFamily = (id: MonsterId): FamilyId => monsters[id].family;
+
+/**
+ * GDD §8.3 Unthawed (Rimewrought): the first Fire hit it takes strips a share of its
+ * Armor for the rest of the fight (stat%). A weakness, so a Saltburst never cancels it
+ * (D176). Returns the log note, or null if nothing happened.
+ */
+export const unthaw = (c: Combatant): string | null => {
+  if (c.unthawed) return null;
+  for (const a of c.abilities) {
+    if (a.kind !== 'unthawed') continue;
+    c.unthawed = true;
+    c.statPct.armor -= a.armorStrip;
+    return `the ${c.name}'s rime cracks (Unthawed: Armor −${Math.round(a.armorStrip * 100)}% for the fight)`;
+  }
+  return null;
+};

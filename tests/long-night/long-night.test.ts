@@ -209,8 +209,30 @@ describe('the Long Night (GDD §5.9.7)', () => {
         ranks: { hamlet: s.time },
         contractThreat: { added: 0, removed: 0 },
         stand: null,
+        act: 2, // v5 (T5.3, GDD §5.14.1): one act per cycle
+        warden: null,
       });
     });
+
+    it('the new cycle begins the next act, with fresh counters (GDD §5.14.1)', () => {
+      expect(s.story.acts.map((a) => a.act)).toEqual([1, 2]);
+      expect(s.story.acts[1]).toEqual({
+        act: 2,
+        cycle: 2,
+        startedAt: s.time,
+        wins: 0,
+        winsByVillage: {},
+        ruinWins: 0,
+      });
+    });
+  });
+
+  it('v0.5 (GDD §5.14.9): the stand brings the Act I testament, and the new warden its closing scene', () => {
+    const doc = (id: string) => s.story.documents.find((d) => d.id === id);
+    expect(doc('D1-06')).toMatchObject({ cycle: 1, via: 'stand' });
+    expect(doc('D1-07')).toMatchObject({ cycle: 2, via: 'warden' });
+    // The contract still running finished first and was won, bringing Act I's first letter.
+    expect(doc('D1-01')).toMatchObject({ cycle: 1, via: 'contract' });
   });
 
   it('the stand causes no injuries and no deaths', () => {

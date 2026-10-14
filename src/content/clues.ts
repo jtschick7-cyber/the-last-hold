@@ -1,3 +1,4 @@
+import { V05_CLUE_TAGS, v05ClueTexts } from './clues-v05';
 // GDD §8.4: the clue library. Each tag has several in-world texts; a contract
 // draws one text per revealed tag, picked by seed. Species carry three tags each
 // (monsters.ts); three clues together always name exactly one species.
@@ -24,6 +25,8 @@ export const CLUE_TAGS = [
   'strange-birth',
   'stranger',
   'horse',
+  // v0.5: the Cursed's tags (GDD §8.4, D158).
+  ...V05_CLUE_TAGS,
 ] as const;
 export type ClueTag = (typeof CLUE_TAGS)[number];
 
@@ -129,4 +132,5 @@ export const clueTexts: Readonly<Record<ClueTag, readonly string[]>> = {
     'Wet hoofprints from the river to the lane, and none going back.',
     'The ferryman says a grey horse stands in the shallows every dusk, saddled, and no one has seen its owner.',
   ],
+  ...v05ClueTexts,
 };

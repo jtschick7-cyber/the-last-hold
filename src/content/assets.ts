@@ -49,6 +49,12 @@ export const buildingSpriteId = (b: BuildingId): string => `building.${b}`;
 export const holdSceneId = (a: AgeId): string => `scene.hold.${a}`;
 export const EMBERS_ICON = 'icon.embers';
 export const THREAT_ICON = 'icon.threat';
+export const WRIGHTS_BLADE_ICON = 'icon.gear.wrights-blade';
+export const RIBBON_ICON = 'icon.story.ribbon';
+/** Icons for four document types (v0.5, plan T5.13); the other types have none. */
+export const DOC_ICON_TYPES = ['letter', 'journal', 'ledger', 'testament'] as const;
+export const docIconId = (type: string): string | null =>
+  (DOC_ICON_TYPES as readonly string[]).includes(type) ? `icon.doc.${type}` : null;
 export const relicIconId = (r: RelicId): string => `icon.relic.${r}`;
 export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
 export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m}`;
@@ -161,6 +167,7 @@ export const assets: readonly AssetEntry[] = [
       'tools/gen-portraits.ts',
     ),
   ),
+  // The Cursed (v0.5) are drawn too (plan T5.13, tools/draw-cursed.ts).
   ...MONSTER_IDS.map((m) =>
     generated(
       monsterPortraitId(m),
@@ -175,6 +182,19 @@ export const assets: readonly AssetEntry[] = [
   fromPack(THREAT_ICON, 'icon', [16, 16], 'Threat', 'icons/threat.png', ONE_BIT),
   ...RELIC_IDS.map((r) =>
     fromPack(relicIconId(r), 'icon', [16, 16], relics[r].name, `icons/relic-${r}.png`, ONE_BIT),
+  ),
+  // v0.5 (plan T5.13): the Wright's Blade, the ribbon and the document types.
+  fromPack(
+    WRIGHTS_BLADE_ICON,
+    'icon',
+    [16, 16],
+    "Wright's Blade",
+    'icons/gear-wrights-blade.png',
+    ONE_BIT,
+  ),
+  fromPack(RIBBON_ICON, 'icon', [16, 16], 'Ribbon', 'icons/story-ribbon.png', ONE_BIT),
+  ...DOC_ICON_TYPES.map((d) =>
+    fromPack(`icon.doc.${d}`, 'icon', [16, 16], titled(d), `icons/doc-${d}.png`, ONE_BIT),
   ),
 ];
 

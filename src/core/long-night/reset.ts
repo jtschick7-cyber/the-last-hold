@@ -9,6 +9,7 @@ import { num } from '../balance-access';
 import { syncBoardOpen } from '../contracts/board';
 import type { GameState } from '../state/game-state';
 import { freshCycleRecord } from '../state/new-game';
+import { freshAct } from '../state/story-state';
 import { jobSlots } from '../systems/housing';
 import { keptLevel, levelsKeptShare } from './levels';
 
@@ -111,6 +112,10 @@ export const resetForNewCycle = (state: GameState): void => {
   state.threat = 0;
   state.arrivalDue = false;
   state.stats = { ...state.stats, trophies: 0 };
-  state.cycles.push(freshCycleRecord(ending + 1, state.time));
+  // GDD §5.14.1: one act per cycle. A cycle with no act (before v0.5, or the v0.4
+  // arrival's) is followed by Act I (D149).
+  const act = (state.cycles[state.cycles.length - 1]?.act ?? 0) + 1;
+  state.cycles.push(freshCycleRecord(ending + 1, state.time, act));
+  state.story.acts.push(freshAct(act, ending + 1, state.time));
   syncBoardOpen(state);
 };

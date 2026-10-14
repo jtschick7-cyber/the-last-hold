@@ -106,6 +106,7 @@ export interface Combatant {
   readonly traits: readonly TraitEffect[];
   readonly fireTakenReduction: number;
   readonly silverSubHit: boolean;
+  readonly runeSubHit: boolean;
   readonly abilities: readonly MonsterAbility[];
   /** Actions taken so far, including lost ones. */
   actions: number;
@@ -135,6 +136,8 @@ export interface Combatant {
   abilitiesBlocked: number;
   /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
   extraTaken: number;
+  /** Rimewrought's Unthawed has stripped its Armor (GDD §8.3, v0.5). */
+  unthawed: boolean;
 }
 
 export interface LogEntry {

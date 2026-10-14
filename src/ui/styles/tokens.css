@@ -18,6 +18,9 @@
   --c-warn: #f4b41b;
   --c-good: #71aa34;
   --c-preview: #f4b41b;
+  /* v0.5: the Archive reader's parchment card (GDD §9.14). */
+  --c-parchment: #cfc6b8;
+  --c-ink: #302c2e;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 1rem;
@@ -38,6 +41,8 @@
   --c-on-ember: #dff6f5;
   --c-warn: #7a444a;
   --c-good: #397b44;
+  --c-parchment: #f4cca1;
+  --c-ink: #302c2e;
   color-scheme: light;
 }
 

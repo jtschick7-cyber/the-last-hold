@@ -41,7 +41,7 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     name: 'Kozly Hollow',
     band: 'lowlands',
     region: 'Lowland goatherd village in the old wood',
-    locations: ['forest', 'field'],
+    locations: ['forest', 'field', 'ruin'],
     head: { name: 'Bohdan Kozel', title: 'Headman' },
     gifts: ['honeycomb', 'pitch'],
   },
@@ -59,7 +59,7 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     name: 'Velkvik',
     band: 'fells',
     region: 'Highland fjord village',
-    locations: ['river', 'barrow'],
+    locations: ['river', 'barrow', 'ruin'],
     head: { name: 'Gunnar Ravnsson', title: 'Thane' },
     gifts: ['rime-salt', 'pitch'],
   },
@@ -68,8 +68,12 @@ export const villages: Readonly<Record<VillageId, VillageDef>> = {
     name: 'Ravenfell',
     band: 'fells',
     region: 'Highland hamlet among the barrow-hills',
-    locations: ['barrow', 'forest'],
+    locations: ['barrow', 'forest', 'ruin'],
     head: { name: 'Sólveig Arnadóttir', title: 'Thane' },
     gifts: ['rime-salt'],
   },
 };
+
+// GDD §8.2 (v0.5, D157): the villages whose tags include ruin. Like barrows, ruins
+// are never generated in the Hamlet or at tier 1 (core/contracts/board.ts).
+export const RUIN_VILLAGES: readonly VillageId[] = ['kozly-hollow', 'velkvik', 'ravenfell'];

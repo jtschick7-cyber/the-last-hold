@@ -36,7 +36,7 @@ export const balance = {
     food: tunable(6, 'perMinute'),
     wood: tunable(4, 'perMinute'),
     iron: tunable(2, 'perMinute'),
-    silver: tunable(0.24, 'perMinute'),
+    silver: tunable(0.22, 'perMinute'),
   },
   silverSeam: { max: locked(2) },
   mill: { perLevel: tunable(0.25) },
@@ -104,7 +104,7 @@ export const balance = {
     growth: tunable(2.2),
     // Q9 (D81): from the Keep, each hunter's provisions are at least this many minutes
     // of the hold's food capacity (Q11). Hamlet 0: the first contracts stay at the flat base.
-    incomeMinutes: tunable({ hamlet: 0, keep: 1, citadel: 4.1, bastion: 2.5 }), // D106
+    incomeMinutes: tunable({ hamlet: 0, keep: 1, citadel: 4.4, bastion: 2.5 }), // D106, D189
   },
   monster: {
     statGrowth: tunable(1.35),
@@ -126,7 +126,8 @@ export const balance = {
     meterThreshold: locked(100),
     maxTicks: locked(400),
   },
-  gear: { silveredFraction: tunable(0.25) },
+  // runedFraction: GDD §7.7 (v0.5, D159): the Wright's Blade's Rune sub-hit.
+  gear: { silveredFraction: tunable(0.25), runedFraction: tunable(0.25) },
   striker: { critChance: tunable(0.2) },
   mender: {
     healMult: tunable(1.5),
@@ -211,6 +212,16 @@ export const balance = {
     // The median Embers of cycle 1's stand (Standard, Monday, 5 seeds) after T4.15 (D138).
     cycle1MedianEmbers: tunable(193),
   },
+
+  // ---- GDD §7.7 The story (v0.5, D144–D166) ----
+  // Waves held from which a stand is Held, and Triumphant (D145).
+  band: { heldFrom: tunable(9), triumphantFrom: tunable(12) },
+  // Contracts won for a village to rise from Cold, Wary, Hopeful and Trusting (D146).
+  trust: { stepContracts: tunable([10, 15, 20, 25]) },
+  // Hunter letters at these levels, counting the highest level ever reached (D155).
+  letters: { levels: tunable([5, 8]) },
+  // Until all six Ribbonshade names are found, this share of ruin contracts is a Ribbonshade (Q17, D190).
+  ruin: { ribbonshadeShare: tunable(0.5) },
 } as const;
 
 export type Balance = typeof balance;

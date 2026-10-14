@@ -9,6 +9,9 @@ import { runStand } from '../stand/engine';
 import { arrivalTrophyCap, standInputFor } from '../stand/from-state';
 import { bestWavesEver, relicsFound } from '../stand/relics';
 import type { GameState, Preparation, StandRecord } from '../state/game-state';
+import { bandFor } from '../story/band';
+import { standDocuments, wardenDocuments } from '../story/documents';
+import { triumphantStand } from '../story/trust';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.9.3 and §5.9.7 (D107, D110): making the Last Stand, then the Long Night, in
@@ -83,14 +86,21 @@ export const makeStand = (
     embers: { waves: payout.waves, trophies: payout.trophies, total: payout.value },
     relicsFound: found,
     arrival: state.arrivalDue,
+    trustSteps: [],
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];
   if (record) record.stand = stand;
   state.embers += payout.value;
   for (const id of found) state.relics.push({ id, cycle: state.cycle.number });
-  // 4–5. The reset and the new cycle.
+  // GDD §5.14.9: the stand closes the act (its testament on the result sheet), and a
+  // Triumphant one raises every village's trust a step (D146).
+  // The steps are kept on the record so the result sheet can show them whenever it is opened (D183).
+  if (bandFor(result.wavesHeld) === 'triumphant') stand.trustSteps = triumphantStand(state);
+  standDocuments(state);
+  // 4–5. The reset and the new cycle; the next warden's arrival closes the act's scene.
   resetForNewCycle(state);
+  wardenDocuments(state);
   return ok;
 };
 

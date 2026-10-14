@@ -1,3 +1,4 @@
+import { currentAct } from '../../core/story/documents';
 import { hunters } from '../../content/hunters';
 import { monsters } from '../../content/monsters';
 import { num } from '../../core/balance-access';
@@ -15,6 +16,7 @@ import { ResultsView } from '../sheets/ResultsSheet';
 import styles from '../styles/ui.module.css';
 import { InvestigationPanel } from '../widgets/InvestigationPanel';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { VillagesPanel } from '../widgets/VillagesPanel';
 
 // GDD §9.4: the contract board. Running contracts, what is ready to collect, and
 // the open contracts, each with what it pays and what it takes.
@@ -22,7 +24,7 @@ const durationOf = (c: ContractInstance): number => contractDuration(game(), c.t
 
 const Open = ({ c }: { c: ContractInstance }) => {
   const s = game();
-  const notice = noticeFor(c, s.meta.gameSeed);
+  const notice = noticeFor(c, s.meta.gameSeed, currentAct(s), s.story.trust[c.village].level);
   const pay = holdBounty(s, c.tier, []).value;
   return (
     <li class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>
@@ -77,6 +79,7 @@ export const ContractsScreen = () => {
   };
   return (
     <div>
+      <VillagesPanel />
       <section class={styles.card} aria-labelledby="board-title">
         <h2 id="board-title" class={styles.cardTitle}>
           Board {s.board.open.length}/{cap}

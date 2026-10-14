@@ -22,6 +22,7 @@ import {
   str,
   type Obj,
 } from './guards';
+import { wardenName } from './validate-story';
 
 // Technical design §5.2 (v4, D113): the Long Night's part of the save guard.
 
@@ -71,6 +72,13 @@ const stand = (v: unknown, where: string, warnings: string[]): StandRecord => {
     },
     relicsFound: relicList(o.relicsFound, `${where}.relicsFound`),
     arrival: bool(o.arrival, `${where}.arrival`),
+    // D183: stands saved before this field existed brought no recorded steps.
+    trustSteps:
+      o.trustSteps === undefined
+        ? []
+        : arr(o.trustSteps, `${where}.trustSteps`).map((k, i) =>
+            str(k, `${where}.trustSteps[${i}]`),
+          ),
     seen: bool(o.seen, `${where}.seen`),
   };
 };
@@ -87,6 +95,8 @@ const cycleRecord = (v: unknown, where: string, warnings: string[]): CycleRecord
       removed: nonNegative(threat.removed, `${where}.contractThreat.removed`),
     },
     stand: orNull(o.stand, (x) => stand(x, `${where}.stand`, warnings)),
+    act: orNull(o.act, (x) => count(x, `${where}.act`)),
+    warden: wardenName(o.warden, `${where}.warden`),
   };
 };
 

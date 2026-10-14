@@ -2,6 +2,7 @@ import { ages } from '../../content/ages';
 import { RESOURCE_IDS } from '../../content/resources';
 import type { GameState } from '../state/game-state';
 import { ageUpStatus } from '../systems/ages';
+import { sweepDocuments } from '../story/documents';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.1.3: the Age-up. Its grants (age bucket, higher maximum levels, new
@@ -21,5 +22,6 @@ export const ageUp = (state: GameState): ApplyResult => {
   // D113: the cycle history keeps when each Rank was reached.
   const record = state.cycles[state.cycles.length - 1];
   if (record) record.ranks[status.to] = state.time;
+  sweepDocuments(state); // GDD §5.14.2: a Rank document arrives on the Rank-up sheet
   return ok;
 };

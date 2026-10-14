@@ -108,6 +108,14 @@ export const describeAbility = (a: MonsterAbility): string => {
       return `On each of its actions, a ${percent(a.chance)} chance that one random hunter loses their next action.`;
     case 'rootWall':
       return `Regenerates ${percent(a.regenFraction)} of max Health on each of its actions.`;
+    case 'lightless':
+      return `While the swarm stands, every hunter's hit chance is ${Math.round(a.hitChanceCut * 100)} points lower.`;
+    case 'sealBurn':
+      return `A hunter who hits it with a direct attack takes ${percent(a.reflectFraction)} of the damage dealt back as Fire, ignoring Armor.`;
+    case 'reForge':
+      return `Every ${ordinal(a.every)} action, instead of attacking, it restores ${percent(a.healFraction)} of max Health. A Saltburst cancels it.`;
+    case 'unthawed':
+      return `The first Fire hit it takes in a fight strips ${percent(a.armorStrip)} of its Armor for the rest of the fight.`;
     case 'secondSoul':
       return `The first time it reaches 0 Health, it rises again at ${percent(a.reviveFraction)} Health (once per fight).`;
     case 'enthrall':

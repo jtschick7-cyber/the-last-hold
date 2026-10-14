@@ -13,6 +13,7 @@ import { requestStandPreview, type StandAnswer } from '../app/odds-client';
 import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
+import { bandThresholdsLine } from '../../content/story/scenes';
 import { Num } from '../widgets/Num';
 import { LongNightView } from './LongNightSheets';
 
@@ -187,6 +188,9 @@ export const StandView = () => {
         . Each potion works once in the whole stand.
       </p>
       <h3 class={styles.cardTitle}>Preview</h3>
+      <p class={`${styles.small} ${styles.dim}`}>
+        {bandThresholdsLine(num('band.heldFrom'), num('band.triumphantFrom'))}
+      </p>
       {party.length === 0 ? (
         <p class={styles.dim}>Choose at least one hunter.</p>
       ) : !p ? (

@@ -65,6 +65,9 @@ describe('the v0.4 arrival (GDD §5.9.8)', () => {
     expect(s.cycle).toEqual({ number: 2, age: 'hamlet' });
     expect(s.embers).toBeGreaterThanOrEqual(stand.embers.total);
     expect(standProblem(s)).toBe('The Last Stand opens at Bastion.');
+    // v5 (D149): the cycle after the v0.4 arrival begins Act I.
+    expect(s.cycles.map((c) => c.act)).toEqual([null, 1]);
+    expect(s.story.acts.map((a) => [a.act, a.cycle])).toEqual([[1, 2]]);
   });
 
   it('caps the trophies part when it is over the cap, and says so in the breakdown', () => {

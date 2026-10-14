@@ -215,6 +215,22 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
           }
         }
         break;
+      case 'reForge':
+        // GDD §8.3: every 3rd action (3rd, 6th…, like Barrow-Grip), instead of attacking.
+        if (m.actions % a.every === 0 && !cancelsAbility(f, m, 'Re-forge')) {
+          skipAttack = true;
+          const healed = heal(m, roundHalfUp(m.maxHealth * a.healFraction));
+          emit(f, {
+            actor: m.id,
+            kind: 'ability',
+            text: () =>
+              `The ${m.name}'s Re-forge mends it at the anvil, +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+            rolls: [],
+            amount: healed,
+            targetHealth: m.health,
+          });
+        }
+        break;
       case 'riverhorse':
         if (m.actions === 1 && !cancelsAbility(f, m, 'Riverhorse')) {
           const victim = lowestBy(standingHunters, (h) => h.health, false);

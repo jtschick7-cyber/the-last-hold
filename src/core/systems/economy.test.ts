@@ -81,10 +81,10 @@ describe('production (GDD §5.1.1, §5.0 buckets)', () => {
     expect(keysIn(productionRate(s, 'food').breakdown)).toContain('age.keep.allProduction');
   });
 
-  it('silver is 0.24/min per digger (D138)', () => {
+  it('silver is 0.22/min per digger (D138, D189)', () => {
     const s = game();
     s.peasants.jobs['silver-digger'] = 2;
-    expect(productionRate(s, 'silver').value).toBeCloseTo(0.48);
+    expect(productionRate(s, 'silver').value).toBeCloseTo(0.44);
   });
 
   it("Keep's +50% doesn't change silver (T1.11, G1)", () => {

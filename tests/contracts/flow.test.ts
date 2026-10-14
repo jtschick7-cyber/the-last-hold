@@ -294,26 +294,39 @@ describe('injuries and death (GDD §5.3.7)', () => {
   });
 
   it('never kills on an unconfirmed-Reckless-free contract: no death without the Reckless flag', () => {
-    for (let i = 0; i < 60; i++) {
+    // 30 sample games (owner's choice, 2026-10-14). A tier-5 Bies against three
+    // level-1 hunters with no story hunter among them: about even odds, so never
+    // Reckless, and hunters are downed often. (The old setup, a tier-3 Upyr, was won
+    // every time with no one downed, so it never tested this.) The guard keeps it honest.
+    let downed = 0;
+    for (let i = 0; i < 30; i++) {
       const s = keepRich(`safe${i}`);
       s.board.open = [];
-      const c = put(s, { id: `s${i}`, tier: 3, monster: 'upyr', location: 'field' });
+      const c = put(s, { id: `s${i}`, tier: 5, monster: 'bies', location: 'forest' });
       const r = run(s, {
         type: 'contract.launch',
         contract: c.id,
-        party: ['halvar', 'zora', 'ostap'],
+        party: ['halvar', 'zora', 'bjarna'],
       });
       if (!r.ok) continue; // Reckless here: not what this test is about
       advance(s, T0 + 9 * HOUR);
-      expect(s.results[0]?.injuries.some((x) => x.kind === 'dead')).toBe(false);
+      const injuries = s.results[0]?.injuries ?? [];
+      expect(injuries.some((x) => x.kind === 'dead')).toBe(false);
+      downed += injuries.filter((x) => x.kind === 'wounded').length;
     }
+    expect(downed).toBeGreaterThan(0);
   });
 
   it('story hunters never die: a downed one is Grievously Wounded instead', () => {
-    for (let i = 0; i < 40; i++) {
+    // 20 sample games (owner's choice, 2026-10-14). A tier-5 Vodyanoy resists Sigrun's
+    // Fire and downs the whole party. (The old setup, a tier-5 Leshy, is weak to Fire and
+    // was won 99.8% of the time, so no story hunter was ever downed.) The guard makes
+    // sure the death roll really was turned into Grievously Wounded.
+    let grievous = 0;
+    for (let i = 0; i < 20; i++) {
       const s = keepRich(`story${i}`);
       s.board.open = [];
-      const c = put(s, { id: `y${i}`, tier: 5, monster: 'leshy', location: 'forest' });
+      const c = put(s, { id: `y${i}`, tier: 5, monster: 'vodyanoy', location: 'river' });
       run(s, {
         type: 'contract.launch',
         contract: c.id,
@@ -321,9 +334,12 @@ describe('injuries and death (GDD §5.3.7)', () => {
         confirmReckless: true,
       });
       advance(s, T0 + 9 * HOUR);
-      expect(s.results[0]?.injuries.some((x) => x.kind === 'dead')).toBe(false);
+      const injuries = s.results[0]?.injuries ?? [];
+      expect(injuries.some((x) => x.kind === 'dead')).toBe(false);
+      grievous += injuries.filter((x) => x.kind === 'grievous').length;
       for (const id of ['toma', 'ostap', 'sigrun'] as const) expect(s.hunters[id]).toBeDefined();
     }
+    expect(grievous).toBeGreaterThan(0);
   });
 
   it('before its first Long Night, a fallen hunter returns as a candidate 3 days after death', () => {

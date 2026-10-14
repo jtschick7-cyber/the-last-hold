@@ -6,6 +6,7 @@ import { start } from '../../content/start';
 import { UPGRADE_IDS, type UpgradeId } from '../../content/warden-upgrades';
 import { SCHEMA_VERSION, type CycleRecord, type GameState, type Settings } from './game-state';
 import { freshHunter, startingHunters } from './hunters-state';
+import { freshAct, startingVillageTrust } from './story-state';
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'dark',
@@ -20,13 +21,15 @@ const fill = <K extends string>(
 ): Record<K, number> =>
   Object.fromEntries(ids.map((id) => [id, from[id] ?? 0])) as Record<K, number>;
 
-/** A cycle's history entry as it begins (D113). */
-export const freshCycleRecord = (number: number, now: number): CycleRecord => ({
+/** A cycle's history entry as it begins (D113); `act` is the act it tells (GDD §5.14.1). */
+export const freshCycleRecord = (number: number, now: number, act: number | null): CycleRecord => ({
   number,
   startedAt: now,
   ranks: { [start.age]: now },
   contractThreat: { added: 0, removed: 0 },
   stand: null,
+  act,
+  warden: null,
 });
 
 /** A fresh game in the GDD §5.1.4 starting state. */
@@ -70,7 +73,20 @@ export const createNewGame = (seed: string, now: number): GameState => {
     upgrades: fill<UpgradeId>(UPGRADE_IDS, {}),
     relics: [],
     arrivalDue: false, // new games never face the v0.4 arrival (GDD §5.9.8)
-    cycles: [freshCycleRecord(1, now)],
+    cycles: [freshCycleRecord(1, now, 1)],
+    // GDD §5.14.1: a new game starts Act I with cycle 1; the opening scene names the warden.
+    story: {
+      arrivalDue: false,
+      ilseAt: null,
+      acts: [freshAct(1, 1, now)],
+      documents: [],
+      names: [],
+      ribbonshades: 0,
+      peakLevels: Object.fromEntries(startingHunters().map((h) => [h, 1])),
+      letters: [],
+      trust: startingVillageTrust(),
+      unread: [],
+    },
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,

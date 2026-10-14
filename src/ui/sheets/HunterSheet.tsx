@@ -1,4 +1,4 @@
-import { hunterPortraitId } from '../../content/assets';
+import { hunterPortraitId, WRIGHTS_BLADE_ICON } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { traits } from '../../content/traits';
 import { formatDuration, formatNumber } from '../../core/format';
@@ -7,6 +7,7 @@ import {
   hunterStat,
   hunterStatus,
   levelCap,
+  gearLock,
   nextGear,
   slotGear,
   xpToNext,
@@ -16,6 +17,7 @@ import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { Sprite } from '../widgets/Sprite';
+import { HunterLetters } from './HunterLetters';
 
 // GDD §9.7 hunter detail: stats with breakdowns, traits, gear and its upgrade,
 // the record, and a short bio.
@@ -25,23 +27,29 @@ const Slot = ({ id, slot }: { id: HunterId; slot: 'weapon' | 'armor' }) => {
   if (!h) return null;
   const current = slotGear(h, slot);
   const next = nextGear(h, slot);
-  const smithy = next ? s.buildings[next.requires.building] : 0;
-  const locked = next ? smithy < next.requires.level : false;
+  const lock = next ? gearLock(s, next) : null;
+  const locked = lock !== null;
   const affordable = next
     ? RESOURCE_IDS.every((r) => s.resources[r] >= (next.cost[r] ?? 0))
     : false;
   return (
     <div class={styles.row}>
       <span class={styles.grow}>
-        {slot === 'weapon' ? 'Weapon' : 'Armor'}: <strong>{current ? current.name : '—'}</strong>
+        {slot === 'weapon' ? 'Weapon' : 'Armor'}:{' '}
+        {current?.id === 'wrights-blade' && <Sprite id={WRIGHTS_BLADE_ICON} />}{' '}
+        <strong>{current ? current.name : '—'}</strong>
         {next && (
           <div class={`${styles.small} ${styles.dim}`}>
             Next: {next.name}
-            {next.silverSubHit ? ' (adds a Silver sub-hit)' : ''}
+            {next.runeSubHit
+              ? ' (adds a Rune sub-hit)'
+              : next.silverSubHit
+                ? ' (adds a Silver sub-hit)'
+                : ''}
             {next.fireTakenReduction > 0 ? ' (−10% Fire taken)' : ''}
             {next.might > 0 ? ` · +${next.might} Might` : ''}
             {next.armor > 0 ? ` · +${next.armor} Armor` : ''}
-            {locked ? ` · needs Smithy ${next.requires.level}` : ''}
+            {lock ? ` · ${lock}` : ''}
             <span class={styles.cost}>
               {RESOURCE_IDS.filter((r) => (next.cost[r] ?? 0) > 0).map((r) => (
                 <span
@@ -117,6 +125,7 @@ export const HunterView = ({ id }: { id: HunterId }) => {
       <p class={styles.small}>
         Record: {h.record.won} won · {h.record.lost} lost
       </p>
+      <HunterLetters id={id} />
       <p class={`${styles.small} ${styles.dim}`}>{def.bio}</p>
       <button
         type="button"

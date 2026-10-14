@@ -4,6 +4,7 @@ import { constantAt, num } from '../balance-access';
 import { arrivalClues, noteArrival } from '../investigation/knowledge';
 import { candidatesFor } from './candidates';
 import { stream } from '../rng';
+import { ribbonName } from '../story/names';
 import type { ContractInstance, GameState } from '../state/game-state';
 import { MS_PER_SECOND } from '../time';
 
@@ -50,13 +51,24 @@ export const generateContract = (
       ] ?? VILLAGE_IDS[0]
     ];
   const places: readonly LocationId[] = village.locations.filter(
-    (l) => LOCATION_IDS.includes(l) && (l !== 'barrow' || tier >= 2),
+    // Barrows and ruins start at tier 2 (A3, D157), so never in the Hamlet.
+    (l) => LOCATION_IDS.includes(l) && ((l !== 'barrow' && l !== 'ruin') || tier >= 2),
   );
   const location =
     places[Math.min(places.length - 1, Math.floor(rolls.next() * places.length))] ?? 'field';
   const species = candidatesFor(location, tier);
-  const monster = species[Math.min(species.length - 1, Math.floor(rolls.next() * species.length))];
+  let monster = species[Math.min(species.length - 1, Math.floor(rolls.next() * species.length))];
   if (!monster) throw new Error(`No monster for ${location} at tier ${tier}.`);
+  // GDD §5.14.4 (Q17, D190): until all six Ribbonshade names are found, a share of ruin
+  // contracts is a Ribbonshade. Rolled last, so no other contract changes.
+  const ribbonRoll = rolls.next();
+  if (
+    location === 'ruin' &&
+    ribbonName(state.story.ribbonshades + 1) !== null &&
+    species.includes('ribbonshade') &&
+    ribbonRoll < num('ruin.ribbonshadeShare')
+  )
+    monster = 'ribbonshade';
   // GDD §5.6.2: a contract arrives with no clues, unless its species is Mastered.
   const revealed = arrivalClues(state, monster);
   return { id: `c${index}`, village: village.id, monster, tier, location, arrivedAt, revealed };

@@ -108,9 +108,12 @@ describe('runStand (GDD §5.9.3)', () => {
 
   it('each potion fires once in the whole stand', () => {
     const potions = Object.fromEntries(SIX.map((h) => [h.id, 'mending-draught' as const]));
-    const r = runStand(input({ prep: { oils: {}, potions, bombs: [] } }));
+    // Threat 200 so hunters get low enough to drink in more than one wave (from v0.5 the
+    // Cursed join the waves, and at Threat 0 this stand now ends on a Rimewrought's tick limit).
+    const r = runStand(input({ threat: 200, prep: { oils: {}, potions, bombs: [] } }));
     const used = r.waves.flatMap((w) => w.fight.potionsUsed);
-    expect(used.length).toBeGreaterThan(0);
+    expect(used.length).toBeGreaterThan(1);
+    expect(r.waves.filter((w) => w.fight.potionsUsed.length > 0).length).toBeGreaterThan(1);
     expect(new Set(used).size).toBe(used.length);
   });
 
@@ -192,6 +195,7 @@ describe('wave logs from the saved record (technical design §5.3)', () => {
       embers: { waves: 0, trophies: 0, total: 0 },
       relicsFound: [],
       arrival: false,
+      trustSteps: [],
       seen: false,
     };
     expect(replayStand(record)).toEqual(made);

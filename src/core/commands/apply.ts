@@ -1,3 +1,4 @@
+import { arriveV05, nameWarden, readArchive, runV05Arrival } from './wardens';
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
 import { collect, decline, launch, markSeen } from './contracts';
@@ -5,7 +6,16 @@ import { cancelBrew, queueBrew } from './brew';
 import { assign, stop } from './investigate';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
-import { addEmbers, addResources, runArrival, runPolicy, setSeed, skip, unlockAge } from './debug';
+import {
+  addEmbers,
+  addResources,
+  runArrival,
+  runPolicy,
+  setSeed,
+  skip,
+  unlockAge,
+  addArvid,
+} from './debug';
 import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasants';
 import { setSettings } from './settings';
 import { makeStand, markStandSeen } from './stand';
@@ -82,6 +92,16 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return runArrival(state);
     case 'debug.unlockAge':
       return unlockAge(state, cmd.age);
+    case 'debug.addArvid':
+      return addArvid(state);
+    case 'warden.name':
+      return nameWarden(state, cmd.cycle, cmd.name);
+    case 'story.arrive':
+      return arriveV05(state, cmd.names);
+    case 'debug.runV05Arrival':
+      return runV05Arrival(state);
+    case 'archive.read':
+      return readArchive(state, cmd.key);
     default:
       return refuse('Unknown command.');
   }

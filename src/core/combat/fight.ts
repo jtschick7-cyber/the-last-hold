@@ -8,6 +8,7 @@ import { emit, type Fight } from './fight-state';
 import {
   healthPct,
   knowledgeBonus,
+  lightlessCut,
   monsterFamily,
   present,
   speedEff,
@@ -177,6 +178,7 @@ export const runFight = (input: FightInput): FightResult => {
     family: monsterFamily(input.monster.monster),
     monsterId: input.monster.monster,
     attacks: monsters[input.monster.monster].attacks,
+    hitCut: lightlessCut(input.monster.monster),
   };
   const f: Fight = {
     tick: 0,

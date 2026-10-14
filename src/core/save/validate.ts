@@ -7,7 +7,7 @@ import { INGREDIENT_IDS, type IngredientId } from '../../content/ingredients';
 import { JOB_IDS } from '../../content/jobs';
 import { MONSTER_IDS, type MonsterId } from '../../content/monsters';
 import { RESOURCE_IDS } from '../../content/resources';
-import { SCENE_IDS, type SceneId } from '../../content/text/scenes';
+import { ALL_SCENE_IDS, type SceneId } from '../../content/text/scenes';
 import { VILLAGE_IDS, type VillageId } from '../../content/villages';
 import { failure, success, type Result } from '../result';
 import {
@@ -32,6 +32,7 @@ import {
   unit,
   type Obj,
 } from './guards';
+import { storyFrom } from './validate-story';
 import { longNightFrom } from './validate-long-night';
 import type {
   ContractInstance,
@@ -73,7 +74,7 @@ const settingsFrom = (v: unknown, warnings: string[]): Settings => {
 const scenesSeen = (v: unknown, warnings: string[]): SceneId[] => {
   const out: SceneId[] = [];
   for (const x of arr(v, 'scenes')) {
-    if (!(SCENE_IDS as readonly unknown[]).includes(x))
+    if (!(ALL_SCENE_IDS as readonly unknown[]).includes(x))
       warnings.push(`Dropped unknown scene "${String(x)}".`);
     else if (!out.includes(x as SceneId)) out.push(x as SceneId);
   }
@@ -204,6 +205,9 @@ const result = (v: unknown, where: string): ContractResult => {
     }),
     reagents: reagentCounts(o.reagents, `${where}.reagents`),
     wellPrepared: bool(o.wellPrepared, `${where}.wellPrepared`),
+    ...(o.found === undefined
+      ? {}
+      : { found: arr(o.found, `${where}.found`).map((x, i) => str(x, `${where}.found[${i}]`)) }),
   };
 };
 
@@ -369,6 +373,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
       ),
     },
     ...longNightFrom(s, cycleNumber, warnings),
+    story: storyFrom(s, warnings),
     settings: settingsFrom(s.settings, warnings),
   };
 };

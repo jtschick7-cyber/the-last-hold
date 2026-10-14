@@ -5,7 +5,7 @@ import type { GameState } from '../state/game-state';
 import { buildingCost } from '../systems/costs';
 import { idlePeasants, jobSlots } from '../systems/housing';
 import { bundleValue, deltaRateValue, payback, rateValue } from '../systems/valuation';
-import { contractMoves, firstContractFood } from './contracts';
+import { contractMoves, firstContractFood, refillRoster } from './contracts';
 import { defenseMoves, emberMoves, freshMemory, standMove, type PolicyMemory } from './long-night';
 import {
   addBundles,
@@ -169,6 +169,8 @@ export const decideCheckIn = (
 
   const hadOption = policyAgeUp(s)?.ready === true || BUILDING_IDS.some((id) => affordable(s, id));
   // v0.4 (GDD §6.1, D114): the stand first (it ends the cycle), then Embers on The Hearth.
+  // v0.5 (D167): the roster is filled before anything else uses it, the stand included.
+  refillRoster(s, act);
   if (standMove(s, act, memory)) purchases += 1;
   purchases += emberMoves(s, act);
   staff();

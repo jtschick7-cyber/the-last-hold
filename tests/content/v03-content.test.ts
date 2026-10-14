@@ -27,8 +27,8 @@ describe('knowledge levels (GDD §5.6.2)', () => {
 });
 
 describe('clue library (GDD §8.4)', () => {
-  it('has the 20 tags, each with at least 3 distinct texts', () => {
-    expect(CLUE_TAGS).toHaveLength(20);
+  it('has the 27 tags (7 from v0.5), each with at least 3 distinct texts', () => {
+    expect(CLUE_TAGS).toHaveLength(27);
     for (const tag of CLUE_TAGS) {
       const texts = clueTexts[tag];
       expect(texts.length, tag).toBeGreaterThanOrEqual(3);
@@ -62,12 +62,18 @@ describe('ingredients (GDD §8.6)', () => {
   it('drops match the GDD §8.6 table', () => {
     const droppedBy = (id: string): string[] =>
       MONSTER_IDS.filter((m) => (monsters[m].drops as readonly string[]).includes(id)).sort();
-    expect(droppedBy('grave-dust')).toEqual(['draugr', 'strzyga', 'upyr']);
+    expect(droppedBy('grave-dust')).toEqual([
+      'anvil-wight',
+      'draugr',
+      'ribbonshade',
+      'strzyga',
+      'upyr',
+    ]);
     expect(droppedBy('river-pearl')).toEqual(['nix', 'rusalka', 'vodyanoy']);
-    expect(droppedBy('thornwood')).toEqual(['bies', 'huldra', 'kikimora', 'leshy']);
+    expect(droppedBy('thornwood')).toEqual(['bies', 'gloam-moths', 'huldra', 'kikimora', 'leshy']);
     expect(droppedBy('wolf-fang')).toEqual(['wolf']);
     expect(droppedBy('noon-poppy')).toEqual(['poludnitsa']);
-    expect(droppedBy('rime-salt')).toEqual(['draugr']);
+    expect(droppedBy('rime-salt')).toEqual(['draugr', 'rimewrought']);
   });
 
   it('gift reagents match the GDD §8.2 and §8.6 tables', () => {
@@ -193,6 +199,8 @@ describe('bestiary text (setting-primer §6.4)', () => {
   });
 
   it('no two "What it was" lines are the same', () => {
-    expect(new Set(MONSTER_IDS.map((m) => bestiaryText[m].whatItWas)).size).toBe(12);
+    expect(new Set(MONSTER_IDS.map((m) => bestiaryText[m].whatItWas)).size).toBe(
+      MONSTER_IDS.length,
+    );
   });
 });

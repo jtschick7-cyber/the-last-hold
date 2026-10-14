@@ -1,3 +1,4 @@
+import { arvid } from './hunters-v05';
 import type { DamageType } from './damage';
 import type { KnowledgeLevel } from './knowledge';
 import type { MonsterId } from './monsters';
@@ -18,6 +19,7 @@ export const HUNTER_IDS = [
   'toma',
   'stanko',
   'herdis',
+  'arvid', // v0.5 (D154)
 ] as const;
 export type HunterId = (typeof HUNTER_IDS)[number];
 
@@ -60,7 +62,9 @@ export type HunterUnlock =
     }
   /** A species reaches a knowledge level (GDD §5.3.1 "bestiary progress"). */
   | { readonly kind: 'knowledgeLevel'; readonly monster: MonsterId; readonly level: KnowledgeLevel }
-  | { readonly kind: 'bountySilverEarned'; readonly amount: number };
+  | { readonly kind: 'bountySilverEarned'; readonly amount: number }
+  /** When this act begins (Arvid, Act III; v0.5). */
+  | { readonly kind: 'actBegins'; readonly act: number };
 
 export type Origin = 'highland' | 'lowland' | 'wanderer';
 
@@ -75,15 +79,15 @@ export interface PortraitSpec {
   readonly face: 'broad' | 'oval' | 'narrow' | 'square';
   readonly hair: 'none' | 'short' | 'long' | 'braid' | 'cropped';
   readonly hairColor: 'black' | 'brown' | 'auburn' | 'blond' | 'grey' | 'white';
-  readonly beard: 'none' | 'stubble' | 'short' | 'full';
-  readonly headgear: 'none' | 'cap' | 'hood' | 'scarf' | 'band';
+  readonly beard: 'none' | 'stubble' | 'short' | 'full' | 'braided';
+  readonly headgear: 'none' | 'cap' | 'hood' | 'scarf' | 'band' | 'knit';
   readonly headgearColor: 'brown' | 'green' | 'blue' | 'red' | 'grey' | 'violet';
-  readonly collar: 'cloth' | 'fur' | 'leather' | 'plate' | 'mail';
+  readonly collar: 'cloth' | 'fur' | 'leather' | 'scarred-leather' | 'plate' | 'mail';
   readonly clothColor: 'brown' | 'green' | 'blue' | 'red' | 'grey' | 'violet';
   readonly weapon:
     'axe' | 'boathook' | 'staff' | 'spear' | 'satchel' | 'shovel' | 'hammer' | 'kettle' | 'knife';
-  /** Soot on the face (Halvar), a scar, and similar single marks. */
-  readonly mark?: 'soot' | 'scar' | 'frost';
+  /** Soot on the face (Halvar), a scar, and similar single marks; `rune` is drawn on the axe haft (Arvid). */
+  readonly mark?: 'soot' | 'scar' | 'frost' | 'rune';
 }
 
 export interface HunterDef {
@@ -386,4 +390,5 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
     sketch:
       'Can follow a week-old track across bare rock. The iron heel of her crook is rime-salted, an old Ravenfell habit against things that walk at night.',
   },
+  arvid,
 };

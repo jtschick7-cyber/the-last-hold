@@ -18,7 +18,7 @@ const cells: { location: LocationId; tier: number; where: string }[] = [];
 for (const id of VILLAGE_IDS)
   for (const location of villages[id].locations)
     for (const tier of TIERS)
-      if (location !== 'barrow' || tier >= 2) {
+      if ((location !== 'barrow' && location !== 'ruin') || tier >= 2) {
         if (!cells.some((c) => c.location === location && c.tier === tier))
           cells.push({ location, tier, where: `${location} T${tier}` });
       }
@@ -30,9 +30,9 @@ const stillPossible = (pool: readonly MonsterId[], seen: readonly string[]): Mon
   pool.filter((m) => seen.every((t) => (monsters[m].clueTags as readonly string[]).includes(t)));
 
 describe('coverage: location × tier → candidates (GDD §8.3.1)', () => {
-  it('finds the cells villages can generate: 4 locations, barrow from tier 2', () => {
+  it('finds the cells villages can generate: 5 locations, barrow and ruin from tier 2', () => {
     expect(new Set(cells.map((c) => c.location))).toEqual(new Set(LOCATION_IDS));
-    expect(cells).toHaveLength(5 + 5 + 5 + 4);
+    expect(cells).toHaveLength(5 + 5 + 5 + 4 + 4);
   });
 
   it('rule 1: every cell has at least one species', () => {

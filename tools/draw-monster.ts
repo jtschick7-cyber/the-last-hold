@@ -6,6 +6,7 @@
 
 import type { FamilyId } from '../src/content/damage';
 import { monsters, type MonsterId } from '../src/content/monsters';
+import { anvilWight, gloamMoths, ribbonshade, rimewrought } from './draw-cursed';
 import { C, Canvas, seedRolls } from './pixel';
 
 const CX = 32;
@@ -15,6 +16,7 @@ const BACKDROP: Record<FamilyId, readonly [string, string, string]> = {
   'field-and-forest-spirits': [C.pine, C.moss, C.grass],
   'restless-dead': [C.plum, C.night, C.slate],
   'water-spirits': [C.night, C.blue, C.cyan],
+  cursed: [C.ink, C.wine, C.rust], // v0.5 (T5.13)
 };
 
 /** Two matching eyes, mirrored about the middle. */
@@ -375,7 +377,7 @@ const nix = (c: Canvas): void => {
   });
 };
 
-const DRAW: Record<MonsterId, (c: Canvas) => void> = {
+const DRAW: Partial<Record<MonsterId, (c: Canvas) => void>> = {
   wolf,
   kikimora,
   upyr,
@@ -388,7 +390,13 @@ const DRAW: Record<MonsterId, (c: Canvas) => void> = {
   strzyga,
   huldra,
   nix,
+  'gloam-moths': gloamMoths,
+  ribbonshade,
+  'anvil-wight': anvilWight,
+  rimewrought,
 };
+
+export const hasDrawing = (id: MonsterId): boolean => DRAW[id] !== undefined;
 
 export const drawMonster = (id: MonsterId): Canvas => {
   const [dark, mid, light] = BACKDROP[monsters[id].family];
@@ -397,7 +405,9 @@ export const drawMonster = (id: MonsterId): Canvas => {
   c.ellipse(CX, 32, 29, 30, mid);
   c.ellipse(CX, 32, 22, 23, light === C.cyan ? C.blue : dark);
   c.ellipse(CX, 32, 22, 23, (x, y) => ((x + y) % 7 === 0 ? mid : dark));
-  DRAW[id](c);
+  const draw = DRAW[id];
+  if (!draw) throw new Error(`No portrait drawing for ${id} yet (plan T5.13).`);
+  draw(c);
   c.outline(C.ink);
   return c;
 };
