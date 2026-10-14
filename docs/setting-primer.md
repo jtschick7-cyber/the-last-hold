@@ -88,6 +88,7 @@ A wide frontier between the southern kingdoms and the frozen north, where the va
 | Toma Kettle | Wanderer | Tinker and talker, with opinions about every price at the hold |
 | Stanko Sleepless | Lowlands | Kozly Hollow goatherd who raised a wolf pup with his flock. Says the grey ones aren't wolves anymore, and he'd know. |
 | Herdis Strayfinder | Fells | Has kept Ravenfell's sheep alive since she was nine, and found every one that strayed. Says hunters are easier: they tell you where it hurts. |
+| Arvid Netmender | Fells | Velkvik net-mender, 51, with a runed axe he won't talk about. Says he's too old for this. Hasn't missed a fight. |
 
 ---
 
