@@ -610,7 +610,7 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
   - Warden names (24 characters, Suggest) and the Roll of Wardens data (years formula, worn first line).
   - Letters at levels 5 and 8 from the highest level ever reached.
   - Inscriptions on the Citadel and Bastion restorations.
-- [ ] **T5.10 The v0.5 arrival** (D149).
+- [x] **T5.10 The v0.5 arrival** (D149). *(Core and test; the scene and the naming fields are UI, T5.11b. Readings in D182.)*
   - For a pre-v0.5 save, after any v0.4 arrival: Ilse's arrival scene, which finds the documents already behind the save; naming the earlier wardens; Act I starts.
   - A debug action.
   - A test that takes the owner's real v0.4 save through migration and the arrival.

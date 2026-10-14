@@ -74,6 +74,9 @@ export type Command =
   /** GDD §5.9.8: makes this save face the v0.4 arrival, as a pre-v0.4 save does. */
   /** GDD §5.14.5 (D152): name (or rename, from the Roll) the warden of a cycle; empty clears it. */
   | { type: 'warden.name'; cycle: number; name: string }
+  /** GDD §5.14.1 (D149): a pre-v0.5 save meets Ilse and names its earlier wardens, by cycle. */
+  | { type: 'story.arrive'; names: Record<number, string> }
+  | { type: 'debug.runV05Arrival' }
   | { type: 'debug.runArrival' }
   /** Plan T5.5: Arvid can't arrive in v0.5 (Act III isn't written), so this adds him. */
   | { type: 'debug.addArvid' }
