@@ -2,7 +2,7 @@
 
 **Status:** Revised after the plan review (D34–D36). Awaiting owner approval.
 **Reads with:** `CLAUDE.md` (the workflow, definition of done, and owner gates live there, not here), `gdd.md` (what), `technical-design.md` (how), `decisions.md` (why).
-**Depth:** v0.0–v0.4 are in full detail. v0.5 and later are outlines; each gets a **flesh-out session** before it starts (§0.4).
+**Depth:** v0.0–v0.5 are in full detail (v0.5 fleshed out 2026-10-14, D144–D169). v0.6 and later are outlines; each gets a **flesh-out session** before it starts (§0.4).
 **Markers:** **[JC]** = judgment call. **👤** = owner task. **[?]** = task blocked on an owner question (see `docs/questions.md`).
 
 ---
@@ -80,6 +80,7 @@ Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage r
 | v0.2 | 26 | 12–16 |
 | v0.3 | 12 | 8–12 |
 | v0.4 | 16 | 10–14 |
+| v0.5 | 17 | 12–16 |
 
 Estimates, not commitments. If a task proves bigger than a session, split it here first.
 
@@ -535,13 +536,150 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 
 ### v0.5 — The Long Night: Act I and the story systems
 
-**Status:** not started *(needs a flesh-out)*
+**Status:** not started *(fleshed out 2026-10-14, D144–D169)*
 
-- **Scope:** Act I, with retroactive unlock; documents and the Archivist (Ilse); warden naming; the Roll of Wardens; Arvid's content; hunter letters at levels 5 and 10; village trust displayed; cursed ruins (the ruin tag and their creatures, per `lore-secrets.md`); Rune damage and runed gear; Citadel and Bastion inscriptions.
-- **Before you start 👤:**
-  - **Add `docs/lore-secrets.md` back into the repo**, removing its `.gitignore` line and the deny rule (D36).
-  - **Acts I and II are written in the flesh-out** (P4).
-  - A real v0.4 save.
+**Goal:** the story arrives. Acts I and II, documents and Ilse's Archive, the forty names, warden naming and the Roll of Wardens, hunter letters, village trust on screen, the stand's band, the Citadel and Bastion inscriptions; and the mechanics the story needs: ruin contracts with four Cursed creatures, Rune damage, the Runed Blade and Arvid Netmender. Existing saves start Act I at once (D149).
+**Reads:** GDD §5.1.3 (restores), §5.3.4, §5.3.6, §5.4.1, §5.4.3, §5.6.1, §5.9.3, §5.9.7, §5.14, §6.1–6.3 and §6.5 (v0.5 lines), §7.7, §8.2–§8.6, §9.11, §9.14, the v0.5 judgment calls; `lore-secrets.md` §8, §10–§12, §15, §20–§25; `setting-primer.md` (voice); technical design §5.2, §7.2, §9.4, §13.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| ~~Restore `lore-secrets.md` and `outline.md`~~ | — | Done 2026-10-14 (D36, D38) |
+| **Export your real v0.4 save** (More → Save & Data → Copy save code) and paste it into a session | T5.3 (the migration fixture) and T5.10 (the arrival test) | Before T5.3 |
+| Decide any name collisions the search finds | T5.2 | When asked |
+| Approve the 17 drafted letters and the warden-name list | T5.12 | When asked |
+| Review the new art (the four Cursed creatures, Arvid, the Runed Blade, the Archive icons) | T5.13 | In the playtest |
+
+### A. Content and state
+
+- [ ] **T5.1 Content and keys.** *(Split if it runs long: T5.1a mechanics content, T5.1b story content.)*
+  - The v0.5 keys from GDD §7.7 into `balance.ts`, all tunable, and the §7.7 rows rewritten into the `key` = value form in the same commit (D166).
+  - The four Cursed creatures (stats, resistances, abilities, clue tags and texts, drops) and the ruin row of the coverage table, with the content-validation test (§8.3.1) covering ruins.
+  - The ruin tag on Kozly Hollow, Velkvik and Ravenfell; the Runed Blade; Arvid Netmender and his two traits.
+  - Story content in `src/content/`: acts, every Act I and II document with its condition and text, the forty names with their sources and hints, the five name-bearing letters (and slots for the other 17), the residents' band lines, the trust text, the inscriptions, and the warden-name list.
+  - A test against the GDD and `lore-secrets.md` tables.
+  - Wiring that changes saved state waits for T5.3.
+- [ ] **T5.2 Names.** Collision search (GDD §2.3) for every new proper noun:
+  - the 36 new roll names;
+  - Věra, Dana Lisová, Master Hrafn, Hallvard, Master Bielik, and the four non-Sent apprentices on the Mirograd roll;
+  - Kamenfell and the warden-name list.
+  Ribbonshade, Anvil-wight, Gloam-moths, Rimewrought, Arvid Netmender, Shield-companion and Old Wright are already clear (D154, D158). Add all of them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
+- [ ] **T5.3 Migration v4 → v5**, using the **owner's real v0.4 save** as the fixture, with a round-trip test. New saved state:
+  - the act per cycle and its counters;
+  - documents found (with cycle and how);
+  - names found and the Ribbonshade count;
+  - each hunter's highest level ever and the letters read;
+  - trust progress per village;
+  - warden names per cycle;
+  - Ilse's arrival;
+  - the v0.5 arrival flag;
+  - unread-item badges.
+  Technical design §5.2 updated in the same commit. `[?]` until the save is provided.
+
+### B. Ruins, the Cursed and Rune
+
+- [ ] **T5.4 Ruins and the Cursed.**
+  - Ruin contracts from the Keep at tier 2 and up; clue generation for the new tags.
+  - The four abilities in the fight engine: Lightless (hit chance), Seal-burn (Fire back to a direct attacker, no Armor), Re-forge (Saltburst cancels it), Unthawed (first Fire hit, stat%).
+  - The creatures join the Last Stand's waves at their tiers.
+  - **Contract fights and every golden fight unchanged.** If a golden changes, stop and ask; bump `rulesVersion` only with the owner's OK.
+- [ ] **T5.5 Rune.**
+  - The Runed Blade: Citadel and Smithy 8; the Rune sub-hit on its own log line; the breakdowns.
+  - Arvid's traits (Shield-companion as taken%, within the 75% cap; Old Wright).
+  - Arvid's unlock: when Act III begins. He can't arrive in v0.5, so a debug action adds him for testing.
+
+### C. Story systems
+
+- [ ] **T5.6 Acts and documents.**
+  - One act per cycle; counters per act; an unwritten act closes with "The story continues in a later version."
+  - Every condition kind (§5.14.2), and delivery: contract results, Rank-up sheets, the stand result, scenes.
+  - Documents stay obtainable in later cycles.
+  - **A test for every Act I and Act II document's condition,** row by row against `lore-secrets.md` §21–§22.
+- [ ] **T5.7 Names and Ribbonshades.**
+  - A name is found with its source. Ribbonshades give the six names in their fixed order, Jaro's first, with the scene and Halina's note; after six, a ribbon with no name.
+  - **The true-ending gate test:** all 40 names have exactly one source, and none is Delve-only, event-only or missable (`lore-secrets.md` §8).
+- [ ] **T5.8 Trust.**
+  - Contract progress, steps (`trust.stepContracts`), a step from each Triumphant stand, carry-over, never down.
+  - Notices read the trust level; trust-gated documents; the breakdown; the away-sheet line.
+- [ ] **T5.9 Wardens, bands and letters.**
+  - The band from waves held.
+  - Warden names (24 characters, Suggest) and the Roll of Wardens data (years formula, worn first line).
+  - Letters at levels 5 and 8 from the highest level ever reached.
+  - Inscriptions on the Citadel and Bastion restorations.
+- [ ] **T5.10 The v0.5 arrival** (D149).
+  - For a pre-v0.5 save, after any v0.4 arrival: Ilse's arrival scene, which finds the documents already behind the save; naming the earlier wardens; Act I starts.
+  - A debug action.
+  - A test that takes the owner's real v0.4 save through migration and the arrival.
+
+### D. UI
+
+- [ ] **T5.11a The Archive.**
+  - The tab renames when Ilse arrives.
+  - Bestiary, Library (with the letters shelf), Accounts, Names; the reader; badges.
+- [ ] **T5.11b Story across the game.**
+  - Scene sheets; the Villages panel; Letters on the hunter sheet; warden naming; the Roll of Wardens; inscriptions on the Rank sheets; bands on the stand screen and result sheet; the Long Night order (§5.14.9); away-sheet lines.
+  - **Extend the Playwright smoke:** debug → a won contract → Ilse arrives → open a document in the Archive; and stand → band → naming the new warden.
+  - Screenshot pass.
+
+### E. Writing
+
+- [ ] **T5.12 Letters and lists.** 👤 Draft the 17 letters without names (`lore-secrets.md` §23 voice) and the warden-name list, for the owner's approval.
+
+### F. Art
+
+- [ ] **T5.13 Art** (the D59 method).
+  - Portraits for the four Cursed creatures (a new family template) and Arvid (the portrait generator, from his look in GDD §8.5).
+  - Icons for the Runed Blade, the ribbon and the document types (letter, journal, ledger, testament).
+  - 👤 Review.
+
+### G. Simulator
+
+- [ ] **T5.14 Policy rules** (GDD §6.1, D167): refill the active roster from the reserve whenever there's room (highest levels first); buy the Runed Blade like any gear; report bands, letters reached, trust levels and names found per cycle.
+- [ ] **T5.15 Checks and speed.**
+  - The v0.5 rows in `sim/targets.ts` (owner-approved, D168; their own commit); the milestone becomes v0.5.
+  - **The suite runs in parallel,** one run per core (D169), with a test that the parallel report matches a sequential one.
+  - Full suite ≤ 5 min in CI.
+- [ ] **T5.16 Tuning** (tunables only) against every check; likely levers are the ruin creatures' numbers and the trust steps. If no reasonable values pass, stop and ask.
+
+### v0.5 acceptance criteria
+
+1. Act I and Act II run in their cycles; every document arrives on its condition and stays obtainable (tests, row by row).
+2. A pre-v0.5 save meets Ilse on load, names its earlier wardens, and starts Act I, tested on the owner's real v0.4 save.
+3. All 40 names have exactly one source, none missable (test); the Names view shows found and missing names with hints.
+4. Trust rises, never falls, and explains itself; it changes no numbers.
+5. Ruin contracts, the four Cursed creatures, the Runed Blade and Arvid work, with breakdowns and readable logs.
+6. Every stand has a band; the Roll of Wardens shows every warden.
+7. Contract fights for v0.4 species and every golden fight are unchanged.
+8. Every earlier check passes; the full suite runs in ≤ 5 min.
+
+### v0.5 simulator checks
+
+| Check | Target |
+|---|---|
+| Act I lands in its cycle | Every Act I document with a contract, Rank or stand condition (D1-01, -03, -04, -06, -09, -10) found by the end of cycle 1; D1-07 at the next warden. D1-02 and D1-05 reported only |
+| Act II lands in its cycle | D2-01 to D2-07, D2-09 and D2-10 found in cycle 2; D2-08 (Sigrun) reported only |
+| Ruins show up | First ruin contract won ≤ 24 h after the Keep |
+| Ribbonshade names | All six found by the end of cycle 3 |
+| Trust moves | At least one village rises a step in cycle 1 |
+| All earlier checks | Pass |
+| Suite time | ≤ 5 min in CI (parallel, D169) |
+
+Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: stand bands, letters reached, trust per cycle.
+
+### v0.5 owner playtest checklist 👤 (on the preview build)
+
+- [ ] Ilse's arrival and the Archive feel like the story arriving, not a menu.
+- [ ] Act I's documents read well, arrive at sensible moments, and each has one wrongness, not more.
+- [ ] Your save started Act I smoothly, and naming your earlier wardens felt right.
+- [ ] The Names view makes you want to find the next one; the hints are fair.
+- [ ] Ruins and the Cursed feel different from the folklore monsters; the Runed Blade feels worth it.
+- [ ] Trust is easy to read; the band on your stand felt fair.
+- [ ] The Roll of Wardens and the inscriptions land.
+- [ ] Screenshot pass and new art review.
+- [ ] (If you reach it) Act II and Sigrun's confession.
+
+**Out of scope:** Acts III–VI and their documents (Act III is written at the v0.6 flesh-out); Arvid arriving in play; the Deep family (D161); Ember-echoes (Delves, v0.7); trust rewards (v0.10); hunter relics.
 
 ### v0.6 — Alchemy discovery & skills through use
 
@@ -593,3 +731,5 @@ Order revised by P2 and P3 (D35): **the Long Night comes before alchemy discover
 5. **The seeded golden fights** recorded in T2.9 become locked fixtures.
 6. **Only one preview exists at a time:** the most recently pushed milestone branch.
 7. **Citadel and Bastion ship in v0.4 with neutral text;** their inscriptions arrive in v0.5.
+8. **v0.5 is 17 tasks over 12–16 sessions;** T5.1 may split into mechanics and story content.
+9. **Arvid ships in v0.5 but can't arrive until Act III is written;** a debug action tests him.

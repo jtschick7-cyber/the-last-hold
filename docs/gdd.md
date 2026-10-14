@@ -1071,6 +1071,8 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **Defenses** *(v0.4)*: from Citadel, raises Walls and the Watchtower in turn (lower one first) whenever a level is affordable with the Rank-up reserve kept.
 - **The stand** *(v0.4)*: from Bastion, runs a quick preview (20 practice stands) at every check-in and stands at the first check-in where Embers per day of the cycle is lower than at the one before. It takes the suggested six; each hunter carries the oil for the family most common in the first 12 waves; Mending Draughts for as many hunters as it has; bombs are automatic. Light and Heavy use the same rule.
 - **Embers** *(v0.4)*: buys the cheapest affordable warden upgrade (ties by list order), and keeps the default three active hunters in each new cycle.
+- **The roster** *(v0.5, D167)*: whenever the active roster has room, it fills it from the reserve, highest levels first.
+- **The Runed Blade** *(v0.5, D167)*: bought like any gear upgrade. Ruin contracts are ordinary contracts to it; story items are never a goal.
 
 ### 6.2 Targets
 
@@ -1093,6 +1095,11 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 | v0.4 |
 | **First Long Night** | **Days 3–5** (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) | v0.4 |
 | Later cycles | Each ≥ 15% faster than the first, with a floor of 2 days **[JC]** *(D134: was "than the one before"; after cycle 2, cycles settle at about 3 days)*. Acts I–VI therefore take about **2–3 weeks** of play (14–21 days) and about 15 in-world years *(⚑ revisions A15, lore L5)* | v0.4 |
+| Act I lands in its cycle *(D168)* | Every Act I document with a contract, Rank or stand condition found by the end of cycle 1; D1-07 at the next warden (D1-02 and D1-05 reported only) | v0.5 |
+| Act II lands in its cycle *(D168)* | Every Act II document except Sigrun's confession found in cycle 2 (D2-08 reported only) | v0.5 |
+| First ruin contract won *(D168)* | ≤ 24 h after the Keep | v0.5 |
+| All six Ribbonshade names *(D168)* | By the end of cycle 3 | v0.5 |
+| A village's trust rises *(D168)* | In cycle 1 | v0.5 |
 | Idle-only vs Standard | First-time completion of all content ≤ 1.3× slower (D20) | v0.7 |
 
 ### 6.3 Engagement checks (simulator)
@@ -1128,7 +1135,7 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Live odds panel** | ≤ 100 ms per update | 500 samples, in the same worker |
 | **Last Stand preview** *(v0.4, D114)* | ≤ 1 s on a mid-range phone | 100 practice stands (`laststand.previewSamples`), in the same worker |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
-| **Simulator: full suite** | ≤ 5 min in CI | All policies and checks |
+| **Simulator: full suite** | ≤ 5 min in CI | All policies and checks; from v0.5 the runs play in parallel, one per core, with identical results (D169) |
 
 A benchmark test enforces the first three on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone.
 
