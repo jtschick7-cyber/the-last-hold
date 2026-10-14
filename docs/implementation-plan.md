@@ -735,7 +735,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 - [x] **T6.10 Art** *(Done as D233; 👤 review in the playtest.)* (the D59 method): 16 px icons for the six new brews and the four skills (1-Bit Pack where it fits, recolored). 👤 Review.
 
 #### G. Simulator
-- [ ] **T6.11 Policy rules** (GDD §6.1, D215): experiments in spare kettles; the new brews in the kit; Arvid used through the roster rule.
+- [x] **T6.11 Policy rules** *(Done as D234.)* (GDD §6.1, D215): experiments in spare kettles; the new brews in the kit; Arvid used through the roster rule.
 - [ ] **T6.12 Checks.** The v0.6 rows in `sim/targets.ts` in **their own commit** (owner-approved, D216); the milestone becomes v0.6; the reported lines (bands per cycle, skill levels, properties found). No new simulated runs: the new checks read the existing runs (D196).
 - [ ] **T6.13 Tuning** (tunables only) against every check. Likely levers: `skill.*` XP values (for "skills pace"), `band.*`, `trust.stepContracts` and `trust.triumphantContracts` (for "trust rises in cycle 1" against "no Sworn before cycle 4"), `experiment.time`. If no reasonable values pass, stop and ask.
 

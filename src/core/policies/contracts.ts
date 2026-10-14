@@ -12,7 +12,14 @@ import { availableHunters, candidates, nextGear, rosterCap, snapshotOf } from '.
 import type { Bundle } from './goals';
 import { contractIdentity } from '../investigation/view';
 import { investigationSlots } from '../investigation/lodge';
-import { brewMoves, investigateMoves, labBuildings, labFirstSetBuilt, prepFor } from './lab';
+import {
+  brewMoves,
+  experimentMoves,
+  investigateMoves,
+  labBuildings,
+  labFirstSetBuilt,
+  prepFor,
+} from './lab';
 import { ageIndex } from '../systems/ages';
 import { hunters } from '../../content/hunters';
 import { traits } from '../../content/traits';
@@ -156,6 +163,7 @@ export const contractMoves = (
     actions += recruit(s, act, silverHold) + equip(s, act, held) + labBuildings(s, act, held);
   refillRoster(s, act);
   actions += brewMoves(s, act);
+  actions += experimentMoves(s, act);
   for (const c of [...s.board.open].sort(byValue)) {
     const free = availableHunters(s);
     if (free.length === 0) break;
