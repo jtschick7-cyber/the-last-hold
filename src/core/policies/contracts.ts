@@ -68,6 +68,22 @@ const recruit = (s: GameState, act: Act, hold: number): number => {
   return n;
 };
 
+/**
+ * GDD §6.1 (v0.5, D167): whenever the active roster has room, it fills it from the reserve,
+ * highest levels first. Hunters who are hurt or away wait (the move is refused). Returns the moves made.
+ */
+export const refillRoster = (s: GameState, act: Act): number => {
+  let n = 0;
+  const reserve = (Object.keys(s.hunters) as HunterId[])
+    .filter((id) => !s.roster.active.includes(id))
+    .sort((a, b) => (s.hunters[b]?.level ?? 0) - (s.hunters[a]?.level ?? 0));
+  for (const id of reserve) {
+    if (s.roster.active.length >= rosterCap(s).value) break;
+    if (act({ type: 'roster.set', hunter: id, active: true })) n += 1;
+  }
+  return n;
+};
+
 /** Raises the roster cap when hunters wait in the reserve, and upgrades gear, weakest slot first. */
 const equip = (s: GameState, act: Act, reserve: Bundle): number => {
   let n = 0;
@@ -134,6 +150,7 @@ export const contractMoves = (
   if (!labFirstSetBuilt(s)) actions += labBuildings(s, act, held);
   if (labFirstSetBuilt(s))
     actions += recruit(s, act, silverHold) + equip(s, act, held) + labBuildings(s, act, held);
+  refillRoster(s, act);
   actions += brewMoves(s, act);
   for (const c of [...s.board.open].sort(byValue)) {
     const free = availableHunters(s);
