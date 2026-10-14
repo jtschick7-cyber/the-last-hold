@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { begin, onwardAll } from './helpers';
 
 // Plan T1.38 / technical design §14: the phone-sized smoke test on the real
 // production build. Load → buy a Cottage → reload → the purchase is still
@@ -12,6 +13,7 @@ test('buy a Cottage, reload, and reload again offline', async ({ page, context }
   page.on('pageerror', (e) => errors.push(e.message));
 
   await page.goto('./');
+  await begin(page);
   const row = cottageRow(page);
   await expect(row).toContainText('×0');
   await row.getByRole('button', { name: 'Buy' }).click();
@@ -42,6 +44,7 @@ test('send hunters on a contract, skip time, and collect', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('./?debug');
+  await begin(page);
 
   // The Contracts tab shows an unread count, e.g. "Contracts (1)".
   const tab = (name: string) =>
@@ -77,6 +80,8 @@ test('send hunters on a contract, skip time, and collect', async ({ page }) => {
   await expect(page.getByText('⏱ Running')).toBeVisible();
 
   await debug('+1 h');
+  // A won contract may bring Ilse (GDD §5.14.3): her scene waits to be dismissed.
+  await onwardAll(page);
   await tab('Contracts').click();
   await expect(page.getByText(/Ready to collect/)).toBeVisible();
   await page.getByRole('button', { name: 'Collect' }).click();
@@ -91,6 +96,7 @@ test('make the Last Stand at Bastion and start a new cycle', async ({ page }) =>
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('./?debug');
+  await begin(page);
   const tab = (name: string) =>
     page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
   const onward = async () => {
@@ -136,6 +142,7 @@ test('the v0.4 arrival: a Keep save faces its first Long Night, then starts over
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('./?debug');
+  await begin(page);
   const tab = (name: string) =>
     page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
   const onward = async () => {
