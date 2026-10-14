@@ -181,7 +181,7 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a).
 - **Answer (owner):** (a), 2026-10-14 (D191). Both rows now read "by the end of cycle 4"; every check passes.
 
-### Q19 — Two v0.6 simulator checks that tuning can't reach (blocks the end of T6.13) — open
+### Q19 — Two v0.6 simulator checks that tuning can't reach (blocks the end of T6.13) — answered
 - **What the full suite shows now** (Standard, Monday, 5 seeds, after the tuning in D237): every earlier check passes, and so do five of the seven new ones (first new brew 5.8 h after the Hut, skills start, skills pace, Act III, Arvid's letter, trust arc). Two do not:
   1. **Recipe book complete by the end of cycle 3: the simulated player reaches 33 of 36 (median).** The missing three are all Noon Poppy's. Noon Poppy is only dropped by the Poludnitsa (a field monster, tiers 2–4); the player wins between 0 and 3 of them in 11 days, and each experiment spends one unit. Grave dust and river pearl (also drops) are short for the same reason. Nothing in `balance.ts` changes how often a Poludnitsa is posted or what it drops.
   2. **Later cycles: cycle 2 is 14% faster than cycle 1, the check wants 15%** (cycle 3 is 32% faster). At `skill.smithingCost` 0.0175 this passes, but then the two ruin rows (Act II's D2-06, and all six Ribbonshade names by cycle 4) fail instead. The suite is touchy: Smithing values from 0.024 to 0.026 pass both ruin rows and miss only later-cycles; 0.015–0.0225 and 0.0275 and above miss the ruin rows or the economy rows. I picked 0.025 (D237).
@@ -190,3 +190,4 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options for 2:** (a) let me try a small change to an Embers value (`embers.perWave`, tunable) to speed up cycle 2, then re-run everything; (b) relax the row to 14%; (c) go back to Smithing 0.0175 and move the two ruin rows one cycle later (as Q18 did).
 - **Recommendation for 2:** (a), with (b) as the fallback.
 - **What I did meanwhile (tunables only, D237):** `skill.smithingCost` 0.0175 → 0.025, `skill.xp.command.contractPerTier` 1 → 2 (Command was level 3 at the end of cycle 3, the check wants 4–8), `trust.stepContracts` first step 10 → 8 (no village rose in cycle 1; one does now). T6.13 stays open.
+- **Answer (owner):** 2026-10-14: as recommended: (1) a second source for Noon Poppy, a village gift; (2) try an Embers value for later-cycles. Built as D239 and D240 (the gift is at Velkvik, not Kozly Hollow, and the Embers values changed nothing; the suite passes with Smithing at 0.021).

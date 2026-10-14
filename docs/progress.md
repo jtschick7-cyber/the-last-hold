@@ -567,3 +567,13 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** the owner's answer to Q19, then finish T6.13 and run the whole suite on 5 seeds; then the milestone-end steps (plan §0.3: the owner's playtest on the preview, then merge, tag, `sim:accept`).
 - **Open questions:** Q19. **Proposed rows:** D228–D237.
 - **Not done / deferred:** (1) Hut brew summaries do not show the Alchemy potency in their numbers (the potency is in the fights and the odds, not in the Hut text); (2) no e2e for the on-load arrival card or the new-warden sheet's Arvid line (the core is tested); (3) live-play discovery lines on the Hut are not saved (session only) and a `debug.skip` shows none; (4) the nine older brews have no icons; (5) `stand-story.test.ts` had two stray debug logs, removed.
+
+## 2026-10-14 — v0.6 build, session 3 (Q19 answered; T6.13 done)
+- **Owner accepted D228–D237 (D238) and answered Q19 "as recommended".** Pushed to `milestone/v0.6` (the preview build follows it).
+- **Q19 (1), a second source for Noon Poppy (D239):** a village gift, but at **Velkvik, not Kozly Hollow**: with Kozly Hollow the dilution of honeycomb and pitch pushed other checks out of their bands in every tuning tried; Velkvik works. The owner said "for example Kozly Hollow", so this is flagged as a change to look at. GDD §8.2 and §8.6 updated.
+- **Simulated player (D239):** experiments use what the check-in's brews leave (no reserve); with a reserve the book stalled at 34 of 36.
+- **Q19 (2), later-cycles (D240):** the Embers values (`embers.perWave`, `longNight.levelsKept`) changed nothing; `skill.smithingCost` is now 0.021 and the whole suite passes on 5 seeds (35 of 35 checks).
+- **State:** `npm run check` and the full `npm run sim:check` are green. T6.1–T6.13 are all ticked. `sim:accept`, the merge and the tag wait for the owner's playtest (plan §0.3).
+- **Next:** the owner plays the preview: the v0.6 checklist is in the plan. Then, only after "the playtest passed": merge, tag, `sim:accept`, update statuses.
+- **Open questions:** none. **Proposed rows:** D239, D240.
+- **Not done / deferred:** as in the session 2 entry (Hut brew text without Alchemy potency; no e2e for the on-load card or the new-warden Arvid line; the nine older brews have no icons). The suite is touchy: a small change to a number can move one of the ruin or economy rows, as before.

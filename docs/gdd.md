@@ -850,7 +850,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 | Skill | XP from (tunable) | Gives, per level |
 |---|---|---|
 | **Alchemy** | brew finished 1 · experiment 3 · property revealed 10 | Brews **+3% stronger** (to +30%): every number in a brew's effect (oil bonus, heal, Armor, Speed, Coldwater, Owl-Eye, bomb damage and burn). Counts of actions (Saltburst's block, Steadfast, Poppy Smoke, durations) don't change. Multiplies with Herbwise. |
-| **Smithing** | gear upgrade: its tier × 2 · Smithy level built 2 | Gear upgrades cost **2.5% less** per level (to −25%; D237), every resource including silver |
+| **Smithing** | gear upgrade: its tier × 2 · Smithy level built 2 | Gear upgrades cost **2.1% less** per level (to −21%; D240), every resource including silver |
 | **Lore** | clue revealed 1 · species reaching a knowledge level 5 · document or letter found 5 | Clues take **4% less time** (to −40%), after Studied, Tracker and the Bone Whistle |
 | **Command** | contract won: its tier · wave held in the Last Stand 1 | Hunters earn **+4% contract XP** (to +40%), adding with Drill Yard and the Tally Stick |
 
@@ -1144,7 +1144,7 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **Embers** *(v0.4)*: buys the cheapest affordable warden upgrade (ties by list order), and keeps the default three active hunters in each new cycle.
 - **The roster** *(v0.5, D167)*: whenever the active roster has room, it fills it from the reserve, highest levels first.
 - **The Wright's Blade** *(v0.5, D167)*: bought like any gear upgrade. Ruin contracts are ordinary contracts to it; story items are never a goal.
-- **Experiments** *(v0.6)*: any kettle not needed for its usual brews runs an experiment: the untried pair with the most hidden properties left, herbs and gifts before monster drops, keeping enough stock for its usual brews.
+- **Experiments** *(v0.6)*: each kettle runs one experiment behind its usual brews (D235): the untried pair with the most hidden properties left, herbs and gifts before monster drops, from what its brews leave in the stores (D239).
 - **The v0.6 brews** *(v0.6)*: Hidebane Oil vs Beasts & Wilds and Wright's Oil vs the Cursed, like the other oils; Coldwater vs the Poludnitsa and the Ribbonshade, Owl-Eye vs Gloam-moths, Steadfast vs any species with an ability that costs an action: the counter-potion on the Vanguard, the Mending Draught on the next hunter. Bombs: weak-to first, then a Saltburst, then Poppy Smoke.
 - **Skills** need no decisions. **Arvid** joins at the start of Act III; the roster rule (D167) uses him.
 
@@ -1353,7 +1353,7 @@ Every constant here is tunable unless marked locked.
 | Experiment | 1 unit of each of two ingredients; takes the time (× Copper Still) | `experiment.time` = 10 min, `experiment.units` = 1 | 5.8.3 |
 | Skill level | level L → L+1 costs `b × g^L` XP; 0–10 | `skill.maxLevel` = 10 **(locked)**, `skill.xpBase` = 20, `skill.xpGrowth` = 1.6 | 5.8.6 |
 | Skill XP | per activity | `skill.xp.alchemy` = { brew 1, experiment 3, property 10 }, `skill.xp.smithing` = { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` = { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` = { contractPerTier 2, wave 1 } *(D237; was 1)* | 5.8.6 |
-| Skill bonuses | per level | `skill.alchemyPotency` = 0.03, `skill.smithingCost` = 0.025 *(D237; was 0.0175, D228)*, `skill.loreClueTime` = 0.04, `skill.commandXp` = 0.04 | 5.8.6 |
+| Skill bonuses | per level | `skill.alchemyPotency` = 0.03, `skill.smithingCost` = 0.021 *(D240; was 0.04, D228, D237)*, `skill.loreClueTime` = 0.04, `skill.commandXp` = 0.04 | 5.8.6 |
 
 Brew numbers live with their content, like every consumable (§5.8.5): Coldwater 0.40 Fire taken; Owl-Eye 0.10 hit chance; Steadfast 1 use; Poppy Smoke 1 lost action; the new oils use `oil.familyBonus`. The properties table is content (§8.6).
 
@@ -1387,7 +1387,7 @@ The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.4 (Keep unles
 | Dubno Ford | Lowland river crossing | river, field | honeycomb, hare's foot |
 | Kozly Hollow | Lowland goatherd village in the old wood | forest, field, ruin *(v0.5)* | honeycomb, pitch |
 | Mirograd | Lowland market town (the largest) | field, river | hare's foot, pitch |
-| Velkvik | Highland fjord village | river, barrow, ruin *(v0.5)* | rime salt, pitch |
+| Velkvik | Highland fjord village | river, barrow, ruin *(v0.5)* | rime salt, pitch, noon poppy *(D239)* |
 | Ravenfell | Highland hamlet among the barrow-hills | barrow, forest, ruin *(v0.5)* | rime salt |
 
 A contract's location tag comes from its village. **Each success also gives one gift reagent** from that village (v0.3+). **Ruin** (v0.5, D157) joins three villages' tags; like barrows, ruins are never generated in the Hamlet or at tier 1, so a village whose only possible tags are ruled out picks from the rest.
@@ -1598,7 +1598,7 @@ Each ingredient carries **3 hidden properties** (§5.8.1). **Bold** = proved by 
 | River pearl | Drop: Rusalka, Vodyanoy, Nix | **Drowned-Bane Oil** · Coldwater Draught · Frost Pot |
 | Thornwood | Drop: Kikimora, Bies, Leshy, Huldra, Gloam-moths *(v0.5)* | **Thornbane Oil** · **Hardwood Tonic** · Fire Pot |
 | Wolf fang | Drop: Gaunt Wolf | Hidebane Oil · Owl-Eye Drops · Steadfast Draught |
-| Noon poppy | Drop: Poludnitsa | Coldwater Draught · Poppy Smoke · Mending Draught |
+| Noon poppy | Gift: Velkvik *(Q19, D239)*; drop: Poludnitsa | Coldwater Draught · Poppy Smoke · Mending Draught |
 
 Carriers per brew (2–3 each): Grave Oil 3, Drowned-Bane 3, Thornbane 2, Mending 3, Hardwood 3, Quickfoot 2, Fire Pot 2, Frost Pot 2, Saltburst 2, Hidebane 2, Wright's Oil 2, Coldwater 2, Owl-Eye 3, Steadfast 3, Poppy Smoke 2 = 36. No two ingredients have the same three. **Content test (T6.1):** every brew has ≥ 2 carriers (≥ 1 for bombs), each ingredient exactly 3 distinct properties, and the 15 bold ones are exactly the v0.3 recipes'.
 
@@ -1658,7 +1658,7 @@ Found at Last Stand wave milestones (§5.9.6). Bonuses go in the relic bucket; n
 3. **Odds preview raised from 200 to 500 simulated fights.** This keeps the displayed margin within ±4.4 points. *(Small edit to approved §5.4.2.)*
 4. **Monster tier scaling is relative to each monster's base tier,** and Armor scales more slowly (1.15 per tier) than Health and Might (1.35). *(Small edit to approved §5.4.1.)*
 5. **"Leshy bark" renamed to "thornwood"** and dropped by three monsters, so the forest oil is available from tier 1. *(Small edit to approved §5.7.)*
-6. **Village gifts:** each success also gives a village-specific reagent. This is how honeycomb, hare's foot, pitch, and rime salt enter the game.
+6. **Village gifts:** each success also gives a village-specific reagent. This is how honeycomb, hare's foot, pitch, and rime salt enter the game; from v0.6 Velkvik also gifts noon poppy (Q19, D239).
 7. **Preparation-matters check:** matched preparation must raise the odds by at least 15 points. This is the main simulator guard on the Witcher influence.
 8. **Silver check:** at least 70% of silver income must come from bounties once contracts unlock.
 9. **The hunter roster and stats in §8.5,** including Sigrun Halfhand as an Emberwright lore hook.

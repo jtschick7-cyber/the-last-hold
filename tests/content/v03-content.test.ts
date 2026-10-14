@@ -83,6 +83,7 @@ describe('ingredients (GDD §8.6)', () => {
     expect(giftedBy('hares-foot')).toEqual(['dubno-ford', 'mirograd']);
     expect(giftedBy('pitch')).toEqual(['kozly-hollow', 'mirograd', 'velkvik']);
     expect(giftedBy('rime-salt')).toEqual(['ravenfell', 'velkvik']);
+    expect(giftedBy('noon-poppy')).toEqual(['velkvik']); // Q19, D239
   });
 
   it("every ingredient's declared source is real, and every non-herb has one", () => {

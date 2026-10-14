@@ -244,34 +244,19 @@ describe('the v0.6 rules (GDD §6.1, D215)', () => {
     });
   });
 
-  it('keeps enough stock for the usual brews and skips pairs already in a kettle', () => {
+  it('uses what the brews left, even one unit, and skips pairs already in a kettle (D239)', () => {
     const s = rich();
     s.buildings['alchemists-hut'] = 2;
     for (const k of Object.keys(s.stores)) s.stores[k as keyof typeof s.stores] = 0;
-    s.stores.yarrow = 2; // 1 unit would leave only 1: below the stock it keeps
-    s.stores.juniper = 4;
-    s.stores.mugwort = 4;
+    s.stores.yarrow = 1;
+    s.stores.juniper = 1;
+    s.stores.mugwort = 0; // nothing to put in
     expect(experimentMoves(s, actOn(s).act)).toBe(1);
-    expect(s.queues.brewing[0]).toMatchObject({ kind: 'experiment', a: 'mugwort', b: 'juniper' });
-    // Two kettles, but only one pair is left to try.
+    expect(s.queues.brewing[0]).toMatchObject({ kind: 'experiment', a: 'yarrow', b: 'juniper' });
+    expect(s.stores.yarrow).toBe(0);
+    // Two kettles, but only one pair could be filled.
     expect(experimentMoves(s, actOn(s).act)).toBe(0);
     expect(s.queues.brewing).toHaveLength(1);
-  });
-
-  it('lets a drop that no usual recipe uses go down to nothing, but keeps stock of the ones that are used', () => {
-    const s = rich();
-    s.buildings['alchemists-hut'] = 1;
-    for (const k of Object.keys(s.stores)) s.stores[k as keyof typeof s.stores] = 0;
-    s.stores['wolf-fang'] = 1;
-    s.stores['noon-poppy'] = 1;
-    s.stores['grave-dust'] = 2; // Grave Oil uses it: 2 is not enough to spare one
-    expect(experimentMoves(s, actOn(s).act)).toBe(1);
-    expect(s.queues.brewing[0]).toMatchObject({
-      kind: 'experiment',
-      a: 'wolf-fang',
-      b: 'noon-poppy',
-    });
-    expect(s.stores['grave-dust']).toBe(2);
   });
 
   it('queues one experiment per kettle behind the usual brews, never more (D235)', () => {

@@ -1,18 +1,13 @@
 import type { BuildingId } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
 import { hunters, type HunterId } from '../../content/hunters';
-import {
-  INGREDIENT_IDS,
-  ingredients,
-  type IngredientId,
-  type IngredientSource,
-} from '../../content/ingredients';
+import { INGREDIENT_IDS, ingredients, type IngredientSource } from '../../content/ingredients';
 import { monsters, type MonsterId } from '../../content/monsters';
 import type { Command } from '../commands';
 import { bombIsWeak, oilMatches } from '../contracts/prep';
 import { contractIdentity } from '../investigation/view';
 import { investigationSlots } from '../investigation/lodge';
-import { experimentProblem, hiddenIndexes, knownRecipes } from '../alchemy/book';
+import { experimentProblem, hiddenIndexes } from '../alchemy/book';
 import { brewSlots } from '../alchemy/brewing';
 import { num } from '../balance-access';
 import type { ContractInstance, GameState, Preparation } from '../state/game-state';
@@ -64,8 +59,6 @@ const WANT: readonly [ConsumableId, number][] = [
   ['poppy-smoke', 1],
 ];
 
-/** Stock an experiment leaves of an ingredient the usual brews use: the most a recipe takes from one (2). */
-const KEEP_STOCK = 2;
 const SOURCE_RANK: Record<IngredientSource, number> = {
   'herb-garden': 0,
   'village-gift': 1,
@@ -142,24 +135,17 @@ export const brewMoves = (s: GameState, act: Act): number => {
 /**
  * GDD §6.1 (v0.6, D215, D235): each kettle runs an experiment behind its usual brews: the
  * untried pair with the most hidden properties left (herbs and gifts before monster drops
- * on a tie), from ingredients it holds more than the usual brews need. Returns the moves made.
+ * on a tie), from what the check-in's brews left in the stores (they were queued first, so
+ * they have had their share: D239). Returns the moves made.
  */
 export const experimentMoves = (s: GameState, act: Act): number => {
   let n = 0;
   const units = num('experiment.units');
-  // Only what the usual brews' recipes use is kept back; a drop nothing brews with is free to try.
-  const usual = new Set(
-    WANT.flatMap(([id]) =>
-      Object.keys(knownRecipes(s, id)[0]?.ingredients ?? {}),
-    ) as IngredientId[],
-  );
   // A kettle's brew takes 10 minutes, so a check-in's brews leave it idle until the next one:
   // each kettle gets one experiment queued behind them (the queue is unlimited, GDD §5.7).
   const running = (): number => s.queues.brewing.filter((j) => j.kind === 'experiment').length;
   while (running() < brewSlots(s)) {
-    const stocked = INGREDIENT_IDS.filter(
-      (id) => s.stores[id] >= units + (usual.has(id) ? KEEP_STOCK : 0),
-    );
+    const stocked = INGREDIENT_IDS.filter((id) => s.stores[id] >= units);
     const pairs = stocked
       .flatMap((a, i) => stocked.slice(i + 1).map((b) => [a, b] as const))
       .filter(([a, b]) => experimentProblem(s, a, b) === null)
