@@ -13,6 +13,7 @@ describe('skill views', () => {
       expect(v.level).toBe(0);
       expect(v.progress).toEqual({ level: 0, into: 0, needed: xpToNext(0) });
       expect(v.bonus.value).toBe(0);
+      expect(v.bonusText).toBe('0%');
       expect(v.maxed).toBe(false);
     }
   });

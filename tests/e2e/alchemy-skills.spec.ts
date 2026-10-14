@@ -74,6 +74,7 @@ test('an experiment shows a property in the Book', async ({ page }) => {
   const again = page.getByRole('dialog', { name: "Alchemist's Hut" });
   await again.getByRole('button', { name: 'Book' }).click();
   await expect(again.getByText('Properties found: 16 of 36')).toBeVisible();
+  await again.getByRole('heading', { name: 'Brews' }).scrollIntoViewIfNeeded();
   await shot(page, 'hut-book-after');
   expect(errors).toEqual([]);
 });
@@ -103,7 +104,11 @@ test('Start Act III brings Arvid and D3-01; the Rank screen shows the ember', as
   await tab(page, 'Hold').click();
   await page.getByRole('button', { name: 'Rank ▸' }).click();
   await expect(page.getByText('What the ember remembers')).toBeVisible();
-  await page.getByText('What the ember remembers').scrollIntoViewIfNeeded();
+  await page
+    .getByText('Highest level')
+    .first()
+    .or(page.getByText('Command 0'))
+    .scrollIntoViewIfNeeded();
   await expect(page.getByText('Alchemy 0')).toBeVisible();
   await shot(page, 'rank-ember');
   expect(errors).toEqual([]);

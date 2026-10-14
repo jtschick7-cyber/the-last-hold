@@ -263,6 +263,29 @@ export const recipes: readonly Recipe[] = [
     layers: [[[tile]]],
   })),
 
+  // v0.6 icons, 16 px, from the 1-Bit Pack (plan T6.10): the six new brews (a brown flask,
+  // a pale flask, a blue flask, a blue dropper, a green bottle, a round bomb) and the four
+  // warden skills (a full flask, a hammer, a scroll, a crown).
+  ...(
+    [
+      ['brew', 'hidebane-oil', 671],
+      ['brew', 'wrights-oil', 670],
+      ['brew', 'coldwater-draught', 669],
+      ['brew', 'owl-eye-drops', 897],
+      ['brew', 'steadfast-draught', 964],
+      ['brew', 'poppy-smoke', 486],
+      ['skill', 'alchemy', 581],
+      ['skill', 'smithing', 380],
+      ['skill', 'lore', 768],
+      ['skill', 'command', 141],
+    ] as const
+  ).map(([group, id, tile]): Recipe => ({
+    id: `icon.${group}.${id}`,
+    file: `icons/${group}-${id}.png`,
+    sheet: 'bit',
+    layers: [[[tile]]],
+  })),
+
   // Hold scenes, 160 × 64 (10 × 4 tiles): the hamlet among the ruins, then the
   // Keep with its restored wall and gatehouse (setting-primer §6.5).
   {

@@ -15,7 +15,9 @@ import {
 import { num } from '../../core/balance-access';
 import { formatDuration } from '../../core/format';
 import type { GameState } from '../../core/state/game-state';
+import { brewIconId } from '../../content/assets';
 import { dispatch, game, hutNews, version } from '../app/runtime';
+import { Sprite } from '../widgets/Sprite';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.9: the Alchemist's Hut. Three sections: Brew (every known recipe of each brew),
@@ -38,11 +40,13 @@ const BrewRow = ({ s, id }: { s: GameState; id: ConsumableId }) => {
   if (!recipe) return null;
   const why = recipeShortfall(s, recipe);
   const def = consumables[id];
+  const icon = brewIconId(id);
   return (
     <li
       class={`${styles.row} ${styles.divider}`}
       style={{ ...(why ? { opacity: 0.85 } : {}), alignItems: 'flex-start' }}
     >
+      {icon && <Sprite id={icon} scale={2} />}
       <span class={styles.grow}>
         <strong>{def.name}</strong>
         <br />
@@ -222,6 +226,7 @@ const BookSection = ({ s }: { s: GameState }) => {
           const recipes = knownRecipes(s, id);
           return (
             <li key={id} class={styles.divider}>
+              {brewIconId(id) && <Sprite id={brewIconId(id) ?? ''} />}{' '}
               <strong>{consumables[id].name}</strong>
               <br />
               <span class={`${styles.small} ${styles.dim}`}>

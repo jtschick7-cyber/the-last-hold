@@ -732,7 +732,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
 - [x] **T6.9b Skills and Act III on screen** *(Done as D232. Playwright: tests/e2e/alchemy-skills.spec.ts; the phone-size screenshots were checked.)* "What the ember remembers" on the Rank screen with breakdowns; the skill lines on the away sheet and new-warden sheet; Arvid's arrival and the Act III scenes; "Held from 12 · Triumphant from 15" on the stand screen. **Extend the Playwright smoke:** debug → queue an experiment → skip time → a property revealed in the Book; and debug "Start Act III" → Arvid arrives → D3-01. Screenshot pass at phone size.
 
 #### F. Art
-- [ ] **T6.10 Art** (the D59 method): 16 px icons for the six new brews and the four skills (1-Bit Pack where it fits, recolored). 👤 Review.
+- [x] **T6.10 Art** *(Done as D233; 👤 review in the playtest.)* (the D59 method): 16 px icons for the six new brews and the four skills (1-Bit Pack where it fits, recolored). 👤 Review.
 
 #### G. Simulator
 - [ ] **T6.11 Policy rules** (GDD §6.1, D215): experiments in spare kettles; the new brews in the kit; Arvid used through the roster rule.

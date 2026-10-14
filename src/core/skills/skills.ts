@@ -105,7 +105,7 @@ export interface SkillView {
   readonly maxed: boolean;
   /** The bonus at this level as a share (0.12 = 12%), with its breakdown line. */
   readonly bonus: Explained;
-  /** "+12%" or "−12%". */
+  /** "+12%" or "−12%", and "0%" at level 0. */
   readonly bonusText: string;
 }
 
@@ -135,6 +135,6 @@ export const skillViews = (state: GameState): SkillView[] =>
           ],
         },
       },
-      bonusText: `${skills[id].sign}${percent(bonus.value)}`,
+      bonusText: bonus.value === 0 ? '0%' : `${skills[id].sign}${percent(bonus.value)}`,
     };
   });

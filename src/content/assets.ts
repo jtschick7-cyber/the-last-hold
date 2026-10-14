@@ -1,3 +1,5 @@
+import { CONSUMABLE_IDS, consumables, type ConsumableId } from './consumables';
+import { SKILL_IDS, skills, type SkillId } from './skills';
 import { AGE_IDS, type AgeId } from './ages';
 import { BUILDING_IDS, type BuildingId } from './buildings';
 import { HUNTER_IDS, hunters, type HunterId } from './hunters';
@@ -55,6 +57,11 @@ export const RIBBON_ICON = 'icon.story.ribbon';
 export const DOC_ICON_TYPES = ['letter', 'journal', 'ledger', 'testament'] as const;
 export const docIconId = (type: string): string | null =>
   (DOC_ICON_TYPES as readonly string[]).includes(type) ? `icon.doc.${type}` : null;
+/** The six v0.6 brews have icons (plan T6.10); the nine older ones are text only, so this is null for them. */
+export const NEW_BREW_IDS = CONSUMABLE_IDS.slice(9);
+export const brewIconId = (b: ConsumableId): string | null =>
+  NEW_BREW_IDS.includes(b) ? `icon.brew.${b}` : null;
+export const skillIconId = (s: SkillId): string => `icon.skill.${s}`;
 export const relicIconId = (r: RelicId): string => `icon.relic.${r}`;
 export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
 export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m}`;
@@ -195,6 +202,20 @@ export const assets: readonly AssetEntry[] = [
   fromPack(RIBBON_ICON, 'icon', [16, 16], 'Ribbon', 'icons/story-ribbon.png', ONE_BIT),
   ...DOC_ICON_TYPES.map((d) =>
     fromPack(`icon.doc.${d}`, 'icon', [16, 16], titled(d), `icons/doc-${d}.png`, ONE_BIT),
+  ),
+  // v0.6 (plan T6.10): the six new brews and the four warden skills.
+  ...NEW_BREW_IDS.map((b) =>
+    fromPack(
+      `icon.brew.${b}`,
+      'icon',
+      [16, 16],
+      consumables[b].name,
+      `icons/brew-${b}.png`,
+      ONE_BIT,
+    ),
+  ),
+  ...SKILL_IDS.map((k) =>
+    fromPack(skillIconId(k), 'icon', [16, 16], skills[k].name, `icons/skill-${k}.png`, ONE_BIT),
   ),
 ];
 

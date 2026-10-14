@@ -1,7 +1,9 @@
 import { skillViews } from '../../core/skills/skills';
+import { skillIconId } from '../../content/assets';
 import { emberNews, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
+import { Sprite } from '../widgets/Sprite';
 
 // GDD §5.8.6, §9.13: "What the ember remembers", the four warden skills on the Rank
 // screen: level, progress to the next, the bonus, and its breakdown on long-press.
@@ -21,6 +23,7 @@ export const SkillsView = () => {
         {views.map((v) => (
           <li key={v.id} class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>
             <div class={styles.row}>
+              <Sprite id={skillIconId(v.id)} scale={2} />
               <strong class={styles.grow}>
                 {v.name} {v.level}
               </strong>
