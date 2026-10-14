@@ -1,3 +1,5 @@
+import type { ConsumableId } from '../../content/consumables';
+import type { IngredientId } from '../../content/ingredients';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import type { ContractResult, GameState } from '../state/game-state';
 import { productionRate } from '../systems/production';
@@ -30,6 +32,15 @@ export type AdvanceEvent =
   | { type: 'arrival'; at: number; contractId: string }
   /** A brew finished into the stores (GDD §5.7). */
   | { type: 'brew'; at: number; item: string }
+  /** An experiment finished: the properties it showed, and the brews it newly made makeable (GDD §5.8.3). */
+  | {
+      type: 'experiment';
+      at: number;
+      a: IngredientId;
+      b: IngredientId;
+      revealed: readonly { ingredient: IngredientId; index: number }[];
+      discovered: readonly ConsumableId[];
+    }
   /** The Herb Gardens grew `each` of every herb. */
   | { type: 'harvest'; at: number; each: number }
   /** A Lodge slot revealed a clue; `identified` when it left one species (GDD §5.6.3). */
@@ -105,7 +116,8 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
       if (hunter) log.events.push({ type: 'recovered', at: state.time, hunter });
     } else if (kind === 5) {
       const done = applyBrew(state);
-      if (done) log.events.push({ type: 'brew', ...done });
+      if (done && 'item' in done) log.events.push({ type: 'brew', ...done });
+      else if (done) log.events.push({ type: 'experiment', ...done });
     } else if (kind === 6) {
       const h = applyHarvest(state);
       if (h) log.events.push({ type: 'harvest', ...h });

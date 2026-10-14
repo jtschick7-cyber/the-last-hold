@@ -66,6 +66,20 @@ export type ConsumableEffect =
   /** v0.6: at tick 1 the monster loses its next `lostActions` actions. */
   | { readonly kind: 'smoke'; readonly lostActions: number };
 
+/**
+ * How a brew's recipe is built from carriers of its property (GDD §5.8.2, D198):
+ * an oil or potion is 3 units from two different carriers, 2 of one and 1 of the other;
+ * a single bomb is 1 unit of a carrier plus a resource; Saltburst is 2 units of carriers
+ * (any mix) plus a resource.
+ */
+export type RecipeShape =
+  | { readonly kind: 'split'; readonly major: number; readonly minor: number }
+  | { readonly kind: 'single'; readonly units: number; readonly resources: ResourceBundle }
+  | { readonly kind: 'double'; readonly units: number; readonly resources: ResourceBundle };
+
+const SPLIT: RecipeShape = { kind: 'split', major: 2, minor: 1 };
+const withWood: RecipeShape = { kind: 'single', units: 1, resources: { wood: 1 } };
+
 export interface Recipe {
   readonly ingredients: Readonly<Partial<Record<IngredientId, number>>>;
   /** Basic resources, for the two recipes that use wood or silver (GDD §5.7). */
@@ -81,6 +95,8 @@ export interface ConsumableDef {
   readonly summary: string;
   /** The recipe the book starts with; null for a v0.6 brew, which must be discovered (GDD §5.8.2). */
   readonly recipe: Recipe | null;
+  /** How any recipe for it is built from the carriers the book knows (GDD §5.8.2). */
+  readonly shape: RecipeShape;
 }
 
 export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
@@ -91,6 +107,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'oil', family: 'restless-dead' },
     summary: '+35% damage vs Restless Dead.',
     recipe: { ingredients: { 'grave-dust': 2, juniper: 1 }, resources: {} },
+    shape: SPLIT,
   },
   'drowned-bane-oil': {
     id: 'drowned-bane-oil',
@@ -99,6 +116,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'oil', family: 'water-spirits' },
     summary: '+35% damage vs Water Spirits.',
     recipe: { ingredients: { 'river-pearl': 2, yarrow: 1 }, resources: {} },
+    shape: SPLIT,
   },
   'thornbane-oil': {
     id: 'thornbane-oil',
@@ -107,6 +125,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'oil', family: 'field-and-forest-spirits' },
     summary: '+35% damage vs Field & Forest Spirits.',
     recipe: { ingredients: { thornwood: 2, mugwort: 1 }, resources: {} },
+    shape: SPLIT,
   },
   'mending-draught': {
     id: 'mending-draught',
@@ -115,6 +134,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'heal', belowHealth: 0.3, healFraction: 0.4 },
     summary: 'Once, below 30% Health: heal 40% of max Health.',
     recipe: { ingredients: { yarrow: 2, honeycomb: 1 }, resources: {} },
+    shape: SPLIT,
   },
   // GDD §5.7. Once "Ironbark Tonic"; Ironbark is a Warcraft druid talent for damage
   // reduction (GDD §2.3), so the owner chose Hardwood (Q13, D96).
@@ -125,6 +145,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'armorUntilAction', armorBonus: 0.3, untilAction: 5 },
     summary: "+30% Armor until the holder's 5th action.",
     recipe: { ingredients: { thornwood: 1, juniper: 2 }, resources: {} },
+    shape: SPLIT,
   },
   'quickfoot-tincture': {
     id: 'quickfoot-tincture',
@@ -133,6 +154,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'speedWholeFight', speedBonus: 0.2 },
     summary: '+20% Speed for the whole fight.',
     recipe: { ingredients: { mugwort: 2, 'hares-foot': 1 }, resources: {} },
+    shape: SPLIT,
   },
   'fire-pot': {
     id: 'fire-pot',
@@ -141,6 +163,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'burn', damageType: 'fire', initial: 40, perAction: 10, actions: 3 },
     summary: "At tick 1: 40 Fire damage, then 10 Fire on each of the monster's next 3 actions.",
     recipe: { ingredients: { pitch: 1 }, resources: { wood: 1 } },
+    shape: withWood,
   },
   'frost-pot': {
     id: 'frost-pot',
@@ -149,6 +172,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'chill', damageType: 'frost', initial: 30, speedCut: 0.3, actions: 3 },
     summary: "At tick 1: 30 Frost damage, then −30% Speed for the monster's next 3 actions.",
     recipe: { ingredients: { 'rime-salt': 1 }, resources: { wood: 1 } },
+    shape: withWood,
   },
   saltburst: {
     id: 'saltburst',
@@ -158,6 +182,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     summary:
       "Triggers on the monster's first ability: cancels it and blocks abilities for the monster's next 3 actions.",
     recipe: { ingredients: { 'rime-salt': 2 }, resources: { silver: 1 } },
+    shape: { kind: 'double', units: 2, resources: { silver: 1 } },
   },
   // ---- v0.6 (GDD §5.8.5, D201) ----
   'hidebane-oil': {
@@ -167,6 +192,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'oil', family: 'beasts-and-wilds' },
     summary: '+35% damage vs Beasts & Wilds.',
     recipe: null,
+    shape: SPLIT,
   },
   'wrights-oil': {
     id: 'wrights-oil',
@@ -175,6 +201,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'oil', family: 'cursed' },
     summary: '+35% damage vs the Cursed.',
     recipe: null,
+    shape: SPLIT,
   },
   'coldwater-draught': {
     id: 'coldwater-draught',
@@ -183,6 +210,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'fireTaken', takenCut: 0.4 },
     summary: 'The holder takes −40% Fire damage for the whole fight.',
     recipe: null,
+    shape: SPLIT,
   },
   'owl-eye-drops': {
     id: 'owl-eye-drops',
@@ -191,6 +219,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'hitChance', hitChance: 0.1 },
     summary: "+10 points to the holder's hit chance for the whole fight.",
     recipe: null,
+    shape: SPLIT,
   },
   'steadfast-draught': {
     id: 'steadfast-draught',
@@ -200,6 +229,7 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     summary:
       "The first time a monster's ability would cost the holder an action, it doesn't; its other effects still apply.",
     recipe: null,
+    shape: SPLIT,
   },
   'poppy-smoke': {
     id: 'poppy-smoke',
@@ -208,5 +238,6 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     effect: { kind: 'smoke', lostActions: 1 },
     summary: 'At tick 1: the monster loses its next action.',
     recipe: null,
+    shape: withWood,
   },
 };

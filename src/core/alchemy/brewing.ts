@@ -1,7 +1,9 @@
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
+import type { IngredientId } from '../../content/ingredients';
+import { finishExperiment, type ExperimentResult } from './book';
 import { num } from '../balance-access';
-import type { BrewJob, GameState } from '../state/game-state';
+import type { BrewJob, GameState, KettleJob } from '../state/game-state';
 import { MS_PER_SECOND } from '../time';
 import { brewCut } from '../long-night/bonuses';
 
@@ -26,6 +28,13 @@ export const kettlesBusy = (state: GameState): number =>
 export const brewMs = (state: GameState): number =>
   num('brew.time') * MS_PER_SECOND * (1 - brewCut(state).value);
 
+/** One experiment's time, less the Copper Still like a brew (GDD §5.8.3). */
+export const experimentMs = (state: GameState): number =>
+  num('experiment.time') * MS_PER_SECOND * (1 - brewCut(state).value);
+
+const jobMs = (state: GameState, job: KettleJob): number =>
+  job.kind === 'experiment' ? experimentMs(state) : brewMs(state);
+
 /** Starts waiting brews, in queue order, on every free kettle, from the current time. */
 export const startBrews = (state: GameState): void => {
   let busy = kettlesBusy(state);
@@ -33,7 +42,7 @@ export const startBrews = (state: GameState): void => {
   for (const job of state.queues.brewing) {
     if (busy >= slots) break;
     if (job.doneAt === null) {
-      job.doneAt = state.time + brewMs(state);
+      job.doneAt = state.time + jobMs(state, job);
       busy += 1;
     }
   }
@@ -52,12 +61,19 @@ export interface BrewDone {
   at: number;
 }
 
+/** An experiment finished: what it showed and what it newly made makeable (GDD §5.8.3). */
+export interface ExperimentDone extends ExperimentResult {
+  a: IngredientId;
+  b: IngredientId;
+  at: number;
+}
+
 /** A brew is still the only kind of kettle job a player can queue until experiments (T6.4). */
 export const brewJobs = (state: GameState): BrewJob[] =>
   state.queues.brewing.filter((j): j is BrewJob => j.kind === 'brew');
 
 /** Finishes the soonest brew into the stores and starts the next. The clock is at its time. */
-export const applyBrew = (state: GameState): BrewDone | null => {
+export const applyBrew = (state: GameState): BrewDone | ExperimentDone | null => {
   let index = -1;
   state.queues.brewing.forEach((job, i) => {
     const best = state.queues.brewing[index];
@@ -69,8 +85,8 @@ export const applyBrew = (state: GameState): BrewDone | null => {
   if (!job) return null;
   state.queues.brewing.splice(index, 1);
   startBrews(state);
-  // An experiment's result (GDD §5.8.3) is T6.4; nothing can queue one before then.
-  if (job.kind === 'experiment') return null;
+  if (job.kind === 'experiment')
+    return { a: job.a, b: job.b, at: state.time, ...finishExperiment(state, job.a, job.b) };
   state.stores[job.item] += 1;
   return { item: job.item, at: state.time };
 };

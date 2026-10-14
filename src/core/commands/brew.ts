@@ -1,19 +1,30 @@
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
 import { INGREDIENT_IDS, type IngredientId } from '../../content/ingredients';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
-import { brewSlots, recipeOf, startBrews } from '../alchemy/brewing';
+import { chosenRecipe, defaultRecipe, experimentProblem } from '../alchemy/book';
+import { brewSlots, startBrews } from '../alchemy/brewing';
+import { num } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.7: queueing a brew pays its recipe at once; cancelling refunds it in full.
 
-export const queueBrew = (state: GameState, item: ConsumableId): ApplyResult => {
+export const queueBrew = (
+  state: GameState,
+  item: ConsumableId,
+  ingredients?: Partial<Record<IngredientId, number>>,
+): ApplyResult => {
   if (!(CONSUMABLE_IDS as readonly string[]).includes(item))
     return refuse('That is not something the Hut can brew.');
   if (brewSlots(state) === 0) return refuse('Build an Alchemist’s Hut to brew.');
-  const recipe = recipeOf(item);
-  // GDD §5.8.2: a v0.6 brew can't be brewed until the book knows its recipe (T6.4).
-  if (!recipe) return refuse(`The book does not know a recipe for ${consumables[item].name} yet.`);
+  // GDD §5.8.2: only a recipe the book knows can be brewed.
+  const recipe = ingredients ? chosenRecipe(state, item, ingredients) : defaultRecipe(state, item);
+  if (!recipe)
+    return refuse(
+      ingredients
+        ? `The book does not know that recipe for ${consumables[item].name}.`
+        : `The book does not know a recipe for ${consumables[item].name} yet.`,
+    );
   for (const [id, n] of Object.entries(recipe.ingredients))
     if (state.stores[id as IngredientId] < (n ?? 0))
       return refuse(`Not enough ${id.replace(/-/g, ' ')} for ${consumables[item].name}.`);
@@ -39,6 +50,27 @@ export const cancelBrew = (state: GameState, index: number): ApplyResult => {
     for (const id of INGREDIENT_IDS) state.stores[id] += job.paid.ingredients[id] ?? 0;
     for (const r of RESOURCE_IDS) state.resources[r] += job.paid.resources[r] ?? 0;
   }
+  startBrews(state);
+  return ok;
+};
+
+/** GDD §5.8.3: an experiment pays 1 unit of each ingredient now and takes a kettle. */
+export const queueExperiment = (
+  state: GameState,
+  a: IngredientId,
+  b: IngredientId,
+): ApplyResult => {
+  const ids = INGREDIENT_IDS as readonly string[];
+  if (!ids.includes(a) || !ids.includes(b)) return refuse('That is not an ingredient.');
+  if (brewSlots(state) === 0) return refuse('Build an Alchemist’s Hut to experiment.');
+  const problem = experimentProblem(state, a, b);
+  if (problem) return refuse(problem);
+  const units = num('experiment.units');
+  for (const id of [a, b])
+    if (state.stores[id] < units) return refuse(`Not enough ${id.replace(/-/g, ' ')}.`);
+  state.stores[a] -= units;
+  state.stores[b] -= units;
+  state.queues.brewing.push({ kind: 'experiment', a, b, units, doneAt: null });
   startBrews(state);
   return ok;
 };

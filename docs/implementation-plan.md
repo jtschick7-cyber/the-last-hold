@@ -717,7 +717,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: sta
   Technical design §5.2 updated in the same commit.
 
 #### B. Alchemy
-- [ ] **T6.4 The recipe book and experiments** (core): the known-recipe rule and the shapes (GDD §5.8.2), alternate recipes and the 2:1 split, experiment jobs (paid when queued, refunds, Copper Still), the reveal rule in §8.6 order, refusals ("already tried", "nothing left to learn"), "Discovered:" results. Test-first, rule by rule.
+- [x] **T6.4 The recipe book and experiments** (core) *(Done as D225; the UI is T6.9a, and the simulated player's use of experiments is T6.11.)*: the known-recipe rule and the shapes (GDD §5.8.2), alternate recipes and the 2:1 split, experiment jobs (paid when queued, refunds, Copper Still), the reveal rule in §8.6 order, refusals ("already tried", "nothing left to learn"), "Discovered:" results. Test-first, rule by rule.
 - [ ] **T6.5 The new brews in combat.** The two oils (and well-prepared), Coldwater (taken%, cap), Owl-Eye (hit chance), Steadfast (first lost action prevented; other effects kept), Poppy Smoke (the monster's next action lost at tick 1); Herbwise, Spoil and Saltburst as GDD §5.8.5 says; the stand's bomb order and once-per-stand potions. **Contract fights for every existing item and every golden fight unchanged; `rulesVersion` stays 3 — if a golden changes, stop and ask** (D218). One test per new effect; benchmarks unchanged in budget.
 
 #### C. Skills

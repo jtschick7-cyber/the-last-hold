@@ -5,6 +5,7 @@ import type { SceneId } from '../../content/text/scenes';
 import type { HunterId } from '../../content/hunters';
 import type { JobId } from '../../content/jobs';
 import type { ConsumableId } from '../../content/consumables';
+import type { IngredientId } from '../../content/ingredients';
 import type { ResourceBundle } from '../../content/resources';
 import type { PolicyId } from '../policies/schedules';
 import type { Preparation, Settings } from '../state/game-state';
@@ -40,9 +41,15 @@ export type Command =
   | { type: 'investigate.assign'; contract: string }
   /** Takes a contract off its Lodge slot; the clues shown stay. */
   | { type: 'investigate.stop'; contract: string }
-  /** Queues a brew in the Alchemist's Hut; the recipe is paid now (GDD §5.7). */
-  | { type: 'brew.queue'; item: ConsumableId }
-  /** Cancels a queued brew and refunds it. */
+  /**
+   * Queues a brew in the Alchemist's Hut; the recipe is paid now (GDD §5.7). `ingredients`
+   * picks one of the recipes the book knows (GDD §5.8.2); without it, the v0.3 recipe or
+   * the first known one.
+   */
+  | { type: 'brew.queue'; item: ConsumableId; ingredients?: Partial<Record<IngredientId, number>> }
+  /** Queues an experiment: 1 of each ingredient in a kettle, paid now (GDD §5.8.3). */
+  | { type: 'experiment.queue'; a: IngredientId; b: IngredientId }
+  /** Cancels a queued brew or experiment and refunds it. */
   | { type: 'brew.cancel'; index: number }
   /** Acknowledges finished contracts; rewards were applied at completion (B9). */
   | { type: 'results.collect' }
