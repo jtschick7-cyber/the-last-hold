@@ -32,12 +32,7 @@
         "silver-digger": 0
       },
       "autoSettle": true,
-      "priority": [
-        "farmer",
-        "woodcutter",
-        "miner",
-        "silver-digger"
-      ],
+      "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
       "lastSettleAt": 0
     },
     "buildings": {
@@ -84,23 +79,14 @@
       }
     },
     "roster": {
-      "active": [
-        "halvar",
-        "zora"
-      ]
+      "active": ["halvar", "zora"]
     },
     "board": {
       "opened": false,
       "open": [],
       "nextArrivalAt": null,
       "arrivals": 8,
-      "tierWins": [
-        0,
-        0,
-        0,
-        0,
-        0
-      ]
+      "tierWins": [0, 0, 0, 0, 0]
     },
     "bestiary": {
       "kikimora": {
@@ -145,12 +131,7 @@
     "running": [],
     "results": [],
     "fallen": [],
-    "scenes": [
-      "vow",
-      "first-contract",
-      "ilse",
-      "opening"
-    ],
+    "scenes": ["vow", "first-contract", "ilse", "opening"],
     "log": {
       "recentFights": [
         {
@@ -169,10 +150,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             }
@@ -208,10 +186,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -227,10 +202,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             }
@@ -311,10 +283,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -330,10 +299,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             }
@@ -443,9 +409,7 @@
           "triumphs": 0
         }
       },
-      "unread": [
-        "doc:D1-01"
-      ]
+      "unread": ["doc:D1-01"]
     },
     "settings": {
       "theme": "dark",
