@@ -1,5 +1,6 @@
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
+import { debugGrantLoot, debugReadyRanks } from './debug-depth';
 import { addStar, rankUp } from './hunter-depth';
 import { craftItem, equipFromStores, reworkItem, salvageItem, unequipItem } from './items';
 import { debugUnlit } from './unlit';
@@ -115,6 +116,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setSeed(state, cmd.seed);
     case 'debug.addEmbers':
       return addEmbers(state, cmd.amount);
+    case 'debug.grantLoot':
+      return debugGrantLoot(state);
+    case 'debug.readyRanks':
+      return debugReadyRanks(state);
     case 'debug.runArrival':
       return runArrival(state);
     case 'debug.unlockAge':

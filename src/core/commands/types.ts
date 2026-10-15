@@ -121,6 +121,10 @@ export type Command =
   /** GDD §5.14.2: an Archive item has been opened; its badge goes. */
   | { type: 'archive.read'; key: string }
   | { type: 'debug.runArrival' }
+  /** Plan T8.13b: a Rare Iron Blade into Stores, as a won contract's loot would be. */
+  | { type: 'debug.grantLoot' }
+  /** Plan T8.13b: every hunter's highest level 10 and 100 more trophies, so ranks can be bought. */
+  | { type: 'debug.readyRanks' }
   /** Plan T5.5: Arvid can't arrive in v0.5 (Act III isn't written), so this adds him. */
   | { type: 'debug.addArvid' }
   | { type: 'debug.unlockAge'; age: AgeId };

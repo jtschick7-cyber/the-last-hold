@@ -28,6 +28,12 @@ export const ResultView = () => {
       {v.reagents.length > 0 && (
         <p>Reagents: {v.reagents.map((r) => `${r.units} ${r.name}`).join(', ')}</p>
       )}
+      {v.xp > 0 && (
+        <p>
+          Each hunter earned <strong>{v.xp} XP</strong>.
+        </p>
+      )}
+      {v.itemLine && <p class={styles.good}>{v.itemLine}</p>}
       {v.relics.map((r) => (
         <p key={r.name} class={styles.good}>
           <strong>Found: {r.name}.</strong> <span class={styles.dim}>{r.line}</span>

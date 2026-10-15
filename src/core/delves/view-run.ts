@@ -11,6 +11,7 @@ import { ingredients } from '../../content/ingredients';
 import { balance } from '../../content/balance';
 import type { Breakdown } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
+import { foundLines } from '../story/found-lines';
 import { blessingsBreakdown } from './blessing-breakdown';
 import { floorFamily } from './generate';
 
@@ -156,6 +157,10 @@ export interface ResultView {
     readonly text: string;
   }[];
   readonly relics: readonly { readonly name: string; readonly line: string }[];
+  /** Hunter XP each of the three earned this run (D316); 0 for a run before v0.8 or a quiet night. */
+  readonly xp: number;
+  /** The guardian's item in words ("Loot: a Fine Silvered Blade.", or the salvage line), or null. */
+  readonly itemLine: string | null;
   /** Pechko's line, picked by the run's seed from the set for how it ended (lore §29). */
   readonly pechko: string;
   readonly rankName: string;
@@ -199,6 +204,8 @@ export const resultView = (state: GameState): ResultView | null => {
         : [];
     }),
     relics: r.relics.map((id) => ({ name: delveRelics[id].name, line: delveRelics[id].line })),
+    xp: r.xp ?? 0,
+    itemLine: r.item ? (foundLines(state, [r.item])[0] ?? null) : null,
     pechko: set[r.line % set.length] ?? set[0],
     rankName: ages[state.cycle.age].name,
   };

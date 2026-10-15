@@ -4,8 +4,14 @@ import type { HunterId } from '../../content/hunters';
 import { useSkillOf } from '../../content/use-skills';
 import { num } from '../../core/balance-access';
 import { formatNumber } from '../../core/format';
-import { rankUpView, starView, trophiesOnHand, type ProgressView } from '../../core/systems/ranks';
-import { dispatch, game } from '../app/runtime';
+import {
+  nextRank,
+  rankUpView,
+  starView,
+  trophiesOnHand,
+  type ProgressView,
+} from '../../core/systems/ranks';
+import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 
@@ -13,6 +19,8 @@ import { Num } from '../widgets/Num';
 // buttons with their costs and breakdowns. The rules and the words for a refusal come from
 // core/systems/ranks.ts; this file only draws them.
 
+// The button's own text is plain (a button can't hold another button); the cost beneath it carries
+// the breakdown (long-press or ⓘ), built by the same function that built the number.
 const BuyButton = ({
   verb,
   view,
@@ -22,30 +30,38 @@ const BuyButton = ({
   view: ProgressView;
   onBuy: () => void;
 }) => (
-  <button
-    type="button"
-    class={view.available ? styles.btnPrimary : styles.btn}
-    disabled={!view.available}
-    onClick={onBuy}
-  >
-    {verb}{' '}
-    <Num
-      text={`${formatNumber(view.trophies.value)} trophies`}
-      breakdown={() => view.trophies.breakdown}
-    />
-    {view.embers && view.embers.value > 0 && (
-      <>
-        {' + '}
-        <Num
-          text={`${formatNumber(view.embers.value)} Embers`}
-          breakdown={() => view.embers?.breakdown ?? view.trophies.breakdown}
-        />
-      </>
-    )}
-  </button>
+  <div>
+    <button
+      type="button"
+      class={view.available ? styles.btnPrimary : styles.btn}
+      disabled={!view.available}
+      onClick={onBuy}
+    >
+      {verb}
+    </button>
+    <div class={styles.small}>
+      Cost:{' '}
+      <Num
+        text={`${formatNumber(view.trophies.value)} trophies`}
+        breakdown={() => view.trophies.breakdown}
+        marked
+      />
+      {view.embers && view.embers.value > 0 && (
+        <>
+          {' + '}
+          <Num
+            text={`${formatNumber(view.embers.value)} Embers`}
+            breakdown={() => view.embers?.breakdown ?? view.trophies.breakdown}
+            marked
+          />
+        </>
+      )}
+    </div>
+  </div>
 );
 
 export const RankStars = ({ id }: { id: HunterId }) => {
+  void version.value; // a child sheet part re-renders only by its own signal
   const s = game();
   const h = s.hunters[id];
   const [note, setNote] = useState<string | null>(null);
@@ -68,10 +84,10 @@ export const RankStars = ({ id }: { id: HunterId }) => {
         <span class={styles.dim}>Trophies on hand: {formatNumber(trophiesOnHand(s))}</span>
       </p>
       <div class={styles.row}>
-        {rank && rank.label !== 'Master-Wright' && (
+        {rank && nextRank(h.rank) !== null && (
           <div class={styles.grow}>
             <BuyButton
-              verb={`Rank up to ${rank.label}:`}
+              verb={`Rank up to ${rank.label}`}
               view={rank}
               onBuy={() => act('hunter.rankUp')}
             />
@@ -80,7 +96,7 @@ export const RankStars = ({ id }: { id: HunterId }) => {
         )}
         {star && h.stars < max && (
           <div class={styles.grow}>
-            <BuyButton verb="Add a star:" view={star} onBuy={() => act('hunter.addStar')} />
+            <BuyButton verb="Add a star" view={star} onBuy={() => act('hunter.addStar')} />
             {star.reason && <div class={`${styles.small} ${styles.dim}`}>{star.reason}</div>}
           </div>
         )}
@@ -91,6 +107,7 @@ export const RankStars = ({ id }: { id: HunterId }) => {
 };
 
 export const UseSkillRow = ({ id }: { id: HunterId }) => {
+  void version.value; // a child sheet part re-renders only by its own signal
   const h = game().hunters[id];
   if (!h) return null;
   const skill = useSkillOf(id);

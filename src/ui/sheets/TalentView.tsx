@@ -1,12 +1,13 @@
 import { useState } from 'preact/hooks';
 import type { HunterId } from '../../content/hunters';
 import { talentSheet } from '../../core/systems/talents';
-import { dispatch, game } from '../app/runtime';
+import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.16 (v0.8, D326): three branch columns of three tiers. A locked tier shows what it needs
 // ("needs 2 stars"); respec is free. Core's `talentSheet` decides every cell and every reason.
 export const TalentView = ({ id }: { id: HunterId }) => {
+  void version.value; // a child sheet part re-renders only by its own signal
   const s = game();
   const view = talentSheet(s, id);
   const [note, setNote] = useState<string | null>(null);

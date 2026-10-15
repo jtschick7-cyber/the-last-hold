@@ -981,7 +981,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - Rank badge, stars, use-skill, three slots, talents with tier locks and respec, Rank up and Add a star with costs and breakdowns.
   - The slot picker (best first, differences, Craft, Rework).
   - The Hearth's pointer line.
-- [ ] **T8.13b Stores, lines, Act V and the smoke.**
+- [x] **T8.13b Stores, lines, Act V and the smoke.** *(Done except the "rank-up" line, `[?]` Q27: a rank only changes by command, so nothing happens while away to line; readings D348.)*
   - Stores with Salvage under Hunters.
   - The away-sheet and results lines (loot, auto-salvage, Legendary found, rank-up, yard).
   - Act V's scenes and on-load card, and the Rift card's sixth-door line.

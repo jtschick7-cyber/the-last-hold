@@ -12,6 +12,7 @@ import {
 import { unspentTalentPoints } from '../../core/systems/ranks';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
+import { StoresPanel } from './StoresPanel';
 import { HunterView } from '../sheets/HunterSheet';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
@@ -89,6 +90,7 @@ export const HuntersScreen = () => {
           </div>
         )}
       </section>
+      <StoresPanel />
       {cands.length > 0 && (
         <section class={styles.card}>
           <h2 class={styles.cardTitle}>Candidates</h2>

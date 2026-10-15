@@ -24,3 +24,58 @@ export const onwardAll = async (page: Page): Promise<void> => {
     await o.click();
   }
 };
+
+/** Opens More → Debug, presses each button, and closes the panel. Needs `?debug`. */
+export const debugPress = async (page: Page, ...buttons: string[]): Promise<void> => {
+  await tab(page, 'More').click();
+  await page.getByRole('button', { name: /^Debug/ }).click();
+  for (const b of buttons) await page.getByRole('button', { name: b, exact: true }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
+};
+
+/**
+ * The on-load card helper (plan T8.13b, D323): imports a save file through More → Save & Data,
+ * then checks the card that takes the Hold's place (Arvid's or Pechko's), uses its button, and
+ * checks the scene's sheet opens. One helper for both cards, so they are tested the same way.
+ */
+export const meetOnLoadCard = async (
+  page: Page,
+  save: object,
+  card: { title: string; line: string | RegExp; button: string; sheet: string; text: RegExp },
+): Promise<void> => {
+  await tab(page, 'More').click();
+  await page.getByRole('button', { name: /^Save/ }).first().click();
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'save.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(save)),
+  });
+  await page.getByRole('button', { name: 'Yes, load it' }).click();
+  // The away sheet may open over the new game; close it, then go back to the Hold.
+  await page.waitForTimeout(800);
+  for (let i = 0; i < 4; i++) {
+    const close = page.getByRole('button', { name: 'Close' });
+    if (
+      !(await close
+        .first()
+        .isVisible()
+        .catch(() => false))
+    )
+      break;
+    await close.first().click();
+  }
+  await tab(page, 'Hold').click();
+  // The card takes the Hold's place; only Hold and More stay in the tab bar.
+  await expect(page.getByRole('heading', { name: card.title })).toBeVisible();
+  await expect(page.getByText(card.line)).toBeVisible();
+  await expect(tab(page, 'Hunters')).toHaveCount(0);
+  await expect(tab(page, 'More')).toBeVisible();
+  await page.getByRole('button', { name: card.button }).click();
+  const sheet = page.getByRole('dialog', { name: card.sheet });
+  await expect(sheet).toBeVisible();
+  await expect(sheet.getByText(card.text)).toBeVisible();
+  await page.getByRole('button', { name: 'Close' }).click();
+  // Once it has played, the card is gone and the Hold is back.
+  await expect(page.getByRole('heading', { name: card.title })).toHaveCount(0);
+  await expect(tab(page, 'Hold')).toBeVisible();
+};

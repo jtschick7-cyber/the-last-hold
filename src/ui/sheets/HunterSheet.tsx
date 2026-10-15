@@ -20,6 +20,7 @@ import { TraitList } from '../delve/TraitList';
 // GDD §9.7, §9.16 hunter detail: stats with breakdowns, rank and stars, the use-skill, the three
 // slots (weapon, armor, keepsake) each opening its picker, talents, the record, and a short bio.
 const Slot = ({ id, slot }: { id: HunterId; slot: GearSlot }) => {
+  void version.value; // a child sheet part re-renders only by its own signal
   const s = game();
   const h = s.hunters[id];
   if (!h) return null;
@@ -55,6 +56,7 @@ const Slot = ({ id, slot }: { id: HunterId; slot: GearSlot }) => {
 };
 
 const KeepsakeSlot = ({ id }: { id: HunterId }) => {
+  void version.value; // a child sheet part re-renders only by its own signal
   const h = game().hunters[id];
   if (!h) return null;
   return (

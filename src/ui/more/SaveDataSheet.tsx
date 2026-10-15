@@ -89,9 +89,11 @@ export const SaveDataSheet = () => {
             accept="application/json,.json"
             class="sr-only"
             onChange={async (e) => {
-              const file = e.currentTarget.files?.[0];
+              // The event's currentTarget is gone after the first await, so keep the input itself.
+              const input = e.currentTarget;
+              const file = input.files?.[0];
               if (file) offer(decodeSaveFile(await file.text()));
-              e.currentTarget.value = '';
+              input.value = '';
             }}
           />
         </label>
