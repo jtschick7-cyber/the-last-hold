@@ -11,6 +11,10 @@ import { PATRON_IDS, patrons, type PatronId } from './delves/patrons';
 import { DELVE_RELIC_IDS, delveRelics, type DelveRelicId } from './delves/relics';
 import { COSMETIC_IDS, type CosmeticId } from './delves/shop';
 import { RARITIES, rarityNames, type RarityId } from './delves/blessing-types';
+import { GEAR_IDS, gear, type GearId } from './gear';
+import { ITEM_RARITY_IDS, itemRarities, type ItemRarity } from './items';
+import { LEGENDARY_IDS, legendaries, type LegendaryId } from './legendaries';
+import { HUNTER_RANK_IDS, hunterRanks, type HunterRank } from './ranks';
 
 // Technical design §12.1: every image the game shows has a manifest row.
 // Swapping art means replacing a file or changing a row, never code. A row with
@@ -67,10 +71,19 @@ export const RIBBON_ICON = 'icon.story.ribbon';
 export const DOC_ICON_TYPES = ['letter', 'journal', 'ledger', 'testament'] as const;
 export const docIconId = (type: string): string | null =>
   (DOC_ICON_TYPES as readonly string[]).includes(type) ? `icon.doc.${type}` : null;
-/** The six v0.6 brews have icons (plan T6.10); the nine older ones are text only, so this is null for them. */
+/** The six v0.6 brews' icons are from the 1-Bit Pack (plan T6.10). */
 export const NEW_BREW_IDS = CONSUMABLE_IDS.slice(9);
-export const brewIconId = (b: ConsumableId): string | null =>
-  NEW_BREW_IDS.includes(b) ? `icon.brew.${b}` : null;
+/** Every brew has an icon (the nine older ones since v0.8, D323). */
+export const brewIconId = (b: ConsumableId): string => `icon.brew.${b}`;
+// v0.8 (plan T8.14, D324): gear base icons, item rarity frames, keepsakes, the star, rank badges and
+// the nine older brews' icons, all code-drawn by tools/draw-items.ts.
+export const gearIconId = (g: GearId): string => `icon.item.${g}`;
+export const itemFrameId = (r: ItemRarity): string => `icon.item-frame.${r}`;
+export const keepsakeIconId = (l: LegendaryId): string => `icon.keepsake.${l}`;
+export const STAR_ICON = 'icon.star';
+export const rankBadgeId = (r: HunterRank): string => `icon.rank.${r}`;
+/** The nine brews from before v0.6 are drawn in code, the six newer ones come from the 1-Bit Pack. */
+export const OLD_BREW_ICON_IDS = CONSUMABLE_IDS.slice(0, 9);
 export const skillIconId = (s: SkillId): string => `icon.skill.${s}`;
 export const relicIconId = (r: RelicId): string => `icon.relic.${r}`;
 export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
@@ -237,6 +250,58 @@ export const assets: readonly AssetEntry[] = [
   ),
   ...SKILL_IDS.map((k) =>
     fromPack(skillIconId(k), 'icon', [16, 16], skills[k].name, `icons/skill-${k}.png`, ONE_BIT),
+  ),
+  // v0.8 (plan T8.14, D324): drawn by tools/gen-items.ts.
+  ...GEAR_IDS.map((g) =>
+    generated(
+      gearIconId(g),
+      [16, 16],
+      gear[g].name,
+      `icons/item-${g}.png`,
+      'tools/gen-items.ts',
+      'icon',
+    ),
+  ),
+  ...ITEM_RARITY_IDS.map((r) =>
+    generated(
+      itemFrameId(r),
+      [20, 20],
+      `${itemRarities[r].name} item frame`,
+      `icons/item-frame-${r}.png`,
+      'tools/gen-items.ts',
+      'frame',
+    ),
+  ),
+  ...LEGENDARY_IDS.map((l) =>
+    generated(
+      keepsakeIconId(l),
+      [16, 16],
+      legendaries[l].name,
+      `icons/keepsake-${l}.png`,
+      'tools/gen-items.ts',
+      'icon',
+    ),
+  ),
+  generated(STAR_ICON, [16, 16], 'Star', 'icons/star.png', 'tools/gen-items.ts', 'icon'),
+  ...HUNTER_RANK_IDS.map((r) =>
+    generated(
+      rankBadgeId(r),
+      [16, 16],
+      `${hunterRanks[r].name} badge`,
+      `icons/rank-${r}.png`,
+      'tools/gen-items.ts',
+      'icon',
+    ),
+  ),
+  ...OLD_BREW_ICON_IDS.map((b) =>
+    generated(
+      brewIconId(b),
+      [16, 16],
+      consumables[b].name,
+      `icons/brew-${b}.png`,
+      'tools/gen-items.ts',
+      'icon',
+    ),
   ),
   // v0.7 (plan T7.12): drawn by tools/gen-sprites.ts.
   ...HUNTER_IDS.map((h) =>

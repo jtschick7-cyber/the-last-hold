@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import type { GearSlot } from '../../content/gear';
 import type { HunterId } from '../../content/hunters';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
+import { keepsakeIconId } from '../../content/assets';
 import { formatNumber } from '../../core/format';
 import {
   keepsakeOptions,
@@ -11,6 +12,8 @@ import {
 } from '../../core/systems/slot-picker';
 import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
+import { ItemIcon } from '../widgets/ItemIcon';
+import { Sprite } from '../widgets/Sprite';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 
 // GDD §9.16 (v0.8, D326): the slot picker (Stores items that fit, best first, each with what it
@@ -32,14 +35,17 @@ export const Cost = ({ cost }: { cost: Readonly<Record<ResourceId, number>> }) =
 
 /** An item's name, base numbers and lines. The rarity frames are the art task (T8.14). */
 export const ItemLines = ({ item }: { item: ItemView }) => (
-  <div>
-    <strong>{item.name}</strong>
-    <div class={`${styles.small} ${styles.dim}`}>{item.base}</div>
-    {item.lines.map((l) => (
-      <div key={l} class={styles.small}>
-        {l}
-      </div>
-    ))}
+  <div class={styles.row}>
+    <ItemIcon gear={item.gear} rarity={item.rarity} />
+    <div>
+      <strong>{item.name}</strong>
+      <div class={`${styles.small} ${styles.dim}`}>{item.base}</div>
+      {item.lines.map((l) => (
+        <div key={l} class={styles.small}>
+          {l}
+        </div>
+      ))}
+    </div>
   </div>
 );
 
@@ -158,6 +164,7 @@ export const KeepsakePickerSheet = ({ id }: { id: HunterId }) => {
       <ul class={styles.list}>
         {options.map((o) => (
           <li key={o.id} class={`${styles.row} ${styles.divider} ${o.found ? '' : styles.dim}`}>
+            <Sprite id={keepsakeIconId(o.id)} scale={2} />
             <span class={styles.grow}>
               <strong>{o.name}</strong>
               <div class={`${styles.small} ${styles.dim}`}>

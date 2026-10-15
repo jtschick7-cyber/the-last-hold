@@ -756,3 +756,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Please look at:** **Q27** in `docs/questions.md`: the GDD wants "a rank-up" line on the away sheet, but a rank only changes when you press the button, so nothing happens while you're away. My recommendation is to skip it (b). Also D348.
 - **Phone-size look:** screenshots of Stores, the hunter sheet, the picker and the talent columns at 412 px wide look right; item icons and rarity frames are still text (T8.14).
 - **Next:** T8.14 art, then T8.15 CI split, T8.16 policy rules, T8.17 checks, T8.18 tuning. `npm run check` green (2,077 tests).
+
+## 2026-10-15 — v0.8 session 4 (continued): T8.14 art
+- **Owner decisions:** D347 and D348 accepted, Q27 answered (b) (D349): no rank-up line.
+- **T8.14 is built** (D350 Proposed), all drawn in code so no pack tile has to be guessed: 16 px icons for the 7 gear pieces, 4 item frames (grey, green, blue, violet-and-gold, with notched sides so they can't be mistaken for the Delve frames), 6 keepsakes, a star, 3 rank badges and icons for the nine older brews. They now show in the hunter sheet (slot icon in its frame, keepsake icon, stars, rank badge), the slot picker, Stores, the keepsake picker and the Hut (every brew has an icon now). Manifest rows, `docs/credits.md` and the contact sheet are updated (a v0.8 section shows each piece on each frame). Tests (`tests/tools/item-art.test.ts`): each file is exactly what its drawing code draws, is the manifest size and stays in the palette; the four frames differ from each other and from the Delve frames; every brew has an icon.
+- **For your playtest:** please look at the art on the contact sheet (`public/contact-sheet.html`, section "v0.8") and in the game. The Thole and the Wolf-Tooth String are the ones I'm least sure read well at 16 px.
+- **Next:** T8.15 CI split and Node 20, then T8.16 policy rules, T8.17 checks (own commit), T8.18 tuning.

@@ -273,4 +273,4 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
   (c) A line on a contract's result when that win is the one that made a hunter qualify (needs one more saved field on the result).
 - **Recommendation:** (b) for now; (a) if you'd like the nudge.
 - **Blocks:** only the "rank-up" part of the line list in T8.13b. Everything else in it is built.
-- **Answer (owner):** *(waiting)*
+- **Answer (owner):** (b), 2026-10-15 (D349). No rank-up line; GDD §9.16 and the plan's T8.13b line list are read without it.

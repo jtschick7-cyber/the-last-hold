@@ -1,7 +1,6 @@
-import { hunterPortraitId, WRIGHTS_BLADE_ICON } from '../../content/assets';
+import { hunterPortraitId, keepsakeIconId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { formatDuration, formatNumber } from '../../core/format';
-import { wornItem } from '../../core/systems/items';
 import { slotPicker } from '../../core/systems/slot-picker';
 import type { GearSlot } from '../../content/gear';
 import { legendaries } from '../../content/legendaries';
@@ -10,6 +9,7 @@ import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
+import { ItemIcon } from '../widgets/ItemIcon';
 import { Sprite } from '../widgets/Sprite';
 import { HunterLetters } from './HunterLetters';
 import { RankStars, UseSkillRow } from './HunterDepth';
@@ -28,12 +28,13 @@ const Slot = ({ id, slot }: { id: HunterId; slot: GearSlot }) => {
   const worn = view?.worn;
   return (
     <div class={styles.row}>
+      {view?.worn ? (
+        <ItemIcon gear={view.worn.gear} rarity={view.worn.rarity} />
+      ) : (
+        <span style={{ width: '40px', flex: 'none' }} />
+      )}
       <span class={styles.grow}>
-        {slot === 'weapon' ? 'Weapon' : 'Armor'}:{' '}
-        {slot === 'weapon' && wornItem(s, h, 'weapon')?.base === 'wrights-blade' && (
-          <Sprite id={WRIGHTS_BLADE_ICON} />
-        )}{' '}
-        <strong>{worn ? worn.name : '—'}</strong>
+        {slot === 'weapon' ? 'Weapon' : 'Armor'}: <strong>{worn ? worn.name : '—'}</strong>
         {worn && (
           <div class={`${styles.small} ${styles.dim}`}>
             {[worn.base, ...worn.lines].filter((x) => x !== '').join(' · ')}
@@ -61,6 +62,11 @@ const KeepsakeSlot = ({ id }: { id: HunterId }) => {
   if (!h) return null;
   return (
     <div class={styles.row}>
+      {h.keepsake ? (
+        <Sprite id={keepsakeIconId(h.keepsake)} scale={2} />
+      ) : (
+        <span style={{ width: '32px', flex: 'none' }} />
+      )}
       <span class={styles.grow}>
         Keepsake: <strong>{h.keepsake ? legendaries[h.keepsake].name : '—'}</strong>
         {h.keepsake && (

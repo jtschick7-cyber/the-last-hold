@@ -1,7 +1,7 @@
 import { gear } from '../../content/gear';
 import { hunters } from '../../content/hunters';
 import { ITEM_RARITY_IDS } from '../../content/items';
-import { LEGENDARY_IDS, legendaries } from '../../content/legendaries';
+import { LEGENDARY_IDS, legendaries, type LegendaryId } from '../../content/legendaries';
 import { num } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import { owned, wornBy } from './legendaries';
@@ -23,7 +23,7 @@ export interface StoresRow {
 }
 
 export interface LegendaryRow {
-  readonly id: string;
+  readonly id: LegendaryId;
   readonly name: string;
   readonly text: string;
   readonly keptBy: string | null;

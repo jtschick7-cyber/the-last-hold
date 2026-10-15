@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { rankBadgeId, STAR_ICON } from '../../content/assets';
 import { hunterRanks } from '../../content/ranks';
 import type { HunterId } from '../../content/hunters';
 import { useSkillOf } from '../../content/use-skills';
@@ -14,6 +15,7 @@ import {
 import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
+import { Sprite } from '../widgets/Sprite';
 
 // GDD §9.16 (v0.8, D326): the rank badge and stars, the use-skill, and the Rank up and Add a star
 // buttons with their costs and breakdowns. The rules and the words for a refusal come from
@@ -76,10 +78,14 @@ export const RankStars = ({ id }: { id: HunterId }) => {
   return (
     <div>
       <p class={styles.small}>
-        <span class={styles.badge}>{hunterRanks[h.rank].name}</span>{' '}
+        <span class={styles.badge}>
+          <Sprite id={rankBadgeId(h.rank)} /> {hunterRanks[h.rank].name}
+        </span>{' '}
         <span aria-label={`${h.stars} of ${max} stars`}>
-          {'★'.repeat(h.stars)}
-          {'☆'.repeat(Math.max(0, max - h.stars))}
+          {Array.from({ length: h.stars }, (_, i) => (
+            <Sprite key={i} id={STAR_ICON} />
+          ))}
+          <span class={styles.dim}>{'☆'.repeat(Math.max(0, max - h.stars))}</span>
         </span>{' '}
         <span class={styles.dim}>Trophies on hand: {formatNumber(trophiesOnHand(s))}</span>
       </p>

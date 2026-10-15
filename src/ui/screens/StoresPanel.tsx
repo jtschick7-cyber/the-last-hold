@@ -1,4 +1,6 @@
 import { useState } from 'preact/hooks';
+import { keepsakeIconId } from '../../content/assets';
+import { Sprite } from '../widgets/Sprite';
 import { storesView, type StoresSort } from '../../core/systems/stores-view';
 import { dispatch, game, version } from '../app/runtime';
 import { ItemLines } from '../sheets/SlotPickerSheet';
@@ -63,10 +65,15 @@ export const StoresPanel = () => {
           <h3 class={styles.cardTitle}>Legendaries</h3>
           <ul class={styles.list}>
             {view.legendaries.map((l) => (
-              <li key={l.id} class={styles.divider}>
-                <strong>{l.name}</strong>{' '}
-                <span class={styles.dim}>{l.keptBy ? `· kept by ${l.keptBy}` : '· in Stores'}</span>
-                <div class={`${styles.small} ${styles.dim}`}>{l.text}</div>
+              <li key={l.id} class={`${styles.row} ${styles.divider}`}>
+                <Sprite id={keepsakeIconId(l.id)} scale={2} />
+                <span class={styles.grow}>
+                  <strong>{l.name}</strong>{' '}
+                  <span class={styles.dim}>
+                    {l.keptBy ? `· kept by ${l.keptBy}` : '· in Stores'}
+                  </span>
+                  <div class={`${styles.small} ${styles.dim}`}>{l.text}</div>
+                </span>
               </li>
             ))}
           </ul>

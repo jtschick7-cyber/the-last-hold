@@ -56,6 +56,8 @@ export interface ItemView {
   readonly name: string;
   readonly rarity: ItemState['rarity'];
   readonly slot: GearSlot;
+  /** The base piece, for its icon. */
+  readonly gear: GearId;
   readonly base: string;
   readonly lines: readonly string[];
 }
@@ -65,6 +67,7 @@ export const itemView = (item: ItemState): ItemView => ({
   name: itemName(item.rarity, item.base),
   rarity: item.rarity,
   slot: gear[item.base].slot,
+  gear: item.base,
   base: baseText(gear[item.base]),
   lines: item.lines.map(lineText),
 });
