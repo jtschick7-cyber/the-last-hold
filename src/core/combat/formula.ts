@@ -21,9 +21,12 @@ export const finalDamage = (
   armorApplies: boolean,
   taken: number,
   hitMult: number,
+  armorPierce = 0,
 ): number => {
   if (resistance === 0) return 0;
-  const afterArmor = armorApplies ? Math.max(0, dealt - armorEff(target)) : dealt;
+  // Rune Nail (GDD §8.12): a share of the target's Armor is ignored.
+  const armor = armorPierce === 0 ? armorEff(target) : armorEff(target) * (1 - armorPierce);
+  const afterArmor = armorApplies ? Math.max(0, dealt - armor) : dealt;
   const rounded = roundHalfUp(afterArmor * (1 - taken) * hitMult);
   const floor = K.minDamage;
   return rounded < floor ? floor : rounded;

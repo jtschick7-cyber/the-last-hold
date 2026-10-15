@@ -1,5 +1,6 @@
 import { GEAR_IDS, type GearId } from '../../content/gear';
 import { hunters, HUNTER_IDS } from '../../content/hunters';
+import { LEGENDARY_IDS, legendaries, type LegendaryId } from '../../content/legendaries';
 import { ITEM_RARITY_IDS, type ItemRarity } from '../../content/items';
 import { itemName } from '../systems/items';
 import { allDocuments } from '../../content/story/acts';
@@ -23,6 +24,9 @@ const isRarity = (v: string | undefined): v is ItemRarity =>
   (ITEM_RARITY_IDS as readonly string[]).includes(v ?? '');
 const isGear = (v: string | undefined): v is GearId =>
   (GEAR_IDS as readonly string[]).includes(v ?? '');
+
+const isLegendary = (v: string | undefined): v is LegendaryId =>
+  (LEGENDARY_IDS as readonly string[]).includes(v ?? '');
 
 export const foundLines = (_state: GameState, keys: readonly string[]): string[] => {
   const out: string[] = [];
@@ -56,6 +60,8 @@ export const foundLines = (_state: GameState, keys: readonly string[]): string[]
         .filter(Boolean)
         .join(' and ');
       out.push(`Stores was full: the ${itemName(a, b)} was salvaged${paid ? ` for ${paid}` : ''}.`);
+    } else if (tag === 'legendary' && isLegendary(a)) {
+      out.push(`Legendary found: ${legendaries[a].name}. A hunter can keep it.`);
     } else if (tag === 'trust') {
       const step = parseTrustKey(key);
       if (step) out.push(trustStepLine(villages[step.village].name, step.level));

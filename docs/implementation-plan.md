@@ -961,7 +961,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - **`rulesVersion` 5** (owner-approved, D308): every golden fight and every recorded fight replays line for line in Node, WebKit and Chromium. **If one changes, stop and ask.**
   - The odds and Suggest include use-skills. Benchmarks stay in budget.
   - One test per use-skill.
-- [ ] **T8.9 Talents and Legendaries** (D313, D306).
+- [x] **T8.9 Talents and Legendaries** (D313, D306).
   - The talent pick and free respec commands; the 27 effects (Herbs off in Delves, shown).
   - Keepsakes: equip and swap.
   - The six Legendary effects in fights; the milestone checks, on the same events as the Delve relics' idle sources.

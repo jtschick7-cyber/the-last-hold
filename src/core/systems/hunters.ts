@@ -3,6 +3,8 @@ import { buildings, BUILDING_IDS } from '../../content/buildings';
 import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
 import { bonusLines, itemRarities } from '../../content/items';
 import { useSkillOf } from '../../content/use-skills';
+import { legendaries } from '../../content/legendaries';
+import { TALENT_BRANCHES, talentById } from '../../content/talents';
 import {
   HUNTER_IDS,
   hunters,
@@ -175,6 +177,9 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
     ...(h.stars > 0 ? { stars: h.stars } : {}),
     // v0.8 (D312): a Wright's use-skill; Apprentices have none, so their snapshots are unchanged.
     ...(h.rank !== 'apprentice' ? { skill: useSkillOf(id).id } : {}),
+    // v0.8 (D313, D306): picked talents and the keepsake; absent when none, so old snapshots are unchanged.
+    ...(h.talents.length > 0 ? { talents: [...h.talents] } : {}),
+    ...(h.keepsake !== null ? { keepsake: h.keepsake } : {}),
   };
 };
 
@@ -350,6 +355,35 @@ export const hunterStat = (state: GameState, id: HunterId, stat: StatName): Expl
         });
       }
     }
+  }
+  // v0.8 talents (GDD §8.11) and Yrsa's Thole (§8.12), in the buckets combat/build.ts puts them in.
+  for (const id of h.talents) {
+    const t = talentById(id);
+    if (!t) continue;
+    const e = t.effect;
+    const from = `${TALENT_BRANCHES[t.role].find((b) => b.id === t.branch)?.name ?? t.branch}, tier ${t.tier}`;
+    if (
+      (e.kind === 'armorFlat' && stat === 'armor') ||
+      (e.kind === 'speedFlat' && stat === 'speed')
+    ) {
+      flat += e.amount;
+      children.push({ label: `${from} talent: ${t.text}`, value: e.amount });
+    } else if (
+      (e.kind === 'mightPct' && stat === 'might') ||
+      (e.kind === 'maxHealthPct' && stat === 'health')
+    ) {
+      pct += e.amount;
+      lineChildren.push({
+        label: `${from} talent: ${t.text}`,
+        value: e.amount,
+        formula: `(base × level scale + gear) × ${e.amount}`,
+      });
+    }
+  }
+  const kept = h.keepsake ? legendaries[h.keepsake] : null;
+  if (kept?.effect.kind === 'startMeter' && stat === 'speed') {
+    flat += kept.effect.speed;
+    children.push({ label: `${kept.name}: +${kept.effect.speed} Speed`, value: kept.effect.speed });
   }
   const before = base * scale + flat;
   const raw = before * (1 + pct);

@@ -90,6 +90,10 @@ export type Command =
   | { type: 'story.startActIII' }
   | { type: 'hunter.rankUp'; hunter: string }
   | { type: 'hunter.addStar'; hunter: string }
+  | { type: 'talent.pick'; hunter: string; talent: string }
+  | { type: 'talent.respec'; hunter: string }
+  | { type: 'keepsake.equip'; hunter: string; legendary: string }
+  | { type: 'keepsake.unequip'; hunter: string }
   | { type: 'item.craft'; base: string }
   | { type: 'item.rework'; item: string }
   | { type: 'item.equip'; item: string; hunter: string }

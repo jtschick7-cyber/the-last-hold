@@ -69,11 +69,31 @@ export const endOwnAction = (c: Combatant): void => {
   }
 };
 
+/** GDD §8.12 Wolf-Tooth String: +3% Might (status%, stacking) per monster downed this fight, up to a cap. */
+const toothString = (f: Fight): void => {
+  for (const h of f.hunters) {
+    const e = h.keepsake?.effect;
+    if (e?.kind !== 'mightPerMonsterDowned') continue;
+    const add = Math.min(e.each, e.max - h.toothGiven);
+    if (add <= 0) continue;
+    h.toothGiven += add;
+    h.statusPct.might += add;
+    emit(f, {
+      actor: h.id,
+      kind: 'keepsake',
+      text: () =>
+        `${h.name}'s ${h.keepsake?.name}: +${Math.round(add * 100)}% Might (${Math.round(h.toothGiven * 100)}% in all)`,
+      rolls: [],
+    });
+  }
+};
+
 /** A monster of the group is down for good: the Pack Grows counts it (D255). */
 const countKill = (f: Fight, m: Combatant): void => {
   if (f.noted.has(m.id)) return;
   f.noted.add(m.id);
   f.kills += 1;
+  toothString(f);
   const pack = f.rules.packGrows;
   if (!pack) return;
   const add = Math.min(pack.perKill, pack.max - f.packGiven);
@@ -253,7 +273,7 @@ const hunterAct = (f: Fight, c: Combatant, extra = false): void => {
   // D251: the Vanguard, and the Mender when she attacks, hit the front monster; the Striker the weakest.
   const target = c.role === 'striker' ? weakestMonster(f) : frontMonster(f);
   const root = c.skill === 'stopping-root' && !c.skillUsed ? skillOf(c) : null;
-  directAttack(f, c, target, mender ? { mightMult: K.menderAttack } : {});
+  directAttack(f, c, target, mender ? { mightMult: c.attackShare ?? K.menderAttack } : {});
   if (root) plantRoot(f, c, root, target); // Stopping Root: her first attack, hit or miss
   resolveEnds(f);
   // The Wolf's Share (Delve): a crit that brings a monster down for good earns one extra action at once.
@@ -307,7 +327,7 @@ const pickTarget = (
   if (!first) return null;
   if (candidates.length === 1) return { target: first, pre: [], preNotes: [] };
   const weight = (h: Combatant): number =>
-    h.role === 'vanguard' ? K.vanguardWeight : K.otherWeight;
+    h.weightOverride ?? (h.role === 'vanguard' ? K.vanguardWeight : K.otherWeight);
   const total = candidates.reduce((s, h) => s + weight(h), 0);
   const roll = f.rolls.next();
   const point = roll * total;
@@ -490,6 +510,17 @@ export const runFight = (input: FightInput): FightResult => {
       actor: h.id,
       kind: 'skill',
       text: () => `${h.name} (${skillOf(h)?.name}) is up before the wolves: his turn comes first`,
+      rolls: [],
+    });
+  }
+  for (const h of hunters) {
+    // Yrsa's Thole (GDD §8.12): the holder's meter starts at the Legendary's number (set in buildHunter).
+    const e = h.keepsake?.effect;
+    if (e?.kind !== 'startMeter') continue;
+    emit(f, {
+      actor: h.id,
+      kind: 'keepsake',
+      text: () => `${h.name}'s ${h.keepsake?.name}: the turn meter starts at ${e.meter}`,
       rolls: [],
     });
   }

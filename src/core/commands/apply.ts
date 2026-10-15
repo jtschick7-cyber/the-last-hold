@@ -3,6 +3,7 @@ import { debugStartAct, startActOnLoad } from './act-start';
 import { addStar, rankUp } from './hunter-depth';
 import { craftItem, equipFromStores, reworkItem, salvageItem, unequipItem } from './items';
 import { debugUnlit } from './unlit';
+import { equipKeepsake, pickTalent, respecTalents, unequipKeepsake } from './talents';
 import {
   buyAlternateTrait,
   buyChosenStart,
@@ -162,6 +163,14 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return rankUp(state, cmd.hunter);
     case 'hunter.addStar':
       return addStar(state, cmd.hunter);
+    case 'talent.pick':
+      return pickTalent(state, cmd.hunter, cmd.talent);
+    case 'talent.respec':
+      return respecTalents(state, cmd.hunter);
+    case 'keepsake.equip':
+      return equipKeepsake(state, cmd.hunter, cmd.legendary);
+    case 'keepsake.unequip':
+      return unequipKeepsake(state, cmd.hunter);
     case 'item.craft':
       return craftItem(state, cmd.base);
     case 'item.rework':

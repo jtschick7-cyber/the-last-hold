@@ -13,6 +13,7 @@ import type { GameState, Preparation, StandRecord } from '../state/game-state';
 import { bandFor } from '../story/band';
 import { arriveArvid } from '../story/act3';
 import { endRunForStand } from '../delves/run';
+import { grantLegendaries } from '../systems/legendaries';
 import { beginAct, currentAct, standDocuments, wardenDocuments } from '../story/documents';
 import { triumphantStand } from '../story/trust';
 import { ok, refuse, type ApplyResult } from './types';
@@ -106,6 +107,7 @@ export const makeStand = (
   // The steps are kept on the record so the result sheet can show them whenever it is opened (D183).
   if (stand.band === 'triumphant') stand.trustSteps = triumphantStand(state);
   standDocuments(state);
+  grantLegendaries(state); // Yrsa's Thole comes with D5-06 (GDD §8.12)
   // GDD §5.14.1 (D257): after Act V's Last Stand the Unlit's door opens.
   if ((currentAct(state) ?? 0) >= 5) state.delve.unlitOpen = true;
   // 4–5. The reset and the new cycle; the next warden's arrival closes the act's scene.

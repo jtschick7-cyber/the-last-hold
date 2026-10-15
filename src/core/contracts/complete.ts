@@ -6,6 +6,7 @@ import { isWellPrepared, prepIds } from './prep';
 import { reagentsFor } from './reagents';
 import { seeded, stream } from '../rng';
 import { lootKey, rollContractLoot, takeLoot } from '../systems/loot';
+import { grantLegendaries, legendaryKey } from '../systems/legendaries';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
 import { gainXp, recoveryFactor } from '../systems/hunters';
@@ -140,6 +141,8 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
     const drop = rollContractLoot(stream(state.meta.gameSeed, 'loot', contract.id), contract.tier);
     if (drop) found.push(lootKey(takeLoot(state, drop)));
   }
+  // GDD §5.11.6 (D306, D328 (5)): a species reaching Mastered can complete a family; the Legendary is found now.
+  if (success) found.push(...grantLegendaries(state).map(legendaryKey));
   // GDD §5.14.6: after the documents (a trust-gated one reads trust before this win, D178).
   if (success) found.push(...winForVillage(state, contract.village));
   // GDD §5.14.7: a level-up can reach a hunter's letter, win or lose.

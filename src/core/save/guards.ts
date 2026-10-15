@@ -5,6 +5,8 @@ import { GEAR_IDS, type GearId } from '../../content/gear';
 import { HUNTER_IDS, ROLE_IDS, type HunterId } from '../../content/hunters';
 import { TRAIT_IDS, type TraitId } from '../../content/traits';
 import { USE_SKILL_IDS } from '../../content/use-skills';
+import { LEGENDARY_IDS } from '../../content/legendaries';
+import { talentById } from '../../content/talents';
 import type { HunterSnapshot } from '../combat';
 import type { Preparation } from '../state/game-state';
 import type { ItemLine } from '../state/item-state';
@@ -113,6 +115,19 @@ export const snapshot = (v: unknown, where: string): HunterSnapshot => {
     ...(o.lines === undefined ? {} : { lines: itemLines(o.lines, `${where}.lines`) }),
     ...(o.stars === undefined ? {} : { stars: count(o.stars, `${where}.stars`) }),
     ...(o.skill === undefined ? {} : { skill: oneOf(o.skill, USE_SKILL_IDS, `${where}.skill`) }),
+    ...(o.talents === undefined
+      ? {}
+      : {
+          talents: arr(o.talents, `${where}.talents`).map((t, i) => {
+            const id = str(t, `${where}.talents[${i}]`);
+            if (!talentById(id))
+              throw new Invalid(`${where}.talents[${i}]: unknown talent "${id}".`);
+            return id;
+          }),
+        }),
+    ...(o.keepsake === undefined
+      ? {}
+      : { keepsake: oneOf(o.keepsake, LEGENDARY_IDS, `${where}.keepsake`) }),
   };
 };
 

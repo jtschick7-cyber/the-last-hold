@@ -107,7 +107,10 @@ export const directAttack = (
   // knowledge% (GDD §5.0): only the hunters' damage, and 0 unless the species is Studied or better.
   // Each group member has its own level (the Unremembering switch turns the bonus off, D257).
   const knowledgeLevel = attacker.side === 'hunter' ? target.knowledgeLevel : 0;
-  const knowledge = f.rules.knowledgeOff ? 0 : knowledgeBonus(knowledgeLevel);
+  const knowledgeBase = f.rules.knowledgeOff ? 0 : knowledgeBonus(knowledgeLevel);
+  // Hunt, tier 1 (GDD §8.11): the same bucket, against a Studied or Mastered species.
+  const huntBonus = knowledgeBase > 0 ? attacker.knownBonus : 0;
+  const knowledge = knowledgeBase + huntBonus;
   const dealt = typed * (1 + outgoing) * (1 + knowledge) * (crit ? attacker.critMult : 1);
   // Shovelful (GDD §8.5b): the armed attack ignores Armor.
   const armed = attacker.skillArmed ? skillOf(attacker) : null;
@@ -116,8 +119,10 @@ export const directAttack = (
   let hitMult = target.nextHitTakenMult;
   target.nextHitTakenMult = 1;
   // The Armor this hit actually met, read before the hit lands (Swell can change it after; Q7).
-  let armor = ignoresArmor ? 0 : armorEff(target);
-  let amount = finalDamage(dealt, target, resistance, !ignoresArmor, taken, hitMult);
+  // Rune Nail (GDD §8.12) ignores a share of the target's Armor on a direct attack.
+  const pierce = attacker.armorPierce;
+  let armor = ignoresArmor ? 0 : pierce === 0 ? armorEff(target) : armorEff(target) * (1 - pierce);
+  let amount = finalDamage(dealt, target, resistance, !ignoresArmor, taken, hitMult, pierce);
   // Hold the Stair (GDD §8.5b): once a fight, Arvid takes the hit that would down another hunter,
   // after his own Armor and taken% (it can down him). No new dice: the same hit, the same rolls.
   const notes: string[] = [];
@@ -149,8 +154,12 @@ export const directAttack = (
     const out = [`${cap(attacker.damage)} ${fmt2(dealt)}`];
     if (resistance !== 1) out.push(resistance === 0 ? 'immune' : `(×${resistance} resist)`);
     if (knowledge > 0)
-      out.push(`(+${pct(knowledge)} ${knowledgeLevel >= 4 ? 'Mastered' : 'Studied'})`);
+      out.push(
+        `(+${pct(knowledge)} ${knowledgeLevel >= 4 ? 'Mastered' : 'Studied'}${huntBonus > 0 ? `, Hunt talent +${pct(huntBonus)}` : ''})`,
+      );
     out.push(ignoresArmor ? 'ignores armor (Shovelful)' : `−${fmt2(armor)} armor`);
+    if (pierce > 0 && !ignoresArmor)
+      out.push(`(${attacker.keepsake?.name} ignores ${pct(pierce)})`);
     return out.join(' ');
   };
   emit(f, {
@@ -171,6 +180,9 @@ export const directAttack = (
   if (attacker.silverSubHit && standing(target))
     subHit(f, attacker, target, variance, crit, 'silver');
   if (attacker.runeSubHit && standing(target)) subHit(f, attacker, target, variance, crit, 'rune');
+  // Coffin Silver (GDD §8.12): a Silver sub-hit on each direct hit, beside the blade's own.
+  if (attacker.coffinSilver > 0 && standing(target))
+    subHit(f, attacker, target, variance, crit, 'silver', attacker.coffinSilver, 'Coffin Silver');
   // The Pale Smith's Smith's Mark (Delve): a Rune sub-hit on every direct hit, beside the blade's own.
   if (attacker.runeMark > 0 && standing(target))
     subHit(f, attacker, target, variance, crit, 'rune', attacker.runeMark, "Smith's Mark");
