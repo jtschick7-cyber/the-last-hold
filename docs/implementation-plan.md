@@ -966,7 +966,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - Keepsakes: equip and swap.
   - The six Legendary effects in fights; the milestone checks, on the same events as the Delve relics' idle sources.
   - One test per talent and per Legendary.
-- [ ] **T8.10 The yard** (D315).
+- [x] **T8.10 The yard** (D315).
   - Yard XP when a contract finishes, for every hunter at the hold not on it (not the dead, not in a Delve), at 25% of each party member's XP, capped at the third-highest hunter's level.
   - The away-sheet line.
   - Tests: the cap; an injured hunter earning; a Delving hunter not earning.

@@ -60,6 +60,9 @@ export const foundLines = (_state: GameState, keys: readonly string[]): string[]
         .filter(Boolean)
         .join(' and ');
       out.push(`Stores was full: the ${itemName(a, b)} was salvaged${paid ? ` for ${paid}` : ''}.`);
+    } else if (tag === 'yard' && HUNTER_IDS.some((h) => h === a)) {
+      const id = HUNTER_IDS.find((h) => h === a);
+      if (id) out.push(`The yard: ${hunters[id].shortName} reached level ${b}.`);
     } else if (tag === 'legendary' && isLegendary(a)) {
       out.push(`Legendary found: ${legendaries[a].name}. A hunter can keep it.`);
     } else if (tag === 'trust') {

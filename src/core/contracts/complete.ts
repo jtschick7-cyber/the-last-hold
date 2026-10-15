@@ -18,6 +18,7 @@ import { contractXpBonus } from '../long-night/bonuses';
 import { recordWin, sweepDocuments } from '../story/documents';
 import { defeatRibbonshade } from '../story/names';
 import { winForVillage } from '../story/trust';
+import { applyYard } from './yard';
 import { notePeak } from '../story/letters';
 import { deathSeed, fightSeed } from './seeds';
 
@@ -81,6 +82,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   for (const [id, n] of Object.entries(reagents))
     state.stores[id as keyof typeof state.stores] += n ?? 0;
 
+  const earners: HunterId[] = [];
   const injuries: ContractResult['injuries'] = [];
   const levelUps: ContractResult['levelUps'] = [];
   run.party.forEach((id, i) => {
@@ -116,6 +118,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
       h.recovery = { kind: outcome.kind, until: at + outcome.recoverySeconds * MS_PER_SECOND };
       injuries.push({ hunter: id, kind: outcome.kind, until: h.recovery.until });
     }
+    earners.push(id);
     for (const level of gainXp(state, h, xp)) levelUps.push({ hunter: id, level });
   });
 
@@ -147,6 +150,8 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   if (success) found.push(...winForVillage(state, contract.village));
   // GDD §5.14.7: a level-up can reach a hunter's letter, win or lose.
   for (const u of levelUps) found.push(...notePeak(state, u.hunter, u.level));
+  // GDD §5.11.5 (D315): everyone else at the hold earns a share of that XP in the yard, win or lose.
+  if (earners.length > 0) found.push(...applyYard(state, run.party, xp));
 
   const ref: FightRef = {
     contractId: contract.id,
