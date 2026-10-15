@@ -977,7 +977,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
 - [x] **T8.12 The older-rules note** (D319; readings D344): show "recorded with an older rules version" only when a replay comes out different from the record. Applies to contract fights, stand waves and Delve floors. Tests both ways.
 
 #### C. UI
-- [ ] **T8.13a The hunter sheet and the picker** (§9.16).
+- [x] **T8.13a The hunter sheet and the picker** (§9.16; readings D347).
   - Rank badge, stars, use-skill, three slots, talents with tier locks and respec, Rank up and Add a star with costs and breakdowns.
   - The slot picker (best first, differences, Craft, Rework).
   - The Hearth's pointer line.

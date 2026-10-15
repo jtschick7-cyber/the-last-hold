@@ -1,5 +1,6 @@
 import { hunterPortraitId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
+import { hunterRanks } from '../../content/ranks';
 import { formatDuration, formatNumber } from '../../core/format';
 import {
   candidates,
@@ -8,6 +9,7 @@ import {
   lockedHunters,
   rosterCap,
 } from '../../core/systems/hunters';
+import { unspentTalentPoints } from '../../core/systems/ranks';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { HunterView } from '../sheets/HunterSheet';
@@ -45,7 +47,9 @@ const Card = ({ id }: { id: HunterId }) => {
           <span class={styles.grow}>
             <strong>{def.name}</strong>
             <div class={`${styles.small} ${styles.dim}`}>
-              {roleNames[def.role]} · {def.damage} · Lv {h.level} · {line}
+              {roleNames[def.role]} · {def.damage} · Lv {h.level} · {hunterRanks[h.rank].name}
+              {h.stars > 0 ? ` ${'★'.repeat(h.stars)}` : ''} · {line}{' '}
+              {unspentTalentPoints(h) > 0 && <span class={styles.badge}>talent point</span>}
             </div>
           </span>
         </span>

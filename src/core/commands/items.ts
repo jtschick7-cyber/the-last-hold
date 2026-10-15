@@ -4,10 +4,10 @@ import { CRAFT_FROM_SCRATCH, reworkNext } from '../../content/items';
 import { RESOURCE_IDS } from '../../content/resources';
 import { gearCost, noteGearUpgraded } from '../skills/hooks';
 import type { GameState } from '../state/game-state';
-import { canAfford } from '../systems/costs';
-import { gearLock, hunterStatus } from '../systems/hunters';
+import { hunterStatus } from '../systems/hunters';
 import { equipItem, itemById, makeItem, paidFor, replaceItem } from '../systems/items';
 import { salvageValue, storesFull } from '../systems/loot';
+import { payProblem } from '../systems/slot-picker';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.11.1, §5.11.7 (v0.8, D304, D307): the Smithy crafts and reworks, hunters equip, and Stores
@@ -25,11 +25,9 @@ const busy = (state: GameState, hunter: keyof typeof hunters): string | null => 
 };
 
 const pay = (state: GameState, id: GearId): ApplyResult | null => {
-  const g = gear[id];
-  const lock = gearLock(state, g);
-  if (lock) return refuse(`The ${g.name} ${lock}.`);
-  const { cost } = gearCost(state, g); // after Smithing (GDD §5.8.6)
-  if (!canAfford(state, cost)) return refuse(`Not enough resources for ${g.name}.`);
+  const problem = payProblem(state, id); // the picker shows the same words (GDD §9.16)
+  if (problem) return refuse(problem);
+  const { cost } = gearCost(state, gear[id]); // after Smithing (GDD §5.8.6)
   for (const r of RESOURCE_IDS) state.resources[r] -= cost[r];
   return null;
 };
