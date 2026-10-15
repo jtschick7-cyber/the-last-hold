@@ -739,5 +739,5 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ### Current state (end of v0.8 session 3; supersedes the open items in the handoff above)
 - **Done and ticked:** T8.1–T8.12 and T8.11b. **Next:** T8.13a (hunter sheet and picker), then T8.13b, T8.14–T8.18. `npm run check` green (2,059 tests, 65 s); CI green through T8.11.
-- **Owner decisions:** D340, D341 accepted (D343); D337 (1), D342 accepted and Q26 answered (a) (D345). The only decision still Proposed from this milestone's later work is D346 (Command XP: six floors, not the guardian); D330–D336, D338–D339 and D344 are as logged.
+- **Owner decisions:** D340, D341 accepted (D343); D337 (1), D342 accepted and Q26 answered (a) (D345). Still Proposed and unreviewed by the owner: D330–D336, D344 and D346 (Command XP: six floors, not the guardian); D338–D339 are main's maintenance rows.
 - **No open question for the owner.** A fresh container needs `npm ci`, then `npm run check` without piping.
