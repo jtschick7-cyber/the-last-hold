@@ -1,5 +1,6 @@
 import { hunters, HUNTER_IDS } from '../../content/hunters';
 import { allDocuments } from '../../content/story/acts';
+import { CRACK_LETTERS, crackLetterLine } from '../../content/story/act5';
 import { documentTypeNames } from '../../content/story/documents';
 import { roll } from '../../content/story/roll';
 import { firstRibbon, laterRibbon, plainRibbon } from '../../content/story/scenes';
@@ -21,7 +22,10 @@ export const foundLines = (_state: GameState, keys: readonly string[]): string[]
     const [tag, a, b] = key.split(':');
     if (tag === 'doc') {
       const doc = allDocuments.find((d) => d.id === a);
-      if (doc) {
+      if (doc && CRACK_LETTERS.includes(doc.id)) {
+        // Yrsa's letters come up through the crack behind the stove, not with a bounty (D302).
+        out.push(crackLetterLine(doc.heading));
+      } else if (doc) {
         out.push(
           `A ${documentTypeNames[doc.type].toLowerCase()} came with the bounty: '${doc.heading}'.`,
         );

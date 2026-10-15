@@ -891,7 +891,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
 | Review the new art (item icons, rarity frames, keepsakes, star, rank badges, brew icons) | T8.14 | In the playtest |
 
 #### A. Story, fixes and content
-- [ ] **T8.1 Act V** *(the first task, D301–D302)*.
+- [x] **T8.1 Act V** *(the first task, D301–D302)*.
   - Act V in `src/content/story/act5.ts`, word for word from `lore-secrets.md` §30: every document with its condition and text, the two arrival lines, the delivery line ("Pechko found a letter at the crack: '…'."), the new Accounts event "What the hearth leaves" and the additions to three earlier events with their excerpts.
   - Opening **the Unlit's door after Act V's stand** (D257), with the Rift card line, and Yrsa's Thole's result-sheet line after D5-06. The Legendary itself is built in T8.9; until then the line shows alone.
   - The last written act becomes 5. No new condition kinds.

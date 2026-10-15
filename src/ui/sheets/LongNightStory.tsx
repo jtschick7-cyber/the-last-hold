@@ -2,6 +2,7 @@ import { useEffect } from 'preact/hooks';
 import { emberRemembers } from '../../content/skills';
 import { arvidArrival } from '../../content/story/act3';
 import { act4Arrival } from '../../content/story/act4';
+import { act5Arrival } from '../../content/story/act5';
 import { bandLabels, ilseReturns } from '../../content/story/scenes';
 import { skillViews } from '../../core/skills/skills';
 import { trustStepLine } from '../../content/story/trust';
@@ -65,11 +66,27 @@ const useRead = (ids: readonly string[]): void => {
   }, [ids.join()]);
 };
 
-/** The act's testament, or the unwritten-act line. */
-export const Testament = ({ act }: { act: DocumentDef | string | null }) => {
+/** The act's testament (with any line the stand adds after it), or the unwritten-act line. */
+export const Testament = ({
+  act,
+  note = null,
+}: {
+  act: DocumentDef | string | null;
+  note?: string | null;
+}) => {
   const doc = typeof act === 'object' && act !== null && isFound(game(), act.id) ? act : null;
   useRead(doc ? [doc.id] : []);
-  if (doc) return <DocumentReader id={doc.id} />;
+  if (doc)
+    return (
+      <>
+        <DocumentReader id={doc.id} />
+        {note && (
+          <p class={styles.small}>
+            <em>{note}</em>
+          </p>
+        )}
+      </>
+    );
   return (
     <p>
       <em>{typeof act === 'string' || act === null ? UNWRITTEN_ACT_LINE : ''}</em>
@@ -86,22 +103,30 @@ export const WardenScenes = ({ stand }: { stand: StandRecord }) => {
   useRead(ids);
   // D3-01 plays after Ilse's line, which names Arvid (GDD §5.14.3, D211).
   const arvid = ids.includes('D3-01');
-  // D4-01 plays after Pechko's line, which names the oilcloth bundle (GDD §5.14.3, D245).
-  const pechko = ids.includes('D4-01');
+  // D4-01 and D5-01 play after Pechko's line, which names the oilcloth bundle or the crack (GDD §5.14.3, D245, D302).
+  const opening = ids.includes('D5-01') ? 'D5-01' : ids.includes('D4-01') ? 'D4-01' : null;
   return (
     <>
       {ids
-        .filter((id) => id !== 'D3-01' && id !== 'D4-01')
+        .filter((id) => id !== 'D3-01' && id !== opening)
         .map((id) => (
           <DocumentReader key={id} id={id} />
         ))}
       {s.story.ilseAt !== null && (
         <p class={styles.small}>
-          <em>{pechko ? act4Arrival : arvid ? arvidArrival : ilseReturns}</em>
+          <em>
+            {opening === 'D5-01'
+              ? act5Arrival
+              : opening === 'D4-01'
+                ? act4Arrival
+                : arvid
+                  ? arvidArrival
+                  : ilseReturns}
+          </em>
         </p>
       )}
       {arvid && <DocumentReader id="D3-01" />}
-      {pechko && <DocumentReader id="D4-01" />}
+      {opening && <DocumentReader id={opening} />}
       <p class={styles.small}>
         {emberRemembers(skillViews(s).map((v) => ({ name: v.name, level: v.level })))}
       </p>

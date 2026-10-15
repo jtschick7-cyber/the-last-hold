@@ -27,6 +27,11 @@ export const RiftCard = () => {
       </h2>
       <p>{v.quiet ? v.line : <Num text={v.line} breakdown={() => v.waiting.breakdown} />}</p>
       <p class={`${styles.small} ${styles.dim}`}>You hold {v.held} Riftglass.</p>
+      {v.unlitLine && (
+        <p class={styles.small}>
+          <em>{v.unlitLine}</em>
+        </p>
+      )}
       <button
         type="button"
         class={styles.btnPrimary}

@@ -4,7 +4,7 @@ import type { VillageId } from '../villages';
 // lore-secrets §20 (D162): the forty names, one apprentice Sent every second
 // spring from year 200 to 276, and Sigrun entered as the 40th for 278. Each has
 // exactly one source (lore §8): act documents 28, Ribbonshades 6, hunter letters
-// 5, Sigrun's confession 1. Acts I–IV are written; the names of Acts V and VI are fixed
+// 5, Sigrun's confession 1. Acts I–V are written; the names of Act VI are fixed
 // now and go into their documents when those acts are written (lore §20 note 5).
 
 /** Where a name is found (GDD §5.14.4). */
@@ -63,7 +63,7 @@ export const roll: readonly RollName[] = [
     year: 206,
     name: 'Hild Aslaugsdóttir',
     village: 'ravenfell',
-    source: { kind: 'laterAct', act: 5 },
+    source: { kind: 'document', id: 'D5-03' },
     hint: 'Letters went down. Not all of them were about the dark.',
   },
   {
@@ -71,7 +71,7 @@ export const roll: readonly RollName[] = [
     year: 208,
     name: 'Radim Tkadlec',
     village: 'mirograd',
-    source: { kind: 'laterAct', act: 5 },
+    source: { kind: 'document', id: 'D5-03' },
     hint: 'Letters went down. Not all of them were about the dark.',
   },
   {
@@ -79,7 +79,7 @@ export const roll: readonly RollName[] = [
     year: 210,
     name: 'Ragna Leifsdóttir',
     village: 'velkvik',
-    source: { kind: 'laterAct', act: 5 },
+    source: { kind: 'document', id: 'D5-03' },
     hint: 'Letters went down. Not all of them were about the dark.',
   },
   {
@@ -87,7 +87,7 @@ export const roll: readonly RollName[] = [
     year: 212,
     name: 'Vít Brodský',
     village: 'dubno-ford',
-    source: { kind: 'laterAct', act: 5 },
+    source: { kind: 'document', id: 'D5-03' },
     hint: 'Letters went down. Not all of them were about the dark.',
   },
   {

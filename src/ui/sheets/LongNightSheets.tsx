@@ -14,7 +14,7 @@ import { WardenNameField } from '../widgets/WardenNameField';
 import { BandLine, ResidentsAndTrust, Testament, WardenScenes } from './LongNightStory';
 import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
-import { actClosing } from '../../core/story/documents';
+import { actClosing, actClosingNote } from '../../core/story/documents';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { Sprite } from '../widgets/Sprite';
@@ -193,7 +193,7 @@ export const LongNightView = () => {
   return (
     <div>
       {step === 0 && <StandResultView stand={last.stand} />}
-      {step === 1 && <Testament act={actClosing(act)} />}
+      {step === 1 && <Testament act={actClosing(act)} note={actClosingNote(s, act)} />}
       {step === 2 && <HearthView />}
       {step === 3 && <NewWarden s={s} stand={last.stand} />}
       <button type="button" class={styles.btnPrimary} style={{ width: '100%' }} onClick={next}>
