@@ -3,7 +3,7 @@ import type { GameState } from '../state/game-state';
 import { freshHunter } from '../state/hunters-state';
 import type { FoundVia } from '../state/story-state';
 import { levelCap, rosterCap } from '../systems/hunters';
-import { findDocument, sweepDocuments } from './documents';
+import { findDocument, isFound, sweepDocuments } from './documents';
 import { noteAllPeaks } from './letters';
 
 // GDD §5.8, §8.5, §5.14.1 (D211, D213, D214): Act III begins and Arvid arrives with Ilse.
@@ -22,9 +22,19 @@ export const actThreeDue = (state: GameState): boolean =>
 
 /** Arvid joins the roster at the highest hunter's level within the Rank cap (D211). */
 const joinArvid = (state: GameState): void => {
-  if (state.hunters.arvid) return;
-  const highest = Math.max(1, ...Object.values(state.hunters).map((h) => h?.level ?? 0));
-  state.hunters.arvid = { ...freshHunter(), level: Math.min(highest, levelCap(state)) };
+  const highest = Math.max(
+    1,
+    ...Object.entries(state.hunters).map(([id, h]) => (id === 'arvid' ? 0 : (h?.level ?? 0))),
+  );
+  const level = Math.min(highest, levelCap(state));
+  const there = state.hunters.arvid;
+  if (there) {
+    // The debug "Add Arvid" (v0.5) puts him here at level 1 before Act III. The arrival brings him
+    // up to D211's level, never down, and only once: the scene is still to play (D282).
+    if (!isFound(state, 'D3-01') && there.level < level) there.level = level;
+    return;
+  }
+  state.hunters.arvid = { ...freshHunter(), level };
   if (state.roster.active.length < rosterCap(state).value) state.roster.active.push('arvid');
 };
 

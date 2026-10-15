@@ -1,7 +1,9 @@
 // Plan T6.7 (GDD §5.14.1, §8.5; lore-secrets §26; D211, D213, D214): Arvid arrives with Ilse
 // when Act III begins, at the highest hunter's level within the Rank cap; a save in an
 // unwritten act's cycle starts Act III on load; the debug "Start Act III"; D3-08.
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { loadEnvelope } from '../../src/core/save';
 import { hunters } from '../../src/content/hunters';
 import { arvidArrival, arvidArrivalOnLoad } from '../../src/content/story/act3';
 import { freshCycleRecord, createNewGame } from '../../src/core/state/new-game';
@@ -108,6 +110,64 @@ describe('Arvid arrives when Act III begins (D211)', () => {
     h.level = 20;
     stand(s);
     expect(s.story.letters.some((l) => l.hunter === 'arvid' && l.slot === 0)).toBe(true);
+  });
+});
+
+describe("Arvid's level on arrival (D211; the owner's save, D244, T7.2)", () => {
+  /** The owner's real v0.6 save (cycle 19, hunters at levels 8 to 2), rewound to before Arvid's arrival. */
+  const ownerSave = (): GameState => {
+    const env = JSON.parse(
+      readFileSync(new URL('../saves/fixtures/v6-owner.json', import.meta.url), 'utf8'),
+    ) as unknown;
+    const r = loadEnvelope(env);
+    if (!r.ok) throw new Error(r.error);
+    const s = r.value.state;
+    delete s.hunters.arvid;
+    s.roster.active = s.roster.active.filter((h) => h !== 'arvid');
+    s.story.documents = s.story.documents.filter((d) => !d.id.startsWith('D3-'));
+    return s;
+  };
+
+  it('the on-load arrival gives the highest hunter’s level within the cap: not level 1', () => {
+    const s = ownerSave();
+    const highest = Math.max(...Object.values(s.hunters).map((h) => h?.level ?? 0));
+    expect(highest).toBeGreaterThan(1);
+    expect(actThreeDue(s)).toBe(true);
+    expect(run(s, { type: 'story.startActIII' }).ok).toBe(true);
+    expect(s.hunters.arvid?.level).toBe(Math.min(highest, levelCap(s)));
+  });
+
+  it('level 1 only when every other hunter is at level 1 (the rule, applied as written)', () => {
+    const s = ownerSave();
+    for (const h of Object.values(s.hunters)) if (h) h.level = 1;
+    run(s, { type: 'story.startActIII' });
+    expect(s.hunters.arvid?.level).toBe(1);
+  });
+
+  it('a debug-added Arvid (level 1) is brought up to that level when the arrival plays (D282)', () => {
+    const s = ownerSave();
+    expect(run(s, { type: 'debug.addArvid' }).ok).toBe(true);
+    expect(s.hunters.arvid?.level).toBe(1);
+    expect(run(s, { type: 'debug.startActIII' }).ok).toBe(true);
+    const highest = Math.max(
+      ...Object.entries(s.hunters).map(([id, h]) => (id === 'arvid' ? 0 : (h?.level ?? 0))),
+    );
+    expect(s.hunters.arvid?.level).toBe(Math.min(highest, levelCap(s)));
+    expect(s.story.peakLevels.arvid).toBe(s.hunters.arvid?.level);
+  });
+
+  it('never lowers a higher Arvid, and does not raise him again after the scene', () => {
+    const s = ownerSave();
+    run(s, { type: 'debug.addArvid' });
+    const a = s.hunters.arvid;
+    if (!a) throw new Error('no arvid');
+    a.level = 9;
+    run(s, { type: 'debug.startActIII' });
+    expect(s.hunters.arvid?.level).toBe(9);
+    // Later, with higher hunters, a second arrival (refused) changes nothing.
+    for (const h of Object.values(s.hunters)) if (h && h !== s.hunters.arvid) h.level = 10;
+    expect(run(s, { type: 'debug.startActIII' }).ok).toBe(false);
+    expect(s.hunters.arvid?.level).toBe(9);
   });
 });
 
