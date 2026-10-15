@@ -2,6 +2,7 @@ import type { ConsumableId } from '../../content/consumables';
 import type { RollSource } from '../rng';
 import type { Combatant, LogEntry } from './types';
 import type { FightContext } from './stats';
+import type { FightRules } from './delve';
 
 /** The running fight. Everything that changes during it lives here. */
 export interface Fight {
@@ -29,6 +30,25 @@ export interface Fight {
   readonly bombs: readonly ConsumableId[];
   /** Watchtower volley at tick 1 (Last Stand only); 0 in contract fights. */
   readonly volley: number;
+  /** The ★ rules and Unlit switches of a Delve floor (D255, D257); all off elsewhere. */
+  readonly rules: FightRules;
+  /** Monsters downed so far this fight (the Pack Grows counts them for the run). */
+  kills: number;
+  /** How much Might the Pack Grows has given so far, so its cap holds across floors. */
+  packGiven: number;
+  /** Actions the party has taken (the Drowned Bell's knock-back counts them). */
+  partyActions: number;
+  /** Mended Cloth: used this floor, and the downed hunter waiting for the Mender. */
+  clothUsed: boolean;
+  clothPending: Combatant | null;
+  /** The Long Vigil has been used this run. */
+  vigilUsed: boolean;
+  /** Who has already been counted down (hunter and monster ids). */
+  readonly noted: Set<string>;
+  /** Toll: hunter→monster pairs whose first hit has landed. */
+  readonly tolled: Set<string>;
+  /** The last direct attack was a crit (the Wolf's Share, Struck Bronze). */
+  lastCrit: boolean;
   /** Alchemy: how much stronger every brew number is this fight (1 at level 0, GDD §5.8.6). */
   readonly potency: number;
 }

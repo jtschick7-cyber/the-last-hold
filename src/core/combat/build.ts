@@ -4,6 +4,8 @@ import { num } from '../balance-access';
 import { intPow } from '../math';
 import { hunterKit } from './prep';
 import type { Preparation } from '../state/game-state';
+import { K } from './constants';
+import type { HunterBoost } from './delve';
 import { speciesOf } from './species';
 import type { Combatant, FightMonster, HunterSnapshot } from './types';
 
@@ -27,9 +29,25 @@ const kit = {
   steadfastLeft: 0,
   tonicLeft: 0,
   extraTaken: 0,
+  dealtBonus: 0,
+  takenByType: {},
+  vanguardShield: 0,
+  healBonus: 0,
+  healThreshold: K.healBelow,
+  lowHealth: null,
+  runeMark: 0,
+  forgeWelded: false,
+  noHealing: false,
+  menderHeals: true,
+  actionDrain: 0,
 } as const;
 
-export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation): Combatant => {
+export const buildHunter = (
+  h: HunterSnapshot,
+  slot: number,
+  prep?: Preparation,
+  boost?: HunterBoost,
+): Combatant => {
   const { oilFamily, potion } = hunterKit(h, prep);
   const scale = 1 + num('hunter.levelStatGrowth') * (h.level - 1);
   const effects = h.traits.map((t) => traits[t].effect);
@@ -46,8 +64,12 @@ export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation)
     } else if (e.kind === 'critMult') critMult = e.mult;
     else if (e.kind === 'speedFlat') speedFlat += e.amount;
   }
-  const maxHealth = roundHalfUp(h.base.health * scale);
-  return {
+  const maxHealth = roundHalfUp(
+    boost && boost.healthPct !== 0
+      ? h.base.health * scale * (1 + boost.healthPct)
+      : h.base.health * scale,
+  );
+  const hunter: Combatant = {
     side: 'hunter',
     id: h.id,
     name: h.name,
@@ -70,9 +92,12 @@ export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation)
     resist: null,
     varianceLo,
     varianceHi,
-    critChance: h.role === 'striker' ? num('striker.critChance') : num('combat.critChance'),
-    critMult,
-    speed: h.base.speed + speedFlat,
+    critChance:
+      (h.role === 'striker' ? num('striker.critChance') : num('combat.critChance')) +
+      (boost ? boost.critPoints / 100 : 0),
+    // Heavy Jaw: the higher multiplier applies (with Cold-blooded too).
+    critMult: boost && boost.critMult > critMult ? boost.critMult : critMult,
+    speed: h.base.speed + speedFlat + (boost?.speedFlat ?? 0),
     traits: effects,
     fireTakenReduction: armor?.fireTakenReduction ?? 0,
     silverSubHit: weapon?.silverSubHit ?? false,
@@ -90,6 +115,21 @@ export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation)
     potion,
     ...kit,
   };
+  if (boost) {
+    hunter.statPct.might += boost.mightPct;
+    hunter.flat.might += boost.mightFlat;
+    hunter.flat.armor += boost.armorFlat;
+    hunter.flat.speed += boost.speedFlat;
+    hunter.hitBonus += boost.hitPoints / 100;
+    hunter.dealtBonus = boost.dealtBonus;
+    hunter.extraTaken += boost.takenAll;
+    hunter.takenByType = boost.takenByType;
+    hunter.vanguardShield = boost.vanguardShield;
+    hunter.healBonus = boost.healBonus;
+    if (boost.healThreshold !== null) hunter.healThreshold = boost.healThreshold;
+    hunter.lowHealth = boost.lowHealth;
+  }
+  return hunter;
 };
 
 /** `strength` multiplies Health and Might: Threat in the Last Stand (GDD §5.9.1); 1 elsewhere. */

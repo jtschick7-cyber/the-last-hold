@@ -4,6 +4,7 @@ import type { GearId } from '../../content/gear';
 import type { HunterId, RoleId, Stats } from '../../content/hunters';
 import type { MonsterAbility, MonsterId } from '../../content/monsters';
 import type { GuardianId } from '../../content/delves/guardians';
+import type { DelveRelicId } from '../../content/delves/relics';
 import type { TraitEffect, TraitId } from '../../content/traits';
 import type { RollSource } from '../rng';
 import type { Preparation } from '../state/game-state';
@@ -68,6 +69,20 @@ export interface GuardianInstance {
 /** What a fight is against: a contract species or a Deep guardian. */
 export type FightMonster = MonsterInstance | GuardianInstance;
 
+/** A Delve floor's fight (GDD §5.10, D254, D255): what the run brings into it. */
+export interface DelveFightOptions {
+  /** Blessing ids taken so far this run. */
+  readonly blessings: readonly string[];
+  /** Delve relics owned: their effects work only here (D261). */
+  readonly relics: readonly DelveRelicId[];
+  /** Each hunter's Health carried in, as a share of max Health; 0 is down for the run (D253). Absent means full. */
+  readonly health: Readonly<Partial<Record<HunterId, number>>>;
+  /** Monsters killed earlier in the run (the Pack Grows). */
+  readonly kills: number;
+  /** The Long Vigil has been used this run. */
+  readonly vigilUsed: boolean;
+}
+
 export interface FightInput {
   readonly party: readonly HunterSnapshot[];
   readonly monster: FightMonster;
@@ -76,6 +91,8 @@ export interface FightInput {
    * is won when every monster is down. Absent or empty: the one-monster fight of §5.5.
    */
   readonly companions?: readonly MonsterInstance[];
+  /** A Delve floor: blessings, relics and carried Health (GDD §5.10). Absent: a contract fight or a stand. */
+  readonly delve?: DelveFightOptions;
   /** How many of the 16 contract species are not yet Studied: the Forgotten's Nameless (GDD §8.3). */
   readonly nameless?: number;
   /** Null in the Last Stand: the hold isn't a contract location, so location traits don't apply. */
@@ -181,6 +198,29 @@ export interface Combatant {
   steadfastLeft: number;
   /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
   extraTaken: number;
+  // ---- Delve blessings and relics (v0.7, GDD §8.8); all neutral outside a Delve ----
+  /** outgoing%: added to the hunter's damage bonuses. */
+  dealtBonus: number;
+  /** taken% against one damage type only (Cooled Iron). */
+  takenByType: Readonly<Partial<Record<DamageType, number>>>;
+  /** Warp and Weft: taken% for this hunter while another Vanguard stands. */
+  vanguardShield: number;
+  /** The Mender's heals are this much stronger (Shared Bread, Goose-Grease). */
+  healBonus: number;
+  /** The Mender heals anyone below this share of max Health. */
+  healThreshold: number;
+  /** Blood in the Snow: +Might (stat%) while below this share of Health. */
+  lowHealth: { readonly below: number; readonly amount: number } | null;
+  /** The Smith's Mark: a Rune sub-hit of this share on every direct hit (0 = none). */
+  runeMark: number;
+  /** Forge-Welded: Armor also reduces ability damage and burns, to a minimum of 1. */
+  forgeWelded: boolean;
+  /** What Was Burned: nothing restores this hunter's Health. */
+  noHealing: boolean;
+  /** No Name: false stops the Mender healing. */
+  menderHeals: boolean;
+  /** Drawn Thin: Health lost, as a share of max, after each of this hunter's own actions. */
+  actionDrain: number;
   /** Rimewrought's Unthawed has stripped its Armor (GDD §8.3, v0.5). */
   unthawed: boolean;
 }
@@ -226,6 +266,8 @@ export interface FightResult {
   }[];
   /** A Saltburst went off and cancelled an ability (part of "well prepared", GDD §5.7). */
   readonly saltburstCancelled: boolean;
+  /** A Delve floor: what the run carries on (kills, the Long Vigil). */
+  readonly delve?: { readonly kills: number; readonly vigilUsed: boolean };
   /** Hunters whose potion fired or was ruined in this fight (the stand's once-per-stand rule). */
   readonly potionsUsed: readonly string[];
 }

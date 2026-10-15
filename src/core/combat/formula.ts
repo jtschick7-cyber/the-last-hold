@@ -30,6 +30,7 @@ export const finalDamage = (
 };
 
 export const heal = (c: Combatant, amount: number): number => {
+  if (c.noHealing) return 0; // What Was Burned (Delve): nothing restores Health
   const before = c.health;
   // Chill (Deep guardian): a chilled hunter receives less healing (status%).
   const received = c.healCutLeft > 0 ? roundHalfUp(amount * (1 - c.healCut)) : amount;

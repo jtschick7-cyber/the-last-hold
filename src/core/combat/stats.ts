@@ -20,7 +20,13 @@ const swellBonus = (c: Combatant): number => {
 };
 
 export const mightEff = (c: Combatant): number =>
-  (c.base.might + c.flat.might) * (1 + c.statPct.might) * (1 + c.statusPct.might);
+  (c.base.might + c.flat.might) *
+  (1 + c.statPct.might + lowHealthMight(c)) *
+  (1 + c.statusPct.might);
+
+/** Blood in the Snow (Delve): +Might (stat%) while below a share of Health. */
+const lowHealthMight = (c: Combatant): number =>
+  c.lowHealth !== null && c.health < c.maxHealth * c.lowHealth.below ? c.lowHealth.amount : 0;
 
 export const armorEff = (c: Combatant): number =>
   (c.base.armor + c.flat.armor) * (1 + c.statPct.armor + swellBonus(c)) * (1 + c.statusPct.armor);
@@ -69,6 +75,7 @@ export const outgoingPct = (
     else if (e.kind === 'mightVsFamily' && e.family === family) sum += e.amount;
     else if (e.kind === 'damageType' && e.type === type) sum += e.dealt;
   }
+  sum += a.dealtBonus; // Delve blessings (v0.7); 0 elsewhere
   // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
   if (a.oilFamily !== null && a.oilFamily === family) sum += ctx.oilBonus;
   return sum;
@@ -90,7 +97,7 @@ export const hitChance = (
         if (e.kind === 'partyHitOnLocation' && e.location === ctx.location) chance += e.amount;
       }
     }
-  }
+  } else chance += attacker.hitBonus; // Low Tide (Delve): monsters' hit chance; 0 elsewhere
   return chance;
 };
 
@@ -115,7 +122,15 @@ export const takenReduction = (
   party: readonly Combatant[],
 ): number => {
   if (defender.side !== 'hunter') return 0;
-  let sum = defender.extraTaken;
+  let sum = defender.extraTaken + (defender.takenByType[type] ?? 0);
+  if (defender.vanguardShield > 0) {
+    // Warp and Weft (Delve): the others take less while a Vanguard stands.
+    for (const ally of party)
+      if (ally !== defender && present(ally) && ally.role === 'vanguard') {
+        sum += defender.vanguardShield;
+        break;
+      }
+  }
   for (const ally of party) {
     if (!present(ally)) continue;
     for (const e of ally.traits) {

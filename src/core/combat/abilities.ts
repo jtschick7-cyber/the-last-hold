@@ -306,7 +306,14 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
         if (!standing(h)) continue;
         // Fire ignores Armor, but taken% (Fire-touched, Plate) still applies (B4).
         const raw = h.maxHealth * a.maxHealthFraction;
-        const amount = finalDamage(raw, h, 1, false, takenReduction(h, 'fire', f.hunters), 1);
+        const amount = finalDamage(
+          raw,
+          h,
+          1,
+          h.forgeWelded,
+          takenReduction(h, 'fire', f.hunters),
+          1,
+        );
         hurt(h, amount);
         emit(f, {
           actor: m.id,
@@ -326,7 +333,14 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
       for (const h of f.hunters) {
         if (!standing(h)) continue;
         const raw = h.maxHealth * a.maxHealthFraction;
-        const amount = finalDamage(raw, h, 1, false, takenReduction(h, 'frost', f.hunters), 1);
+        const amount = finalDamage(
+          raw,
+          h,
+          1,
+          h.forgeWelded,
+          takenReduction(h, 'frost', f.hunters),
+          1,
+        );
         hurt(h, amount);
         emit(f, {
           actor: m.id,
