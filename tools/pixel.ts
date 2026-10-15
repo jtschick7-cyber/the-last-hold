@@ -44,20 +44,28 @@ export const C = {
 } as const;
 export type ColorName = keyof typeof C;
 
-const SIZE = 64;
+const PORTRAIT_SIZE = 64;
 
+/** A square canvas: 64 px for portraits, 32 px for battle sprites (GDD §9.12), 16 px for icons. */
 export class Canvas {
-  readonly px: (string | null)[] = Array.from({ length: SIZE * SIZE }, () => null);
+  readonly px: (string | null)[];
+
+  constructor(readonly size: number = PORTRAIT_SIZE) {
+    this.px = Array.from({ length: size * size }, () => null);
+  }
 
   set(x: number, y: number, c: string | null): void {
     const ix = Math.round(x);
     const iy = Math.round(y);
-    if (ix < 0 || iy < 0 || ix >= SIZE || iy >= SIZE) return;
-    this.px[iy * SIZE + ix] = c;
+    if (ix < 0 || iy < 0 || ix >= this.size || iy >= this.size) return;
+    this.px[iy * this.size + ix] = c;
   }
 
   get(x: number, y: number): string | null {
-    return this.px[Math.round(y) * SIZE + Math.round(x)] ?? null;
+    const ix = Math.round(x);
+    const iy = Math.round(y);
+    if (ix < 0 || iy < 0 || ix >= this.size || iy >= this.size) return null;
+    return this.px[iy * this.size + ix] ?? null;
   }
 
   fill(c: string | null): void {
@@ -98,33 +106,35 @@ export class Canvas {
   mirrored(draw: (set: (x: number, y: number, c: string) => void) => void): void {
     draw((x, y, c) => {
       this.set(x, y, c);
-      this.set(SIZE - 1 - x, y, c);
+      this.set(this.size - 1 - x, y, c);
     });
   }
 
   /** Draws a dark outline one pixel outside every filled pixel that touches empty space. */
   outline(c: string): void {
+    const n = this.size;
     const next = [...this.px];
-    for (let y = 0; y < SIZE; y++) {
-      for (let x = 0; x < SIZE; x++) {
-        if (this.px[y * SIZE + x] !== null) continue;
+    for (let y = 0; y < n; y++) {
+      for (let x = 0; x < n; x++) {
+        if (this.px[y * n + x] !== null) continue;
         const touches = [
-          this.px[y * SIZE + x - 1],
-          this.px[y * SIZE + x + 1],
-          this.px[(y - 1) * SIZE + x],
-          this.px[(y + 1) * SIZE + x],
-        ].some((n) => n !== undefined && n !== null);
-        if (touches) next[y * SIZE + x] = c;
+          x > 0 ? this.px[y * n + x - 1] : null,
+          x < n - 1 ? this.px[y * n + x + 1] : null,
+          this.px[(y - 1) * n + x],
+          this.px[(y + 1) * n + x],
+        ].some((v) => v !== undefined && v !== null);
+        if (touches) next[y * n + x] = c;
       }
     }
     this.px.splice(0, this.px.length, ...next);
   }
 
-  toPng(): Buffer {
-    const png = new PNG({ width: SIZE, height: SIZE });
+  /** The picture as a PNG; `height` crops to the top rows (the wide hold overlays). */
+  toPng(height: number = this.size): Buffer {
+    const png = new PNG({ width: this.size, height });
     this.px.forEach((hex, i) => {
       const o = i * 4;
-      if (hex === null) return;
+      if (hex === null || i >= this.size * height) return;
       png.data[o] = parseInt(hex.slice(0, 2), 16);
       png.data[o + 1] = parseInt(hex.slice(2, 4), 16);
       png.data[o + 2] = parseInt(hex.slice(4, 6), 16);

@@ -627,3 +627,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Open questions:** none new. **Waiting on you (not blocking):** D287 and D288 (Proposed) and the drafted blurbs, relic lines and Pechko lines.
 - **Heads-up:** the check takes about 80–85 s against a 90 s limit; WebKit browser tests only run in CI.
 
+## 2026-10-15 — v0.7 session 3 (continued): T7.12 art
+- **Owner approved D287, D288 and the drafted lines.**
+- **Drawn in code (D265, D289 Proposed):** 30 battle sprites (the 11 hunters from their portrait parts, the 16 species by family template, the 3 Deep guardians), each a strip of five 32 px frames: idle, a second idle, lunge, hit flash, downed. Also the six patron sigils (16 px), the Riftglass icon, the six Delve relic icons, three rarity frames (20 px), and the four hold cosmetics as 160 × 64 layers for each of the four Ranks. 62 new images, all manifest rows, `docs/credits.md` regenerated. Tests redraw every file and compare, check the palette and the sizes, that all five frames exist and differ, and that a lunge stays in the frame.
+- **Contact sheet:** `/preview/contact-sheet.html` now shows each sprite frame by frame and the cosmetics on their scenes. 👤 **Please review (Q22).**
+- **Known roughness:** the Ribbonshade's ribbon reads weakly; the Gloam-Moths and the guardians are the least like their portraits; the cosmetic positions on the scenes are measured by eye (the carved door in particular) and may need a nudge.
+- **Not done on purpose:** nothing shows the sprites in the app yet; the floor playback and the sprite widget that picks a frame are T7.13a. The shrunk-portrait fallback (D265) is built there too.
+- **Next:** T7.13a (the Rift card, rift scene, entry sheet, floor playback), then T7.13b, T7.14, T7.15, T7.16.
+- **Open questions:** Q22 (art review, not blocking). **Waiting on you:** accept or edit D289.

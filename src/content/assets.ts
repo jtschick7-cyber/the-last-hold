@@ -6,12 +6,22 @@ import { HUNTER_IDS, hunters, type HunterId } from './hunters';
 import { MONSTER_IDS, monsters, type MonsterId } from './monsters';
 import { RELIC_IDS, relics, type RelicId } from './relics';
 import { RESOURCE_IDS, type ResourceId } from './resources';
+import { GUARDIAN_IDS, guardians, type GuardianId } from './delves/guardians';
+import { PATRON_IDS, patrons, type PatronId } from './delves/patrons';
+import { DELVE_RELIC_IDS, delveRelics, type DelveRelicId } from './delves/relics';
+import { COSMETIC_IDS, type CosmeticId } from './delves/shop';
+import { RARITIES, rarityNames, type RarityId } from './delves/blessing-types';
 
 // Technical design §12.1: every image the game shows has a manifest row.
 // Swapping art means replacing a file or changing a row, never code. A row with
 // source 'placeholder' has no file yet; <Sprite> draws the fallback for it.
 // GDD §9.12 sizes: 16 px icons, 32 px buildings, 64 px portraits.
-export type AssetKind = 'icon' | 'building' | 'scene' | 'portrait';
+export type AssetKind = 'icon' | 'building' | 'scene' | 'portrait' | 'sprite' | 'frame';
+
+/** GDD §9.12 (D265): a battle sprite is one strip of these 32 px frames, left to right. */
+export const SPRITE_FRAME_NAMES = ['idle', 'idle2', 'lunge', 'hit', 'downed'] as const;
+export type SpriteFrameName = (typeof SPRITE_FRAME_NAMES)[number];
+export const SPRITE_PX = 32;
 
 interface AssetBase {
   readonly id: string;
@@ -65,6 +75,16 @@ export const skillIconId = (s: SkillId): string => `icon.skill.${s}`;
 export const relicIconId = (r: RelicId): string => `icon.relic.${r}`;
 export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
 export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m}`;
+// v0.7 (plan T7.12, D265): battle sprites, the patron sigils, the Riftglass, the Delve relics, the
+// rarity frames and the hold cosmetics, all code-drawn.
+export const hunterSpriteId = (h: HunterId): string => `sprite.hunter.${h}`;
+export const monsterSpriteId = (m: MonsterId): string => `sprite.monster.${m}`;
+export const guardianSpriteId = (g: GuardianId): string => `sprite.guardian.${g}`;
+export const sigilIconId = (p: PatronId): string => `icon.sigil.${p}`;
+export const RIFTGLASS_ICON = 'icon.riftglass';
+export const delveRelicIconId = (r: DelveRelicId): string => `icon.delve-relic.${r}`;
+export const rarityFrameId = (r: RarityId): string => `icon.rarity.${r}`;
+export const cosmeticId = (c: CosmeticId, age: AgeId): string => `scene.cosmetic.${c}.${age}`;
 
 // Plan T1.31a: the v0.1 images, built from the owner's CC0 Kenney packs by
 // tools/build-art.ts (recipes in tools/art-recipes.ts) and recolored to the
@@ -108,9 +128,10 @@ const generated = (
   label: string,
   file: string,
   generator: string,
+  kind: AssetKind = 'portrait',
 ): AssetEntry => ({
   id,
-  kind: 'portrait',
+  kind,
   size,
   label,
   file,
@@ -216,6 +237,87 @@ export const assets: readonly AssetEntry[] = [
   ),
   ...SKILL_IDS.map((k) =>
     fromPack(skillIconId(k), 'icon', [16, 16], skills[k].name, `icons/skill-${k}.png`, ONE_BIT),
+  ),
+  // v0.7 (plan T7.12): drawn by tools/gen-sprites.ts.
+  ...HUNTER_IDS.map((h) =>
+    generated(
+      hunterSpriteId(h),
+      [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+      `${hunters[h].name}, battle sprite`,
+      `sprites/hunter-${h}.png`,
+      'tools/gen-sprites.ts',
+      'sprite',
+    ),
+  ),
+  ...MONSTER_IDS.map((m) =>
+    generated(
+      monsterSpriteId(m),
+      [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+      `${monsters[m].name}, battle sprite`,
+      `sprites/monster-${m}.png`,
+      'tools/gen-sprites.ts',
+      'sprite',
+    ),
+  ),
+  ...GUARDIAN_IDS.map((g) =>
+    generated(
+      guardianSpriteId(g),
+      [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+      `${guardians[g].name}, battle sprite`,
+      `sprites/guardian-${g}.png`,
+      'tools/gen-sprites.ts',
+      'sprite',
+    ),
+  ),
+  ...PATRON_IDS.map((p) =>
+    generated(
+      sigilIconId(p),
+      [16, 16],
+      `${patrons[p].name}, sigil`,
+      `icons/sigil-${p}.png`,
+      'tools/gen-sprites.ts',
+      'icon',
+    ),
+  ),
+  generated(
+    RIFTGLASS_ICON,
+    [16, 16],
+    'Riftglass',
+    'icons/riftglass.png',
+    'tools/gen-sprites.ts',
+    'icon',
+  ),
+  ...DELVE_RELIC_IDS.map((r) =>
+    generated(
+      delveRelicIconId(r),
+      [16, 16],
+      delveRelics[r].name,
+      `icons/delve-relic-${r}.png`,
+      'tools/gen-sprites.ts',
+      'icon',
+    ),
+  ),
+  ...RARITIES.map((r) =>
+    generated(
+      rarityFrameId(r),
+      [20, 20],
+      `${rarityNames[r]} frame`,
+      `icons/rarity-${r}.png`,
+      'tools/gen-sprites.ts',
+      'frame',
+    ),
+  ),
+  ...COSMETIC_IDS.flatMap((c) =>
+    AGE_IDS.map((a) =>
+      generated(
+        cosmeticId(c, a),
+        [160, 64],
+        `${titled(c)}, the hold at ${titled(a)}`,
+        `scenes/cosmetics/${a}-${c}.png`,
+        'tools/gen-sprites.ts',
+        'scene',
+      ),
+    ),
   ),
 ];
 

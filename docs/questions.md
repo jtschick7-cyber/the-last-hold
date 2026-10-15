@@ -209,3 +209,9 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
   (c) Command skill XP per floor cleared (like a wave held), no hunter XP.
 - **Recommendation:** (a). It's the D20-safe reading of everything decided, and v0.8 is where XP, ranks and yard XP (D275) are designed together.
 - **Answer (owner):** 2026-10-15: (a), as recommended: no hunter XP and no warden-skill XP from Delves in v0.7 (D281). v0.8 decides along with trophies, loot and yard XP.
+
+### Q22 — Review the v0.7 art: battle sprites first (not blocking; one session before T7.13a)
+- **What to look at:** the contact sheet on the preview (`/preview/contact-sheet.html`): the 11 hunter and 19 monster battle sprites with all five frames, the six patron sigils, Riftglass, the six Delve relics, the three rarity frames, and the four hold cosmetics on each Rank's scene.
+- **Options per sprite:** (a) keep; (b) redraw, with what to change; (c) drop it, so the floor shows the 64 px portrait shrunk to 32 px (D265).
+- **Recommendation:** (a) for the hunters and most species, with a close look at the Ribbonshade (its ribbon reads weakly), the Gloam-Moths and the Deep guardians, which are the least like their portraits.
+- **Blocks:** nothing in T7.13a's build (it uses whatever is drawn); a rejected sprite is a redraw or the portrait fallback.
