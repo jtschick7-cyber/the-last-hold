@@ -1,7 +1,7 @@
 import { roundHalfUp } from './build';
 import { cancelsAbility, checkPotion, spoilHit } from './prep';
 import { finalDamage, heal, hurt } from './formula';
-import { emit, type Fight } from './fight-state';
+import { cap, emit, type Fight } from './fight-state';
 import { armorEff, mightEff, present, speedEff, standing, takenReduction } from './stats';
 import type { Combatant } from './types';
 
@@ -150,7 +150,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
             actor: m.id,
             kind: 'ability',
             text: () =>
-              `${m.name}'s Root-Wall mends it, +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+              `${cap(m.name)}'s Root-Wall mends it, +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
             rolls: [],
             amount: healed,
             targetHealth: m.health,
@@ -185,8 +185,8 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               target: victim.id,
               text: () =>
                 lost
-                  ? `${m.name} leads ${victim.name} astray (loses their next action)`
-                  : `${m.name} leads ${victim.name} astray, but ${keeps(victim)}`,
+                  ? `${cap(m.name)} leads ${victim.name} astray (loses their next action)`
+                  : `${cap(m.name)} leads ${victim.name} astray, but ${keeps(victim)}`,
               rolls: used,
               rollNotes: notes,
             });
@@ -196,7 +196,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         emit(f, {
           actor: m.id,
           kind: 'ability-roll',
-          text: () => `${m.name}'s Lead Astray fails`,
+          text: () => `${cap(m.name)}'s Lead Astray fails`,
           rolls: used,
           rollNotes: notes,
         });
@@ -214,8 +214,8 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               target: victim.id,
               text: () =>
                 lost
-                  ? `${m.name} sings, and ${victim.name} is charmed (loses their next action)`
-                  : `${m.name} sings, and ${victim.name} is charmed, but ${keeps(victim)}`,
+                  ? `${cap(m.name)} sings, and ${victim.name} is charmed (loses their next action)`
+                  : `${cap(m.name)} sings, and ${victim.name} is charmed, but ${keeps(victim)}`,
               rolls: [],
             });
           }
@@ -232,7 +232,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               kind: 'ability',
               target: victim.id,
               text: () =>
-                `${m.name} enthralls ${victim.name} (${lost ? 'loses their next action' : keeps(victim)}), +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+                `${cap(m.name)} enthralls ${victim.name} (${lost ? 'loses their next action' : keeps(victim)}), +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
               rolls: [],
               amount: healed,
               targetHealth: m.health,
@@ -265,7 +265,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
-              text: () => `${m.name} carries ${victim.name} off into the river`,
+              text: () => `${cap(m.name)} carries ${victim.name} off into the river`,
               rolls: [],
             });
           }

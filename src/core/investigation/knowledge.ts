@@ -38,11 +38,14 @@ export const noteArrival = (state: GameState, contract: ContractInstance): void 
 export const arrivalClues = (state: GameState, monster: MonsterId): number =>
   levelOf(state, monster) >= 4 ? 3 : 0;
 
+/** A species as a fight sees it, with the knowledge level set (no Delve scaling). */
+export type KnownMonster = Required<Pick<MonsterInstance, 'monster' | 'tier' | 'knowledge'>>;
+
 /** The species as a fight sees it now: its tier and what the hunters know of it. */
 export const monsterFor = (
   state: GameState,
   contract: Pick<ContractInstance, 'monster' | 'tier'>,
-): Required<MonsterInstance> => ({
+): KnownMonster => ({
   monster: contract.monster,
   tier: contract.tier,
   knowledge: levelOf(state, contract.monster),
@@ -77,7 +80,7 @@ export const recordFight = (state: GameState, monster: MonsterId, won: boolean):
 export const oddsTarget = (
   state: GameState,
   contract: ContractInstance,
-): Required<MonsterInstance> | Required<MonsterInstance>[] =>
+): KnownMonster | KnownMonster[] =>
   isIdentified(state.meta.gameSeed, contract)
     ? monsterFor(state, contract)
     : possibleSpecies(state.meta.gameSeed, contract).map((m) =>

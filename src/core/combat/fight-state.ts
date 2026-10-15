@@ -7,7 +7,10 @@ import type { FightContext } from './stats';
 export interface Fight {
   tick: number;
   readonly hunters: Combatant[];
+  /** The first monster of the group (the only one in a one-monster fight); bombs and the volley hit it. */
   readonly monster: Combatant;
+  /** The whole group, in group order (D251). */
+  readonly monsters: Combatant[];
   readonly rolls: RollSource;
   readonly ctx: FightContext;
   /** knowledge% bucket: what the hunters' damage gains against this species (GDD §5.0). */
@@ -50,5 +53,8 @@ export const roller = (f: Fight): { draw: () => number; used: number[] } => {
     },
   };
 };
+
+/** A name at the start of a log line ("second Upyr" → "Second Upyr"). */
+export const cap = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const fmt2 = (x: number): string => x.toFixed(2);

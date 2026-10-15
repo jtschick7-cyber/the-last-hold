@@ -4,7 +4,7 @@ import { buildHunter, buildMonster, roundHalfUp } from './build';
 import { endOfMonsterAction, heal, startOfMonsterAction } from './abilities';
 import { burnTick, cancelsAbility, startOfFight } from './prep';
 import { directAttack } from './damage';
-import { emit, type Fight } from './fight-state';
+import { cap, emit, type Fight } from './fight-state';
 import {
   alchemyPotency,
   healthPct,
@@ -22,6 +22,8 @@ import type { Combatant, FightInput, FightResult } from './types';
 // meter rises by its Speed; whoever reaches the threshold acts once and loses the
 // threshold from the meter. Ties go: higher meter, higher Speed, hunters before
 // the monster, party slot order (no randomness is drawn for ties).
+
+const ORDINALS = ['first', 'second', 'third', 'fourth', 'fifth'] as const;
 
 const actsBefore = (a: Combatant, b: Combatant): number =>
   b.meter - a.meter ||
@@ -52,28 +54,45 @@ const endOwnAction = (c: Combatant): void => {
   }
 };
 
-/** Monster at 0 Health (Second Soul may raise it once); every hunter downed. */
+/**
+ * Each monster at 0 Health may be raised once by Second Soul; the fight is won when every
+ * monster of the group is down (D251), lost when every hunter is.
+ */
 const resolveEnds = (f: Fight): void => {
-  const m = f.monster;
-  if (m.health <= 0) {
-    const soul = m.abilities.find((a) => a.kind === 'secondSoul');
-    if (soul && !m.secondSoulUsed && !cancelsAbility(f, m, 'Second Soul')) {
-      m.secondSoulUsed = true;
-      m.health = roundHalfUp(m.maxHealth * soul.reviveFraction);
-      emit(f, {
-        actor: m.id,
-        kind: 'ability',
-        text: () =>
-          `${m.name} rises again with its second soul · ${m.name} ${m.health}/${m.maxHealth}`,
-        rolls: [],
-        targetHealth: m.health,
-      });
-    } else {
-      f.over = 'monster-down';
-      return;
+  let anyUp = false;
+  for (const m of f.monsters) {
+    if (m.health <= 0) {
+      const soul = m.abilities.find((a) => a.kind === 'secondSoul');
+      if (soul && !m.secondSoulUsed && !cancelsAbility(f, m, 'Second Soul')) {
+        m.secondSoulUsed = true;
+        m.health = roundHalfUp(m.maxHealth * soul.reviveFraction);
+        emit(f, {
+          actor: m.id,
+          kind: 'ability',
+          text: () =>
+            `${cap(m.name)} rises again with its second soul · ${m.name} ${m.health}/${m.maxHealth}`,
+          rolls: [],
+          targetHealth: m.health,
+        });
+      }
     }
+    if (m.health > 0) anyUp = true;
+  }
+  if (!anyUp) {
+    f.over = 'monster-down';
+    return;
   }
   if (f.hunters.every((h) => !standing(h))) f.over = 'party-down';
+};
+
+/** The front monster: the first standing in group order (D251). */
+const frontMonster = (f: Fight): Combatant => f.monsters.find(standing) ?? f.monster;
+
+/** The standing monster with the lowest Health; ties go to group order (D251). */
+const weakestMonster = (f: Fight): Combatant => {
+  let best: Combatant | null = null;
+  for (const m of f.monsters) if (standing(m) && (!best || m.health < best.health)) best = m;
+  return best ?? f.monster;
 };
 
 const loseAction = (f: Fight, c: Combatant): void => {
@@ -108,7 +127,9 @@ const hunterAct = (f: Fight, c: Combatant): void => {
       return;
     }
   }
-  directAttack(f, c, f.monster, mender ? { mightMult: K.menderAttack } : {});
+  // D251: the Vanguard, and the Mender when she attacks, hit the front monster; the Striker the weakest.
+  const target = c.role === 'striker' ? weakestMonster(f) : frontMonster(f);
+  directAttack(f, c, target, mender ? { mightMult: K.menderAttack } : {});
   resolveEnds(f);
 };
 
@@ -148,7 +169,7 @@ const monsterAct = (f: Fight, m: Combatant): void => {
   const skipAttack = startOfMonsterAction(f, m);
   resolveEnds(f);
   if (!skipAttack) {
-    for (let i = 0; i < f.ctx.attacks && !f.over; i++) {
+    for (let i = 0; i < m.attacks && !f.over; i++) {
       const picked = pickTarget(f, f.hunters.filter(present));
       if (!picked) break;
       directAttack(f, m, picked.target, { pre: picked.pre, preNotes: picked.preNotes });
@@ -173,7 +194,22 @@ export const runFight = (input: FightInput): FightResult => {
       h.extraTaken = stand.partyTaken;
     }
   }
-  const monster = buildMonster(input.monster, stand?.monsterStrength ?? 1);
+  // The group in order (D251). A species that appears twice is "first" and "second", with its own id.
+  const instances = [input.monster, ...(input.companions ?? [])];
+  const seen: Record<string, number> = {};
+  const total: Record<string, number> = {};
+  for (const m of instances) total[m.monster] = (total[m.monster] ?? 0) + 1;
+  const monsterList = instances.map((m, slot) => {
+    const n = (seen[m.monster] = (seen[m.monster] ?? 0) + 1);
+    const def = monsters[m.monster];
+    if (instances.length === 1) return buildMonster(m, stand?.monsterStrength ?? 1);
+    return buildMonster(m, stand?.monsterStrength ?? 1, {
+      slot,
+      id: n === 1 ? def.id : `${def.id}-${n}`,
+      name: (total[m.monster] ?? 1) > 1 ? `${ORDINALS[n - 1] ?? `#${n}`} ${def.name}` : def.name,
+    });
+  });
+  const monster = monsterList[0] as Combatant;
   const potency = alchemyPotency(input.alchemy ?? 0);
   const ctx: FightContext = {
     location: input.location,
@@ -187,6 +223,7 @@ export const runFight = (input: FightInput): FightResult => {
     tick: 0,
     hunters,
     monster,
+    monsters: monsterList,
     rolls: input.rolls,
     ctx,
     knowledgePct: knowledgeBonus(input.monster.knowledge ?? 0),
@@ -207,7 +244,7 @@ export const runFight = (input: FightInput): FightResult => {
   const threshold = K.meterThreshold;
   const maxTicks = K.maxTicks;
   let tick = 0;
-  const everyone = [...hunters, monster];
+  const everyone = [...hunters, ...monsterList];
   while (tick < maxTicks && !f.over) {
     tick += 1;
     f.tick = tick;
@@ -257,8 +294,14 @@ export const runFight = (input: FightInput): FightResult => {
       maxHealth: h.maxHealth,
       downed: h.health <= 0,
     })),
-    monsterHealth: monster.health,
-    monsterMaxHealth: monster.maxHealth,
+    monsterHealth: monsterList.reduce((s, m) => s + Math.max(0, m.health), 0),
+    monsterMaxHealth: monsterList.reduce((s, m) => s + m.maxHealth, 0),
+    monsters: monsterList.map((m) => ({
+      id: m.id,
+      name: m.name,
+      health: m.health,
+      maxHealth: m.maxHealth,
+    })),
     saltburstCancelled: f.saltburstCancelled,
     potionsUsed: hunters.filter((h) => h.potion?.used === true).map((h) => h.id),
   };

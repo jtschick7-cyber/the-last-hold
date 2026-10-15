@@ -1,10 +1,11 @@
 import { num } from '../balance-access';
 import { finalDamage, hurt } from './formula';
-import { emit, fmt2, type Fight } from './fight-state';
+import { cap as capName, emit, fmt2, type Fight } from './fight-state';
 import { afterOwnHit } from './abilities';
 import { checkPotion } from './prep';
 import {
   armorEff,
+  groupLightlessCut,
   hitChance,
   mightEff,
   outgoingPct,
@@ -53,9 +54,13 @@ export const directAttack = (
     }
     return r;
   };
-  const who = (): string => `${attacker.name}${roleTag(attacker)}`;
+  const who = (): string => `${capName(attacker.name)}${roleTag(attacker)}`;
   const party = f.hunters;
-  const chance = hitChance(attacker, party, f.ctx);
+  // A group's Lightless is the largest cut among the swarms standing (D251); a single monster's is constant.
+  const chance =
+    f.monsters.length === 1
+      ? hitChance(attacker, party, f.ctx)
+      : hitChance(attacker, party, f.ctx, groupLightlessCut(f.monsters));
   const hitRoll = draw((r) =>
     r < chance ? `Hit ${fmt3(r)} < ${pct(chance)} → hit` : `Hit ${fmt3(r)} ≥ ${pct(chance)} → miss`,
   );
@@ -88,7 +93,7 @@ export const directAttack = (
   const raw = mightEff(attacker) * mult * variance;
   const resistance = target.resist ? target.resist[attacker.damage] : 1;
   const typed = raw * resistance;
-  const outgoing = outgoingPct(attacker, attacker.damage, f.ctx);
+  const outgoing = outgoingPct(attacker, attacker.damage, f.ctx, target.family ?? f.ctx.family);
   // knowledge% (GDD §5.0): only the hunters' damage, and 0 unless the species is Studied or better.
   const knowledge = attacker.side === 'hunter' ? f.knowledgePct : 0;
   const dealt = typed * (1 + outgoing) * (1 + knowledge) * (crit ? attacker.critMult : 1);
@@ -194,7 +199,7 @@ const sealBurn = (f: Fight, attacker: Combatant, target: Combatant, dealt: numbe
       kind: 'ability',
       target: attacker.id,
       text: () =>
-        `${target.name}'s Seal-burn scorches ${attacker.name}: Fire ${fmt2(raw)} = ${amount} · ${attacker.name} ${attacker.health}/${attacker.maxHealth}`,
+        `${capName(target.name)}'s Seal-burn scorches ${attacker.name}: Fire ${fmt2(raw)} = ${amount} · ${attacker.name} ${attacker.health}/${attacker.maxHealth}`,
       rolls: [],
       amount,
       targetHealth: attacker.health,

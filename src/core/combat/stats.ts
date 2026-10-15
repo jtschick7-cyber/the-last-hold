@@ -57,15 +57,20 @@ export const knowledgeBonus = (level: number): number =>
   level >= 4 ? num('knowledge.masteredDamage') : level >= 3 ? num('knowledge.studiedDamage') : 0;
 
 /** outgoing% bucket: traits vs a location or family, Fire-touched (GDD §5.0). */
-export const outgoingPct = (a: Combatant, type: DamageType, ctx: FightContext): number => {
+export const outgoingPct = (
+  a: Combatant,
+  type: DamageType,
+  ctx: FightContext,
+  family: FamilyId = ctx.family,
+): number => {
   let sum = 0;
   for (const e of a.traits) {
     if (e.kind === 'mightOnLocation' && e.location === ctx.location) sum += e.amount;
-    else if (e.kind === 'mightVsFamily' && e.family === ctx.family) sum += e.amount;
+    else if (e.kind === 'mightVsFamily' && e.family === family) sum += e.amount;
     else if (e.kind === 'damageType' && e.type === type) sum += e.dealt;
   }
   // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
-  if (a.oilFamily !== null && a.oilFamily === ctx.family) sum += ctx.oilBonus;
+  if (a.oilFamily !== null && a.oilFamily === family) sum += ctx.oilBonus;
   return sum;
 };
 
@@ -74,10 +79,11 @@ export const hitChance = (
   attacker: Combatant,
   party: readonly Combatant[],
   ctx: FightContext,
+  cut: number = ctx.hitCut,
 ): number => {
   let chance = K.hitChance;
   if (attacker.side === 'hunter') {
-    chance -= ctx.hitCut;
+    chance -= cut;
     chance += attacker.hitBonus; // Owl-Eye Drops (v0.6)
     for (const h of party) {
       for (const e of h.traits) {
@@ -128,6 +134,20 @@ export const takenReduction = (
   }
   const cap = K.takenCap;
   return sum > cap ? cap : sum;
+};
+
+/**
+ * Lightless across a group (D251): while any swarm stands the cut applies once. Two passives of
+ * the same name don't stack (§5.0), so it is the largest cut among the monsters standing.
+ */
+export const groupLightlessCut = (monsters: readonly Combatant[]): number => {
+  let cut = 0;
+  for (const m of monsters) {
+    if (!standing(m)) continue;
+    for (const a of m.abilities)
+      if (a.kind === 'lightless' && a.hitChanceCut > cut) cut = a.hitChanceCut;
+  }
+  return cut;
 };
 
 export const monsterFamily = (id: MonsterId): FamilyId => monsters[id].family;

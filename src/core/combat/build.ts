@@ -50,6 +50,8 @@ export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation)
     id: h.id,
     name: h.name,
     role: h.role,
+    family: null,
+    attacks: 1,
     slot,
     health: maxHealth,
     maxHealth,
@@ -89,23 +91,42 @@ export const buildHunter = (h: HunterSnapshot, slot: number, prep?: Preparation)
 };
 
 /** `strength` multiplies Health and Might: Threat in the Last Stand (GDD §5.9.1); 1 elsewhere. */
-export const buildMonster = (m: MonsterInstance, strength = 1): Combatant => {
+export interface MemberOptions {
+  /** Group order, 0-based (D251). */
+  readonly slot: number;
+  /** Unique within the fight; the species id for the first of its kind. */
+  readonly id: string;
+  /** "first Upyr" when a species appears twice; the species name otherwise. */
+  readonly name: string;
+}
+
+export const buildMonster = (
+  m: MonsterInstance,
+  strength = 1,
+  member?: MemberOptions,
+): Combatant => {
   const def = monsters[m.monster];
   const steps = m.tier - def.tiers[0];
   const tierScale = intPow(num('monster.statGrowth'), steps);
   const statScale = strength === 1 ? tierScale : tierScale * strength;
   const armorScale = intPow(num('monster.armorGrowth'), steps);
-  const maxHealth = roundHalfUp(def.health * statScale);
+  const maxHealth = roundHalfUp(
+    m.healthMult === undefined ? def.health * statScale : def.health * statScale * m.healthMult,
+  );
+  const might =
+    m.mightMult === undefined ? def.might * statScale : def.might * statScale * m.mightMult;
   return {
     side: 'monster',
-    id: def.id,
-    name: def.name,
+    id: member?.id ?? def.id,
+    name: member?.name ?? def.name,
     role: null,
-    slot: 0,
+    family: def.family,
+    attacks: def.attacks,
+    slot: member?.slot ?? 0,
     health: maxHealth,
     maxHealth,
     meter: 0,
-    base: { might: def.might * statScale, armor: def.armor * armorScale, speed: def.speed },
+    base: { might, armor: def.armor * armorScale, speed: def.speed },
     flat: { ...zero },
     statPct: { ...zero },
     statusPct: { ...zero },

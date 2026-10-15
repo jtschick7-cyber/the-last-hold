@@ -31,6 +31,10 @@ export interface MonsterInstance {
    * Mastered add to the damage the hunters deal. Frozen at launch; absent means 0.
    */
   readonly knowledge?: number;
+  /** A Delve group member (GDD §5.10.4, D250): Health × this, 1 if absent. */
+  readonly healthMult?: number;
+  /** A Delve group member: Might × this, 1 if absent. */
+  readonly mightMult?: number;
 }
 
 /**
@@ -51,6 +55,11 @@ export interface StandWaveOptions {
 export interface FightInput {
   readonly party: readonly HunterSnapshot[];
   readonly monster: MonsterInstance;
+  /**
+   * The rest of a Delve group (GDD §5.10.4, D251), after `monster`, in group order. The fight
+   * is won when every monster is down. Absent or empty: the one-monster fight of §5.5.
+   */
+  readonly companions?: readonly MonsterInstance[];
   /** Null in the Last Stand: the hold isn't a contract location, so location traits don't apply. */
   readonly location: LocationId | null;
   readonly rolls: RollSource;
@@ -89,7 +98,11 @@ export interface Combatant {
   readonly id: string;
   readonly name: string;
   readonly role: RoleId | null;
-  /** Party slot order; the monster is 0. */
+  /** A monster's family (null for hunters), so a hunter's family bonuses read the monster hit. */
+  readonly family: FamilyId | null;
+  /** Attacks per action: a monster's `Atk`, 1 for a hunter. */
+  readonly attacks: number;
+  /** Party slot order; the monsters take 0, 1, 2… in group order (D251). */
   readonly slot: number;
   health: number;
   readonly maxHealth: number;
@@ -180,8 +193,16 @@ export interface FightResult {
     readonly maxHealth: number;
     readonly downed: boolean;
   }[];
+  /** The monsters' Health added together (one monster's, in a one-monster fight). */
   readonly monsterHealth: number;
   readonly monsterMaxHealth: number;
+  /** Each monster of the group, in group order (D251). */
+  readonly monsters: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly health: number;
+    readonly maxHealth: number;
+  }[];
   /** A Saltburst went off and cancelled an ability (part of "well prepared", GDD §5.7). */
   readonly saltburstCancelled: boolean;
   /** Hunters whose potion fired or was ruined in this fight (the stand's once-per-stand rule). */
