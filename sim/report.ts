@@ -121,6 +121,29 @@ export const contentLines = (runs: readonly RunResult[]): string[] =>
       return `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: all content at ${hoursText(c.hours)} (last: ${c.last})`;
     });
 
+/**
+ * Reported, not judged (GDD §6.2 v0.8, plan T8.16): stars and Wrights as each cycle ended, items by
+ * rarity per cycle (Fine/Rare/Heroic), the Legendaries found (and in which cycle), and the Delver's
+ * Delve XP (what each of the three earned across its runs).
+ */
+export const depthLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.spec.policy === 'standard' || r.spec.policy === 'delver')
+    .map((r) => {
+      const d = r.depth;
+      const cycles = d.cycles
+        .map(
+          (c) =>
+            `cycle ${c.cycle}: ${c.stars} stars, ${c.wrights} Wrights, items ${c.items.fine}/${c.items.rare}/${c.items.heroic}`,
+        )
+        .join('; ');
+      const legends = d.legendaries.map((l) => `${l.id} (cycle ${l.cycle})`).join(', ') || 'none';
+      return (
+        `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${cycles}; ` +
+        `Legendaries: ${legends}${r.spec.policy === 'delver' ? `; Delve XP ${d.delveXp}` : ''}`
+      );
+    });
+
 const WEEK_HOURS = 24 * 7;
 
 /**
@@ -183,6 +206,12 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
     ...discoveryLines(report.runs),
   );
   out.push('', '## Delves (reported only)', '', ...delveLines(report.runs));
+  out.push(
+    '',
+    '## Hunter depth (reported only; items are Fine/Rare/Heroic per cycle)',
+    '',
+    ...depthLines(report.runs),
+  );
   out.push(
     '',
     '## All content (reported only; the Idle-only row judges the medians)',

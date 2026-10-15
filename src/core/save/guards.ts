@@ -1,10 +1,15 @@
 import { CONSUMABLE_IDS, type ConsumableId } from '../../content/consumables';
-import { DAMAGE_TYPES } from '../../content/damage';
+import { DAMAGE_TYPES, FAMILY_IDS } from '../../content/damage';
+import { BONUS_LINE_IDS } from '../../content/items';
 import { GEAR_IDS, type GearId } from '../../content/gear';
 import { HUNTER_IDS, ROLE_IDS, type HunterId } from '../../content/hunters';
 import { TRAIT_IDS, type TraitId } from '../../content/traits';
+import { USE_SKILL_IDS } from '../../content/use-skills';
+import { LEGENDARY_IDS } from '../../content/legendaries';
+import { talentById } from '../../content/talents';
 import type { HunterSnapshot } from '../combat';
 import type { Preparation } from '../state/game-state';
+import type { ItemLine } from '../state/item-state';
 
 // Technical design §9.4: the shared readers of the hand-written save guard. Each
 // takes plain JSON and a path for the error message, and throws `Invalid` when
@@ -107,8 +112,38 @@ export const snapshot = (v: unknown, where: string): HunterSnapshot => {
     ),
     weapon: gear(o.weapon, `${where}.weapon`),
     armorGear: gear(o.armorGear, `${where}.armorGear`),
+    ...(o.lines === undefined ? {} : { lines: itemLines(o.lines, `${where}.lines`) }),
+    ...(o.stars === undefined ? {} : { stars: count(o.stars, `${where}.stars`) }),
+    ...(o.skill === undefined ? {} : { skill: oneOf(o.skill, USE_SKILL_IDS, `${where}.skill`) }),
+    ...(o.talents === undefined
+      ? {}
+      : {
+          talents: arr(o.talents, `${where}.talents`).map((t, i) => {
+            const id = str(t, `${where}.talents[${i}]`);
+            if (!talentById(id))
+              throw new Invalid(`${where}.talents[${i}]: unknown talent "${id}".`);
+            return id;
+          }),
+        }),
+    ...(o.keepsake === undefined
+      ? {}
+      : { keepsake: oneOf(o.keepsake, LEGENDARY_IDS, `${where}.keepsake`) }),
   };
 };
+
+const itemLine = (v: unknown, where: string): ItemLine => {
+  const o = obj(v, where);
+  const kind = oneOf(o.kind, BONUS_LINE_IDS, `${where}.kind`);
+  const family =
+    o.family === undefined ? undefined : oneOf(o.family, FAMILY_IDS, `${where}.family`);
+  if ((kind === 'bane') !== (family !== undefined))
+    throw new Invalid(`${where}: only a bane line names a family, and it must.`);
+  const size = nonNegative(o.size, `${where}.size`);
+  return family === undefined ? { kind, size } : { kind, size, family };
+};
+
+export const itemLines = (v: unknown, where: string): ItemLine[] =>
+  arr(v, where).map((l, i) => itemLine(l, `${where}[${i}]`));
 
 export const knowledgeLevel = (v: unknown, where: string): number => {
   const n = count(v, where);

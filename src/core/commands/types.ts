@@ -88,7 +88,18 @@ export type Command =
   | { type: 'debug.runV05Arrival' }
   /** GDD §5.14.1 (D214): a save whose cycle began Act III before it was written meets Arvid on load. */
   | { type: 'story.startActIII' }
-  | { type: 'story.startActIV' }
+  | { type: 'hunter.rankUp'; hunter: string }
+  | { type: 'hunter.addStar'; hunter: string }
+  | { type: 'talent.pick'; hunter: string; talent: string }
+  | { type: 'talent.respec'; hunter: string }
+  | { type: 'keepsake.equip'; hunter: string; legendary: string }
+  | { type: 'keepsake.unequip'; hunter: string }
+  | { type: 'item.craft'; base: string }
+  | { type: 'item.rework'; item: string }
+  | { type: 'item.equip'; item: string; hunter: string }
+  | { type: 'item.unequip'; hunter: string; slot: string }
+  | { type: 'item.salvage'; item: string }
+  | { type: 'story.startAct' }
   | { type: 'delve.start'; party: HunterId[] }
   | { type: 'delve.chooseStart'; patron: PatronId }
   | { type: 'delve.chooseDoor'; patron: PatronId }
@@ -104,12 +115,16 @@ export type Command =
   | { type: 'riftglass.switchTrait'; hunter: HunterId; alternate: boolean }
   /** Plan T6.7: begins Act III in the current cycle for testing; Arvid arrives, D3-01 plays. */
   | { type: 'debug.startActIII' }
-  | { type: 'debug.startActIV' }
+  | { type: 'debug.startAct'; act: number }
   /** Opens or closes the Unlit's door for testing (locked until Act V, D257). */
   | { type: 'debug.unlit'; open: boolean }
   /** GDD §5.14.2: an Archive item has been opened; its badge goes. */
   | { type: 'archive.read'; key: string }
   | { type: 'debug.runArrival' }
+  /** Plan T8.13b: a Rare Iron Blade into Stores, as a won contract's loot would be. */
+  | { type: 'debug.grantLoot' }
+  /** Plan T8.13b: every hunter's highest level 10 and 100 more trophies, so ranks can be bought. */
+  | { type: 'debug.readyRanks' }
   /** Plan T5.5: Arvid can't arrive in v0.5 (Act III isn't written), so this adds him. */
   | { type: 'debug.addArvid' }
   | { type: 'debug.unlockAge'; age: AgeId };

@@ -43,6 +43,8 @@ describe('debug commands (technical design §15)', () => {
     { type: 'debug.addResources', bundle: { wood: 1 } },
     { type: 'debug.setSeed', seed: 'x' },
     { type: 'debug.unlockAge', age: 'hamlet' },
+    { type: 'debug.grantLoot' },
+    { type: 'debug.readyRanks' },
   ])('$type sets debugUsed', (cmd) => {
     const s = createNewGame('d', T0);
     apply(s, cmd, T0);

@@ -7,7 +7,7 @@ import { outgoingPct, takenReduction } from '../../src/core/combat/stats';
 import { unlockMet } from '../../src/core/systems/hunters';
 import { freshAct } from '../../src/core/state/story-state';
 import { cyclic, fightOf, lines, snap } from './helpers';
-import { give, keepRich, run } from '../contracts/helpers';
+import { gearIn, give, keepRich, run, wear } from '../contracts/helpers';
 
 describe("the Wright's Blade", () => {
   it('adds +12 Might and a Rune sub-hit beside the Silver one, each on its own line', () => {
@@ -30,9 +30,7 @@ describe("the Wright's Blade", () => {
   it('needs Smithy 8 and the Citadel, and follows the Silvered Blade in place', () => {
     const s = keepRich('blade');
     give(s, 'zora');
-    const h = s.hunters.zora;
-    if (!h) throw new Error('no zora');
-    h.weapon = 'silvered-blade';
+    wear(s, 'zora', 'silvered-blade');
     Object.assign(s.resources, { iron: 10_000, silver: 10_000 });
     s.buildings.smithy = 8;
     const atKeep = run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'weapon' });
@@ -43,7 +41,7 @@ describe("the Wright's Blade", () => {
     expect(run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'weapon' }).ok).toBe(false);
     s.buildings.smithy = 8;
     expect(run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'weapon' }).ok).toBe(true);
-    expect(h.weapon).toBe('wrights-blade');
+    expect(gearIn(s, 'zora', 'weapon')).toBe('wrights-blade');
     expect(s.resources).toMatchObject({ iron: 9_400, silver: 9_700 });
   });
 });

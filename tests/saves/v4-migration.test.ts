@@ -8,6 +8,7 @@ import { apply } from '../../src/core/commands';
 import { createNewGame } from '../../src/core/state/new-game';
 import { shiftClock } from '../../src/core/state/shift';
 import type { GameState } from '../../src/core/state/game-state';
+import { oldKey } from './old-view';
 
 const FIXTURES = new URL('./fixtures/', import.meta.url);
 const readFixture = (f: string): { state: Record<string, unknown> } =>
@@ -61,7 +62,7 @@ describe('the v3 → v4 migration (plan T4.3)', () => {
         expect(after.log.recentFights.map(({ alchemy: _a, ...f }) => f)).toEqual(
           before.log.recentFights,
         );
-      else expect(after[key], key).toEqual(before[key]);
+      else expect(oldKey(after, key), key).toEqual(before[key]);
     }
   });
 

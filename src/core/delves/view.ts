@@ -6,6 +6,7 @@ import { guardians } from '../../content/delves/guardians';
 import { HUNTER_IDS, hunters, type HunterId } from '../../content/hunters';
 import { monsters, type MonsterId } from '../../content/monsters';
 import { RIFT_QUIET_LINE } from '../../content/delves/rift-text';
+import { sixthDoorLine } from '../../content/story/act5';
 import { runFight } from '../combat';
 import type { Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
@@ -33,6 +34,8 @@ export interface RiftCardView {
   readonly label: string;
   /** A run is paused, a result is unread or the allowance is full: the Hold tab's badge (§9.15). */
   readonly badge: boolean;
+  /** After Act V's stand, until a blessing has been taken from the Unlit: the sixth-door line (D302). */
+  readonly unlitLine: string | null;
 }
 
 /** The Rift card on the Hold screen; null until a warden has reached the Keep. */
@@ -53,6 +56,8 @@ export const riftCardView = (state: GameState): RiftCardView | null => {
     action: run ? 'continue' : d.result ? 'result' : 'delve',
     label: run ? `Continue (${floorName(run.floor)})` : d.result ? 'Last Delve ▸' : 'Delve',
     badge: run !== null || d.result !== null || full,
+    // GDD §5.14.1 (D302): said when the door first opens; it goes once the Unlit has been walked through.
+    unlitLine: d.unlitOpen && (d.taken.unlit?.length ?? 0) === 0 ? sixthDoorLine : null,
   };
 };
 

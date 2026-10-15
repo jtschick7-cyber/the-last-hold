@@ -2,10 +2,11 @@ import { act1Documents } from './act1';
 import { act2Documents } from './act2';
 import { act3Documents } from './act3';
 import { act4Documents } from './act4';
+import { act5Documents } from './act5';
 import type { DocumentDef } from './documents';
 
-// GDD §5.14.1 and lore-secrets §5: one act per cycle. Acts I to IV are written
-// (D163, D164, D209, D245). An act that isn't written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
+// GDD §5.14.1 and lore-secrets §5: one act per cycle. Acts I to V are written
+// (D163, D164, D209, D245, D302). An act that isn't written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
 
 export interface ActDef {
   readonly act: number;
@@ -20,10 +21,11 @@ export const acts: readonly ActDef[] = [
   { act: 2, heading: 'II. The Sent', witness: 'Tomek Lis', documents: act2Documents },
   { act: 3, heading: 'III. The Night', witness: 'Arvid Netmender', documents: act3Documents },
   { act: 4, heading: 'IV. The Keeper', witness: 'Dobrava Halsten', documents: act4Documents },
+  { act: 5, heading: 'V. The Hearthblade', witness: 'Yrsa Varn', documents: act5Documents },
 ];
 
 /** The last act whose text is in the game. */
-export const LAST_WRITTEN_ACT = 4;
+export const LAST_WRITTEN_ACT = 5;
 
 /** "III" for act 3 (lore-secrets §5 has six acts). */
 export const actNumeral = (act: number): string =>
@@ -36,10 +38,10 @@ export const allDocuments: readonly DocumentDef[] = acts.flatMap((a) => a.docume
 /**
  * GDD §5.14.3, §9.14: the Accounts view. Each key event's accounts sit side by
  * side, each labeled with its witness; none is marked true. Excerpts are quoted
- * word for word from their documents (lore-secrets §21.3, §22.3, §26.3, §28.3).
+ * word for word from their documents (lore-secrets §21.3, §22.3, §26.3, §28.3, §30.3).
  */
 export interface AccountEvent {
-  readonly id: 'fall' | 'apprentices' | 'bell' | 'yrsa' | 'light';
+  readonly id: 'fall' | 'apprentices' | 'bell' | 'yrsa' | 'light' | 'hearth';
   readonly heading: string;
   readonly accounts: readonly { readonly document: string; readonly excerpt: string }[];
 }
@@ -66,6 +68,7 @@ export const accountEvents: readonly AccountEvent[] = [
       },
       { document: 'D1-10', excerpt: 'A folded sheet with nothing written on it.' },
       { document: 'D3-06', excerpt: 'Then we took our hammers to the chains.' },
+      { document: 'D5-02', excerpt: "It wasn't coming after us." },
     ],
   },
   {
@@ -95,6 +98,7 @@ export const accountEvents: readonly AccountEvent[] = [
         excerpt:
           'I have written them where the order kept the things it hunted, because nobody opens this book but me.',
       },
+      { document: 'D5-03', excerpt: 'Whoever cut them stopped.' },
     ],
   },
   {
@@ -134,6 +138,10 @@ export const accountEvents: readonly AccountEvent[] = [
       },
       { document: 'D3-06', excerpt: 'Yrsa was right.' },
       { document: 'D4-06', excerpt: 'When the Hearthblade broke the chains, I did not mend them.' },
+      {
+        document: 'D5-06',
+        excerpt: 'I broke the chains to stop them sending children down that stair.',
+      },
     ],
   },
   {
@@ -152,6 +160,26 @@ export const accountEvents: readonly AccountEvent[] = [
       },
       { document: 'D4-05', excerpt: 'Then she went up and sat with me, and kept it.' },
       { document: 'D4-06', excerpt: 'The light in the window was mine.' },
+    ],
+  },
+  {
+    id: 'hearth',
+    heading: 'What the hearth leaves',
+    accounts: [
+      {
+        document: 'D4-04',
+        excerpt: 'Every year the seal wants a little more than the year before.',
+      },
+      {
+        document: 'D5-04',
+        excerpt: 'The cold down there is thickest right where the slag lands.',
+      },
+      { document: 'D5-05', excerpt: "It isn't your arithmetic. It's the pit." },
+      {
+        document: 'D5-06',
+        excerpt: 'The order built a fire to hold the cold back, and the fire is what grows it.',
+      },
+      { document: 'D5-08', excerpt: "It's a mouth." },
     ],
   },
 ];

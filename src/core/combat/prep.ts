@@ -6,6 +6,7 @@ import { speedEff, unthaw } from './stats';
 import type { Combatant, HunterPotion, HunterSnapshot } from './types';
 import type { Preparation } from '../state/game-state';
 import { traits } from '../../content/traits';
+import { talentTotals } from './talents';
 
 // GDD §5.7: preparation in the fight. Oils coat a weapon for the whole fight; each
 // hunter's potion fires on its own condition; up to two bombs are thrown at tick 1
@@ -21,7 +22,8 @@ export const hunterKit = (
   const oilEffect = oil ? consumables[oil].effect : null;
   const potionId = prep?.potions[h.id];
   const def = potionId ? consumables[potionId] : null;
-  let power = 0;
+  const tal = talentTotals(h.talents);
+  let power = tal.potionPower; // Herbs talents (GDD §8.11)
   for (const t of h.traits) {
     const e = traits[t].effect;
     if (e.kind === 'potionPower') power += e.amount;
@@ -36,7 +38,14 @@ export const hunterKit = (
       e.kind === 'fireTaken' ||
       e.kind === 'hitChance' ||
       e.kind === 'steadfast')
-      ? { id: def.id, name: def.name, effect: e, power, used: false }
+      ? {
+          id: def.id,
+          name: def.name,
+          effect: e,
+          power,
+          below: e.kind === 'heal' ? (tal.mendingBelow ?? e.belowHealth) : 0,
+          used: false,
+        }
       : null;
   return { oilFamily: oilEffect?.kind === 'oil' ? oilEffect.family : null, potion };
 };
@@ -194,11 +203,19 @@ export const burnTick = (f: Fight, m: Combatant): void => {
   });
 };
 
-/** Mending Draught: once, below its threshold, the holder drinks it (checked after any damage). */
+/**
+ * Called after any damage to a hunter: the Mending Draught, then Ferryman's Coin. Each fires once,
+ * below its threshold, and only while the holder still stands.
+ */
 export const checkPotion = (f: Fight, h: Combatant): void => {
+  drinkPotion(f, h);
+  ferrymansCoin(f, h);
+};
+
+const drinkPotion = (f: Fight, h: Combatant): void => {
   const p = h.potion;
   if (!p || p.used || p.effect.kind !== 'heal' || h.health <= 0) return;
-  if (h.health >= h.maxHealth * p.effect.belowHealth) return;
+  if (h.health >= h.maxHealth * p.below) return;
   p.used = true;
   const healed = heal(
     h,
@@ -209,6 +226,25 @@ export const checkPotion = (f: Fight, h: Combatant): void => {
     kind: 'prep',
     target: h.id,
     text: () => `${h.name} drinks ${p.name}, +${healed} · ${h.name} ${h.health}/${h.maxHealth}`,
+    rolls: [],
+    amount: healed,
+    targetHealth: h.health,
+  });
+};
+
+/** GDD §8.12 Ferryman's Coin: once a fight, the first time the holder drops below the line and is still standing. */
+const ferrymansCoin = (f: Fight, h: Combatant): void => {
+  const e = h.keepsake?.effect;
+  if (e?.kind !== 'healOnceBelow' || h.coinUsed || h.health <= 0) return;
+  if (h.health >= h.maxHealth * e.below) return;
+  h.coinUsed = true;
+  const healed = heal(h, roundHalfUp(h.maxHealth * e.heal));
+  emit(f, {
+    actor: h.id,
+    kind: 'keepsake',
+    target: h.id,
+    text: () =>
+      `${h.name}'s ${h.keepsake?.name} warms: +${healed} · ${h.name} ${h.health}/${h.maxHealth}`,
     rolls: [],
     amount: healed,
     targetHealth: h.health,

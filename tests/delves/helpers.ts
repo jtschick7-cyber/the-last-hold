@@ -2,7 +2,7 @@ import type { HunterId } from '../../src/content/hunters';
 import type { Command } from '../../src/core/commands';
 import { apply } from '../../src/core/commands';
 import type { GameState } from '../../src/core/state/game-state';
-import { keepRich } from '../contracts/helpers';
+import { keepRich, wear } from '../contracts/helpers';
 
 export const PARTY: HunterId[] = ['halvar', 'zora', 'ostap'];
 
@@ -18,7 +18,9 @@ export const strongKeep = (
   s.roster.active = [...PARTY, 'bjarna', 'vesna', 'radek'];
   for (const id of PARTY) {
     const h = s.hunters[id];
-    if (h) Object.assign(h, { level: 25, weapon: 'wrights-blade', armor: 'emberwright-plate' });
+    if (h) h.level = 25;
+    wear(s, id, 'wrights-blade');
+    wear(s, id, 'emberwright-plate');
   }
   s.delve.allowance = 140;
   s.delve.allowanceAt = s.time;
@@ -32,6 +34,7 @@ export const frailKeep = (seed = 'frail'): GameState => {
     const h = s.hunters[id];
     if (h) Object.assign(h, { level: 1, weapon: null, armor: null });
   }
+  s.items = []; // no gear at all
   return s;
 };
 

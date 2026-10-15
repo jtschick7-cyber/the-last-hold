@@ -210,11 +210,12 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a). It's the D20-safe reading of everything decided, and v0.8 is where XP, ranks and yard XP (D275) are designed together.
 - **Answer (owner):** 2026-10-15: (a), as recommended: no hunter XP and no warden-skill XP from Delves in v0.7 (D281). v0.8 decides along with trophies, loot and yard XP.
 
-### Q22 — Review the v0.7 art: battle sprites first (not blocking; one session before T7.13a)
+### Q22 — Review the v0.7 art: battle sprites first (not blocking; one session before T7.13a) — answered
 - **What to look at:** the contact sheet on the preview (`/preview/contact-sheet.html`): the 11 hunter and 19 monster battle sprites with all five frames, the six patron sigils, Riftglass, the six Delve relics, the three rarity frames, and the four hold cosmetics on each Rank's scene.
 - **Options per sprite:** (a) keep; (b) redraw, with what to change; (c) drop it, so the floor shows the 64 px portrait shrunk to 32 px (D265).
 - **Recommendation:** (a) for the hunters and most species, with a close look at the Ribbonshade (its ribbon reads weakly), the Gloam-Moths and the Deep guardians, which are the least like their portraits.
 - **Blocks:** nothing in T7.13a's build (it uses whatever is drawn); a rejected sprite is a redraw or the portrait fallback.
+- **Answer (owner):** approved, 2026-10-15 (progress.md, v0.7 session 3). The Ribbonshade, the Gloam-Moths and the three Deep guardians were redrawn after the review, and the carved door was re-aligned.
 
 ### Q23 — `npm run check` now takes 91–95 s; the limit is 90 s (not blocking; decide before T7.15) — answered
 - **What I measured (end of T7.13b, idle machine):** typecheck 15 s, lint 14 s, format check 13.5 s, tests 46 s, fast simulator 9 s: about 98 s one after another, 91–95 s as `npm run check` runs it. It was 82 s at the end of T7.6. The growth is the Delve work (new tests: sprites 96, whole Delve runs, views). The slowest test files are `sim/parallel.test.ts` 13 s, `tests/contracts/equivalence.test.ts` 12 s, `tests/contracts/flow.test.ts` 11 s, `src/core/policies/play.test.ts` 7 s.
@@ -236,3 +237,40 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a). It is one change, it keeps the shape "clear the floors, then face the guardian", and a player who builds around a patron should do better than the simulator's simple pick. Your playtest on the preview decides; any of the others is a one-number change.
 - **Blocks:** nothing. All 38 simulator checks pass either way.
 - **Answer (owner):** (a), 2026-10-15 (D297). Depth stays one tier deeper at every Rank.
+
+### Q25 — Confirm the write-up details of the v0.8 flesh-out (blocks T8.3, T8.6) — answered
+- **Question:** while writing up, I filled in ten details the session didn't ask about. They are in D328 (Proposed). Are they fine as written?
+  1. Loot is a weapon or an armor piece, half each, then picked by tier (D305).
+  2. A "bane of a family" line rolls its family from the five contract families.
+  3. Trophies **on hand** = trophies earned this cycle minus those spent on ranks and stars (never below 0). They go at the Long Night as trophies do now.
+  4. Star growth applies to every level and is recomputed from the current stars, so adding a star raises a hunter's stats at once.
+  5. A Legendary is found the moment its milestone is met (a species reaching Mastered, or D5-06 found). It lands in Stores and goes to the keepsake slot when you (or the simulated player) put it there.
+  6. Swapping keepsakes, equipping items and respeccing talents are refused while the hunter is on a contract or in a Delve, like the trait switch.
+  7. Talents and use-skills work in the Last Stand and in Delves. The Herbs talents do nothing in Delves (no potions there), and the talent sheet says so.
+  8. The Delves' meter knock-back (Toll) becomes a general fight rule, used by Boathook and Rattle the Pots.
+  9. Loot seeds are `${gameSeed}:loot:${contractId}` (contracts) and `${runSeed}:loot` (a Delve guardian).
+  10. Yrsa's Thole is a keepsake; its line shows on the Act V stand's result sheet after D5-06.
+- **Options:** (a) all ten as written; (b) change any by number.
+- **Recommendation:** (a).
+- **Answer (owner):** (a), all ten as written, 2026-10-15 (D329).
+
+### Q26 — Where does "Command XP per Delve floor" live in `balance.ts`? (blocks the Command XP part of T8.11; T8.3 goes on without that one key)
+- **What I found:** the flesh-out names the constant `skill.xp.command.delveFloor` (GDD §5.10.7, §7.10). But `skill.xp.command` already exists as **one** constant, `{ contractPerTier 2, wave 1 }` (GDD §7.8, D237), and the test that matches `balance.ts` against GDD §7 needs every key to be exactly one constant. A key can't be both a constant and a folder.
+- **Options:**
+  (a) **Add it as a field of the existing constant:** `skill.xp.command` = { contractPerTier 2, wave 1, delveFloor 1 }. The GDD §7.8 row gains `delveFloor 1`, and §7.10 points to it. No test changes and no code reads change; the reading `skill.xp.command.delveFloor` in §5.10.7 then names that field.
+  (b) Split the constant in three: `skill.xp.command.contractPerTier`, `.wave`, `.delveFloor`. The GDD §7.8 row changes and the code that reads the Command table changes.
+  (c) Loosen the key test so a constant may also have sub-keys. This touches a test helper, which I would not do on my own.
+- **Recommendation:** (a): smallest change, nothing else moves, same numbers.
+- **Blocks:** the Command XP line of T8.11 (marked `[?]`) and one row of GDD §7.10, which is left out for now. Nothing else.
+- **Answer (owner):** (a), 2026-10-15 (D345).
+
+
+### Q27 — What is "a rank-up" line on the away sheet and results? (T8.13b; not blocking)
+- **What I found:** GDD §9.16 lists "one line each for loot, auto-salvage, a Legendary found, a rank-up, and yard catch-up" on the away sheet and results. Loot, auto-salvage, Legendary and yard lines are built (they come from things that happen while you are away). But a hunter's rank only changes when **you** press Rank up (GDD §5.11.3), so nothing can "rank up" while you are away, and there is no line to show.
+- **Options:**
+  (a) **A "can rank up" line on the away sheet**, worked out from the save when you come back: *"Zora can rank up to Wright."* Not saved, so it is never stale; shown once per return, not in the results list.
+  (b) **Skip it.** The Hunters tab already shows a talent-point badge, and the hunter sheet shows Rank up with its reason. Rank-ups are your own action, so no line is needed.
+  (c) A line on a contract's result when that win is the one that made a hunter qualify (needs one more saved field on the result).
+- **Recommendation:** (b) for now; (a) if you'd like the nudge.
+- **Blocks:** only the "rank-up" part of the line list in T8.13b. Everything else in it is built.
+- **Answer (owner):** (b), 2026-10-15 (D349). No rank-up line; GDD §9.16 and the plan's T8.13b line list are read without it.

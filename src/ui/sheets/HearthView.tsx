@@ -21,6 +21,7 @@ export const HearthView = () => {
         <Sprite id={EMBERS_ICON} /> <strong>{formatNumber(s.embers)} Embers</strong>{' '}
         <span class={styles.dim}>— what the last warden left in the hearth.</span>
       </p>
+      <p class={`${styles.small} ${styles.dim}`}>Stars are bought on each hunter's sheet.</p>
       <ul class={styles.list}>
         {UPGRADE_IDS.map((id) => {
           const def = upgrades[id];

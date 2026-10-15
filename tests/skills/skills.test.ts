@@ -7,6 +7,7 @@ import { runFight } from '../../src/core/combat';
 import { clueDuration } from '../../src/core/investigation/lodge';
 import { contractXpBonus } from '../../src/core/long-night/bonuses';
 import { gearCost } from '../../src/core/skills/hooks';
+import { slotGear } from '../../src/core/systems/hunters';
 import {
   gainSkillXp,
   levelFor,
@@ -76,7 +77,7 @@ describe('Smithing: XP and cheaper gear', () => {
     expect(s.skills.smithing).toBe(
       before +
         2 +
-        2 * (s.hunters.ostap?.armor ? (gear[s.hunters.ostap.armor]?.tier ?? tier) : tier),
+        2 * (s.hunters.ostap ? (slotGear(s, s.hunters.ostap, 'armor')?.tier ?? tier) : tier),
     );
   });
 

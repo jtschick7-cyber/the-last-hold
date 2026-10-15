@@ -2,6 +2,7 @@
 // against lore-secrets §21–§22 (D148) and Act III's (§26), and stays obtainable in later cycles.
 import { describe, expect, it } from 'vitest';
 import { allDocuments, UNWRITTEN_ACT_LINE } from '../../src/content/story/acts';
+import { yrsaTholeLine } from '../../src/content/story/act5';
 import { kamenfellNoticeEnd } from '../../src/content/story/scenes';
 import type { MonsterId } from '../../src/content/monsters';
 import type { VillageId } from '../../src/content/villages';
@@ -17,6 +18,7 @@ import { createNewGame } from '../../src/core/state/new-game';
 import type { ContractInstance, GameState } from '../../src/core/state/game-state';
 import {
   actClosing,
+  actClosingNote,
   beginAct,
   isFound,
   recordWin,
@@ -188,14 +190,7 @@ describe('Act II (lore-secrets §22)', () => {
     reach(s, 'bastion');
     expect(sweepDocuments(s)).not.toContain('doc:D2-08');
     nextCycle(s); // Act III's cycle: she's recruited at the Keep
-    s.hunters.sigrun = {
-      level: 1,
-      xp: 0,
-      weapon: null,
-      armor: null,
-      recovery: null,
-      record: { won: 0, lost: 0 },
-    };
+    s.hunters.sigrun = freshHunter();
     expect(sweepDocuments(s)).toEqual(['doc:D2-08', 'name:40']);
     expect(s.story.documents.find((d) => d.id === 'D2-08')?.via).toBe('roster');
     mark('D2-08');
@@ -371,6 +366,105 @@ describe('Act IV (lore-secrets §28, D245)', () => {
   });
 });
 
+describe('Act V (lore-secrets §30, D302)', () => {
+  /** A save in Act V's cycle (cycle 5): Acts I to IV behind it, with wins in each earlier one. */
+  const act5 = (): GameState => {
+    const s = createNewGame('act5', T0);
+    win(s, 'ravenfell', 'field', 'wolf'); // Act I wins: none of them counts in Act V
+    win(s, 'kozly-hollow', 'field', 'wolf');
+    win(s, 'kozly-hollow', 'field', 'wolf');
+    nextCycle(s);
+    win(s, 'ravenfell');
+    nextCycle(s);
+    nextCycle(s);
+    nextCycle(s);
+    return s;
+  };
+
+  it('D5-01: the act beginning, on the new-warden sheet or on load; never by a sweep', () => {
+    const s = act5();
+    expect(isFound(s, 'D5-01')).toBe(false);
+    expect(sweepDocuments(s)).not.toContain('doc:D5-01');
+    expect(beginAct(s, 5, 'warden')).toContain('doc:D5-01');
+    expect(s.story.documents.find((d) => d.id === 'D5-01')).toMatchObject({
+      cycle: 5,
+      via: 'warden',
+    });
+    expect(beginAct(s, 5, 'warden')).toEqual([]); // once
+    const t = act5();
+    expect(beginAct(t, 5, 'arrival')).toContain('doc:D5-01');
+    expect(t.story.documents.find((d) => d.id === 'D5-01')?.via).toBe('arrival');
+    mark('D5-01');
+  });
+
+  it('D5-02: the 1st contract won in Act V, not an earlier act’s', () => {
+    const s = act5();
+    expect(isFound(s, 'D5-02')).toBe(false);
+    expect(win(s, 'dubno-ford')).toContain('doc:D5-02');
+    expect(s.story.documents.find((d) => d.id === 'D5-02')?.via).toBe('contract');
+    mark('D5-02');
+  });
+
+  it('D5-03: the 1st Ravenfell contract won in Act V, with four names (#4–#7)', () => {
+    const s = act5();
+    expect(win(s, 'mirograd')).not.toContain('doc:D5-03'); // another village
+    expect(win(s, 'ravenfell')).toEqual(
+      expect.arrayContaining(['doc:D5-03', 'name:4', 'name:5', 'name:6', 'name:7']),
+    );
+    expect(win(s, 'ravenfell')).not.toContain('doc:D5-03'); // once
+    mark('D5-03');
+  });
+
+  it('D5-03 counts the first Ravenfell win of Act V even when the earlier acts had one', () => {
+    const s = act5(); // Act I and Act II each won at Ravenfell
+    expect(isFound(s, 'D5-03')).toBe(false);
+    expect(win(s, 'ravenfell', 'ruin', 'wolf')).toContain('doc:D5-03'); // any location
+  });
+
+  it('D5-04 and D5-05: the Citadel and Bastion reached in Act V’s cycle or later', () => {
+    const s = act5();
+    reach(s, 'citadel');
+    expect(sweepDocuments(s)).toContain('doc:D5-04');
+    expect(isFound(s, 'D5-05')).toBe(false);
+    reach(s, 'bastion');
+    expect(sweepDocuments(s)).toContain('doc:D5-05');
+    mark('D5-04', 'D5-05');
+  });
+
+  it('D5-06 on the Act V stand; D5-07 when the next warden arrives', () => {
+    const s = act5();
+    standDocuments(s);
+    expect(isFound(s, 'D5-06')).toBe(true);
+    expect(isFound(s, 'D5-07')).toBe(false);
+    nextCycle(s);
+    expect(wardenDocuments(s)).toContain('doc:D5-07');
+    mark('D5-06', 'D5-07');
+  });
+
+  it('D5-08: the 2nd Kozly Hollow contract won in Act V, not the 1st', () => {
+    const s = act5(); // Act I had two Kozly Hollow wins: they do not count
+    expect(win(s, 'kozly-hollow')).not.toContain('doc:D5-08');
+    expect(win(s, 'kozly-hollow')).toContain('doc:D5-08');
+    mark('D5-08');
+  });
+
+  it('uses no ruin, family or Delve condition, so the family counter cannot touch it (D318)', () => {
+    for (const d of allDocuments.filter((x) => x.act === 5)) {
+      expect(['familyWon', 'huntersTogether', 'knowledge']).not.toContain(d.condition.kind);
+      if (d.condition.kind === 'contractWon') expect(d.condition.location).toBeUndefined();
+    }
+  });
+
+  it('the Last Stand of Act V closes with D5-06 and Yrsa’s Thole’s line (D314)', () => {
+    const s = act5();
+    expect(actClosingNote(s, 5)).toBeNull(); // the testament isn't found yet
+    standDocuments(s);
+    expect(actClosingNote(s, 5)).toBe(yrsaTholeLine);
+    expect(actClosingNote(s, 4)).toBeNull();
+    expect(actClosing(5)).toMatchObject({ id: 'D5-06' });
+  });
+});
+
 describe('acts (GDD §5.14.1)', () => {
   it('documents stay obtainable in later cycles', () => {
     const s = createNewGame('later', T0);
@@ -398,9 +492,10 @@ describe('acts (GDD §5.14.1)', () => {
     expect(actClosing(2)).toMatchObject({ id: 'D2-09' });
     expect(actClosing(3)).toMatchObject({ id: 'D3-06' });
     expect(actClosing(4)).toMatchObject({ id: 'D4-06' });
-    expect(actClosing(5)).toBe(UNWRITTEN_ACT_LINE);
+    expect(actClosing(5)).toMatchObject({ id: 'D5-06' });
+    expect(actClosing(6)).toBe(UNWRITTEN_ACT_LINE);
     expect(actClosing(null)).toBeNull();
-    expect(allDocuments.some((d) => d.act >= 5)).toBe(false);
+    expect(allDocuments.some((d) => d.act >= 6)).toBe(false);
   });
 
   it('in Act II, a fell village’s ruin notice names Kamenfell; never in Act I or the lowlands', () => {

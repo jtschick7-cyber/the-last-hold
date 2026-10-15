@@ -22,9 +22,9 @@ const actThree = (seed: string): GameState => {
 };
 
 describe('Act IV begins with the next warden (D245)', () => {
-  it('Act IV is the last written act, with the Keeper’s witness', () => {
-    expect(LAST_WRITTEN_ACT).toBe(4);
-    expect(acts.map((a) => a.act)).toEqual([1, 2, 3, 4]);
+  it('Act IV is written, with the Keeper’s witness (Act V is the last written act, D302)', () => {
+    expect(LAST_WRITTEN_ACT).toBe(5);
+    expect(acts.map((a) => a.act)).toEqual([1, 2, 3, 4, 5]);
     expect(actNumeral(4)).toBe('IV');
     expect(acts[3]?.heading).toBe('IV. The Keeper');
   });

@@ -2,7 +2,8 @@ import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
 import type { ConsumableId, Recipe } from '../../content/consumables';
 import type { LocationId } from '../../content/damage';
-import type { GearId } from '../../content/gear';
+import type { LegendaryId } from '../../content/legendaries';
+import type { HunterRank } from '../../content/ranks';
 import type { HunterId } from '../../content/hunters';
 import type { IngredientId } from '../../content/ingredients';
 import type { JobId } from '../../content/jobs';
@@ -16,6 +17,7 @@ import type { HunterSnapshot } from '../combat';
 import type { Band } from '../../content/story/scenes';
 import type { RecipeBook, SkillXp } from './book-state';
 import type { DelveState } from './delve-state';
+import type { ItemState } from './item-state';
 import type { StoryState } from './story-state';
 import type { InjuryKind } from '../contracts/injury';
 
@@ -26,16 +28,28 @@ import type { InjuryKind } from '../contracts/injury';
 // v5 adds the story: acts, documents, names, letters, trust, Ilse, warden names and the
 // v0.5 arrival (plan T5.3); v6 adds the recipe book, warden skills, experiments in the
 // kettles, the Alchemy level frozen on fights and stands, and each stand's band (plan
-// T6.3, D218). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 7;
+// T6.3, D218); v7 adds Delves and per-act family counts (plan T7.1, T7.5); v8 adds items,
+// Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317). Times are epoch
+// milliseconds.
+export const SCHEMA_VERSION = 8;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
   level: number;
   /** XP toward the next level. */
   xp: number;
-  weapon: GearId | null;
-  armor: GearId | null;
+  /** The item worn in the weapon slot (an `ItemState` id), or null. */
+  weapon: string | null;
+  /** The item worn in the armor slot, or null. */
+  armor: string | null;
+  /** v8 (D309): kept through the Long Night. */
+  rank: HunterRank;
+  /** v8 (D310): 0–5, kept through the Long Night. */
+  stars: number;
+  /** v8 (D313): the talents picked (content/talents.ts ids), kept through the Long Night. */
+  talents: string[];
+  /** v8 (D306): the Legendary worn in the keepsake slot, or null. */
+  keepsake: LegendaryId | null;
   /** Injury recovery on real time; null when fit. Ends at `until` (an event). */
   recovery: { kind: Exclude<InjuryKind, 'none' | 'dead'>; until: number } | null;
   record: { won: number; lost: number };
@@ -319,6 +333,12 @@ export interface GameState {
   skills: SkillXp;
   /** Delves, Riftglass, relics and echoes (v7, GDD §5.10). Kept forever. */
   delve: DelveState;
+  /** Every item the hold owns, worn or in Stores (v8, GDD §5.11). Reset at the Long Night. */
+  items: ItemState[];
+  /** Items ever made: the next id's number, so ids never repeat (v8). */
+  itemSeq: number;
+  /** Legendaries found, with the cycle (v8, GDD §5.11.6). Kept forever. */
+  legendaries: { id: LegendaryId; cycle: number }[];
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;
@@ -327,6 +347,8 @@ export interface GameState {
     contractsLost: number;
     /** Trophies earned this cycle; spending never reduces it (A7). */
     trophies: number;
+    /** Trophies spent this cycle on ranks and stars (v8, D328 (3)): on hand = earned − spent. */
+    trophiesSpent: number;
     /** Silver earned from bounties (Toma's unlock; the silver-share check). */
     bountySilver: number;
     kills: Partial<Record<MonsterId, number>>;

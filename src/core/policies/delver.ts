@@ -47,6 +47,10 @@ export const bestBlessing = (cards: readonly string[]): string | null => {
   return [...cards].sort((a, b) => rank(b) - rank(a) || order(a) - order(b))[0] ?? null;
 };
 
+/** Every card on offer is of the lowest rarity (D321's Re-roll trigger). */
+const allFaint = (cards: readonly string[]): boolean =>
+  cards.length > 0 && cards.every((id) => blessingById(id)?.rarity === 'faint');
+
 /** What a session did: the commands it applied, and the result of every run it finished. */
 export interface DelveSessionRecord {
   readonly commands: readonly Command[];
@@ -87,6 +91,12 @@ export const delveSession = (state: GameState, now: number): DelveSessionRecord 
         const door = favouredPatron(run, stage.doors);
         moved = door !== null && act({ type: 'delve.chooseDoor', patron: door });
       } else if (stage.kind === 'offer') {
+        // GDD §6.1 (v0.8, D321): the Re-roll is used once a run, on the first offer where every
+        // card is Faint; the new offer is then played like any other.
+        if (state.delve.shop.reroll && !run.rerollUsed && allFaint(stage.cards)) {
+          if (!act({ type: 'delve.reroll' })) throw new Error('The Delver could not re-roll.');
+          continue;
+        }
         const pick = bestBlessing(stage.cards);
         moved = pick !== null && act({ type: 'delve.chooseBlessing', blessing: pick });
       } else if (stage.patron === null) {

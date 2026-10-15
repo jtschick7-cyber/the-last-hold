@@ -185,6 +185,8 @@ interface GameState {
   story: StoryState                              // v0.5; acts, documents, names, letters, trust (below)
   book: RecipeBook                               // v0.6; revealed properties per ingredient, pairs tried
   skills: Record<SkillId, number>                // v0.6; warden skill XP (the level is derived)
+  items: ItemState[]                             // v0.8; every item owned: equipped or in Stores (cap 40)
+  legendaries: { id: LegendaryId; cycle: number }[]  // v0.8; found, kept forever
   stats: LifetimeStats                           // trophies this cycle, totals
   log: { recentFights: FightRef[] }              // seeds + inputs, not full logs (§5.3)
   settings: Settings
@@ -195,6 +197,19 @@ interface GameState {
 - **The story** *(v0.5, plan T5.3)*: each `CycleRecord` also holds the **act** it tells (null for cycles before v0.5, and for a cycle still owed the v0.4 arrival) and the **warden's name** (up to 24 characters; null until named). `StoryState` holds: the v0.5 arrival flag; when Ilse arrived; one `ActProgress` per act begun (its cycle, start time, and the counters that run from then: wins, wins by village, ruin wins); documents found (id, cycle, time, how); names found (roll number, cycle, time) and the count of Ribbonshades defeated; each hunter's **highest level ever** (letters read it, D155); letters reached; each village's trust (level, progress toward the next step, wins counted, Triumphant stands); and the unread Archive items for the badge. Nothing in it resets at the Long Night. The v4 → v5 migration starts Act I in the current cycle (D149), or with the cycle after a pending v0.4 arrival; it sets each hunter's highest level from their level now or at death, and every village to its starting trust.
 - **Alchemy discovery and skills** *(v0.6, plan T6.3, D218)*: `book` holds, for each ingredient, which of its three properties (by index in the §8.6 order) are revealed, and the pairs already tried (`a+b`, in ingredient-list order). It opens with the 15 properties the nine v0.3 recipes prove. `skills` holds XP per warden skill; levels are derived. Both are kept through the Long Night. The kettle queue holds `KettleJob`s: a **brew** records the recipe it was paid with (`paid`), so a cancel refunds exactly that whichever recipes the book knows later; an **experiment** records its two ingredients and the units paid. `RunningContract`, `FightRef` and `StandRecord` carry the **Alchemy level** frozen at launch (0 for anything made before v0.6, so every replay is unchanged, D206); a `StandRecord` also carries its **band**, so a stand keeps the band it earned under the thresholds of its day (D194). The six new brews have empty store slots. The v5 → v6 migration (`save/migration-v6.ts`) holds frozen copies of the v0.3 recipes, the 15 known properties and the old thresholds (9 and 12) so later content changes never rewrite an old save.
 - **Delves and Act IV** *(v0.7, plan T7.1 and T7.5, D245, D246, D267)*: `delve` holds the Delve state, all kept forever: the active run (`seed`, `baseTier` fixed at its start, `floor` 1–6 or 7 for the guardian, the `party` of three, each hunter's `health` with 0 meaning down, `blessings` taken, the `stage` on screen (the two doors, the offered cards, or the next fight), `lastDoors`, the Unlit doors used, whether Re-roll was used, a `rules` bag for the ★ rules' bookkeeping, and `earned` so far); the `result` of a finished run until its sheet is read; `runs` started (the seed's number); `riftglass`; the banked `allowance` and `allowanceAt`, when it last grew (null until the first Keep); `sceneSeen`; `unlitOpen`; the `shop` (Late hours level, alternate traits bought and in use, cosmetics, Chosen start, Re-roll); `deep` (knowledge of the Deep guardians, outside the bestiary); `relics`; `echoes`; the rarities `taken` from each patron (which finds the echoes); and, for v0.8, Delve `kills` per family and `guardiansBeaten` (D278). Each `ActProgress` also holds `winsByFamily`, which Act IV's margins count (D4-02, D4-03). The v6 → v7 step (`save/migration-v7.ts`) gives every act an empty family count and the Delves their starting state, and **re-bases Act IV (D246)**: the cycles' act numbers above III were story-less in v6, so they are cleared, the current cycle becomes Act IV, the counters recorded for story-less acts are dropped, and Act IV begins fresh at the save's time; the `story.startActIV` command then plays D4-01 on load (`via` 'arrival'), finding an Act IV Rank document only if that Rank is already behind the save this cycle. The guard is `save/validate-delve.ts`: unknown content ids are dropped with a warning, and a run that cannot be trusted refuses the load.
+- **Hunter depth and Act V** *(v0.8, plan T8.5, D306–D317)*:
+  - **`items`:** every item the hold owns, each with an id, its base piece, tier, rarity (Common, Fine, Rare, Heroic), its bonus lines (kind, size, and the family for a bane line), what was paid into it (for Salvage), and where it is (a hunter's weapon or armor slot, or Stores).
+  - **Each `HunterState`:** gains `rank` (apprentice, wright, masterWright), `stars` (0–5), `talents` (picked ids), `keepsake` (a Legendary id or null), and its `weapon` and `armor` as item ids.
+  - **`legendaries`:** the ones found, with the cycle.
+  - **Trophies spent this cycle** are recorded beside the cycle's trophies, so trophies on hand = earned − spent.
+  - **The Long Night** keeps ranks, stars, talents, keepsakes and Legendaries, and drops every other item.
+  - **`ActProgress.winsByFamily`** is now separate for each act (D318).
+  - **The v7 → v8 step** (`save/migration-v8.ts`):
+    - turns each hunter's gear tiers into equipped Common items with today's numbers;
+    - gives each hunter the rank their highest level ever qualifies for (D311), with stars 0 and talents empty;
+    - finds Legendaries whose milestone is already met;
+    - keeps Act IV's family counts and clears Acts I–III's;
+    - starts Act V on load when the current cycle has no act (D246, generalising `story.startActIV` to `story.startAct`).
 - **Derived values are never stored:** rates, the active-roster cap, odds. They come from **selectors** (`core/state/selectors.ts`). Each selector that feeds a visible number also returns a `Breakdown` tree (§5.4).
 - **Fight logs are not stored.** A `FightRef` holds the seed and the inputs (party, preparation, monster instance), and the log is **regenerated on demand** by re-running the fight. This keeps saves small and proves determinism every time a log opens.
 
@@ -206,7 +221,7 @@ interface FightRef { contractId: string; seed: string; party: HunterSnapshot[];
 ```
 
 - **Snapshots freeze hunter stats at launch,** so later level-ups don't change a replayed log.
-- **If the combat code ever changes in a way that alters an old replay,** the replay shows *"recorded with an older rules version"* instead of a different log. A `rulesVersion` constant bumps whenever combat math changes **[JC]**.
+- **If the combat code ever changes in a way that alters an old replay,** the replay shows *"recorded with an older rules version"*. From v0.8 the note shows only when the replay actually differs from the record (D319); a replay that matches shows nothing. A `rulesVersion` constant bumps whenever combat math changes (5 from v0.8, D308).
 
 ### 5.4 Breakdown trees (GDD §5.0, D10)
 
@@ -294,6 +309,8 @@ Each kind of randomness gets its own derived seed. That way, adding a roll in on
 | Odds preview, sample i | `${gameSeed}:odds:${contractId}:${partyIds}:${i}`, a distinct prefix, so it never equals the real fight; no preparation, so prepared and unprepared previews share their dice (D98) |
 | Suggest, stage 1 | `${gameSeed}:suggest:${contractId}:${i}`, **the same seeds for every party** (GDD §6.5) |
 | Clues and investigation | `${gameSeed}:clues:${contractId}` |
+| Contract loot (v0.8) | `${gameSeed}:loot:${contractId}` (fixed at launch, like the fight) |
+| Delve guardian loot (v0.8) | `${runSeed}:loot` |
 | Simulator | `sim:${runSeed}` (the simulator also picks its own `gameSeed`) |
 
 ### 7.3 Roll sources (for the exact test)
@@ -427,12 +444,13 @@ interface RollSource { next(): number }   // [0, 1)
 | Workflow | Trigger | Steps |
 |---|---|---|
 | `ci.yml` | Every push and pull request | `npm ci` → typecheck → lint → unit and content tests → golden and determinism tests → fast simulator checks → build → Playwright smoke plus the determinism and golden suites in WebKit and Chromium *(⚑ from v0.1)* |
-| `sim.yml` *(⚑)* | Pull requests to `main`, and on demand | The full 5-seed `sim:check` |
+| `sim.yml` *(⚑)* | Pull requests to `main`, and on demand | The full 5-seed `sim:check`, **split into parallel jobs** (for example the Monday Standard and Delver runs, and everything else) plus a final job that combines their results and judges every row (D320). Same runs, seeds and rows; each job must finish in **5 minutes or less**. |
 | `bench.yml` *(⚑ plan review A10)* | Pull requests, and on demand | Benchmarks. **Warns** at the budget and **fails only at 2×** the budget. Not part of `npm run check`. |
 | `deploy.yml` | Push to `main` or `milestone/*` | Builds live and preview (§11.3) → deploys |
 
 - **Milestones end with a tag** (`v0.1.0`, …). The version string shows in About.
 - **Budgets** *(⚑ plan review A11)*: **`npm run check` must finish in 90 s or less** on a laptop-class machine. CI (`ci.yml`) should finish in 10 minutes or less. **"Fast" simulator checks** = the Opening policy plus the Standard policy, **1 seed**, run through the current milestone's last time target. The full suite runs in `sim.yml` and at milestone end.
+- **Workflow actions** use versions that don't run on the deprecated Node 20 (D323).
 - **Pull request descriptions** use `.github/pull_request_template.md`, in plain language: what changed, what to playtest, known issues, deferred or skipped.
 
 ### 11.3 Preview builds *(⚑ new, P1)*
@@ -521,7 +539,7 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 
 ### 13.4 Performance
 
-- **Budgets:** a 3-cycle run in **60 s or less**; the full suite in **5 min or less** (GDD §6.5); the fast set within `npm run check`'s 90 s (§11.2).
+- **Budgets:** a 3-cycle run in **60 s or less**; the full suite in **5 min or less per CI job** (GDD §6.5, D320); the fast set within `npm run check`'s 90 s (§11.2).
 - The simulator runs **without the worker**. Contract odds come from the core directly, at stage-1 sample counts **[JC]**. The engine is fast because `advance` is event-driven: nothing is simulated second by second.
 
 ---
@@ -614,4 +632,4 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 14. **Simulator:** 5 seeds; medians for time targets, every seed for engagement checks; no worker.
 15. **The performance proxy** is one-quarter of the phone budget on CI.
 16. **A name-collision list** is enforced by a content test.
-17. **The full simulator suite** runs in CI on pull requests to `main` and on demand (`.github/workflows/sim.yml`, lines 5–8, matching §11.2). The workflow is still a stub that exits 0 (its header comment), so the full suite is not live in CI yet.
+17. **The full simulator suite** runs in CI on pull requests to `main` and on demand (`.github/workflows/sim.yml`, lines 5–8, matching §11.2). Since v0.8 (T8.15, D320) it is live: three shard jobs (`long`: Standard and the Delver; `rest`: Opening and Light; `heavy`) and a final job that combines their runs and judges every row (`sim/shards.ts`).

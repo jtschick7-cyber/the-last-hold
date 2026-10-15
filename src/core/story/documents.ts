@@ -2,6 +2,7 @@ import { noteDocument } from '../skills/hooks';
 import { knowledgeLevels } from '../../content/knowledge';
 import { monsters } from '../../content/monsters';
 import { allDocuments, LAST_WRITTEN_ACT, UNWRITTEN_ACT_LINE } from '../../content/story/acts';
+import { yrsaTholeLine } from '../../content/story/act5';
 import type { DocumentCondition, DocumentDef } from '../../content/story/documents';
 import { TRUST_LEVELS, type TrustLevel } from '../../content/story/trust';
 import type { VillageId } from '../../content/villages';
@@ -193,6 +194,10 @@ export const beginAct = (
   keys.push(...sweepDocuments(state, via === 'arrival' ? 'arrival' : undefined));
   return keys;
 };
+
+/** A line the stand's result sheet adds after the act's testament (Act V: Yrsa's Thole, D314), or null. */
+export const actClosingNote = (state: GameState, act: number | null): string | null =>
+  act === 5 && isFound(state, 'D5-06') ? yrsaTholeLine : null;
 
 /** What closes an act on the Long Night (GDD §5.14.9): its testament, or the unwritten line. */
 export const actClosing = (act: number | null): DocumentDef | string | null => {

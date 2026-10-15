@@ -55,6 +55,14 @@ export const contentParts = (
     { label: 'the recipe book', hours: run.content.book36Hours ?? INFINITE },
     { label: 'the six names', hours: Math.max(...STORY.ribbonNames.map(name)) },
     { label: 'skills at level 4', hours: run.content.skills4Hours ?? INFINITE },
+    // v0.8 (D322): the five name letters and every hunter at Wright.
+    ...ALL_CONTENT.letters.map((l) => ({
+      label: `${l.hunter}'s letter ${l.slot + 1}`,
+      hours:
+        run.story.letters.find((x) => x.hunter === l.hunter && x.slot === l.slot)?.hours ??
+        INFINITE,
+    })),
+    { label: 'every hunter at Wright', hours: run.content.wrightsHours ?? INFINITE },
   ];
 };
 

@@ -109,7 +109,7 @@ const equip = (s: GameState, act: Act, reserve: Bundle): number => {
     const h = s.hunters[id];
     if (!h) continue;
     for (const slot of ['weapon', 'armor'] as const) {
-      const next = nextGear(h, slot);
+      const next = nextGear(s, h, slot);
       if (!next) continue;
       const price = gearCost(s, next).cost;
       const clear = (['food', 'wood', 'iron', 'silver'] as const).every(

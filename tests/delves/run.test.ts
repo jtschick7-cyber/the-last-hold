@@ -25,7 +25,7 @@ import {
 import { encodeSaveFile, loadEnvelope, makeEnvelope } from '../../src/core/save';
 import type { GameState } from '../../src/core/state/game-state';
 import { createNewGame } from '../../src/core/state/new-game';
-import { hunterStatus } from '../../src/core/systems/hunters';
+import { hunterStatus, xpToNext } from '../../src/core/systems/hunters';
 import { T0 } from '../contracts/helpers';
 import { cmd, frailKeep, PARTY, playRun, strongKeep } from './helpers';
 
@@ -328,12 +328,16 @@ describe('a whole run', () => {
     expect(r?.outcome).toBe('defeated');
     expect(r?.guardianBeaten).toBe(false);
     expect(s.delve.riftglass).toBe(r?.riftglass);
-    // No injuries, deaths or recovery timers, no XP (Q21), no trophies, no bestiary learning (D262).
+    // No injuries, deaths or recovery timers, no trophies, no bestiary learning (D262). XP: none in
+    // v0.7 (Q21); from v0.8 only what the floors cleared paid (D316), checked in hunter-rewards.test.ts.
     expect(JSON.stringify(Object.values(s.hunters).map((h) => h?.recovery ?? null))).toBe(energy);
     expect(s.fallen).toEqual([]);
     expect(s.stats.trophies).toBe(0);
     expect(s.bestiary).toEqual({});
-    expect(s.hunters.zora?.xp).toBe(0);
+    const zora = s.hunters.zora;
+    let earned = zora?.xp ?? 0;
+    for (let l = 1; l < (zora?.level ?? 1); l++) earned += xpToNext(l);
+    expect(earned).toBe(r?.xp ?? 0);
     expect(hunterStatus(s, 'halvar')).toBe('ready');
   });
 

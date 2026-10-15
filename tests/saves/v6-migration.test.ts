@@ -12,6 +12,7 @@ import { migrations } from '../../src/core/save/migrations';
 import { startingBook } from '../../src/core/state/book-state';
 import type { GameState, StandRecord } from '../../src/core/state/game-state';
 import { createNewGame } from '../../src/core/state/new-game';
+import { oldKey } from './old-view';
 
 const FIXTURES = new URL('./fixtures/', import.meta.url);
 type Env = { schemaVersion: number; state: Record<string, unknown> };
@@ -72,7 +73,7 @@ describe("the v5 → v6 migration on the owner's real save (plan T6.3)", () => {
         expect(after.log.recentFights.map(({ alchemy: _a, ...f }) => f)).toEqual(
           before.log.recentFights,
         );
-      else expect(after[key], key).toEqual(before[key]);
+      else expect(oldKey(after, key), key).toEqual(before[key]);
     }
   });
 

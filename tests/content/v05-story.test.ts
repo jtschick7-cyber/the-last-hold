@@ -7,6 +7,14 @@ import { balance } from '../../src/content/balance';
 import { HUNTER_IDS, hunters } from '../../src/content/hunters';
 import { villages } from '../../src/content/villages';
 import { accountEvents, acts, allDocuments, LAST_WRITTEN_ACT } from '../../src/content/story/acts';
+import {
+  act5Arrival,
+  act5ArrivalOnLoad,
+  CRACK_LETTERS,
+  crackLetterLine,
+  sixthDoorLine,
+  yrsaTholeLine,
+} from '../../src/content/story/act5';
 import type { DocumentDef } from '../../src/content/story/documents';
 import { letters } from '../../src/content/story/letters';
 import { foundNameLine, roll, ROLL_SIZE } from '../../src/content/story/roll';
@@ -61,12 +69,13 @@ const docText = (d: DocumentDef): string =>
   ].join('\n');
 const flat = (s: string): string => s.replace(/\s+/g, ' ').replace(/\*/g, '').trim();
 
-/** lore §21.1, §22.1, §26.1 and §28.1: the documents tables, as [id, title, type, witness, arrives, where, names]. */
+/** lore §21.1, §22.1, §26.1, §28.1 and §30.1: the documents tables, as [id, title, type, witness, arrives, where, names]. */
 const tableRows = (): string[][] =>
   (
     lore.slice(lore.indexOf('## 21. '), lore.indexOf('## 23. ')) +
     lore.slice(lore.indexOf('## 26. '), lore.indexOf('## 27. ')) +
-    lore.slice(lore.indexOf('## 28. '), lore.indexOf('## 29. '))
+    lore.slice(lore.indexOf('## 28. '), lore.indexOf('## 29. ')) +
+    lore.slice(lore.indexOf('## 30. '), lore.indexOf('## 31. '))
   )
     .split('\n')
     .filter((l) => /^\| D\d-\d\d/.test(l))
@@ -77,13 +86,13 @@ const tableRows = (): string[][] =>
         .map((c) => c.replace(/\*\(new\)\*/, '').trim()),
     );
 
-describe('Acts I to IV (lore-secrets §21, §22, §26, §28)', () => {
+describe('Acts I to V (lore-secrets §21, §22, §26, §28, §30)', () => {
   const rows = tableRows();
 
   it('have every document of the tables, and no other', () => {
     expect(allDocuments.map((d) => d.id).sort()).toEqual(rows.map((r) => r[0]).sort());
-    expect(acts.map((a) => a.act)).toEqual([1, 2, 3, 4]);
-    expect(LAST_WRITTEN_ACT).toBe(4);
+    expect(acts.map((a) => a.act)).toEqual([1, 2, 3, 4, 5]);
+    expect(LAST_WRITTEN_ACT).toBe(5);
     for (const a of acts) for (const d of a.documents) expect(d.act, d.id).toBe(a.act);
   });
 
@@ -162,6 +171,49 @@ describe('Acts I to IV (lore-secrets §21, §22, §26, §28)', () => {
     expect(c('D4-06')).toEqual({ kind: 'actStand' });
     expect(c('D4-07')).toEqual({ kind: 'nextWarden' });
     expect(c('D4-08')).toEqual({ kind: 'contractWon', nth: 2, village: 'mirograd' });
+    // Act V (lore §30.1, D302): no new condition kinds.
+    expect(c('D5-01')).toEqual({ kind: 'actBegins' });
+    expect(c('D5-02')).toEqual({ kind: 'contractWon', nth: 1 });
+    expect(c('D5-03')).toEqual({ kind: 'contractWon', nth: 1, village: 'ravenfell' });
+    expect(c('D5-04')).toEqual({ kind: 'rankReached', age: 'citadel' });
+    expect(c('D5-05')).toEqual({ kind: 'rankReached', age: 'bastion' });
+    expect(c('D5-06')).toEqual({ kind: 'actStand' });
+    expect(c('D5-07')).toEqual({ kind: 'nextWarden' });
+    expect(c('D5-08')).toEqual({ kind: 'contractWon', nth: 2, village: 'kozly-hollow' });
+  });
+
+  it('give Act V exactly four names, all in D5-03, and no new proper nouns', () => {
+    const five = allDocuments.filter((d) => d.act === 5);
+    expect(five.map((d) => d.id)).toEqual([
+      'D5-01',
+      'D5-02',
+      'D5-03',
+      'D5-04',
+      'D5-05',
+      'D5-06',
+      'D5-07',
+      'D5-08',
+    ]);
+    expect(five.flatMap((d) => d.names)).toEqual([4, 5, 6, 7]);
+    expect(five.find((d) => d.names.length > 0)?.id).toBe('D5-03');
+  });
+
+  it('say Act V’s arrival, delivery, Thole and sixth-door lines word for word (lore §30.2, D314)', () => {
+    const section = flat(lore.slice(lore.indexOf('## 30. '), lore.indexOf('## 31. ')));
+    for (const line of [
+      act5Arrival,
+      act5ArrivalOnLoad,
+      crackLetterLine('The first night'),
+      yrsaTholeLine,
+      sixthDoorLine,
+    ])
+      expect(section).toContain(flat(line));
+    expect(CRACK_LETTERS.map((id) => allDocuments.find((d) => d.id === id)?.witness)).toEqual([
+      'Yrsa',
+      'Yrsa',
+      'Yrsa',
+      'Yrsa, to the Keeper',
+    ]);
   });
 
   it('give Act IV exactly six names, in D4-02 and D4-03, and no new proper nouns', () => {

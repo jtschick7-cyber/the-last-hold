@@ -1,76 +1,87 @@
-import { gearCost } from '../../core/skills/hooks';
-import { hunterPortraitId, WRIGHTS_BLADE_ICON } from '../../content/assets';
+import { hunterPortraitId, keepsakeIconId } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { formatDuration, formatNumber } from '../../core/format';
-import { RESOURCE_IDS } from '../../content/resources';
-import {
-  hunterStat,
-  hunterStatus,
-  levelCap,
-  gearLock,
-  nextGear,
-  slotGear,
-  xpToNext,
-} from '../../core/systems/hunters';
+import { slotPicker } from '../../core/systems/slot-picker';
+import type { GearSlot } from '../../content/gear';
+import { legendaries } from '../../content/legendaries';
+import { hunterStat, hunterStatus, levelCap, xpToNext } from '../../core/systems/hunters';
 import { dispatch, game, version } from '../app/runtime';
+import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
-import { ResourceIcon } from '../widgets/ResourceIcon';
+import { ItemIcon } from '../widgets/ItemIcon';
 import { Sprite } from '../widgets/Sprite';
 import { HunterLetters } from './HunterLetters';
+import { RankStars, UseSkillRow } from './HunterDepth';
+import { KeepsakePickerSheet, SlotPickerSheet } from './SlotPickerSheet';
+import { TalentView } from './TalentView';
 import { TraitList } from '../delve/TraitList';
 
-// GDD §9.7 hunter detail: stats with breakdowns, traits, gear and its upgrade,
-// the record, and a short bio.
-const Slot = ({ id, slot }: { id: HunterId; slot: 'weapon' | 'armor' }) => {
+// GDD §9.7, §9.16 hunter detail: stats with breakdowns, rank and stars, the use-skill, the three
+// slots (weapon, armor, keepsake) each opening its picker, talents, the record, and a short bio.
+const Slot = ({ id, slot }: { id: HunterId; slot: GearSlot }) => {
+  void version.value; // a child sheet part re-renders only by its own signal
   const s = game();
   const h = s.hunters[id];
   if (!h) return null;
-  const current = slotGear(h, slot);
-  const next = nextGear(h, slot);
-  const lock = next ? gearLock(s, next) : null;
-  const locked = lock !== null;
-  // GDD §5.8.6: the cost after Smithing, from the same function the command pays with.
-  const cost = next ? gearCost(s, next).cost : null;
-  const affordable = cost ? RESOURCE_IDS.every((r) => s.resources[r] >= cost[r]) : false;
+  const view = slotPicker(s, id, slot);
+  const worn = view?.worn;
   return (
     <div class={styles.row}>
+      {view?.worn ? (
+        <ItemIcon gear={view.worn.gear} rarity={view.worn.rarity} />
+      ) : (
+        <span style={{ width: '40px', flex: 'none' }} />
+      )}
       <span class={styles.grow}>
-        {slot === 'weapon' ? 'Weapon' : 'Armor'}:{' '}
-        {current?.id === 'wrights-blade' && <Sprite id={WRIGHTS_BLADE_ICON} />}{' '}
-        <strong>{current ? current.name : '—'}</strong>
-        {next && (
+        {slot === 'weapon' ? 'Weapon' : 'Armor'}: <strong>{worn ? worn.name : '—'}</strong>
+        {worn && (
           <div class={`${styles.small} ${styles.dim}`}>
-            Next: {next.name}
-            {next.runeSubHit
-              ? ' (adds a Rune sub-hit)'
-              : next.silverSubHit
-                ? ' (adds a Silver sub-hit)'
-                : ''}
-            {next.fireTakenReduction > 0 ? ' (−10% Fire taken)' : ''}
-            {next.might > 0 ? ` · +${next.might} Might` : ''}
-            {next.armor > 0 ? ` · +${next.armor} Armor` : ''}
-            {lock ? ` · ${lock}` : ''}
-            <span class={styles.cost}>
-              {RESOURCE_IDS.filter((r) => (cost?.[r] ?? 0) > 0).map((r) => (
-                <span key={r} class={s.resources[r] >= (cost?.[r] ?? 0) ? undefined : styles.short}>
-                  <ResourceIcon r={r} /> {formatNumber(cost?.[r] ?? 0)}
-                </span>
-              ))}
-            </span>
+            {[worn.base, ...worn.lines].filter((x) => x !== '').join(' · ')}
           </div>
         )}
       </span>
-      {next && (
-        <button
-          type="button"
-          class={affordable && !locked ? styles.btnPrimary : styles.btn}
-          disabled={!affordable || locked}
-          onClick={() => dispatch({ type: 'gear.upgrade', hunter: id, slot })}
-        >
-          Upgrade
-        </button>
+      <button
+        type="button"
+        class={styles.btn}
+        onClick={() =>
+          openSheet(`${hunters[id].shortName}: ${slot}`, () => (
+            <SlotPickerSheet id={id} slot={slot} />
+          ))
+        }
+      >
+        Change
+      </button>
+    </div>
+  );
+};
+
+const KeepsakeSlot = ({ id }: { id: HunterId }) => {
+  void version.value; // a child sheet part re-renders only by its own signal
+  const h = game().hunters[id];
+  if (!h) return null;
+  return (
+    <div class={styles.row}>
+      {h.keepsake ? (
+        <Sprite id={keepsakeIconId(h.keepsake)} scale={2} />
+      ) : (
+        <span style={{ width: '32px', flex: 'none' }} />
       )}
+      <span class={styles.grow}>
+        Keepsake: <strong>{h.keepsake ? legendaries[h.keepsake].name : '—'}</strong>
+        {h.keepsake && (
+          <div class={`${styles.small} ${styles.dim}`}>{legendaries[h.keepsake].text}</div>
+        )}
+      </span>
+      <button
+        type="button"
+        class={styles.btn}
+        onClick={() =>
+          openSheet(`${hunters[id].shortName}: keepsake`, () => <KeepsakePickerSheet id={id} />)
+        }
+      >
+        Change
+      </button>
     </div>
   );
 };
@@ -113,9 +124,13 @@ export const HunterView = ({ id }: { id: HunterId }) => {
           </span>
         ))}
       </div>
+      <RankStars id={id} />
+      <UseSkillRow id={id} />
       <TraitList id={id} />
       <Slot id={id} slot="weapon" />
       <Slot id={id} slot="armor" />
+      <KeepsakeSlot id={id} />
+      <TalentView id={id} />
       <p class={styles.small}>
         Record: {h.record.won} won · {h.record.lost} lost
       </p>

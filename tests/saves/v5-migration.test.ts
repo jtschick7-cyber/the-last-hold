@@ -10,6 +10,7 @@ import { migrations } from '../../src/core/save/migrations';
 import { createNewGame } from '../../src/core/state/new-game';
 import { shiftClock } from '../../src/core/state/shift';
 import type { GameState, StandRecord } from '../../src/core/state/game-state';
+import { oldKey } from './old-view';
 
 const FIXTURES = new URL('./fixtures/', import.meta.url);
 const readFixture = (f: string): { schemaVersion: number; state: Record<string, unknown> } =>
@@ -59,7 +60,7 @@ describe('the v4 → v5 migration (plan T5.3)', () => {
         expect(after.log.recentFights.map(({ alchemy: _a, ...f }) => f)).toEqual(
           before.log.recentFights,
         );
-      else expect(after[key], key).toEqual(before[key]);
+      else expect(oldKey(after, key), key).toEqual(before[key]);
     }
   });
 

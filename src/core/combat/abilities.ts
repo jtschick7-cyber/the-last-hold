@@ -31,10 +31,17 @@ const lowestBy = (
  * effects still apply). True when the action is lost.
  */
 const lose = (c: Combatant): boolean => {
+  // The Barley Knot (GDD §8.12) works by Steadfast's rule; being free, it goes before a Draught.
+  if (c.knotLeft > 0) {
+    c.knotLeft = 0;
+    c.keptBy = c.keepsake?.name.replace(/^The /, '') ?? 'keepsake';
+    return false;
+  }
   const p = c.potion;
   if (c.steadfastLeft > 0 && p && !p.used) {
     c.steadfastLeft -= 1;
     if (c.steadfastLeft === 0) p.used = true;
+    c.keptBy = p.name;
     return false;
   }
   c.lostActions += 1;
@@ -42,7 +49,8 @@ const lose = (c: Combatant): boolean => {
 };
 
 /** The log words for an action a Steadfast Draught kept. */
-const keeps = (c: Combatant): string => `their ${c.potion?.name ?? 'potion'} keeps their action`;
+const keeps = (c: Combatant): string =>
+  `their ${c.keptBy ?? c.potion?.name ?? 'potion'} keeps their action`;
 
 /** Effects that fire when an attack by `attacker` hits; returns log notes. */
 export const afterOwnHit = (

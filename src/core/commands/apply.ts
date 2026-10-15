@@ -1,6 +1,10 @@
 import { debugStartActThree, startActThree } from './act3';
-import { debugStartActFour, startActFourOnLoad } from './act4';
+import { debugStartAct, startActOnLoad } from './act-start';
+import { debugGrantLoot, debugReadyRanks } from './debug-depth';
+import { addStar, rankUp } from './hunter-depth';
+import { craftItem, equipFromStores, reworkItem, salvageItem, unequipItem } from './items';
 import { debugUnlit } from './unlit';
+import { equipKeepsake, pickTalent, respecTalents, unequipKeepsake } from './talents';
 import {
   buyAlternateTrait,
   buyChosenStart,
@@ -112,6 +116,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setSeed(state, cmd.seed);
     case 'debug.addEmbers':
       return addEmbers(state, cmd.amount);
+    case 'debug.grantLoot':
+      return debugGrantLoot(state);
+    case 'debug.readyRanks':
+      return debugReadyRanks(state);
     case 'debug.runArrival':
       return runArrival(state);
     case 'debug.unlockAge':
@@ -156,10 +164,32 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return buyCosmetic(state, cmd.cosmetic);
     case 'riftglass.switchTrait':
       return switchTrait(state, cmd.hunter, cmd.alternate);
-    case 'story.startActIV':
-      return startActFourOnLoad(state);
-    case 'debug.startActIV':
-      return debugStartActFour(state);
+    case 'hunter.rankUp':
+      return rankUp(state, cmd.hunter);
+    case 'hunter.addStar':
+      return addStar(state, cmd.hunter);
+    case 'talent.pick':
+      return pickTalent(state, cmd.hunter, cmd.talent);
+    case 'talent.respec':
+      return respecTalents(state, cmd.hunter);
+    case 'keepsake.equip':
+      return equipKeepsake(state, cmd.hunter, cmd.legendary);
+    case 'keepsake.unequip':
+      return unequipKeepsake(state, cmd.hunter);
+    case 'item.craft':
+      return craftItem(state, cmd.base);
+    case 'item.rework':
+      return reworkItem(state, cmd.item);
+    case 'item.equip':
+      return equipFromStores(state, cmd.item, cmd.hunter);
+    case 'item.unequip':
+      return unequipItem(state, cmd.hunter, cmd.slot);
+    case 'item.salvage':
+      return salvageItem(state, cmd.item);
+    case 'story.startAct':
+      return startActOnLoad(state);
+    case 'debug.startAct':
+      return debugStartAct(state, cmd.act);
     case 'debug.unlit':
       return debugUnlit(state, cmd.open);
     case 'debug.runV05Arrival':

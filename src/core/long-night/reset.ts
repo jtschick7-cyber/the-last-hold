@@ -86,8 +86,11 @@ export const resetForNewCycle = (state: GameState): void => {
       weapon: null,
       armor: null,
       recovery: null,
+      // GDD §5.9.7 (v0.8): ranks, stars, talents and keepsakes are kept.
     };
   }
+  // Every item is gone, except Legendaries, which are not items (GDD §5.11.7, D306).
+  state.items = [];
   // The dead return as candidates, levels halved like everyone's.
   for (const f of state.fallen)
     if (f.cycle === ending && f.level !== undefined) f.returnLevel = keptLevel(f.level, share);
@@ -111,7 +114,7 @@ export const resetForNewCycle = (state: GameState): void => {
   state.garden = { nextAt: null };
   state.threat = 0;
   state.arrivalDue = false;
-  state.stats = { ...state.stats, trophies: 0 };
+  state.stats = { ...state.stats, trophies: 0, trophiesSpent: 0 };
   // GDD §5.14.1: one act per cycle. A cycle with no act (before v0.5, or the v0.4
   // arrival's) is followed by Act I (D149).
   const act = (state.cycles[state.cycles.length - 1]?.act ?? 0) + 1;

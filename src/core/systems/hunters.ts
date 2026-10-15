@@ -1,6 +1,10 @@
 import { AGE_IDS, ages } from '../../content/ages';
 import { buildings, BUILDING_IDS } from '../../content/buildings';
 import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
+import { bonusLines, itemRarities } from '../../content/items';
+import { useSkillOf } from '../../content/use-skills';
+import { legendaries } from '../../content/legendaries';
+import { TALENT_BRANCHES, talentById } from '../../content/talents';
 import {
   HUNTER_IDS,
   hunters,
@@ -21,6 +25,7 @@ import { othersRecoveryMult, recoveryMult } from '../contracts/injury';
 import { intPow } from '../math';
 import type { GameState, HunterState } from '../state/game-state';
 import { MS_PER_DAY, MS_PER_SECOND } from '../time';
+import { wornItem } from './items';
 
 // GDD §5.3: the roster, each hunter's level and gear, who is free to go, and who
 // can be recruited. Derived values come from here, never stored (technical design §5.2).
@@ -115,14 +120,14 @@ export const availableHunters = (state: GameState): HunterId[] =>
   state.roster.active.filter((id) => hunterStatus(state, id) === 'ready');
 
 /** The weapon or armor slot's current gear tier, if any. */
-export const slotGear = (h: HunterState, slot: GearSlot): GearDef | null => {
-  const id = slot === 'weapon' ? h.weapon : h.armor;
-  return id ? gear[id] : null;
+export const slotGear = (state: GameState, h: HunterState, slot: GearSlot): GearDef | null => {
+  const item = wornItem(state, h, slot);
+  return item ? gear[item.base] : null;
 };
 
 /** The next upgrade for a slot: the lowest tier above the current one. */
-export const nextGear = (h: HunterState, slot: GearSlot): GearDef | null => {
-  const current = slotGear(h, slot)?.tier ?? 0;
+export const nextGear = (state: GameState, h: HunterState, slot: GearSlot): GearDef | null => {
+  const current = slotGear(state, h, slot)?.tier ?? 0;
   return (
     GEAR_IDS.map((g) => gear[g])
       .filter((g) => g.slot === slot && g.tier > current)
@@ -155,6 +160,8 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
   const def = hunters[id];
   const h = state.hunters[id];
   if (!h) throw new Error(`${id} is not on the roster.`);
+  const worn = [wornItem(state, h, 'weapon'), wornItem(state, h, 'armor')];
+  const lines = worn.flatMap((i) => i?.lines ?? []);
   return {
     id,
     name: def.name,
@@ -163,8 +170,16 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
     level: h.level,
     base: def.stats,
     traits: effectiveTraits(state, id),
-    weapon: h.weapon,
-    armorGear: h.armor,
+    weapon: worn[0]?.base ?? null,
+    armorGear: worn[1]?.base ?? null,
+    // v0.8: only when an item has lines, so every old snapshot and golden stays as it was.
+    ...(lines.length > 0 ? { lines } : {}),
+    ...(h.stars > 0 ? { stars: h.stars } : {}),
+    // v0.8 (D312): a Wright's use-skill; Apprentices have none, so their snapshots are unchanged.
+    ...(h.rank !== 'apprentice' ? { skill: useSkillOf(id).id } : {}),
+    // v0.8 (D313, D306): picked talents and the keepsake; absent when none, so old snapshots are unchanged.
+    ...(h.talents.length > 0 ? { talents: [...h.talents] } : {}),
+    ...(h.keepsake !== null ? { keepsake: h.keepsake } : {}),
   };
 };
 
@@ -282,18 +297,29 @@ export const hunterStat = (state: GameState, id: HunterId, stat: StatName): Expl
   const base = def.stats[stat];
   const growth = num('hunter.levelStatGrowth');
   const scaled = stat === 'health' || stat === 'might';
-  const scale = scaled ? 1 + growth * (h.level - 1) : 1;
+  const starGrowth = num('star.growthPerStar') * h.stars;
+  const levelScale = scaled ? 1 + growth * (h.level - 1) : 1;
+  const scale = scaled ? 1 + (growth + starGrowth) * (h.level - 1) : 1;
   const children: Explained['breakdown'][] = [{ label: `Base (${def.shortName})`, value: base }];
   if (scaled) {
     children.push({
       label: `Level ${h.level}`,
-      value: base * scale - base,
+      value: base * levelScale - base,
       formula: `${base} × ${growth} × (${h.level} − 1)`,
       key: 'hunter.levelStatGrowth',
     });
+    // GDD §5.11.3 (D310): each star adds a point to the growth per level, so it shows here.
+    if (h.stars > 0) {
+      children.push({
+        label: `${h.stars} ${h.stars === 1 ? 'star' : 'stars'}: +${roundHalfUp(starGrowth * 100)}% growth per level`,
+        value: base * scale - base * levelScale,
+        formula: `${base} × ${num('star.growthPerStar')} × ${h.stars} × (${h.level} − 1)`,
+        key: 'star.growthPerStar',
+      });
+    }
   }
   let flat = 0;
-  for (const g of [slotGear(h, 'weapon'), slotGear(h, 'armor')]) {
+  for (const g of [slotGear(state, h, 'weapon'), slotGear(state, h, 'armor')]) {
     if (!g) continue;
     const add = stat === 'might' ? g.might : stat === 'armor' ? g.armor : 0;
     if (add === 0) continue;
@@ -307,10 +333,69 @@ export const hunterStat = (state: GameState, id: HunterId, stat: StatName): Expl
       children.push({ label: traits[t].name, value: e.amount });
     }
   }
-  const raw = base * scale + flat;
+  // v0.8 (D305): the bonus lines of the worn items, in the same buckets the fight puts them in.
+  let pct = 0;
+  const pctKind = stat === 'might' ? 'might' : stat === 'health' ? 'health' : null;
+  const flatKind = stat === 'armor' ? 'armor' : stat === 'speed' ? 'speed' : null;
+  const lineChildren: Explained['breakdown'][] = [];
+  for (const slot of ['weapon', 'armor'] as const) {
+    const item = wornItem(state, h, slot);
+    if (!item) continue;
+    for (const l of item.lines) {
+      const from = `${itemRarities[item.rarity].name} ${gear[item.base].name}`;
+      if (l.kind === flatKind) {
+        flat += l.size;
+        children.push({ label: `${from}: +${l.size} ${bonusLines[l.kind].label}`, value: l.size });
+      } else if (l.kind === pctKind) {
+        pct += l.size;
+        lineChildren.push({
+          label: `${from}: +${roundHalfUp(l.size * 100)}% ${bonusLines[l.kind].label}`,
+          value: l.size,
+          formula: `(base × level scale + gear) × ${l.size}`,
+        });
+      }
+    }
+  }
+  // v0.8 talents (GDD §8.11) and Yrsa's Thole (§8.12), in the buckets combat/build.ts puts them in.
+  for (const id of h.talents) {
+    const t = talentById(id);
+    if (!t) continue;
+    const e = t.effect;
+    const from = `${TALENT_BRANCHES[t.role].find((b) => b.id === t.branch)?.name ?? t.branch}, tier ${t.tier}`;
+    if (
+      (e.kind === 'armorFlat' && stat === 'armor') ||
+      (e.kind === 'speedFlat' && stat === 'speed')
+    ) {
+      flat += e.amount;
+      children.push({ label: `${from} talent: ${t.text}`, value: e.amount });
+    } else if (
+      (e.kind === 'mightPct' && stat === 'might') ||
+      (e.kind === 'maxHealthPct' && stat === 'health')
+    ) {
+      pct += e.amount;
+      lineChildren.push({
+        label: `${from} talent: ${t.text}`,
+        value: e.amount,
+        formula: `(base × level scale + gear) × ${e.amount}`,
+      });
+    }
+  }
+  const kept = h.keepsake ? legendaries[h.keepsake] : null;
+  if (kept?.effect.kind === 'startMeter' && stat === 'speed') {
+    flat += kept.effect.speed;
+    children.push({ label: `${kept.name}: +${kept.effect.speed} Speed`, value: kept.effect.speed });
+  }
+  const before = base * scale + flat;
+  const raw = before * (1 + pct);
+  for (const c of lineChildren) children.push({ ...c, value: before * c.value });
   const value = stat === 'health' ? roundHalfUp(raw) : raw;
   return {
     value,
-    breakdown: { label, value, formula: 'base × level scale + gear + traits', children },
+    breakdown: {
+      label,
+      value,
+      formula: 'base × level scale + gear + traits, then item lines',
+      children,
+    },
   };
 };

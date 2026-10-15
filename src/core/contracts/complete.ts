@@ -4,7 +4,9 @@ import { runFight } from '../combat';
 import { recordFight } from '../investigation/knowledge';
 import { isWellPrepared, prepIds } from './prep';
 import { reagentsFor } from './reagents';
-import { seeded } from '../rng';
+import { seeded, stream } from '../rng';
+import { lootKey, rollContractLoot, takeLoot } from '../systems/loot';
+import { grantLegendaries, legendaryKey } from '../systems/legendaries';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
 import { gainXp, recoveryFactor } from '../systems/hunters';
@@ -16,6 +18,7 @@ import { contractXpBonus } from '../long-night/bonuses';
 import { recordWin, sweepDocuments } from '../story/documents';
 import { defeatRibbonshade } from '../story/names';
 import { winForVillage } from '../story/trust';
+import { applyYard } from './yard';
 import { notePeak } from '../story/letters';
 import { deathSeed, fightSeed } from './seeds';
 
@@ -79,6 +82,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   for (const [id, n] of Object.entries(reagents))
     state.stores[id as keyof typeof state.stores] += n ?? 0;
 
+  const earners: HunterId[] = [];
   const injuries: ContractResult['injuries'] = [];
   const levelUps: ContractResult['levelUps'] = [];
   run.party.forEach((id, i) => {
@@ -114,6 +118,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
       h.recovery = { kind: outcome.kind, until: at + outcome.recoverySeconds * MS_PER_SECOND };
       injuries.push({ hunter: id, kind: outcome.kind, until: h.recovery.until });
     }
+    earners.push(id);
     for (const level of gainXp(state, h, xp)) levelUps.push({ hunter: id, level });
   });
 
@@ -134,10 +139,19 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   // GDD §5.4.3, §5.14.2: a success can bring documents and names; a failure never does.
   const found = success ? [...recordWin(state, contract), ...sweepDocuments(state)] : [];
   if (success && contract.monster === 'ribbonshade') found.push(...defeatRibbonshade(state));
+  // GDD §5.11.2 (D305): a won contract can drop an item, fixed at launch like the fight.
+  if (success) {
+    const drop = rollContractLoot(stream(state.meta.gameSeed, 'loot', contract.id), contract.tier);
+    if (drop) found.push(lootKey(takeLoot(state, drop)));
+  }
+  // GDD §5.11.6 (D306, D328 (5)): a species reaching Mastered can complete a family; the Legendary is found now.
+  if (success) found.push(...grantLegendaries(state).map(legendaryKey));
   // GDD §5.14.6: after the documents (a trust-gated one reads trust before this win, D178).
   if (success) found.push(...winForVillage(state, contract.village));
   // GDD §5.14.7: a level-up can reach a hunter's letter, win or lose.
   for (const u of levelUps) found.push(...notePeak(state, u.hunter, u.level));
+  // GDD §5.11.5 (D315): everyone else at the hold earns a share of that XP in the yard, win or lose.
+  if (earners.length > 0) found.push(...applyYard(state, run.party, xp));
 
   const ref: FightRef = {
     contractId: contract.id,

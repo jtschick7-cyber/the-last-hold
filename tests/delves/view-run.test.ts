@@ -132,6 +132,22 @@ describe('the result sheet', () => {
     expect(r?.relics.map((x) => x.name)).toContain('Spindle Whorl');
     expect(r?.echoes.length).toBeGreaterThan(0);
     expect(r?.floors).toBeGreaterThanOrEqual(7);
+    // v0.8 (D316): the XP each hunter earned and the guardian's item, in the story's own words.
+    expect(r?.xp).toBeGreaterThan(0);
+    expect(r?.itemLine).toMatch(
+      /^Loot: a (Fine|Rare|Heroic) (Silvered Blade|Emberwright Plate)\.$/,
+    );
+  });
+
+  it('a run from before v0.8 has no XP and no item line', () => {
+    const s = start('old');
+    cmd(s, { type: 'delve.leave' });
+    const result = s.delve.result;
+    if (result) {
+      delete result.xp;
+      delete result.item;
+    }
+    expect(resultView(s)).toMatchObject({ xp: 0, itemLine: null });
   });
 
   it('an empty allowance is "the rift is quiet tonight", with Pechko\'s quiet line', () => {

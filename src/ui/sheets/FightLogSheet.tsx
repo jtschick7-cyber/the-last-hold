@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { monsters } from '../../content/monsters';
 import { runFight } from '../../core/combat';
 import { seeded } from '../../core/rng';
-import { RULES_VERSION } from '../../core/rules-version';
+import { fightReplayDiffers, OLDER_RULES_NOTE } from '../../core/replay-check';
 import type { FightRef } from '../../core/state/game-state';
 import styles from '../styles/ui.module.css';
 
@@ -29,7 +29,7 @@ export const FightLogView = ({ fight }: { fight: FightRef }) => {
   const [check, setCheck] = useState<string | null>(null);
   const first = replay(fight);
   const lines = first.log;
-  const older = fight.rulesVersion !== RULES_VERSION;
+  const older = fightReplayDiffers(fight, first);
   const name = monsters[fight.monster.monster].name;
   const buckets = new Map<number, typeof lines>();
   for (const l of lines) {
@@ -44,11 +44,7 @@ export const FightLogView = ({ fight }: { fight: FightRef }) => {
           {first.ticks}
         </strong>
       </p>
-      {older && (
-        <p class={`${styles.small} ${styles.warn}`}>
-          Recorded with an older rules version, so this replay may differ from what happened.
-        </p>
-      )}
+      {older && <p class={`${styles.small} ${styles.warn}`}>{OLDER_RULES_NOTE}</p>}
       <ul class={styles.list} style={{ fontSize: '0.875rem' }}>
         {collapsed
           ? [...buckets.entries()].map(([k, group]) => (

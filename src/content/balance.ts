@@ -69,7 +69,7 @@ export const balance = {
   },
   xp: {
     base: tunable(50),
-    growth: tunable(1.5),
+    growth: tunable(1.3),
     perTier: tunable(20),
   },
   barracks: { maxLevel: locked(5) },
@@ -177,6 +177,10 @@ export const balance = {
     unlitDoorsPerRun: locked(1),
     reagentsPerFloor: tunable(1),
     guardianReagents: tunable(2),
+    // GDD §7.10 (v0.8, D316): hunter XP and a guardian item, only while the run pays Riftglass.
+    xpPerTier: tunable(10), // per floor cleared × tier, to each of the three
+    guardianXpPerTier: tunable(20), // for the guardian × tier
+    guardianLootWeights: tunable({ fine: 50, rare: 35, heroic: 15 }),
   },
   riftglass: {
     perFloor: tunable(2),
@@ -191,6 +195,36 @@ export const balance = {
       reroll: tunable(60),
     },
   },
+
+  // ---- GDD §7.10 Hunter depth (v0.8, D300–D328) ----
+  // Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (Q26 (a), D345).
+  loot: {
+    chanceBase: tunable(0.1),
+    chancePerTier: tunable(0.05),
+    rarityWeights: tunable({ fine: 65, rare: 27, heroic: 8 }),
+    // Bonus-line sizes: percentages as shares, Armor and Speed flat, crit in chance (0.04 = 4 points).
+    lines: tunable({ might: 0.06, health: 0.08, armor: 2, speed: 1, crit: 0.04, bane: 0.12 }),
+  },
+  stores: { cap: locked(40) },
+  salvage: { share: tunable(0.25), perLine: tunable(20) },
+  rank: {
+    wrightLevel: locked(5),
+    masterLevel: locked(10),
+    wrightTrophies: tunable(10),
+    masterTrophies: tunable(60),
+  },
+  talent: {
+    points: locked({ apprentice: 1, wright: 3, masterWright: 5 }),
+    tierStars: locked([0, 2, 4]),
+  },
+  star: {
+    max: locked(5),
+    embersPerStar: tunable(20),
+    trophiesPerStar: tunable(10),
+    growthPerStar: tunable(0.01),
+  },
+  keepsake: { slots: locked(1) },
+  yard: { share: tunable(0.25), capRank: locked(3) },
 
   // ---- GDD §7.5 Bestiary & preparation ----
   knowledge: {
@@ -255,7 +289,7 @@ export const balance = {
   // Hunter letters at these levels, counting the highest level ever reached (D155).
   letters: { levels: tunable([5, 8]) },
   // Until all six Ribbonshade names are found, this share of ruin contracts is a Ribbonshade (Q17, D190).
-  ruin: { ribbonshadeShare: tunable(0.5) },
+  ruin: { ribbonshadeShare: tunable(0.75) },
 
   // ---- GDD §7.8 Alchemy discovery & skills (v0.6, D193–D220) ----
   experiment: { time: tunable(10 * MIN, 'seconds'), units: tunable(1) }, // 10 min, 1 unit each
@@ -268,7 +302,7 @@ export const balance = {
       alchemy: tunable({ brew: 1, experiment: 3, property: 10 }),
       smithing: tunable({ gearPerTier: 2, smithyLevel: 2 }),
       lore: tunable({ clue: 1, knowledgeLevel: 5, document: 5 }),
-      command: tunable({ contractPerTier: 2, wave: 1 }),
+      command: tunable({ contractPerTier: 2, wave: 1, delveFloor: 1 }), // delveFloor: GDD §7.10, D316, Q26 (a)
     },
     // Per level (D205): brews stronger, gear cheaper, clues quicker, contract XP higher.
     alchemyPotency: tunable(0.03),

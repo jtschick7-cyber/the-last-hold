@@ -4,7 +4,17 @@
 // Run: npx vite-node tools/contact-sheet.ts
 import { writeFileSync } from 'node:fs';
 import { AGE_IDS } from '../src/content/ages';
-import { assets, SPRITE_FRAME_NAMES, SPRITE_PX, type AssetEntry } from '../src/content/assets';
+import {
+  assets,
+  gearIconId,
+  itemFrameId,
+  OLD_BREW_ICON_IDS,
+  SPRITE_FRAME_NAMES,
+  SPRITE_PX,
+  type AssetEntry,
+} from '../src/content/assets';
+import { GEAR_IDS } from '../src/content/gear';
+import { ITEM_RARITY_IDS } from '../src/content/items';
 import { COSMETIC_IDS } from '../src/content/delves/shop';
 
 const src = (a: AssetEntry): string =>
@@ -37,7 +47,27 @@ const sceneFor = (age: string): string => {
 
 const isSprite = (a: AssetEntry): boolean => a.kind === 'sprite';
 const isCosmetic = (a: AssetEntry): boolean => a.id.startsWith('scene.cosmetic.');
-const rest = assets.filter((a) => !isSprite(a) && !isCosmetic(a));
+// v0.8 (plan T8.14, D324): the item art has its own section, with each gear piece on each frame.
+const isV08 = (a: AssetEntry): boolean =>
+  a.id.startsWith('icon.item.') ||
+  a.id.startsWith('icon.item-frame.') ||
+  a.id.startsWith('icon.keepsake.') ||
+  a.id.startsWith('icon.rank.') ||
+  a.id === 'icon.star' ||
+  OLD_BREW_ICON_IDS.some((b) => a.id === `icon.brew.${b}`);
+const rest = assets.filter((a) => !isSprite(a) && !isCosmetic(a) && !isV08(a));
+
+const fileOf = (id: string): string => {
+  const a = assets.find((x) => x.id === id);
+  return a && a.source !== 'placeholder' ? a.file : '';
+};
+
+/** One gear icon (16 px) centred in an item frame (20 px), both at 4×. */
+const framed = (gear: string, frame: string): string =>
+  `<span class="framed"><img src="assets/${fileOf(frame)}" width="80" height="80" alt=""><img class="over" src="assets/${fileOf(gear)}" width="64" height="64" alt=""></span>`;
+const itemRows = ITEM_RARITY_IDS.map(
+  (r) => `<div>${r}: ${GEAR_IDS.map((g) => framed(gearIconId(g), itemFrameId(r))).join('')}</div>`,
+).join('\n');
 
 const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,6 +80,7 @@ figcaption{font-size:11px;margin-top:6px}code{color:#9cf}
 .frames{display:flex;gap:4px}.frame{display:inline-block;width:${SPRITE_PX * K}px;height:${SPRITE_PX * K}px;background-color:#555;image-rendering:pixelated;background-repeat:no-repeat}
 .stack{position:relative}.stack img{position:absolute;left:0;top:0;background:none}.stack img:first-child{background:#555}
 h2{margin:24px 0 4px}
+.framed{position:relative;display:inline-block;width:80px;height:80px;margin:0 4px 4px 0}.framed img{image-rendering:pixelated;position:absolute;left:0;top:0;background:none}.framed .over{left:8px;top:8px}
 </style></head><body>
 <h1>Contact sheet</h1>
 <p>${assets.length} assets. Placeholders show their kind's silhouette.</p>
@@ -59,6 +90,10 @@ ${assets.filter(isSprite).map(spriteRow).join('\n')}
 <h2>Hold cosmetics (v0.7)</h2>
 <p>The four cosmetics on each Rank's hold scene.</p>
 ${AGE_IDS.map(sceneFor).join('\n')}
+<h2>Items, keepsakes, ranks and the older brews (v0.8)</h2>
+<p>Each gear piece on each rarity frame (Common, Fine, Rare, Heroic), then every new asset on its own.</p>
+${itemRows}
+${assets.filter(isV08).map(cell).join('\n')}
 <h2>Everything else</h2>
 ${rest.map(cell).join('\n')}
 </body></html>

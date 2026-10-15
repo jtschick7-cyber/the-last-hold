@@ -15,7 +15,6 @@ import {
   bool,
   count,
   finite,
-  gear,
   hunterId,
   idRecord,
   Invalid,
@@ -32,6 +31,7 @@ import {
   type Obj,
 } from './guards';
 import { storyFrom } from './validate-story';
+import { growthFrom, itemsFrom } from './validate-items';
 import { alchemyLevel, bookFrom, kettleJob, skillsFrom } from './validate-alchemy';
 import { delveFrom } from './validate-delve';
 import { longNightFrom } from './validate-long-night';
@@ -129,7 +129,7 @@ const contract = (v: unknown, where: string): ContractInstance => {
   };
 };
 
-const hunterState = (v: unknown, where: string): HunterState => {
+const hunterState = (v: unknown, where: string, id: HunterId, warnings: string[]): HunterState => {
   const o = obj(v, where);
   const level = count(o.level, `${where}.level`);
   if (level < 1) throw new Invalid(`${where}.level is below 1.`);
@@ -137,8 +137,9 @@ const hunterState = (v: unknown, where: string): HunterState => {
   return {
     level,
     xp: nonNegative(o.xp, `${where}.xp`),
-    weapon: gear(o.weapon, `${where}.weapon`),
-    armor: gear(o.armor, `${where}.armor`),
+    weapon: orNull(o.weapon, (x) => str(x, `${where}.weapon`)),
+    armor: orNull(o.armor, (x) => str(x, `${where}.armor`)),
+    ...growthFrom(o, id, where, warnings),
     recovery: orNull(o.recovery, (x) => {
       const r = obj(x, `${where}.recovery`);
       return {
@@ -286,7 +287,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
       warnings.push(`Dropped unknown hunters entry "${k}".`);
       continue;
     }
-    owned[k as HunterId] = hunterState(x, `hunters.${k}`);
+    owned[k as HunterId] = hunterState(x, `hunters.${k}`, k as HunterId, warnings);
   }
   const active: HunterId[] = [];
   for (const [i, h] of arr(rosterRaw.active, 'roster.active').entries()) {
@@ -362,6 +363,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
       contractsWon: count(stats.contractsWon, 'stats.contractsWon'),
       contractsLost: count(stats.contractsLost, 'stats.contractsLost'),
       trophies: count(stats.trophies, 'stats.trophies'),
+      trophiesSpent: count(stats.trophiesSpent, 'stats.trophiesSpent'),
       bountySilver: nonNegative(stats.bountySilver, 'stats.bountySilver'),
       kills: sparseCounts(stats.kills, MONSTER_IDS, 'stats.kills', warnings),
       winsByLocation: sparseCounts(
@@ -376,6 +378,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
     book: bookFrom(s.book, warnings),
     skills: skillsFrom(s.skills, warnings),
     delve: delveFrom(s.delve, warnings),
+    ...itemsFrom(s, owned, warnings),
     settings: settingsFrom(s.settings, warnings),
   };
 };

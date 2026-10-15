@@ -1,13 +1,16 @@
 import type { ConsumableEffect, ConsumableId } from '../../content/consumables';
 import type { DamageType, FamilyId, LocationId } from '../../content/damage';
 import type { GearId } from '../../content/gear';
+import type { LegendaryDef, LegendaryId } from '../../content/legendaries';
 import type { HunterId, RoleId, Stats } from '../../content/hunters';
 import type { MonsterAbility, MonsterId } from '../../content/monsters';
 import type { GuardianId } from '../../content/delves/guardians';
 import type { DelveRelicId } from '../../content/delves/relics';
 import type { TraitEffect, TraitId } from '../../content/traits';
+import type { UseSkillId } from '../../content/use-skills';
 import type { RollSource } from '../rng';
 import type { Preparation } from '../state/game-state';
+import type { ItemLine } from '../state/item-state';
 
 // GDD §5.5: the combat inputs, the live combatants, and the fight log.
 
@@ -23,6 +26,16 @@ export interface HunterSnapshot {
   readonly traits: readonly TraitId[];
   readonly weapon: GearId | null;
   readonly armorGear: GearId | null;
+  /** The hunter's use-skill, once they are a Wright (v0.8, D312); absent for Apprentices. */
+  readonly skill?: UseSkillId;
+  /** Stars, which add to the Health and Might growth per level (v0.8, D310); absent at 0. */
+  readonly stars?: number;
+  /** The bonus lines of the worn items (v0.8, D305); absent when there are none. */
+  readonly lines?: readonly ItemLine[];
+  /** The talents picked, as ids (v0.8, D313); absent when there are none. */
+  readonly talents?: readonly string[];
+  /** The Legendary in the keepsake slot (v0.8, D306); absent when empty. */
+  readonly keepsake?: LegendaryId;
 }
 
 export interface MonsterInstance {
@@ -120,6 +133,8 @@ export interface HunterPotion {
   >;
   /** 0.25 more power with Herbwise (potionPower). */
   readonly power: number;
+  /** A Mending Draught fires below this share of Health: its own 30%, or 40% with the Herbs talent (v0.8). */
+  readonly below: number;
   used: boolean;
 }
 
@@ -199,8 +214,24 @@ export interface Combatant {
   /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
   extraTaken: number;
   // ---- Delve blessings and relics (v0.7, GDD §8.8); all neutral outside a Delve ----
+  /** The hunter's use-skill (v0.8, GDD §8.5b), or null: Apprentices, monsters. */
+  skill: UseSkillId | null;
+  /** A once-per-fight skill (or a "first" one) has fired. */
+  skillUsed: boolean;
+  /** The skill that fires on the action being taken; set for that action only. */
+  skillArmed: boolean;
+  /** taken% from a use-skill (Banked Smoke), until the Vanguard's next action. */
+  useTaken: number;
+  /** Rime-Dipped: the monster's remaining actions at −`rimeCut` Speed (status%). */
+  rimeLeft: number;
+  rimeCut: number;
+  /** Stopping Root: Venom for `rootAmount` at the start of each of the monster's next `rootLeft` actions. */
+  rootLeft: number;
+  rootAmount: number;
   /** outgoing%: added to the hunter's damage bonuses. */
   dealtBonus: number;
+  /** outgoing% against one contract family, from bane lines on worn items (v0.8); empty elsewhere. */
+  baneVs: Readonly<Partial<Record<FamilyId, number>>>;
   /** taken% against one damage type only (Cooled Iron). */
   takenByType: Readonly<Partial<Record<DamageType, number>>>;
   /** A monster's knowledge level (0–4): the hunters' Studied and Mastered bonus against it (GDD §5.0). */
@@ -227,6 +258,29 @@ export interface Combatant {
   actionDrain: number;
   /** Rimewrought's Unthawed has stripped its Armor (GDD §8.3, v0.5). */
   unthawed: boolean;
+  // ---- Talents and Legendaries (v0.8, GDD §8.11, §8.12); all neutral without them ----
+  /** taken% for the holder from the Wall talent (a reduction). */
+  talentTaken: number;
+  /** Monsters target this hunter with this weight instead of the role's (Warden, tier 2). */
+  weightOverride: number | null;
+  /** knowledge% extra against a Studied or Mastered species (Hunt, tier 1). */
+  knownBonus: number;
+  /** A Mender's attacks deal this share of her Might instead of `mender.attackMult` (Watch, tier 3). */
+  attackShare: number | null;
+  /** The Legendary worn in the keepsake slot, or null. */
+  keepsake: LegendaryDef | null;
+  /** Rune Nail: the share of the target's Armor a direct attack ignores. */
+  armorPierce: number;
+  /** Coffin Silver: the Silver sub-hit's share of Might on each direct hit (0 = none). */
+  coffinSilver: number;
+  /** The Barley Knot: 1 until it has kept an action. */
+  knotLeft: number;
+  /** Ferryman's Coin has been used this fight. */
+  coinUsed: boolean;
+  /** Wolf-Tooth String: Might (status%) given so far this fight. */
+  toothGiven: number;
+  /** What kept the holder's last action (a potion's or a Legendary's name), for the log. */
+  keptBy: string | null;
 }
 
 export interface LogEntry {

@@ -13,6 +13,7 @@ import type { GameState, Preparation, StandRecord } from '../state/game-state';
 import { bandFor } from '../story/band';
 import { arriveArvid } from '../story/act3';
 import { endRunForStand } from '../delves/run';
+import { grantLegendaries } from '../systems/legendaries';
 import { beginAct, currentAct, standDocuments, wardenDocuments } from '../story/documents';
 import { triumphantStand } from '../story/trust';
 import { ok, refuse, type ApplyResult } from './types';
@@ -106,13 +107,17 @@ export const makeStand = (
   // The steps are kept on the record so the result sheet can show them whenever it is opened (D183).
   if (stand.band === 'triumphant') stand.trustSteps = triumphantStand(state);
   standDocuments(state);
+  grantLegendaries(state); // Yrsa's Thole comes with D5-06 (GDD §8.12)
+  // GDD §5.14.1 (D257): after Act V's Last Stand the Unlit's door opens.
+  if ((currentAct(state) ?? 0) >= 5) state.delve.unlitOpen = true;
   // 4–5. The reset and the new cycle; the next warden's arrival closes the act's scene.
   resetForNewCycle(state);
   wardenDocuments(state);
   // GDD §8.5 (D211): Arvid arrives with Ilse as Act III begins.
   if (currentAct(state) === 3) arriveArvid(state, 'warden');
-  // Act IV begins with the same arrival: Ilse, and Pechko's bundle (D4-01, D245).
-  if (currentAct(state) === 4) beginAct(state, 4, 'warden');
+  // Acts IV and V begin with the same arrival: Ilse, and Pechko (D4-01, D5-01; D245, D302).
+  const begun = currentAct(state) ?? 0;
+  if (begun >= 4) beginAct(state, begun, 'warden');
   return ok;
 };
 

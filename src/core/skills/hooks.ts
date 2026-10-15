@@ -10,7 +10,7 @@ import { gainSkillXp, skillBonus, xpTable } from './skills';
 type AlchemyXp = { brew: number; experiment: number; property: number };
 type SmithingXp = { gearPerTier: number; smithyLevel: number };
 type LoreXp = { clue: number; knowledgeLevel: number; document: number };
-type CommandXp = { contractPerTier: number; wave: number };
+type CommandXp = { contractPerTier: number; wave: number; delveFloor: number };
 
 const roundHalfUp = (x: number): number => Math.floor(x + 0.5);
 
@@ -50,6 +50,11 @@ export const noteContractWon = (state: GameState, tier: number): void => {
 
 export const noteWavesHeld = (state: GameState, waves: number): void => {
   gainSkillXp(state, 'command', xpTable<CommandXp>('command').wave * waves);
+};
+
+/** A Delve floor was cleared in a run that pays Riftglass (GDD §5.10.7, D316). */
+export const noteDelveFloor = (state: GameState): void => {
+  gainSkillXp(state, 'command', xpTable<CommandXp>('command').delveFloor);
 };
 
 /** Smithing: gear upgrades cost this share less, every resource including silver (GDD §5.8.6). */

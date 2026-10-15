@@ -17,7 +17,7 @@ import { startingDelve } from '../../src/core/state/delve-state';
 import { createNewGame } from '../../src/core/state/new-game';
 import { freshHunter } from '../../src/core/state/hunters-state';
 import { snapshotOf } from '../../src/core/systems/hunters';
-import { actFourDue } from '../../src/core/story/act4';
+import { actDue } from '../../src/core/story/act-start';
 import { isFound, recordWin, sweepDocuments } from '../../src/core/story/documents';
 
 const FIXTURES = new URL('./fixtures/', import.meta.url);
@@ -53,10 +53,10 @@ describe('the v6 → v7 migration on the owner’s real save', () => {
   const after = fresh();
 
   it('is a real v0.6 save: schema 6, cycle 19, Hamlet', () => {
-    expect(SCHEMA_VERSION).toBe(7);
+    expect(SCHEMA_VERSION).toBeGreaterThanOrEqual(7);
     expect(old.schemaVersion).toBe(6);
     expect(before.cycle).toEqual({ number: 19, age: 'hamlet' });
-    expect(after.meta.schemaVersion).toBe(7);
+    expect(after.meta.schemaVersion).toBe(SCHEMA_VERSION);
   });
 
   it('keeps everything the save had, apart from what v7 adds and re-bases', () => {
@@ -68,7 +68,8 @@ describe('the v6 → v7 migration on the owner’s real save', () => {
     expect(after.story.documents).toEqual(before.story.documents);
     for (const key of Object.keys(before) as (keyof GameState)[]) {
       if (key === 'meta') expect({ ...after.meta, schemaVersion: 6 }).toEqual(before.meta);
-      else if (key !== 'story' && key !== 'cycles') expect(after[key], key).toEqual(before[key]);
+      else if (!['story', 'cycles', 'hunters', 'stats'].includes(key))
+        expect(after[key], key).toEqual(before[key]); // v8 changes hunters and stats (tests/saves/v8-migration.test.ts)
     }
   });
 
@@ -104,9 +105,9 @@ describe('the v6 → v7 migration on the owner’s real save', () => {
 
   it('plays D4-01 on load, finds nothing else (Hamlet), and the next Field & Forest win finds D4-02', () => {
     const s = fresh();
-    expect(actFourDue(s)).toBe(true);
+    expect(actDue(s)).toBe(4);
     expect(sweepDocuments(s)).not.toContain('doc:D4-01'); // only by the start
-    expect(apply(s, { type: 'story.startActIV' }, s.time).ok).toBe(true);
+    expect(apply(s, { type: 'story.startAct' }, s.time).ok).toBe(true);
     expect(s.story.documents.find((d) => d.id === 'D4-01')).toMatchObject({
       cycle: 19,
       via: 'arrival',
@@ -114,8 +115,8 @@ describe('the v6 → v7 migration on the owner’s real save', () => {
     expect(s.story.documents.filter((d) => d.id.startsWith('D4-')).map((d) => d.id)).toEqual([
       'D4-01',
     ]);
-    expect(actFourDue(s)).toBe(false);
-    expect(apply(s, { type: 'story.startActIV' }, s.time).ok).toBe(false); // once
+    expect(actDue(s)).toBeNull();
+    expect(apply(s, { type: 'story.startAct' }, s.time).ok).toBe(false); // once
     // The Kikimora is Field & Forest; the Gaunt Wolf is not; Beasts & Wilds needs two.
     expect(win(s, 'wolf', 'dubno-ford')).not.toContain('doc:D4-02');
     expect(win(s, 'kikimora', 'dubno-ford')).toEqual(
@@ -133,7 +134,7 @@ describe('the v6 → v7 migration on the owner’s real save', () => {
     if (!rec) throw new Error('no cycle');
     rec.ranks.keep = s.time;
     rec.ranks.citadel = s.time;
-    expect(apply(s, { type: 'story.startActIV' }, s.time).ok).toBe(true);
+    expect(apply(s, { type: 'story.startAct' }, s.time).ok).toBe(true);
     const ids = s.story.documents
       .filter((d) => d.id.startsWith('D4-'))
       .map((d) => d.id)
@@ -149,7 +150,7 @@ describe('the v6 → v7 migration on the owner’s real save', () => {
   it('round-trips equal', () => {
     expect(roundTrip(after)).toEqual(after);
     const s = fresh();
-    apply(s, { type: 'story.startActIV' }, s.time);
+    apply(s, { type: 'story.startAct' }, s.time);
     expect(roundTrip(s)).toEqual(s);
   });
 });
@@ -171,7 +172,7 @@ describe('v7 state', () => {
     expect(s.cycles.map((c) => c.act)).toEqual(
       (env.state.cycles as { act: number | null }[]).map((c) => c.act),
     );
-    expect(actFourDue(s)).toBe(false);
+    expect(actDue(s)).toBeNull();
   });
 
   it('the v7.json fixture (the owner’s save after the Act IV card, played 72 h) loads and round-trips', () => {
@@ -185,8 +186,13 @@ describe('v7 state', () => {
 
   it('a count for an unknown family is dropped with a warning', () => {
     const env = JSON.parse(JSON.stringify(readFixture('v7.json'))) as Env;
-    const story = env.state.story as { acts: { winsByFamily: Record<string, number> }[] };
-    (story.acts[0] as { winsByFamily: Record<string, number> }).winsByFamily = { dragons: 3 };
+    const story = env.state.story as {
+      acts: { act: number; winsByFamily: Record<string, number> }[];
+    };
+    // Act IV's counts survive the v8 migration (Acts I–III's are cleared, D318).
+    const four = story.acts.find((a) => a.act === 4);
+    if (!four) throw new Error('no Act IV');
+    four.winsByFamily = { dragons: 3 };
     const r = loadEnvelope(env);
     if (!r.ok) throw new Error(r.error);
     expect(r.value.warnings.some((w) => w.includes('dragons'))).toBe(true);

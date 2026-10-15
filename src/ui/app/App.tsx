@@ -13,8 +13,8 @@ import { MoreScreen } from '../screens/MoreScreen';
 import { InstallSheet } from '../more/InfoSheets';
 import { ArrivalView } from '../sheets/ArrivalView';
 import { actThreeDue } from '../../core/story/act3';
-import { actFourDue } from '../../core/story/act4';
-import { ActFourArrivalView } from '../sheets/ActFourArrivalView';
+import { actDue } from '../../core/story/act-start';
+import { ActArrivalView } from '../sheets/ActArrivalView';
 import { ActThreeArrivalView } from '../sheets/ActThreeArrivalView';
 import { V05ArrivalView } from '../sheets/V05ArrivalView';
 import { AwayView } from '../sheets/AwaySheet';
@@ -138,7 +138,7 @@ export const App = () => {
   useEffect(() => {
     if (version.value === 0) return;
     const g = game();
-    if (!g.arrivalDue && !g.story.arrivalDue && !actThreeDue(g) && !actFourDue(g)) playScenes();
+    if (!g.arrivalDue && !g.story.arrivalDue && !actThreeDue(g) && actDue(g) === null) playScenes();
   }, [version.value, sheets.value.length]);
 
   useEffect(() => {
@@ -163,8 +163,9 @@ export const App = () => {
   const meetIlse = !arrival && game().story.arrivalDue;
   // GDD §5.14.1 (D214): a save in a cycle that began Act III unwritten meets Arvid on load.
   const meetArvid = !arrival && !meetIlse && actThreeDue(game());
-  // GDD §5.14.1 (D246): likewise a save re-based onto Act IV meets Pechko's bundle on load.
-  const meetPechko = !arrival && !meetIlse && !meetArvid && actFourDue(game());
+  // GDD §5.14.1 (D246, D302): likewise a save re-based onto Act IV or Act V meets Pechko on load.
+  const dueAct = !arrival && !meetIlse && !meetArvid ? actDue(game()) : null;
+  const meetPechko = dueAct !== null;
   const shown: readonly Tab[] =
     arrival || meetIlse || meetArvid || meetPechko
       ? ['hold', 'more']
@@ -189,7 +190,7 @@ export const App = () => {
           ) : meetArvid && screen === 'hold' ? (
             <ActThreeArrivalView />
           ) : meetPechko && screen === 'hold' ? (
-            <ActFourArrivalView />
+            <ActArrivalView act={dueAct ?? 4} />
           ) : (
             SCREENS[screen]()
           )}

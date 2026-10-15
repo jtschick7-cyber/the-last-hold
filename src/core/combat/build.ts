@@ -1,8 +1,10 @@
+import type { FamilyId } from '../../content/damage';
 import { gear } from '../../content/gear';
-import { traits } from '../../content/traits';
+import { traits, type TraitEffect } from '../../content/traits';
 import { num } from '../balance-access';
 import { intPow } from '../math';
 import { hunterKit } from './prep';
+import { keepsakeDef, talentTotals } from './talents';
 import type { Preparation } from '../state/game-state';
 import { K } from './constants';
 import type { HunterBoost } from './delve';
@@ -30,6 +32,15 @@ const kit = {
   tonicLeft: 0,
   extraTaken: 0,
   dealtBonus: 0,
+  baneVs: {},
+  skill: null,
+  skillUsed: false,
+  skillArmed: false,
+  useTaken: 0,
+  rimeLeft: 0,
+  rimeCut: 0,
+  rootLeft: 0,
+  rootAmount: 0,
   knowledgeLevel: 0,
   takenByType: {},
   vanguardShield: 0,
@@ -42,6 +53,17 @@ const kit = {
   menderHeals: true,
   actionDrain: 0,
   abilityHalved: false,
+  talentTaken: 0,
+  weightOverride: null,
+  knownBonus: 0,
+  attackShare: null,
+  keepsake: null,
+  armorPierce: 0,
+  coffinSilver: 0,
+  knotLeft: 0,
+  coinUsed: false,
+  toothGiven: 0,
+  keptBy: null,
 } as const;
 
 export const buildHunter = (
@@ -51,14 +73,23 @@ export const buildHunter = (
   boost?: HunterBoost,
 ): Combatant => {
   const { oilFamily, potion } = hunterKit(h, prep);
-  const scale = 1 + num('hunter.levelStatGrowth') * (h.level - 1);
-  const effects = h.traits.map((t) => traits[t].effect);
+  // GDD §5.3.2, §5.11.3: growth per level is 10% plus 1 point per star.
+  const scale =
+    1 +
+    (num('hunter.levelStatGrowth') + num('star.growthPerStar') * (h.stars ?? 0)) * (h.level - 1);
+  const tal = talentTotals(h.talents);
+  const keep = keepsakeDef(h.keepsake);
+  const effects: TraitEffect[] = h.traits.map((t) => traits[t].effect);
+  // Warden talents (GDD §8.11) work like the Shieldwall trait: while he stands, the others take less.
+  if (tal.alliesTaken > 0)
+    effects.push({ kind: 'alliesTakenWhileStanding', amount: -tal.alliesTaken });
   const weapon = h.weapon ? gear[h.weapon] : null;
   const armor = h.armorGear ? gear[h.armorGear] : null;
   let varianceLo = num('combat.varianceLo');
   let varianceHi = num('combat.varianceHi');
   let critMult = num('combat.critMult');
-  let speedFlat = 0;
+  let speedFlat = tal.speedFlat;
+  if (keep?.effect.kind === 'startMeter') speedFlat += keep.effect.speed; // Yrsa's Thole
   // v0.7 alternate traits (GDD §8.5a): crit points, max Health, flat Armor, halved ability damage.
   let traitCrit = 0;
   let traitHealth = 0;
@@ -75,7 +106,23 @@ export const buildHunter = (
     } else if (e.kind === 'critMult') critMult = e.mult;
     else if (e.kind === 'speedFlat') speedFlat += e.amount;
   }
-  const healthPct = (boost?.healthPct ?? 0) + traitHealth;
+  // Edge, tier 2: a higher multiplier from a trait or blessing wins.
+  if (tal.critMult > critMult) critMult = tal.critMult;
+  // v0.8 (D305): the bonus lines of the worn items, each into its bucket (GDD §5.11.2).
+  let lineMight = 0;
+  let lineHealth = 0;
+  let lineArmor = 0;
+  let lineCrit = 0;
+  const bane: Partial<Record<FamilyId, number>> = {};
+  for (const l of h.lines ?? []) {
+    if (l.kind === 'might') lineMight += l.size;
+    else if (l.kind === 'health') lineHealth += l.size;
+    else if (l.kind === 'armor') lineArmor += l.size;
+    else if (l.kind === 'speed') speedFlat += l.size;
+    else if (l.kind === 'crit') lineCrit += l.size;
+    else if (l.family) bane[l.family] = (bane[l.family] ?? 0) + l.size;
+  }
+  const healthPct = (boost?.healthPct ?? 0) + traitHealth + lineHealth + tal.maxHealthPct;
   const maxHealth = roundHalfUp(
     healthPct !== 0 ? h.base.health * scale * (1 + healthPct) : h.base.health * scale,
   );
@@ -89,11 +136,11 @@ export const buildHunter = (
     slot,
     health: maxHealth,
     maxHealth,
-    meter: 0,
+    meter: keep?.effect.kind === 'startMeter' ? keep.effect.meter : 0,
     base: { might: h.base.might * scale, armor: h.base.armor, speed: h.base.speed },
     flat: {
       might: weapon?.might ?? 0,
-      armor: (armor?.armor ?? 0) + traitArmor,
+      armor: (armor?.armor ?? 0) + traitArmor + lineArmor + tal.armorFlat,
       speed: speedFlat,
     },
     statPct: { ...zero },
@@ -105,7 +152,9 @@ export const buildHunter = (
     critChance:
       (h.role === 'striker' ? num('striker.critChance') : num('combat.critChance')) +
       (boost ? boost.critPoints / 100 : 0) +
-      traitCrit / 100,
+      traitCrit / 100 +
+      lineCrit +
+      tal.critPoints,
     // Heavy Jaw: the higher multiplier applies (with Cold-blooded too).
     critMult: boost && boost.critMult > critMult ? boost.critMult : critMult,
     speed: h.base.speed + speedFlat + (boost?.speedFlat ?? 0),
@@ -127,6 +176,9 @@ export const buildHunter = (
     ...kit,
   };
   hunter.abilityHalved = abilityHalved;
+  hunter.skill = h.skill ?? null;
+  hunter.statPct.might += lineMight;
+  hunter.baneVs = bane;
   if (boost) {
     hunter.statPct.might += boost.mightPct;
     hunter.flat.might += boost.mightFlat;
@@ -140,6 +192,25 @@ export const buildHunter = (
     hunter.healBonus = boost.healBonus;
     if (boost.healThreshold !== null) hunter.healThreshold = boost.healThreshold;
     hunter.lowHealth = boost.lowHealth;
+  }
+  // v0.8 talents (GDD §8.11): after the Delve boost, which assigns some of these fields.
+  hunter.statPct.might += tal.mightPct;
+  hunter.hitBonus += tal.hitPoints;
+  hunter.dealtBonus += tal.damageDealt;
+  hunter.talentTaken = tal.takenSelf;
+  hunter.weightOverride = tal.targetWeight;
+  hunter.knownBonus = tal.damageVsKnown;
+  hunter.healBonus += tal.healingDone;
+  if (tal.healsBelow !== null && tal.healsBelow > hunter.healThreshold)
+    hunter.healThreshold = tal.healsBelow;
+  hunter.attackShare = tal.attackShare;
+  // v0.8 Legendaries (GDD §8.12): one named effect each.
+  if (keep) {
+    hunter.keepsake = keep;
+    const e = keep.effect;
+    if (e.kind === 'steadfastOnce') hunter.knotLeft = 1;
+    else if (e.kind === 'silverSubHit') hunter.coffinSilver = e.mightShare;
+    else if (e.kind === 'armorPierce') hunter.armorPierce = e.share;
   }
   return hunter;
 };

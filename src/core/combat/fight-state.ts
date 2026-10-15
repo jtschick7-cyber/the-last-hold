@@ -51,7 +51,14 @@ export interface Fight {
   lastCrit: boolean;
   /** Alchemy: how much stronger every brew number is this fight (1 at level 0, GDD §5.8.6). */
   readonly potency: number;
+  /** Banked Smoke: the Vanguard whose smoke covers the party until their next action. */
+  smokeHolder: Combatant | null;
 }
+
+/** A general fight rule (v0.8, D328 (8)): lowers a monster's turn meter. Toll, Boathook and Rattle the Pots use it. */
+export const knockBack = (m: Combatant, amount: number): void => {
+  m.meter -= amount;
+};
 
 /** A log line whose text is built only if the fight is being logged. */
 export type Entry = Omit<LogEntry, 'tick' | 'text'> & { readonly text: () => string };
