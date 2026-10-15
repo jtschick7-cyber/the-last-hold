@@ -190,14 +190,7 @@ describe('Act II (lore-secrets §22)', () => {
     reach(s, 'bastion');
     expect(sweepDocuments(s)).not.toContain('doc:D2-08');
     nextCycle(s); // Act III's cycle: she's recruited at the Keep
-    s.hunters.sigrun = {
-      level: 1,
-      xp: 0,
-      weapon: null,
-      armor: null,
-      recovery: null,
-      record: { won: 0, lost: 0 },
-    };
+    s.hunters.sigrun = freshHunter();
     expect(sweepDocuments(s)).toEqual(['doc:D2-08', 'name:40']);
     expect(s.story.documents.find((d) => d.id === 'D2-08')?.via).toBe('roster');
     mark('D2-08');

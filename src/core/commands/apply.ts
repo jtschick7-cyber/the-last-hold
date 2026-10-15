@@ -1,5 +1,5 @@
 import { debugStartActThree, startActThree } from './act3';
-import { debugStartActFour, startActFourOnLoad } from './act4';
+import { debugStartAct, startActOnLoad } from './act-start';
 import { debugUnlit } from './unlit';
 import {
   buyAlternateTrait,
@@ -156,10 +156,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return buyCosmetic(state, cmd.cosmetic);
     case 'riftglass.switchTrait':
       return switchTrait(state, cmd.hunter, cmd.alternate);
-    case 'story.startActIV':
-      return startActFourOnLoad(state);
-    case 'debug.startActIV':
-      return debugStartActFour(state);
+    case 'story.startAct':
+      return startActOnLoad(state);
+    case 'debug.startAct':
+      return debugStartAct(state, cmd.act);
     case 'debug.unlit':
       return debugUnlit(state, cmd.open);
     case 'debug.runV05Arrival':

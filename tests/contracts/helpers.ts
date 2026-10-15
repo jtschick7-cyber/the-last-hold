@@ -1,3 +1,5 @@
+import { gear, type GearId, type GearSlot } from '../../src/content/gear';
+import { equipItem, makeItem, wornItem } from '../../src/core/systems/items';
 import { apply } from '../../src/core/commands';
 import type { Command } from '../../src/core/commands';
 import { syncBoardOpen } from '../../src/core/contracts/board';
@@ -39,4 +41,16 @@ export const give = (s: GameState, ...ids: HunterId[]): void => {
     if (!s.hunters[id]) s.hunters[id] = freshHunter();
     if (!s.roster.active.includes(id)) s.roster.active.push(id);
   }
+};
+
+/** Puts a Common item of this gear piece on a hunter, whatever the Smithy says (tests only). */
+export const wear = (s: GameState, hunter: HunterId, gearId: GearId): void => {
+  const g = gear[gearId];
+  equipItem(s, makeItem(s, g), hunter, g.slot);
+};
+
+/** The gear piece a hunter wears in a slot, or null. */
+export const gearIn = (s: GameState, hunter: HunterId, slot: GearSlot): GearId | null => {
+  const h = s.hunters[hunter];
+  return h ? (wornItem(s, h, slot)?.base ?? null) : null;
 };

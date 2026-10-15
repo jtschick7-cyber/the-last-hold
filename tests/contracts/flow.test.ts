@@ -8,7 +8,7 @@ import { advance } from '../../src/core/sim';
 import type { ContractInstance, GameState, HunterState } from '../../src/core/state/game-state';
 import { snapshotOf } from '../../src/core/systems/hunters';
 import { productionRate } from '../../src/core/systems/production';
-import { HOUR, T0, give, hamletWithMine, keepRich, run } from './helpers';
+import { HOUR, T0, give, gearIn, hamletWithMine, keepRich, run, wear } from './helpers';
 
 const hunterOf = (s: GameState, id: HunterId): HunterState => {
   const h = s.hunters[id];
@@ -461,15 +461,15 @@ describe('gear (GDD §5.3.6)', () => {
     s.resources = { food: 1000, wood: 1000, iron: 1000, silver: 1000 };
     s.buildings.smithy = 1;
     expect(run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'weapon' }).ok).toBe(true);
-    expect(s.hunters.zora?.weapon).toBe('iron-blade');
+    expect(gearIn(s, 'zora', 'weapon')).toBe('iron-blade');
     expect(s.resources.iron).toBe(940);
     expect(run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'weapon' }).ok).toBe(false); // Smithy 3
     s.buildings.smithy = 3;
     expect(run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'weapon' }).ok).toBe(true);
-    expect(s.hunters.zora?.weapon).toBe('steel-blade');
+    expect(gearIn(s, 'zora', 'weapon')).toBe('steel-blade');
     expect(s.resources).toMatchObject({ iron: 690, wood: 950 });
     expect(run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'armor' }).ok).toBe(true);
-    expect(s.hunters.zora?.armor).toBe('hide-armor');
+    expect(gearIn(s, 'zora', 'armor')).toBe('hide-armor');
     expect(s.resources.food).toBe(970);
   });
 
@@ -482,13 +482,13 @@ describe('gear (GDD §5.3.6)', () => {
     s.buildings.smithy = 6;
     for (let i = 0; i < 3; i++)
       expect(run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'weapon' }).ok).toBe(true);
-    expect(s.hunters.zora?.weapon).toBe('silvered-blade');
+    expect(gearIn(s, 'zora', 'weapon')).toBe('silvered-blade');
     expect(run(s, { type: 'gear.upgrade', hunter: 'zora', slot: 'weapon' }).ok).toBe(false);
   });
 
   it('gear shows up in the fight snapshot', () => {
     const s = keepRich();
-    hunterOf(s, 'zora').weapon = 'steel-blade';
+    wear(s, 'zora', 'steel-blade');
     expect(snapshotOf(s, 'zora')).toMatchObject({
       weapon: 'steel-blade',
       level: 1,
@@ -527,8 +527,8 @@ describe('displayed hunter stats (GDD §5.3.2, A14)', () => {
   it('match what the fight uses: base, level scaling, gear and traits', () => {
     const s = keepRich();
     hunterOf(s, 'zora').level = 3;
-    hunterOf(s, 'zora').weapon = 'steel-blade';
-    hunterOf(s, 'zora').armor = 'mail';
+    wear(s, 'zora', 'steel-blade');
+    wear(s, 'zora', 'mail');
     const stat = (n: 'health' | 'might' | 'armor' | 'speed') => hunterStat(s, 'zora', n).value;
     expect(stat('health')).toBe(120); // 100 × (1 + 0.1 × 2)
     expect(stat('might')).toBeCloseTo(20 * 1.2 + 9, 10);

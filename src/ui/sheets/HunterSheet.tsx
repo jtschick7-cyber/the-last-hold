@@ -26,8 +26,8 @@ const Slot = ({ id, slot }: { id: HunterId; slot: 'weapon' | 'armor' }) => {
   const s = game();
   const h = s.hunters[id];
   if (!h) return null;
-  const current = slotGear(h, slot);
-  const next = nextGear(h, slot);
+  const current = slotGear(s, h, slot);
+  const next = nextGear(s, h, slot);
   const lock = next ? gearLock(s, next) : null;
   const locked = lock !== null;
   // GDD §5.8.6: the cost after Smithing, from the same function the command pays with.

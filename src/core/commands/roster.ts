@@ -5,6 +5,7 @@ import { RESOURCE_IDS } from '../../content/resources';
 import type { GameState } from '../state/game-state';
 import { freshHunter } from '../state/hunters-state';
 import { canAfford } from '../systems/costs';
+import { equipItem, makeItem, paidFor, replaceItem, wornItem } from '../systems/items';
 import {
   candidates,
   hunterStatus,
@@ -69,7 +70,7 @@ export const upgradeGear = (state: GameState, id: HunterId, slot: GearSlot): App
   const h = state.hunters[id];
   if (!h) return refuse(`${hunters[id].shortName} isn't on your roster.`);
   if (slot !== 'weapon' && slot !== 'armor') return refuse('Weapon or armor.');
-  const next = nextGear(h, slot);
+  const next = nextGear(state, h, slot);
   if (!next) return refuse('Already the best gear there is.');
   if (state.buildings[next.requires.building] < next.requires.level) {
     return refuse(`${next.name} needs Smithy level ${next.requires.level}.`);
@@ -79,8 +80,19 @@ export const upgradeGear = (state: GameState, id: HunterId, slot: GearSlot): App
   const { cost } = gearCost(state, next); // after Smithing (GDD §5.8.6)
   if (!canAfford(state, cost)) return refuse(`Not enough resources for ${next.name}.`);
   for (const r of RESOURCE_IDS) state.resources[r] -= cost[r];
-  if (slot === 'weapon') h.weapon = next.id;
-  else h.armor = next.id;
+  // GDD §5.11.1 (D304): the first tier is crafted as a Common item; any other step reworks the worn
+  // item one tier up for the same cost, and it keeps its bonus lines.
+  const worn = wornItem(state, h, slot);
+  const paid = paidFor(next);
+  if (worn) {
+    replaceItem(state, worn, {
+      ...worn,
+      base: next.id,
+      paid: { iron: worn.paid.iron + paid.iron, silver: worn.paid.silver + paid.silver },
+    });
+  } else {
+    equipItem(state, makeItem(state, next, 'common', [], paid), id, slot);
+  }
   noteGearUpgraded(state, next.tier);
   return ok;
 };

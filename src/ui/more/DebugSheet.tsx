@@ -174,12 +174,23 @@ export const DebugSheet = () => {
           type="button"
           class={styles.btn}
           onClick={() => {
-            const r = dispatch({ type: 'debug.startActIV' });
+            const r = dispatch({ type: 'debug.startAct', act: 4 });
             setNote(r.ok ? 'Done.' : r.reason);
             if (r.ok) openSheet('The bundle', () => <DocumentReader id="D4-01" />);
           }}
         >
           Start Act IV
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
+            const r = dispatch({ type: 'debug.startAct', act: 5 });
+            setNote(r.ok ? 'Done.' : r.reason);
+            if (r.ok) openSheet('The broom', () => <DocumentReader id="D5-01" />);
+          }}
+        >
+          Start Act V
         </button>
         <button
           type="button"

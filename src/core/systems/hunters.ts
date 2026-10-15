@@ -21,6 +21,7 @@ import { othersRecoveryMult, recoveryMult } from '../contracts/injury';
 import { intPow } from '../math';
 import type { GameState, HunterState } from '../state/game-state';
 import { MS_PER_DAY, MS_PER_SECOND } from '../time';
+import { wornItem } from './items';
 
 // GDD §5.3: the roster, each hunter's level and gear, who is free to go, and who
 // can be recruited. Derived values come from here, never stored (technical design §5.2).
@@ -115,14 +116,14 @@ export const availableHunters = (state: GameState): HunterId[] =>
   state.roster.active.filter((id) => hunterStatus(state, id) === 'ready');
 
 /** The weapon or armor slot's current gear tier, if any. */
-export const slotGear = (h: HunterState, slot: GearSlot): GearDef | null => {
-  const id = slot === 'weapon' ? h.weapon : h.armor;
-  return id ? gear[id] : null;
+export const slotGear = (state: GameState, h: HunterState, slot: GearSlot): GearDef | null => {
+  const item = wornItem(state, h, slot);
+  return item ? gear[item.base] : null;
 };
 
 /** The next upgrade for a slot: the lowest tier above the current one. */
-export const nextGear = (h: HunterState, slot: GearSlot): GearDef | null => {
-  const current = slotGear(h, slot)?.tier ?? 0;
+export const nextGear = (state: GameState, h: HunterState, slot: GearSlot): GearDef | null => {
+  const current = slotGear(state, h, slot)?.tier ?? 0;
   return (
     GEAR_IDS.map((g) => gear[g])
       .filter((g) => g.slot === slot && g.tier > current)
@@ -163,8 +164,8 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
     level: h.level,
     base: def.stats,
     traits: effectiveTraits(state, id),
-    weapon: h.weapon,
-    armorGear: h.armor,
+    weapon: wornItem(state, h, 'weapon')?.base ?? null,
+    armorGear: wornItem(state, h, 'armor')?.base ?? null,
   };
 };
 
@@ -293,7 +294,7 @@ export const hunterStat = (state: GameState, id: HunterId, stat: StatName): Expl
     });
   }
   let flat = 0;
-  for (const g of [slotGear(h, 'weapon'), slotGear(h, 'armor')]) {
+  for (const g of [slotGear(state, h, 'weapon'), slotGear(state, h, 'armor')]) {
     if (!g) continue;
     const add = stat === 'might' ? g.might : stat === 'armor' ? g.armor : 0;
     if (add === 0) continue;

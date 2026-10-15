@@ -21,6 +21,7 @@ import { browserCodec } from '../../src/platform/compression';
 import { createSaveStore, SAVE_KEYS } from '../../src/platform/save-store';
 import { createChannelStorage } from '../../src/platform/storage';
 import { memoryBackend } from '../helpers/memory-storage';
+import { oldHunters } from './old-view';
 
 const FIXTURES = new URL('./fixtures/', import.meta.url);
 const fixtures = readdirSync(FIXTURES).filter((f) => /^v\d+(-[a-z]+)?\.json$/.test(f));
@@ -377,7 +378,7 @@ describe('the v2 → v3 migration (plan T3.4)', () => {
     expect(after.meta.schemaVersion).toBe(SCHEMA_VERSION);
     expect(after.resources).toEqual(old.state.resources);
     expect(after.peasants).toEqual(old.state.peasants);
-    expect(after.hunters).toEqual(old.state.hunters);
+    expect(oldHunters(after)).toEqual(old.state.hunters);
     expect(after.roster).toEqual(old.state.roster);
     expect(after.board.tierWins).toEqual(old.state.board.tierWins);
     expect(after.board.nextArrivalAt).toBe(old.state.board.nextArrivalAt);

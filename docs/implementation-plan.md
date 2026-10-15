@@ -919,7 +919,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
     - the Common items equal today's gear table number for number;
     - the **D20 content test** updated: Delve XP, Command XP and guardian items each have their idle source (contract XP, contract loot).
 - [x] **T8.4 Names.** *(Done with T8.3, D332: no collisions.)* Collision search (GDD §2.3, D173 rule) for every name in `OUT-6-new-names.md`; add them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
-- [ ] **T8.5 Migration v7 → v8** (D317), using the **owner's real v0.7 save** (`v7-owner.json`) as the fixture, with a round-trip test, and a `v8.json` fixture (that save played 72 h).
+- [x] **T8.5 Migration v7 → v8** (D317; readings in D334), using the **owner's real v0.7 save** (`v7-owner.json`) as the fixture, with a round-trip test, and a `v8.json` fixture (that save played 72 h).
   - **New saved state:**
     - items (each with base, tier, rarity, lines; equipped or in Stores);
     - each hunter's rank, stars, talent picks and keepsake;

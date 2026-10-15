@@ -7,6 +7,10 @@ export const freshHunter = (): HunterState => ({
   xp: 0,
   weapon: null,
   armor: null,
+  rank: 'apprentice',
+  stars: 0,
+  talents: [],
+  keepsake: null,
   recovery: null,
   record: { won: 0, lost: 0 },
 });

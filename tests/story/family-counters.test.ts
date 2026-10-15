@@ -45,11 +45,11 @@ const total = (counts: Partial<Record<string, number>>): number => {
 
 describe('per-act family counters (T8.2, D318)', () => {
   it('the owner’s v0.7 save: all four acts show the same family counts, as separate counters', () => {
-    const env: unknown = JSON.parse(
+    // Read as saved (schema 7), before the v8 migration clears Acts I–III (D318).
+    const env = JSON.parse(
       readFileSync(new URL('../saves/fixtures/v7-owner.json', import.meta.url), 'utf8'),
-    );
-    const s = load(env);
-    const acts = s.story.acts;
+    ) as { state: GameState };
+    const acts = env.state.story.acts;
     expect(acts.map((a) => a.act)).toEqual([1, 2, 3, 4]);
     // The reported symptom: identical counts in every act.
     for (const a of acts) expect(a.winsByFamily).toEqual(acts[3]?.winsByFamily);
@@ -57,10 +57,18 @@ describe('per-act family counters (T8.2, D318)', () => {
     // the number of contracts won since (Act IV's own total is its wins).
     expect(total(acts[3]?.winsByFamily ?? {})).toBe(acts[3]?.wins);
     expect(acts[0]?.wins).toBeGreaterThan(acts[3]?.wins ?? 0); // Act I's other counters go back further
-    // Separate objects, not one shared counter.
-    for (let i = 0; i < acts.length; i++)
-      for (let j = i + 1; j < acts.length; j++)
-        expect(acts[i]?.winsByFamily).not.toBe(acts[j]?.winsByFamily);
+    // Loaded through a save and a load, they are separate objects, not one shared counter.
+    const s = load(JSON.parse(JSON.stringify(env)));
+    for (let i = 0; i < s.story.acts.length; i++)
+      for (let j = i + 1; j < s.story.acts.length; j++)
+        expect(s.story.acts[i]?.winsByFamily).not.toBe(s.story.acts[j]?.winsByFamily);
+    // The v8 migration keeps Act IV's counts and clears the rest, which nothing reads (D318).
+    expect(s.story.acts.map((a) => total(a.winsByFamily))).toEqual([
+      0,
+      0,
+      0,
+      total(acts[3]?.winsByFamily ?? {}),
+    ]);
   });
 
   it('after the next win, every act begun moves, each from its own base; an act begun later starts at zero', () => {
