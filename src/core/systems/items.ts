@@ -1,6 +1,6 @@
-import { gear, type GearDef, type GearSlot } from '../../content/gear';
+import { gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
 import type { HunterId } from '../../content/hunters';
-import type { ItemRarity } from '../../content/items';
+import { itemRarities, type ItemRarity } from '../../content/items';
 import type { GameState, HunterState } from '../state/game-state';
 import type { ItemLine, ItemState } from '../state/item-state';
 
@@ -66,3 +66,7 @@ export const replaceItem = (state: GameState, from: ItemState, to: ItemState): v
   if (i < 0) throw new Error(`No item ${from.id}.`);
   state.items[i] = to;
 };
+
+/** A readable name for an item: "Rare Steel Blade". */
+export const itemName = (rarity: ItemRarity, base: GearId): string =>
+  rarity === 'common' ? gear[base].name : `${itemRarities[rarity].name} ${gear[base].name}`;

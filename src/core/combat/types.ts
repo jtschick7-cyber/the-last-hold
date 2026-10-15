@@ -8,6 +8,7 @@ import type { DelveRelicId } from '../../content/delves/relics';
 import type { TraitEffect, TraitId } from '../../content/traits';
 import type { RollSource } from '../rng';
 import type { Preparation } from '../state/game-state';
+import type { ItemLine } from '../state/item-state';
 
 // GDD §5.5: the combat inputs, the live combatants, and the fight log.
 
@@ -23,6 +24,8 @@ export interface HunterSnapshot {
   readonly traits: readonly TraitId[];
   readonly weapon: GearId | null;
   readonly armorGear: GearId | null;
+  /** The bonus lines of the worn items (v0.8, D305); absent when there are none. */
+  readonly lines?: readonly ItemLine[];
 }
 
 export interface MonsterInstance {
@@ -201,6 +204,8 @@ export interface Combatant {
   // ---- Delve blessings and relics (v0.7, GDD §8.8); all neutral outside a Delve ----
   /** outgoing%: added to the hunter's damage bonuses. */
   dealtBonus: number;
+  /** outgoing% against one contract family, from bane lines on worn items (v0.8); empty elsewhere. */
+  baneVs: Readonly<Partial<Record<FamilyId, number>>>;
   /** taken% against one damage type only (Cooled Iron). */
   takenByType: Readonly<Partial<Record<DamageType, number>>>;
   /** A monster's knowledge level (0–4): the hunters' Studied and Mastered bonus against it (GDD §5.0). */

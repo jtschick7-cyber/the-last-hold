@@ -1,6 +1,7 @@
 import { AGE_IDS, ages } from '../../content/ages';
 import { buildings, BUILDING_IDS } from '../../content/buildings';
 import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
+import { bonusLines, itemRarities } from '../../content/items';
 import {
   HUNTER_IDS,
   hunters,
@@ -156,6 +157,8 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
   const def = hunters[id];
   const h = state.hunters[id];
   if (!h) throw new Error(`${id} is not on the roster.`);
+  const worn = [wornItem(state, h, 'weapon'), wornItem(state, h, 'armor')];
+  const lines = worn.flatMap((i) => i?.lines ?? []);
   return {
     id,
     name: def.name,
@@ -164,8 +167,10 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
     level: h.level,
     base: def.stats,
     traits: effectiveTraits(state, id),
-    weapon: wornItem(state, h, 'weapon')?.base ?? null,
-    armorGear: wornItem(state, h, 'armor')?.base ?? null,
+    weapon: worn[0]?.base ?? null,
+    armorGear: worn[1]?.base ?? null,
+    // v0.8: only when an item has lines, so every old snapshot and golden stays as it was.
+    ...(lines.length > 0 ? { lines } : {}),
   };
 };
 
@@ -308,10 +313,40 @@ export const hunterStat = (state: GameState, id: HunterId, stat: StatName): Expl
       children.push({ label: traits[t].name, value: e.amount });
     }
   }
-  const raw = base * scale + flat;
+  // v0.8 (D305): the bonus lines of the worn items, in the same buckets the fight puts them in.
+  let pct = 0;
+  const pctKind = stat === 'might' ? 'might' : stat === 'health' ? 'health' : null;
+  const flatKind = stat === 'armor' ? 'armor' : stat === 'speed' ? 'speed' : null;
+  const lineChildren: Explained['breakdown'][] = [];
+  for (const slot of ['weapon', 'armor'] as const) {
+    const item = wornItem(state, h, slot);
+    if (!item) continue;
+    for (const l of item.lines) {
+      const from = `${itemRarities[item.rarity].name} ${gear[item.base].name}`;
+      if (l.kind === flatKind) {
+        flat += l.size;
+        children.push({ label: `${from}: +${l.size} ${bonusLines[l.kind].label}`, value: l.size });
+      } else if (l.kind === pctKind) {
+        pct += l.size;
+        lineChildren.push({
+          label: `${from}: +${roundHalfUp(l.size * 100)}% ${bonusLines[l.kind].label}`,
+          value: l.size,
+          formula: `(base × level scale + gear) × ${l.size}`,
+        });
+      }
+    }
+  }
+  const before = base * scale + flat;
+  const raw = before * (1 + pct);
+  for (const c of lineChildren) children.push({ ...c, value: before * c.value });
   const value = stat === 'health' ? roundHalfUp(raw) : raw;
   return {
     value,
-    breakdown: { label, value, formula: 'base × level scale + gear + traits', children },
+    breakdown: {
+      label,
+      value,
+      formula: 'base × level scale + gear + traits, then item lines',
+      children,
+    },
   };
 };

@@ -943,7 +943,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - Technical design §5.2 and §7.2 are already updated by the docs commit (OUT-9). Check they match.
 
 #### B. Systems
-- [ ] **T8.6 Items, loot, Stores and Salvage** (D304, D305, D307).
+- [x] **T8.6 Items, loot, Stores and Salvage** (D304, D305, D307).
   - **Commands:** craft, rework, equip, unequip and salvage, all refused while the hunter is on a contract or in a Delve.
   - **Rules:** loot on every contract won (seeded); auto-salvage when Stores is full; the reset at the Long Night (Legendaries kept); the Smithing cut on crafting and rework.
   - **Breakdowns:** every item line in the stat breakdowns.

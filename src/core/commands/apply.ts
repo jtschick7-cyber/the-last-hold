@@ -1,5 +1,6 @@
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
+import { craftItem, equipFromStores, reworkItem, salvageItem, unequipItem } from './items';
 import { debugUnlit } from './unlit';
 import {
   buyAlternateTrait,
@@ -156,6 +157,16 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return buyCosmetic(state, cmd.cosmetic);
     case 'riftglass.switchTrait':
       return switchTrait(state, cmd.hunter, cmd.alternate);
+    case 'item.craft':
+      return craftItem(state, cmd.base);
+    case 'item.rework':
+      return reworkItem(state, cmd.item);
+    case 'item.equip':
+      return equipFromStores(state, cmd.item, cmd.hunter);
+    case 'item.unequip':
+      return unequipItem(state, cmd.hunter, cmd.slot);
+    case 'item.salvage':
+      return salvageItem(state, cmd.item);
     case 'story.startAct':
       return startActOnLoad(state);
     case 'debug.startAct':

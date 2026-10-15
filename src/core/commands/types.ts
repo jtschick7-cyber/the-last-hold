@@ -88,6 +88,11 @@ export type Command =
   | { type: 'debug.runV05Arrival' }
   /** GDD §5.14.1 (D214): a save whose cycle began Act III before it was written meets Arvid on load. */
   | { type: 'story.startActIII' }
+  | { type: 'item.craft'; base: string }
+  | { type: 'item.rework'; item: string }
+  | { type: 'item.equip'; item: string; hunter: string }
+  | { type: 'item.unequip'; hunter: string; slot: string }
+  | { type: 'item.salvage'; item: string }
   | { type: 'story.startAct' }
   | { type: 'delve.start'; party: HunterId[] }
   | { type: 'delve.chooseStart'; patron: PatronId }

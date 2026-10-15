@@ -4,7 +4,8 @@ import { runFight } from '../combat';
 import { recordFight } from '../investigation/knowledge';
 import { isWellPrepared, prepIds } from './prep';
 import { reagentsFor } from './reagents';
-import { seeded } from '../rng';
+import { seeded, stream } from '../rng';
+import { lootKey, rollContractLoot, takeLoot } from '../systems/loot';
 import { RULES_VERSION } from '../rules-version';
 import type { ContractResult, FightRef, GameState, RunningContract } from '../state/game-state';
 import { gainXp, recoveryFactor } from '../systems/hunters';
@@ -134,6 +135,11 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   // GDD §5.4.3, §5.14.2: a success can bring documents and names; a failure never does.
   const found = success ? [...recordWin(state, contract), ...sweepDocuments(state)] : [];
   if (success && contract.monster === 'ribbonshade') found.push(...defeatRibbonshade(state));
+  // GDD §5.11.2 (D305): a won contract can drop an item, fixed at launch like the fight.
+  if (success) {
+    const drop = rollContractLoot(stream(state.meta.gameSeed, 'loot', contract.id), contract.tier);
+    if (drop) found.push(lootKey(takeLoot(state, drop)));
+  }
   // GDD §5.14.6: after the documents (a trust-gated one reads trust before this win, D178).
   if (success) found.push(...winForVillage(state, contract.village));
   // GDD §5.14.7: a level-up can reach a hunter's letter, win or lose.

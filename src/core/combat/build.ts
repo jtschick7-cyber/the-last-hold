@@ -1,3 +1,4 @@
+import type { FamilyId } from '../../content/damage';
 import { gear } from '../../content/gear';
 import { traits } from '../../content/traits';
 import { num } from '../balance-access';
@@ -30,6 +31,7 @@ const kit = {
   tonicLeft: 0,
   extraTaken: 0,
   dealtBonus: 0,
+  baneVs: {},
   knowledgeLevel: 0,
   takenByType: {},
   vanguardShield: 0,
@@ -75,7 +77,21 @@ export const buildHunter = (
     } else if (e.kind === 'critMult') critMult = e.mult;
     else if (e.kind === 'speedFlat') speedFlat += e.amount;
   }
-  const healthPct = (boost?.healthPct ?? 0) + traitHealth;
+  // v0.8 (D305): the bonus lines of the worn items, each into its bucket (GDD §5.11.2).
+  let lineMight = 0;
+  let lineHealth = 0;
+  let lineArmor = 0;
+  let lineCrit = 0;
+  const bane: Partial<Record<FamilyId, number>> = {};
+  for (const l of h.lines ?? []) {
+    if (l.kind === 'might') lineMight += l.size;
+    else if (l.kind === 'health') lineHealth += l.size;
+    else if (l.kind === 'armor') lineArmor += l.size;
+    else if (l.kind === 'speed') speedFlat += l.size;
+    else if (l.kind === 'crit') lineCrit += l.size;
+    else if (l.family) bane[l.family] = (bane[l.family] ?? 0) + l.size;
+  }
+  const healthPct = (boost?.healthPct ?? 0) + traitHealth + lineHealth;
   const maxHealth = roundHalfUp(
     healthPct !== 0 ? h.base.health * scale * (1 + healthPct) : h.base.health * scale,
   );
@@ -93,7 +109,7 @@ export const buildHunter = (
     base: { might: h.base.might * scale, armor: h.base.armor, speed: h.base.speed },
     flat: {
       might: weapon?.might ?? 0,
-      armor: (armor?.armor ?? 0) + traitArmor,
+      armor: (armor?.armor ?? 0) + traitArmor + lineArmor,
       speed: speedFlat,
     },
     statPct: { ...zero },
@@ -105,7 +121,8 @@ export const buildHunter = (
     critChance:
       (h.role === 'striker' ? num('striker.critChance') : num('combat.critChance')) +
       (boost ? boost.critPoints / 100 : 0) +
-      traitCrit / 100,
+      traitCrit / 100 +
+      lineCrit,
     // Heavy Jaw: the higher multiplier applies (with Cold-blooded too).
     critMult: boost && boost.critMult > critMult ? boost.critMult : critMult,
     speed: h.base.speed + speedFlat + (boost?.speedFlat ?? 0),
@@ -127,6 +144,8 @@ export const buildHunter = (
     ...kit,
   };
   hunter.abilityHalved = abilityHalved;
+  hunter.statPct.might += lineMight;
+  hunter.baneVs = bane;
   if (boost) {
     hunter.statPct.might += boost.mightPct;
     hunter.flat.might += boost.mightFlat;

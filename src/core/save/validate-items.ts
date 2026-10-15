@@ -1,15 +1,25 @@
 import { balance } from '../../content/balance';
-import { FAMILY_IDS } from '../../content/damage';
 import { GEAR_IDS, gear } from '../../content/gear';
 import type { HunterId } from '../../content/hunters';
-import { BONUS_LINE_IDS, ITEM_RARITY_IDS, itemRarities } from '../../content/items';
+import { ITEM_RARITY_IDS, itemRarities } from '../../content/items';
 import { LEGENDARY_IDS, type LegendaryId } from '../../content/legendaries';
 import { HUNTER_RANK_IDS } from '../../content/ranks';
 import { talentById } from '../../content/talents';
 import { hunters as hunterContent } from '../../content/hunters';
 import type { GameState, HunterState } from '../state/game-state';
-import type { ItemLine, ItemState } from '../state/item-state';
-import { arr, count, hunterId, Invalid, nonNegative, obj, oneOf, orNull, str } from './guards';
+import type { ItemState } from '../state/item-state';
+import {
+  arr,
+  count,
+  hunterId,
+  Invalid,
+  itemLines,
+  nonNegative,
+  obj,
+  oneOf,
+  orNull,
+  str,
+} from './guards';
 
 // Technical design §5.2 (v8): the guard for items, Legendaries and the hunter growth fields. An
 // unknown id of content that was removed is dropped with a warning; a save whose items disagree
@@ -45,21 +55,10 @@ export const growthFrom = (
   };
 };
 
-const line = (v: unknown, where: string): ItemLine => {
-  const o = obj(v, where);
-  const kind = oneOf(o.kind, BONUS_LINE_IDS, `${where}.kind`);
-  const family =
-    o.family === undefined ? undefined : oneOf(o.family, FAMILY_IDS, `${where}.family`);
-  if ((kind === 'bane') !== (family !== undefined))
-    throw new Invalid(`${where}: only a bane line names a family, and it must.`);
-  const size = nonNegative(o.size, `${where}.size`);
-  return family === undefined ? { kind, size } : { kind, size, family };
-};
-
 const item = (v: unknown, where: string): ItemState => {
   const o = obj(v, where);
   const rarity = oneOf(o.rarity, ITEM_RARITY_IDS, `${where}.rarity`);
-  const lines = arr(o.lines, `${where}.lines`).map((l, i) => line(l, `${where}.lines[${i}]`));
+  const lines = itemLines(o.lines, `${where}.lines`);
   if (lines.length !== itemRarities[rarity].lines)
     throw new Invalid(`${where} has ${lines.length} lines for a ${rarity} item.`);
   const paid = obj(o.paid, `${where}.paid`);

@@ -76,6 +76,7 @@ export const outgoingPct = (
     else if (e.kind === 'damageType' && e.type === type) sum += e.dealt;
   }
   sum += a.dealtBonus; // Delve blessings (v0.7); 0 elsewhere
+  if (family !== 'deep') sum += a.baneVs[family] ?? 0; // bane lines on worn items (v0.8)
   // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
   if (a.oilFamily !== null && a.oilFamily === family) sum += ctx.oilBonus;
   return sum;
