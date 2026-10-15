@@ -23,7 +23,8 @@ const all = buildSpecs({
   days: 1,
   seeds: 1,
   starts: ['mon'],
-  fast: false,
+  // The fast shape (stop at the first moments), so Standard does not play its 42 days of the full suite.
+  fast: true,
 });
 // Played once and shared, so the tests below don't each pay for the same runs.
 const whole = runSequential(all);

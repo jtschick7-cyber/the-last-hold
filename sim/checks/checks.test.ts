@@ -75,6 +75,7 @@ const run = (
     totalHours: 0,
   },
   content: { book36Hours: null, skills4Hours: null },
+  depth: { cycles: [], legendaries: [], delveXp: 0 },
 });
 
 describe('time targets', () => {

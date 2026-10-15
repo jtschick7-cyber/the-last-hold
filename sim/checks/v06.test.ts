@@ -42,6 +42,7 @@ const run = (m: Made = {}): RunResult =>
       totalHours: 0,
     },
     content: { book36Hours: null, skills4Hours: null },
+    depth: { cycles: [], legendaries: [], delveXp: 0 },
   }) as unknown as RunResult;
 
 const skills = (a: number, s: number, l: number, c: number) => ({

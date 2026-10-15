@@ -208,6 +208,23 @@ export interface ContentRecord {
   readonly skills4Hours: number | null;
 }
 
+/**
+ * What the v0.8 systems did over a run (GDD §6.2 v0.8, plan T8.16): reported, not judged. Stars and
+ * Wrights are read as each cycle ends (the last entry is the end of the run); items are those a
+ * cycle's won contracts and Delve guardians gave, by rarity, kept or salvaged on the spot.
+ */
+export interface DepthRecord {
+  readonly cycles: readonly {
+    readonly cycle: number;
+    readonly stars: number;
+    readonly wrights: number;
+    readonly items: Readonly<Record<'fine' | 'rare' | 'heroic', number>>;
+  }[];
+  readonly legendaries: readonly { readonly id: string; readonly cycle: number }[];
+  /** Hunter XP each of the three earned across the Delver's Delve runs. */
+  readonly delveXp: number;
+}
+
 export interface RunResult {
   readonly spec: RunSpec;
   /** Hours from the start to each GDD §6.2 moment, or null if never reached. */
@@ -230,6 +247,7 @@ export interface RunResult {
   readonly discovery: DiscoveryRecord;
   readonly delve: DelveRecord;
   readonly content: ContentRecord;
+  readonly depth: DepthRecord;
 }
 
 const largest = (value: unknown): number => {
@@ -277,6 +295,27 @@ export const runOne = (spec: RunSpec): RunResult => {
   const standSamples: StandSample[] = [];
   const trust: { cycle: number; levels: Record<string, string> }[] = [];
   const delveRuns: DelveRunRecord[] = [];
+  const itemsBy = new Map<number, Record<'fine' | 'rare' | 'heroic', number>>();
+  const noteItem = (cycle: number, key: string | undefined): void => {
+    const rarity = key?.split(':')[1];
+    if (rarity !== 'fine' && rarity !== 'rare' && rarity !== 'heroic') return;
+    const row = itemsBy.get(cycle) ?? { fine: 0, rare: 0, heroic: 0 };
+    row[rarity] += 1;
+    itemsBy.set(cycle, row);
+  };
+  let delveXp = 0;
+  const depthCycles: {
+    cycle: number;
+    stars: number;
+    wrights: number;
+    items: Record<'fine' | 'rare' | 'heroic', number>;
+  }[] = [];
+  const depthNow = (cycle: number, s: GameState) => ({
+    cycle,
+    stars: Object.values(s.hunters).reduce((n, h) => n + (h?.stars ?? 0), 0),
+    wrights: Object.values(s.hunters).filter((h) => h && h.rank !== 'apprentice').length,
+    items: { ...(itemsBy.get(cycle) ?? { fine: 0, rare: 0, heroic: 0 }) },
+  });
   /** All of "all content" is found (GDD §6.2 v0.7, D271). */
   const contentDone = (s: GameState): boolean =>
     book36Hours !== null &&
@@ -322,6 +361,8 @@ export const runOne = (spec: RunSpec): RunResult => {
         if (c.type === 'build.buy' && c.building === 'mine') mark('first-mine', rec.at);
       }
       for (const r of rec.delveResults ?? []) {
+        delveXp += r.xp ?? 0;
+        noteItem(s.cycle.number, r.item);
         delveRuns.push({
           hours: (rec.at - start) / HOUR,
           cycle: s.cycle.number,
@@ -360,6 +401,8 @@ export const runOne = (spec: RunSpec): RunResult => {
         if (e.type === 'clue' && e.identified) mark('first-identified', e.at);
       }
       for (const r of rec.away.contracts) {
+        for (const key of r.found ?? [])
+          if (key.startsWith('loot:') || key.startsWith('salvaged:')) noteItem(prevCycle, key);
         if (r.success && r.location === 'ruin') mark('first-ruin', r.at);
         contracts.push({
           hours: (r.at - start) / HOUR,
@@ -419,6 +462,7 @@ export const runOne = (spec: RunSpec): RunResult => {
       if (s.cycle.number !== prevCycle) {
         trust.push({ cycle: prevCycle, levels: levelsNow(s) });
         discoveryCycles.push(discoveryNow(prevCycle, s));
+        depthCycles.push(depthNow(prevCycle, s));
       }
       prevAge = s.cycle.age;
       prevCycle = s.cycle.number;
@@ -435,6 +479,7 @@ export const runOne = (spec: RunSpec): RunResult => {
   if (best) moments['best-last-stand'] = best.hours;
   trust.push({ cycle: state.cycle.number, levels: levelsNow(state) });
   discoveryCycles.push(discoveryNow(state.cycle.number, state));
+  depthCycles.push(depthNow(state.cycle.number, state));
   const risen = (levels: Readonly<Record<string, string>>): number =>
     VILLAGE_IDS.filter(
       (v) =>
@@ -478,6 +523,11 @@ export const runOne = (spec: RunSpec): RunResult => {
     story,
     discovery: { hutHours, firstNewBrewHours, cycles: discoveryCycles },
     content: { book36Hours, skills4Hours },
+    depth: {
+      cycles: depthCycles,
+      legendaries: state.legendaries.map((l) => ({ id: l.id, cycle: l.cycle })),
+      delveXp,
+    },
     delve: {
       runs: delveRuns,
       riftglassHeld: state.delve.riftglass,

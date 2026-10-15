@@ -6,6 +6,7 @@ import { buildingCost } from '../systems/costs';
 import { idlePeasants, jobSlots } from '../systems/housing';
 import { bundleValue, deltaRateValue, payback, rateValue } from '../systems/valuation';
 import { contractMoves, firstContractFood, refillRoster } from './contracts';
+import { depthMoves } from './depth';
 import { defenseMoves, emberMoves, freshMemory, standMove, type PolicyMemory } from './long-night';
 import {
   addBundles,
@@ -178,6 +179,8 @@ export const decideCheckIn = (
     purchases += 1;
     agedUp = true;
   }
+  // v0.8 (GDD §6.1, D321, D352): ranks, stars from the Embers The Hearth left, talents, Legendaries, items.
+  depthMoves(s, act);
   // v0.2 (D75): contracts and hunters, before the building rules, so launches start their timers.
   purchases += contractMoves(s, act, reserveFor(s), recruitHold(s, horizonMs));
   // The first contract's provisions are held back from everything else, and settling

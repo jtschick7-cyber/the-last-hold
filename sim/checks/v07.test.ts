@@ -76,6 +76,7 @@ describe('Idle-only vs Delver (D271)', () => {
         names: STORY.ribbonNames.map((n) => ({ n, cycle: 1, hours: 100 })),
       },
       content: { book36Hours: last, skills4Hours: 100 },
+      depth: { cycles: [], legendaries: [], delveXp: 0 },
     }) as unknown as RunResult;
 
   it('names the last part of all content, and counts a part never found as infinitely late', () => {

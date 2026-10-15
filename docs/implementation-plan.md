@@ -1004,7 +1004,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - Workflow actions on versions that don't use the deprecated Node 20.
   - Measure each job. **If any job goes over 5 minutes, stop and ask** (never trim seeds or rows).
   - Optional: a short profiling look at the simulator.
-- [ ] **T8.16 Policy rules** (GDD §6.1, D321).
+- [x] **T8.16 Policy rules** (GDD §6.1, D321; readings D352).
   - Items (rework the weakest slot first; equip loot by a fixed item score; salvage the lowest scorers once Stores passes 30).
   - Rank up when qualified; Embers on the Hearth first, then the cheapest star; talents in a fixed order per role; Legendaries by a fixed table.
   - The Delver's Re-roll rule.
