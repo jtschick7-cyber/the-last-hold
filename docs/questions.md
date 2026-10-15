@@ -192,20 +192,20 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **What I did meanwhile (tunables only, D237):** `skill.smithingCost` 0.0175 → 0.025, `skill.xp.command.contractPerTier` 1 → 2 (Command was level 3 at the end of cycle 3, the check wants 4–8), `trust.stepContracts` first step 10 → 8 (no village rose in cycle 1; one does now). T6.13 stays open.
 - **Answer (owner):** 2026-10-14: as recommended: (1) a second source for Noon Poppy, a village gift; (2) try an Embers value for later-cycles. Built as D239 and D240 (the gift is at Velkvik, not Kozly Hollow, and the Embers values changed nothing; the suite passes with Smithing at 0.021).
 
-### Q20 — Are monsters named in Delves? (blocks T7.6) — open
+### Q20 — Are monsters named in Delves? (blocks T7.6) — answered
 - **Question:** contracts often post unknown monsters that the Lodge identifies (§5.6.3). A Delve has no investigation, so how does a floor's group appear?
 - **Options:**
   (a) **Always shown by name**, with their resistances visible as for an Identified species. Seeing a species in a Delve doesn't change its bestiary state (Identified, Studied and Mastered come from contracts only, D262).
   (b) Shown by name only if the species is already Identified in the bestiary; otherwise "?" until the fight's playback reveals it.
   (c) Always "?" until the fight; the door shows only the family.
 - **Recommendation:** (a). The door already names the family (D256), blessings are chosen against it, and the bestiary stays an idle-path pillar.
-- **Answer (owner):**
+- **Answer (owner):** 2026-10-15: (a), as recommended: monsters are always shown by name, with resistances visible as for an Identified species; seeing one in a Delve does not change its bestiary state (D280).
 
-### Q21 — Do Delves give hunter or warden-skill XP? (blocks T7.9) — open
+### Q21 — Do Delves give hunter or warden-skill XP? (blocks T7.9) — answered
 - **Question:** the flesh-out settled Delve rewards (Riftglass, reagents, echoes, relics, Deep bestiary) and ruled out trophies and folklore kills (D262), but never said whether hunters gain XP from Delve fights, or whether warden skills gain XP from Delves (Command counts contract wins and waves held; Lore counts clues and knowledge).
 - **Options:**
   (a) **No XP of either kind in v0.7.** Delves stay off the idle path's pace. v0.8 decides along with trophies and loot (D278).
   (b) Hunter XP at half the contract rate per floor (20 × tier ÷ 2, shared), no skill XP. Delves would help late recruits level, but every earlier check judged on `standard` stays fair only because `standard` never Delves; the Delver would level faster, which the Idle-only row would show.
   (c) Command skill XP per floor cleared (like a wave held), no hunter XP.
 - **Recommendation:** (a). It's the D20-safe reading of everything decided, and v0.8 is where XP, ranks and yard XP (D275) are designed together.
-- **Answer (owner):**
+- **Answer (owner):** 2026-10-15: (a), as recommended: no hunter XP and no warden-skill XP from Delves in v0.7 (D281). v0.8 decides along with trophies, loot and yard XP.

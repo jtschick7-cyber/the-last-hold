@@ -1001,7 +1001,7 @@ Delves are short, active, optional runs into the rift under the Hearth Hall (`lo
 - **Group size:** `delve.groupSize` 2 on floors 1–3, 3 on floors 4–6.
 - **Members:** contract monsters of the floor's tier at `delve.memberHealth` 0.5 × Health and `delve.memberMight` 0.6 × Might (Armor and Speed unchanged).
 - **One family per floor**, picked by the run's seed; species drawn from that family's species whose tier range includes the floor's tier (above tier 5: those that reach tier 5), repeats allowed. The Deep family never appears on floors. The family shows on the doors before the floor (§5.10.5).
-- **[?] Q20 — monsters in Delves are shown by name** (recommended; no investigation in Delves, and showing them doesn't change the bestiary's Identified state). Pending the owner's answer. Delve kills of folklore and Cursed species **don't** count toward the bestiary (D262).
+- **Monsters in Delves are always shown by name** (Q20, D280), with their resistances visible as for an Identified species; there is no investigation in Delves, and seeing a species there doesn't change its bestiary state. Delve kills of folklore and Cursed species **don't** count toward the bestiary (D262).
 - A **Ribbonshade in a Delve never carries a name** (`lore-secrets.md` §8); Seal-burn works as usual.
 - **Targeting (no new dice):**
   - The Vanguard, and the Mender when she attacks, hit the **front** monster: the first standing in group order.
@@ -1026,7 +1026,7 @@ Delves are short, active, optional runs into the rift under the Hearth Hall (`lo
 - Health carries from floor to floor. Before each new floor (and before the guardian), every standing hunter recovers `delve.recovery` 20% of max Health.
 - A downed hunter is **out for the rest of the run**.
 - If all three are down, the run ends and keeps what it earned so far.
-- **Nothing follows hunters home:** no injuries, deaths or recovery timers. **[?] Q21 — no hunter or warden-skill XP from Delves in v0.7** (recommended), pending the owner's answer.
+- **Nothing follows hunters home:** no injuries, deaths or recovery timers. **No hunter or warden-skill XP from Delves in v0.7** (Q21, D281); v0.8 decides.
 
 #### 5.10.7 Rewards *(D258, D261, D262, D263)*
 
