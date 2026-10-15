@@ -1,3 +1,4 @@
+import { accrueAllowance } from '../delves/riftglass';
 import { skillLevels } from '../skills/skills';
 import type { SkillId } from '../../content/skills';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
@@ -80,6 +81,8 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
   }
   // Time past the cap passes without production (GDD §5.2).
   state.time = Math.max(state.time, now);
+  // The allowance banks real time, past the offline cap too (GDD §5.10.8: "Riftglass waiting" on the away sheet).
+  accrueAllowance(state, state.time);
   state.meta.lastSeen = now;
   state.meta.clockHighWater = Math.max(state.meta.clockHighWater, now);
 

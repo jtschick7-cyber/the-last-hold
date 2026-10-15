@@ -51,7 +51,7 @@ const oddsFor = (
   prep: Preparation,
 ): number | null => {
   if (party.length === 0) return null;
-  if (s.resources.food < provisions(s, party.length, c.tier).value) return null;
+  if (s.resources.food < provisions(s, party.length, c.tier, party).value) return null;
   return computeOdds({
     gameSeed: s.meta.gameSeed,
     contractId: c.id,

@@ -1,5 +1,24 @@
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartActFour, startActFourOnLoad } from './act4';
+import {
+  buyAlternateTrait,
+  buyChosenStart,
+  buyCosmetic,
+  buyLateHours,
+  buyReroll,
+  switchTrait,
+} from '../delves/shop';
+import {
+  ackResult,
+  chooseBlessing,
+  chooseDoor,
+  chooseStartPatron,
+  fightFloor,
+  leaveRun,
+  rerollOffer,
+  seeScene,
+  startRun,
+} from '../delves/run';
 import { arriveV05, nameWarden, readArchive, runV05Arrival } from './wardens';
 import type { GameState } from '../state/game-state';
 import { ageUp } from './age';
@@ -106,6 +125,36 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return startActThree(state);
     case 'debug.startActIII':
       return debugStartActThree(state);
+    case 'delve.start':
+      return startRun(state, cmd.party);
+    case 'delve.chooseStart':
+      return chooseStartPatron(state, cmd.patron);
+    case 'delve.chooseDoor':
+      return chooseDoor(state, cmd.patron);
+    case 'delve.chooseBlessing':
+      return chooseBlessing(state, cmd.blessing);
+    case 'delve.reroll':
+      return rerollOffer(state);
+    case 'delve.fight':
+      return fightFloor(state);
+    case 'delve.leave':
+      return leaveRun(state);
+    case 'delve.ackResult':
+      return ackResult(state);
+    case 'delve.seeScene':
+      return seeScene(state);
+    case 'riftglass.buy':
+      return cmd.item === 'late-hours'
+        ? buyLateHours(state)
+        : cmd.item === 'chosen-start'
+          ? buyChosenStart(state)
+          : buyReroll(state);
+    case 'riftglass.buyTrait':
+      return buyAlternateTrait(state, cmd.hunter);
+    case 'riftglass.buyCosmetic':
+      return buyCosmetic(state, cmd.cosmetic);
+    case 'riftglass.switchTrait':
+      return switchTrait(state, cmd.hunter, cmd.alternate);
     case 'story.startActIV':
       return startActFourOnLoad(state);
     case 'debug.startActIV':

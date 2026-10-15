@@ -1,3 +1,4 @@
+import { startAllowanceClock } from '../delves/riftglass';
 import { AGE_IDS, type AgeId } from '../../content/ages';
 import { RESOURCE_IDS, type ResourceBundle } from '../../content/resources';
 import { play } from '../policies/play';
@@ -80,6 +81,7 @@ export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
   state.cycle.age = age;
   const record = state.cycles[state.cycles.length - 1];
   if (record && record.ranks[age] === undefined) record.ranks[age] = state.time; // D113
+  startAllowanceClock(state);
   sweepDocuments(state);
   state.meta.debugUsed = true;
   return ok;

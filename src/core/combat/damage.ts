@@ -1,5 +1,5 @@
 import { num } from '../balance-access';
-import { finalDamage, hurt } from './formula';
+import { abilityTaken, finalDamage, hurt } from './formula';
 import { cap as capName, emit, fmt2, type Fight } from './fight-state';
 import { afterOwnHit } from './abilities';
 import { checkPotion } from './prep';
@@ -7,6 +7,7 @@ import {
   armorEff,
   groupLightlessCut,
   hitChance,
+  knowledgeBonus,
   mightEff,
   outgoingPct,
   standing,
@@ -97,7 +98,9 @@ export const directAttack = (
   const typed = raw * resistance;
   const outgoing = outgoingPct(attacker, attacker.damage, f.ctx, target.family ?? f.ctx.family);
   // knowledge% (GDD §5.0): only the hunters' damage, and 0 unless the species is Studied or better.
-  const knowledge = attacker.side === 'hunter' ? f.knowledgePct : 0;
+  // Each group member has its own level (the Unremembering switch turns the bonus off, D257).
+  const knowledgeLevel = attacker.side === 'hunter' ? target.knowledgeLevel : 0;
+  const knowledge = f.rules.knowledgeOff ? 0 : knowledgeBonus(knowledgeLevel);
   const dealt = typed * (1 + outgoing) * (1 + knowledge) * (crit ? attacker.critMult : 1);
   const taken = takenReduction(target, attacker.damage, party);
   const hitMult = target.nextHitTakenMult;
@@ -117,7 +120,7 @@ export const directAttack = (
     const out = [`${cap(attacker.damage)} ${fmt2(dealt)}`];
     if (resistance !== 1) out.push(resistance === 0 ? 'immune' : `(×${resistance} resist)`);
     if (knowledge > 0)
-      out.push(`(+${pct(knowledge)} ${f.knowledge >= 4 ? 'Mastered' : 'Studied'})`);
+      out.push(`(+${pct(knowledge)} ${knowledgeLevel >= 4 ? 'Mastered' : 'Studied'})`);
     out.push(`−${fmt2(armor)} armor`);
     return out.join(' ');
   };
@@ -221,13 +224,16 @@ const sealBurn = (f: Fight, attacker: Combatant, target: Combatant, dealt: numbe
   for (const a of target.abilities) {
     if (a.kind !== 'sealBurn' || dealt <= 0) continue;
     const raw = dealt * a.reflectFraction;
-    const amount = finalDamage(
-      raw,
+    const amount = abilityTaken(
       attacker,
-      1,
-      attacker.forgeWelded,
-      takenReduction(attacker, 'fire', f.hunters),
-      1,
+      finalDamage(
+        raw,
+        attacker,
+        1,
+        attacker.forgeWelded,
+        takenReduction(attacker, 'fire', f.hunters),
+        1,
+      ),
     );
     hurt(attacker, amount);
     emit(f, {

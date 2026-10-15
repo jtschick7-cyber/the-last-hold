@@ -30,6 +30,7 @@ const kit = {
   tonicLeft: 0,
   extraTaken: 0,
   dealtBonus: 0,
+  knowledgeLevel: 0,
   takenByType: {},
   vanguardShield: 0,
   healBonus: 0,
@@ -40,6 +41,7 @@ const kit = {
   noHealing: false,
   menderHeals: true,
   actionDrain: 0,
+  abilityHalved: false,
 } as const;
 
 export const buildHunter = (
@@ -57,17 +59,25 @@ export const buildHunter = (
   let varianceHi = num('combat.varianceHi');
   let critMult = num('combat.critMult');
   let speedFlat = 0;
+  // v0.7 alternate traits (GDD §8.5a): crit points, max Health, flat Armor, halved ability damage.
+  let traitCrit = 0;
+  let traitHealth = 0;
+  let traitArmor = 0;
+  let abilityHalved = false;
   for (const e of effects) {
+    if (e.kind === 'critPoints') traitCrit += e.amount;
+    else if (e.kind === 'maxHealthPct') traitHealth += e.amount;
+    else if (e.kind === 'armorFlat') traitArmor += e.amount;
+    else if (e.kind === 'abilityDamageHalved') abilityHalved = true;
     if (e.kind === 'varianceRange') {
       varianceLo = e.lo;
       varianceHi = e.hi;
     } else if (e.kind === 'critMult') critMult = e.mult;
     else if (e.kind === 'speedFlat') speedFlat += e.amount;
   }
+  const healthPct = (boost?.healthPct ?? 0) + traitHealth;
   const maxHealth = roundHalfUp(
-    boost && boost.healthPct !== 0
-      ? h.base.health * scale * (1 + boost.healthPct)
-      : h.base.health * scale,
+    healthPct !== 0 ? h.base.health * scale * (1 + healthPct) : h.base.health * scale,
   );
   const hunter: Combatant = {
     side: 'hunter',
@@ -83,7 +93,7 @@ export const buildHunter = (
     base: { might: h.base.might * scale, armor: h.base.armor, speed: h.base.speed },
     flat: {
       might: weapon?.might ?? 0,
-      armor: armor?.armor ?? 0,
+      armor: (armor?.armor ?? 0) + traitArmor,
       speed: speedFlat,
     },
     statPct: { ...zero },
@@ -94,7 +104,8 @@ export const buildHunter = (
     varianceHi,
     critChance:
       (h.role === 'striker' ? num('striker.critChance') : num('combat.critChance')) +
-      (boost ? boost.critPoints / 100 : 0),
+      (boost ? boost.critPoints / 100 : 0) +
+      traitCrit / 100,
     // Heavy Jaw: the higher multiplier applies (with Cold-blooded too).
     critMult: boost && boost.critMult > critMult ? boost.critMult : critMult,
     speed: h.base.speed + speedFlat + (boost?.speedFlat ?? 0),
@@ -115,6 +126,7 @@ export const buildHunter = (
     potion,
     ...kit,
   };
+  hunter.abilityHalved = abilityHalved;
   if (boost) {
     hunter.statPct.might += boost.mightPct;
     hunter.flat.might += boost.mightFlat;
@@ -205,5 +217,6 @@ export const buildMonster = (
     oilFamily: null,
     potion: null,
     ...kit,
+    knowledgeLevel: m.knowledge ?? 0,
   };
 };

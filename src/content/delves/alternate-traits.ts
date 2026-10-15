@@ -1,36 +1,35 @@
-import type { DamageType, FamilyId, LocationId } from '../damage';
 import type { HunterId } from '../hunters';
+import type { TraitEffect } from '../traits';
 
 // GDD §8.5a (D260): each of the 11 hunters has an alternate second trait, bought once with
 // Riftglass (`riftglass.shop.trait`); the hunter then switches freely between the two while
 // not on a contract or in a run. The first trait never changes. Sidegrades, not upgrades; the
 // simulated players never switch. Content outside the saved-state id lists until T7.5 (D171).
 
-export type AlternateEffect =
-  /** Damage taken from monster abilities (not direct attacks) is halved, after resistances, rounded half up (min 1). */
-  | { readonly kind: 'abilityDamageHalved' }
-  | { readonly kind: 'critPoints'; readonly amount: number }
-  /** Recovery times for the other hunters of any contract he joins. */
-  | { readonly kind: 'othersRecoveryTime'; readonly amount: number }
-  | { readonly kind: 'mightOnLocation'; readonly location: LocationId; readonly amount: number }
-  | { readonly kind: 'healthPct'; readonly amount: number }
-  /** Party hit chance, in points, on contracts at this location. */
-  | { readonly kind: 'partyHitOnLocation'; readonly location: LocationId; readonly points: number }
-  /** Provisions for contracts this hunter joins. */
-  | { readonly kind: 'provisionsPct'; readonly amount: number }
-  | { readonly kind: 'dealtPctOfType'; readonly type: DamageType; readonly amount: number }
-  | { readonly kind: 'armorFlat'; readonly amount: number }
-  | { readonly kind: 'mightVsFamily'; readonly family: FamilyId; readonly amount: number };
+export const ALT_TRAIT_IDS = [
+  'smoke-lunged',
+  'long-hook',
+  'splint-and-sling',
+  'fjord-born',
+  'field-born',
+  'broad-back',
+  'forge-eyed',
+  'thrifty',
+  'dipped-knife',
+  'rock-footed',
+  'fjord-axe',
+] as const;
+export type AltTraitId = (typeof ALT_TRAIT_IDS)[number];
 
 export interface AlternateTraitDef {
-  readonly id: string;
+  readonly id: AltTraitId;
   readonly name: string;
   readonly hunter: HunterId | 'arvid';
   /** The second trait it can stand in for (a TRAIT_IDS entry). */
   readonly replaces: string;
   /** The exact effect, as GDD §8.5a gives it. */
   readonly text: string;
-  readonly effect: AlternateEffect;
+  readonly effect: TraitEffect;
 }
 
 export const alternateTraits: readonly AlternateTraitDef[] = [
@@ -56,7 +55,7 @@ export const alternateTraits: readonly AlternateTraitDef[] = [
     hunter: 'ostap',
     replaces: 'hard-to-kill',
     text: 'Recovery times −15% for the other hunters of any contract he joins',
-    effect: { kind: 'othersRecoveryTime', amount: -0.15 },
+    effect: { kind: 'othersRecoveryMult', mult: 0.85 },
   },
   {
     id: 'fjord-born',
@@ -80,7 +79,7 @@ export const alternateTraits: readonly AlternateTraitDef[] = [
     hunter: 'radek',
     replaces: 'hard-to-kill',
     text: '+10% max Health (stat%)',
-    effect: { kind: 'healthPct', amount: 0.1 },
+    effect: { kind: 'maxHealthPct', amount: 0.1 },
   },
   {
     id: 'forge-eyed',
@@ -88,7 +87,7 @@ export const alternateTraits: readonly AlternateTraitDef[] = [
     hunter: 'sigrun',
     replaces: 'lantern-bearer',
     text: 'Party hit chance +5 points on ruin contracts',
-    effect: { kind: 'partyHitOnLocation', location: 'ruin', points: 5 },
+    effect: { kind: 'partyHitOnLocation', location: 'ruin', amount: 0.05 },
   },
   {
     id: 'thrifty',
@@ -96,7 +95,7 @@ export const alternateTraits: readonly AlternateTraitDef[] = [
     hunter: 'toma',
     replaces: 'quick',
     text: 'Provisions for contracts he joins −15%',
-    effect: { kind: 'provisionsPct', amount: -0.15 },
+    effect: { kind: 'provisionsMult', mult: 0.85 },
   },
   {
     id: 'dipped-knife',
@@ -104,7 +103,7 @@ export const alternateTraits: readonly AlternateTraitDef[] = [
     hunter: 'stanko',
     replaces: 'quick',
     text: '+15% Venom damage dealt (outgoing%)',
-    effect: { kind: 'dealtPctOfType', type: 'venom', amount: 0.15 },
+    effect: { kind: 'damageType', type: 'venom', dealt: 0.15, taken: 0 },
   },
   {
     id: 'rock-footed',

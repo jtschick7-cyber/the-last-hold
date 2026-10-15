@@ -203,6 +203,8 @@ export interface Combatant {
   dealtBonus: number;
   /** taken% against one damage type only (Cooled Iron). */
   takenByType: Readonly<Partial<Record<DamageType, number>>>;
+  /** A monster's knowledge level (0–4): the hunters' Studied and Mastered bonus against it (GDD §5.0). */
+  knowledgeLevel: number;
   /** Warp and Weft: taken% for this hunter while another Vanguard stands. */
   vanguardShield: number;
   /** The Mender's heals are this much stronger (Shared Bread, Goose-Grease). */
@@ -219,6 +221,8 @@ export interface Combatant {
   noHealing: boolean;
   /** No Name: false stops the Mender healing. */
   menderHeals: boolean;
+  /** Smoke-Lunged (alternate trait): damage taken from monster abilities is halved. */
+  abilityHalved: boolean;
   /** Drawn Thin: Health lost, as a share of max, after each of this hunter's own actions. */
   actionDrain: number;
   /** Rimewrought's Unthawed has stripped its Armor (GDD §8.3, v0.5). */

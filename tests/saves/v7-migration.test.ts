@@ -15,6 +15,8 @@ import {
 } from '../../src/core/state/game-state';
 import { startingDelve } from '../../src/core/state/delve-state';
 import { createNewGame } from '../../src/core/state/new-game';
+import { freshHunter } from '../../src/core/state/hunters-state';
+import { snapshotOf } from '../../src/core/systems/hunters';
 import { actFourDue } from '../../src/core/story/act4';
 import { isFound, recordWin, sweepDocuments } from '../../src/core/story/documents';
 
@@ -194,6 +196,7 @@ describe('v7 state', () => {
 describe('the saved Delve state (technical design §5.2)', () => {
   const withRun = (): GameState => {
     const s = createNewGame('delve', 1_000);
+    s.hunters.ostap = freshHunter();
     s.delve.runs = 1;
     s.delve.riftglass = 12;
     s.delve.allowance = 40;
@@ -218,13 +221,23 @@ describe('the saved Delve state (technical design §5.2)', () => {
       baseTier: 2,
       floor: 3,
       party: ['halvar', 'zora', 'ostap'],
-      health: { halvar: 150, zora: 0, ostap: 90 },
+      snapshots: (['halvar', 'zora', 'ostap'] as const).map((id) => snapshotOf(s, id)),
+      health: { halvar: 0.8, zora: 0, ostap: 0.45 },
+      kills: 3,
+      vigilUsed: false,
+      lastFloor: {
+        floor: 2,
+        blessings: ['true-hammer'],
+        health: { halvar: 1, zora: 1, ostap: 1 },
+        kills: 1,
+        vigilUsed: false,
+        result: 'win',
+      },
       blessings: ['true-hammer', 'toll'],
       stage: { kind: 'offer', patron: 'wolf', cards: ['long-teeth', 'hungry', 'heavy-jaw'] },
       lastDoors: ['pale-smith', 'drowned-bell'],
       unlitDoorsUsed: 0,
       rerollUsed: false,
-      rules: { toll: 2 },
       earned: {
         floors: 2,
         riftglass: 4,

@@ -1,6 +1,8 @@
 import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
 import type { GearSlot } from '../../content/gear';
+import type { PatronId } from '../../content/delves/patrons';
+import type { CosmeticId } from '../../content/delves/shop';
 import type { SceneId } from '../../content/text/scenes';
 import type { HunterId } from '../../content/hunters';
 import type { JobId } from '../../content/jobs';
@@ -87,6 +89,19 @@ export type Command =
   /** GDD §5.14.1 (D214): a save whose cycle began Act III before it was written meets Arvid on load. */
   | { type: 'story.startActIII' }
   | { type: 'story.startActIV' }
+  | { type: 'delve.start'; party: HunterId[] }
+  | { type: 'delve.chooseStart'; patron: PatronId }
+  | { type: 'delve.chooseDoor'; patron: PatronId }
+  | { type: 'delve.chooseBlessing'; blessing: string }
+  | { type: 'delve.reroll' }
+  | { type: 'delve.fight' }
+  | { type: 'delve.leave' }
+  | { type: 'delve.ackResult' }
+  | { type: 'delve.seeScene' }
+  | { type: 'riftglass.buy'; item: 'late-hours' | 'chosen-start' | 'reroll' }
+  | { type: 'riftglass.buyTrait'; hunter: HunterId }
+  | { type: 'riftglass.buyCosmetic'; cosmetic: CosmeticId }
+  | { type: 'riftglass.switchTrait'; hunter: HunterId; alternate: boolean }
   /** Plan T6.7: begins Act III in the current cycle for testing; Arvid arrives, D3-01 plays. */
   | { type: 'debug.startActIII' }
   | { type: 'debug.startActIV' }

@@ -38,6 +38,22 @@ export const recoveryMult = (hunterTraits: readonly TraitId[]): number => {
   return mult;
 };
 
+/** Splint and Sling: the other hunters of a party recover faster (recovery times × this), D260. */
+export const othersRecoveryMult = (
+  party: readonly (readonly TraitId[])[],
+  index: number,
+): number => {
+  let mult = 1;
+  party.forEach((tr, i) => {
+    if (i === index) return;
+    for (const t of tr) {
+      const e = traits[t].effect;
+      if (e.kind === 'othersRecoveryMult') mult *= e.mult;
+    }
+  });
+  return mult;
+};
+
 const wounded = (tier: number, mult: number): number =>
   roundHalfUp(num('injury.woundedPerTier') * tier * mult);
 

@@ -1,11 +1,12 @@
 import type { FamilyId } from '../../content/damage';
-import type { BlessingRuleId, RarityId } from '../../content/delves/blessing-types';
+import type { RarityId } from '../../content/delves/blessing-types';
 import type { GuardianId } from '../../content/delves/guardians';
 import type { PatronId } from '../../content/delves/patrons';
 import type { DelveRelicId } from '../../content/delves/relics';
 import type { CosmeticId } from '../../content/delves/shop';
 import type { HunterId } from '../../content/hunters';
 import type { IngredientId } from '../../content/ingredients';
+import type { HunterSnapshot } from '../combat';
 import type { SpeciesKnowledge } from './game-state';
 
 // Technical design §5.2 (v7, plan T7.5, D267): the Delves' part of the save (GDD §5.10).
@@ -28,10 +29,23 @@ export interface DelveEarned {
 
 /** What is on screen between fights, so a paused run resumes exactly there (D248). */
 export type DelveStage =
+  /** Chosen start (D259): pick a patron, then 1 of 3 Faint blessings from it. */
+  | { kind: 'start'; patron: PatronId | null; cards: string[] }
   | { kind: 'doors'; doors: [PatronId, PatronId] }
   | { kind: 'offer'; patron: PatronId; cards: string[] }
   /** The next fight (floor `run.floor`, or the guardian when it is 7) is about to be worked out. */
   | { kind: 'fight' };
+
+/** The last floor fought, kept so its playback can be replayed from the seed (GDD §5.10.2). */
+export interface DelveFloorRecord {
+  floor: number;
+  /** The blessings, carried Health (shares), kills and Long Vigil as they stood when it began. */
+  blessings: string[];
+  health: Partial<Record<HunterId, number>>;
+  kills: number;
+  vigilUsed: boolean;
+  result: 'win' | 'loss';
+}
 
 export interface DelveRun {
   /** `${gameSeed}:delve:${runs}`; every fight is sub-seeded from it (GDD §5.10.2). */
@@ -42,8 +56,14 @@ export interface DelveRun {
   floor: number;
   /** The three hunters who went down (`delve.partySize`). */
   party: HunterId[];
-  /** Current Health of each hunter in the party; 0 = down for the rest of the run (D253). */
+  /** The party as it went down, frozen at the start so a level or a new sword never changes the run. */
+  snapshots: HunterSnapshot[];
+  /** Current Health of each hunter as a share of max Health; 0 = down for the rest of the run (D253). */
   health: Partial<Record<HunterId, number>>;
+  /** Monsters killed this run (the Pack Grows) and whether the Long Vigil is spent. */
+  kills: number;
+  vigilUsed: boolean;
+  lastFloor: DelveFloorRecord | null;
   /** Blessing ids taken this run, in order (D255). */
   blessings: string[];
   stage: DelveStage;
@@ -52,8 +72,6 @@ export interface DelveRun {
   unlitDoorsUsed: number;
   /** The Re-roll upgrade has been used this run (D259). */
   rerollUsed: boolean;
-  /** Bookkeeping for the ★ rules (kills for the Pack Grows, once-per-run flags, …). */
-  rules: Partial<Record<BlessingRuleId, number>>;
   earned: DelveEarned;
 }
 

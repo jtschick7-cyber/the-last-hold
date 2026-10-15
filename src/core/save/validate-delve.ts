@@ -1,5 +1,5 @@
 import { FAMILY_IDS, type FamilyId } from '../../content/damage';
-import { RARITIES, type BlessingRuleId } from '../../content/delves/blessing-types';
+import { RARITIES } from '../../content/delves/blessing-types';
 import { blessingById } from '../../content/delves/blessings';
 import { GUARDIAN_IDS, type GuardianId } from '../../content/delves/guardians';
 import { PATRON_IDS, type PatronId } from '../../content/delves/patrons';
@@ -11,6 +11,7 @@ import { INGREDIENT_IDS } from '../../content/ingredients';
 import { balance } from '../../content/balance';
 import type {
   DelveEarned,
+  DelveFloorRecord,
   DelveResult,
   DelveRun,
   DelveShop,
@@ -29,6 +30,7 @@ import {
   obj,
   oneOf,
   orNull,
+  snapshot,
   sparseCounts,
   str,
 } from './guards';
@@ -37,18 +39,6 @@ import {
 // ids are dropped with a warning, never a crash (§9.4); a run that can't be trusted is
 // dropped whole, because a half-read run could not be resumed.
 
-const RULE_IDS: readonly BlessingRuleId[] = [
-  'smiths-mark',
-  'forge-welded',
-  'one-thread',
-  'mended-cloth',
-  'pack-grows',
-  'wolfs-share',
-  'price-paid',
-  'long-vigil',
-  'toll',
-  'struck-bronze',
-];
 const ECHO_IDS = new Set(echoDefs.map((e) => e.id));
 
 const patron = (v: unknown, where: string): PatronId => oneOf(v, PATRON_IDS, where);
@@ -102,7 +92,15 @@ const doorsPair = (v: unknown, where: string): [PatronId, PatronId] => {
 
 const stage = (v: unknown, where: string): DelveStage => {
   const o = obj(v, where);
-  const kind = oneOf(o.kind, ['doors', 'offer', 'fight'], `${where}.kind`);
+  const kind = oneOf(o.kind, ['start', 'doors', 'offer', 'fight'], `${where}.kind`);
+  if (kind === 'start') {
+    const cards = arr(o.cards, `${where}.cards`).map((x, i) => {
+      const id = str(x, `${where}.cards[${i}]`);
+      if (!blessingById(id)) throw new Invalid(`${where}.cards[${i}] isn't a blessing.`);
+      return id;
+    });
+    return { kind, patron: orNull(o.patron, (x) => patron(x, `${where}.patron`)), cards };
+  }
   if (kind === 'doors') return { kind, doors: doorsPair(o.doors, `${where}.doors`) };
   if (kind === 'fight') return { kind };
   const p = patron(o.patron, `${where}.patron`);
@@ -112,6 +110,32 @@ const stage = (v: unknown, where: string): DelveStage => {
     return id;
   });
   return { kind, patron: p, cards };
+};
+
+const lastFloor = (v: unknown, party: readonly HunterId[]): DelveFloorRecord => {
+  const o = obj(v, 'delve.run.lastFloor');
+  const health: DelveFloorRecord['health'] = {};
+  for (const h of party) {
+    const share = nonNegative(
+      obj(o.health, 'delve.run.lastFloor.health')[h],
+      `delve.run.lastFloor.health.${h}`,
+    );
+    if (share > 1) throw new Invalid(`delve.run.lastFloor.health.${h} is more than full.`);
+    health[h] = share;
+  }
+  return {
+    floor: count(o.floor, 'delve.run.lastFloor.floor'),
+    blessings: arr(o.blessings, 'delve.run.lastFloor.blessings').map((x, i) => {
+      const id = str(x, `delve.run.lastFloor.blessings[${i}]`);
+      if (!blessingById(id))
+        throw new Invalid(`delve.run.lastFloor.blessings[${i}] isn't a blessing.`);
+      return id;
+    }),
+    health,
+    kills: count(o.kills, 'delve.run.lastFloor.kills'),
+    vigilUsed: bool(o.vigilUsed, 'delve.run.lastFloor.vigilUsed'),
+    result: oneOf(o.result, ['win', 'loss'], 'delve.run.lastFloor.result'),
+  };
 };
 
 const run = (v: unknown, warnings: string[]): DelveRun => {
@@ -124,7 +148,16 @@ const run = (v: unknown, warnings: string[]): DelveRun => {
     throw new Invalid('delve.run.floor is out of range.');
   const healthRaw = obj(o.health, 'delve.run.health');
   const health: DelveRun['health'] = {};
-  for (const h of party) health[h] = nonNegative(healthRaw[h], `delve.run.health.${h}`);
+  for (const h of party) {
+    const share = nonNegative(healthRaw[h], `delve.run.health.${h}`);
+    if (share > 1) throw new Invalid(`delve.run.health.${h} is more than full.`);
+    health[h] = share;
+  }
+  const snapshots = arr(o.snapshots, 'delve.run.snapshots').map((s, i) =>
+    snapshot(s, `delve.run.snapshots[${i}]`),
+  );
+  if (snapshots.map((s) => s.id).join() !== party.join())
+    throw new Invalid('delve.run.snapshots do not match the party.');
   const blessings = arr(o.blessings, 'delve.run.blessings').map((x, i) => {
     const id = str(x, `delve.run.blessings[${i}]`);
     if (!blessingById(id)) throw new Invalid(`delve.run.blessings[${i}] isn't a blessing.`);
@@ -132,27 +165,21 @@ const run = (v: unknown, warnings: string[]): DelveRun => {
   });
   if (new Set(blessings).size !== blessings.length)
     throw new Invalid('delve.run.blessings lists one twice (D255).');
-  const rulesRaw = obj(o.rules, 'delve.run.rules');
-  const rules: DelveRun['rules'] = {};
-  for (const [k, x] of Object.entries(rulesRaw)) {
-    if (!(RULE_IDS as readonly string[]).includes(k)) {
-      warnings.push(`Dropped unknown delve.run.rules entry "${k}".`);
-      continue;
-    }
-    rules[k as BlessingRuleId] = finite(x, `delve.run.rules.${k}`);
-  }
   return {
     seed: str(o.seed, 'delve.run.seed'),
     baseTier: count(o.baseTier, 'delve.run.baseTier'),
     floor,
     party,
+    snapshots,
     health,
+    kills: count(o.kills, 'delve.run.kills'),
+    vigilUsed: bool(o.vigilUsed, 'delve.run.vigilUsed'),
+    lastFloor: orNull(o.lastFloor, (x) => lastFloor(x, party)),
     blessings,
     stage: stage(o.stage, 'delve.run.stage'),
     lastDoors: orNull(o.lastDoors, (x) => doorsPair(x, 'delve.run.lastDoors')),
     unlitDoorsUsed: count(o.unlitDoorsUsed, 'delve.run.unlitDoorsUsed'),
     rerollUsed: bool(o.rerollUsed, 'delve.run.rerollUsed'),
-    rules,
     earned: earned(o.earned, 'delve.run.earned', warnings),
   };
 };

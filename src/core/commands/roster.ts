@@ -50,6 +50,7 @@ export const setActive = (state: GameState, id: HunterId, active: boolean): Appl
   if (active === isActive) return refuse(isActive ? 'Already active.' : 'Already in the reserve.');
   const status = hunterStatus(state, id);
   if (status === 'on-contract') return refuse(`${hunters[id].shortName} is on a contract.`);
+  if (status === 'in-delve') return refuse(`${hunters[id].shortName} is in a Delve.`);
   if (status === 'recovering') return refuse(`${hunters[id].shortName} is recovering.`);
   if (active) {
     if (state.roster.active.length >= rosterCap(state).value) {

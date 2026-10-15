@@ -1,4 +1,5 @@
 import type { ConsumableId } from '../../content/consumables';
+import { accrueAllowance } from '../delves/riftglass';
 import type { IngredientId } from '../../content/ingredients';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import type { ContractResult, GameState } from '../state/game-state';
@@ -133,6 +134,8 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
     }
   }
   integrate(state, toTime, produced);
+  // The Riftglass allowance grows with time (GDD §5.10.8, D258); the Delve run itself does not.
+  accrueAllowance(state, state.time);
   // The game was running up to here (technical design §6.4 bookkeeping).
   state.meta.lastSeen = state.time;
   state.meta.clockHighWater = Math.max(state.meta.clockHighWater, state.time);

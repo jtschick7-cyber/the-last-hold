@@ -1,6 +1,6 @@
 import { roundHalfUp } from './build';
 import { cancelsAbility, checkPotion, spoilHit } from './prep';
-import { finalDamage, heal, hurt } from './formula';
+import { abilityTaken, finalDamage, heal, hurt } from './formula';
 import { cap, emit, type Fight } from './fight-state';
 import { armorEff, mightEff, present, speedEff, standing, takenReduction } from './stats';
 import type { Combatant } from './types';
@@ -306,13 +306,9 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
         if (!standing(h)) continue;
         // Fire ignores Armor, but taken% (Fire-touched, Plate) still applies (B4).
         const raw = h.maxHealth * a.maxHealthFraction;
-        const amount = finalDamage(
-          raw,
+        const amount = abilityTaken(
           h,
-          1,
-          h.forgeWelded,
-          takenReduction(h, 'fire', f.hunters),
-          1,
+          finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, 'fire', f.hunters), 1),
         );
         hurt(h, amount);
         emit(f, {
@@ -333,13 +329,9 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
       for (const h of f.hunters) {
         if (!standing(h)) continue;
         const raw = h.maxHealth * a.maxHealthFraction;
-        const amount = finalDamage(
-          raw,
+        const amount = abilityTaken(
           h,
-          1,
-          h.forgeWelded,
-          takenReduction(h, 'frost', f.hunters),
-          1,
+          finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, 'frost', f.hunters), 1),
         );
         hurt(h, amount);
         emit(f, {

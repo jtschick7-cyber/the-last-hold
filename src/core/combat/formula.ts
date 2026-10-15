@@ -29,6 +29,13 @@ export const finalDamage = (
   return rounded < floor ? floor : rounded;
 };
 
+/**
+ * Ability damage that lands on a hunter (Noon Heat, Drain, Seal-burn): Smoke-Lunged halves it,
+ * rounded half up, at least 1 (GDD §8.5a). Anything else passes through unchanged.
+ */
+export const abilityTaken = (target: Combatant, amount: number): number =>
+  target.abilityHalved && amount > 0 ? Math.max(1, roundHalfUp(amount / 2)) : amount;
+
 export const heal = (c: Combatant, amount: number): number => {
   if (c.noHealing) return 0; // What Was Burned (Delve): nothing restores Health
   const before = c.health;

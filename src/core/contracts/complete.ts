@@ -89,7 +89,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
       tier: contract.tier,
       reckless: run.reckless,
       story: hunterContent[id].story,
-      recoveryMult: recoveryFactor(id),
+      recoveryMult: recoveryFactor(partyTraits, i),
       deathRoll: null as number | null,
     };
     if (needsDeathRoll(end, ctx)) {

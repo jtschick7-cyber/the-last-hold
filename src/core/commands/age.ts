@@ -2,6 +2,7 @@ import { ages } from '../../content/ages';
 import { RESOURCE_IDS } from '../../content/resources';
 import type { GameState } from '../state/game-state';
 import { ageUpStatus } from '../systems/ages';
+import { startAllowanceClock } from '../delves/riftglass';
 import { sweepDocuments } from '../story/documents';
 import { ok, refuse, type ApplyResult } from './types';
 
@@ -22,6 +23,7 @@ export const ageUp = (state: GameState): ApplyResult => {
   // D113: the cycle history keeps when each Rank was reached.
   const record = state.cycles[state.cycles.length - 1];
   if (record) record.ranks[status.to] = state.time;
+  startAllowanceClock(state); // GDD §5.10.8: the Riftglass allowance begins when Delves open
   sweepDocuments(state); // GDD §5.14.2: a Rank document arrives on the Rank-up sheet
   return ok;
 };

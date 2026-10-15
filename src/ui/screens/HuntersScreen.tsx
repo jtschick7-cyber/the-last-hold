@@ -27,9 +27,11 @@ const Card = ({ id }: { id: HunterId }) => {
       ? `✚ ${h.recovery.kind} · ${formatDuration((h.recovery.until - s.time) / 1000)}`
       : status === 'on-contract'
         ? '⏱ On contract'
-        : status === 'ready'
-          ? '● Ready'
-          : 'Reserve';
+        : status === 'in-delve'
+          ? '▼ In a Delve'
+          : status === 'ready'
+            ? '● Ready'
+            : 'Reserve';
   return (
     <li class={styles.divider}>
       <button

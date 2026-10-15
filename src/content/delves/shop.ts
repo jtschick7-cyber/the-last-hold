@@ -28,6 +28,8 @@ export interface NamedShopItem extends ShopItemDef {
 }
 
 export const LATE_HOURS_LEVELS = 5;
+/** Late hours: +1 h offline cap per level (GDD §5.10.8), in seconds like every duration. */
+export const LATE_HOURS_SECONDS_PER_LEVEL = 3600;
 
 export const shopItems: readonly NamedShopItem[] = [
   {

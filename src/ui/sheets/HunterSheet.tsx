@@ -99,9 +99,11 @@ export const HunterView = ({ id }: { id: HunterId }) => {
           ? `✚ ${h.recovery.kind}, back in ${formatDuration((h.recovery.until - s.time) / 1000)}`
           : status === 'on-contract'
             ? '⏱ On a contract'
-            : status === 'ready'
-              ? '● Ready'
-              : 'In the reserve'}
+            : status === 'in-delve'
+              ? '▼ In a Delve'
+              : status === 'ready'
+                ? '● Ready'
+                : 'In the reserve'}
       </p>
       <div class={styles.cost}>
         {(['health', 'might', 'armor', 'speed'] as const).map((n) => (
@@ -129,7 +131,7 @@ export const HunterView = ({ id }: { id: HunterId }) => {
         type="button"
         class={styles.btn}
         onClick={() => dispatch({ type: 'roster.set', hunter: id, active: !active })}
-        disabled={status === 'on-contract' || status === 'recovering'}
+        disabled={status === 'on-contract' || status === 'in-delve' || status === 'recovering'}
       >
         {active ? 'Move to the reserve' : 'Make active'}
       </button>
