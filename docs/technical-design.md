@@ -37,7 +37,7 @@ From the brief and the decisions log:
 | Tests | **Vitest** | Shares Vite's config. Its bundled `vite-node` also runs the simulator, so no extra runner is needed. Built-in benchmarking. |
 | UI | **Preact + @preact/signals** | About 4 KB. React-style components that Claude Code writes reliably. Signals give fine-grained updates without a state library. |
 | PWA | **vite-plugin-pwa** (Workbox) | Generates the service worker and manifest correctly. Hand-written service workers are a classic source of stale-cache bugs. |
-| Browser tests | **Playwright** *(from v0.2, D24.7)* | One smoke test on a phone-sized viewport |
+| Browser tests | **Playwright** *(from v0.1, D24.7; moved up, D61)* | The smoke test and the cross-engine determinism and golden suites (§14) |
 | Lint and format | **ESLint (flat config) + Prettier** | Enforces the layer rules (§4.2) and the no-`Math.random` rule mechanically |
 
 **Runtime dependencies: 2** (`preact`, `@preact/signals`). Everything else is a dev dependency.
@@ -618,7 +618,7 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 
 1. **TypeScript strict plus `noUncheckedIndexedAccess`; Node 22; npm; versions pinned in v0.0.**
 2. **The core mutates state in place;** hypotheticals use `structuredClone`.
-3. **A lint rule bans numeric literals** in `core/systems/` other than 0, 1, and 100.
+3. **A lint rule bans numeric literals** in `core/systems/` other than the allowlist 0, 1, −1, 2, 100, and array indices (§5.1, A14).
 4. **Fight logs are regenerated from stored references, not saved;** a `rulesVersion` guards replays.
 5. **Tie order for simultaneous events:** completions → recoveries → brews → clues → refills → settles.
 6. **The away sheet appears after 5+ minutes away;** catch-up runs on the main thread, not a worker.
@@ -632,4 +632,4 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 14. **Simulator:** 5 seeds; medians for time targets, every seed for engagement checks; no worker.
 15. **The performance proxy** is one-quarter of the phone budget on CI.
 16. **A name-collision list** is enforced by a content test.
-17. **The full simulator suite** runs in CI only on `main` and on pull requests labeled `balance`.
+17. **The full simulator suite** runs in CI on pull requests to `main` and on demand (`.github/workflows/sim.yml`, lines 5–8, matching §11.2). The workflow is still a stub that exits 0 (its header comment), so the full suite is not live in CI yet.

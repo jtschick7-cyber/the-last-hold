@@ -681,6 +681,14 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** v0.8 (hunter depth) needs its flesh-out session in chat first (plan §0.4); Claude Code does not start it before that. Carried over: WebKit browser tests run only in CI; the Delver never uses Re-roll (D294); the on-load Arvid card has no UI test; the nine older brews have no icons.
 
 
+## 2026-10-15 — Maintenance session: docs sync and enforcement (branch `chore/docs-sync`)
+- **Done (owner-authorized, outside the milestones):** six stale doc copies fixed (M1; the simulator trigger now matches `sim.yml`, and the doc says the workflow is still a stub); a Context hygiene section in CLAUDE.md (M2); the decisions sweep in plan §0.4 and an Actuals paragraph in §0.7 (M3, M4); a 90-second budget step for `npm run check` in `ci.yml` (M5); a pre-commit hook for typecheck and lint (M6). Logged as D338 and D339.
+- **Check time (M5):** `npm run check` took 57–61 s here on three runs; CI's own step took 40 s on the latest v0.8 run. The hard fail at 90 s has plenty of margin, so no question was needed.
+- **Hook (M6) verification, partly done:** the hook script was tested directly against sample commands: it blocks a real `git commit` while typecheck or lint fails, and lets `git status`, `git commit-tree`, `echo git commit` and a clean commit through. A live commit attempt in this session was **not** blocked, because Claude Code reads its settings when a session starts. Please check once in your next session: a commit with a deliberately broken file should be refused.
+- **Heads-up for merging:** `milestone/v0.8` already uses decision numbers D300–D337, so this branch's rows are D338 and D339 (v0.8 may take those numbers before this merges; renumber ours if so). v0.8 also edits the GDD, technical design and plan; expect small merge conflicts in `decisions.md` and the plan.
+- **Skipped or deferred:** technical design §11.2 and judgment call text about the 90-second budget were not touched (not in the authorized edits); it may now want a line saying CI enforces it.
+- **Next:** the owner merges this PR, then v0.8 continues on `milestone/v0.8`.
+
 ## 2026-10-15 — v0.8 session 1: the flesh-out is applied (docs only)
 - **Branch:** `milestone/v0.8`, created from `origin/main` (the v0.7.0 merge, `f19c3cb`).
 - **Applied as written, in one docs commit:** the flesh-out files are in `docs/flesh-out/v0.8/` (OUT-1 to OUT-9) with the summary in `docs/flesh-out/v0.8-summary.md`. The decisions D300–D329, GDD edits (sections A–K and the judgment calls), lore secrets §30–§32 and the small edits, the plan's v0.8 section (T8.1–T8.18) with the v0.9 and v0.10 notes, §0.7, the Depth line and judgment call 12, the questions (Q22 marked answered, Q25 added), and the technical design edits are all in.

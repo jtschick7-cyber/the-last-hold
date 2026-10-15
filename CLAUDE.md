@@ -29,6 +29,11 @@ Append an entry to **`docs/progress.md`**:
 
 Keep it short and plain.
 
+## Context hygiene
+
+- **When the context is compacted:** preserve the current task, the list of files changed this session, any open questions, and the exact test command.
+- **End sessions at task boundaries.** Don't start a new task with a long context: finish the task (green `npm run check`, `progress.md` updated) and let the next session run the start ritual instead.
+
 ## Working with the owner
 
 - **Ask questions with options and a recommendation.** Confirm assumptions; never choose silently.
@@ -66,7 +71,7 @@ Keep it short and plain.
 - The UI never computes game rules.
 
 **Content and balance**
-- Content lives in `src/content/`. Every numeric game constant lives in `src/content/balance.ts`, under its GDD §7 key, marked `tunable` or `locked`.
+- Content lives in `src/content/`. Shared numeric constants live in `src/content/balance.ts`, under their GDD §7 key, marked `tunable` or `locked`. Per-item numbers (hunter stats, monster stats, and the like) live in their content files (D44).
 - **Balance fixes change `tunable` constants only, never formulas.** If no reasonable value passes, stop and ask.
 
 **Saves**
