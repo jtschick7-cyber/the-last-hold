@@ -1125,4 +1125,10 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'clear',
     note: 'Hunter ranks (D274, lore §3.1): the order\'s own titles; "Apprentice" and "Wright" are everyday words; no game uses this ladder.',
   })),
+  ...['Chill', 'Drain', 'Nameless', 'Settling'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-15',
+    result: 'generic',
+    note: 'Deep guardian abilities (GDD §8.3, D252): everyday words.',
+  })),
 ];

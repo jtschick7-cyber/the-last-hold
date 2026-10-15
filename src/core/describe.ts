@@ -108,6 +108,14 @@ export const describeAbility = (a: MonsterAbility): string => {
       return `On each of its actions, a ${percent(a.chance)} chance that one random hunter loses their next action.`;
     case 'rootWall':
       return `Regenerates ${percent(a.regenFraction)} of max Health on each of its actions.`;
+    case 'chill':
+      return `A hunter it hits receives ${percent(a.healingLoss)} less healing for their next ${a.actions} actions.`;
+    case 'drain':
+      return `On each of its actions, every hunter loses ${percent(a.maxHealthFraction)} of max Health as Frost, ignoring Armor.`;
+    case 'nameless':
+      return `Gains ${percent(a.mightPerSpecies)} Might and ${percent(a.healthPerSpecies)} Health for each of the 16 contract species not yet Studied.`;
+    case 'settling':
+      return `Every ${ordinal(a.every)} action, its attack hits every standing hunter (Armor applies).`;
     case 'lightless':
       return `While the swarm stands, every hunter's hit chance is ${Math.round(a.hitChanceCut * 100)} points lower.`;
     case 'sealBurn':

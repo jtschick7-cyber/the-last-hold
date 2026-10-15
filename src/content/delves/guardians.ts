@@ -11,27 +11,24 @@ export const GUARDIAN_IDS = ['unlits-breath', 'the-forgotten', 'dross-tide'] as 
 export type GuardianId = (typeof GUARDIAN_IDS)[number];
 
 export type GuardianAbility =
-  /**
-   * Chill: a hunter it hits receives `healingLoss` less healing for their next `actions`
-   * actions (status%, refreshes). Drain: on each of its actions every standing hunter loses
-   * `drainShare` of max Health as Frost damage, ignoring Armor.
-   */
+  /** Chill: a hunter it hits receives `healingLoss` less healing for their next `actions` actions (status%, refreshes). */
   | {
-      readonly kind: 'chillDrain';
-      readonly label: 'Chill and Drain';
+      readonly kind: 'chill';
+      readonly name: 'Chill';
       readonly healingLoss: number;
       readonly actions: number;
-      readonly drainShare: number;
     }
+  /** Drain: on each of its actions every standing hunter loses this share of max Health as Frost, ignoring Armor. */
+  | { readonly kind: 'drain'; readonly name: 'Drain'; readonly maxHealthFraction: number }
   /** Nameless (passive): +Might and +Health (stat%) for each contract species not yet Studied. */
   | {
       readonly kind: 'nameless';
-      readonly label: 'Nameless';
+      readonly name: 'Nameless';
       readonly mightPerSpecies: number;
       readonly healthPerSpecies: number;
     }
   /** Settling: every `every`th action its attack hits every standing hunter (Armor applies). */
-  | { readonly kind: 'settling'; readonly label: 'Settling'; readonly every: number };
+  | { readonly kind: 'settling'; readonly name: 'Settling'; readonly every: number };
 
 export interface GuardianDef {
   readonly id: GuardianId;
@@ -43,8 +40,10 @@ export interface GuardianDef {
   readonly armor: number;
   readonly speed: number;
   readonly attacks: number;
+  /** First tier it appears at (its base tier t₀); tiers above scale it like any monster (§7.4). */
+  readonly baseTier: number;
   readonly resist: Readonly<Record<DamageType, number>>;
-  readonly ability: GuardianAbility;
+  readonly abilities: readonly GuardianAbility[];
   /** `delve.guardianReagents` units of this drop on defeat. */
   readonly drop: IngredientId;
   /** The bestiary's "What it was" line (lore §29, approved). */
@@ -72,14 +71,12 @@ export const guardians: Readonly<Record<GuardianId, GuardianDef>> = {
     armor: 2,
     speed: 12,
     attacks: 1,
+    baseTier: 2,
     resist: resist(1.0, 1.0, 1.5, 0, 1.25, 0),
-    ability: {
-      kind: 'chillDrain',
-      label: 'Chill and Drain',
-      healingLoss: 0.5,
-      actions: 3,
-      drainShare: 0.02,
-    },
+    abilities: [
+      { kind: 'chill', name: 'Chill', healingLoss: 0.5, actions: 3 },
+      { kind: 'drain', name: 'Drain', maxHealthFraction: 0.02 },
+    ],
     drop: 'rime-salt',
     whatItWas: 'What it was: the warmth of someone nobody sat up with, gone cold.',
     blurb:
@@ -94,8 +91,11 @@ export const guardians: Readonly<Record<GuardianId, GuardianDef>> = {
     armor: 5,
     speed: 10,
     attacks: 1,
+    baseTier: 2,
     resist: resist(1.0, 1.25, 1.0, 1.0, 1.5, 0),
-    ability: { kind: 'nameless', label: 'Nameless', mightPerSpecies: 0.03, healthPerSpecies: 0.03 },
+    abilities: [
+      { kind: 'nameless', name: 'Nameless', mightPerSpecies: 0.03, healthPerSpecies: 0.03 },
+    ],
     drop: 'noon-poppy',
     whatItWas: 'What it was: everyone whose name was said for the last time, and then not again.',
     blurb:
@@ -110,8 +110,9 @@ export const guardians: Readonly<Record<GuardianId, GuardianDef>> = {
     armor: 10,
     speed: 6,
     attacks: 1,
+    baseTier: 2,
     resist: resist(0.75, 1.0, 0.5, 1.25, 1.5, 0),
-    ability: { kind: 'settling', label: 'Settling', every: 3 },
+    abilities: [{ kind: 'settling', name: 'Settling', every: 3 }],
     drop: 'river-pearl',
     whatItWas: "What it was: what's left in the forge when the fire is done with a thing.",
     blurb:

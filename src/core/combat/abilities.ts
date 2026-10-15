@@ -86,6 +86,16 @@ export const afterOwnHit = (
         if (healed > 0) notes.push(`${attacker.name} drinks, +${healed}`);
         break;
       }
+      case 'chill':
+        // Unlit's Breath (Deep): the chill refreshes on every hit, and counts the target's own actions.
+        if (!cancelsAbility(f, attacker, 'Chill')) {
+          target.healCutLeft = a.actions;
+          target.healCut = a.healingLoss;
+          notes.push(
+            `${target.name} is chilled (healing −${Math.round(a.healingLoss * 100)}% for ${a.actions} actions)`,
+          );
+        }
+        break;
       case 'barrowGrip':
         if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Barrow-Grip')) {
           notes.push(
@@ -304,6 +314,26 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
           target: h.id,
           text: () =>
             `Noon Heat burns ${h.name}: Fire ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
+          rolls: [],
+          amount,
+          targetHealth: h.health,
+        });
+        checkPotion(f, h);
+      }
+    } else if (a.kind === 'drain') {
+      // Unlit's Breath (Deep): Frost on every standing hunter, ignoring Armor; taken% still applies.
+      if (cancelsAbility(f, m, 'Drain')) continue;
+      for (const h of f.hunters) {
+        if (!standing(h)) continue;
+        const raw = h.maxHealth * a.maxHealthFraction;
+        const amount = finalDamage(raw, h, 1, false, takenReduction(h, 'frost', f.hunters), 1);
+        hurt(h, amount);
+        emit(f, {
+          actor: m.id,
+          kind: 'ability',
+          target: h.id,
+          text: () =>
+            `The cold drains ${h.name}: Frost ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
           rolls: [],
           amount,
           targetHealth: h.health,

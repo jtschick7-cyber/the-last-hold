@@ -1,5 +1,6 @@
 // Plan T3.11, the part the screens read: what a contract shows of its monster, the bestiary
 // rows, and the ability wording. The UI shows these; it never works them out. GDD §9.4, §9.8.
+import { guardians } from '../../src/content/delves/guardians';
 import { describe, expect, it } from 'vitest';
 import { FAMILY_IDS } from '../../src/content/damage';
 import { MONSTER_IDS, monsters, type MonsterAbility } from '../../src/content/monsters';
@@ -108,7 +109,11 @@ describe('the bestiary rows (GDD §9.8)', () => {
 });
 
 describe('ability wording (GDD §8.3)', () => {
-  const all = MONSTER_IDS.flatMap((m) => monsters[m].abilities);
+  // The 16 contract species and the three Deep guardians (v0.7): every ability kind is described and has a tip.
+  const all = [
+    ...MONSTER_IDS.flatMap((m) => monsters[m].abilities),
+    ...Object.values(guardians).flatMap((g) => g.abilities),
+  ];
 
   it('every ability has a plain description built from its numbers', () => {
     for (const a of all) expect(describeAbility(a).length).toBeGreaterThan(20);

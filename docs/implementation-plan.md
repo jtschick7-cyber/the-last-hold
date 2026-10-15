@@ -805,7 +805,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: ban
 
 #### B. Combat
 - [x] **T7.6 Group fights** *(done; WebKit runs only in CI)* *(Q20 answered (a), D280)*. The fight engine takes a group of monsters (D251): targeting by role (front; lowest Health for Strikers; ties by group order), the same-tick order extended (hunters, party order, group order), same-name passives not stacking, every monster ability acting on the group's member that owns it, success when every monster is down. **Test-first. `rulesVersion` 4 (owner-approved, D251): the §5.5.1 fight, every seeded golden fight and every existing contract and stand fight replay line for line, in Node, WebKit and Chromium; if one changes, stop and ask.** Log lines name group targets ("the second Upyr"). One test per rule.
-- [ ] **T7.7 The Deep guardians.** Chill, Drain, Nameless (with its breakdown from the bestiary), Settling (each hit resolved as a direct attack); guardian Health ×2; tier scaling past 5. One test per ability.
+- [x] **T7.7 The Deep guardians** *(done)*. Chill, Drain, Nameless (with its breakdown from the bestiary), Settling (each hit resolved as a direct attack); guardian Health ×2; tier scaling past 5. One test per ability.
 - [ ] **T7.8 Blessings in combat.** All 48: the bucket effects through the existing buckets; the ★ rules (the Smith's Mark sub-hit; Forge-Welded; One Thread; Mended Cloth; the Pack Grows; the Wolf's Share; A Price Paid; the Long Vigil; Toll and meter knock-back; Struck Bronze) and the Unlit's four switches. Each blessing has a test; each ★ rule's log line; breakdown lines (the Unlit's negative lines). Benchmarks unchanged in budget.
 
 #### C. Delves

@@ -1,5 +1,5 @@
 import type { DamageType, FamilyId, LocationId } from '../../content/damage';
-import { monsters, type MonsterId } from '../../content/monsters';
+import { monsters, type MonsterAbility, type MonsterId } from '../../content/monsters';
 import { num } from '../balance-access';
 import { K } from './constants';
 import type { Combatant } from './types';
@@ -33,8 +33,8 @@ export const healthPct = (c: Combatant): number => c.health / c.maxHealth;
 export interface FightContext {
   /** Null in the Last Stand (no location traits). */
   readonly location: LocationId | null;
-  readonly family: FamilyId;
-  readonly monsterId: MonsterId;
+  readonly family: FamilyId | 'deep';
+  readonly monsterId: string;
   /** The monster's attacks per action. */
   readonly attacks: number;
   /** Gloam-moths' Lightless: hunters' hit chance is this much lower while it stands (v0.5). */
@@ -44,8 +44,8 @@ export interface FightContext {
 }
 
 /** GDD §8.3 Lightless (a passive): the cut to every hunter's hit chance. */
-export const lightlessCut = (id: MonsterId): number => {
-  for (const a of monsters[id].abilities) if (a.kind === 'lightless') return a.hitChanceCut;
+export const lightlessCut = (def: { readonly abilities: readonly MonsterAbility[] }): number => {
+  for (const a of def.abilities) if (a.kind === 'lightless') return a.hitChanceCut;
   return 0;
 };
 
@@ -61,7 +61,7 @@ export const outgoingPct = (
   a: Combatant,
   type: DamageType,
   ctx: FightContext,
-  family: FamilyId = ctx.family,
+  family: FamilyId | 'deep' = ctx.family,
 ): number => {
   let sum = 0;
   for (const e of a.traits) {

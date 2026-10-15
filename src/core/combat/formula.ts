@@ -31,6 +31,8 @@ export const finalDamage = (
 
 export const heal = (c: Combatant, amount: number): number => {
   const before = c.health;
-  c.health = Math.min(c.maxHealth, c.health + amount);
+  // Chill (Deep guardian): a chilled hunter receives less healing (status%).
+  const received = c.healCutLeft > 0 ? roundHalfUp(amount * (1 - c.healCut)) : amount;
+  c.health = Math.min(c.maxHealth, c.health + received);
   return c.health - before;
 };

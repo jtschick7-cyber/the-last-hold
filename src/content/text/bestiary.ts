@@ -144,6 +144,14 @@ export const abilityTips: Readonly<Record<MonsterAbility['kind'], string>> = {
     'It always takes your strongest hunter first, so do not put every eggshell in one basket; a Saltburst cancels the first charm.',
   riverhorse:
     'It takes the hunter with the least Health, so keep everyone topped up, or set a Saltburst and the horse carries nobody.',
+  chill:
+    'A chilled hunter heals half as well for three of their own actions, so let the chill run out before you lean on the Mender, and keep her close.',
+  drain:
+    'It bleeds the whole party a little on every action, and Armor does not help. End the fight quickly; Cooled Iron from the Pale Smith softens the cold.',
+  nameless:
+    'It grows with every species you have not Studied. The best preparation is the bestiary: Study more of them before you come down.',
+  settling:
+    'Every third swing reaches everyone at once, and Armor still counts. Plate, a Shieldwall and a full Health bar carry you through it.',
   lightless:
     'While the swarm stands, every swing is likelier to miss. It is weak to Fire: a Fire Pot or a Fire hunter burns it down before the misses add up.',
   sealBurn:

@@ -171,18 +171,21 @@ describe('the Deep guardians (GDD §8.3, D252)', () => {
 
   it('have the abilities’ numbers as the GDD words them', () => {
     const text = (n: string) => flat(rowFor('**Abilities, clue tags, and drops:**', n)?.[1] ?? '');
-    const a = guardians['unlits-breath'].ability;
-    expect(a).toMatchObject({ healingLoss: 0.5, actions: 3, drainShare: 0.02 });
+    const a = guardians['unlits-breath'].abilities;
+    expect(a).toMatchObject([
+      { kind: 'chill', healingLoss: 0.5, actions: 3 },
+      { kind: 'drain', maxHealthFraction: 0.02 },
+    ]);
     expect(text("Unlit's Breath")).toContain('50% less healing for their next 3 actions');
     expect(text("Unlit's Breath")).toContain(
       'every standing hunter loses 2% of max Health as Frost damage, ignoring Armor',
     );
-    expect(guardians['the-forgotten'].ability).toMatchObject({
+    expect(guardians['the-forgotten'].abilities[0]).toMatchObject({
       mightPerSpecies: 0.03,
       healthPerSpecies: 0.03,
     });
     expect(text('The Forgotten')).toContain('+3% Might and +3% Health');
-    expect(guardians['dross-tide'].ability).toMatchObject({ every: 3 });
+    expect(guardians['dross-tide'].abilities[0]).toMatchObject({ every: 3 });
     expect(text('The Dross-Tide')).toContain('every 3rd action');
   });
 

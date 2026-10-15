@@ -3,6 +3,7 @@ import type { DamageType, FamilyId, LocationId } from '../../content/damage';
 import type { GearId } from '../../content/gear';
 import type { HunterId, RoleId, Stats } from '../../content/hunters';
 import type { MonsterAbility, MonsterId } from '../../content/monsters';
+import type { GuardianId } from '../../content/delves/guardians';
 import type { TraitEffect, TraitId } from '../../content/traits';
 import type { RollSource } from '../rng';
 import type { Preparation } from '../state/game-state';
@@ -52,14 +53,31 @@ export interface StandWaveOptions {
   readonly volley: number;
 }
 
+/**
+ * A Deep guardian (GDD §5.10.4, D252): fights alone at the end of a Delve run. Its tier scales it
+ * like any monster's (past tier 5 too); `healthMult` is `delve.guardianHealth` and the Salt Ring.
+ */
+export interface GuardianInstance {
+  readonly guardian: GuardianId;
+  readonly tier: number;
+  readonly knowledge?: number;
+  readonly healthMult?: number;
+  readonly mightMult?: number;
+}
+
+/** What a fight is against: a contract species or a Deep guardian. */
+export type FightMonster = MonsterInstance | GuardianInstance;
+
 export interface FightInput {
   readonly party: readonly HunterSnapshot[];
-  readonly monster: MonsterInstance;
+  readonly monster: FightMonster;
   /**
    * The rest of a Delve group (GDD §5.10.4, D251), after `monster`, in group order. The fight
    * is won when every monster is down. Absent or empty: the one-monster fight of §5.5.
    */
   readonly companions?: readonly MonsterInstance[];
+  /** How many of the 16 contract species are not yet Studied: the Forgotten's Nameless (GDD §8.3). */
+  readonly nameless?: number;
   /** Null in the Last Stand: the hold isn't a contract location, so location traits don't apply. */
   readonly location: LocationId | null;
   readonly rolls: RollSource;
@@ -99,7 +117,7 @@ export interface Combatant {
   readonly name: string;
   readonly role: RoleId | null;
   /** A monster's family (null for hunters), so a hunter's family bonuses read the monster hit. */
-  readonly family: FamilyId | null;
+  readonly family: FamilyId | 'deep' | null;
   /** Attacks per action: a monster's `Atk`, 1 for a hunter. */
   readonly attacks: number;
   /** Party slot order; the monsters take 0, 1, 2… in group order (D251). */
@@ -150,6 +168,9 @@ export interface Combatant {
   burnAmount: number;
   /** Frost Pot: −Speed% for the monster's next actions. */
   chillLeft: number;
+  /** Chill (Deep guardian): healing received is cut by `healCut` for this many of the holder's own actions. */
+  healCutLeft: number;
+  healCut: number;
   /** Saltburst: the monster's next actions in which abilities do nothing. */
   abilitiesBlocked: number;
   /** Owl-Eye Drops (v0.6): added to the hunter's hit chance for the whole fight. */

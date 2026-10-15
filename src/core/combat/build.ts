@@ -1,11 +1,11 @@
 import { gear } from '../../content/gear';
 import { traits } from '../../content/traits';
-import { monsters } from '../../content/monsters';
 import { num } from '../balance-access';
 import { intPow } from '../math';
 import { hunterKit } from './prep';
 import type { Preparation } from '../state/game-state';
-import type { Combatant, HunterSnapshot, MonsterInstance } from './types';
+import { speciesOf } from './species';
+import type { Combatant, FightMonster, HunterSnapshot } from './types';
 
 // GDD §5.3.2 and §7.4: hunters scale with level (Health and Might only), monsters
 // with tier above their base tier. Health is always a whole number: round half up.
@@ -19,6 +19,8 @@ const kit = {
   burnLeft: 0,
   burnAmount: 0,
   chillLeft: 0,
+  healCutLeft: 0,
+  healCut: 0,
   abilitiesBlocked: 0,
   hitBonus: 0,
   fireTakenPotion: 0,
@@ -101,20 +103,30 @@ export interface MemberOptions {
 }
 
 export const buildMonster = (
-  m: MonsterInstance,
+  m: FightMonster,
   strength = 1,
   member?: MemberOptions,
+  nameless = 0,
 ): Combatant => {
-  const def = monsters[m.monster];
-  const steps = m.tier - def.tiers[0];
+  const def = speciesOf(m);
+  const steps = m.tier - def.baseTier;
   const tierScale = intPow(num('monster.statGrowth'), steps);
   const statScale = strength === 1 ? tierScale : tierScale * strength;
   const armorScale = intPow(num('monster.armorGrowth'), steps);
-  const maxHealth = roundHalfUp(
-    m.healthMult === undefined ? def.health * statScale : def.health * statScale * m.healthMult,
-  );
-  const might =
+  // The Forgotten's Nameless (a passive, GDD §8.3): +3% Might and Health (stat%) per contract species not yet Studied.
+  let namelessHealth = 1;
+  let namelessMight = 1;
+  for (const a of def.abilities)
+    if (a.kind === 'nameless') {
+      namelessHealth = 1 + a.healthPerSpecies * nameless;
+      namelessMight = 1 + a.mightPerSpecies * nameless;
+    }
+  const healthBase =
+    m.healthMult === undefined ? def.health * statScale : def.health * statScale * m.healthMult;
+  const maxHealth = roundHalfUp(namelessHealth === 1 ? healthBase : healthBase * namelessHealth);
+  const mightBase =
     m.mightMult === undefined ? def.might * statScale : def.might * statScale * m.mightMult;
+  const might = namelessMight === 1 ? mightBase : mightBase * namelessMight;
   return {
     side: 'monster',
     id: member?.id ?? def.id,

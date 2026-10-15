@@ -1,5 +1,5 @@
-import { monsters } from '../../content/monsters';
 import { K } from './constants';
+import { speciesOf } from './species';
 import { buildHunter, buildMonster, roundHalfUp } from './build';
 import { endOfMonsterAction, heal, startOfMonsterAction } from './abilities';
 import { burnTick, cancelsAbility, startOfFight } from './prep';
@@ -10,13 +10,12 @@ import {
   healthPct,
   knowledgeBonus,
   lightlessCut,
-  monsterFamily,
   present,
   speedEff,
   standing,
   type FightContext,
 } from './stats';
-import type { Combatant, FightInput, FightResult } from './types';
+import type { Combatant, FightInput, FightMonster, FightResult } from './types';
 
 // GDD §5.5: an auto-battle on a turn meter. Each tick every standing combatant's
 // meter rises by its Speed; whoever reaches the threshold acts once and loses the
@@ -32,7 +31,7 @@ const actsBefore = (a: Combatant, b: Combatant): number =>
   a.slot - b.slot;
 
 /** A status that counts the holder's own actions ends here (Hamstring). */
-const endOwnAction = (c: Combatant): void => {
+export const endOwnAction = (c: Combatant): void => {
   if (c.tonicLeft > 0) {
     c.tonicLeft -= 1;
     if (c.tonicLeft === 0) c.statusPct.armor = 0;
@@ -45,6 +44,10 @@ const endOwnAction = (c: Combatant): void => {
     }
   }
   if (c.abilitiesBlocked > 0) c.abilitiesBlocked -= 1;
+  if (c.healCutLeft > 0) {
+    c.healCutLeft -= 1;
+    if (c.healCutLeft === 0) c.healCut = 0;
+  }
   if (c.hamstringLeft > 0) {
     c.hamstringLeft -= 1;
     if (c.hamstringLeft === 0) {
@@ -168,7 +171,27 @@ const monsterAct = (f: Fight, m: Combatant): void => {
   }
   const skipAttack = startOfMonsterAction(f, m);
   resolveEnds(f);
-  if (!skipAttack) {
+  const settling = m.abilities.find((a) => a.kind === 'settling');
+  if (
+    !skipAttack &&
+    settling &&
+    m.actions % settling.every === 0 &&
+    !cancelsAbility(f, m, 'Settling')
+  ) {
+    // The Dross-Tide (Deep): every `every`th action its attack reaches every standing hunter, each
+    // hit rolled and resolved as a direct attack (Armor applies); no target roll is drawn.
+    emit(f, {
+      actor: m.id,
+      kind: 'ability',
+      text: () => `${cap(m.name)} settles over the whole party`,
+      rolls: [],
+    });
+    for (const h of f.hunters.filter(present)) {
+      if (f.over || !present(h)) continue;
+      directAttack(f, m, h);
+      resolveEnds(f);
+    }
+  } else if (!skipAttack) {
     for (let i = 0; i < m.attacks && !f.over; i++) {
       const picked = pickTarget(f, f.hunters.filter(present));
       if (!picked) break;
@@ -198,25 +221,33 @@ export const runFight = (input: FightInput): FightResult => {
   const instances = [input.monster, ...(input.companions ?? [])];
   const seen: Record<string, number> = {};
   const total: Record<string, number> = {};
-  for (const m of instances) total[m.monster] = (total[m.monster] ?? 0) + 1;
+  const key = (m: FightMonster): string => speciesOf(m).id;
+  for (const m of instances) total[key(m)] = (total[key(m)] ?? 0) + 1;
   const monsterList = instances.map((m, slot) => {
-    const n = (seen[m.monster] = (seen[m.monster] ?? 0) + 1);
-    const def = monsters[m.monster];
-    if (instances.length === 1) return buildMonster(m, stand?.monsterStrength ?? 1);
-    return buildMonster(m, stand?.monsterStrength ?? 1, {
-      slot,
-      id: n === 1 ? def.id : `${def.id}-${n}`,
-      name: (total[m.monster] ?? 1) > 1 ? `${ORDINALS[n - 1] ?? `#${n}`} ${def.name}` : def.name,
-    });
+    const n = (seen[key(m)] = (seen[key(m)] ?? 0) + 1);
+    const def = speciesOf(m);
+    if (instances.length === 1)
+      return buildMonster(m, stand?.monsterStrength ?? 1, undefined, input.nameless ?? 0);
+    return buildMonster(
+      m,
+      stand?.monsterStrength ?? 1,
+      {
+        slot,
+        id: n === 1 ? def.id : `${def.id}-${n}`,
+        name: (total[key(m)] ?? 1) > 1 ? `${ORDINALS[n - 1] ?? `#${n}`} ${def.name}` : def.name,
+      },
+      input.nameless ?? 0,
+    );
   });
   const monster = monsterList[0] as Combatant;
   const potency = alchemyPotency(input.alchemy ?? 0);
+  const first = speciesOf(input.monster);
   const ctx: FightContext = {
     location: input.location,
-    family: monsterFamily(input.monster.monster),
-    monsterId: input.monster.monster,
-    attacks: monsters[input.monster.monster].attacks,
-    hitCut: lightlessCut(input.monster.monster),
+    family: first.family,
+    monsterId: first.id,
+    attacks: first.attacks,
+    hitCut: lightlessCut(first),
     oilBonus: K.oilBonus * potency,
   };
   const f: Fight = {
