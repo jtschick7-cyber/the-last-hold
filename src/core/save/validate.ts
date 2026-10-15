@@ -33,6 +33,7 @@ import {
 } from './guards';
 import { storyFrom } from './validate-story';
 import { alchemyLevel, bookFrom, kettleJob, skillsFrom } from './validate-alchemy';
+import { delveFrom } from './validate-delve';
 import { longNightFrom } from './validate-long-night';
 import type {
   ContractInstance,
@@ -374,6 +375,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
     story: storyFrom(s, warnings),
     book: bookFrom(s.book, warnings),
     skills: skillsFrom(s.skills, warnings),
+    delve: delveFrom(s.delve, warnings),
     settings: settingsFrom(s.settings, warnings),
   };
 };

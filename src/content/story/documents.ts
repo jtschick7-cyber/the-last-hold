@@ -1,4 +1,5 @@
 import type { AgeId } from '../ages';
+import type { FamilyId } from '../damage';
 import type { HunterId } from '../hunters';
 import type { KnowledgeLevel } from '../knowledge';
 import type { MonsterId } from '../monsters';
@@ -6,10 +7,10 @@ import type { VillageId } from '../villages';
 import type { TrustLevel } from './trust';
 
 // GDD §5.14.2 (D148): documents arrive on fixed conditions, never by chance. The
-// texts and conditions are lore-secrets §21 (Act I), §22 (Act II) and §26 (Act III), word
+// texts and conditions are lore-secrets §21 (Act I), §22 (Act II), §26 (Act III) and §28 (Act IV), word
 // for word. Core (T5.6) reads the conditions; the Archive (T5.11a) shows the text.
 
-/** lore-secrets §15.1. Ember-echoes arrive with Delves (v0.7). */
+/** lore-secrets §15.1. Ember-echoes (E-01 to E-18, lore §29) arrive with Delves and belong to no act. */
 export const DOCUMENT_TYPES = [
   'letter',
   'journal',
@@ -54,6 +55,10 @@ export type DocumentCondition =
   | { readonly kind: 'nextWarden' }
   /** Arvid arrives with Ilse when Act III begins (lore §26, D211, D214). */
   | { readonly kind: 'arvidArrives' }
+  /** The act begins: its opening scene plays (D4-01, lore §28, D245). Judged when the act starts, never by a sweep. */
+  | { readonly kind: 'actBegins' }
+  /** The nth contract won against a monster family since the act began (D4-02, D4-03, D245). */
+  | { readonly kind: 'familyWon'; readonly nth: number; readonly family: FamilyId }
   /** Two hunters are both on the roster, in the act's cycle or later, once `after` is found (D213). */
   | {
       readonly kind: 'huntersTogether';

@@ -61,11 +61,12 @@ const docText = (d: DocumentDef): string =>
   ].join('\n');
 const flat = (s: string): string => s.replace(/\s+/g, ' ').replace(/\*/g, '').trim();
 
-/** lore §21.1, §22.1 and §26.1: the documents tables, as [id, title, type, witness, arrives, where, names]. */
+/** lore §21.1, §22.1, §26.1 and §28.1: the documents tables, as [id, title, type, witness, arrives, where, names]. */
 const tableRows = (): string[][] =>
   (
     lore.slice(lore.indexOf('## 21. '), lore.indexOf('## 23. ')) +
-    lore.slice(lore.indexOf('## 26. '), lore.indexOf('## 27. '))
+    lore.slice(lore.indexOf('## 26. '), lore.indexOf('## 27. ')) +
+    lore.slice(lore.indexOf('## 28. '), lore.indexOf('## 29. '))
   )
     .split('\n')
     .filter((l) => /^\| D\d-\d\d/.test(l))
@@ -76,13 +77,13 @@ const tableRows = (): string[][] =>
         .map((c) => c.replace(/\*\(new\)\*/, '').trim()),
     );
 
-describe('Acts I, II and III (lore-secrets §21, §22, §26)', () => {
-  const rows = tableRows().filter((r) => r[0] !== 'D1-08'); // D1-08 waits for Delves (v0.7)
+describe('Acts I to IV (lore-secrets §21, §22, §26, §28)', () => {
+  const rows = tableRows();
 
   it('have every document of the tables, and no other', () => {
     expect(allDocuments.map((d) => d.id).sort()).toEqual(rows.map((r) => r[0]).sort());
-    expect(acts.map((a) => a.act)).toEqual([1, 2, 3]);
-    expect(LAST_WRITTEN_ACT).toBe(3);
+    expect(acts.map((a) => a.act)).toEqual([1, 2, 3, 4]);
+    expect(LAST_WRITTEN_ACT).toBe(4);
     for (const a of acts) for (const d of a.documents) expect(d.act, d.id).toBe(a.act);
   });
 
@@ -95,6 +96,7 @@ describe('Acts I, II and III (lore-secrets §21, §22, §26)', () => {
       'Resident scene': 'scene',
       'Resident scene + ledger strip': 'scene',
       Journal: 'journal',
+      'Journal page': 'journal',
     };
     for (const [id, title, type, witness] of rows) {
       const d = allDocuments.find((x) => x.id === id);
@@ -147,6 +149,34 @@ describe('Acts I, II and III (lore-secrets §21, §22, §26)', () => {
       hunters: ['arvid', 'sigrun'],
       after: 'D2-08',
     });
+    // Act IV (lore §28.1, D245).
+    expect(c('D4-01')).toEqual({ kind: 'actBegins' });
+    expect(c('D4-02')).toEqual({
+      kind: 'familyWon',
+      nth: 1,
+      family: 'field-and-forest-spirits',
+    });
+    expect(c('D4-03')).toEqual({ kind: 'familyWon', nth: 2, family: 'beasts-and-wilds' });
+    expect(c('D4-04')).toEqual({ kind: 'rankReached', age: 'citadel' });
+    expect(c('D4-05')).toEqual({ kind: 'rankReached', age: 'bastion' });
+    expect(c('D4-06')).toEqual({ kind: 'actStand' });
+    expect(c('D4-07')).toEqual({ kind: 'nextWarden' });
+    expect(c('D4-08')).toEqual({ kind: 'contractWon', nth: 2, village: 'mirograd' });
+  });
+
+  it('give Act IV exactly six names, in D4-02 and D4-03, and no new proper nouns', () => {
+    const four = allDocuments.filter((d) => d.act === 4);
+    expect(four.map((d) => d.id)).toEqual([
+      'D4-01',
+      'D4-02',
+      'D4-03',
+      'D4-04',
+      'D4-05',
+      'D4-06',
+      'D4-07',
+      'D4-08',
+    ]);
+    expect(four.flatMap((d) => d.names)).toEqual([21, 22, 24, 25, 26, 27]);
   });
 
   it('have the lore texts word for word', () => {

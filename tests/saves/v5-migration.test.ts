@@ -66,7 +66,15 @@ describe('the v4 → v5 migration (plan T5.3)', () => {
   it('starts Act I at once, in the current cycle (D149); earlier cycles had no act', () => {
     expect(after.cycles.map((c) => c.act)).toEqual([null, 1]);
     expect(after.story.acts).toEqual([
-      { act: 1, cycle: 2, startedAt: before.time, wins: 0, winsByVillage: {}, ruinWins: 0 },
+      {
+        act: 1,
+        cycle: 2,
+        startedAt: before.time,
+        wins: 0,
+        winsByVillage: {},
+        ruinWins: 0,
+        winsByFamily: {}, // added by the v6 → v7 step
+      },
     ]);
   });
 
@@ -130,7 +138,15 @@ describe('v5 state (technical design §5.2)', () => {
     expect(g.cycles[0]?.warden).toBeNull();
     expect(g.story.arrivalDue).toBe(false);
     expect(g.story.acts).toEqual([
-      { act: 1, cycle: 1, startedAt: 5_000, wins: 0, winsByVillage: {}, ruinWins: 0 },
+      {
+        act: 1,
+        cycle: 1,
+        startedAt: 5_000,
+        wins: 0,
+        winsByVillage: {},
+        ruinWins: 0,
+        winsByFamily: {},
+      },
     ]);
     expect(g.story.peakLevels).toEqual({ halvar: 1, zora: 1 });
   });

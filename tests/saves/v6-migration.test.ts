@@ -56,6 +56,12 @@ describe("the v5 → v6 migration on the owner's real save (plan T6.3)", () => {
     for (const key of Object.keys(before) as (keyof GameState)[]) {
       if (key === 'meta') expect({ ...after.meta, schemaVersion: 5 }).toEqual(before.meta);
       else if (key === 'cycles') expect(after.cycles.map(strip)).toEqual(before.cycles);
+      else if (key === 'story')
+        // v7 adds each act's family wins (D245).
+        expect({
+          ...after.story,
+          acts: after.story.acts.map(({ winsByFamily: _f, ...a }) => a),
+        }).toEqual(before.story);
       else if (key === 'stores')
         expect(
           Object.fromEntries(

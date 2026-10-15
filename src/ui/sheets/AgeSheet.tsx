@@ -7,6 +7,7 @@ import { dispatch, game, version } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
+import { RiftglassShop } from '../delve/ShopCard';
 import { HearthView } from './HearthView';
 import { RollOfWardens } from './RollOfWardens';
 import { SkillsView } from './SkillsView';
@@ -56,6 +57,7 @@ export const AgeSheet = () => {
           </button>
         )}
         <HearthView />
+        <RiftglassShop />
         <SkillsView />
         <RollOfWardens />
       </div>
@@ -113,6 +115,7 @@ export const AgeSheet = () => {
         Rank up to {ages[status.to].name}
       </button>
       <HearthView />
+      <RiftglassShop />
       <SkillsView />
       <RollOfWardens />
     </div>

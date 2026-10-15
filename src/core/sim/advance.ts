@@ -1,4 +1,6 @@
 import type { ConsumableId } from '../../content/consumables';
+import { accrueAllowance } from '../delves/riftglass';
+import { grantIdleDelveRelics } from '../delves/rewards';
 import type { IngredientId } from '../../content/ingredients';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import type { ContractResult, GameState } from '../state/game-state';
@@ -117,7 +119,11 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
     } else if (kind === 5) {
       const done = applyBrew(state);
       if (done && 'item' in done) log.events.push({ type: 'brew', ...done });
-      else if (done) log.events.push({ type: 'experiment', ...done });
+      else if (done) {
+        log.events.push({ type: 'experiment', ...done });
+        // GDD §8.10a (D261): the recipe book complete finds the Horn Spoon.
+        grantIdleDelveRelics(state);
+      }
     } else if (kind === 6) {
       const h = applyHarvest(state);
       if (h) log.events.push({ type: 'harvest', ...h });
@@ -133,6 +139,8 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
     }
   }
   integrate(state, toTime, produced);
+  // The Riftglass allowance grows with time (GDD §5.10.8, D258); the Delve run itself does not.
+  accrueAllowance(state, state.time);
   // The game was running up to here (technical design §6.4 bookkeeping).
   state.meta.lastSeen = state.time;
   state.meta.clockHighWater = Math.max(state.meta.clockHighWater, state.time);

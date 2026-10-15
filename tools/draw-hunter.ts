@@ -7,15 +7,15 @@
 import type { PortraitSpec } from '../src/content/hunters';
 import { C, Canvas, seedRolls } from './pixel';
 
-type Ramp = readonly [light: string, mid: string, dark: string];
+export type Ramp = readonly [light: string, mid: string, dark: string];
 
-const SKIN: Record<PortraitSpec['skin'], Ramp> = {
+export const SKIN: Record<PortraitSpec['skin'], Ramp> = {
   light: [C.cream, C.sand, C.clay],
   warm: [C.sand, C.clay, C.rust],
   tan: [C.clay, C.rust, C.brown],
   deep: [C.rust, C.brown, C.brownDark],
 };
-const HAIR: Record<PortraitSpec['hairColor'], Ramp> = {
+export const HAIR: Record<PortraitSpec['hairColor'], Ramp> = {
   black: [C.coal, C.ink, C.wine],
   brown: [C.brown, C.brownDark, C.wine],
   auburn: [C.red, C.blood, C.brownDark],
@@ -23,7 +23,7 @@ const HAIR: Record<PortraitSpec['hairColor'], Ramp> = {
   grey: [C.bone, C.ash, C.stone],
   white: [C.frost, C.bone, C.ash],
 };
-const CLOTH: Record<PortraitSpec['clothColor'] | PortraitSpec['headgearColor'], Ramp> = {
+export const CLOTH: Record<PortraitSpec['clothColor'] | PortraitSpec['headgearColor'], Ramp> = {
   brown: [C.rust, C.brown, C.brownDark],
   green: [C.grass, C.moss, C.pine],
   blue: [C.cyan, C.blue, C.night],

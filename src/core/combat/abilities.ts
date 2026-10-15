@@ -1,7 +1,7 @@
 import { roundHalfUp } from './build';
 import { cancelsAbility, checkPotion, spoilHit } from './prep';
-import { finalDamage, heal, hurt } from './formula';
-import { emit, type Fight } from './fight-state';
+import { abilityTaken, finalDamage, heal, hurt } from './formula';
+import { cap, emit, type Fight } from './fight-state';
 import { armorEff, mightEff, present, speedEff, standing, takenReduction } from './stats';
 import type { Combatant } from './types';
 
@@ -86,6 +86,16 @@ export const afterOwnHit = (
         if (healed > 0) notes.push(`${attacker.name} drinks, +${healed}`);
         break;
       }
+      case 'chill':
+        // Unlit's Breath (Deep): the chill refreshes on every hit, and counts the target's own actions.
+        if (!cancelsAbility(f, attacker, 'Chill')) {
+          target.healCutLeft = a.actions;
+          target.healCut = a.healingLoss;
+          notes.push(
+            `${target.name} is chilled (healing −${Math.round(a.healingLoss * 100)}% for ${a.actions} actions)`,
+          );
+        }
+        break;
       case 'barrowGrip':
         if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Barrow-Grip')) {
           notes.push(
@@ -150,7 +160,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
             actor: m.id,
             kind: 'ability',
             text: () =>
-              `${m.name}'s Root-Wall mends it, +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+              `${cap(m.name)}'s Root-Wall mends it, +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
             rolls: [],
             amount: healed,
             targetHealth: m.health,
@@ -185,8 +195,8 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               target: victim.id,
               text: () =>
                 lost
-                  ? `${m.name} leads ${victim.name} astray (loses their next action)`
-                  : `${m.name} leads ${victim.name} astray, but ${keeps(victim)}`,
+                  ? `${cap(m.name)} leads ${victim.name} astray (loses their next action)`
+                  : `${cap(m.name)} leads ${victim.name} astray, but ${keeps(victim)}`,
               rolls: used,
               rollNotes: notes,
             });
@@ -196,7 +206,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         emit(f, {
           actor: m.id,
           kind: 'ability-roll',
-          text: () => `${m.name}'s Lead Astray fails`,
+          text: () => `${cap(m.name)}'s Lead Astray fails`,
           rolls: used,
           rollNotes: notes,
         });
@@ -214,8 +224,8 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               target: victim.id,
               text: () =>
                 lost
-                  ? `${m.name} sings, and ${victim.name} is charmed (loses their next action)`
-                  : `${m.name} sings, and ${victim.name} is charmed, but ${keeps(victim)}`,
+                  ? `${cap(m.name)} sings, and ${victim.name} is charmed (loses their next action)`
+                  : `${cap(m.name)} sings, and ${victim.name} is charmed, but ${keeps(victim)}`,
               rolls: [],
             });
           }
@@ -232,7 +242,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               kind: 'ability',
               target: victim.id,
               text: () =>
-                `${m.name} enthralls ${victim.name} (${lost ? 'loses their next action' : keeps(victim)}), +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+                `${cap(m.name)} enthralls ${victim.name} (${lost ? 'loses their next action' : keeps(victim)}), +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
               rolls: [],
               amount: healed,
               targetHealth: m.health,
@@ -265,7 +275,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
               actor: m.id,
               kind: 'ability',
               target: victim.id,
-              text: () => `${m.name} carries ${victim.name} off into the river`,
+              text: () => `${cap(m.name)} carries ${victim.name} off into the river`,
               rolls: [],
             });
           }
@@ -296,7 +306,10 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
         if (!standing(h)) continue;
         // Fire ignores Armor, but taken% (Fire-touched, Plate) still applies (B4).
         const raw = h.maxHealth * a.maxHealthFraction;
-        const amount = finalDamage(raw, h, 1, false, takenReduction(h, 'fire', f.hunters), 1);
+        const amount = abilityTaken(
+          h,
+          finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, 'fire', f.hunters), 1),
+        );
         hurt(h, amount);
         emit(f, {
           actor: m.id,
@@ -304,6 +317,29 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
           target: h.id,
           text: () =>
             `Noon Heat burns ${h.name}: Fire ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
+          rolls: [],
+          amount,
+          targetHealth: h.health,
+        });
+        checkPotion(f, h);
+      }
+    } else if (a.kind === 'drain') {
+      // Unlit's Breath (Deep): Frost on every standing hunter, ignoring Armor; taken% still applies.
+      if (cancelsAbility(f, m, 'Drain')) continue;
+      for (const h of f.hunters) {
+        if (!standing(h)) continue;
+        const raw = h.maxHealth * a.maxHealthFraction;
+        const amount = abilityTaken(
+          h,
+          finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, 'frost', f.hunters), 1),
+        );
+        hurt(h, amount);
+        emit(f, {
+          actor: m.id,
+          kind: 'ability',
+          target: h.id,
+          text: () =>
+            `The cold drains ${h.name}: Frost ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
           rolls: [],
           amount,
           targetHealth: h.health,

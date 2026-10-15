@@ -1,11 +1,13 @@
 import { num } from '../balance-access';
-import { finalDamage, hurt } from './formula';
-import { emit, fmt2, type Fight } from './fight-state';
+import { abilityTaken, finalDamage, hurt } from './formula';
+import { cap as capName, emit, fmt2, type Fight } from './fight-state';
 import { afterOwnHit } from './abilities';
 import { checkPotion } from './prep';
 import {
   armorEff,
+  groupLightlessCut,
   hitChance,
+  knowledgeBonus,
   mightEff,
   outgoingPct,
   standing,
@@ -42,6 +44,7 @@ export const directAttack = (
   target: Combatant,
   opts: AttackOptions = {},
 ): boolean => {
+  f.lastCrit = false;
   const used: number[] = f.logging ? [...(opts.pre ?? [])] : [];
   const labels: string[] = f.logging ? [...(opts.preNotes ?? [])] : [];
   // `label` runs only when the fight is logged (odds previews build no text).
@@ -53,9 +56,13 @@ export const directAttack = (
     }
     return r;
   };
-  const who = (): string => `${attacker.name}${roleTag(attacker)}`;
+  const who = (): string => `${capName(attacker.name)}${roleTag(attacker)}`;
   const party = f.hunters;
-  const chance = hitChance(attacker, party, f.ctx);
+  // A group's Lightless is the largest cut among the swarms standing (D251); a single monster's is constant.
+  const chance =
+    f.monsters.length === 1
+      ? hitChance(attacker, party, f.ctx)
+      : hitChance(attacker, party, f.ctx, groupLightlessCut(f.monsters));
   const hitRoll = draw((r) =>
     r < chance ? `Hit ${fmt3(r)} < ${pct(chance)} → hit` : `Hit ${fmt3(r)} ≥ ${pct(chance)} → miss`,
   );
@@ -84,13 +91,16 @@ export const directAttack = (
         ? `Crit ${fmt3(r)} < ${pct(critChance)} → crit`
         : `Crit ${fmt3(r)} ≥ ${pct(critChance)} → no crit`,
     ) < critChance;
+  f.lastCrit = crit;
   const mult = opts.mightMult ?? 1;
   const raw = mightEff(attacker) * mult * variance;
   const resistance = target.resist ? target.resist[attacker.damage] : 1;
   const typed = raw * resistance;
-  const outgoing = outgoingPct(attacker, attacker.damage, f.ctx);
+  const outgoing = outgoingPct(attacker, attacker.damage, f.ctx, target.family ?? f.ctx.family);
   // knowledge% (GDD §5.0): only the hunters' damage, and 0 unless the species is Studied or better.
-  const knowledge = attacker.side === 'hunter' ? f.knowledgePct : 0;
+  // Each group member has its own level (the Unremembering switch turns the bonus off, D257).
+  const knowledgeLevel = attacker.side === 'hunter' ? target.knowledgeLevel : 0;
+  const knowledge = f.rules.knowledgeOff ? 0 : knowledgeBonus(knowledgeLevel);
   const dealt = typed * (1 + outgoing) * (1 + knowledge) * (crit ? attacker.critMult : 1);
   const taken = takenReduction(target, attacker.damage, party);
   const hitMult = target.nextHitTakenMult;
@@ -100,6 +110,7 @@ export const directAttack = (
   const amount = finalDamage(dealt, target, resistance, true, taken, hitMult);
   hurt(target, amount);
   const notes = afterOwnHit(f, attacker, target, amount, draw);
+  if (attacker.side === 'hunter') delveHitRules(f, attacker, target, crit, notes);
   if (attacker.damage === 'fire') {
     const cracked = unthaw(target);
     if (cracked) notes.push(cracked);
@@ -109,7 +120,7 @@ export const directAttack = (
     const out = [`${cap(attacker.damage)} ${fmt2(dealt)}`];
     if (resistance !== 1) out.push(resistance === 0 ? 'immune' : `(×${resistance} resist)`);
     if (knowledge > 0)
-      out.push(`(+${pct(knowledge)} ${f.knowledge >= 4 ? 'Mastered' : 'Studied'})`);
+      out.push(`(+${pct(knowledge)} ${knowledgeLevel >= 4 ? 'Mastered' : 'Studied'})`);
     out.push(`−${fmt2(armor)} armor`);
     return out.join(' ');
   };
@@ -131,8 +142,39 @@ export const directAttack = (
   if (attacker.silverSubHit && standing(target))
     subHit(f, attacker, target, variance, crit, 'silver');
   if (attacker.runeSubHit && standing(target)) subHit(f, attacker, target, variance, crit, 'rune');
+  // The Pale Smith's Smith's Mark (Delve): a Rune sub-hit on every direct hit, beside the blade's own.
+  if (attacker.runeMark > 0 && standing(target))
+    subHit(f, attacker, target, variance, crit, 'rune', attacker.runeMark, "Smith's Mark");
   if (target.side === 'hunter') checkPotion(f, target);
   return true;
+};
+
+/**
+ * Delve rules that fire when a hunter's direct attack hits (GDD §8.8): the Drowned Bell's Toll
+ * knocks a monster's meter back on each hunter's first hit on it, and Struck Bronze makes a
+ * crit cost its target its next action. Notes join the hit's log line.
+ */
+const delveHitRules = (
+  f: Fight,
+  attacker: Combatant,
+  target: Combatant,
+  crit: boolean,
+  notes: string[],
+): void => {
+  if (target.side !== 'monster') return;
+  const { toll, struckBronze } = f.rules;
+  if (toll > 0) {
+    const key = `${attacker.id}>${target.id}`;
+    if (!f.tolled.has(key)) {
+      f.tolled.add(key);
+      target.meter -= toll;
+      notes.push(`the bell tolls: ${target.name}'s turn comes ${toll} later`);
+    }
+  }
+  if (struckBronze && crit && standing(target)) {
+    target.lostActions += 1;
+    notes.push(`struck bronze: ${target.name} loses their next action`);
+  }
 };
 
 /**
@@ -146,10 +188,12 @@ const subHit = (
   variance: number,
   crit: boolean,
   type: 'silver' | 'rune',
+  fraction?: number,
+  label?: string,
 ): void => {
   const resistance = target.resist ? target.resist[type] : 1;
   const dealt =
-    num(type === 'silver' ? 'gear.silveredFraction' : 'gear.runedFraction') *
+    (fraction ?? num(type === 'silver' ? 'gear.silveredFraction' : 'gear.runedFraction')) *
     mightEff(attacker) *
     variance *
     (crit ? attacker.critMult : 1) *
@@ -161,7 +205,7 @@ const subHit = (
     kind: 'sub-hit',
     target: target.id,
     text: () =>
-      `${attacker.name}'s ${type} also hits ${the(target)} — ${cap(type)} ${fmt2(dealt)} ` +
+      `${attacker.name}'s ${label ?? type} also hits ${the(target)} — ${cap(type)} ${fmt2(dealt)} ` +
       `${resistance === 0 ? 'immune' : ''}= ${amount} · ${target.name} ${target.health}/${target.maxHealth}`,
     rolls: [],
     dealt,
@@ -180,13 +224,16 @@ const sealBurn = (f: Fight, attacker: Combatant, target: Combatant, dealt: numbe
   for (const a of target.abilities) {
     if (a.kind !== 'sealBurn' || dealt <= 0) continue;
     const raw = dealt * a.reflectFraction;
-    const amount = finalDamage(
-      raw,
+    const amount = abilityTaken(
       attacker,
-      1,
-      false,
-      takenReduction(attacker, 'fire', f.hunters),
-      1,
+      finalDamage(
+        raw,
+        attacker,
+        1,
+        attacker.forgeWelded,
+        takenReduction(attacker, 'fire', f.hunters),
+        1,
+      ),
     );
     hurt(attacker, amount);
     emit(f, {
@@ -194,7 +241,7 @@ const sealBurn = (f: Fight, attacker: Combatant, target: Combatant, dealt: numbe
       kind: 'ability',
       target: attacker.id,
       text: () =>
-        `${target.name}'s Seal-burn scorches ${attacker.name}: Fire ${fmt2(raw)} = ${amount} · ${attacker.name} ${attacker.health}/${attacker.maxHealth}`,
+        `${capName(target.name)}'s Seal-burn scorches ${attacker.name}: Fire ${fmt2(raw)} = ${amount} · ${attacker.name} ${attacker.health}/${attacker.maxHealth}`,
       rolls: [],
       amount,
       targetHealth: attacker.health,

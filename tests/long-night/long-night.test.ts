@@ -241,6 +241,7 @@ describe('the Long Night (GDD §5.9.7)', () => {
         wins: 0,
         winsByVillage: {},
         ruinWins: 0,
+        winsByFamily: {},
       });
     });
   });

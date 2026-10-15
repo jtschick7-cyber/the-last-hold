@@ -1,0 +1,81 @@
+import type { BlessingDef } from './blessing-types';
+
+// GDD §8.8 (D255, D257): The Hearth-Crone's eight blessings, exact effects as the GDD gives them.
+// `effects` and `rule` are what combat reads (T7.8); `text` is what the card shows.
+
+export const hearthCroneBlessings: readonly BlessingDef[] = [
+  {
+    id: 'broth-on-the-hob',
+    patron: 'hearth-crone',
+    rarity: 'faint',
+    name: 'Broth on the Hob',
+    text: 'Recovery between floors rises from 20% to 35% of max Health',
+    star: false,
+    effects: [{ kind: 'recoverySet', value: 0.35 }],
+  },
+  {
+    id: 'goose-grease',
+    patron: 'hearth-crone',
+    rarity: 'faint',
+    name: 'Goose-Grease',
+    text: "The Mender's heals +20%",
+    star: false,
+    effects: [{ kind: 'healPct', amount: 0.2 }],
+  },
+  {
+    id: 'wool-against-the-skin',
+    patron: 'hearth-crone',
+    rarity: 'faint',
+    name: 'Wool Against the Skin',
+    text: '+10% max Health',
+    star: false,
+    effects: [{ kind: 'healthPct', amount: 0.1 }],
+  },
+  {
+    id: 'close-the-door',
+    patron: 'hearth-crone',
+    rarity: 'faint',
+    name: 'Close the Door',
+    text: '−6% damage taken',
+    star: false,
+    effects: [{ kind: 'takenPct', amount: 0.06 }],
+  },
+  {
+    id: 'a-price-paid',
+    patron: 'hearth-crone',
+    rarity: 'warm',
+    name: 'A Price Paid',
+    text: 'At the start of each floor, every standing hunter loses 10% of their current Health (rounded down; never below 1) and gains +20% Might for that floor',
+    star: true,
+    effects: [],
+    rule: { rule: 'price-paid', params: { healthLost: 0.1, might: 0.2 } },
+  },
+  {
+    id: 'up-again',
+    patron: 'hearth-crone',
+    rarity: 'warm',
+    name: 'Up Again',
+    text: "Hunters standing at the end of a floor recover to at least 50% of max Health (applied after the floor's recovery)",
+    star: false,
+    effects: [{ kind: 'recoveryFloor', value: 0.5 }],
+  },
+  {
+    id: 'sit-up-with-them',
+    patron: 'hearth-crone',
+    rarity: 'warm',
+    name: 'Sit Up With Them',
+    text: 'The Mender heals anyone below 85% Health (instead of 70%)',
+    star: false,
+    effects: [{ kind: 'menderThreshold', value: 0.85 }],
+  },
+  {
+    id: 'the-long-vigil',
+    patron: 'hearth-crone',
+    rarity: 'bright',
+    name: 'The Long Vigil',
+    text: 'Once per run, when the last standing hunter is downed, every downed hunter gets up at once at 25% of max Health',
+    star: true,
+    effects: [],
+    rule: { rule: 'long-vigil', params: { health: 0.25 } },
+  },
+];

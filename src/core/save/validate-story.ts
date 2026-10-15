@@ -1,3 +1,4 @@
+import { FAMILY_IDS } from '../../content/damage';
 import { HUNTER_IDS } from '../../content/hunters';
 import { allDocuments } from '../../content/story/acts';
 import { ROLL_SIZE } from '../../content/story/roll';
@@ -45,6 +46,7 @@ const act = (v: unknown, where: string, warnings: string[]): ActProgress => {
     wins: count(o.wins, `${where}.wins`),
     winsByVillage: sparseCounts(o.winsByVillage, VILLAGE_IDS, `${where}.winsByVillage`, warnings),
     ruinWins: count(o.ruinWins, `${where}.ruinWins`),
+    winsByFamily: sparseCounts(o.winsByFamily, FAMILY_IDS, `${where}.winsByFamily`, warnings),
   };
 };
 

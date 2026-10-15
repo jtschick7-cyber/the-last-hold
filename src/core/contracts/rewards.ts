@@ -1,9 +1,11 @@
 import type { AgeId } from '../../content/ages';
+import type { HunterId } from '../../content/hunters';
 import { traits, type TraitId } from '../../content/traits';
 import { constantAt, num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import { intPow } from '../math';
 import type { GameState } from '../state/game-state';
+import { effectiveTraits } from '../systems/hunters';
 import { foodCapacity } from '../systems/production';
 import { bountyBonus as goodwill, durationCut } from '../long-night/bonuses';
 import { MS_PER_SECOND } from '../time';
@@ -63,7 +65,12 @@ export const bounty = (
  * peasants can't lower it), times party size and the tier growth. The income term is what
  * keeps food a real cost after the settling years.
  */
-export const provisions = (state: GameState, partySize: number, tier: number): Explained => {
+export const provisions = (
+  state: GameState,
+  partySize: number,
+  tier: number,
+  party: readonly HunterId[] = [],
+): Explained => {
   const base = num('provisions.base');
   const growth = num('provisions.growth');
   const minutes =
@@ -72,7 +79,14 @@ export const provisions = (state: GameState, partySize: number, tier: number): E
     ] ?? 0;
   const income = minutes > 0 ? foodCapacity(state).value : 0;
   const perHunter = Math.max(base, minutes * income);
-  const value = perHunter * partySize * intPow(growth, tier - 1);
+  // Thrifty (alternate trait, GDD §8.5a): provisions for contracts the holder joins × this.
+  let thrift = 1;
+  for (const id of party)
+    for (const t of effectiveTraits(state, id)) {
+      const e = traits[t].effect;
+      if (e.kind === 'provisionsMult') thrift *= e.mult;
+    }
+  const value = perHunter * partySize * intPow(growth, tier - 1) * thrift;
   return {
     value,
     breakdown: {
@@ -90,6 +104,7 @@ export const provisions = (state: GameState, partySize: number, tier: number): E
         { label: 'Party size', value: partySize },
         { label: 'Growth per tier', value: growth, key: 'provisions.growth' },
         { label: 'Tier', value: tier },
+        ...(thrift !== 1 ? [{ label: 'Thrifty', value: thrift }] : []),
       ],
     },
   };

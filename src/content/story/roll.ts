@@ -4,7 +4,7 @@ import type { VillageId } from '../villages';
 // lore-secrets §20 (D162): the forty names, one apprentice Sent every second
 // spring from year 200 to 276, and Sigrun entered as the 40th for 278. Each has
 // exactly one source (lore §8): act documents 28, Ribbonshades 6, hunter letters
-// 5, Sigrun's confession 1. Acts I–III are written; the names of Acts IV–VI are fixed
+// 5, Sigrun's confession 1. Acts I–IV are written; the names of Acts V and VI are fixed
 // now and go into their documents when those acts are written (lore §20 note 5).
 
 /** Where a name is found (GDD §5.14.4). */
@@ -199,7 +199,7 @@ export const roll: readonly RollName[] = [
     year: 240,
     name: 'Ludmila Hrubá',
     village: 'mirograd',
-    source: { kind: 'laterAct', act: 4 },
+    source: { kind: 'document', id: 'D4-02' },
     hint: 'Someone kept a second ledger.',
   },
   {
@@ -207,7 +207,7 @@ export const roll: readonly RollName[] = [
     year: 242,
     name: 'Anežka Vrbová',
     village: 'kozly-hollow',
-    source: { kind: 'laterAct', act: 4 },
+    source: { kind: 'document', id: 'D4-02' },
     hint: 'Someone kept a second ledger.',
   },
   {
@@ -223,7 +223,7 @@ export const roll: readonly RollName[] = [
     year: 246,
     name: 'Brynja Torsdóttir',
     village: 'velkvik',
-    source: { kind: 'laterAct', act: 4 },
+    source: { kind: 'document', id: 'D4-02' },
     hint: 'Someone kept a second ledger.',
   },
   {
@@ -231,7 +231,7 @@ export const roll: readonly RollName[] = [
     year: 248,
     name: 'Halla Runólfsdóttir',
     village: 'ravenfell',
-    source: { kind: 'laterAct', act: 4 },
+    source: { kind: 'document', id: 'D4-03' },
     hint: 'Someone kept a second ledger.',
   },
   {
@@ -239,7 +239,7 @@ export const roll: readonly RollName[] = [
     year: 250,
     name: 'Božena Stará',
     village: 'mirograd',
-    source: { kind: 'laterAct', act: 4 },
+    source: { kind: 'document', id: 'D4-03' },
     hint: 'Someone kept a second ledger.',
   },
   {
@@ -247,7 +247,7 @@ export const roll: readonly RollName[] = [
     year: 252,
     name: 'Štěpán Koláček',
     village: 'mirograd',
-    source: { kind: 'laterAct', act: 4 },
+    source: { kind: 'document', id: 'D4-03' },
     hint: 'Someone kept a second ledger.',
   },
   {

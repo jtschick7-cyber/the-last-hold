@@ -2,6 +2,7 @@ import type { ClueTag } from './clues';
 import { type DamageType, type FamilyId, type LocationId } from './damage';
 import type { IngredientId } from './ingredients';
 import { CURSED_IDS, cursed, type CursedAbility } from './cursed';
+import type { GuardianAbility } from './delves/guardians';
 
 // GDD §8.3: the 12 monsters, identified for free in v0.2. Stats are at the
 // monster's base tier; each tier above it scales Health and Might by
@@ -30,6 +31,7 @@ export type MonsterId = (typeof MONSTER_IDS)[number];
 /** Every ability's numbers, exactly as GDD §8.3 words them (turn-meter form, G4); the Cursed's are in cursed.ts. */
 export type MonsterAbility =
   | CursedAbility
+  | GuardianAbility
   | {
       readonly kind: 'hamstring';
       readonly name: 'Hamstring';

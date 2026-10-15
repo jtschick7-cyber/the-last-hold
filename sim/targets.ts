@@ -207,9 +207,24 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.6',
   },
+  // v0.7 (GDD §6.2, D271, D272: owner-approved rows). Judged by their own checks.
+  {
+    id: 'act-4',
+    text: 'Act IV lands in its cycle: D4-01 to D4-06 and D4-08 by the end of cycle 4, D4-07 with the next warden',
+    bounds: [],
+    enforcedFrom: 'v0.7',
+  },
+  {
+    id: 'first-guardian',
+    text: 'First guardian beaten: by the end of cycle 2 (Delver)',
+    bounds: [],
+    enforcedFrom: 'v0.7',
+  },
   {
     id: 'idle-only',
-    text: 'Idle-only vs Standard: first-time completion of all content ≤ 1.3× slower',
+    // D271 defines it: Standard reaches the last of "all content" no more than 1.3× later than the
+    // Delver (median of the Monday seeds). See ALL_CONTENT below.
+    text: 'Idle-only vs Delver: Standard reaches the last of "all content" ≤ 1.3× later than the Delver',
     bounds: [],
     enforcedFrom: 'v0.7',
   },
@@ -247,11 +262,42 @@ export const STORY = {
     nextWarden: { doc: 'D3-07', byCycle: 4 },
     reportedOnly: ['D3-08'],
   },
+  /** Act IV (v0.7, D271): D4-01 to D4-06 and D4-08 by the end of cycle 4, D4-07 with the next warden. */
+  act4: {
+    byCycle: 4,
+    docs: ['D4-01', 'D4-02', 'D4-03', 'D4-04', 'D4-05', 'D4-06', 'D4-08'],
+    nextWarden: { doc: 'D4-07', byCycle: 5 },
+    reportedOnly: [],
+  },
   /** The six Ribbonshade names (roll numbers, in their fixed order) by the end of cycle 3. */
   ribbonNames: [39, 15, 16, 17, 19, 20],
   // Owner-approved change (Q18, D191): was cycle 3; a cycle brings only a few ruins.
   ribbonsByCycle: 4,
 } as const;
+
+/**
+ * GDD §6.2 (v0.7, D271): "all content" for the Idle-only row. Every judged document of Acts I–IV
+ * (the ones the act rows judge; D1-02, D1-05, D2-08 and D3-08 are reported only), the recipe book
+ * at 36 of 36, all six Ribbonshade names and every warden skill at level 4.
+ */
+export const ALL_CONTENT = {
+  documents: [
+    ...STORY.act1.docs,
+    STORY.act1.nextWarden.doc,
+    ...STORY.act2.docs,
+    ...STORY.act2.later.docs,
+    STORY.act2.nextWarden.doc,
+    ...STORY.act3.docs,
+    STORY.act3.nextWarden.doc,
+    ...STORY.act4.docs,
+    STORY.act4.nextWarden.doc,
+  ],
+  /** The Idle-only row: Standard may take at most this many times the Delver's time. */
+  maxRatio: 1.3,
+} as const;
+
+/** The first guardian is beaten by the end of this cycle (D271, the Delver). */
+export const FIRST_GUARDIAN_BY_CYCLE = 2;
 
 /**
  * GDD §6.2 (v0.6, D216): the discovery, skill and arc rows. Judged on the median over the

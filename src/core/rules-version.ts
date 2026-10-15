@@ -4,5 +4,8 @@
 // contract fights are unchanged in version 2. Version 2 (D139): the v0.4 tuning changed
 // how Threat strengthens Last Stand waves (`threat.waveStrengthPerPoint`). Version 3
 // (owner-approved, D175): the Cursed join the Last Stand's waves, so a stand recorded
-// before v0.5 would replay with other monsters; contract fights are unchanged.
-export const RULES_VERSION = 3;
+// before v0.5 would replay with other monsters; contract fights are unchanged. Version 4
+// (owner-approved, D251): Delve group fights (several monsters, targeting by role, group order
+// in the same-tick rule); a one-monster fight takes exactly the steps it always did, so every
+// contract fight and Last Stand wave recorded under versions 1 to 3 replays unchanged.
+export const RULES_VERSION = 4;

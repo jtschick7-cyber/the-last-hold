@@ -1,8 +1,8 @@
 import type { DocumentDef } from './documents';
 
 // lore-secrets §21 (D163): Act I, The Fall. Witness: Marta Dubska. Texts word
-// for word; D1-04 is setting-primer §8's voice sample. D1-08 (an Ember-echo)
-// waits for Delves (v0.7). Act I names the Hearthblade's family, never her first
+// for word; D1-04 is setting-primer §8's voice sample. The old D1-08 is now E-01, an
+// Ember-echo that belongs to no act (lore §29, D263). Act I names the Hearthblade's family, never her first
 // name.
 
 export const act1Documents: readonly DocumentDef[] = [

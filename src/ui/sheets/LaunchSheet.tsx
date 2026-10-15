@@ -161,7 +161,7 @@ export const LaunchView = ({ contractId }: { contractId: string }) => {
   const known = identity.identified && identity.monster !== null;
   const { weak, resists } =
     known && identity.monster ? resistLines(identity.monster) : { weak: '', resists: '' };
-  const food = provisions(s, chosen.length, contract.tier);
+  const food = provisions(s, chosen.length, contract.tier, chosen);
   const short = s.resources.food < food.value;
   const wait = short
     ? timeToAfford(

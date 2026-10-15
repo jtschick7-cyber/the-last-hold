@@ -1,3 +1,4 @@
+import type { FamilyId } from '../../content/damage';
 import type { HunterId } from '../../content/hunters';
 import type { LetterHunter, LetterSlot } from '../../content/story/letters';
 import { startingTrust, type TrustLevel } from '../../content/story/trust';
@@ -17,6 +18,8 @@ export interface ActProgress {
   winsByVillage: Partial<Record<VillageId, number>>;
   /** Ruin contracts won since the act began. */
   ruinWins: number;
+  /** Contracts won against each monster family since the act began (schema v7, D245). */
+  winsByFamily: Partial<Record<FamilyId, number>>;
 }
 
 /** How a document was found (GDD §5.14.2); `arrival` = handed over in Ilse's v0.5 arrival scene. */
@@ -95,4 +98,5 @@ export const freshAct = (act: number, cycle: number, now: number): ActProgress =
   wins: 0,
   winsByVillage: {},
   ruinWins: 0,
+  winsByFamily: {},
 });

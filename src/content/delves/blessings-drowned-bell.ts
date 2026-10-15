@@ -1,0 +1,81 @@
+import type { BlessingDef } from './blessing-types';
+
+// GDD §8.8 (D255, D257): The Drowned Bell's eight blessings, exact effects as the GDD gives them.
+// `effects` and `rule` are what combat reads (T7.8); `text` is what the card shows.
+
+export const drownedBellBlessings: readonly BlessingDef[] = [
+  {
+    id: 'toll',
+    patron: 'drowned-bell',
+    rarity: 'faint',
+    name: 'Toll',
+    text: "Each hunter's first hit on each monster in a fight knocks that monster's meter back 20",
+    star: true,
+    effects: [],
+    rule: { rule: 'toll', params: { knockback: 20 } },
+  },
+  {
+    id: 'cold-water',
+    patron: 'drowned-bell',
+    rarity: 'faint',
+    name: 'Cold Water',
+    text: 'Monsters −8% Speed',
+    star: false,
+    effects: [{ kind: 'monsterSpeedPct', amount: -0.08 }],
+  },
+  {
+    id: 'muffled',
+    patron: 'drowned-bell',
+    rarity: 'faint',
+    name: 'Muffled',
+    text: 'Monsters −8% Might',
+    star: false,
+    effects: [{ kind: 'monsterMightPct', amount: -0.08 }],
+  },
+  {
+    id: 'low-tide',
+    patron: 'drowned-bell',
+    rarity: 'faint',
+    name: 'Low Tide',
+    text: "Monsters' hit chance −5 points",
+    star: false,
+    effects: [{ kind: 'monsterHitPoints', amount: -5 }],
+  },
+  {
+    id: 'struck-bronze',
+    patron: 'drowned-bell',
+    rarity: 'warm',
+    name: 'Struck Bronze',
+    text: 'A crit makes its target lose its next action',
+    star: true,
+    effects: [],
+    rule: { rule: 'struck-bronze', params: {} },
+  },
+  {
+    id: 'undertow',
+    patron: 'drowned-bell',
+    rarity: 'warm',
+    name: 'Undertow',
+    text: 'Every monster starts each floor with its meter at −30',
+    star: false,
+    effects: [{ kind: 'monsterStartMeter', value: -30 }],
+  },
+  {
+    id: 'slack-water',
+    patron: 'drowned-bell',
+    rarity: 'warm',
+    name: 'Slack Water',
+    text: 'Monsters −15% Speed',
+    star: false,
+    effects: [{ kind: 'monsterSpeedPct', amount: -0.15 }],
+  },
+  {
+    id: 'rung-for-the-sent',
+    patron: 'drowned-bell',
+    rarity: 'bright',
+    name: 'Rung for the Sent',
+    text: "Every 4th action taken by the party in a fight knocks every standing monster's meter back 50",
+    star: false,
+    effects: [{ kind: 'knockbackEveryNth', every: 4, amount: 50 }],
+  },
+];

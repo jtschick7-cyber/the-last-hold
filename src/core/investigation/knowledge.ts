@@ -2,6 +2,7 @@ import { type MonsterId } from '../../content/monsters';
 import { num } from '../balance-access';
 import { noteKnowledgeLevels } from '../skills/hooks';
 import type { MonsterInstance } from '../combat';
+import { grantIdleDelveRelics } from '../delves/rewards';
 import { candidatesFor } from '../contracts/candidates';
 import type { ContractInstance, GameState } from '../state/game-state';
 import { isIdentified, possibleSpecies } from './clues';
@@ -38,11 +39,14 @@ export const noteArrival = (state: GameState, contract: ContractInstance): void 
 export const arrivalClues = (state: GameState, monster: MonsterId): number =>
   levelOf(state, monster) >= 4 ? 3 : 0;
 
+/** A species as a fight sees it, with the knowledge level set (no Delve scaling). */
+export type KnownMonster = Required<Pick<MonsterInstance, 'monster' | 'tier' | 'knowledge'>>;
+
 /** The species as a fight sees it now: its tier and what the hunters know of it. */
 export const monsterFor = (
   state: GameState,
   contract: Pick<ContractInstance, 'monster' | 'tier'>,
-): Required<MonsterInstance> => ({
+): KnownMonster => ({
   monster: contract.monster,
   tier: contract.tier,
   knowledge: levelOf(state, contract.monster),
@@ -66,6 +70,8 @@ export const recordFight = (state: GameState, monster: MonsterId, won: boolean):
   if (level > entry.level) {
     noteKnowledgeLevels(state, level - entry.level);
     entry.level = level;
+    // GDD §8.10a (D261): a family all Studied finds its Delve relic, on the same event as other unlocks.
+    grantIdleDelveRelics(state);
   }
 };
 
@@ -77,7 +83,7 @@ export const recordFight = (state: GameState, monster: MonsterId, won: boolean):
 export const oddsTarget = (
   state: GameState,
   contract: ContractInstance,
-): Required<MonsterInstance> | Required<MonsterInstance>[] =>
+): KnownMonster | KnownMonster[] =>
   isIdentified(state.meta.gameSeed, contract)
     ? monsterFor(state, contract)
     : possibleSpecies(state.meta.gameSeed, contract).map((m) =>

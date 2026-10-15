@@ -1,0 +1,39 @@
+/* GDD §9.12 (D265): a battle sprite is a strip of 32 px frames, shown at 2×. */
+.box {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  flex: none;
+}
+
+.strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 320px;
+  height: 64px;
+  max-width: none;
+  image-rendering: pixelated;
+}
+
+.fallback {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+}
+
+/* The two idle frames take turns; reduced motion (tokens.css) stops the animation on the first. */
+.idle {
+  animation: breathe 1.2s steps(1) infinite;
+}
+
+@keyframes breathe {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-64px);
+  }
+}

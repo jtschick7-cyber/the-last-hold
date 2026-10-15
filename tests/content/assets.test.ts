@@ -9,6 +9,7 @@ import {
   buildingSpriteId,
   holdSceneId,
   resourceIconId,
+  SPRITE_FRAME_NAMES,
 } from '../../src/content/assets';
 import { BUILDING_IDS } from '../../src/content/buildings';
 import { RESOURCE_IDS } from '../../src/content/resources';
@@ -25,9 +26,11 @@ describe('asset manifest', () => {
 
   it('IDs are unique and sizes follow GDD §9.12', () => {
     expect(assetById.size).toBe(assets.length);
-    const sizes = { icon: 16, building: 32, portrait: 64 } as const;
+    const sizes = { icon: 16, building: 32, portrait: 64, frame: 20 } as const;
     for (const a of assets) {
-      if (a.kind !== 'scene') expect(a.size, a.id).toEqual([sizes[a.kind], sizes[a.kind]]);
+      // Scenes are wide; a battle sprite is a strip of 32 px frames (GDD §9.12, D265).
+      if (a.kind === 'sprite') expect(a.size, a.id).toEqual([32 * SPRITE_FRAME_NAMES.length, 32]);
+      else if (a.kind !== 'scene') expect(a.size, a.id).toEqual([sizes[a.kind], sizes[a.kind]]);
     }
   });
 

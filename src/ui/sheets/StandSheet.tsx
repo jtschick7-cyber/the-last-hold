@@ -14,6 +14,7 @@ import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { bandThresholdsLine } from '../../content/story/scenes';
+import { standDelveLine } from '../../core/delves/view-run';
 import { Num } from '../widgets/Num';
 import { LongNightView } from './LongNightSheets';
 
@@ -90,6 +91,7 @@ const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => (
       hamlet. Your hunters (with part of their levels), the bestiary, Embers, relics and warden
       upgrades are kept.
     </p>
+    {standDelveLine(game()) && <p class={styles.small}>{standDelveLine(game())}</p>}
     <p class={`${styles.small} ${styles.dim}`}>This can't be undone.</p>
     <button
       type="button"

@@ -11,12 +11,13 @@ import {
 import { knowledgeLevels } from '../../content/knowledge';
 import { actNumeral } from '../../content/story/acts';
 import { monsters } from '../../content/monsters';
-import { traits } from '../../content/traits';
+import { alternateTraits } from '../../content/delves/alternate-traits';
+import { traits, type TraitId } from '../../content/traits';
 import { constantAt, num } from '../balance-access';
 import type { Explained } from '../breakdown/breakdown';
 import type { HunterSnapshot } from '../combat';
 import { roundHalfUp } from '../combat/build';
-import { recoveryMult } from '../contracts/injury';
+import { othersRecoveryMult, recoveryMult } from '../contracts/injury';
 import { intPow } from '../math';
 import type { GameState, HunterState } from '../state/game-state';
 import { MS_PER_DAY, MS_PER_SECOND } from '../time';
@@ -97,13 +98,14 @@ export const gainXp = (
 const inRecovery = (h: HunterState, now: number): boolean =>
   h.recovery !== null && h.recovery.until > now;
 
-export type HunterStatus = 'ready' | 'on-contract' | 'recovering' | 'reserve';
+export type HunterStatus = 'ready' | 'on-contract' | 'in-delve' | 'recovering' | 'reserve';
 
 /** Reserve hunters can't take contracts; active ones are ready unless busy or recovering. */
 export const hunterStatus = (state: GameState, id: HunterId): HunterStatus | null => {
   const h = state.hunters[id];
   if (!h) return null;
   if (state.running.some((r) => r.party.includes(id))) return 'on-contract';
+  if (state.delve.run?.party.includes(id)) return 'in-delve'; // GDD §5.10.1 (D253)
   if (inRecovery(h, state.time)) return 'recovering';
   return state.roster.active.includes(id) ? 'ready' : 'reserve';
 };
@@ -137,6 +139,17 @@ export const gearLock = (state: GameState, next: GearDef): string | null => {
   return null;
 };
 
+/**
+ * The hunter's traits as they fight now: the second one is the alternate trait when it was bought
+ * and switched on (GDD §8.5a, D260); the first never changes.
+ */
+export const effectiveTraits = (state: GameState, id: HunterId): HunterDef['traits'] => {
+  const base = hunters[id].traits;
+  if (!state.delve.shop.traitsActive.includes(id)) return base;
+  const alt = alternateTraits.find((a) => a.hunter === id);
+  return alt ? [base[0], alt.id as TraitId] : base;
+};
+
 /** A hunter frozen for a fight (technical design §5.3). */
 export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
   const def = hunters[id];
@@ -149,13 +162,15 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
     damage: def.damage,
     level: h.level,
     base: def.stats,
-    traits: def.traits,
+    traits: effectiveTraits(state, id),
     weapon: h.weapon,
     armorGear: h.armor,
   };
 };
 
-export const recoveryFactor = (id: HunterId): number => recoveryMult(hunters[id].traits);
+/** Recovery times for one hunter of a party: their own traits, and the others' Splint and Sling (GDD §8.5a). */
+export const recoveryFactor = (party: readonly (readonly TraitId[])[], index: number): number =>
+  recoveryMult(party[index] ?? []) * othersRecoveryMult(party, index);
 
 /** Whether a hunter's unlock condition is met (GDD §8.5 "Unlock"). */
 export const unlockMet = (state: GameState, unlock: HunterUnlock): boolean => {

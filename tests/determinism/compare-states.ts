@@ -18,8 +18,11 @@ const TIMESTAMP_KEYS = new Set([
   'arrivedAt',
   'nextArrivalAt',
   'diedAt',
+  // v0.7: when the Riftglass allowance last grew.
+  'allowanceAt',
 ]);
-const FLOAT_PARENTS = new Set(['resources']);
+// v0.7: the Riftglass allowance grows with time like a resource (GDD §5.10.8), so it gets the resource tolerance.
+const FLOAT_PARENTS = new Set(['resources', 'delve']);
 // v0.4: Threat rises with time exactly like a resource (GDD §5.9.1), so it gets the
 // resource tolerance; everything about contracts' Threat stays in exact integer tallies.
 const FLOAT_KEYS = new Set(['threat']);

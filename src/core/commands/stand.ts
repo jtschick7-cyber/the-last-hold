@@ -12,7 +12,8 @@ import { bestWavesEver, relicsFound } from '../stand/relics';
 import type { GameState, Preparation, StandRecord } from '../state/game-state';
 import { bandFor } from '../story/band';
 import { arriveArvid } from '../story/act3';
-import { currentAct, standDocuments, wardenDocuments } from '../story/documents';
+import { endRunForStand } from '../delves/run';
+import { beginAct, currentAct, standDocuments, wardenDocuments } from '../story/documents';
 import { triumphantStand } from '../story/trust';
 import { ok, refuse, type ApplyResult } from './types';
 
@@ -51,6 +52,8 @@ export const makeStand = (
   const bad = prepProblem(state, party, full);
   if (bad) return refuse(bad);
 
+  // A paused Delve ends here and keeps what it earned (GDD §5.10.2, D267).
+  endRunForStand(state);
   // 1. Contracts still running finish now, with the dice fixed at launch.
   for (const r of state.running) r.endsAt = Math.min(r.endsAt, state.time);
   while (state.running.length > 0) applyCompletion(state);
@@ -108,6 +111,8 @@ export const makeStand = (
   wardenDocuments(state);
   // GDD §8.5 (D211): Arvid arrives with Ilse as Act III begins.
   if (currentAct(state) === 3) arriveArvid(state, 'warden');
+  // Act IV begins with the same arrival: Ilse, and Pechko's bundle (D4-01, D245).
+  if (currentAct(state) === 4) beginAct(state, 4, 'warden');
   return ok;
 };
 

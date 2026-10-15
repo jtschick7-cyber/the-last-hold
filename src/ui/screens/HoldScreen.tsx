@@ -1,5 +1,4 @@
 import { ages } from '../../content/ages';
-import { holdSceneId } from '../../content/assets';
 import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { spoken } from '../app/lines';
@@ -7,9 +6,10 @@ import { AgeSheet } from '../sheets/AgeSheet';
 import styles from '../styles/ui.module.css';
 import { BuildList } from './BuildList';
 import { PeasantsPanel } from './PeasantsPanel';
-import { Sprite } from '../widgets/Sprite';
+import { HoldScene } from '../widgets/HoldScene';
 import { ThreatMeter } from '../widgets/ThreatMeter';
 import { LongNightView, lastStand } from '../sheets/LongNightSheets';
+import { RiftCard } from '../delve/RiftCard';
 
 // GDD §9.2: the hold header (pixel hold scene, via the asset manifest), the
 // peasants panel, and the build list.
@@ -21,7 +21,7 @@ export const HoldScreen = () => {
     <div>
       <header class={styles.card}>
         <div style={{ textAlign: 'center' }}>
-          <Sprite id={holdSceneId(s.cycle.age)} scale={2} />
+          <HoldScene age={s.cycle.age} />
         </div>
         <div class={styles.row}>
           <h1
@@ -57,6 +57,7 @@ export const HoldScreen = () => {
           </p>
         )}
       </header>
+      <RiftCard />
       <PeasantsPanel />
       <BuildList />
     </div>

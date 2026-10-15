@@ -3,6 +3,7 @@ import { useEffect } from 'preact/hooks';
 import { buildInfo } from '../../platform/build-info';
 import type { UpdateHandle } from '../../platform/service-worker';
 import { archiveTab } from '../../core/story/archive';
+import { riftCardView } from '../../core/delves/view';
 import { ArchiveScreen } from '../screens/ArchiveScreen';
 import { BestiaryScreen } from '../screens/BestiaryScreen';
 import { ContractsScreen } from '../screens/ContractsScreen';
@@ -12,6 +13,8 @@ import { MoreScreen } from '../screens/MoreScreen';
 import { InstallSheet } from '../more/InfoSheets';
 import { ArrivalView } from '../sheets/ArrivalView';
 import { actThreeDue } from '../../core/story/act3';
+import { actFourDue } from '../../core/story/act4';
+import { ActFourArrivalView } from '../sheets/ActFourArrivalView';
 import { ActThreeArrivalView } from '../sheets/ActThreeArrivalView';
 import { V05ArrivalView } from '../sheets/V05ArrivalView';
 import { AwayView } from '../sheets/AwaySheet';
@@ -133,7 +136,9 @@ export const App = () => {
 
   // Scenes play once, when their moment comes (setting-primer §6.6); not during the arrival.
   useEffect(() => {
-    if (version.value > 0 && !game().arrivalDue && !game().story.arrivalDue) playScenes();
+    if (version.value === 0) return;
+    const g = game();
+    if (!g.arrivalDue && !g.story.arrivalDue && !actThreeDue(g) && !actFourDue(g)) playScenes();
   }, [version.value, sheets.value.length]);
 
   useEffect(() => {
@@ -158,8 +163,10 @@ export const App = () => {
   const meetIlse = !arrival && game().story.arrivalDue;
   // GDD §5.14.1 (D214): a save in a cycle that began Act III unwritten meets Arvid on load.
   const meetArvid = !arrival && !meetIlse && actThreeDue(game());
+  // GDD §5.14.1 (D246): likewise a save re-based onto Act IV meets Pechko's bundle on load.
+  const meetPechko = !arrival && !meetIlse && !meetArvid && actFourDue(game());
   const shown: readonly Tab[] =
-    arrival || meetIlse || meetArvid
+    arrival || meetIlse || meetArvid || meetPechko
       ? ['hold', 'more']
       : tabsFor(
           game().board.opened,
@@ -181,6 +188,8 @@ export const App = () => {
             <V05ArrivalView />
           ) : meetArvid && screen === 'hold' ? (
             <ActThreeArrivalView />
+          ) : meetPechko && screen === 'hold' ? (
+            <ActFourArrivalView />
           ) : (
             SCREENS[screen]()
           )}
@@ -197,6 +206,7 @@ export const App = () => {
           >
             {t === 'bestiary' && archive.open ? 'Archive' : TAB_LABEL[t]}
             {t === 'contracts' && unread > 0 ? ` (${unread})` : ''}
+            {t === 'hold' && riftCardView(game())?.badge ? ' ●' : ''}
             {t === 'bestiary' && archive.open && archive.unread > 0 ? ` (${archive.unread})` : ''}
           </button>
         ))}

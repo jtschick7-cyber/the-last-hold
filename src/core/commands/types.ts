@@ -1,6 +1,8 @@
 import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
 import type { GearSlot } from '../../content/gear';
+import type { PatronId } from '../../content/delves/patrons';
+import type { CosmeticId } from '../../content/delves/shop';
 import type { SceneId } from '../../content/text/scenes';
 import type { HunterId } from '../../content/hunters';
 import type { JobId } from '../../content/jobs';
@@ -86,8 +88,25 @@ export type Command =
   | { type: 'debug.runV05Arrival' }
   /** GDD §5.14.1 (D214): a save whose cycle began Act III before it was written meets Arvid on load. */
   | { type: 'story.startActIII' }
+  | { type: 'story.startActIV' }
+  | { type: 'delve.start'; party: HunterId[] }
+  | { type: 'delve.chooseStart'; patron: PatronId }
+  | { type: 'delve.chooseDoor'; patron: PatronId }
+  | { type: 'delve.chooseBlessing'; blessing: string }
+  | { type: 'delve.reroll' }
+  | { type: 'delve.fight' }
+  | { type: 'delve.leave' }
+  | { type: 'delve.ackResult' }
+  | { type: 'delve.seeScene' }
+  | { type: 'riftglass.buy'; item: 'late-hours' | 'chosen-start' | 'reroll' }
+  | { type: 'riftglass.buyTrait'; hunter: HunterId }
+  | { type: 'riftglass.buyCosmetic'; cosmetic: CosmeticId }
+  | { type: 'riftglass.switchTrait'; hunter: HunterId; alternate: boolean }
   /** Plan T6.7: begins Act III in the current cycle for testing; Arvid arrives, D3-01 plays. */
   | { type: 'debug.startActIII' }
+  | { type: 'debug.startActIV' }
+  /** Opens or closes the Unlit's door for testing (locked until Act V, D257). */
+  | { type: 'debug.unlit'; open: boolean }
   /** GDD §5.14.2: an Archive item has been opened; its badge goes. */
   | { type: 'archive.read'; key: string }
   | { type: 'debug.runArrival' }

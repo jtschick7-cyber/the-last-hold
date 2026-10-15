@@ -1,5 +1,5 @@
 import type { DamageType, FamilyId, LocationId } from '../../content/damage';
-import { monsters, type MonsterId } from '../../content/monsters';
+import { monsters, type MonsterAbility, type MonsterId } from '../../content/monsters';
 import { num } from '../balance-access';
 import { K } from './constants';
 import type { Combatant } from './types';
@@ -20,7 +20,13 @@ const swellBonus = (c: Combatant): number => {
 };
 
 export const mightEff = (c: Combatant): number =>
-  (c.base.might + c.flat.might) * (1 + c.statPct.might) * (1 + c.statusPct.might);
+  (c.base.might + c.flat.might) *
+  (1 + c.statPct.might + lowHealthMight(c)) *
+  (1 + c.statusPct.might);
+
+/** Blood in the Snow (Delve): +Might (stat%) while below a share of Health. */
+const lowHealthMight = (c: Combatant): number =>
+  c.lowHealth !== null && c.health < c.maxHealth * c.lowHealth.below ? c.lowHealth.amount : 0;
 
 export const armorEff = (c: Combatant): number =>
   (c.base.armor + c.flat.armor) * (1 + c.statPct.armor + swellBonus(c)) * (1 + c.statusPct.armor);
@@ -33,8 +39,8 @@ export const healthPct = (c: Combatant): number => c.health / c.maxHealth;
 export interface FightContext {
   /** Null in the Last Stand (no location traits). */
   readonly location: LocationId | null;
-  readonly family: FamilyId;
-  readonly monsterId: MonsterId;
+  readonly family: FamilyId | 'deep';
+  readonly monsterId: string;
   /** The monster's attacks per action. */
   readonly attacks: number;
   /** Gloam-moths' Lightless: hunters' hit chance is this much lower while it stands (v0.5). */
@@ -44,8 +50,8 @@ export interface FightContext {
 }
 
 /** GDD §8.3 Lightless (a passive): the cut to every hunter's hit chance. */
-export const lightlessCut = (id: MonsterId): number => {
-  for (const a of monsters[id].abilities) if (a.kind === 'lightless') return a.hitChanceCut;
+export const lightlessCut = (def: { readonly abilities: readonly MonsterAbility[] }): number => {
+  for (const a of def.abilities) if (a.kind === 'lightless') return a.hitChanceCut;
   return 0;
 };
 
@@ -57,15 +63,21 @@ export const knowledgeBonus = (level: number): number =>
   level >= 4 ? num('knowledge.masteredDamage') : level >= 3 ? num('knowledge.studiedDamage') : 0;
 
 /** outgoing% bucket: traits vs a location or family, Fire-touched (GDD §5.0). */
-export const outgoingPct = (a: Combatant, type: DamageType, ctx: FightContext): number => {
+export const outgoingPct = (
+  a: Combatant,
+  type: DamageType,
+  ctx: FightContext,
+  family: FamilyId | 'deep' = ctx.family,
+): number => {
   let sum = 0;
   for (const e of a.traits) {
     if (e.kind === 'mightOnLocation' && e.location === ctx.location) sum += e.amount;
-    else if (e.kind === 'mightVsFamily' && e.family === ctx.family) sum += e.amount;
+    else if (e.kind === 'mightVsFamily' && e.family === family) sum += e.amount;
     else if (e.kind === 'damageType' && e.type === type) sum += e.dealt;
   }
+  sum += a.dealtBonus; // Delve blessings (v0.7); 0 elsewhere
   // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
-  if (a.oilFamily !== null && a.oilFamily === ctx.family) sum += ctx.oilBonus;
+  if (a.oilFamily !== null && a.oilFamily === family) sum += ctx.oilBonus;
   return sum;
 };
 
@@ -74,17 +86,18 @@ export const hitChance = (
   attacker: Combatant,
   party: readonly Combatant[],
   ctx: FightContext,
+  cut: number = ctx.hitCut,
 ): number => {
   let chance = K.hitChance;
   if (attacker.side === 'hunter') {
-    chance -= ctx.hitCut;
+    chance -= cut;
     chance += attacker.hitBonus; // Owl-Eye Drops (v0.6)
     for (const h of party) {
       for (const e of h.traits) {
         if (e.kind === 'partyHitOnLocation' && e.location === ctx.location) chance += e.amount;
       }
     }
-  }
+  } else chance += attacker.hitBonus; // Low Tide (Delve): monsters' hit chance; 0 elsewhere
   return chance;
 };
 
@@ -109,7 +122,15 @@ export const takenReduction = (
   party: readonly Combatant[],
 ): number => {
   if (defender.side !== 'hunter') return 0;
-  let sum = defender.extraTaken;
+  let sum = defender.extraTaken + (defender.takenByType[type] ?? 0);
+  if (defender.vanguardShield > 0) {
+    // Warp and Weft (Delve): the others take less while a Vanguard stands.
+    for (const ally of party)
+      if (ally !== defender && present(ally) && ally.role === 'vanguard') {
+        sum += defender.vanguardShield;
+        break;
+      }
+  }
   for (const ally of party) {
     if (!present(ally)) continue;
     for (const e of ally.traits) {
@@ -128,6 +149,20 @@ export const takenReduction = (
   }
   const cap = K.takenCap;
   return sum > cap ? cap : sum;
+};
+
+/**
+ * Lightless across a group (D251): while any swarm stands the cut applies once. Two passives of
+ * the same name don't stack (§5.0), so it is the largest cut among the monsters standing.
+ */
+export const groupLightlessCut = (monsters: readonly Combatant[]): number => {
+  let cut = 0;
+  for (const m of monsters) {
+    if (!standing(m)) continue;
+    for (const a of m.abilities)
+      if (a.kind === 'lightless' && a.hitChanceCut > cut) cut = a.hitChanceCut;
+  }
+  return cut;
 };
 
 export const monsterFamily = (id: MonsterId): FamilyId => monsters[id].family;

@@ -1,4 +1,4 @@
-import { monsters } from '../../content/monsters';
+import { speciesOf } from './species';
 import { num } from '../balance-access';
 import type { Breakdown } from '../breakdown/breakdown';
 import { buildHunter, buildMonster } from './build';
@@ -7,7 +7,6 @@ import {
   knowledgeBonus,
   lightlessCut,
   mightEff,
-  monsterFamily,
   outgoingPct,
   speedEff,
   takenReduction,
@@ -25,10 +24,10 @@ const mean = (a: number, b: number): number => (a + b) / 2;
 
 const context = (input: FightInput): FightContext => ({
   location: input.location,
-  family: monsterFamily(input.monster.monster),
-  monsterId: input.monster.monster,
-  attacks: monsters[input.monster.monster].attacks,
-  hitCut: lightlessCut(input.monster.monster),
+  family: speciesOf(input.monster).family,
+  monsterId: speciesOf(input.monster).id,
+  attacks: speciesOf(input.monster).attacks,
+  hitCut: lightlessCut(speciesOf(input.monster)),
   oilBonus: num('oil.familyBonus') * alchemyPotency(input.alchemy ?? 0),
 });
 
@@ -86,7 +85,7 @@ export const explainFight = (input: FightInput, winChance: number, label?: strin
     0,
   );
   const monsterPerAction =
-    monsters[input.monster.monster].attacks *
+    speciesOf(input.monster).attacks *
     hunters.reduce((s, h) => {
       const w = h.role === 'vanguard' ? num('target.vanguardWeight') : num('target.otherWeight');
       return s + (w / totalWeight) * perAttack(monster, h, hunters, ctx, 1, knowledge);
@@ -113,7 +112,7 @@ export const explainFight = (input: FightInput, winChance: number, label?: strin
       {
         label: `${name} damage per ${PER} ticks`,
         value: monsterDamage,
-        formula: `${speedEff(monster)} actions × ${monsters[input.monster.monster].attacks} attack(s) × expected hit on a random target`,
+        formula: `${speedEff(monster)} actions × ${speciesOf(input.monster).attacks} attack(s) × expected hit on a random target`,
       },
       { label: "Party's total Health", value: partyHealth },
       {

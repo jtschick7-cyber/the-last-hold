@@ -7,6 +7,7 @@ import { UPGRADE_IDS, type UpgradeId } from '../../content/warden-upgrades';
 import { SCHEMA_VERSION, type CycleRecord, type GameState, type Settings } from './game-state';
 import { freshHunter, startingHunters } from './hunters-state';
 import { startingBook, startingSkills } from './book-state';
+import { startingDelve } from './delve-state';
 import { freshAct, startingVillageTrust } from './story-state';
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -90,6 +91,7 @@ export const createNewGame = (seed: string, now: number): GameState => {
     },
     book: startingBook(),
     skills: startingSkills(),
+    delve: startingDelve(),
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,

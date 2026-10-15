@@ -173,6 +173,34 @@ export const DebugSheet = () => {
         <button
           type="button"
           class={styles.btn}
+          onClick={() => {
+            const r = dispatch({ type: 'debug.startActIV' });
+            setNote(r.ok ? 'Done.' : r.reason);
+            if (r.ok) openSheet('The bundle', () => <DocumentReader id="D4-01" />);
+          }}
+        >
+          Start Act IV
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
+            const open = !game().delve.unlitOpen;
+            const r = dispatch({ type: 'debug.unlit', open });
+            setNote(
+              r.ok
+                ? open
+                  ? 'The Unlit’s door is open: it can replace a door once a run.'
+                  : 'The Unlit’s door is shut.'
+                : r.reason,
+            );
+          }}
+        >
+          {game().delve.unlitOpen ? 'Shut the Unlit’s door' : 'Open the Unlit’s door'}
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
           onClick={() => run({ type: 'debug.runV05Arrival' })}
         >
           Meet Ilse again

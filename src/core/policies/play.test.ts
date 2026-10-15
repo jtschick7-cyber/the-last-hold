@@ -14,9 +14,11 @@ const run = (policy: 'opening' | 'standard', days: number) => {
 };
 
 describe('play', () => {
+  // Two 3-day runs take about 4.7 s alone, so the default 5 s limit fails under a loaded
+  // machine's full-suite run (seen at v0.7 start): a longer limit, the assertion unchanged.
   it('is deterministic: the same run twice gives the same state', () => {
     expect(JSON.stringify(run('standard', 3).s)).toBe(JSON.stringify(run('standard', 3).s));
-  });
+  }, 30_000);
 
   it('checks in at the schedule, starting now', () => {
     const { log } = run('standard', 1);

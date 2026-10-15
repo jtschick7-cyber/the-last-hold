@@ -3,6 +3,8 @@ import type { DamageType, FamilyId, LocationId } from '../../content/damage';
 import type { GearId } from '../../content/gear';
 import type { HunterId, RoleId, Stats } from '../../content/hunters';
 import type { MonsterAbility, MonsterId } from '../../content/monsters';
+import type { GuardianId } from '../../content/delves/guardians';
+import type { DelveRelicId } from '../../content/delves/relics';
 import type { TraitEffect, TraitId } from '../../content/traits';
 import type { RollSource } from '../rng';
 import type { Preparation } from '../state/game-state';
@@ -31,6 +33,10 @@ export interface MonsterInstance {
    * Mastered add to the damage the hunters deal. Frozen at launch; absent means 0.
    */
   readonly knowledge?: number;
+  /** A Delve group member (GDD §5.10.4, D250): Health × this, 1 if absent. */
+  readonly healthMult?: number;
+  /** A Delve group member: Might × this, 1 if absent. */
+  readonly mightMult?: number;
 }
 
 /**
@@ -48,9 +54,47 @@ export interface StandWaveOptions {
   readonly volley: number;
 }
 
+/**
+ * A Deep guardian (GDD §5.10.4, D252): fights alone at the end of a Delve run. Its tier scales it
+ * like any monster's (past tier 5 too); `healthMult` is `delve.guardianHealth` and the Salt Ring.
+ */
+export interface GuardianInstance {
+  readonly guardian: GuardianId;
+  readonly tier: number;
+  readonly knowledge?: number;
+  readonly healthMult?: number;
+  readonly mightMult?: number;
+}
+
+/** What a fight is against: a contract species or a Deep guardian. */
+export type FightMonster = MonsterInstance | GuardianInstance;
+
+/** A Delve floor's fight (GDD §5.10, D254, D255): what the run brings into it. */
+export interface DelveFightOptions {
+  /** Blessing ids taken so far this run. */
+  readonly blessings: readonly string[];
+  /** Delve relics owned: their effects work only here (D261). */
+  readonly relics: readonly DelveRelicId[];
+  /** Each hunter's Health carried in, as a share of max Health; 0 is down for the run (D253). Absent means full. */
+  readonly health: Readonly<Partial<Record<HunterId, number>>>;
+  /** Monsters killed earlier in the run (the Pack Grows). */
+  readonly kills: number;
+  /** The Long Vigil has been used this run. */
+  readonly vigilUsed: boolean;
+}
+
 export interface FightInput {
   readonly party: readonly HunterSnapshot[];
-  readonly monster: MonsterInstance;
+  readonly monster: FightMonster;
+  /**
+   * The rest of a Delve group (GDD §5.10.4, D251), after `monster`, in group order. The fight
+   * is won when every monster is down. Absent or empty: the one-monster fight of §5.5.
+   */
+  readonly companions?: readonly MonsterInstance[];
+  /** A Delve floor: blessings, relics and carried Health (GDD §5.10). Absent: a contract fight or a stand. */
+  readonly delve?: DelveFightOptions;
+  /** How many of the 16 contract species are not yet Studied: the Forgotten's Nameless (GDD §8.3). */
+  readonly nameless?: number;
   /** Null in the Last Stand: the hold isn't a contract location, so location traits don't apply. */
   readonly location: LocationId | null;
   readonly rolls: RollSource;
@@ -89,7 +133,11 @@ export interface Combatant {
   readonly id: string;
   readonly name: string;
   readonly role: RoleId | null;
-  /** Party slot order; the monster is 0. */
+  /** A monster's family (null for hunters), so a hunter's family bonuses read the monster hit. */
+  readonly family: FamilyId | 'deep' | null;
+  /** Attacks per action: a monster's `Atk`, 1 for a hunter. */
+  readonly attacks: number;
+  /** Party slot order; the monsters take 0, 1, 2… in group order (D251). */
   readonly slot: number;
   health: number;
   readonly maxHealth: number;
@@ -137,6 +185,9 @@ export interface Combatant {
   burnAmount: number;
   /** Frost Pot: −Speed% for the monster's next actions. */
   chillLeft: number;
+  /** Chill (Deep guardian): healing received is cut by `healCut` for this many of the holder's own actions. */
+  healCutLeft: number;
+  healCut: number;
   /** Saltburst: the monster's next actions in which abilities do nothing. */
   abilitiesBlocked: number;
   /** Owl-Eye Drops (v0.6): added to the hunter's hit chance for the whole fight. */
@@ -147,6 +198,33 @@ export interface Combatant {
   steadfastLeft: number;
   /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
   extraTaken: number;
+  // ---- Delve blessings and relics (v0.7, GDD §8.8); all neutral outside a Delve ----
+  /** outgoing%: added to the hunter's damage bonuses. */
+  dealtBonus: number;
+  /** taken% against one damage type only (Cooled Iron). */
+  takenByType: Readonly<Partial<Record<DamageType, number>>>;
+  /** A monster's knowledge level (0–4): the hunters' Studied and Mastered bonus against it (GDD §5.0). */
+  knowledgeLevel: number;
+  /** Warp and Weft: taken% for this hunter while another Vanguard stands. */
+  vanguardShield: number;
+  /** The Mender's heals are this much stronger (Shared Bread, Goose-Grease). */
+  healBonus: number;
+  /** The Mender heals anyone below this share of max Health. */
+  healThreshold: number;
+  /** Blood in the Snow: +Might (stat%) while below this share of Health. */
+  lowHealth: { readonly below: number; readonly amount: number } | null;
+  /** The Smith's Mark: a Rune sub-hit of this share on every direct hit (0 = none). */
+  runeMark: number;
+  /** Forge-Welded: Armor also reduces ability damage and burns, to a minimum of 1. */
+  forgeWelded: boolean;
+  /** What Was Burned: nothing restores this hunter's Health. */
+  noHealing: boolean;
+  /** No Name: false stops the Mender healing. */
+  menderHeals: boolean;
+  /** Smoke-Lunged (alternate trait): damage taken from monster abilities is halved. */
+  abilityHalved: boolean;
+  /** Drawn Thin: Health lost, as a share of max, after each of this hunter's own actions. */
+  actionDrain: number;
   /** Rimewrought's Unthawed has stripped its Armor (GDD §8.3, v0.5). */
   unthawed: boolean;
 }
@@ -180,10 +258,20 @@ export interface FightResult {
     readonly maxHealth: number;
     readonly downed: boolean;
   }[];
+  /** The monsters' Health added together (one monster's, in a one-monster fight). */
   readonly monsterHealth: number;
   readonly monsterMaxHealth: number;
+  /** Each monster of the group, in group order (D251). */
+  readonly monsters: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly health: number;
+    readonly maxHealth: number;
+  }[];
   /** A Saltburst went off and cancelled an ability (part of "well prepared", GDD §5.7). */
   readonly saltburstCancelled: boolean;
+  /** A Delve floor: what the run carries on (kills, the Long Vigil). */
+  readonly delve?: { readonly kills: number; readonly vigilUsed: boolean };
   /** Hunters whose potion fired or was ruined in this fight (the stand's once-per-stand rule). */
   readonly potionsUsed: readonly string[];
 }

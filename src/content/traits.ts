@@ -1,3 +1,4 @@
+import { ALT_TRAIT_IDS, alternateTraits } from './delves/alternate-traits';
 import { V05_TRAIT_IDS, v05Traits } from './hunters-v05';
 import { type DamageType, type FamilyId, type LocationId } from './damage';
 
@@ -23,6 +24,8 @@ export const TRAIT_IDS = [
   'tracker',
   // v0.5: Arvid's (GDD §8.5, D154).
   ...V05_TRAIT_IDS,
+  // v0.7: the alternate second traits bought with Riftglass (GDD §8.5a, D260).
+  ...ALT_TRAIT_IDS,
 ] as const;
 export type TraitId = (typeof TRAIT_IDS)[number];
 
@@ -48,7 +51,20 @@ export type TraitEffect =
   /** Idle at the hold: one Lodge slot reveals clues faster (v0.3). */
   | { readonly kind: 'clueSpeed'; readonly amount: number }
   /** While the holder stands, the party member with the lowest % Health takes this much less (v0.5). */
-  | { readonly kind: 'lowestHealthTakenWhileStanding'; readonly amount: number };
+  | { readonly kind: 'lowestHealthTakenWhileStanding'; readonly amount: number }
+  // ---- v0.7 alternate traits (GDD §8.5a, D260) ----
+  /** Damage taken from monster abilities (not direct attacks) is halved, after resistances (Smoke-Lunged). */
+  | { readonly kind: 'abilityDamageHalved' }
+  /** Crit chance, in points (Long Hook). */
+  | { readonly kind: 'critPoints'; readonly amount: number }
+  /** The other hunters of any contract the holder joins recover this much faster: their recovery times × this (Splint and Sling). */
+  | { readonly kind: 'othersRecoveryMult'; readonly mult: number }
+  /** Max Health (stat%), as in Broad Back. */
+  | { readonly kind: 'maxHealthPct'; readonly amount: number }
+  /** Flat Armor (Rock-Footed). */
+  | { readonly kind: 'armorFlat'; readonly amount: number }
+  /** Provisions for contracts the holder joins × this (Thrifty). */
+  | { readonly kind: 'provisionsMult'; readonly mult: number };
 
 export interface TraitDef {
   readonly id: TraitId;
@@ -56,7 +72,7 @@ export interface TraitDef {
   readonly summary: string;
   readonly effect: TraitEffect;
   /** Milestone it starts to matter in; v0.3 and reserved traits are inert in v0.2. */
-  readonly activeFrom: 'v0.2' | 'v0.3' | 'v0.5';
+  readonly activeFrom: 'v0.2' | 'v0.3' | 'v0.5' | 'v0.7';
 }
 
 export const traits: Readonly<Record<TraitId, TraitDef>> = {
@@ -167,4 +183,11 @@ export const traits: Readonly<Record<TraitId, TraitDef>> = {
     activeFrom: 'v0.3',
   },
   ...v05Traits,
+  // v0.7: the alternate second traits (GDD §8.5a), built from their own content entries.
+  ...(Object.fromEntries(
+    alternateTraits.map((a) => [
+      a.id,
+      { id: a.id, name: a.name, summary: `${a.text}.`, effect: a.effect, activeFrom: 'v0.7' },
+    ]),
+  ) as Record<(typeof ALT_TRAIT_IDS)[number], TraitDef>),
 };

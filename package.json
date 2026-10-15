@@ -20,7 +20,7 @@
     "sim": "vite-node sim/cli.ts --",
     "sim:check": "vite-node sim/cli.ts -- --check",
     "sim:accept": "vite-node sim/cli.ts -- --check --accept",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run sim:check -- --fast"
+    "check": "node scripts/check.mjs"
   },
   "dependencies": {
     "@preact/signals": "2.11.3",

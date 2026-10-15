@@ -1,4 +1,5 @@
 import { ages } from '../../content/ages';
+import { families } from '../../content/damage';
 import { hunters, type HunterId } from '../../content/hunters';
 import { knowledgeLevels } from '../../content/knowledge';
 import { monsters } from '../../content/monsters';
@@ -51,6 +52,10 @@ export const describeCondition = (doc: DocumentDef): string => {
       return `the warden after ${act}`;
     case 'arvidArrives':
       return `Arvid's arrival with Ilse when ${act} begins`;
+    case 'actBegins':
+      return `${act} begins`;
+    case 'familyWon':
+      return `the ${c.nth === 1 ? 'first' : ordinal(c.nth)} ${families[c.family].name} contract won in ${act}`;
     case 'huntersTogether':
       return `${c.hunters.map((h) => hunters[h].shortName).join(' and ')} both at the hold`;
   }

@@ -1,3 +1,5 @@
+import { awayDelveLines } from '../delves/away';
+import { accrueAllowance } from '../delves/riftglass';
 import { skillLevels } from '../skills/skills';
 import type { SkillId } from '../../content/skills';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
@@ -36,6 +38,8 @@ export interface AwaySummary {
   events: AdvanceEvent[];
   /** Warden skill levels before and after (GDD §5.8.6); the UI words any rise. Absent in older reports. */
   skills?: { before: Record<SkillId, number>; after: Record<SkillId, number> };
+  /** GDD §9.15: "A Delve is waiting on floor 3." and the Riftglass waiting, as they stood on return. Absent in older reports. */
+  delve?: string[];
 }
 
 export interface CatchUpProgress {
@@ -80,6 +84,8 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
   }
   // Time past the cap passes without production (GDD §5.2).
   state.time = Math.max(state.time, now);
+  // The allowance banks real time, past the offline cap too (GDD §5.10.8: "Riftglass waiting" on the away sheet).
+  accrueAllowance(state, state.time);
   state.meta.lastSeen = now;
   state.meta.clockHighWater = Math.max(state.meta.clockHighWater, now);
 
@@ -99,6 +105,7 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
     arrivals: events.filter((e) => e.type === 'arrival').length,
     events,
     skills: { before: skillsBefore, after: skillLevels(state) },
+    delve: awayDelveLines(state),
   };
 }
 
