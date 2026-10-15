@@ -6,8 +6,9 @@ import { describeRelic } from '../../core/describe-long-night';
 import { formatNumber } from '../../core/format';
 import { embersPayout } from '../../core/stand/embers';
 import { arrivalCapValue } from '../../core/stand/from-state';
-import { RULES_VERSION } from '../../core/rules-version';
-import { replayStand } from '../../core/stand/replay';
+import { OLDER_RULES_NOTE, standReplayDiffers } from '../../core/replay-check';
+import { runStand, type StandResult } from '../../core/stand/engine';
+import { replayStand, standInputOf } from '../../core/stand/replay';
 import type { GameState, StandRecord } from '../../core/state/game-state';
 import { rosterCap } from '../../core/systems/hunters';
 import { WardenNameField } from '../widgets/WardenNameField';
@@ -35,13 +36,17 @@ export const lastStand = (s: GameState): { cycle: number; stand: StandRecord } |
   return null;
 };
 
-/** Technical design §5.3: a stand recorded under older rules may replay differently. */
-const OlderRules = ({ stand }: { stand: StandRecord }) =>
-  stand.rulesVersion === RULES_VERSION ? null : (
-    <p class={`${styles.small} ${styles.warn}`}>
-      Recorded with an older rules version, so this replay may differ from what happened.
-    </p>
+/**
+ * Technical design §5.3, D319: the note shows only when the stand's replay holds a different
+ * number of waves than the record. A sheet that has already replayed it passes the result in.
+ */
+const OlderRules = ({ stand, replay }: { stand: StandRecord; replay?: StandResult }) => {
+  const differs = useMemo(
+    () => standReplayDiffers(stand, replay ?? runStand(standInputOf(stand, false))),
+    [stand.seed, stand.at],
   );
+  return differs ? <p class={`${styles.small} ${styles.warn}`}>{OLDER_RULES_NOTE}</p> : null;
+};
 
 const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
   const result = useMemo(() => replayStand(stand), [stand.seed, stand.at]);
@@ -55,7 +60,7 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
           {w.fight.result === 'win' ? 'held' : 'the walls fell'} at tick {w.fight.ticks}
         </strong>
       </p>
-      <OlderRules stand={stand} />
+      <OlderRules stand={stand} replay={result} />
       <ul class={styles.list} style={{ fontSize: '0.875rem' }}>
         {w.fight.log.map((l, i) => (
           <li key={i} class={styles.divider} style={{ padding: 'var(--space-1) 0' }}>
