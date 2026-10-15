@@ -1,7 +1,6 @@
 import { gearCost } from '../../core/skills/hooks';
 import { hunterPortraitId, WRIGHTS_BLADE_ICON } from '../../content/assets';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
-import { traits } from '../../content/traits';
 import { formatDuration, formatNumber } from '../../core/format';
 import { RESOURCE_IDS } from '../../content/resources';
 import {
@@ -19,6 +18,7 @@ import { Num } from '../widgets/Num';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { Sprite } from '../widgets/Sprite';
 import { HunterLetters } from './HunterLetters';
+import { TraitList } from '../delve/TraitList';
 
 // GDD §9.7 hunter detail: stats with breakdowns, traits, gear and its upgrade,
 // the record, and a short bio.
@@ -113,13 +113,7 @@ export const HunterView = ({ id }: { id: HunterId }) => {
           </span>
         ))}
       </div>
-      <ul class={styles.list}>
-        {def.traits.map((t) => (
-          <li key={t}>
-            <strong>{traits[t].name}:</strong> {traits[t].summary}
-          </li>
-        ))}
-      </ul>
+      <TraitList id={id} />
       <Slot id={id} slot="weapon" />
       <Slot id={id} slot="armor" />
       <p class={styles.small}>

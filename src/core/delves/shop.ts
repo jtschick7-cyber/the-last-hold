@@ -34,78 +34,106 @@ export const lateHoursCost = (state: GameState): Explained | null => {
 export const traitCost = (): number => costs().trait.value;
 export const cosmeticCost = (): number => costs().cosmetic.value;
 
-const pay = (state: GameState, cost: number): ApplyResult | null =>
+const short = (state: GameState, cost: number): string | null =>
   state.delve.riftglass < cost
-    ? refuse(`That costs ${cost} Riftglass; you have ${state.delve.riftglass}.`)
+    ? `That costs ${cost} Riftglass; you have ${state.delve.riftglass}.`
     : null;
 
-export const buyLateHours = (state: GameState): ApplyResult => {
+const known = (id: unknown): id is HunterId =>
+  typeof id === 'string' && (HUNTER_IDS as readonly string[]).includes(id);
+
+// Each purchase has a `…Problem` (why it cannot be bought now, or null) that its buy function and
+// the shop screen both use, so what the screen says is what the command would refuse.
+
+export const lateHoursProblem = (state: GameState): string | null => {
   const cost = lateHoursCost(state);
-  if (!cost) return refuse('Late hours is at its last level.');
+  if (!cost) return 'Late hours is at its last level.';
   if (offlineCap(state).value >= num('offline.ceiling'))
-    return refuse('Your offline cap is already at the 24 hour ceiling.');
-  const short = pay(state, cost.value);
-  if (short) return short;
+    return 'Your offline cap is already at the 24 hour ceiling.';
+  return short(state, cost.value);
+};
+
+export const buyLateHours = (state: GameState): ApplyResult => {
+  const problem = lateHoursProblem(state);
+  const cost = lateHoursCost(state);
+  if (problem || !cost) return refuse(problem ?? 'Late hours is at its last level.');
   state.delve.riftglass -= cost.value;
   state.delve.shop.lateHours += 1;
   return ok;
 };
 
-const known = (id: unknown): id is HunterId =>
-  typeof id === 'string' && (HUNTER_IDS as readonly string[]).includes(id);
+export const traitProblem = (state: GameState, id: HunterId): string | null => {
+  if (!known(id) || !state.hunters[id]) return 'That hunter is not at the hold.';
+  if (state.delve.shop.traitsBought.includes(id))
+    return `${hunters[id].shortName}'s other trait is already bought.`;
+  if (!alternateTraits.some((a) => a.hunter === id)) return 'That hunter has no other trait.';
+  return short(state, traitCost());
+};
 
 /** Unlocks one hunter's alternate second trait (D260). */
 export const buyAlternateTrait = (state: GameState, id: HunterId): ApplyResult => {
-  if (!known(id) || !state.hunters[id]) return refuse('That hunter is not at the hold.');
-  if (state.delve.shop.traitsBought.includes(id))
-    return refuse(`${hunters[id].shortName}'s other trait is already bought.`);
-  if (!alternateTraits.some((a) => a.hunter === id))
-    return refuse('That hunter has no other trait.');
-  const short = pay(state, traitCost());
-  if (short) return short;
+  const problem = traitProblem(state, id);
+  if (problem) return refuse(problem);
   state.delve.riftglass -= traitCost();
   state.delve.shop.traitsBought.push(id);
   return ok;
 };
 
+export const switchProblem = (
+  state: GameState,
+  id: HunterId,
+  alternate: boolean,
+): string | null => {
+  if (!known(id) || !state.hunters[id]) return 'That hunter is not at the hold.';
+  if (!state.delve.shop.traitsBought.includes(id)) return 'That trait has not been bought.';
+  const status = hunterStatus(state, id);
+  if (status === 'on-contract') return `${hunters[id].shortName} is on a contract.`;
+  if (status === 'in-delve') return `${hunters[id].shortName} is in a Delve.`;
+  const on = state.delve.shop.traitsActive.includes(id);
+  if (on === alternate) return alternate ? 'Already using it.' : 'Already using the first one.';
+  return null;
+};
+
 /** Switches a hunter between their two second traits, while they are not on a contract or in a run (D260). */
 export const switchTrait = (state: GameState, id: HunterId, alternate: boolean): ApplyResult => {
-  if (!known(id) || !state.hunters[id]) return refuse('That hunter is not at the hold.');
-  if (!state.delve.shop.traitsBought.includes(id)) return refuse('That trait has not been bought.');
-  const status = hunterStatus(state, id);
-  if (status === 'on-contract') return refuse(`${hunters[id].shortName} is on a contract.`);
-  if (status === 'in-delve') return refuse(`${hunters[id].shortName} is in a Delve.`);
+  const problem = switchProblem(state, id, alternate);
+  if (problem) return refuse(problem);
   const active = state.delve.shop.traitsActive;
-  const on = active.includes(id);
-  if (on === alternate)
-    return refuse(alternate ? 'Already using it.' : 'Already using the first one.');
   state.delve.shop.traitsActive = alternate ? [...active, id] : active.filter((h) => h !== id);
   return ok;
 };
 
+export const cosmeticProblem = (state: GameState, id: CosmeticId): string | null => {
+  if (!(COSMETIC_IDS as readonly string[]).includes(id)) return 'That is not in the shop.';
+  if (state.delve.shop.cosmetics.includes(id)) return 'Already bought.';
+  return short(state, cosmeticCost());
+};
+
 export const buyCosmetic = (state: GameState, id: CosmeticId): ApplyResult => {
-  if (!(COSMETIC_IDS as readonly string[]).includes(id)) return refuse('That is not in the shop.');
-  if (state.delve.shop.cosmetics.includes(id)) return refuse('Already bought.');
-  const short = pay(state, cosmeticCost());
-  if (short) return short;
+  const problem = cosmeticProblem(state, id);
+  if (problem) return refuse(problem);
   state.delve.riftglass -= cosmeticCost();
   state.delve.shop.cosmetics.push(id);
   return ok;
 };
 
+export const chosenStartProblem = (state: GameState): string | null =>
+  state.delve.shop.chosenStart ? 'Already bought.' : short(state, costs().chosenStart.value);
+
 export const buyChosenStart = (state: GameState): ApplyResult => {
-  if (state.delve.shop.chosenStart) return refuse('Already bought.');
-  const short = pay(state, costs().chosenStart.value);
-  if (short) return short;
+  const problem = chosenStartProblem(state);
+  if (problem) return refuse(problem);
   state.delve.riftglass -= costs().chosenStart.value;
   state.delve.shop.chosenStart = true;
   return ok;
 };
 
+export const rerollProblem = (state: GameState): string | null =>
+  state.delve.shop.reroll ? 'Already bought.' : short(state, costs().reroll.value);
+
 export const buyReroll = (state: GameState): ApplyResult => {
-  if (state.delve.shop.reroll) return refuse('Already bought.');
-  const short = pay(state, costs().reroll.value);
-  if (short) return short;
+  const problem = rerollProblem(state);
+  if (problem) return refuse(problem);
   state.delve.riftglass -= costs().reroll.value;
   state.delve.shop.reroll = true;
   return ok;

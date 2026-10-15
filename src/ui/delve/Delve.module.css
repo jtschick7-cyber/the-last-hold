@@ -98,3 +98,70 @@
   border-style: solid;
   border-color: var(--c-ember);
 }
+
+/* Doors and blessing cards (GDD §9.15). */
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 4.5rem;
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  text-align: left;
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-surface-raised);
+  border: 1px solid var(--c-border);
+  border-radius: 0.5rem;
+  touch-action: manipulation;
+}
+
+.choiceOn {
+  border-color: var(--c-ember);
+  box-shadow: 0 0 0 1px var(--c-ember);
+}
+
+.choice:focus-visible {
+  outline: 2px solid var(--c-text);
+  outline-offset: 2px;
+}
+
+.iconBox {
+  position: relative;
+  flex: none;
+  width: 60px;
+  height: 60px;
+}
+
+.iconBox > :first-child {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.iconBox > :last-child {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+}
+
+.but {
+  color: var(--c-warn);
+  font-size: 0.875rem;
+}
+
+.rarity {
+  font-size: 0.75rem;
+  color: var(--c-text-dim);
+}
+
+.footer {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.reader {
+  white-space: pre-line;
+}

@@ -1,6 +1,7 @@
 import { useEffect } from 'preact/hooks';
 import { emberRemembers } from '../../content/skills';
 import { arvidArrival } from '../../content/story/act3';
+import { act4Arrival } from '../../content/story/act4';
 import { bandLabels, ilseReturns } from '../../content/story/scenes';
 import { skillViews } from '../../core/skills/skills';
 import { trustStepLine } from '../../content/story/trust';
@@ -85,19 +86,22 @@ export const WardenScenes = ({ stand }: { stand: StandRecord }) => {
   useRead(ids);
   // D3-01 plays after Ilse's line, which names Arvid (GDD §5.14.3, D211).
   const arvid = ids.includes('D3-01');
+  // D4-01 plays after Pechko's line, which names the oilcloth bundle (GDD §5.14.3, D245).
+  const pechko = ids.includes('D4-01');
   return (
     <>
       {ids
-        .filter((id) => id !== 'D3-01')
+        .filter((id) => id !== 'D3-01' && id !== 'D4-01')
         .map((id) => (
           <DocumentReader key={id} id={id} />
         ))}
       {s.story.ilseAt !== null && (
         <p class={styles.small}>
-          <em>{arvid ? arvidArrival : ilseReturns}</em>
+          <em>{pechko ? act4Arrival : arvid ? arvidArrival : ilseReturns}</em>
         </p>
       )}
       {arvid && <DocumentReader id="D3-01" />}
+      {pechko && <DocumentReader id="D4-01" />}
       <p class={styles.small}>
         {emberRemembers(skillViews(s).map((v) => ({ name: v.name, level: v.level })))}
       </p>

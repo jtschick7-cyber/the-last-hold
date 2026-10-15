@@ -15,6 +15,9 @@ import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { docIconId } from '../../content/assets';
 import { Sprite } from '../widgets/Sprite';
+import { riftScene } from '../../content/delves/rift-text';
+import { echoesShelf } from '../../core/delves/view-shop';
+import { EchoReader } from '../delve/EchoReader';
 import { BestiaryScreen } from './BestiaryScreen';
 
 // GDD §5.14.3, §9.14 (D150): once Ilse arrives, the Bestiary tab becomes the
@@ -121,7 +124,9 @@ const Library = () => {
   const s = game();
   const groups = library(s);
   const shelf = lettersShelf(s);
-  if (groups.length === 0 && shelf.length === 0)
+  const echoList = echoesShelf(s);
+  const wayDown = s.delve.sceneSeen;
+  if (groups.length === 0 && shelf.length === 0 && echoList.length === 0 && !wayDown)
     return <p class={styles.dim}>Nothing in the archive yet.</p>;
   return (
     <>
@@ -151,6 +156,53 @@ const Library = () => {
           ))}
         </section>
       ))}
+      {echoList.length > 0 && (
+        <section class={styles.card} aria-label="Echoes">
+          <h2 class={styles.cardTitle}>Echoes</h2>
+          <p class={`${styles.small} ${styles.dim}`}>
+            Things the patrons said, once, from below. Found: {echoList.length}.
+          </p>
+          <ul class={styles.list}>
+            {echoList.map((e) => (
+              <li key={e.id}>
+                <button
+                  type="button"
+                  class={styles.linkRow}
+                  onClick={() => openSheet('An Ember-echo', () => <EchoReader echo={e} />)}
+                >
+                  <span class={styles.grow}>
+                    <strong>{e.patronName}</strong>
+                    <span class={`${styles.small} ${styles.dim}`}> · {e.rarityName}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {wayDown && (
+        <section class={styles.card} aria-label="Scenes">
+          <h2 class={styles.cardTitle}>Scenes</h2>
+          <button
+            type="button"
+            class={styles.linkRow}
+            onClick={() =>
+              openSheet('The way down', () => (
+                <div>
+                  {riftScene.map((p) => (
+                    <p key={p}>{p}</p>
+                  ))}
+                </div>
+              ))
+            }
+          >
+            <span class={styles.grow}>
+              <strong>The way down</strong>
+              <span class={`${styles.small} ${styles.dim}`}> · Pechko</span>
+            </span>
+          </button>
+        </section>
+      )}
       {shelf.length > 0 && (
         <section class={styles.card} aria-label="Letters">
           <h2 class={styles.cardTitle}>Letters</h2>
