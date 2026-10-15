@@ -14,7 +14,7 @@ const ANCHORS: Record<
   {
     banners: readonly [number, number];
     lanterns: readonly (readonly [number, number])[];
-    door: readonly [number, number];
+    door: readonly [number, number, number, number];
     bell: readonly [number, number];
   }
 > = {
@@ -24,7 +24,7 @@ const ANCHORS: Record<
       [65, 38],
       [94, 38],
     ],
-    door: [54, 36],
+    door: [50, 35, 12, 13],
     bell: [76, 24],
   },
   keep: {
@@ -33,7 +33,7 @@ const ANCHORS: Record<
       [60, 32],
       [98, 32],
     ],
-    door: [134, 35],
+    door: [131, 35, 13, 13],
     bell: [80, 8],
   },
   citadel: {
@@ -42,7 +42,7 @@ const ANCHORS: Record<
       [60, 32],
       [98, 32],
     ],
-    door: [131, 37],
+    door: [130, 35, 12, 13],
     bell: [80, 8],
   },
   bastion: {
@@ -51,7 +51,7 @@ const ANCHORS: Record<
       [60, 36],
       [98, 36],
     ],
-    door: [121, 20],
+    door: [115, 19, 13, 13],
     bell: [80, 8],
   },
 };
@@ -77,17 +77,22 @@ const lantern = (c: Canvas, x: number, y: number): void => {
   c.set(x + 2, y + 4, C.orange);
 };
 
-const carvedDoor = (c: Canvas, x: number, y: number): void => {
-  c.rect(x - 1, y - 1, 12, 14, C.gold);
-  c.rect(x, y, 10, 13, C.brownDark);
-  c.rect(x + 1, y + 1, 8, 12, C.brown);
-  // A flame carved in the middle of the door, a vine around it.
-  c.rect(x + 4, y + 4, 2, 5, C.orange);
-  c.set(x + 4, y + 3, C.gold);
-  c.set(x + 5, y + 2, C.gold);
-  c.rect(x + 3, y + 9, 4, 1, C.sand);
-  c.line(x + 1, y + 11, x + 3, y + 2, C.clay, 1);
-  c.line(x + 8, y + 11, x + 7, y + 2, C.clay, 1);
+/** The door's own box in the scene (frame included): x, y, width, height. */
+type Box = readonly [number, number, number, number];
+
+const carvedDoor = (c: Canvas, [x, y, w, h]: Box): void => {
+  c.rect(x, y, w, h, C.gold);
+  c.rect(x + 1, y + 1, w - 2, h - 2, C.brownDark);
+  c.rect(x + 2, y + 2, w - 4, h - 3, C.brown);
+  // A flame carved in the middle of the door, a vine up each side.
+  const mx = x + Math.floor(w / 2) - 1;
+  const my = y + Math.floor(h / 2) - 3;
+  c.rect(mx, my + 2, 2, 5, C.orange);
+  c.set(mx, my + 1, C.gold);
+  c.set(mx + 1, my, C.gold);
+  c.rect(mx - 1, my + 7, 4, 1, C.sand);
+  c.line(x + 2, y + h - 3, x + 3, y + 3, C.clay, 1);
+  c.line(x + w - 3, y + h - 3, x + w - 4, y + 3, C.clay, 1);
 };
 
 const bell = (c: Canvas, x: number, y: number): void => {
@@ -114,8 +119,7 @@ export const drawCosmetic = (id: CosmeticId, age: AgeId): Canvas => {
       c.outline(C.ink);
       break;
     case 'carved-hearth-hall-door':
-      carvedDoor(c, ...a.door);
-      c.outline(C.ink);
+      carvedDoor(c, a.door);
       break;
     case 'watchtower-bell':
       bell(c, ...a.bell);

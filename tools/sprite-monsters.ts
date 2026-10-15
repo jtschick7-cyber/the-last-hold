@@ -187,34 +187,70 @@ const vodyanoy = (c: Canvas): void => {
   c.set(7, 25, C.lime);
 };
 
+/** A moth seen from above: a thin body, two wings each of a big upper and a small lower lobe, an eye on each. */
+const moth = (c: Canvas, cx: number, cy: number, s: number): void => {
+  for (const dir of [-1, 1]) {
+    // Upper wing: a triangle sweeping up and out.
+    for (let dy = 0; dy <= s; dy++) {
+      const reach = Math.round((s + 2) * (1 - dy / (s + 1)));
+      for (let i = 1; i <= reach + 1; i++) {
+        const edge = i === reach + 1 || dy === s;
+        c.set(cx + dir * i, cy - dy, edge ? C.plum : dy < 2 ? C.dusk : C.violet);
+      }
+    }
+    // Lower wing: smaller, tucked below.
+    for (let dy = 1; dy <= Math.max(2, s - 1); dy++) {
+      const reach = Math.round(s * (1 - dy / (s + 1)));
+      for (let i = 1; i <= reach + 1; i++)
+        c.set(cx + dir * i, cy + dy, i === reach + 1 ? C.plum : C.orchid);
+    }
+    c.set(cx + dir * Math.max(2, Math.floor(s / 2) + 1), cy - Math.floor(s / 2), C.gold);
+    // Feathered antennae.
+    c.set(cx + dir, cy - 3, C.ash);
+    c.set(cx + dir * 2, cy - 4, C.ash);
+  }
+  c.rect(cx, cy - 3, 1, 7, C.ink);
+  c.set(cx, cy - 2, C.gold);
+};
+
 const gloamMoths = (c: Canvas): void => {
-  // A cloud of five: each a body and two wings, dust falling from them.
-  const moth = (cx: number, cy: number, s: number): void => {
-    c.ellipse(cx - s, cy, s, s + 1, C.violet);
-    c.ellipse(cx + s, cy, s, s + 1, C.plum);
-    c.rect(cx, cy - 1, 1, 3, C.ink);
-    c.set(cx - 1, cy - 2, C.gold);
-    c.set(cx + 1, cy - 2, C.gold);
-  };
-  moth(10, 10, 3);
-  moth(22, 8, 3);
-  moth(16, 17, 4);
-  moth(8, 23, 3);
-  moth(24, 22, 3);
+  // One big moth in front and a flutter of small ones behind it, dust drifting down from the wings.
+  moth(c, 10, 7, 2);
+  moth(c, 23, 9, 2);
+  moth(c, 8, 22, 2);
+  moth(c, 24, 24, 2);
+  moth(c, 16, 17, 5);
   const r = seedRolls('moth-dust');
-  for (let i = 0; i < 12; i++) c.set(6 + r() * 20, 14 + r() * 15, C.orchid);
+  for (let i = 0; i < 14; i++) c.set(5 + r() * 22, 20 + r() * 10, r() < 0.5 ? C.orchid : C.dusk);
 };
 
 const ribbonshade = (c: Canvas): void => {
-  wisp(c, 5, 14, [C.violet, C.plum, C.ink], C.red);
-  // A long red ribbon streaming from where a hand should be.
-  for (let i = 0; i < 18; i++)
-    c.set(
-      8 - Math.floor(i / 3) + (i % 2),
-      16 + Math.floor(Math.sin(i / 2) * 2) + Math.floor(i / 4),
-      C.blood,
-    );
-  c.line(6, 14, 2, 20, C.red, 1);
+  // A hooded shade with a pale blank mask for a face.
+  wisp(c, 4, 15, [C.violet, C.plum, C.ink], C.ink);
+  c.ellipse(16, 9, 3, 4, C.bone);
+  c.rect(14, 8, 2, 1, C.ink);
+  c.rect(17, 8, 2, 1, C.ink);
+  c.set(16, 12, C.ash);
+  // The ribbon winds twice around it and streams away in a long wave, bright against the dark.
+  for (const y of [14, 18, 22]) {
+    c.line(11, y, 21, y + 3, C.red, 2);
+    c.line(11, y + 1, 21, y + 4, C.blood, 1);
+  }
+  const pts: readonly (readonly [number, number])[] = [
+    [11, 14],
+    [8, 11],
+    [5, 13],
+    [3, 9],
+    [1, 11],
+  ];
+  pts.forEach(([x, y], i) => {
+    const next = pts[i + 1];
+    if (!next) return;
+    c.line(x, y, next[0], next[1], C.red, 2);
+    c.line(x, y + 2, next[0], next[1] + 2, C.blood, 1);
+  });
+  c.set(1, 9, C.pink);
+  c.set(3, 8, C.pink);
 };
 
 const anvilWight = (c: Canvas): void => {
@@ -260,38 +296,89 @@ const rimewrought = (c: Canvas): void => {
 
 // The Deep (D252): a breath, a forgetting and a tide.
 const unlitsBreath = (c: Canvas): void => {
-  wisp(c, 2, 18, [C.slate, C.plum, C.ink], C.ice);
-  const r = seedRolls('unlit-breath');
-  for (let i = 0; i < 18; i++) c.set(4 + r() * 24, 3 + r() * 26, r() < 0.5 ? C.dusk : C.frost);
+  // A draught where there is no window: bands of cold air curling through the air, and nothing in them.
+  for (let y = 1; y < 30; y++) {
+    const mid = 16 + Math.round(Math.sin(y / 3.2) * 5);
+    const half = 3 + Math.round(Math.sin(y / 5.1 + 1) * 2) + (y > 20 ? 1 : 0);
+    const band = y % 4;
+    c.rect(
+      mid - half,
+      y,
+      half * 2,
+      1,
+      band === 0 ? C.frost : band === 1 ? C.ice : band === 2 ? C.dusk : C.slate,
+    );
+    c.set(mid - half, y, C.slate);
+    c.set(mid + half - 1, y, C.night);
+  }
+  // A hollow at its heart, and breath streaming off to one side.
+  c.ellipse(16, 14, 2, 3, C.ink);
+  c.set(16, 12, C.night);
+  for (const [x, y] of [
+    [5, 9],
+    [7, 8],
+    [4, 15],
+    [6, 16],
+    [4, 22],
+    [26, 6],
+    [27, 18],
+    [24, 25],
+  ] as const)
+    c.set(x, y, C.frost);
+  for (let x = 4; x < 10; x++) c.set(x, 12 + (x % 2), C.ice);
+};
+
+const forgottenFigure = (
+  c: Canvas,
+  cx: number,
+  top: number,
+  w: number,
+  tone: readonly [string, string, string],
+): void => {
+  const h = 29 - top;
+  c.ellipse(cx, top + 3, 3, 4, tone[0]);
+  c.rect(cx - Math.floor(w / 2), top + 7, w, h - 7, tone[1]);
+  c.rect(cx - Math.floor(w / 2), top + 7, w, 2, tone[0]);
+  c.rect(cx - Math.floor(w / 2), 26, w, 4, tone[2]);
+  c.line(cx - Math.floor(w / 2), top + 9, cx - Math.floor(w / 2) - 1, top + h - 4, tone[1], 1);
+  c.line(cx + Math.floor(w / 2), top + 9, cx + Math.floor(w / 2) + 1, top + h - 4, tone[2], 1);
 };
 
 const theForgotten = (c: Canvas): void => {
-  // A figure with no face, a little too tall, arms a little too long.
-  c.rect(11, 12, 10, 14, C.stone);
-  c.rect(11, 12, 10, 2, C.ash);
-  c.rect(11, 24, 10, 6, C.coal);
-  c.ellipse(16, 7, 4, 5, C.bone);
-  c.line(11, 13, 9, 26, C.ash, 2);
-  c.line(21, 13, 23, 26, C.stone, 2);
-  c.rect(8, 26, 3, 2, C.bone);
-  c.rect(22, 26, 3, 2, C.bone);
+  // A crowd of shapes with nobody's face: three figures, the near one tallest, none with a feature.
+  forgottenFigure(c, 8, 8, 6, [C.stone, C.coal, C.ink]);
+  forgottenFigure(c, 24, 7, 6, [C.stone, C.coal, C.ink]);
+  forgottenFigure(c, 16, 1, 10, [C.bone, C.ash, C.stone]);
+  // Where a face should be, only a smooth pale oval and a little less dark.
+  c.set(16, 5, C.ash);
 };
 
 const drossTide = (c: Canvas): void => {
-  // A wave of cooled slag, heaving, a seam of heat running through it.
-  for (let x = 2; x < 30; x++) {
-    const crest =
-      9 + Math.round(Math.abs(Math.sin(x / 3.2)) * 5) + Math.floor(Math.abs(x - 14) / 3);
-    c.rect(x, crest, 1, 30 - crest, x < 8 ? C.coal : C.brownDark);
-    c.set(x, crest, C.rust);
-  }
-  c.rect(5, 19, 22, 2, C.brown);
-  c.rect(8, 23, 16, 1, C.orange);
-  c.rect(12, 24, 8, 1, C.gold);
-  const r = seedRolls('dross');
-  for (let i = 0; i < 10; i++) c.set(3 + r() * 26, 14 + r() * 14, C.orange);
-  c.set(7, 14, C.gold);
-  c.set(9, 14, C.gold);
+  // Slag that walks: a heaped body with a crest curling over like a wave, on two stumps, one
+  // heavy arm reaching, a seam of heat through it.
+  c.rect(10, 24, 5, 6, C.coal);
+  c.rect(19, 24, 5, 6, C.brownDark);
+  shaded(c, 17, 16, 10, 9, [C.rust, C.brown, C.brownDark]);
+  // The crest: a lip of slag curling forward over the top.
+  c.ellipse(10, 8, 6, 3, C.rust);
+  c.rect(4, 8, 6, 3, C.brown);
+  c.set(3, 10, C.brownDark);
+  c.ellipse(19, 8, 5, 3, C.brown);
+  // The reaching arm.
+  c.line(9, 17, 3, 22, C.brown, 3);
+  c.rect(1, 22, 4, 4, C.brownDark);
+  // Cracks of heat.
+  c.line(14, 10, 16, 16, C.orange, 1);
+  c.line(16, 16, 13, 22, C.orange, 1);
+  c.line(16, 16, 22, 19, C.orange, 1);
+  c.set(15, 13, C.gold);
+  c.set(15, 19, C.gold);
+  c.set(7, 14, C.orange);
+  c.set(8, 14, C.gold);
+  // Drips.
+  c.set(6, 27, C.orange);
+  c.set(26, 22, C.orange);
+  c.set(27, 25, C.rust);
 };
 
 const DRAW: Record<MonsterId | GuardianId, (c: Canvas) => void> = {

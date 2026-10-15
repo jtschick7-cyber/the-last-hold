@@ -635,3 +635,5 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Not done on purpose:** nothing shows the sprites in the app yet; the floor playback and the sprite widget that picks a frame are T7.13a. The shrunk-portrait fallback (D265) is built there too.
 - **Next:** T7.13a (the Rift card, rift scene, entry sheet, floor playback), then T7.13b, T7.14, T7.15, T7.16.
 - **Open questions:** Q22 (art review, not blocking). **Waiting on you:** accept or edit D289.
+- **Update after the owner's review (same day):** the Ribbonshade, the Gloam-Moths and the three Deep guardians were redrawn (a hooded shade wound in a bright ribbon; real moths with wings and eye-spots; a cold draught; three faceless figures; walking slag). The carved door was re-aligned: each scene's door box was measured from the scene image and the overlay now fills it exactly (Hamlet, Keep, Citadel, Bastion). The other sprites, the sigils, relics and frames stay unless the owner says otherwise (Q22).
+
