@@ -14,6 +14,7 @@ import { propertiesFound } from '../src/core/alchemy/book';
 import { skillLevels } from '../src/core/skills/skills';
 import { startingTrust, TRUST_LEVELS } from '../src/content/story/trust';
 import { VILLAGE_IDS } from '../src/content/villages';
+import { ALL_CONTENT, STORY } from './targets';
 
 /** GDD §5.9.4: the best-stand samples run from Bastion up to day 7 of cycle 1. */
 const BEST_STAND_UNTIL = 7 * 24;
@@ -47,6 +48,11 @@ export interface RunSpec {
    */
   readonly minCycles?: number;
   readonly maxDays?: number;
+  /**
+   * v0.7 (D271): also keep playing until all of "all content" is found (up to `maxDays`), so the
+   * Idle-only row can compare when each player finished. Only the Monday Standard and Delver runs.
+   */
+  readonly untilContent?: boolean;
 }
 
 export interface CheckInStat {
@@ -271,6 +277,12 @@ export const runOne = (spec: RunSpec): RunResult => {
   const standSamples: StandSample[] = [];
   const trust: { cycle: number; levels: Record<string, string> }[] = [];
   const delveRuns: DelveRunRecord[] = [];
+  /** All of "all content" is found (GDD §6.2 v0.7, D271). */
+  const contentDone = (s: GameState): boolean =>
+    book36Hours !== null &&
+    skills4Hours !== null &&
+    ALL_CONTENT.documents.every((id) => s.story.documents.some((d) => d.id === id)) &&
+    STORY.ribbonNames.every((n) => s.story.names.some((x) => x.n === n));
   let book36Hours: number | null = null;
   let skills4Hours: number | null = null;
   let hutHours: number | null = null;
@@ -295,7 +307,8 @@ export const runOne = (spec: RunSpec): RunResult => {
       (spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null)) ||
       (spec.minCycles !== undefined &&
         st.time >= start + spec.days * DAY &&
-        st.cycle.number > spec.minCycles),
+        st.cycle.number > spec.minCycles &&
+        (!spec.untilContent || contentDone(st))),
     onCheckIn: (rec, s) => {
       // Income: the net change while away, plus the food that settling spent.
       const settles = rec.away.events.filter((e) => e.type === 'settle');

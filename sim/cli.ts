@@ -101,7 +101,12 @@ const specs = (o: Options): RunSpec[] =>
           ...(o.fast ? { stopAt: FAST_UNTIL_TARGETS } : {}),
           // GDD §6.3 #7 (D114): the Standard runs go on through 3 Long Nights, up to 6 weeks.
           ...(!o.fast && (policy === 'standard' || policy === 'delver')
-            ? { minCycles: OVERFLOW_CYCLES, maxDays: 42 }
+            ? {
+                minCycles: OVERFLOW_CYCLES,
+                maxDays: 42,
+                // D271: the Idle-only row compares the Monday runs until each has all content.
+                ...(start === 'mon' ? { untilContent: true } : {}),
+              }
             : {}),
         })),
       ),

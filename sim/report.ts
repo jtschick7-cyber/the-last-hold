@@ -2,6 +2,7 @@ import { RESOURCE_IDS } from '../src/content/resources';
 import { RULES_VERSION } from '../src/core/rules-version';
 import type { CheckResult } from './checks';
 import { hoursText, medianMoment } from './checks/helpers';
+import { allContent } from './checks/v07';
 import { bandLabels, type Band } from '../src/content/story/scenes';
 import { MOMENTS, type Moment, type RunResult } from './run';
 
@@ -108,6 +109,18 @@ export const discoveryLines = (runs: readonly RunResult[]): string[] =>
       return `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${brew}; ${cycles}`;
     });
 
+/**
+ * Reported, not judged (GDD §6.2 v0.7, D271): when each Standard and Delver run reached the last of
+ * "all content", and which part was last. The Idle-only row judges the medians of these.
+ */
+export const contentLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.spec.policy === 'standard' || r.spec.policy === 'delver')
+    .map((r) => {
+      const c = allContent(r);
+      return `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: all content at ${hoursText(c.hours)} (last: ${c.last})`;
+    });
+
 const WEEK_HOURS = 24 * 7;
 
 /**
@@ -170,6 +183,12 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
     ...discoveryLines(report.runs),
   );
   out.push('', '## Delves (reported only)', '', ...delveLines(report.runs));
+  out.push(
+    '',
+    '## All content (reported only; the Idle-only row judges the medians)',
+    '',
+    ...contentLines(report.runs),
+  );
   out.push('', '## Times to each moment (median over seeds)', '');
   out.push(`| Run | ${MOMENTS.join(' | ')} |`, `|---|${MOMENTS.map(() => '---').join('|')}|`);
   for (const [k, ms] of Object.entries(report.baseline.groups)) {
