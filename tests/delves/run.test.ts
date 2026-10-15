@@ -464,3 +464,20 @@ describe('constants (§7.9)', () => {
     ]).toEqual([3, 6, 2, 3]);
   });
 });
+
+describe('the Unlit’s debug switch (D257)', () => {
+  it('opens and shuts the Unlit’s door, and marks the save as debugged', () => {
+    const s = strongKeep('unlit-switch');
+    expect(s.delve.unlitOpen).toBe(false);
+    expect(cmd(s, { type: 'debug.unlit', open: true }).ok).toBe(true);
+    expect(s.delve.unlitOpen).toBe(true);
+    expect(s.meta.debugUsed).toBe(true);
+    // With it open, some run's doors show the Unlit (once a run).
+    const seen = Array.from({ length: 40 }, (_, n) =>
+      doorsFor(`sw:${n}`, 1, null, s.delve.unlitOpen, 0),
+    ).some((d) => d.doors.includes('unlit'));
+    expect(seen).toBe(true);
+    expect(cmd(s, { type: 'debug.unlit', open: false }).ok).toBe(true);
+    expect(s.delve.unlitOpen).toBe(false);
+  });
+});

@@ -1,5 +1,6 @@
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartActFour, startActFourOnLoad } from './act4';
+import { debugUnlit } from './unlit';
 import {
   buyAlternateTrait,
   buyChosenStart,
@@ -159,6 +160,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return startActFourOnLoad(state);
     case 'debug.startActIV':
       return debugStartActFour(state);
+    case 'debug.unlit':
+      return debugUnlit(state, cmd.open);
     case 'debug.runV05Arrival':
       return runV05Arrival(state);
     case 'archive.read':

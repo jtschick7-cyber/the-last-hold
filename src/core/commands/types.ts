@@ -105,6 +105,8 @@ export type Command =
   /** Plan T6.7: begins Act III in the current cycle for testing; Arvid arrives, D3-01 plays. */
   | { type: 'debug.startActIII' }
   | { type: 'debug.startActIV' }
+  /** Opens or closes the Unlit's door for testing (locked until Act V, D257). */
+  | { type: 'debug.unlit'; open: boolean }
   /** GDD §5.14.2: an Archive item has been opened; its badge goes. */
   | { type: 'archive.read'; key: string }
   | { type: 'debug.runArrival' }
