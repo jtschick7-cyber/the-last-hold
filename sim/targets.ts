@@ -5,7 +5,7 @@
 
 import type { PolicyId } from '../src/core/policies';
 
-export const MILESTONES = ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v0.5', 'v0.6', 'v0.7'] as const;
+export const MILESTONES = ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v0.5', 'v0.6', 'v0.7', 'v0.8'] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
 export interface Bound {
@@ -223,10 +223,30 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
   {
     id: 'idle-only',
     // D271 defines it: Standard reaches the last of "all content" no more than 1.3× later than the
-    // Delver (median of the Monday seeds). See ALL_CONTENT below.
+    // Delver (median of the Monday seeds). D322 (v0.8) adds Act V's documents, the five name
+    // letters and every hunter at Wright to "all content". See ALL_CONTENT below.
     text: 'Idle-only vs Delver: Standard reaches the last of "all content" ≤ 1.3× later than the Delver',
     bounds: [],
     enforcedFrom: 'v0.7',
+  },
+  // v0.8 (GDD §6.2, D322: owner-approved rows, their own commit). Judged by their own checks.
+  {
+    id: 'act-5',
+    text: 'Act V lands in its cycle: D5-01 to D5-06 and D5-08 by the end of cycle 5, D5-07 with the next warden',
+    bounds: [],
+    enforcedFrom: 'v0.8',
+  },
+  {
+    id: 'late-letters',
+    text: 'Late recruits catch up: all five name letters (Ostap at levels 5 and 8; Toma, Sigrun and Arvid at 5) by the end of cycle 5',
+    bounds: [],
+    enforcedFrom: 'v0.8',
+  },
+  {
+    id: 'first-wright',
+    text: 'First Wright: by the end of cycle 1',
+    bounds: [],
+    enforcedFrom: 'v0.8',
   },
 ];
 
@@ -269,6 +289,27 @@ export const STORY = {
     nextWarden: { doc: 'D4-07', byCycle: 5 },
     reportedOnly: [],
   },
+  /** Act V (v0.8, D322): D5-01 to D5-06 and D5-08 by the end of cycle 5, D5-07 with the next warden. */
+  act5: {
+    byCycle: 5,
+    docs: ['D5-01', 'D5-02', 'D5-03', 'D5-04', 'D5-05', 'D5-06', 'D5-08'],
+    nextWarden: { doc: 'D5-07', byCycle: 6 },
+    reportedOnly: [],
+  },
+  /**
+   * The five name-bearing letters (v0.8, D322; lore §23): Ostap's two (levels 5 and 8, slots 0 and 1)
+   * and Toma's, Sigrun's and Arvid's first (level 5, slot 0), by the end of cycle 5.
+   */
+  lateLetters: {
+    byCycle: 5,
+    letters: [
+      { hunter: 'ostap', slot: 0 },
+      { hunter: 'ostap', slot: 1 },
+      { hunter: 'toma', slot: 0 },
+      { hunter: 'sigrun', slot: 0 },
+      { hunter: 'arvid', slot: 0 },
+    ],
+  },
   /** The six Ribbonshade names (roll numbers, in their fixed order) by the end of cycle 3. */
   ribbonNames: [39, 15, 16, 17, 19, 20],
   // Owner-approved change (Q18, D191): was cycle 3; a cycle brings only a few ruins.
@@ -276,9 +317,10 @@ export const STORY = {
 } as const;
 
 /**
- * GDD §6.2 (v0.7, D271): "all content" for the Idle-only row. Every judged document of Acts I–IV
- * (the ones the act rows judge; D1-02, D1-05, D2-08 and D3-08 are reported only), the recipe book
- * at 36 of 36, all six Ribbonshade names and every warden skill at level 4.
+ * GDD §6.2 (v0.7, D271; v0.8, D322): "all content" for the Idle-only row. Every judged document of
+ * Acts I–V (the ones the act rows judge; D1-02, D1-05, D2-08 and D3-08 are reported only), the
+ * recipe book at 36 of 36, all six Ribbonshade names, every warden skill at level 4, the five name
+ * letters and every hunter at Wright.
  */
 export const ALL_CONTENT = {
   documents: [
@@ -291,10 +333,20 @@ export const ALL_CONTENT = {
     STORY.act3.nextWarden.doc,
     ...STORY.act4.docs,
     STORY.act4.nextWarden.doc,
+    // v0.8 (D322): Act V's judged documents.
+    ...STORY.act5.docs,
+    STORY.act5.nextWarden.doc,
   ],
+  /** v0.8 (D322): the five name-bearing letters are part of "all content" too (STORY.lateLetters). */
+  letters: STORY.lateLetters.letters,
+  /** v0.8 (D322): so is every hunter at Wright: all eleven owned, none still an Apprentice. */
+  everyHunterWright: true,
   /** The Idle-only row: Standard may take at most this many times the Delver's time. */
   maxRatio: 1.3,
 } as const;
+
+/** First Wright (v0.8, D322): some hunter has ranked up by the end of this cycle. */
+export const FIRST_WRIGHT_BY_CYCLE = 1;
 
 /** The first guardian is beaten by the end of this cycle (D271, the Delver). */
 export const FIRST_GUARDIAN_BY_CYCLE = 2;
