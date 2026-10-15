@@ -897,7 +897,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - The last written act becomes 5. No new condition kinds.
   - Tests: every Act V document's condition, row by row against §30; the text word for word; the true-ending gate (40 names, exactly one source each; #4–7 now from D5-03).
   - The on-load start for a story-less cycle needs saved state, so it is T8.5.
-- [ ] **T8.2 Per-act family counters** (D318).
+- [x] **T8.2 Per-act family counters** (D318; finding in D331: no shared counter, tests added).
   - Reproduce on `v7-owner.json`: every act's `winsByFamily` shows Act IV's numbers.
   - Fix the code so each act begun gets its own counter, with a test that two acts' counters move independently.
   - The migration step (keep Act IV's counts, clear Acts I–III's) is part of T8.5.
