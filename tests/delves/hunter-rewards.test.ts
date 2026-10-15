@@ -96,6 +96,29 @@ describe('a run that pays Riftglass pays the hunters too (D316)', () => {
   });
 });
 
+describe('Command skill XP per floor (D316, Q26 (a))', () => {
+  it('is 1 for each of the six floors cleared, and nothing for the guardian', () => {
+    const s = strongKeep('rewards-command');
+    const before = s.skills.command;
+    play(s);
+    expect(s.delve.result?.guardianBeaten).toBe(true);
+    expect(s.skills.command - before).toBe(6);
+  });
+
+  it('is paid only on floors that pay Riftglass', () => {
+    const s = strongKeep('rewards-command-two');
+    s.delve.allowance = 2;
+    const before = s.skills.command;
+    play(s);
+    expect(s.skills.command - before).toBe(1);
+    const q = strongKeep('rewards-command-quiet');
+    q.delve.allowance = 0;
+    const was = q.skills.command;
+    play(q);
+    expect(q.skills.command).toBe(was);
+  });
+});
+
 describe('a quiet night pays none of it (D316)', () => {
   it('with no Riftglass waiting, a full clear gives no XP and no item', () => {
     const s = strongKeep('rewards-quiet');

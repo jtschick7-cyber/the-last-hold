@@ -1041,7 +1041,7 @@ Delves are short, active, optional runs into the rift under the Hearth Hall (`lo
 | Delve relics | Their Delve source (§8.10a) | Each also has an idle source; effects only in Delves |
 | Deep bestiary | Each guardian defeated counts as a kill of that Deep species | Knowledge levels as §5.6.2; Delve-only, so excluded from the true-ending count |
 | Hunter XP *(v0.8)* | `delve.xpPerTier` 10 × tier per floor cleared; `delve.guardianXpPerTier` 20 × tier for the guardian; to each of the three | Only while the run pays Riftglass; rank level caps apply; no yard XP from Delves |
-| Command skill XP *(v0.8)* | `skill.xp.command.delveFloor` 1 per floor cleared | Only while the run pays Riftglass |
+| Command skill XP *(v0.8)* | `skill.xp.command.delveFloor` 1 per floor cleared (the `delveFloor` field of `skill.xp.command`, §7.8) | Only while the run pays Riftglass |
 | An item *(v0.8)* | The guardian beaten: one item at the guardian's tier (Silvered Blade or Emberwright Plate) | Rarity by `delve.guardianLootWeights` (Fine 50, Rare 35, Heroic 15); only while the run pays Riftglass; same items as contract loot (idle source) |
 | — | No trophies; folklore and Cursed kills don't count toward the bestiary; no Legendaries | D262, D306, D316 |
 
@@ -1524,7 +1524,7 @@ Every constant here is tunable unless marked locked.
 |---|---|---|---|
 | Experiment | 1 unit of each of two ingredients; takes the time (× Copper Still) | `experiment.time` = 10 min, `experiment.units` = 1 | 5.8.3 |
 | Skill level | level L → L+1 costs `b × g^L` XP; 0–10 | `skill.maxLevel` = 10 **(locked)**, `skill.xpBase` = 20, `skill.xpGrowth` = 1.6 | 5.8.6 |
-| Skill XP | per activity | `skill.xp.alchemy` = { brew 1, experiment 3, property 10 }, `skill.xp.smithing` = { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` = { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` = { contractPerTier 2, wave 1 } *(D237; was 1)* | 5.8.6 |
+| Skill XP | per activity | `skill.xp.alchemy` = { brew 1, experiment 3, property 10 }, `skill.xp.smithing` = { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` = { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` = { contractPerTier 2, wave 1, delveFloor 1 } *(D237; was 1; `delveFloor` v0.8, D316, D345)* | 5.8.6 |
 | Skill bonuses | per level | `skill.alchemyPotency` = 0.03, `skill.smithingCost` = 0.021 *(D240; was 0.04, D228, D237)*, `skill.loreClueTime` = 0.04, `skill.commandXp` = 0.04 | 5.8.6 |
 
 Brew numbers live with their content, like every consumable (§5.8.5): Coldwater 0.40 Fire taken; Owl-Eye 0.10 hit chance; Steadfast 1 use; Poppy Smoke 1 lost action; the new oils use `oil.familyBonus`. The properties table is content (§8.6).
@@ -1570,7 +1570,7 @@ Every constant here is tunable unless marked **locked** (D325).
 | Delve XP | per floor cleared × tier; guardian × tier | `delve.xpPerTier` = 10, `delve.guardianXpPerTier` = 20 | 5.10.7 |
 | Guardian loot | rarity weights | `delve.guardianLootWeights` = { fine: 50, rare: 35, heroic: 15 } | 5.10.7 |
 
-Command XP per Delve floor (`delveFloor` = 1, §5.10.7) waits for Q26: where its key lives. Use-skill, talent and Legendary numbers live with their content (§8.5b, §8.11, §8.12), as every earlier trait, ability and blessing does.
+Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.8; Q26 (a), D345). Use-skill, talent and Legendary numbers live with their content (§8.5b, §8.11, §8.12), as every earlier trait, ability and blessing does.
 
 ---
 

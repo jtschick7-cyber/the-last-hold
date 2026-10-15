@@ -262,4 +262,5 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
   (c) Loosen the key test so a constant may also have sub-keys. This touches a test helper, which I would not do on my own.
 - **Recommendation:** (a): smallest change, nothing else moves, same numbers.
 - **Blocks:** the Command XP line of T8.11 (marked `[?]`) and one row of GDD §7.10, which is left out for now. Nothing else.
+- **Answer (owner):** (a), 2026-10-15 (D345).
 

@@ -6,6 +6,7 @@ import type { DelveRun } from '../state/delve-state';
 import type { GameState } from '../state/game-state';
 import { gainXp } from '../systems/hunters';
 import { lootKey, pickRarity, rollLines, takeLoot, type RarityWeights } from '../systems/loot';
+import { noteDelveFloor } from '../skills/hooks';
 import { notePeak } from '../story/letters';
 import { floorTier } from './generate';
 
@@ -13,7 +14,7 @@ import { floorTier } from './generate';
 // for every floor cleared (`delve.xpPerTier` × the floor's tier) and for the guardian
 // (`delve.guardianXpPerTier` × its tier), and one item from the guardian. All of it is paid only
 // while the run pays Riftglass, so a quiet night gives none (D316); no trophies, no yard XP.
-// The Command XP per floor waits for Q26 (where its constant lives) and is not paid yet.
+// The six floors also pay Command skill XP (`skill.xp.command.delveFloor`); the guardian does not.
 
 /** Pays the XP of a cleared floor (or the guardian) to the run's three hunters, and the guardian's item. */
 export const payHunterRewards = (
@@ -32,6 +33,7 @@ export const payHunterRewards = (
     for (const level of gainXp(state, h, xp)) notePeak(state, id, level);
   }
   run.earned.xp = (run.earned.xp ?? 0) + xp;
+  if (!guardian) noteDelveFloor(state); // Command +1 XP per floor cleared (Q26 (a), D345)
   if (guardian) run.earned.item = guardianItem(state, run);
 };
 

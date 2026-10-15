@@ -197,7 +197,7 @@ export const balance = {
   },
 
   // ---- GDD §7.10 Hunter depth (v0.8, D300–D328) ----
-  // `skill.xp.command.delveFloor` (D316) waits for Q26: it cannot sit beside `skill.xp.command`.
+  // Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (Q26 (a), D345).
   loot: {
     chanceBase: tunable(0.1),
     chancePerTier: tunable(0.05),
@@ -302,7 +302,7 @@ export const balance = {
       alchemy: tunable({ brew: 1, experiment: 3, property: 10 }),
       smithing: tunable({ gearPerTier: 2, smithyLevel: 2 }),
       lore: tunable({ clue: 1, knowledgeLevel: 5, document: 5 }),
-      command: tunable({ contractPerTier: 2, wave: 1 }),
+      command: tunable({ contractPerTier: 2, wave: 1, delveFloor: 1 }), // delveFloor: GDD §7.10, D316, Q26 (a)
     },
     // Per level (D205): brews stronger, gear cheaper, clues quicker, contract XP higher.
     alchemyPotency: tunable(0.03),

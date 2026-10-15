@@ -973,7 +973,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
 - [x] **T8.11 Delve rewards** (D316; readings D342).
   - Hunter XP per floor and guardian, the guardian item, all only while the run pays Riftglass.
   - Tests: a quiet-night run pays none of them; a paying run pays exactly the table.
-- [?] **T8.11b Command +1 XP per floor** (D316) waits for Q26 (where the constant lives). Not started; do not pick a place for the constant without the owner's answer.
+- [x] **T8.11b Command +1 XP per floor** (D316). Q26 answered (a), D345: `skill.xp.command.delveFloor` is a field of `skill.xp.command`. Reading D346.
 - [x] **T8.12 The older-rules note** (D319; readings D344): show "recorded with an older rules version" only when a replay comes out different from the record. Applies to contract fights, stand waves and Delve floors. Tests both ways.
 
 #### C. UI
