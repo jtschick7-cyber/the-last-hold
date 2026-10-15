@@ -204,7 +204,8 @@ describe('the Deep guardians (GDD §8.3, D252)', () => {
 });
 
 describe('the Delve relics (GDD §8.10a, D261)', () => {
-  const s = part(gdd, '#### 8.10a Delve relics', '\n---');
+  // GDD §8.11 and §8.12 (v0.8) follow this table, so the section ends there.
+  const s = part(gdd, '#### 8.10a Delve relics', '\n### 8.11');
   const rows = s
     .split('\n')
     .filter((l) => /^\| \*\*/.test(l))

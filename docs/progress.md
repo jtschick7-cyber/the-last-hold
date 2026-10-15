@@ -680,3 +680,12 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Merge and tag:** pull request from `milestone/v0.7` into `main`, then tag `v0.7.0` on the merge commit.
 - **Next:** v0.8 (hunter depth) needs its flesh-out session in chat first (plan §0.4); Claude Code does not start it before that. Carried over: WebKit browser tests run only in CI; the Delver never uses Re-roll (D294); the on-load Arvid card has no UI test; the nine older brews have no icons.
 
+
+## 2026-10-15 — v0.8 session 1: the flesh-out is applied (docs only)
+- **Branch:** `milestone/v0.8`, created from `origin/main` (the v0.7.0 merge, `f19c3cb`).
+- **Applied as written, in one docs commit:** the flesh-out files are in `docs/flesh-out/v0.8/` (OUT-1 to OUT-9) with the summary in `docs/flesh-out/v0.8-summary.md`. The decisions D300–D329, GDD edits (sections A–K and the judgment calls), lore secrets §30–§32 and the small edits, the plan's v0.8 section (T8.1–T8.18) with the v0.9 and v0.10 notes, §0.7, the Depth line and judgment call 12, the questions (Q22 marked answered, Q25 added), and the technical design edits are all in.
+- **Left out on purpose, as asked:** GDD §7.10 and the plan's §0.6 locked row. They go in with T8.3, because `tests/content/balance.test.ts` compares them with `balance.ts`.
+- **Also recorded (OUT-4 part 4):** v0.7's leftovers are handled in v0.8: the Delver's Re-roll → T8.16; the Arvid on-load card test → T8.13b; the nine brew icons → T8.14; the move off Node 20 → T8.15; WebKit-only-in-CI is closed (D323); the Pixel UI Pack frames stay in v1.0. `OUT-8` is the save fixture for T8.5.
+- **Standing instructions (from the owner):** stop and ask if any simulator CI job goes over 5 minutes (never trim seeds or rows), if any golden or recorded fight changes, if a name collides with an influence, or if no reasonable tunable values pass a check. Don't write Act VI's texts; Delves never carry plot. No pull request, no merge, no tag (the owner tags).
+- **Open questions:** none for v0.8. D300–D327 are Decided; D328 and D221–D227 are accepted (D329). Still open from earlier: the final act's timing (D24.10, v0.10); Act VI's texts and the Dross-Tide (v0.9).
+- **Next:** T8.1, Act V.

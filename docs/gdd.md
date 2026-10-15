@@ -159,7 +159,8 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | v0.5 | Act I and the story systems: documents, the Archivist, warden naming, the Roll of Wardens, letters, village trust; ruin contracts, Rune damage and the Wright's Blade *(⚑ P2: split from the Long Night; detail §5.14)* |
 | v0.6 | Session loop begins (alchemy experiments) |
 | v0.7 | Session loop gains Delves |
-| v0.8–v0.10 | Meta loop deepens: stars and talents (v0.8), events (v0.9), Orders (v0.10) |
+| v0.8 | Check-ins gain loot and the Stores list; the meta loop gains hunter ranks, stars, talents, use-skills and Legendaries; Act V |
+| v0.9–v0.10 | Meta loop deepens: events (v0.9), Orders (v0.10) |
 
 ---
 
@@ -176,16 +177,16 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Iron** | Basic | Mine; peasants | Buildings; smithy gear | No | v0.1 |
 | **Silver** | Basic + currency **[JC: silver is both a material and the bounty currency]** | Silver Seams (capped: at most 2, 0.22/min each, no bonuses; G1, D138, D189); **contract bounties (main source)** | Silvered gear; recruitment; Rank-ups | No | v0.1 |
 | **Peasants** | Population | Houses + food surplus | Assigned to gathering jobs | No | v0.1 |
-| **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; levels partly reset: half the levels above 1 are kept (§5.9.7); **gear resets** *(⚑ revision A4)* | v0.2 |
-| **Trophies** | Per monster family | Contract kills (Delves give no trophies in v0.7, D262; v0.8 decides, D278) | Hunter rank-ups (v0.8); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.4 arrival, G8) | v0.2 |
+| **Hunters** | Roster | Recruitment (silver); later contracts and events | Contracts, Delves, bosses | **Yes**: the roster (active and reserve) persists; levels partly reset: half the levels above 1 are kept (§5.9.7); **items reset except Legendaries** *(⚑ D306)*; **ranks, stars and talents are kept** *(v0.8)* | v0.2 |
+| **Trophies** | Per monster family | Contract kills (Delves give none, D262, D316) | Hunter rank-ups and stars (v0.8; spending never lowers the Trophy Hall count or the Embers conversion, A7); trophy-hall bonuses (v0.2) | Partly: converted into Embers at the Long Night (capped at the v0.4 arrival, G8) | v0.2 |
 | **Reagents** | Ingredients | Contracts; herb garden; Delves | Alchemy: oils, potions, bombs | No | v0.3 |
-| **Gear** | Items | Smithy (iron + silver + wood) | Equipped by hunters | No (relics are the persistent gear) | v0.2 |
+| **Items** *(v0.8; were Gear)* | Items | Smithy (craft and rework, §5.11.1); contract loot; Delve guardians (§5.10.7) | Equipped by hunters (weapon, armor) | No, except **Legendaries** (keepsakes, kept forever, D306) | v0.2 / v0.8 |
 | **Oils / Potions / Bombs** | Consumables | Alchemist's hut, from reagents | Contract preparation | No | v0.3 |
 | **Knowledge** | Unlocks | Investigating and killing monsters; alchemy experiments **(the recipe book, v0.6, §5.8)** | Never spent; reduces investigation time and raises odds | **Yes** | v0.3 |
 | **Warden skills** | Progress | Doing their activity: brewing and experiments, gear work, investigation and reading, winning contracts and holding waves (§5.8.6) | Never spent; small permanent bonuses | **Yes** ("carried in the ember") | v0.6 |
 | **Threat** | Pressure meter | Rises with the Rank's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.4 |
-| **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades | **Yes** | v0.4 |
-| **Relics** | Persistent items | Last Stand wave milestones (§5.9.6); Delves (v0.7: six Delve relics, each also with an idle source; their effects work only in Delves, D261) | The hold (v0.4: every relic owned works); hunters (v0.8) | **Yes** | v0.4 / v0.8 *(⚑ v0.4 flesh-out, D111)* |
+| **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades; **hunter stars** (v0.8, D310) | **Yes** | v0.4 |
+| **Relics** | Persistent items | Last Stand wave milestones (§5.9.6); Delves (v0.7: six Delve relics, each also with an idle source; their effects work only in Delves, D261) | The hold (v0.4: every relic owned works); hunters (v0.8: as **Legendaries** in a keepsake slot, §5.11.6) | **Yes** | v0.4 / v0.8 *(⚑ v0.4 flesh-out, D111)* |
 | **Riftglass** | Delve currency with a **banked allowance**: 1/7 of the weekly cap accrues per day, banking up to 2 weeks *(⚑ revision G7)* | Delve floors | The Riftglass shop: Late hours (offline cap), alternate traits, hold cosmetics, Delve upgrades (§5.10.8) | **Yes** | v0.7 |
 | **Lore documents** | Collectibles | Contracts, Delves, Long Night | Mystery progression; some give small hints or bonuses | **Yes** | v0.5 |
 | **Boss marks / Hunt points** | Event currencies | World bosses; Legendary Hunts | Event rewards; unlocking a legendary hunter | **Yes** | v0.9 |
@@ -254,7 +255,7 @@ Every layer has at least one input from another layer and one output to another 
 | Long Night | Defenses (Hold); hunters; Threat state | Embers, relics, story progression |
 | Events | Roster depth | Legendary hunters, event rewards |
 
-**Delve-optional check (D20):** Every resource Delves give either has an idle-path source (reagents, lore, and relics also come from contracts and Last Stands) or is a sidegrade or convenience. Idle-only play reaches all content about 20–30% slower. The balance simulator will verify this from v0.7 on. From v0.7 this is checked two ways: a content test lists every Delve reward with its idle source or its sidegrade / convenience / Delve-only mark, and the Idle-only row (§6.2) compares the `standard` and `delver` players (D269, D271).
+**Delve-optional check (D20):** Every resource Delves give either has an idle-path source (reagents, lore, and relics also come from contracts and Last Stands) or is a sidegrade or convenience. Idle-only play reaches all content about 20–30% slower. The balance simulator will verify this from v0.7 on. From v0.7 this is checked two ways: a content test lists every Delve reward with its idle source or its sidegrade / convenience / Delve-only mark, and the Idle-only row (§6.2) compares the `standard` and `delver` players (D269, D271). From v0.8, Delves also give hunter XP, Command skill XP and one guardian item, but only while a run pays Riftglass (D316). Each has an idle source (contract XP and contract loot), and the Idle-only row's "all content" grows with v0.8 (§6.2).
 
 ---
 
@@ -490,7 +491,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 
 **Active roster and reserve** *(⚑ revision G5)*:
 - **Active roster cap:** 3 in Hamlet (bunks in the Hearth Hall [JC]). In Keep, 3 + Barracks level, up to 8. Citadel adds 2 and Bastion adds 2, for 12 at most [JC].
-- **Reserve:** unlimited. Every hunter you own but haven't made active waits in the reserve. Reserve hunters can't take contracts or Delves and don't earn contract XP. They **can** join world bosses and Legendary Hunts (v0.9).
+- **Reserve:** unlimited. Every hunter you own but haven't made active waits in the reserve. Reserve hunters can't take contracts or Delves; from v0.8 they earn **yard XP** like every hunter not on a contract (§5.11.5). They **can** join world bosses and Legendary Hunts (v0.9).
 - **Swapping** between active and reserve is free and instant, except for hunters who are on a contract or recovering.
 - **Letting a hunter go** means moving them to the reserve. Hunters are never deleted [JC].
 - **Barracks** (Keep, level building, max 5, base cost 600 wood, 300 iron, 100 silver) raises the active cap.
@@ -506,7 +507,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 | Armor | Flat reduction to each incoming hit (minimum damage is 1). |
 | Speed | How often the combatant acts (turn meter, §5.5). |
 
-- **Level 1–10 in Keep** (later Ranks raise the cap). **Health and Might** scale as `base × (1 + 0.10 × (level − 1))`. **Armor and Speed don't scale with level** *(⚑ revision [JC]: under the turn meter, Speed growth would compound into extra actions)*.
+- **Level 1–10 in Keep** (later Ranks raise the cap). **Health and Might** scale as `base × (1 + g × (level − 1))`, where g = 0.10 plus 0.01 per **star** (v0.8, §5.11.3). **Armor and Speed don't scale with level** *(⚑ revision [JC]: under the turn meter, Speed growth would compound into extra actions)*.
 - **Displayed stats include gear and traits** *(⚑ revision A14)*. The breakdown separates base, level, gear and traits.
 - **XP per contract:** 20 × tier on a success, half that on a failure.
 - **XP to go from level L to L+1:** `50 × 1.5^(L−1)`.
@@ -542,7 +543,7 @@ The full list goes in §8.
 
 #### 5.3.6 Gear (v0.2)
 
-Gear is **upgraded in place** **[JC]**. Each hunter has a weapon slot and an armor slot, and the Smithy upgrades the slot directly. There is no item inventory until loot arrives in v0.8.
+Until v0.8, gear is **upgraded in place**: each hunter has a weapon slot and an armor slot, and the Smithy upgrades the slot directly. **From v0.8 every piece below is an item** (§5.11.1): the Smithy crafts the first tier and reworks an item one tier up for the same step cost shown here.
 
 | Slot tier | Effect | Cost | Requires |
 |---|---|---|---|
@@ -617,7 +618,7 @@ The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation ID
 
 | Result | Rewards |
 |---|---|
-| **Success** | Full bounty, trophies, XP, reagents (v0.3); from v0.5, a document when its condition is met, and a Ribbonshade's name (§5.14) |
+| **Success** | Full bounty, trophies, XP, reagents (v0.3); from v0.5, a document when its condition is met, and a Ribbonshade's name (§5.14); from v0.8, a chance of **loot** (§5.11.2) |
 | **Failure** (the party is downed, or 400 ticks pass) | Half XP. In v0.3, any clues gathered are kept as bestiary progress. **No bounty.** |
 | **Well-prepared success** *(v0.3)* | Bounty × 1.5 and +1 trophy **[JC]** |
 
@@ -929,11 +930,12 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 - A **flat list**: eight upgrades, each with levels and a rising cost (§8.9). No branches, and no re-spending in v0.4.
 - Production bonuses go in the **ember** bucket (§5.0); none applies to Silver Seams (G1).
 - **Risk, noted at planning:** a cycle's speed is limited mostly by silver and by how many contracts the hunters can run, and the board's pace is locked. That's why the list includes bounty, level, XP and duration upgrades. If the "later cycles" check (§6.2) still fails after tuning, the build stops and asks rather than touching anything locked.
+- **From v0.8, Embers also buy hunter stars** (§5.11.3), bought on each hunter's sheet. The Hearth shows one line pointing there.
 
 #### 5.9.6 Relics *(D111)*
 
 - **Found at Last Stand milestones:** the first time any stand holds wave **6, 9, 12, 15, 18 and 21**, you find one relic you don't have yet, picked by the stand's seed. A first stand of about 10 waves finds two.
-- **v0.4 relics belong to the hold.** Every relic you own works; there are no relic slots: the six Delve relics of v0.7 work only inside Delves (§5.10.7, D261). Relics for hunters arrive with hunter depth (v0.8).
+- **v0.4 relics belong to the hold.** Every relic you own works; there are no relic slots: the six Delve relics of v0.7 work only inside Delves (§5.10.7, D261). Relics for hunters arrive in v0.8 as **Legendaries** (§5.11.6).
 - Bonuses go in the **relic** bucket (§5.0). No v0.4 relic touches silver. The six are in §8.10.
 - Relics are kept forever.
 
@@ -944,10 +946,11 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 | Rank (back to Hamlet), every building, resources, peasants | Every hunter you've hired, and part of their levels |
 | The contract board, tier unlocks, unread results | The bestiary: knowledge, kills, Mastered auto-identify; **the recipe book (v0.6)** |
 | Stores (consumables and reagents), the brewing queue, Lodge slots | Embers, relics, warden upgrades, **warden skills (v0.6)** |
-| Gear (A4), injuries, Threat, trophies this cycle (after conversion) | Candidates you haven't hired yet (unlocks are lifetime) |
+| Items, except Legendaries (A4, D306), injuries, Threat, trophies this cycle (after conversion) | Candidates you haven't hired yet (unlocks are lifetime) |
 | | The Hall of the Fallen, Reports and fight replays, scenes already seen, settings, lifetime stats, the cycle number (+1), the cycle history |
+| | Hunter ranks, stars and talents; Legendaries (v0.8) |
 
-- **Hunter levels:** each hunter keeps half the levels above 1, rounded down (6 → 3, 5 → 3, 4 → 2); Old Hands raises the share. XP toward the next level goes to 0. A kept level above the current Rank's cap stays; the cap only stops new levels.
+- **Hunter levels:** each hunter keeps half the levels above 1, rounded down (6 → 3, 5 → 3, 4 → 2); Old Hands raises the share. XP toward the next level goes to 0. A kept level above the current Rank's cap stays; the cap only stops new levels. Ranks, stars and talents are kept (v0.8).
 - **Contracts still running** when the stand starts finish on the spot with their real result (the dice were fixed at launch); their rewards apply and their trophies count.
 - **Injured hunters** can join the stand; all injuries clear at the Long Night.
 - **Dead hunters** return as candidates at the Long Night, at their usual price, with their levels halved like everyone's. Story hunters never die (§5.3.7).
@@ -1026,7 +1029,7 @@ Delves are short, active, optional runs into the rift under the Hearth Hall (`lo
 - Health carries from floor to floor. Before each new floor (and before the guardian), every standing hunter recovers `delve.recovery` 20% of max Health.
 - A downed hunter is **out for the rest of the run**.
 - If all three are down, the run ends and keeps what it earned so far.
-- **Nothing follows hunters home:** no injuries, deaths or recovery timers. **No hunter or warden-skill XP from Delves in v0.7** (Q21, D281); v0.8 decides.
+- **Nothing follows hunters home:** no injuries, deaths or recovery timers. **From v0.8, while the run pays Riftglass,** each hunter of the three (downed ones too) earns hunter XP, and Command earns skill XP (§5.10.7, D316).
 
 #### 5.10.7 Rewards *(D258, D261, D262, D263)*
 
@@ -1037,9 +1040,12 @@ Delves are short, active, optional runs into the rift under the Hearth Hall (`lo
 | Ember-echoes | The first time ever a Faint, a Warm and a Bright blessing is taken from a patron | `lore-secrets.md` §29; the Library's Echoes shelf; never required |
 | Delve relics | Their Delve source (§8.10a) | Each also has an idle source; effects only in Delves |
 | Deep bestiary | Each guardian defeated counts as a kill of that Deep species | Knowledge levels as §5.6.2; Delve-only, so excluded from the true-ending count |
-| — | No trophies; folklore and Cursed kills don't count toward the bestiary | D262 |
+| Hunter XP *(v0.8)* | `delve.xpPerTier` 10 × tier per floor cleared; `delve.guardianXpPerTier` 20 × tier for the guardian; to each of the three | Only while the run pays Riftglass; rank level caps apply; no yard XP from Delves |
+| Command skill XP *(v0.8)* | `skill.xp.command.delveFloor` 1 per floor cleared | Only while the run pays Riftglass |
+| An item *(v0.8)* | The guardian beaten: one item at the guardian's tier (Silvered Blade or Emberwright Plate) | Rarity by `delve.guardianLootWeights` (Fine 50, Rare 35, Heroic 15); only while the run pays Riftglass; same items as contract loot (idle source) |
+| — | No trophies; folklore and Cursed kills don't count toward the bestiary; no Legendaries | D262, D306, D316 |
 
-- The run records, for v0.8: Delve kills per family and guardians beaten (D278). The result sheet leaves room for an item line (v0.8).
+- The run records Delve kills per family and guardians beaten (D278). The result sheet shows the guardian's item, if any (v0.8).
 
 #### 5.10.8 Riftglass *(D258, D259)*
 - **The allowance:** it grows by `riftglass.weeklyCap` ÷ 7 (10) per day, continuously, inside `advance()` (including offline time), and banks up to `riftglass.bankWeeks` × `riftglass.weeklyCap` (140). Riftglass earned in a run is taken from it. Earned Riftglass has no cap and is kept forever (it survives the Long Night).
@@ -1056,17 +1062,88 @@ Delves are short, active, optional runs into the rift under the Hearth Hall (`lo
 #### 5.10.9 What the simulator's Delver does *(D270)*
 See §6.1.
 
-### 5.11 Hunter depth *(v0.8, outline; directions decided at the v0.7 flesh-out, D273–D278)*
+### 5.11 Hunter depth *(v0.8; ⚑ v0.8 flesh-out, D300–D328)*
 
-- **Items (D273):** the Smithy crafts every weapon and armor that exists today (same names, same numbers) as **Common** items into an inventory. Loot (contracts; later, events) adds **Fine → Rare → Heroic → Legendary** items with extra bonuses. The Smithing skill keeps cutting crafting costs. The **Wright's Blade** is crafted only, never a drop. **Every item resets at the Long Night**, as gear does (A4).
-- **Hunter ranks (D274):** the order's titles **Apprentice → Wright → Master-Wright** (the hold's Ranks keep their name), from XP plus family trophies.
-- **Stars (D274):** from trophies plus rare drops; they raise stat growth per level and open talent tiers. **Ranks and stars are kept forever;** levels still halve at the Long Night.
-- **Use-skills and talents (D276):** each hunter has one **personal use-skill**, unlocked at Wright, firing automatically on a fixed rule (deterministic, golden-testable). **Talent trees** are passive: 3 branches per role; points from ranks; tiers opened by stars.
-- **Relics (D277):** the 12 relics stay as they are; "relics for hunters" is met by **Legendary items**, each with one fixed, named effect.
-- **Inventory on a phone (D277):** no grid. A slot on the hunter sheet opens a picker (best first, with the difference against what's worn); a **Stores** list under Hunters (cap about 40) with **Salvage** for iron and silver.
-- **The reserve (D275):** reserve hunters earn 25% of the contract XP the active roster earns ("drilling in the yard"), never past the active roster's lowest level.
-- **From Delves (D278):** v0.7 records Delve kills per family and guardians beaten; v0.8 decides whether Delves give trophies or loot, under D20.
-- **Open at the v0.8 flesh-out:** rank and star thresholds; loot sources and drop rates; the 11 use-skills; talent contents; the inventory cap and salvage values; how much yard XP; the checks.
+Hunters grow in four ways that last: **ranks**, **stars**, **talents** and a personal **use-skill**. Gear becomes **items** with loot, and six **Legendaries** are kept forever. Benched hunters catch up in **the yard**.
+
+#### 5.11.1 Items and the Smithy *(D304)*
+- Every weapon and armor piece of §5.3.6 is an **item**. Today's pieces are **Common** items with exactly today's numbers (D308).
+- The Smithy **crafts** a Common Iron Blade (60 iron) or Hide Armor (40 wood, 30 food) from scratch.
+- The Smithy **reworks** any item one tier up (Iron → Steel → Silvered → Wright's Blade; Hide → Mail → Emberwright Plate) for that tier's cost and Smithy level in §5.3.6. The Wright's Blade still needs the Citadel. The Smithing skill cuts every crafting and rework cost (§5.8.6).
+- **A reworked item keeps its bonus lines**, so a lucky early drop can grow with the hunter.
+- The Wright's Blade is reached only by rework; it never drops.
+- **Equipping** is free whenever the hunter isn't on a contract or in a Delve. Unequipped items wait in **Stores**.
+
+#### 5.11.2 Loot *(D305)*
+- **Each contract won** rolls once for an item: chance `loot.chanceBase` 10% + `loot.chancePerTier` 5% × tier (15% at tier 1, 35% at tier 5). Failures never drop items.
+- **The base piece:** weapon or armor (half each), then by the contract's tier: tiers 1–2 Iron Blade or Hide Armor; tier 3 Steel Blade or Mail; tier 4 Silvered Blade or Mail; tier 5 Silvered Blade or Emberwright Plate.
+- **Rarity** sets the number of **bonus lines**: **Fine** 1, **Rare** 2, **Heroic** 3, weighted 65 / 27 / 8 (`loot.rarityWeights`).
+- **The line pool** (each line goes into an existing combat bucket, §5.0; no line twice on one item):
+
+| Line | Bucket | Size |
+|---|---|---|
+| Might | stat% | +6% |
+| Health | stat% | +8% max Health |
+| Armor | flat | +2 |
+| Speed | flat | +1 |
+| Crit | crit chance | +4 points |
+| Bane of a family | outgoing% vs one contract family (rolled) | +12% |
+
+- Loot is seeded (`${gameSeed}:loot:${contractId}`), so it is fixed at launch like the fight.
+- **Delves:** a beaten guardian drops one item (§5.10.7).
+
+#### 5.11.3 Hunter ranks and stars *(D309, D310)*
+- **Ranks:** **Apprentice → Wright → Master-Wright** (the order's titles; the hold's Ranks keep their name).
+
+| Rank | Needs | Gives |
+|---|---|---|
+| Apprentice | — | 1 talent point |
+| **Wright** | Highest level ever ≥ `rank.wrightLevel` 5, and `rank.wrightTrophies` 20 trophies | The use-skill (§5.11.4); 3 talent points in all |
+| **Master-Wright** | Highest level ever ≥ `rank.masterLevel` 10, and `rank.masterTrophies` 60 trophies | 5 talent points in all |
+
+- Trophies of **any family** pay for ranks, from the trophies **on hand** this cycle (earned minus spent). Spending never lowers the Trophy Hall bonus or the Embers conversion, which count trophies earned (A7).
+- **Stars** (0–`star.max` 5): star *n* costs `star.embersPerStar` 20 × *n* Embers and `star.trophiesPerStar` 10 × *n* trophies.
+  - Each star adds `star.growthPerStar` 1 percentage point to the hunter's Health and Might growth per level (§5.3.2), recomputed at once.
+  - Stars open **talent tiers**: tier 1 always, tier 2 at 2 stars, tier 3 at 4 stars (`talent.tierStars`).
+- **Ranks, stars and talents are kept forever.** Levels still halve at the Long Night (§5.9.7). Ranks read the highest level ever, so a rank is never lost.
+- **Breakdowns:** every stat breakdown shows the star line ("2 stars: +2% growth per level"); Rank up and Add a star show their costs.
+
+#### 5.11.4 Use-skills *(D312, D314)*
+- Every hunter has **one personal use-skill**, unlocked at Wright. It **fires on its own**, on a fixed trigger:
+  - every *N*th of the hunter's own actions;
+  - the hunter's first action;
+  - once per fight when something happens.
+- **No new dice:** an effect that replaces a roll still draws it.
+- Use-skills work in contracts, the Last Stand and Delves. The odds and Suggest include them, and each firing gets its own log line.
+- The eleven are in §8.5b.
+- **The meter knock-back** of the Delves (Toll, §8.8) becomes a general fight rule from v0.8.
+
+#### 5.11.5 Talents and the yard *(D313, D315)*
+- **Talents:** each role has 3 branches × 3 tiers (§8.11). Each talent costs 1 point (points from rank, §5.11.3), and a tier is open only with enough stars.
+  - **Respec is free** whenever the hunter isn't on a contract or in a Delve.
+  - Talents are small bonuses in existing buckets.
+- **The yard:** every hunter at the hold who isn't on a given contract earns yard XP when that contract finishes. That means active or reserve, injured or not, but not the dead and not hunters in a Delve.
+  - **Amount:** `yard.share` 25% of the XP each hunter on that contract earned (after Drill Yard, the Tally Stick and Command).
+  - **Cap:** yard XP never takes a hunter past the level of the hold's **third-highest** hunter (`yard.capRank` 3). It only catches people up.
+  - The away sheet gets one line, for example: *"The yard: Arvid reached level 4."*
+
+#### 5.11.6 Legendaries *(D306, D314)*
+- **Six Legendaries**, each found once at a fixed milestone and **kept forever**, each with one named effect (§8.12). They are never random and never from Delves.
+- They go in a third slot, the **keepsake** (`keepsake.slots` 1), which holds only the named effect, no base stats.
+  - Swapping keepsakes is free whenever the hunter isn't on a contract or in a Delve.
+  - A keepsake stays with its hunter through the Long Night.
+- **In-world**, like the hold's relics (`lore-secrets.md` §7), they are objects that held a warden's warmth.
+
+#### 5.11.7 Stores and Salvage *(D307)*
+- **Stores** holds every unequipped item, up to `stores.cap` 40. It is a list under the Hunters tab (§9.16).
+- **Salvage** returns `salvage.share` 25% of the iron and silver that went into the item (crafting and reworks; loot counts its base tier's crafting costs), plus `salvage.perLine` 20 silver per bonus line. Salvaging a Legendary isn't allowed.
+- Loot that arrives when Stores is full is **salvaged automatically**, and the away sheet says so.
+- **At the Long Night**, every item except Legendaries is gone.
+
+#### 5.11.8 What's still for later
+- Delve trophies stay off; events (v0.9) decide whether bosses drop items.
+- Hunter relic slots beyond the keepsake are not planned.
+- Use-skill upgrades at Master-Wright are not planned.
 
 ### 5.12 Events *(v0.9, outline)*
 
@@ -1107,6 +1184,7 @@ See §6.1.
 - **An act that isn't written yet** (from Act IV): its cycle has no act documents, and its Long Night shows *"The story continues in a later version."* Ruins, Ribbonshade names and hunter letters carry on, because they aren't tied to an act. When the act ships, it starts in the current cycle (P4), and the next ones follow one per cycle.
 - **Act III (v0.6, D214):** a save already in Act I or II reaches Act III normally, the cycle after Act II's stand. A save whose current cycle has no act starts Act III **on load**: Arvid arrives (*"Ilse comes up the road early, with an old man carrying a net-needle and an axe."*), D3-01 plays, and Act III's Rank documents already behind the save this cycle (D3-04, D3-05) are found then.
 - **From Act IV on (D246):** an act that ships while a save is in a story-less cycle starts **on load in the current cycle**, with fresh counters: "the 1st Field & Forest Spirits contract won in Act IV" counts from that moment. A Rank document is found on load only if that Rank is already behind the save in this cycle. Counts recorded during story-less cycles are ignored. The on-load line is *"Pechko comes out from behind the stove before you've got your coat off, with something wrapped in oilcloth."* and D4-01 plays. A new game reaches Act IV the cycle after Act III's stand.
+- **Act V (v0.8, D301):** a save in a story-less cycle starts Act V on load with fresh counters (D246); the on-load line is *"Pechko calls you over to the crack behind the stove before you've got your coat off."* and D5-01 plays. A save in Act IV's cycle reaches Act V with the next warden. **After Act V's Last Stand the Unlit's door opens** (D257), with one line on the Rift card the first time: *"There's a sixth door in the rift now. It's colder than the others."*
 - **Act counters** start fresh with each act: "the 2nd Mirograd contract won after Act I begins" counts from that act's start, and counts in any later cycle until it's met.
 
 #### 5.14.2 Documents
@@ -1117,6 +1195,7 @@ See §6.1.
   - A document found during a contract arrives with that contract's result: one line on the away sheet and in the results list, *"A letter came with the bounty: 'My boy writes no letters'."*
   - A Rank document arrives on the Rank-up sheet.
   - A testament arrives on the stand's result sheet, after the waves and Embers.
+  - Act V's letters come up through the crack behind Pechko's stove: the away sheet and results say *"Pechko found a letter at the crack: 'The first night'."* (D302).
   - A resident scene plays as a scene sheet, like the Rank-up scenes.
   - The Archive tab shows a badge until each new item is opened.
 - **Contract results:** a success can bring a document (§5.4.3). Failures never do.
@@ -1126,11 +1205,11 @@ See §6.1.
 
 - **Ilse Marrow arrives with the first document** (D151): the first contract won after Act I begins brings D1-01, Marta's letter, and Ilse walks up with it. Then the **Bestiary tab becomes the Archive** (D150). Before that, the tab is the Bestiary as in v0.3.
 - **Saves from before v0.5** meet her on load (§5.14.1). Her scene hands over everything already found.
-- **Later cycles:** she's back with the new warden. The new-warden sheet says *"Ilse is back from Velkvik with the archive."* When Act III begins, the line reads *"Ilse is back from Velkvik with the archive, and an old man with a net-needle and an axe."* (Arvid, §8.5, D211). When Act IV begins, the line reads *"Ilse is back from Velkvik with the archive. Pechko is waiting at the stove with something wrapped in oilcloth."*
+- **Later cycles:** she's back with the new warden. The new-warden sheet says *"Ilse is back from Velkvik with the archive."* When Act III begins, the line reads *"Ilse is back from Velkvik with the archive, and an old man with a net-needle and an axe."* (Arvid, §8.5, D211). When Act IV begins, the line reads *"Ilse is back from Velkvik with the archive. Pechko is waiting at the stove with something wrapped in oilcloth."* When Act V begins, the line reads *"Ilse is back from Velkvik with the archive. Pechko is kneeling at the crack behind the stove, and he isn't sweeping."*
 - **The Archive tab** has four sections:
   - **Bestiary:** the v0.3 screen, unchanged.
   - **Library:** every document found, grouped by act, then by type, newest first. Each opens in a reader, with any note of Ilse's under it. Letters from hunters (§5.14.7) have their own shelf. From v0.7 the Library has an **Echoes** shelf (Ember-echoes from Delves).
-  - **Accounts:** for each key event (Act I: the Night of the Fall, the apprentices; Act II adds the bell; Act III adds **Yrsa's choice**; Act IV adds **The light in the window**), every account found, side by side, each labeled with its witness. Nothing is marked true.
+  - **Accounts:** for each key event (Act I: the Night of the Fall, the apprentices; Act II adds the bell; Act III adds **Yrsa's choice**; Act IV adds **The light in the window**; Act V adds **What the hearth leaves**), every account found, side by side, each labeled with its witness. Nothing is marked true.
   - **Names:** *"Names found: 12 of 40."* A row for each of the 40, in order. A found name shows its village and year (*"Eirik Varn — Velkvik — onward, year 272 of the order."*); a missing one shows *"— a name not yet found —"* and its hint (`lore-secrets.md` §20).
 
 #### 5.14.4 Names
@@ -1168,9 +1247,9 @@ See §6.1.
 #### 5.14.9 What the Long Night shows, from v0.5
 
 1. The stand's result: waves held, the band, the Embers breakdown, any relic, the residents' lines, any trust steps.
-2. The act's testament (Act I: D1-06; Act II: D2-09; Act III: D3-06), or *"The story continues in a later version."* if the act isn't written.
+2. The act's testament (Act I: D1-06; Act II: D2-09; Act III: D3-06; Act IV: D4-06; Act V: D5-06, followed by Yrsa's Thole's line), or *"The story continues in a later version."* if the act isn't written.
 3. The Hearth.
-4. The new-warden sheet: the warden's name, any resident scene of the act's close (Act I: D1-07 *"Welcome back"*; Act II: D2-10; Act III: D3-07), Ilse's return (with Arvid when Act III begins, then D3-01), and the choice of 3 active hunters.
+4. The new-warden sheet: the warden's name, any resident scene of the act's close (Act I: D1-07 *"Welcome back"*; Act II: D2-10; Act III: D3-07; Act IV: D4-07; Act V: D5-07), Ilse's return (with Arvid when Act III begins, then D3-01), and the choice of 3 active hunters.
 
 ---
 
@@ -1228,6 +1307,12 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **The v0.6 brews** *(v0.6)*: Hidebane Oil vs Beasts & Wilds and Wright's Oil vs the Cursed, like the other oils; Coldwater vs the Poludnitsa and the Ribbonshade, Owl-Eye vs Gloam-moths, Steadfast vs any species with an ability that costs an action: the counter-potion on the Vanguard, the Mending Draught on the next hunter. Bombs: weak-to first, then a Saltburst, then Poppy Smoke.
 - **Skills** need no decisions. **Arvid** joins at the start of Act III; the roster rule (D167) uses him.
 - **Delves** *(Delver only, v0.7, D270)*: in each session, it runs Delves until the allowance is empty, up to 3 runs, with the suggested three (Vanguard, Striker, Mender if it has them, highest levels). **Door:** the patron it has taken most this run (ties: Hearth-Crone, Pale Smith, Wolf Beneath the Hill, Weaver, Drowned Bell). **Blessing:** highest rarity, then list order. It never leaves a run early. **Riftglass:** Chosen start and Re-roll first, then Late hours; never traits or cosmetics. Outside sessions it plays exactly like Standard.
+- **Items** *(v0.8, D321)*: rework the weakest slot first, as gear upgrades worked (same affordability rule and Rank-up reserve). Equip loot that scores higher on a fixed **item score** (Might, Armor and bonus lines with fixed policy weights). Salvage the lowest-scoring items once Stores holds more than 30.
+- **Ranks** *(v0.8)*: rank up as soon as a hunter qualifies and the trophies are on hand.
+- **Embers** *(v0.8)*: Hearth upgrades first, cheapest first (as v0.4); then the cheapest star, ties going to the highest-level hunter.
+- **Talents** *(v0.8)*: a fixed pick order per role. **Legendaries:** a fixed table of who wears which.
+- **Yard XP and Delve rewards** need no decisions.
+- **The Delver's Re-roll** *(v0.8, D321)*: used once a run, on the first offer where every card is Faint.
 
 ### 6.2 Targets
 
@@ -1264,9 +1349,12 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Trust keeps an arc | No village reaches Sworn before the end of cycle 4 | v0.6 |
 | Act IV lands in its cycle *(D271)* | D4-01 to D4-06 and D4-08 by the end of cycle 4; D4-07 with the next warden (Standard) | v0.7 |
 | First guardian beaten *(D271)* | By the end of cycle 2 (Delver) | v0.7 |
-| Idle-only vs Delver *(D20, D271)* | Standard reaches the last of "all content" no more than 1.3× later than the Delver (median of the Monday seeds). "All content" for v0.7: every judged document of Acts I–IV, the recipe book at 36 of 36, all six Ribbonshade names, every warden skill at level 4 | v0.7 |
+| Act V lands in its cycle *(D322)* | D5-01 to D5-06 and D5-08 by the end of cycle 5; D5-07 with the next warden (Standard) | v0.8 |
+| Late recruits catch up *(D322)* | All five name letters (Ostap at levels 5 and 8; Toma, Sigrun and Arvid at 5) by the end of cycle 5 (Standard) | v0.8 |
+| First Wright *(D322)* | By the end of cycle 1 (Standard) | v0.8 |
+| Idle-only vs Delver *(D20, D271, D322)* | Standard reaches the last of "all content" no more than 1.3× later than the Delver (median of the Monday seeds). "All content" for v0.8: every judged document of Acts I–V, the recipe book at 36 of 36, all six Ribbonshade names, every warden skill at level 4, the five letter names, and every hunter at Wright | v0.7 / v0.8 |
 
-Reported only: the stand band per cycle (with waves), skill levels per cycle, properties found per cycle (v0.6); Riftglass per week, floors reached per run, Delve relics found (v0.7, Delver).
+Reported only: the stand band per cycle (with waves), skill levels per cycle, properties found per cycle (v0.6); Riftglass per week, floors reached per run, Delve relics found (v0.7, Delver); stars per cycle, items by rarity per cycle, Legendaries found, Delve XP (v0.8).
 
 **Content test (v0.7, D271):** every Delve reward is listed with its idle source or marked sidegrade, convenience or Delve-only; a reward with neither fails the test.
 
@@ -1305,7 +1393,7 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Live odds panel** | ≤ 100 ms per update | 500 samples, in the same worker |
 | **Last Stand preview** *(v0.4, D114)* | ≤ 1 s on a mid-range phone | 100 practice stands (`laststand.previewSamples`), in the same worker |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
-| **Simulator: full suite** | ≤ 5 min in CI | All policies and checks; from v0.5 the runs play in parallel, one per core, with identical results (D169) |
+| **Simulator: full suite** | **≤ 5 min per CI job** *(D320)* | All policies and checks; the runs play in parallel, one per core (D169), split across parallel CI jobs whose results a final job combines and judges. Never trimmed: same runs, seeds and rows |
 
 A benchmark test enforces the first three on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone.
 
@@ -1716,6 +1804,24 @@ Portrait: a grey beard in two braids, a fisherman's knit cap, a scarred leather 
 
 **v0.3 adds 2 hunters:** Stanko Sleepless (a Wolf-friend Striker with Venom damage) and Herdis Strayfinder (a Tracker Mender), defined by the owner (Q12, D101). That brings the roster to 10. The Barracks cap of 8 makes roster choice matter.
 
+#### 8.5b Use-skills *(v0.8, D312, D314)*
+
+Unlocked at Wright. "Every 3rd action" counts the hunter's own actions in that fight (3rd, 6th, 9th…). "Knocks the meter back N" lowers a monster's turn meter by N. Where an effect replaces a roll, the roll is still drawn. Numbers are tunable, in content.
+
+| Hunter | Use-skill | Trigger | Effect |
+|---|---|---|---|
+| Halvar Two-Smokes | **Banked Smoke** | Every 3rd action, instead of attacking | Until his next action, every hunter takes −20% damage (taken%, inside the 75% cap) |
+| Zora Sedlak | **Boathook** | Every 3rd action | If the hit lands, it knocks the target's meter back 30 |
+| Old Ostap | **Bonesetter's Hands** | Every 4th action | If he heals on that action, the heal is doubled |
+| Bjarna Ice-Hand | **Rime-Dipped** | Every 3rd action | If the hit lands, the target is −25% Speed for its next 2 actions (status%) |
+| Vesna of the Weir | **Stopping Root** | Her first attack in a fight | The target takes Venom damage equal to her Might at the start of each of its next 3 actions (ignores Armor; uses its Venom resistance) |
+| Radek the Gravedigger | **Shovelful** | Every 3rd action | That attack ignores Armor |
+| Sigrun Halfhand | **The Other Hand** | Her first hit in a fight | It is a crit |
+| Toma Kettle | **Rattle the Pots** | His first action, instead of attacking | Every monster's meter is knocked back 40 |
+| Stanko Sleepless | **Up Before the Wolves** | Start of each fight | His meter starts full, so he acts at tick 1 |
+| Herdis Strayfinder | **Shepherd's Crook** | Every 3rd action | If she heals on that action, she also clears the healed hunter's ability effects: slowed (Hamstring), held, charmed, Chill |
+| Arvid Netmender | **Hold the Stair** | Once per fight, when another hunter would be downed while Arvid stands | Arvid takes that hit instead, after his own Armor and taken% (it can down him) |
+
 ### 8.6 Ingredients (v0.3; properties v0.6, D202)
 
 Each ingredient carries **3 hidden properties** (§5.8.1). **Bold** = proved by a v0.3 recipe and known from the start (15); the rest are found by experiment (21). Each property is named by the brew it makes.
@@ -1867,6 +1973,48 @@ Kept forever; shown on the Roll of Wardens. **Their effects work only inside Del
 | **Bell Clapper** | The first offer of each run shows 4 blessings instead of 3 | First Unlit's Breath defeated | Every Beasts & Wilds species Studied |
 | **Salt Ring** | Guardians have 10% less Health | First Forgotten defeated | Every Cursed species Studied |
 | **Horn Spoon** | Guardians drop 1 more unit | First Dross-Tide defeated | The recipe book complete (36 of 36) |
+
+### 8.11 Talents *(v0.8, D313, D314)*
+
+1 point each. Tier 2 opens at 2 stars, tier 3 at 4 stars. Respec is free while the hunter isn't on a contract or in a Delve. Numbers are tunable, in content.
+
+**Vanguard**
+| Tier | Wall | Retort | Warden |
+|---|---|---|---|
+| 1 | +1 Armor | +5% Might | While he stands, the other hunters take −3% damage |
+| 2 | +8% max Health | +3 points crit chance | Monsters target him with weight 4 instead of 3 |
+| 3 | −8% damage taken | +10% damage dealt | While he stands, the other hunters take −5% more damage (−8% in all with tier 1) |
+
+**Striker**
+| Tier | Edge | Hunt | Pace |
+|---|---|---|---|
+| 1 | +3 points crit chance | +3% damage vs a Studied or Mastered species (knowledge bucket) | +1 Speed |
+| 2 | Crits deal ×1.6 instead of ×1.5 (a higher multiplier from a trait or blessing wins) | +5% Might | +1 Speed |
+| 3 | +5 points crit chance | +10% damage dealt | +4 points hit chance |
+
+**Mender**
+| Tier | Herbs | Hands | Watch |
+|---|---|---|---|
+| 1 | Potions she carries are 10% stronger | +8% healing done | +1 Armor |
+| 2 | Potions she carries are 10% stronger more (+20% in all) | +8% healing done more (+16%) | +8% max Health |
+| 3 | Her Mending Draught fires below 40% Health instead of 30% | She heals anyone below 80% Health (instead of 70%) | Her attacks deal 75% of her Might instead of 50% |
+
+The Herbs branch does nothing in Delves (no potions there, D254); the talent sheet says so.
+
+### 8.12 Legendaries *(v0.8, D306, D314)*
+
+Kept forever, worn in the keepsake slot, one of a kind. Numbers are tunable, in content.
+
+| Legendary | Found when… | Effect |
+|---|---|---|
+| **The Barley Knot** | Every Field & Forest species Mastered | Once per fight, the first time a monster's ability would cost the holder an action, it doesn't (Steadfast's rule) |
+| **Wolf-Tooth String** | Every Beasts & Wilds species Mastered | +3% Might (status%, stacking) for each monster downed this fight, up to +15% |
+| **Coffin Silver** | Every Restless Dead species Mastered | Each of the holder's direct hits adds a Silver sub-hit of 0.15 × Might (no Armor, its own log line; stacks with the blade's) |
+| **Ferryman's Coin** | Every Water Spirit species Mastered | Once per fight, the first time the holder drops below 25% Health and is still standing, they recover 30% of max Health |
+| **Rune Nail** | Every Cursed species Mastered | The holder's direct attacks ignore 25% of the target's Armor |
+| **Yrsa's Thole** | Act V's Last Stand (with D5-06) | The holder's meter starts each fight at 50, and +2 Speed |
+
+On the Act V stand's result sheet, after D5-06: *"Wrapped in the same oilcloth: a thole pin of black oak, worn smooth by a rower's hand."*
 
 ---
 
@@ -2158,6 +2306,7 @@ The Hut opens from its building row on the Hold screen.
 | v0.5 | + the Archive tab (Bestiary, Library, Accounts, Names), the document reader, story scenes, the Villages panel, letters on the hunter sheet, warden naming, the Roll of Wardens, bands on the stand screens (§9.14) |
 | v0.6 | + the Hut's Experiment and Book sections; "What the ember remembers" (warden skills) on the Rank screen; skill lines on the away sheet and new-warden sheet; Arvid's arrival; Act III's documents and scenes |
 | v0.7 | + the Rift card on the Hold screen; the Delve sheets (entry, floor playback and log, doors, blessings, Your blessings, guardian, result); the Riftglass shop on the Rank screen; alternate traits on the hunter sheet; battle sprites; the Echoes shelf; Act IV's documents and scenes (§9.15) |
+| v0.8 | + rank, stars, talents, use-skill and three slots on the hunter sheet; the slot picker; Stores with Salvage; Rank up and Add a star; loot, Legendary, rank-up and yard lines on the away sheet and results; Act V's documents and scenes; the Rift card's sixth-door line (§9.16) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -2182,6 +2331,7 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 
 - **Battle sprites (v0.7, D265):** 32 px, code-generated from part templates per family, for the 16 contract species, the 3 Deep guardians and the 11 hunters (from their portrait parts). Animation: a 2-frame idle, a lunge when attacking, a white flash when hit, a downed pose; reduce-motion shows still frames. A contact sheet goes to the owner one session before the Delve screens; a rejected sprite falls back to the 64 px portrait shrunk to 32 px.
 - Also v0.7: patron sigils (6, 16 px), rarity frames (Faint, Warm, Bright), icons for Riftglass and the six Delve relics, and the four hold cosmetics in the hold scene.
+- **v0.8 (D324):** 16 px icons for the 7 base pieces; 4 item rarity frames (Common, Fine, Rare, Heroic), distinct from the Delve frames; 6 keepsake icons; a star icon; 3 rank badges; icons for the nine older brews. A contact sheet for the owner's review in the playtest.
 
 **Honest note:** the generated monsters (especially the poludnitsa, vodyanoy, huldra and nix) will be the weakest art in the game. CC0 packs almost never include folklore creatures like these. The asset manifest lets you swap in better art later without touching code.
 
@@ -2218,6 +2368,22 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 - **Away sheet:** *"A Delve is waiting on floor 3."* and *"Riftglass waiting: 40 of 140."*
 - **Rank screen:** **The Riftglass shop** beside The Hearth (§5.10.8). **Hunter sheet:** the alternate trait switch, once bought.
 - **The Last Stand's confirmation** adds, when a run is paused: *"Your Delve ends here; you keep what it earned."*
+
+### 9.16 Hunter depth screens *(v0.8, D326)*
+
+- **Hunter sheet:**
+  - The rank badge and title ("Wright"), the stars, and the use-skill (name, trigger, effect, "unlocks at Wright" while locked).
+  - **Three slots:** weapon, armor and keepsake.
+  - **Talents:** three branch columns, locked tiers showing "needs 2 stars", free respec, a badge while points are unspent.
+  - **Rank up** and **Add a star**, each with its cost and a breakdown; disabled with the reason when not possible ("needs highest level 5", "needs 40 Embers").
+  - Every stat breakdown shows the star and talent lines.
+- **Slot picker:** opens from a slot.
+  - Items that fit, best first, each with its rarity frame, bonus lines and the difference against what's worn ("+3 Might, −1 Armor").
+  - **Craft** (Iron Blade or Hide Armor) and **Rework** (the worn item one tier up) with costs, disabled with the reason.
+- **Stores** (Hunters tab): every unequipped item ("23 of 40"), sortable by slot and rarity, with **Salvage** showing exactly what it returns.
+- **Away sheet and results:** one line each for loot (*"Loot: a Rare Steel Blade."*), auto-salvage, a Legendary found, a rank-up, and yard catch-up.
+- **The Hearth:** one line, *"Stars are bought on each hunter's sheet."*
+- **Rift card:** the sixth-door line once Act V's stand has opened the Unlit's door.
 
 ---
 
@@ -2336,3 +2502,14 @@ Each one is also marked **[JC]** where it appears.
 6. **The Rift lives on the Hold screen, not a sixth tab** (D264).
 7. **Rarities are Faint, Warm and Bright,** to stay clear of v0.8's loot rarities.
 8. **Acts from Act IV on start on load with fresh counters** (D246).
+
+## Judgment calls added in the v0.8 flesh-out (D300–D328)
+
+1. **Gear climbs by rework,** keeping bonus lines and today's costs (D304).
+2. **Legendaries are milestone rewards, kept forever, in a keepsake slot;** never random, never from Delves (D306).
+3. **Stars cost Embers and trophies,** which gives Embers a use again (D310).
+4. **Ranks read the highest level ever,** so a Long Night never takes one away (D309).
+5. **Yard XP goes to every hunter not on the contract,** capped at the third-highest level (D315).
+6. **Delve XP and loot only while a run pays Riftglass,** so nothing can be farmed (D316).
+7. **Act V's letters come up through the crack,** on ordinary conditions; Delves still carry no plot (D302).
+8. **The simulator splits into parallel CI jobs,** each under 5 minutes (D320).
