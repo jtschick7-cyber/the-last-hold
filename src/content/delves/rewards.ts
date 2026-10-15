@@ -32,6 +32,20 @@ export const delveRewards: readonly DelveRewardDef[] = [
   { id: 'blessings', mark: 'delve-only' },
   { id: 'ember-echoes', mark: 'delve-only' },
   { id: 'deep-bestiary', mark: 'delve-only' },
+  // v0.8 (D316): only while the run pays Riftglass, and each has an idle source.
+  {
+    id: 'hunter-xp',
+    idleSource:
+      'Contracts: contract XP, and the yard for hunters not on the contract (GDD §5.11.5)',
+  },
+  {
+    id: 'command-xp',
+    idleSource: 'Contracts won and Last Stand waves held feed Command (GDD §5.8.6)',
+  },
+  {
+    id: 'guardian-item',
+    idleSource: 'Contract loot: the same items by the same rarities (GDD §5.11.2)',
+  },
   ...DELVE_RELIC_IDS.map((id): DelveRewardDef => ({
     id: `relic:${id}`,
     idleSource:

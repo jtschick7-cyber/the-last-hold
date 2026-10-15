@@ -1131,4 +1131,51 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'generic',
     note: 'Deep guardian abilities (GDD §8.3, D252): everyday words.',
   })),
+  ...[
+    'Banked Smoke',
+    'Boathook',
+    "Bonesetter's Hands",
+    'Rime-Dipped',
+    'Stopping Root',
+    'Shovelful',
+    'The Other Hand',
+    'Rattle the Pots',
+    'Up Before the Wolves',
+    "Shepherd's Crook",
+    'Hold the Stair',
+  ].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-15',
+    result: 'clear',
+    note: 'Use-skill (GDD §8.5b, D314; T8.4): searched against the influences, no match. Boathook, Shovelful, The Other Hand and Shepherd\'s Crook are everyday words and objects; "Bonesetter" is already a v0.2 trait.',
+  })),
+  ...['Wall', 'Retort', 'Warden', 'Edge', 'Hunt', 'Pace', 'Herbs', 'Hands', 'Watch'].map(
+    (name): CheckedName => ({
+      name,
+      checked: '2026-10-15',
+      result: 'generic',
+      note: 'Talent branch (GDD §8.11, D314; T8.4): everyday words. Warcraft has talent trees with other titles; none of these is a tree name here.',
+    }),
+  ),
+  ...[
+    'The Barley Knot',
+    'Wolf-Tooth String',
+    'Coffin Silver',
+    "Ferryman's Coin",
+    'Rune Nail',
+    "Yrsa's Thole",
+  ].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-15',
+    result: 'clear',
+    note: "Legendary (GDD §8.12, D306, D314; T8.4): searched against the influences, no match. Dark Souls has a Wolf Ring and Skyrim a Hircine's Ring, neither this item; \"Ferryman's Coin\" is the Greek myth (Charon's obol), not an item in any influence; Skyrim has an NPC named Yrsa, only the given name already cleared (D173).",
+  })),
+  ...['Common', 'Fine', 'Rare', 'Heroic', 'Legendary', 'Stores', 'Salvage'].map(
+    (name): CheckedName => ({
+      name,
+      checked: '2026-10-15',
+      result: 'generic',
+      note: 'Item words (GDD §5.11, D304–D307; T8.4): everyday words. "Heroic" and "Legendary" are Warcraft-style rarity tiers, used here only as everyday words.',
+    }),
+  ),
 ];

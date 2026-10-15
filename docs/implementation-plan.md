@@ -68,6 +68,7 @@ Claude Code doesn't start an outline-level milestone until its flesh-out is done
 | Events | `boss.*`, `riftglass.bankWeeks` |
 | Delves | `delve.partySize`, `delve.floors`, `delve.doors`, `delve.offers`, `delve.unlitDoorsPerRun`, `riftglass.weeklyCap` (D268) |
 | Skills | `skill.maxLevel` (D217) |
+| Hunter depth | `stores.cap`, `star.max`, `keepsake.slots`, `talent.points`, `talent.tierStars`, `rank.wrightLevel`, `rank.masterLevel`, `yard.capRank` (D325) |
 
 Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage rules**. Everything else in `balance.ts` is tunable.
 
@@ -902,7 +903,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - Fix the code so each act begun gets its own counter, with a test that two acts' counters move independently.
   - The migration step (keep Act IV's counts, clear Acts I–III's) is part of T8.5.
   - Log the fix as a documented drift (Proposed row).
-- [ ] **T8.3 Content and keys: mechanics.**
+- [x] **T8.3 Content and keys: mechanics.** *(All but `skill.xp.command.delveFloor`, which waits for Q26; D333.)*
   - The §7.10 keys into `balance.ts` (the eight locked ones marked locked), with GDD §7.10 added in the `key` = value form and the plan §0.6 row (below), all in the same commit.
   - Content, outside the saved-state id lists until T8.5 (as D171):
     - the Common item bases (today's 7 pieces with today's numbers);
@@ -917,7 +918,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
     - every Legendary has exactly one milestone and none is Delve-only;
     - the Common items equal today's gear table number for number;
     - the **D20 content test** updated: Delve XP, Command XP and guardian items each have their idle source (contract XP, contract loot).
-- [ ] **T8.4 Names.** Collision search (GDD §2.3, D173 rule) for every name in `OUT-6-new-names.md`; add them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
+- [x] **T8.4 Names.** *(Done with T8.3, D332: no collisions.)* Collision search (GDD §2.3, D173 rule) for every name in `OUT-6-new-names.md`; add them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
 - [ ] **T8.5 Migration v7 → v8** (D317), using the **owner's real v0.7 save** (`v7-owner.json`) as the fixture, with a round-trip test, and a `v8.json` fixture (that save played 72 h).
   - **New saved state:**
     - items (each with base, tier, rarity, lines; equipped or in Stores);
@@ -967,7 +968,8 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - The away-sheet line.
   - Tests: the cap; an injured hunter earning; a Delving hunter not earning.
 - [ ] **T8.11 Delve rewards** (D316).
-  - Hunter XP per floor and guardian, Command +1 per floor, the guardian item, all only while the run pays Riftglass.
+  - Hunter XP per floor and guardian, the guardian item, all only while the run pays Riftglass.
+  - `[?]` **Command +1 XP per floor** waits for Q26 (where the constant lives).
   - Tests: a quiet-night run pays none of them; a paying run pays exactly the table.
 - [ ] **T8.12 The older-rules note** (D319): show "recorded with an older rules version" only when a replay comes out different from the record. Applies to contract fights, stand waves and Delve floors. Tests both ways.
 

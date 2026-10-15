@@ -253,3 +253,13 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options:** (a) all ten as written; (b) change any by number.
 - **Recommendation:** (a).
 - **Answer (owner):** (a), all ten as written, 2026-10-15 (D329).
+
+### Q26 — Where does "Command XP per Delve floor" live in `balance.ts`? (blocks the Command XP part of T8.11; T8.3 goes on without that one key)
+- **What I found:** the flesh-out names the constant `skill.xp.command.delveFloor` (GDD §5.10.7, §7.10). But `skill.xp.command` already exists as **one** constant, `{ contractPerTier 2, wave 1 }` (GDD §7.8, D237), and the test that matches `balance.ts` against GDD §7 needs every key to be exactly one constant. A key can't be both a constant and a folder.
+- **Options:**
+  (a) **Add it as a field of the existing constant:** `skill.xp.command` = { contractPerTier 2, wave 1, delveFloor 1 }. The GDD §7.8 row gains `delveFloor 1`, and §7.10 points to it. No test changes and no code reads change; the reading `skill.xp.command.delveFloor` in §5.10.7 then names that field.
+  (b) Split the constant in three: `skill.xp.command.contractPerTier`, `.wave`, `.delveFloor`. The GDD §7.8 row changes and the code that reads the Command table changes.
+  (c) Loosen the key test so a constant may also have sub-keys. This touches a test helper, which I would not do on my own.
+- **Recommendation:** (a): smallest change, nothing else moves, same numbers.
+- **Blocks:** the Command XP line of T8.11 (marked `[?]`) and one row of GDD §7.10, which is left out for now. Nothing else.
+

@@ -1550,6 +1550,28 @@ Every constant here is tunable unless marked **locked** (D268).
 
 Blessing numbers live with their content (§8.8), the guardians' with the monsters (§8.3), the Delve relics' with the relics (§8.10a), the alternate traits' with the traits (§8.5a), as every earlier ability, trait and brew does.
 
+### 7.10 Hunter depth *(v0.8, D300–D328)*
+
+Every constant here is tunable unless marked **locked** (D325).
+
+| Formula | Expression | Constants (key = starting value) | § |
+|---|---|---|---|
+| Loot chance | per contract won | `loot.chanceBase` = 0.10, `loot.chancePerTier` = 0.05 | 5.11.2 |
+| Loot rarity | weights per item | `loot.rarityWeights` = { fine: 65, rare: 27, heroic: 8 } | 5.11.2 |
+| Bonus lines | sizes | `loot.lines` = { might: 0.06, health: 0.08, armor: 2, speed: 1, crit: 0.04, bane: 0.12 } | 5.11.2 |
+| Stores | cap | `stores.cap` = 40 **(locked)** | 5.11.7 |
+| Salvage | share of iron and silver put in; silver per line | `salvage.share` = 0.25, `salvage.perLine` = 20 | 5.11.7 |
+| Ranks | highest level ever needed; trophies | `rank.wrightLevel` = 5 **(locked)**, `rank.masterLevel` = 10 **(locked)**, `rank.wrightTrophies` = 20, `rank.masterTrophies` = 60 | 5.11.3 |
+| Talent points | by rank | `talent.points` = { apprentice: 1, wright: 3, masterWright: 5 } **(locked)** | 5.11.3 |
+| Talent tiers | stars to open tiers 1–3 | `talent.tierStars` = [0, 2, 4] **(locked)** | 5.11.3 |
+| Stars | star n costs n × these; growth per star | `star.max` = 5 **(locked)**, `star.embersPerStar` = 20, `star.trophiesPerStar` = 10, `star.growthPerStar` = 0.01 | 5.11.3 |
+| Keepsake | slots per hunter | `keepsake.slots` = 1 **(locked)** | 5.11.6 |
+| Yard XP | share of a contract's XP; cap at the nth-highest level | `yard.share` = 0.25, `yard.capRank` = 3 **(locked)** | 5.11.5 |
+| Delve XP | per floor cleared × tier; guardian × tier | `delve.xpPerTier` = 10, `delve.guardianXpPerTier` = 20 | 5.10.7 |
+| Guardian loot | rarity weights | `delve.guardianLootWeights` = { fine: 50, rare: 35, heroic: 15 } | 5.10.7 |
+
+Command XP per Delve floor (`delveFloor` = 1, §5.10.7) waits for Q26: where its key lives. Use-skill, talent and Legendary numbers live with their content (§8.5b, §8.11, §8.12), as every earlier trait, ability and blessing does.
+
 ---
 
 ## 8. Starter Content
