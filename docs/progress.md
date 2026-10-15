@@ -796,3 +796,5 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Next:** CI timing of the longer runs (the check-in is already set), then the v0.8 acceptance list and the owner's playtest; nothing is merged or tagged.
 - **CI timings for the T8.17 run (run 38811176882, GitHub runners):** shards `long` 206 s, `rest` 104 s, `heavy` 42 s, judge 56 s; all under 5 minutes, `long` the closest. The T8.18 run (38817016718) is timed in the next check-in.
 - **CI timings for the T8.18 run (run 38817016718, GitHub runners):** shards `long` 72 s, `heavy` 75 s, `rest` 100 s, judge 64 s; all under 5 minutes, and **the judge job passed** (all 41 rows) on GitHub as well as locally.
+
+- **Art redraw (owner's request, D355):** Yrsa's Thole (an oar resting between two thole pins) and the Wolf-Tooth String (three curved fangs on a cord) were redrawn; the other keepsakes are as before. Image tests pass against the new drawings; `public/contact-sheet.html` is regenerated.

@@ -107,15 +107,43 @@ const KEEPSAKES: Record<LegendaryId, (c: Canvas) => void> = {
     ] as const)
       c.rect(x - 1, y - 1, 2, 2, C.cream);
   },
-  // A string of three wolf teeth.
+  // A cord sagging between two knots, three wolf fangs hanging from it, the middle one longest.
   'wolf-tooth-string': (c) => {
-    c.line(1, 4, 8, 8, C.brown, 1);
-    c.line(8, 8, 15, 4, C.brown, 1);
-    for (const x of [4, 8, 12]) {
-      const y = x === 8 ? 9 : x === 4 ? 6 : 6;
-      c.rect(x - 1, y, 3, 3, C.bone);
-      c.rect(x, y + 3, 1, 2, C.cream);
+    const cord: readonly (readonly [number, number])[] = [
+      [0, 3],
+      [2, 4],
+      [4, 5],
+      [6, 6],
+      [8, 6],
+      [10, 6],
+      [12, 5],
+      [14, 4],
+      [15, 3],
+    ];
+    for (let i = 1; i < cord.length; i++) {
+      const [x0, y0] = cord[i - 1] ?? [0, 0];
+      const [x1, y1] = cord[i] ?? [0, 0];
+      c.line(x0, y0, x1, y1, C.brown, 1);
+      c.line(x0, y0 + 1, x1, y1 + 1, C.brownDark, 1);
     }
+    c.set(0, 2, C.clay); // the knots
+    c.set(1, 2, C.clay);
+    c.set(14, 2, C.clay);
+    c.set(15, 2, C.clay);
+    // A fang: wide at the root, tapering to a point that leans toward the middle; lit on the
+    // left, shaded on the right.
+    const fang = (cx: number, top: number, len: number, lean: number): void => {
+      for (let i = 0; i < len; i++) {
+        const w = i < len * 0.4 ? 3 : i < len * 0.75 ? 2 : 1;
+        const x = cx - Math.floor(w / 2) + (i >= len * 0.55 ? lean : 0);
+        c.rect(x, top + i, w, 1, C.bone);
+        c.set(x, top + i, C.frost);
+        if (w > 1) c.set(x + w - 1, top + i, C.ash);
+      }
+    };
+    fang(3, 5, 7, 1);
+    fang(8, 6, 9, 0);
+    fang(12, 5, 7, -1);
   },
   // A grave-coin of silver, cut with a cross.
   'coffin-silver': (c) => {
@@ -143,14 +171,31 @@ const KEEPSAKES: Record<LegendaryId, (c: Canvas) => void> = {
     c.rect(7, 9, 2, 1, C.orchid);
     c.set(8, 7, C.rose);
   },
-  // A thole pin of oak, rimed at the top: the oar's peg.
+  // An oar resting between two oak thole pins in a boat's gunwale, rime on the pins: where the oar sits.
   'yrsas-thole': (c) => {
-    c.rect(6, 3, 4, 10, C.brown);
-    c.rect(6, 3, 2, 10, C.clay);
-    c.rect(4, 12, 8, 2, C.brownDark);
-    c.rect(5, 1, 6, 3, C.frost);
-    c.rect(6, 1, 3, 1, C.ice);
-    c.set(10, 3, C.ice);
+    // The gunwale plank.
+    c.rect(0, 11, 16, 3, C.brown);
+    c.rect(0, 11, 16, 1, C.clay);
+    c.rect(0, 13, 16, 1, C.brownDark);
+    c.rect(6, 12, 3, 1, C.rust);
+    // The oar's loom runs across, behind the pins.
+    c.rect(0, 5, 16, 3, C.sand);
+    c.rect(0, 5, 16, 1, C.cream);
+    c.rect(0, 7, 16, 1, C.clay);
+    // The pins, in front: tapered, lit on the left, with a dab of rime at each tip.
+    for (const x of [3, 11]) {
+      c.rect(x, 2, 2, 9, C.brown);
+      c.rect(x, 2, 1, 9, C.clay);
+      c.rect(x + 1, 2, 1, 9, C.brownDark);
+      c.set(x, 1, C.frost);
+      c.set(x + 1, 1, C.ice);
+      c.set(x - 1, 4, C.ice);
+      c.set(x + 2, 9, C.frost);
+    }
+    // Rime on the oar between the pins.
+    c.set(6, 5, C.frost);
+    c.set(7, 5, C.ice);
+    c.set(9, 5, C.frost);
   },
 };
 
