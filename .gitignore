@@ -158,3 +158,6 @@ art-src/packs/
 # Playwright output
 test-results/
 playwright-report/
+
+# Simulator shard results (plan T8.15; regenerated, uploaded as CI artifacts)
+sim/shards/

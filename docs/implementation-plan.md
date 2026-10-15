@@ -998,7 +998,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - Manifest entries; `credits.md` regenerated; the contact sheet updated. 👤 Review in the playtest.
 
 #### E. CI and simulator
-- [ ] **T8.15 CI: split the simulator job, and move off Node 20** (D320, D323).
+- [x] **T8.15 CI: split the simulator job, and move off Node 20** (D320, D323; readings D351). *CI timings are in `progress.md`; the full suite currently fails `trust-moves`, a balance matter for T8.18.*
   - `sim.yml` runs the full suite as parallel jobs (for example, the Monday Standard and Delver runs in one, everything else in another) plus a final job that combines their results and judges every row.
   - Same runs, seeds and rows; the combined report equals a single-machine run (a test, like `sim/parallel.test.ts`).
   - Workflow actions on versions that don't use the deprecated Node 20.

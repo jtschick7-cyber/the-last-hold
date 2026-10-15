@@ -1,5 +1,8 @@
-# Technical design §11.2: the full 5-seed simulator suite. A stub until v0.1
-# (plan T0.5); the simulator itself is a stub that exits 0.
+# Technical design §11.2 (plan T8.15, D320): the full 5-seed simulator suite, split into parallel
+# shard jobs (sim/shards.ts) and one final job that combines their runs and judges every row. The
+# shards play the very same runs, seeds and rows a single machine would (sim/shards.test.ts).
+# Each job's simulator step must finish in 5 minutes or less; over that, the job fails with a
+# message, and the owner is asked before anything is trimmed (never seeds or rows).
 name: Simulator
 
 on:
@@ -8,14 +11,70 @@ on:
   workflow_dispatch:
 
 jobs:
-  sim:
+  shard:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [long, rest, heavy]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm run sim:check
+      - name: Play the ${{ matrix.shard }} shard (5 minute limit)
+        run: |
+          start=$SECONDS
+          npm run sim -- --check --shard ${{ matrix.shard }}
+          elapsed=$((SECONDS - start))
+          echo "Shard ${{ matrix.shard }} took ${elapsed}s (limit 300s)"
+          if [ "$elapsed" -gt 300 ]; then
+            echo "::error::Shard ${{ matrix.shard }} took ${elapsed}s, over the 5-minute limit. Stop and ask the owner; never trim seeds or rows."
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v7
+        with:
+          name: sim-shard-${{ matrix.shard }}
+          path: sim/shards/${{ matrix.shard }}.json
+          if-no-files-found: error
+
+  judge:
+    needs: shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: sim-shard-*
+          merge-multiple: true
+          path: sim/shards
+      - name: Combine the shards and judge every row (5 minute limit)
+        run: |
+          start=$SECONDS
+          npm run sim:check -- --combine sim/shards
+          elapsed=$((SECONDS - start))
+          echo "Judging took ${elapsed}s (limit 300s)"
+          if [ "$elapsed" -gt 300 ]; then
+            echo "::error::Judging took ${elapsed}s, over the 5-minute limit. Stop and ask the owner."
+            exit 1
+          fi
+      - name: Put the report in the job summary
+        if: always()
+        run: |
+          latest=$(ls -t sim/reports/*.md 2>/dev/null | head -n 1)
+          if [ -n "$latest" ]; then cat "$latest" >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: sim-report
+          path: sim/reports
+          if-no-files-found: ignore

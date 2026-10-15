@@ -8,9 +8,16 @@ import { CURRENT_MILESTONE, FAST_UNTIL_TARGETS } from './milestone';
 import { defaultWorkers, runSequential, runSpecs } from './parallel';
 import { markdown, summarize, type Baseline, type Report } from './report';
 import { STARTS, type RunResult, type RunSpec, type StartId } from './run';
-import { ENGAGEMENT, enforced } from './targets';
-
-const OVERFLOW_CYCLES = ENGAGEMENT.noOverflow.cycles;
+import { buildSpecs } from './specs';
+import {
+  combineShards,
+  readShards,
+  specsOfShard,
+  SHARD_IDS,
+  writeShard,
+  type ShardId,
+} from './shards';
+import { enforced } from './targets';
 
 // Balance simulator (technical design §13). Examples:
 //   npm run sim -- --policy standard --days 14 --seeds 5
@@ -31,12 +38,17 @@ interface Options {
   fast: boolean;
   accept: boolean;
   name: string | null;
+  /** Plan T8.15: play only this shard's runs and write them to `shardDir` (no judging). */
+  shard: ShardId | null;
+  /** Judge the runs the shards in this folder hold. */
+  combine: string | null;
+  shardDir: string;
 }
 
 const usage = (problem: string): never => {
   console.error(
     `${problem}\nUsage: npm run sim -- [--policy ${POLICY_IDS.join('|')}|all] [--days N] ` +
-      `[--seeds N] [--start mon|sat|both] [--check] [--fast] [--accept] [--name label]`,
+      `[--seeds N] [--start mon|sat|both] [--check] [--fast] [--accept] [--name label] [--shard ${SHARD_IDS.join('|')}] [--shard-dir folder] [--combine folder]`,
   );
   process.exit(2);
 };
@@ -51,6 +63,9 @@ const parse = (args: readonly string[]): Options => {
     fast: false,
     accept: false,
     name: null,
+    shard: null,
+    combine: null,
+    shardDir: join(here, 'shards'),
   };
   for (let i = 0; i < args.length; i++) {
     const flag = args[i];
@@ -76,6 +91,12 @@ const parse = (args: readonly string[]): Options => {
     else if (flag === '--fast') o.fast = true;
     else if (flag === '--accept') o.accept = true;
     else if (flag === '--name') o.name = value();
+    else if (flag === '--shard') {
+      const k = value();
+      if ((SHARD_IDS as readonly string[]).includes(k)) o.shard = k as ShardId;
+      else usage(`Unknown shard "${k}" (${SHARD_IDS.join(', ')}).`);
+    } else if (flag === '--combine') o.combine = value();
+    else if (flag === '--shard-dir') o.shardDir = value();
     else usage(`Unknown flag "${flag}".`);
   }
   if (o.fast) {
@@ -84,33 +105,13 @@ const parse = (args: readonly string[]): Options => {
     Object.assign(o, { policies: ['opening', 'standard'], seeds: 1, starts: ['mon'], days: 5 }); // Bastion: days 3–4
   }
   if (o.accept && o.fast) usage('--accept needs the full suite, not --fast.');
+  if ((o.shard || o.combine) && o.fast) usage('--shard and --combine are for the full suite.');
+  if (o.shard && (o.combine || o.accept))
+    usage('--shard only plays its runs; judge with --combine.');
   return o;
 };
 
-const specs = (o: Options): RunSpec[] =>
-  o.policies.flatMap((policy) =>
-    // D272: the Delver runs the Monday seeds only.
-    o.starts
-      .filter((start) => policy !== 'delver' || start === 'mon')
-      .flatMap((start) =>
-        Array.from({ length: o.seeds }, (_, i) => ({
-          policy,
-          seed: `sim-${i + 1}`,
-          start,
-          days: o.days,
-          ...(o.fast ? { stopAt: FAST_UNTIL_TARGETS } : {}),
-          // GDD §6.3 #7 (D114): the Standard runs go on through 3 Long Nights, up to 6 weeks.
-          ...(!o.fast && (policy === 'standard' || policy === 'delver')
-            ? {
-                minCycles: OVERFLOW_CYCLES,
-                maxDays: 42,
-                // D271: the Idle-only row compares the Monday runs until each has all content.
-                ...(start === 'mon' ? { untilContent: true } : {}),
-              }
-            : {}),
-        })),
-      ),
-  );
+const specs = (o: Options): RunSpec[] => buildSpecs(o);
 
 const readBaseline = (): Baseline | null =>
   existsSync(BASELINE) ? (JSON.parse(readFileSync(BASELINE, 'utf8')) as Baseline) : null;
@@ -120,9 +121,22 @@ const main = async (): Promise<void> => {
   const began = performance.now();
   // D169: the full suite plays its runs in parallel, one worker per core; the fast set is two
   // short runs and stays in this process. Results are identical either way (sim/parallel.test.ts).
-  const runs: RunResult[] = o.fast
-    ? runSequential(specs(o))
-    : await runSpecs(specs(o), defaultWorkers());
+  if (o.shard) {
+    // Plan T8.15 (D320): one parallel CI job plays its share of the suite and keeps the raw runs.
+    const mine = specsOfShard(specs(o), o.shard);
+    const runs = await runSpecs(mine, defaultWorkers());
+    mkdirSync(o.shardDir, { recursive: true });
+    const path = writeShard(o.shardDir, { shard: o.shard, runs });
+    const secs = ((performance.now() - began) / 1000).toFixed(1);
+    console.log(`Shard ${o.shard}: ${runs.length} runs, ${secs} s, written to ${path}`);
+    return;
+  }
+  // The combining job reads every shard's runs and judges the whole suite as one machine would.
+  const runs: RunResult[] = o.combine
+    ? combineShards(specs(o), readShards(o.combine))
+    : o.fast
+      ? runSequential(specs(o))
+      : await runSpecs(specs(o), defaultWorkers());
   const checks: CheckResult[] = o.check
     ? CHECKS.filter((c) => enforced(c.enforcedFrom, CURRENT_MILESTONE)).map((c) => c.judge(runs))
     : [];

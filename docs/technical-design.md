@@ -632,4 +632,4 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 14. **Simulator:** 5 seeds; medians for time targets, every seed for engagement checks; no worker.
 15. **The performance proxy** is one-quarter of the phone budget on CI.
 16. **A name-collision list** is enforced by a content test.
-17. **The full simulator suite** runs in CI on pull requests to `main` and on demand (`.github/workflows/sim.yml`, lines 5–8, matching §11.2). The workflow is still a stub that exits 0 (its header comment), so the full suite is not live in CI yet.
+17. **The full simulator suite** runs in CI on pull requests to `main` and on demand (`.github/workflows/sim.yml`, lines 5–8, matching §11.2). Since v0.8 (T8.15, D320) it is live: three shard jobs (`long`: Standard and the Delver; `rest`: Opening and Light; `heavy`) and a final job that combines their runs and judges every row (`sim/shards.ts`).
