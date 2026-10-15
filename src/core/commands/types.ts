@@ -88,6 +88,8 @@ export type Command =
   | { type: 'debug.runV05Arrival' }
   /** GDD §5.14.1 (D214): a save whose cycle began Act III before it was written meets Arvid on load. */
   | { type: 'story.startActIII' }
+  | { type: 'hunter.rankUp'; hunter: string }
+  | { type: 'hunter.addStar'; hunter: string }
   | { type: 'item.craft'; base: string }
   | { type: 'item.rework'; item: string }
   | { type: 'item.equip'; item: string; hunter: string }

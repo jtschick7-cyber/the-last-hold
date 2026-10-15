@@ -110,6 +110,7 @@ export const snapshot = (v: unknown, where: string): HunterSnapshot => {
     weapon: gear(o.weapon, `${where}.weapon`),
     armorGear: gear(o.armorGear, `${where}.armorGear`),
     ...(o.lines === undefined ? {} : { lines: itemLines(o.lines, `${where}.lines`) }),
+    ...(o.stars === undefined ? {} : { stars: count(o.stars, `${where}.stars`) }),
   };
 };
 

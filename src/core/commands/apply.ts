@@ -1,5 +1,6 @@
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
+import { addStar, rankUp } from './hunter-depth';
 import { craftItem, equipFromStores, reworkItem, salvageItem, unequipItem } from './items';
 import { debugUnlit } from './unlit';
 import {
@@ -157,6 +158,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return buyCosmetic(state, cmd.cosmetic);
     case 'riftglass.switchTrait':
       return switchTrait(state, cmd.hunter, cmd.alternate);
+    case 'hunter.rankUp':
+      return rankUp(state, cmd.hunter);
+    case 'hunter.addStar':
+      return addStar(state, cmd.hunter);
     case 'item.craft':
       return craftItem(state, cmd.base);
     case 'item.rework':

@@ -53,7 +53,10 @@ export const buildHunter = (
   boost?: HunterBoost,
 ): Combatant => {
   const { oilFamily, potion } = hunterKit(h, prep);
-  const scale = 1 + num('hunter.levelStatGrowth') * (h.level - 1);
+  // GDD §5.3.2, §5.11.3: growth per level is 10% plus 1 point per star.
+  const scale =
+    1 +
+    (num('hunter.levelStatGrowth') + num('star.growthPerStar') * (h.stars ?? 0)) * (h.level - 1);
   const effects = h.traits.map((t) => traits[t].effect);
   const weapon = h.weapon ? gear[h.weapon] : null;
   const armor = h.armorGear ? gear[h.armorGear] : null;

@@ -24,6 +24,8 @@ export interface HunterSnapshot {
   readonly traits: readonly TraitId[];
   readonly weapon: GearId | null;
   readonly armorGear: GearId | null;
+  /** Stars, which add to the Health and Might growth per level (v0.8, D310); absent at 0. */
+  readonly stars?: number;
   /** The bonus lines of the worn items (v0.8, D305); absent when there are none. */
   readonly lines?: readonly ItemLine[];
 }

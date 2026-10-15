@@ -171,6 +171,7 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
     armorGear: worn[1]?.base ?? null,
     // v0.8: only when an item has lines, so every old snapshot and golden stays as it was.
     ...(lines.length > 0 ? { lines } : {}),
+    ...(h.stars > 0 ? { stars: h.stars } : {}),
   };
 };
 
@@ -288,15 +289,26 @@ export const hunterStat = (state: GameState, id: HunterId, stat: StatName): Expl
   const base = def.stats[stat];
   const growth = num('hunter.levelStatGrowth');
   const scaled = stat === 'health' || stat === 'might';
-  const scale = scaled ? 1 + growth * (h.level - 1) : 1;
+  const starGrowth = num('star.growthPerStar') * h.stars;
+  const levelScale = scaled ? 1 + growth * (h.level - 1) : 1;
+  const scale = scaled ? 1 + (growth + starGrowth) * (h.level - 1) : 1;
   const children: Explained['breakdown'][] = [{ label: `Base (${def.shortName})`, value: base }];
   if (scaled) {
     children.push({
       label: `Level ${h.level}`,
-      value: base * scale - base,
+      value: base * levelScale - base,
       formula: `${base} × ${growth} × (${h.level} − 1)`,
       key: 'hunter.levelStatGrowth',
     });
+    // GDD §5.11.3 (D310): each star adds a point to the growth per level, so it shows here.
+    if (h.stars > 0) {
+      children.push({
+        label: `${h.stars} ${h.stars === 1 ? 'star' : 'stars'}: +${roundHalfUp(starGrowth * 100)}% growth per level`,
+        value: base * scale - base * levelScale,
+        formula: `${base} × ${num('star.growthPerStar')} × ${h.stars} × (${h.level} − 1)`,
+        key: 'star.growthPerStar',
+      });
+    }
   }
   let flat = 0;
   for (const g of [slotGear(state, h, 'weapon'), slotGear(state, h, 'armor')]) {

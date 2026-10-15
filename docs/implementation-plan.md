@@ -948,7 +948,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - **Rules:** loot on every contract won (seeded); auto-salvage when Stores is full; the reset at the Long Night (Legendaries kept); the Smithing cut on crafting and rework.
   - **Breakdowns:** every item line in the stat breakdowns.
   - **Test-first. Golden check:** with Common items, the §5.5.1 fight, every seeded golden fight and every recorded fight in the fixtures replay **line for line**. If one changes, stop and ask.
-- [ ] **T8.7 Ranks, stars and the trophies on hand** (D309, D310).
+- [x] **T8.7 Ranks, stars and the trophies on hand** (D309, D310).
   - Commands `hunter.rankUp` and `hunter.addStar`, with their refusals.
   - The growth formula with the star line in every breakdown; trophies on hand (earned minus spent).
   - Kept through the Long Night (in the reset's row-by-row test).
