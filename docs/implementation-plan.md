@@ -38,6 +38,7 @@ A planning session in chat (not in Claude Code), with the owner, before the mile
 2. Bring the milestone's GDD section to full detail, with owner approval.
 3. Expand this plan's section into tasks, a "Before you start" box, acceptance criteria, and simulator checks.
 4. Log the decisions.
+5. Sweep the decisions log: every `Proposed` row gets an owner yes/no. No row stays `Proposed` across two milestones. *(Claude lists the open `Proposed` rows for the owner at each flesh-out; the yes/no is the owner's.)*
 
 Claude Code doesn't start an outline-level milestone until its flesh-out is done.
 
@@ -87,6 +88,8 @@ Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage r
 | v0.7 | 17 (T7.1–T7.16, T7.13 in two parts) | 13–17 |
 
 Estimates, not commitments. If a task proves bigger than a session, split it here first.
+
+**Actuals [JC].** Counted from `docs/progress.md` (one entry ≈ one session; flesh-out and planning entries excluded). Entries overcount real sessions, because several early milestones were written up task by task within one day, so read these as upper bounds: v0.0 2, v0.1 17, v0.2 6, v0.3 6, v0.4 15, v0.5 7, v0.6 5 (3 numbered build sessions), v0.7 8 (4 numbered build sessions). Every milestone from v0.2 on came in under its estimate except v0.4 (15 entries against 10–14), and v0.4's entries were mostly one per task. The v0.8 flesh-out sets the estimates for v0.8 and later from these actuals.
 
 ### 0.8 Optional extras
 

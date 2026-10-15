@@ -1,7 +1,7 @@
 # The Last Hold — Game Design Document
 
 **Status:** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑.
-**Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something.
+**Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something. The judgment-call lists at the end of each section are a historical record of when each call was added; where a list and a section body disagree, the body (with its revision trail and `decisions.md`) is authoritative.
 **Related docs:** `setting-primer.md` (spoiler-free; readable from v0.1), `lore-secrets.md` (the full truth; **kept outside the repo until v0.5**, D36), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
 ---
@@ -1307,7 +1307,7 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | ≤ 5 min in CI | All policies and checks; from v0.5 the runs play in parallel, one per core, with identical results (D169) |
 
-A benchmark test enforces the first three on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone.
+A benchmark test checks the first three on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone: it warns at the budget and fails only at 2× (plan review A10, technical design §11.2).
 
 ---
 
