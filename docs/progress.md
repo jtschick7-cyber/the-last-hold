@@ -675,3 +675,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Later, same day (owner request):** added the missing debug switch for the Unlit: a button in the debug panel ("Open the Unlit's door") and the `debug.unlit` command (D298 Proposed). The Unlit then replaces one door on a quarter of floors, at most once a run, so a few runs may pass before its door shows. `npm run check` green (1,833 tests).
 - **Playtest fix (owner):** the Unlit's "but…" line was yellow, not red as GDD §5.10.5 and §9.15 say. It now uses a new red token from the Zughy 32 palette (bright on the dark theme, darker on the light one), with a test. `npm run check` green (1,835 tests).
 
+## 2026-10-15 — v0.7 complete
+- **The owner's playtest passed** (on the preview with D294–D298 and the red "but…" line). Plan §0.3 followed: baseline accepted (`sim:accept`, 38 of 38 checks, full suite 216 s), plan status `complete`, checklist ticked, decisions row D299 (D298 accepted).
+- **Merge and tag:** pull request from `milestone/v0.7` into `main`, then tag `v0.7.0` on the merge commit.
+- **Next:** v0.8 (hunter depth) needs its flesh-out session in chat first (plan §0.4); Claude Code does not start it before that. Carried over: WebKit browser tests run only in CI; the Delver never uses Re-roll (D294); the on-load Arvid card has no UI test; the nine older brews have no icons.
+

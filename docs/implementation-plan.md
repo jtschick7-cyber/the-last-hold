@@ -780,7 +780,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: ban
 
 ### v0.7 — Delves
 
-**Status:** in progress *(fleshed out 2026-10-14, D244–D279)*
+**Status:** complete *(fleshed out 2026-10-14, D244–D279; playtest passed 2026-10-15, D299)*
 
 **Goal:** Delves arrive: short, optional runs into the rift under the Hearth Hall, with fights against groups of monsters played back with battle sprites, five patrons' blessings (the Unlit built but locked until Act V), the Deep family as guardians, the Riftglass allowance and shop, six Delve relics and Ember-echoes. Delves never speed up the idle path: everything they give has an idle source or is a sidegrade, a convenience, or works only in Delves (D20). And **Act IV, The Keeper**, written in full, reaches the owner's save on load.
 **Reads:** GDD §4.1, §4.3, §5.0, §5.3, §5.5, §5.6.1, §5.9.3, §5.9.6, §5.10 (all), §5.14.1–5.14.3, §6.1–6.3 (v0.7 lines), §7.9, §8.3, §8.5 and §8.5a, §8.8, §8.10 and §8.10a, §9.6, §9.11, §9.12, §9.15; `lore-secrets.md` §8, §12.2, §13, §15, §20, §28, §29; technical design §5.2, §5.3, §7.2, §9, §12, §13.
@@ -848,15 +848,15 @@ Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: ban
 Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday seeds only (D272). Reported, not judged: Riftglass per week, floors reached per run, Delve relics found.
 
 ### v0.7 owner playtest checklist 👤 (on the preview build)
-- [ ] The rift scene and the Rift card make Delves easy to find and clearly optional.
-- [ ] A run takes about 5 minutes and you understand every fight (watch one, skip one, read one log).
-- [ ] Doors and blessings feel like choices: at least one run where you built around a patron.
-- [ ] Group fights read well: you can tell who hit whom.
-- [ ] The allowance makes sense ("The rift is quiet tonight" when it's empty) and the shop has something you want.
-- [ ] (Debug switch) The Unlit's cards show their drawbacks clearly.
-- [ ] Your save meets Act IV on load: D4-01 plays; the margins and Pechko's scenes read well, one wrongness each (D4-06 and D4-07 deliberately say more).
-- [ ] Battle sprites, sigils and the new art: keep, regenerate or placeholder.
-- [ ] Screenshot pass.
+- [x] The rift scene and the Rift card make Delves easy to find and clearly optional.
+- [x] A run takes about 5 minutes and you understand every fight (watch one, skip one, read one log).
+- [x] Doors and blessings feel like choices: at least one run where you built around a patron.
+- [x] Group fights read well: you can tell who hit whom.
+- [x] The allowance makes sense ("The rift is quiet tonight" when it's empty) and the shop has something you want.
+- [x] (Debug switch) The Unlit's cards show their drawbacks clearly.
+- [x] Your save meets Act IV on load: D4-01 plays; the margins and Pechko's scenes read well, one wrongness each (D4-06 and D4-07 deliberately say more).
+- [x] Battle sprites, sigils and the new art: keep, regenerate or placeholder.
+- [x] Screenshot pass.
 
 **Out of scope:** Act V and the Unlit's door in normal play (Act V is written at the v0.8 flesh-out, D247); hunter XP, trophies or loot from Delves (v0.8, D278); relic slots; the Deep family in the Last Stand; items, ranks, stars, talents and use-skills (v0.8); trust rewards and Orders (v0.10).
 
