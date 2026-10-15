@@ -32,12 +32,7 @@
         "silver-digger": 2
       },
       "autoSettle": true,
-      "priority": [
-        "woodcutter",
-        "farmer",
-        "miner",
-        "silver-digger"
-      ],
+      "priority": ["woodcutter", "farmer", "miner", "silver-digger"],
       "lastSettleAt": 1792073520399.286
     },
     "buildings": {
@@ -248,13 +243,7 @@
       ],
       "nextArrivalAt": 1792084204407,
       "arrivals": 421,
-      "tierWins": [
-        8,
-        10,
-        5,
-        1,
-        0
-      ]
+      "tierWins": [8, 10, 5, 1, 0]
     },
     "bestiary": {
       "wolf": {
@@ -382,14 +371,7 @@
       }
     ],
     "fallen": [],
-    "scenes": [
-      "first-contract",
-      "vow",
-      "ilse",
-      "opening",
-      "sigrun-door",
-      "sigrun-vow"
-    ],
+    "scenes": ["first-contract", "vow", "ilse", "opening", "sigrun-door", "sigrun-vow"],
     "log": {
       "recentFights": [
         {
@@ -408,10 +390,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -427,10 +406,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             },
@@ -446,10 +422,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -486,10 +459,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -505,10 +475,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -524,10 +491,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             }
@@ -564,10 +528,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null
             },
@@ -583,10 +544,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -623,10 +581,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -642,10 +597,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -661,10 +613,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             }
@@ -681,9 +630,7 @@
           "prep": {
             "oils": {},
             "potions": {},
-            "bombs": [
-              "fire-pot"
-            ]
+            "bombs": ["fire-pot"]
           },
           "alchemy": 0
         },
@@ -703,10 +650,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -722,10 +666,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -741,10 +682,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -781,10 +719,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -800,10 +735,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -819,10 +751,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -859,10 +788,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -878,10 +804,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -897,10 +820,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -921,9 +841,7 @@
               "ostap": "thornbane-oil"
             },
             "potions": {},
-            "bombs": [
-              "fire-pot"
-            ]
+            "bombs": ["fire-pot"]
           },
           "alchemy": 0
         },
@@ -943,10 +861,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -962,10 +877,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -981,10 +893,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -1021,10 +930,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -1040,10 +946,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             }
@@ -1080,10 +983,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -1120,10 +1020,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -1139,10 +1036,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": null
             },
@@ -1158,10 +1052,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": null
             }
@@ -1198,10 +1089,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -1217,10 +1105,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": null
             },
@@ -1236,10 +1121,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": null
             }
@@ -1276,10 +1158,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -1295,10 +1174,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": null
             },
@@ -1314,10 +1190,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": null
             }
@@ -1354,10 +1227,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -1373,10 +1243,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": null
             },
@@ -1392,10 +1259,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": null
             }
@@ -1432,10 +1296,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -1451,10 +1312,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "steel-blade",
               "armorGear": "hide-armor"
             },
@@ -1470,10 +1328,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "hide-armor"
             }
@@ -1510,10 +1365,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -1529,10 +1381,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -1548,10 +1397,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             }
@@ -1588,10 +1434,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -1628,10 +1471,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -1647,10 +1487,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -1666,10 +1503,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             }
@@ -1686,9 +1520,7 @@
           "prep": {
             "oils": {},
             "potions": {},
-            "bombs": [
-              "fire-pot"
-            ]
+            "bombs": ["fire-pot"]
           },
           "alchemy": 0
         },
@@ -1708,10 +1540,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -1727,10 +1556,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -1746,10 +1572,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             }
@@ -1789,10 +1612,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -1808,10 +1628,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -1827,10 +1644,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -1867,10 +1681,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -1886,10 +1697,7 @@
                 "armor": 7,
                 "speed": 8
               },
-              "traits": [
-                "haggler",
-                "quick"
-              ],
+              "traits": ["haggler", "quick"],
               "weapon": null,
               "armorGear": null
             },
@@ -1905,10 +1713,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": null,
               "armorGear": null
             }
@@ -1945,10 +1750,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "shield-companion",
-                "old-wright"
-              ],
+              "traits": ["shield-companion", "old-wright"],
               "weapon": null,
               "armorGear": null
             }
@@ -1985,10 +1787,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -2004,10 +1803,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -2023,10 +1819,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -2063,10 +1856,7 @@
                 "armor": 7,
                 "speed": 8
               },
-              "traits": [
-                "haggler",
-                "quick"
-              ],
+              "traits": ["haggler", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -2082,10 +1872,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -2101,10 +1888,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null
             }
@@ -2123,9 +1907,7 @@
               "toma": "thornbane-oil"
             },
             "potions": {},
-            "bombs": [
-              "frost-pot"
-            ]
+            "bombs": ["frost-pot"]
           },
           "alchemy": 2
         },
@@ -2145,10 +1927,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -2164,10 +1943,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -2183,10 +1959,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -2202,10 +1975,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -2242,10 +2012,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -2261,10 +2028,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             }
@@ -2301,10 +2065,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -2341,10 +2102,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -2360,10 +2118,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             }
@@ -2400,10 +2155,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -2419,10 +2171,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             },
@@ -2438,10 +2187,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -2478,10 +2224,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -2497,10 +2240,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             },
@@ -2516,10 +2256,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -2556,10 +2293,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -2575,10 +2309,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             },
@@ -2594,10 +2325,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             }
@@ -2634,10 +2362,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -2653,10 +2378,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -2672,10 +2394,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -2692,9 +2411,7 @@
           "prep": {
             "oils": {},
             "potions": {},
-            "bombs": [
-              "fire-pot"
-            ]
+            "bombs": ["fire-pot"]
           },
           "alchemy": 4
         },
@@ -2714,10 +2431,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -2733,10 +2447,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -2775,10 +2486,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -2794,10 +2502,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -2813,10 +2518,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null
             }
@@ -2855,10 +2557,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -2874,10 +2573,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -2893,10 +2589,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -2933,10 +2626,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -2952,10 +2642,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -2971,10 +2658,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null
             }
@@ -3011,10 +2695,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -3053,10 +2734,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3072,10 +2750,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3091,10 +2766,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -3133,10 +2805,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -3152,10 +2821,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -3171,10 +2837,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             }
@@ -3211,10 +2874,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             }
@@ -3251,10 +2911,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3270,10 +2927,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3289,10 +2943,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -3329,10 +2980,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3348,10 +2996,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3367,10 +3012,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -3407,10 +3049,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -3426,10 +3065,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -3445,10 +3081,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor"
             }
@@ -3485,10 +3118,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3504,10 +3134,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3523,10 +3150,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -3563,10 +3187,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3582,10 +3203,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3601,10 +3219,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             }
@@ -3641,10 +3256,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3660,10 +3272,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3679,10 +3288,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             }
@@ -3722,10 +3328,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -3741,10 +3344,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -3760,10 +3360,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -3800,10 +3397,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3819,10 +3413,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3838,10 +3429,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3857,10 +3445,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "mail"
             }
@@ -3897,10 +3482,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3916,10 +3498,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3935,10 +3514,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             }
@@ -3975,10 +3551,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -3994,10 +3567,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4013,10 +3583,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             }
@@ -4134,10 +3701,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4153,10 +3717,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4172,10 +3733,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4191,10 +3749,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4210,10 +3765,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4229,10 +3781,7 @@
                 "armor": 7,
                 "speed": 8
               },
-              "traits": [
-                "haggler",
-                "quick"
-              ],
+              "traits": ["haggler", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -4271,12 +3820,7 @@
             "trophies": 78,
             "total": 173
           },
-          "relicsFound": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relicsFound": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "arrival": true,
           "trustSteps": [],
           "band": "triumphant",
@@ -4317,10 +3861,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4336,10 +3877,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4355,10 +3893,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4374,10 +3909,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -4397,12 +3929,7 @@
             "walls": 1,
             "watchtower": 1
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -4465,10 +3992,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4484,10 +4008,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -4503,10 +4024,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -4523,12 +4041,7 @@
             "walls": 2,
             "watchtower": 1
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -4589,10 +4102,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -4608,10 +4118,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             },
@@ -4627,10 +4134,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -4645,12 +4149,7 @@
             "walls": 0,
             "watchtower": 0
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -4713,10 +4212,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4732,10 +4228,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -4751,10 +4244,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -4771,12 +4261,7 @@
             "walls": 2,
             "watchtower": 1
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -4838,10 +4323,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null
             },
@@ -4857,10 +4339,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null
             },
@@ -4876,10 +4355,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null
             }
@@ -4894,12 +4370,7 @@
             "walls": 0,
             "watchtower": 0
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -4962,10 +4433,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -4981,10 +4449,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5000,10 +4465,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5019,10 +4481,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5038,10 +4497,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             },
@@ -5057,10 +4513,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -5080,12 +4533,7 @@
             "walls": 2,
             "watchtower": 1
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -5157,10 +4605,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5176,10 +4621,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5195,10 +4637,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5214,10 +4653,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5233,10 +4669,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5252,10 +4685,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -5272,12 +4702,7 @@
             "walls": 3,
             "watchtower": 2
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -5350,10 +4775,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5369,10 +4791,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5388,10 +4807,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5407,10 +4823,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5426,10 +4839,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -5445,10 +4855,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             }
@@ -5467,12 +4874,7 @@
             "walls": 1,
             "watchtower": 0
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -5544,10 +4946,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5563,10 +4962,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5582,10 +4978,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5601,10 +4994,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5620,10 +5010,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5639,10 +5026,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -5659,12 +5043,7 @@
             "walls": 1,
             "watchtower": 0
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -5692,10 +5071,7 @@
           },
           "relicsFound": [],
           "arrival": false,
-          "trustSteps": [
-            "trust:kozly-hollow:sworn",
-            "trust:ravenfell:sworn"
-          ],
+          "trustSteps": ["trust:kozly-hollow:sworn", "trust:ravenfell:sworn"],
           "band": "triumphant",
           "alchemy": 0,
           "seen": false
@@ -5734,10 +5110,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5753,10 +5126,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5772,10 +5142,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5791,10 +5158,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5810,10 +5174,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5829,10 +5190,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -5851,12 +5209,7 @@
             "walls": 2,
             "watchtower": 1
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -5923,10 +5276,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5942,10 +5292,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5961,10 +5308,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5980,10 +5324,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -5999,10 +5340,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6018,10 +5356,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             }
@@ -6040,12 +5375,7 @@
             "walls": 1,
             "watchtower": 0
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -6112,10 +5442,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6131,10 +5458,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6150,10 +5474,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6169,10 +5490,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6188,10 +5506,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -6207,10 +5522,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -6228,12 +5540,7 @@
             "walls": 4,
             "watchtower": 3
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -6300,10 +5607,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6319,10 +5623,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6338,10 +5639,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6357,10 +5655,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6376,10 +5671,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6395,10 +5687,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             }
@@ -6424,12 +5713,7 @@
             "walls": 5,
             "watchtower": 5
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -6496,10 +5780,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6515,10 +5796,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6534,10 +5812,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6553,10 +5828,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6572,10 +5844,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6591,10 +5860,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -6612,12 +5878,7 @@
             "walls": 2,
             "watchtower": 1
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -6684,10 +5945,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6703,10 +5961,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6722,10 +5977,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6741,10 +5993,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6760,10 +6009,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6779,10 +6025,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             }
@@ -6800,12 +6043,7 @@
             "walls": 3,
             "watchtower": 2
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -6872,10 +6110,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6891,10 +6126,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6910,10 +6142,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "emberwright-plate"
             },
@@ -6929,10 +6158,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -6948,10 +6174,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "silvered-blade",
               "armorGear": "mail"
             },
@@ -6967,10 +6190,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "steel-blade",
               "armorGear": "mail"
             }
@@ -6989,12 +6209,7 @@
             "walls": 2,
             "watchtower": 1
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -7061,10 +6276,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -7080,10 +6292,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -7099,10 +6308,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -7118,10 +6324,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -7137,10 +6340,7 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             },
@@ -7156,10 +6356,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "wrights-blade",
               "armorGear": "emberwright-plate"
             }
@@ -7178,12 +6375,7 @@
             "walls": 5,
             "watchtower": 4
           },
-          "relics": [
-            "tally-stick",
-            "bone-whistle",
-            "plough-share",
-            "copper-still"
-          ],
+          "relics": ["tally-stick", "bone-whistle", "plough-share", "copper-still"],
           "knowledge": {
             "wolf": 4,
             "kikimora": 4,
@@ -7862,66 +7054,18 @@
     },
     "book": {
       "properties": {
-        "yarrow": [
-          0,
-          1,
-          2
-        ],
-        "mugwort": [
-          0,
-          1,
-          2
-        ],
-        "juniper": [
-          0,
-          1,
-          2
-        ],
-        "honeycomb": [
-          0,
-          1,
-          2
-        ],
-        "hares-foot": [
-          0,
-          1,
-          2
-        ],
-        "pitch": [
-          0,
-          1,
-          2
-        ],
-        "rime-salt": [
-          0,
-          1,
-          2
-        ],
-        "grave-dust": [
-          0,
-          1,
-          2
-        ],
-        "river-pearl": [
-          0,
-          1,
-          2
-        ],
-        "thornwood": [
-          0,
-          1,
-          2
-        ],
-        "wolf-fang": [
-          0,
-          1,
-          2
-        ],
-        "noon-poppy": [
-          0,
-          1,
-          2
-        ]
+        "yarrow": [0, 1, 2],
+        "mugwort": [0, 1, 2],
+        "juniper": [0, 1, 2],
+        "honeycomb": [0, 1, 2],
+        "hares-foot": [0, 1, 2],
+        "pitch": [0, 1, 2],
+        "rime-salt": [0, 1, 2],
+        "grave-dust": [0, 1, 2],
+        "river-pearl": [0, 1, 2],
+        "thornwood": [0, 1, 2],
+        "wolf-fang": [0, 1, 2],
+        "noon-poppy": [0, 1, 2]
       },
       "tried": [
         "juniper+pitch",
@@ -7949,11 +7093,7 @@
         "seed": "fe9f602e3b10c984:delve:5",
         "baseTier": 5,
         "floor": 2,
-        "party": [
-          "halvar",
-          "zora",
-          "ostap"
-        ],
+        "party": ["halvar", "zora", "ostap"],
         "snapshots": [
           {
             "id": "halvar",
@@ -7967,10 +7107,7 @@
               "armor": 8,
               "speed": 7
             },
-            "traits": [
-              "shieldwall",
-              "steady"
-            ],
+            "traits": ["shieldwall", "steady"],
             "weapon": "wrights-blade",
             "armorGear": "emberwright-plate"
           },
@@ -7986,10 +7123,7 @@
               "armor": 3,
               "speed": 13
             },
-            "traits": [
-              "fen-born",
-              "quick"
-            ],
+            "traits": ["fen-born", "quick"],
             "weapon": "wrights-blade",
             "armorGear": "emberwright-plate"
           },
@@ -8005,10 +7139,7 @@
               "armor": 4,
               "speed": 9
             },
-            "traits": [
-              "bonesetter",
-              "hard-to-kill"
-            ],
+            "traits": ["bonesetter", "hard-to-kill"],
             "weapon": "wrights-blade",
             "armorGear": "emberwright-plate"
           }
@@ -8022,9 +7153,7 @@
         "vigilUsed": false,
         "lastFloor": {
           "floor": 1,
-          "blessings": [
-            "the-smiths-mark"
-          ],
+          "blessings": ["the-smiths-mark"],
           "health": {
             "halvar": 1,
             "zora": 1,
@@ -8034,22 +7163,13 @@
           "vigilUsed": false,
           "result": "win"
         },
-        "blessings": [
-          "the-smiths-mark"
-        ],
+        "blessings": ["the-smiths-mark"],
         "stage": {
           "kind": "offer",
           "patron": "unlit",
-          "cards": [
-            "no-name",
-            "cold-hands",
-            "drawn-thin"
-          ]
+          "cards": ["no-name", "cold-hands", "drawn-thin"]
         },
-        "lastDoors": [
-          "weaver",
-          "unlit"
-        ],
+        "lastDoors": ["weaver", "unlit"],
         "unlitDoorsUsed": 1,
         "rerollUsed": false,
         "earned": {
@@ -8155,27 +7275,12 @@
         }
       ],
       "taken": {
-        "wolf": [
-          "faint",
-          "warm"
-        ],
-        "hearth-crone": [
-          "warm"
-        ],
-        "drowned-bell": [
-          "faint"
-        ],
-        "pale-smith": [
-          "faint",
-          "warm"
-        ],
-        "weaver": [
-          "warm",
-          "faint"
-        ],
-        "unlit": [
-          "bright"
-        ]
+        "wolf": ["faint", "warm"],
+        "hearth-crone": ["warm"],
+        "drowned-bell": ["faint"],
+        "pale-smith": ["faint", "warm"],
+        "weaver": ["warm", "faint"],
+        "unlit": ["bright"]
       },
       "kills": {
         "restless-dead": 7,
