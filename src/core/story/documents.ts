@@ -1,5 +1,6 @@
 import { noteDocument } from '../skills/hooks';
 import { knowledgeLevels } from '../../content/knowledge';
+import { monsters } from '../../content/monsters';
 import { allDocuments, LAST_WRITTEN_ACT, UNWRITTEN_ACT_LINE } from '../../content/story/acts';
 import type { DocumentCondition, DocumentDef } from '../../content/story/documents';
 import { TRUST_LEVELS, type TrustLevel } from '../../content/story/trust';
@@ -81,9 +82,11 @@ const standingMet = (state: GameState, doc: DocumentDef, p: ActProgress): boolea
     case 'actStand':
     case 'nextWarden':
       return false;
-    case 'arvidArrives':
-      // Judged when he arrives (core/story/act3.ts), never by a sweep.
-      return false;
+    case 'arvidArrives': // judged when he arrives (core/story/act3.ts)
+    case 'actBegins': // judged when the act begins (beginAct)
+      return false; // never by a sweep
+    case 'familyWon':
+      return (p.winsByFamily[c.family] ?? 0) >= c.nth;
     case 'huntersTogether':
       // D213: both at the hold, once the act has begun, after the earlier scene is found.
       return c.hunters.every((h) => state.hunters[h] !== undefined) && isFound(state, c.after);
@@ -98,6 +101,8 @@ const VIA: Readonly<Record<DocumentCondition['kind'], FoundVia>> = {
   actStand: 'stand',
   nextWarden: 'warden',
   arvidArrives: 'warden',
+  actBegins: 'warden',
+  familyWon: 'contract',
   huntersTogether: 'roster',
 };
 
@@ -129,16 +134,21 @@ export const recordWin = (state: GameState, contract: ContractInstance): string[
     p.wins += 1;
     p.winsByVillage[contract.village] = (p.winsByVillage[contract.village] ?? 0) + 1;
     if (contract.location === 'ruin') p.ruinWins += 1;
+    const family = monsters[contract.monster].family;
+    p.winsByFamily[family] = (p.winsByFamily[family] ?? 0) + 1;
   }
   const keys: string[] = [];
   for (const doc of allDocuments) {
     const c = doc.condition;
     const p = progressOf(state, doc.act);
-    if (c.kind !== 'contractWon' || !p || isFound(state, doc.id)) continue;
-    const met =
-      c.minTrust === undefined
-        ? winCount(p, c) >= c.nth
-        : contract.village === c.village && trustAtLeast(state, contract.village, c.minTrust);
+    if (!p || isFound(state, doc.id)) continue;
+    let met = false;
+    if (c.kind === 'contractWon')
+      met =
+        c.minTrust === undefined
+          ? winCount(p, c) >= c.nth
+          : contract.village === c.village && trustAtLeast(state, contract.village, c.minTrust);
+    else if (c.kind === 'familyWon') met = standingMet(state, doc, p);
     if (met) keys.push(...findDocument(state, doc, 'contract'));
   }
   return keys;
@@ -163,6 +173,24 @@ export const wardenDocuments = (state: GameState): string[] => {
     if (doc.condition.kind !== 'nextWarden' || act === null || doc.act >= act) continue;
     if (progressOf(state, doc.act)) keys.push(...findDocument(state, doc, 'warden'));
   }
+  return keys;
+};
+
+/**
+ * An act begins (GDD §5.14.1, D245): its opening scene plays, and any Rank document the
+ * save already stands behind is found with it. Act III's Arvid has his own arrival
+ * (core/story/act3.ts). Returns the keys of everything new.
+ */
+export const beginAct = (
+  state: GameState,
+  act: number,
+  via: Extract<FoundVia, 'warden' | 'arrival'>,
+): string[] => {
+  const keys: string[] = [];
+  for (const doc of allDocuments)
+    if (doc.act === act && doc.condition.kind === 'actBegins' && progressOf(state, act))
+      keys.push(...findDocument(state, doc, via));
+  keys.push(...sweepDocuments(state, via === 'arrival' ? 'arrival' : undefined));
   return keys;
 };
 

@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { allDocuments, UNWRITTEN_ACT_LINE } from '../../src/content/story/acts';
 import { kamenfellNoticeEnd } from '../../src/content/story/scenes';
+import type { MonsterId } from '../../src/content/monsters';
 import type { VillageId } from '../../src/content/villages';
 import type { LocationId } from '../../src/content/damage';
 import { noticeFor } from '../../src/core/contracts/notice';
@@ -16,6 +17,7 @@ import { createNewGame } from '../../src/core/state/new-game';
 import type { ContractInstance, GameState } from '../../src/core/state/game-state';
 import {
   actClosing,
+  beginAct,
   isFound,
   recordWin,
   standDocuments,
@@ -25,17 +27,25 @@ import {
 
 const T0 = Date.UTC(2026, 9, 14, 8);
 let n = 0;
-const contract = (village: VillageId, location: LocationId = 'field'): ContractInstance => ({
+const contract = (
+  village: VillageId,
+  location: LocationId = 'field',
+  monster: MonsterId = 'wolf',
+): ContractInstance => ({
   id: `c${(n += 1)}`,
   village,
-  monster: 'wolf',
+  monster,
   tier: 2,
   location,
   arrivedAt: T0,
   revealed: 3,
 });
-const win = (s: GameState, village: VillageId, location?: LocationId): string[] =>
-  recordWin(s, contract(village, location));
+const win = (
+  s: GameState,
+  village: VillageId,
+  location?: LocationId,
+  monster?: MonsterId,
+): string[] => recordWin(s, contract(village, location, monster));
 const found = (s: GameState): string[] => s.story.documents.map((d) => d.id).sort();
 
 /** Starts the next cycle and its act, as the Long Night does. */
@@ -273,6 +283,94 @@ describe('Act III (lore-secrets §26)', () => {
   });
 });
 
+describe('Act IV (lore-secrets §28, D245)', () => {
+  /** A save in Act IV's cycle (cycle 4): Acts I to III behind it, with a family win in each earlier one. */
+  const act4 = (): GameState => {
+    const s = createNewGame('act4', T0);
+    win(s, 'mirograd', 'field', 'kikimora'); // Act I wins: none of them counts in Act IV
+    win(s, 'mirograd', 'field', 'wolf');
+    win(s, 'mirograd', 'field', 'wolf');
+    nextCycle(s);
+    win(s, 'mirograd', 'field', 'huldra');
+    nextCycle(s);
+    nextCycle(s);
+    return s;
+  };
+
+  it('D4-01: the act beginning, on the new-warden sheet or on load; never by a sweep', () => {
+    const s = act4();
+    expect(isFound(s, 'D4-01')).toBe(false);
+    expect(sweepDocuments(s)).not.toContain('doc:D4-01');
+    expect(beginAct(s, 4, 'warden')).toContain('doc:D4-01');
+    expect(s.story.documents.find((d) => d.id === 'D4-01')).toMatchObject({
+      cycle: 4,
+      via: 'warden',
+    });
+    expect(beginAct(s, 4, 'warden')).toEqual([]); // once
+    const t = act4();
+    expect(beginAct(t, 4, 'arrival')).toContain('doc:D4-01');
+    expect(t.story.documents.find((d) => d.id === 'D4-01')?.via).toBe('arrival');
+    const none = createNewGame('no-act-4', T0); // an act not begun has no scene
+    expect(beginAct(none, 4, 'warden')).toEqual([]);
+    mark('D4-01');
+  });
+
+  it('D4-02: the 1st Field & Forest Spirits contract won in Act IV, with three names', () => {
+    const s = act4();
+    expect(isFound(s, 'D4-02')).toBe(false); // the Kikimora and the Huldra of earlier acts do not count
+    expect(win(s, 'dubno-ford', 'field', 'wolf')).not.toContain('doc:D4-02'); // another family
+    expect(win(s, 'dubno-ford', 'ruin', 'wolf')).not.toContain('doc:D4-02');
+    expect(win(s, 'dubno-ford', 'field', 'leshy')).toEqual(
+      expect.arrayContaining(['doc:D4-02', 'name:21', 'name:22', 'name:24']),
+    );
+    expect(s.story.documents.find((d) => d.id === 'D4-02')?.via).toBe('contract');
+    expect(win(s, 'dubno-ford', 'field', 'kikimora')).not.toContain('doc:D4-02'); // once
+    mark('D4-02');
+  });
+
+  it('D4-03: the 2nd Beasts & Wilds contract won in Act IV, not the 1st, with three names', () => {
+    const s = act4();
+    expect(win(s, 'kozly-hollow', 'field', 'wolf')).not.toContain('doc:D4-03');
+    expect(win(s, 'kozly-hollow', 'field', 'bies')).toEqual(
+      expect.arrayContaining(['doc:D4-03', 'name:25', 'name:26', 'name:27']),
+    );
+    mark('D4-03');
+  });
+
+  it('D4-02 and D4-03 stay obtainable in a later cycle (counts run on until met)', () => {
+    const s = act4();
+    nextCycle(s);
+    expect(win(s, 'mirograd', 'field', 'poludnitsa')).toContain('doc:D4-02');
+  });
+
+  it('D4-04 and D4-05: the Citadel and Bastion reached in Act IV’s cycle or later', () => {
+    const s = act4();
+    reach(s, 'citadel');
+    expect(sweepDocuments(s)).toContain('doc:D4-04');
+    expect(isFound(s, 'D4-05')).toBe(false);
+    reach(s, 'bastion');
+    expect(sweepDocuments(s)).toContain('doc:D4-05');
+    mark('D4-04', 'D4-05');
+  });
+
+  it('D4-06 on the Act IV stand; D4-07 when the next warden arrives', () => {
+    const s = act4();
+    standDocuments(s);
+    expect(isFound(s, 'D4-06')).toBe(true);
+    expect(isFound(s, 'D4-07')).toBe(false);
+    nextCycle(s);
+    expect(wardenDocuments(s)).toContain('doc:D4-07');
+    mark('D4-06', 'D4-07');
+  });
+
+  it('D4-08: the 2nd Mirograd contract won in Act IV, not the 1st', () => {
+    const s = act4();
+    expect(win(s, 'mirograd')).not.toContain('doc:D4-08'); // Act I and III wins do not count
+    expect(win(s, 'mirograd')).toContain('doc:D4-08');
+    mark('D4-08');
+  });
+});
+
 describe('acts (GDD §5.14.1)', () => {
   it('documents stay obtainable in later cycles', () => {
     const s = createNewGame('later', T0);
@@ -299,9 +397,10 @@ describe('acts (GDD §5.14.1)', () => {
     expect(actClosing(1)).toMatchObject({ id: 'D1-06' });
     expect(actClosing(2)).toMatchObject({ id: 'D2-09' });
     expect(actClosing(3)).toMatchObject({ id: 'D3-06' });
-    expect(actClosing(4)).toBe(UNWRITTEN_ACT_LINE);
+    expect(actClosing(4)).toMatchObject({ id: 'D4-06' });
+    expect(actClosing(5)).toBe(UNWRITTEN_ACT_LINE);
     expect(actClosing(null)).toBeNull();
-    expect(allDocuments.some((d) => d.act >= 4)).toBe(false);
+    expect(allDocuments.some((d) => d.act >= 5)).toBe(false);
   });
 
   it('in Act II, a fell village’s ruin notice names Kamenfell; never in Act I or the lowlands', () => {

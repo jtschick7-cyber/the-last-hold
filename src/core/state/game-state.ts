@@ -26,7 +26,7 @@ import type { InjuryKind } from '../contracts/injury';
 // v0.5 arrival (plan T5.3); v6 adds the recipe book, warden skills, experiments in the
 // kettles, the Alchemy level frozen on fights and stands, and each stand's band (plan
 // T6.3, D218). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 6;
+export const SCHEMA_VERSION = 7;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {

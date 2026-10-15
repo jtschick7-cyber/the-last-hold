@@ -66,9 +66,10 @@ describe('the true-ending gate (lore-secrets §8)', () => {
     for (const s of sources) expect(allowed).toContain(s.kind);
     // Documents that carry names arrive on conditions that recur in every cycle.
     for (const d of allDocuments.filter((x) => x.names.length > 0))
-      expect(['contractWon', 'rankReached', 'knowledge', 'hunterAtRank'], d.id).toContain(
-        d.condition.kind,
-      );
+      expect(
+        ['contractWon', 'familyWon', 'rankReached', 'knowledge', 'hunterAtRank'],
+        d.id,
+      ).toContain(d.condition.kind);
   });
 
   it('none is missable: letters are story hunters’, who never die, at levels a hunter can reach', () => {
