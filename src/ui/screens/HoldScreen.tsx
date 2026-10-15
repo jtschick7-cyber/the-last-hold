@@ -10,6 +10,7 @@ import { PeasantsPanel } from './PeasantsPanel';
 import { Sprite } from '../widgets/Sprite';
 import { ThreatMeter } from '../widgets/ThreatMeter';
 import { LongNightView, lastStand } from '../sheets/LongNightSheets';
+import { RiftCard } from '../delve/RiftCard';
 
 // GDD §9.2: the hold header (pixel hold scene, via the asset manifest), the
 // peasants panel, and the build list.
@@ -57,6 +58,7 @@ export const HoldScreen = () => {
           </p>
         )}
       </header>
+      <RiftCard />
       <PeasantsPanel />
       <BuildList />
     </div>

@@ -1,6 +1,8 @@
 import { useState } from 'preact/hooks';
 import { hunters } from '../../content/hunters';
 import { scenes, storyScenes, type SceneId } from '../../content/text/scenes';
+import { riftScene } from '../../content/delves/rift-text';
+import { delvesOpen } from '../../core/delves/access';
 import { isFound } from '../../core/story/documents';
 import styles from '../styles/ui.module.css';
 import { WardenNameField } from '../widgets/WardenNameField';
@@ -68,6 +70,28 @@ const OpeningView = () => {
   );
 };
 
+// lore-secrets §29 (D266): the way down, shown once when a warden first reaches the Keep.
+const RiftSceneView = () => (
+  <div>
+    {riftScene.map((p) => (
+      <p key={p}>{p}</p>
+    ))}
+    <button
+      type="button"
+      class={styles.btnPrimary}
+      style={{ width: '100%' }}
+      onClick={() => {
+        dispatch({ type: 'delve.seeScene' });
+        closeSheet();
+      }}
+    >
+      Onward
+    </button>
+  </div>
+);
+
+const showRift = (): void => openSheet('The way down', () => <RiftSceneView />);
+
 const show = (id: SceneId): void => {
   dispatch({ type: 'scene.seen', scene: id });
   openSheet(sceneOf(id).title, () => (id === 'opening' ? <OpeningView /> : <SceneView id={id} />));
@@ -104,6 +128,7 @@ export const playScenes = (): void => {
   }
   // The first time the hold reaches Keep with hunters on the roster (§6.6).
   if (s.cycle.age === 'keep' && Object.keys(s.hunters).length >= 2 && !s.scenes.includes('vow')) {
-    show('vow');
+    return show('vow');
   }
+  if (delvesOpen(s) && !s.delve.sceneSeen) showRift();
 };
