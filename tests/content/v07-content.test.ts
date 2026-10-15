@@ -302,7 +302,8 @@ describe('§7.9 constants (D268)', () => {
       balance.delve.doors.value,
       balance.delve.offers.value,
     ]).toEqual([3, 6, 2, 3]);
-    expect(balance.delve.baseTier.value).toEqual({ keep: 2, citadel: 3, bastion: 4 });
+    // Tuned in T7.16 (D296): one tier deeper than the flesh-out's 2 / 3 / 4.
+    expect(balance.delve.baseTier.value).toEqual({ keep: 3, citadel: 4, bastion: 5 });
     expect(balance.delve.groupSize.value).toEqual({ floors1to3: 2, floors4to6: 3 });
     expect([
       balance.delve.memberHealth.value,

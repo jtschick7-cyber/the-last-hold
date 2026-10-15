@@ -43,7 +43,7 @@ test('the rift scene, the Rift card, a whole Delve, the result and the shop', as
   await shot(page, 'delve-card');
   await card.getByRole('button', { name: 'Delve', exact: true }).click();
   const sheet = page.getByRole('dialog', { name: 'Delve' });
-  await expect(sheet.getByText(/Keep: floors tier 2–3, guardian tier 4/)).toBeVisible();
+  await expect(sheet.getByText(/Keep: floors tier 3–4, guardian tier 5/)).toBeVisible();
   await shot(page, 'delve-entry');
   await sheet.getByRole('button', { name: 'Start' }).click();
 

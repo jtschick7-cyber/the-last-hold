@@ -85,7 +85,7 @@ describe('the Rift card (§9.15)', () => {
 
 describe('the entry sheet (§9.15)', () => {
   it('shows the depth of the Rank the way the GDD words it', () => {
-    expect(entryView(strongKeep('depth')).depth).toBe('Keep: floors tier 2–3, guardian tier 4');
+    expect(entryView(strongKeep('depth')).depth).toBe('Keep: floors tier 3–4, guardian tier 5');
   });
 
   it('suggests the three, and greys out whoever cannot go with the reason', () => {

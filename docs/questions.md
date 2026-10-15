@@ -225,3 +225,14 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Recommendation:** (a), with (b) if it is still close.
 - **Blocks:** nothing now. The rule says check must be green in 90 s or less, so I did not claim it passes: everything passes, but the time is over.
 - **Answer (owner):** (a), 2026-10-15 (D293). `npm run check` now runs typecheck, lint and the format check at the same time (`scripts/check.mjs`); nothing was skipped or loosened. Measured on this container, an idle run: 64 s before, 52 s after.
+
+### Q24 — How hard should a Delve be? (T7.16; not blocking, I picked a reading and logged it as D296) — open
+- **What I found:** the simulated Delver (picks the highest-rarity blessing, never plays cleverly) beat the guardian in 56 of 59 runs and cleared all six floors in every run. Your browser run agreed. No document says how often a run should be won, so the checks could not call it too easy.
+- **Options (same five Monday seeds, guardian wins):**
+  (a) **One tier deeper at every Rank** (Keep 3 / Citadel 4 / Bastion 5): **71%** of runs beat the guardian, floors 1–6 nearly always cleared, the guardian is the real test. **I set this (D296).**
+  (b) Leave the flesh-out's depth (Keep 2 / 3 / 4): 95%. Delves stay a gentle side trip.
+  (c) One tier deeper and tougher monsters (memberHealth 0.75, memberMight 0.8): 59%, a few runs fall on floors 1–3.
+  (d) Two tiers deeper (Keep 4 / 5 / 6): 21%, one seed never beats a guardian, which puts the first-guardian row at risk.
+- **Recommendation:** (a). It is one change, it keeps the shape "clear the floors, then face the guardian", and a player who builds around a patron should do better than the simulator's simple pick. Your playtest on the preview decides; any of the others is a one-number change.
+- **Blocks:** nothing. All 38 simulator checks pass either way.
+

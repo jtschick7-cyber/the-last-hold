@@ -46,14 +46,14 @@ describe('access and depth (D249, D253)', () => {
     const later = strongKeep();
     later.cycle.age = 'hamlet';
     expect(delvesOpen(later)).toBe(true);
-    expect(baseTierFor(later)).toBe(2);
+    expect(baseTierFor(later)).toBe(3);
   });
 
   it('floors 1–3 are at the Rank’s tier, 4–6 one higher, the guardian two higher', () => {
     for (const [rank, base] of [
-      ['keep', 2],
-      ['citadel', 3],
-      ['bastion', 4],
+      ['keep', 3],
+      ['citadel', 4],
+      ['bastion', 5],
     ] as const) {
       const s = strongKeep(`depth-${rank}`, rank);
       expect(start(s).ok).toBe(true);
@@ -74,8 +74,8 @@ describe('access and depth (D249, D253)', () => {
     const s = strongKeep('depth-fixed');
     start(s);
     s.cycle.age = 'bastion';
-    expect(s.delve.run?.baseTier).toBe(2);
-    expect(baseTierFor(s)).toBe(4);
+    expect(s.delve.run?.baseTier).toBe(3);
+    expect(baseTierFor(s)).toBe(5);
   });
 
   it('takes exactly three distinct, ready, active hunters', () => {

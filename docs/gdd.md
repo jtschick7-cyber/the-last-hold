@@ -993,7 +993,7 @@ Delves are short, active, optional runs into the rift under the Hearth Hall (`lo
 - **Starting the Last Stand ends a paused run** and keeps what it earned (the stand's confirmation says so) (D267).
 
 #### 5.10.3 Depth *(D249)*
-- Fixed when the run starts, from the hold's Rank: floors 1–3 at `delve.baseTier` (Keep 2, Citadel 3, Bastion 4); floors 4–6 at that +`delve.upperTierStep` (1); the guardian at +`delve.guardianTierStep` (2).
+- Fixed when the run starts, from the hold's Rank: floors 1–3 at `delve.baseTier` (Keep 3, Citadel 4, Bastion 5); floors 4–6 at that +`delve.upperTierStep` (1); the guardian at +`delve.guardianTierStep` (2).
 - Past tier 5, the Last Stand's scaling continues (Health and Might ×1.35, Armor ×1.15 per step, §5.9.3).
 - A Rank-up during a run doesn't change it.
 
@@ -1449,7 +1449,7 @@ Every constant here is tunable unless marked **locked** (D268).
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Party, floors, doors, offers | fixed shape of a run | `delve.partySize` = 3 **(locked)**, `delve.floors` = 6 **(locked)**, `delve.doors` = 2 **(locked)**, `delve.offers` = 3 **(locked)** | 5.10.2, 5.10.5 |
-| Depth | floors 1–3 at base; 4–6 at base + step; guardian at base + guardian step | `delve.baseTier` = { keep: 2, citadel: 3, bastion: 4 }, `delve.upperTierStep` = 1, `delve.guardianTierStep` = 2 | 5.10.3 |
+| Depth | floors 1–3 at base; 4–6 at base + step; guardian at base + guardian step | `delve.baseTier` = { keep: 3, citadel: 4, bastion: 5 }, `delve.upperTierStep` = 1, `delve.guardianTierStep` = 2 | 5.10.3 |
 | Group | members per floor; each a contract monster of the tier × these | `delve.groupSize` = { floors1to3: 2, floors4to6: 3 }, `delve.memberHealth` = 0.5, `delve.memberMight` = 0.6 | 5.10.4 |
 | Guardian | Deep species of the tier × this Health | `delve.guardianHealth` = 2 | 5.10.4, 8.3 |
 | Recovery | standing hunters recover this share of max Health before each floor | `delve.recovery` = 0.2 | 5.10.6 |
@@ -2209,7 +2209,7 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 ### 9.15 Delve screens *(v0.7, D264)*
 
 - **Rift card** (Hold screen, under the hold header, from the first Keep): *"Riftglass: 40 waiting, banks up to 140"* (long-press: the allowance's breakdown), and **Delve** or **Continue (floor 3)**. The Hold tab shows a badge when a run is paused or the allowance is full. No new tab.
-- **Entry sheet:** three slots with a suggested three (Vanguard, Striker, Mender if available, highest levels); unavailable hunters greyed with the reason ("on a contract", "recovering"); the depth ("Keep: floors tier 2–3, guardian tier 4"); the allowance; Chosen start, if bought; **Start**.
+- **Entry sheet:** three slots with a suggested three (Vanguard, Striker, Mender if available, highest levels); unavailable hunters greyed with the reason ("on a contract", "recovering"); the depth ("Keep: floors tier 3–4, guardian tier 5"); the allowance; Chosen start, if bought; **Start**.
 - **Floor:** the group and the party as battle sprites; the fight plays back in about 10–20 s; **Skip** and **Log** (the fight log of §9.6, with group targets named: "Zora hits the second Upyr"). Health bars carry over.
 - **Doors:** two large cards, each with the patron's name and sigil and *"Ahead: Restless Dead"*.
 - **Blessing:** three cards: rarity frame, name, one-line effect; the Unlit's red *"but…"* line; Re-roll, if bought. **Your blessings** (always available between floors): every blessing taken, with breakdowns.

@@ -163,7 +163,7 @@ export const balance = {
     floors: locked(6),
     doors: locked(2),
     offers: locked(3),
-    baseTier: tunable({ keep: 2, citadel: 3, bastion: 4 }),
+    baseTier: tunable({ keep: 3, citadel: 4, bastion: 5 }),
     upperTierStep: tunable(1),
     guardianTierStep: tunable(2),
     groupSize: tunable({ floors1to3: 2, floors4to6: 3 }),

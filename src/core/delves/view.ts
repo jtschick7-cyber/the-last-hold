@@ -69,7 +69,7 @@ export interface EntryView {
   readonly rows: readonly EntryHunterRow[];
   readonly suggested: readonly HunterId[];
   readonly partySize: number;
-  /** "Keep: floors tier 2–3, guardian tier 4". */
+  /** "Keep: floors tier 3–4, guardian tier 5". */
   readonly depth: string;
   readonly allowance: Explained;
   readonly quiet: boolean;
