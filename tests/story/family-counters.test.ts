@@ -37,8 +37,11 @@ const beginAct = (s: GameState, act: number): void => {
   s.cycles.push(freshCycleRecord(act, s.time, act));
   s.story.acts.push(freshAct(act, act, s.time));
 };
-const total = (counts: Partial<Record<string, number>>): number =>
-  Object.values(counts).reduce((a, b) => a + (b ?? 0), 0);
+const total = (counts: Partial<Record<string, number>>): number => {
+  let sum = 0;
+  for (const n of Object.values(counts)) sum += n ?? 0;
+  return sum;
+};
 
 describe('per-act family counters (T8.2, D318)', () => {
   it('the owner’s v0.7 save: all four acts show the same family counts, as separate counters', () => {
