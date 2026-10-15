@@ -123,7 +123,7 @@ export const takenReduction = (
   party: readonly Combatant[],
 ): number => {
   if (defender.side !== 'hunter') return 0;
-  let sum = defender.extraTaken + (defender.takenByType[type] ?? 0);
+  let sum = defender.extraTaken + (defender.takenByType[type] ?? 0) + defender.useTaken;
   if (defender.vanguardShield > 0) {
     // Warp and Weft (Delve): the others take less while a Vanguard stands.
     for (const ally of party)

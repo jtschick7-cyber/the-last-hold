@@ -6,6 +6,7 @@ import type { MonsterAbility, MonsterId } from '../../content/monsters';
 import type { GuardianId } from '../../content/delves/guardians';
 import type { DelveRelicId } from '../../content/delves/relics';
 import type { TraitEffect, TraitId } from '../../content/traits';
+import type { UseSkillId } from '../../content/use-skills';
 import type { RollSource } from '../rng';
 import type { Preparation } from '../state/game-state';
 import type { ItemLine } from '../state/item-state';
@@ -24,6 +25,8 @@ export interface HunterSnapshot {
   readonly traits: readonly TraitId[];
   readonly weapon: GearId | null;
   readonly armorGear: GearId | null;
+  /** The hunter's use-skill, once they are a Wright (v0.8, D312); absent for Apprentices. */
+  readonly skill?: UseSkillId;
   /** Stars, which add to the Health and Might growth per level (v0.8, D310); absent at 0. */
   readonly stars?: number;
   /** The bonus lines of the worn items (v0.8, D305); absent when there are none. */
@@ -204,6 +207,20 @@ export interface Combatant {
   /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
   extraTaken: number;
   // ---- Delve blessings and relics (v0.7, GDD §8.8); all neutral outside a Delve ----
+  /** The hunter's use-skill (v0.8, GDD §8.5b), or null: Apprentices, monsters. */
+  skill: UseSkillId | null;
+  /** A once-per-fight skill (or a "first" one) has fired. */
+  skillUsed: boolean;
+  /** The skill that fires on the action being taken; set for that action only. */
+  skillArmed: boolean;
+  /** taken% from a use-skill (Banked Smoke), until the Vanguard's next action. */
+  useTaken: number;
+  /** Rime-Dipped: the monster's remaining actions at −`rimeCut` Speed (status%). */
+  rimeLeft: number;
+  rimeCut: number;
+  /** Stopping Root: Venom for `rootAmount` at the start of each of the monster's next `rootLeft` actions. */
+  rootLeft: number;
+  rootAmount: number;
   /** outgoing%: added to the hunter's damage bonuses. */
   dealtBonus: number;
   /** outgoing% against one contract family, from bane lines on worn items (v0.8); empty elsewhere. */

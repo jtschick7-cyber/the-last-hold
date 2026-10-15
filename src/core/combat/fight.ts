@@ -4,7 +4,17 @@ import { buildHunter, buildMonster, roundHalfUp } from './build';
 import { endOfMonsterAction, heal, startOfMonsterAction } from './abilities';
 import { burnTick, cancelsAbility, startOfFight } from './prep';
 import { directAttack } from './damage';
-import { cap, emit, type Fight } from './fight-state';
+import { cap, emit, knockBack, type Fight } from './fight-state';
+import {
+  clearAbilityEffects,
+  clearSmoke,
+  endRime,
+  firesThisAction,
+  plantRoot,
+  replaceAction,
+  rootTick,
+  skillOf,
+} from './skills';
 import { activeEffects, boostFor, monsterBoostFrom, NO_RULES, rulesFrom } from './delve';
 import {
   alchemyPotency,
@@ -40,10 +50,11 @@ export const endOwnAction = (c: Combatant): void => {
   if (c.chillLeft > 0) {
     c.chillLeft -= 1;
     if (c.chillLeft === 0) {
-      c.statusPct.speed = 0;
+      c.statusPct.speed = c.rimeLeft > 0 ? -c.rimeCut : 0; // Rime-Dipped (v0.8) may still be slowing it
       c.speed = speedEff(c);
     }
   }
+  endRime(c);
   if (c.abilitiesBlocked > 0) c.abilitiesBlocked -= 1;
   if (c.healCutLeft > 0) {
     c.healCutLeft -= 1;
@@ -133,6 +144,8 @@ const resolveEnds = (f: Fight): void => {
     }
     f.over = 'party-down';
   }
+  // Banked Smoke ends when its holder goes down (GDD §8.5b).
+  if (f.smokeHolder && !standing(f.smokeHolder)) clearSmoke(f);
 };
 
 /** The front monster: the first standing in group order (D251). */
@@ -151,6 +164,8 @@ const loseAction = (f: Fight, c: Combatant): void => {
 };
 
 const hunterAct = (f: Fight, c: Combatant, extra = false): void => {
+  c.skillArmed = false;
+  if (f.smokeHolder === c) clearSmoke(f); // Banked Smoke lasts until the holder's next action
   const mender = c.role === 'mender';
   const pending = f.clothPending;
   if (mender && pending && pending !== c && !extra) {
@@ -170,6 +185,10 @@ const hunterAct = (f: Fight, c: Combatant, extra = false): void => {
     });
     return;
   }
+  // Use-skills (GDD §8.5b): on the trigger, some replace the attack; others arm the action.
+  const fired = extra ? null : firesThisAction(c);
+  if (fired && replaceAction(f, c, fired)) return;
+  c.skillArmed = fired !== null;
   if (mender && c.menderHeals) {
     const threshold = c.healThreshold;
     let patient: Combatant | null = null;
@@ -181,17 +200,34 @@ const hunterAct = (f: Fight, c: Combatant, extra = false): void => {
       let bonus = c.healBonus;
       for (const e of c.traits) if (e.kind === 'healingDone') bonus += e.amount;
       const base = K.healMult * (c.base.might + c.flat.might);
-      const healed = heal(patient, roundHalfUp(base * (1 + bonus)));
+      // Bonesetter's Hands (GDD §8.5b): on the armed action the heal is doubled.
+      const armed = c.skillArmed ? skillOf(c) : null;
+      const doubled = armed?.effect.kind === 'healMultiplier' ? armed.effect.mult : 1;
+      const healed = heal(patient, roundHalfUp(base * (1 + bonus)) * doubled);
       emit(f, {
         actor: c.id,
         kind: 'heal',
         target: patient.id,
         text: () =>
-          `${c.name} (Mender) heals ${patient.name} for ${healed} · ${patient.name} ${patient.health}/${patient.maxHealth}`,
+          `${c.name} (Mender) heals ${patient.name} for ${healed} · ${patient.name} ${patient.health}/${patient.maxHealth}` +
+          `${doubled > 1 ? ` · ${armed?.name}: the heal is doubled` : ''}`,
         rolls: [],
         amount: healed,
         targetHealth: patient.health,
       });
+      if (armed?.effect.kind === 'clearAbilityEffects') {
+        // Shepherd's Crook (GDD §8.5b): the healed hunter is freed of what monsters' abilities did.
+        const cleared = clearAbilityEffects(patient);
+        if (cleared.length > 0)
+          emit(f, {
+            actor: c.id,
+            kind: 'skill',
+            target: patient.id,
+            text: () =>
+              `${c.name} (${armed.name}) frees ${patient.name}: ${cleared.join(', ')} cleared`,
+            rolls: [],
+          });
+      }
       if (f.rules.oneThread > 0 && healed > 0) {
         // The Weaver's One Thread: every other standing hunter recovers a share of what was healed.
         const share = roundHalfUp(healed * f.rules.oneThread);
@@ -216,7 +252,9 @@ const hunterAct = (f: Fight, c: Combatant, extra = false): void => {
   }
   // D251: the Vanguard, and the Mender when she attacks, hit the front monster; the Striker the weakest.
   const target = c.role === 'striker' ? weakestMonster(f) : frontMonster(f);
+  const root = c.skill === 'stopping-root' && !c.skillUsed ? skillOf(c) : null;
   directAttack(f, c, target, mender ? { mightMult: K.menderAttack } : {});
+  if (root) plantRoot(f, c, root, target); // Stopping Root: her first attack, hit or miss
   resolveEnds(f);
   // The Wolf's Share (Delve): a crit that brings a monster down for good earns one extra action at once.
   if (f.rules.wolfsShare && !extra && f.lastCrit && !f.over && target.health <= 0 && standing(c)) {
@@ -248,7 +286,7 @@ const partyActed = (f: Fight, c: Combatant): void => {
   f.partyActions += 1;
   const k = f.rules.knockback;
   if (k && !f.over && f.partyActions % k.every === 0) {
-    for (const m of f.monsters) if (standing(m)) m.meter -= k.amount;
+    for (const m of f.monsters) if (standing(m)) knockBack(m, k.amount);
     emit(f, {
       actor: 'party',
       kind: 'rule',
@@ -287,6 +325,10 @@ const monsterAct = (f: Fight, m: Combatant): void => {
   f.monsterActing = true;
   burnTick(f, m);
   resolveEnds(f);
+  if (m.rootLeft > 0 && !f.over) {
+    rootTick(f, m); // Stopping Root (v0.8)
+    resolveEnds(f);
+  }
   if (f.over) {
     f.monsterActing = false;
     return;
@@ -436,9 +478,21 @@ export const runFight = (input: FightInput): FightResult => {
     bombs: input.prep?.bombs ?? [],
     volley: stand?.volley ?? 0,
     potency,
+    smokeHolder: null,
   };
   // Potions that work from the start, then the bombs, before anyone acts (GDD §5.7).
   startOfFight(f);
+  for (const h of hunters) {
+    // Up Before the Wolves (GDD §8.5b): Stanko's meter starts full, so he acts at tick 1.
+    if (h.skill !== 'up-before-the-wolves') continue;
+    h.meter = K.meterThreshold;
+    emit(f, {
+      actor: h.id,
+      kind: 'skill',
+      text: () => `${h.name} (${skillOf(h)?.name}) is up before the wolves: his turn comes first`,
+      rolls: [],
+    });
+  }
   if (rules.pricePaid) {
     // The Hearth-Crone's A Price Paid: each standing hunter pays a share of current Health for Might this floor.
     const price = rules.pricePaid;
@@ -485,6 +539,7 @@ export const runFight = (input: FightInput): FightResult => {
       if (c.lostActions > 0) loseAction(f, c);
       else if (c.side === 'hunter') {
         hunterAct(f, c);
+        c.skillArmed = false;
         partyActed(f, c);
       } else monsterAct(f, c);
       endOwnAction(c);

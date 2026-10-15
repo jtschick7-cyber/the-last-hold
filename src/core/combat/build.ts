@@ -32,6 +32,14 @@ const kit = {
   extraTaken: 0,
   dealtBonus: 0,
   baneVs: {},
+  skill: null,
+  skillUsed: false,
+  skillArmed: false,
+  useTaken: 0,
+  rimeLeft: 0,
+  rimeCut: 0,
+  rootLeft: 0,
+  rootAmount: 0,
   knowledgeLevel: 0,
   takenByType: {},
   vanguardShield: 0,
@@ -147,6 +155,7 @@ export const buildHunter = (
     ...kit,
   };
   hunter.abilityHalved = abilityHalved;
+  hunter.skill = h.skill ?? null;
   hunter.statPct.might += lineMight;
   hunter.baneVs = bane;
   if (boost) {

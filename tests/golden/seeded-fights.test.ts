@@ -117,9 +117,10 @@ describe('seeded golden fights (locked)', () => {
     }).toEqual(c.want);
   });
 
-  // Owner-approved (D139, D175, D251): versions 2 and 3 changed only Last Stand waves and version 4
-  // added Delve groups; these contract fights, recorded under version 1, reproduce unchanged.
-  it('these goldens were recorded under rules version 1; versions 2 to 4 keep their contract fights', () => {
-    expect(RULES_VERSION).toBe(4);
+  // Owner-approved (D139, D175, D251, D308): versions 2 and 3 changed only Last Stand waves, version 4
+  // added Delve groups and version 5 the use-skills and item lines; these contract fights, recorded
+  // under version 1, reproduce unchanged.
+  it('these goldens were recorded under rules version 1; versions 2 to 5 keep their contract fights', () => {
+    expect(RULES_VERSION).toBe(5);
   });
 });

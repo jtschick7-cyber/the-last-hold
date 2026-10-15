@@ -220,3 +220,15 @@ describe('kept through the Long Night (GDD §5.9.7)', () => {
     expect(s.legendaries).toHaveLength(1);
   });
 });
+
+describe('use-skills come with Wright (D312)', () => {
+  it('the snapshot carries the hunter’s use-skill from Wright on, so odds, stands and Delves all use it', () => {
+    const s = keepRich('skill-snapshot');
+    expect('skill' in snapshotOf(s, 'zora')).toBe(false); // an Apprentice
+    hunter(s).rank = 'wright';
+    expect(snapshotOf(s, 'zora').skill).toBe('boathook');
+    hunter(s).rank = 'masterWright';
+    expect(snapshotOf(s, 'zora').skill).toBe('boathook'); // no upgrades at Master-Wright
+    expect(snapshotOf(s, 'halvar').skill).toBeUndefined();
+  });
+});

@@ -953,7 +953,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - The growth formula with the star line in every breakdown; trophies on hand (earned minus spent).
   - Kept through the Long Night (in the reset's row-by-row test).
   - Tests: a rank never lost to halving; a star raising stats at once; spending never changing the Trophy Hall bonus or the Embers conversion.
-- [ ] **T8.8 Use-skills in the fight engine** (D312, D314).
+- [x] **T8.8 Use-skills in the fight engine** (D312, D314).
   - All 11, each on its trigger, with no new dice, a log line each, and the general meter knock-back.
   - **`rulesVersion` 5** (owner-approved, D308): every golden fight and every recorded fight replays line for line in Node, WebKit and Chromium. **If one changes, stop and ask.**
   - The odds and Suggest include use-skills. Benchmarks stay in budget.

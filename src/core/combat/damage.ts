@@ -2,6 +2,8 @@ import { num } from '../balance-access';
 import { abilityTaken, finalDamage, hurt } from './formula';
 import { cap as capName, emit, fmt2, type Fight } from './fight-state';
 import { afterOwnHit } from './abilities';
+import { rimeSlow, skillOf, stairHolder } from './skills';
+import { knockBack } from './fight-state';
 import { checkPotion } from './prep';
 import {
   armorEff,
@@ -41,9 +43,10 @@ export const pct = (x: number): string => `${Math.round(x * 1000) / 10}%`;
 export const directAttack = (
   f: Fight,
   attacker: Combatant,
-  target: Combatant,
+  initialTarget: Combatant,
   opts: AttackOptions = {},
 ): boolean => {
+  let target = initialTarget;
   f.lastCrit = false;
   const used: number[] = f.logging ? [...(opts.pre ?? [])] : [];
   const labels: string[] = f.logging ? [...(opts.preNotes ?? [])] : [];
@@ -85,12 +88,16 @@ export const directAttack = (
   });
   const variance = attacker.varianceLo + (attacker.varianceHi - attacker.varianceLo) * spread;
   const critChance = attacker.critChance;
-  const crit =
+  const rolledCrit =
     draw((r) =>
       r < critChance
         ? `Crit ${fmt3(r)} < ${pct(critChance)} → crit`
         : `Crit ${fmt3(r)} ≥ ${pct(critChance)} → no crit`,
     ) < critChance;
+  // The Other Hand (GDD §8.5b): Sigrun's first hit in a fight is a crit. The crit roll is still drawn.
+  const otherHand = attacker.skill === 'the-other-hand' && !attacker.skillUsed;
+  if (otherHand) attacker.skillUsed = true;
+  const crit = rolledCrit || otherHand;
   f.lastCrit = crit;
   const mult = opts.mightMult ?? 1;
   const raw = mightEff(attacker) * mult * variance;
@@ -102,14 +109,36 @@ export const directAttack = (
   const knowledgeLevel = attacker.side === 'hunter' ? target.knowledgeLevel : 0;
   const knowledge = f.rules.knowledgeOff ? 0 : knowledgeBonus(knowledgeLevel);
   const dealt = typed * (1 + outgoing) * (1 + knowledge) * (crit ? attacker.critMult : 1);
-  const taken = takenReduction(target, attacker.damage, party);
-  const hitMult = target.nextHitTakenMult;
+  // Shovelful (GDD §8.5b): the armed attack ignores Armor.
+  const armed = attacker.skillArmed ? skillOf(attacker) : null;
+  const ignoresArmor = armed?.effect.kind === 'ignoreArmor';
+  let taken = takenReduction(target, attacker.damage, party);
+  let hitMult = target.nextHitTakenMult;
   target.nextHitTakenMult = 1;
   // The Armor this hit actually met, read before the hit lands (Swell can change it after; Q7).
-  const armor = armorEff(target);
-  const amount = finalDamage(dealt, target, resistance, true, taken, hitMult);
+  let armor = ignoresArmor ? 0 : armorEff(target);
+  let amount = finalDamage(dealt, target, resistance, !ignoresArmor, taken, hitMult);
+  // Hold the Stair (GDD §8.5b): once a fight, Arvid takes the hit that would down another hunter,
+  // after his own Armor and taken% (it can down him). No new dice: the same hit, the same rolls.
+  const notes: string[] = [];
+  const holder =
+    attacker.side === 'monster' && amount >= target.health ? stairHolder(f, target) : null;
+  if (holder) {
+    const spared = target;
+    spared.nextHitTakenMult = hitMult; // the hit did not land on them
+    holder.skillUsed = true;
+    target = holder;
+    taken = takenReduction(target, attacker.damage, party);
+    hitMult = target.nextHitTakenMult;
+    target.nextHitTakenMult = 1;
+    armor = armorEff(target);
+    amount = finalDamage(dealt, target, resistance, true, taken, hitMult);
+    notes.push(`Hold the Stair: ${holder.name} takes the hit meant for ${spared.name}`);
+  }
   hurt(target, amount);
-  const notes = afterOwnHit(f, attacker, target, amount, draw);
+  notes.push(...afterOwnHit(f, attacker, target, amount, draw));
+  if (otherHand) notes.push(`The Other Hand: ${attacker.name}'s first hit is a crit`);
+  if (armed && attacker.side === 'hunter') hitSkill(armed.effect, target, notes);
   if (attacker.side === 'hunter') delveHitRules(f, attacker, target, crit, notes);
   if (attacker.damage === 'fire') {
     const cracked = unthaw(target);
@@ -121,7 +150,7 @@ export const directAttack = (
     if (resistance !== 1) out.push(resistance === 0 ? 'immune' : `(×${resistance} resist)`);
     if (knowledge > 0)
       out.push(`(+${pct(knowledge)} ${knowledgeLevel >= 4 ? 'Mastered' : 'Studied'})`);
-    out.push(`−${fmt2(armor)} armor`);
+    out.push(ignoresArmor ? 'ignores armor (Shovelful)' : `−${fmt2(armor)} armor`);
     return out.join(' ');
   };
   emit(f, {
@@ -149,6 +178,24 @@ export const directAttack = (
   return true;
 };
 
+/** What an armed use-skill adds when its attack hits (Boathook, Rime-Dipped); notes join the hit's log line. */
+const hitSkill = (
+  effect: NonNullable<ReturnType<typeof skillOf>>['effect'],
+  target: Combatant,
+  notes: string[],
+): void => {
+  if (target.side !== 'monster') return;
+  if (effect.kind === 'knockBackOnHit') {
+    knockBack(target, effect.amount);
+    notes.push(`Boathook: ${target.name}'s turn comes ${effect.amount} later`);
+  } else if (effect.kind === 'slowOnHit') {
+    rimeSlow(target, effect.amount, effect.actions);
+    notes.push(
+      `Rime-Dipped: ${target.name} is slowed (Speed −${Math.round(effect.amount * 100)}% for ${effect.actions} actions)`,
+    );
+  } else if (effect.kind === 'ignoreArmor') notes.push('Shovelful: the blow ignores Armor');
+};
+
 /**
  * Delve rules that fire when a hunter's direct attack hits (GDD §8.8): the Drowned Bell's Toll
  * knocks a monster's meter back on each hunter's first hit on it, and Struck Bronze makes a
@@ -167,7 +214,7 @@ const delveHitRules = (
     const key = `${attacker.id}>${target.id}`;
     if (!f.tolled.has(key)) {
       f.tolled.add(key);
-      target.meter -= toll;
+      knockBack(target, toll);
       notes.push(`the bell tolls: ${target.name}'s turn comes ${toll} later`);
     }
   }

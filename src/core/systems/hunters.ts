@@ -2,6 +2,7 @@ import { AGE_IDS, ages } from '../../content/ages';
 import { buildings, BUILDING_IDS } from '../../content/buildings';
 import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
 import { bonusLines, itemRarities } from '../../content/items';
+import { useSkillOf } from '../../content/use-skills';
 import {
   HUNTER_IDS,
   hunters,
@@ -172,6 +173,8 @@ export const snapshotOf = (state: GameState, id: HunterId): HunterSnapshot => {
     // v0.8: only when an item has lines, so every old snapshot and golden stays as it was.
     ...(lines.length > 0 ? { lines } : {}),
     ...(h.stars > 0 ? { stars: h.stars } : {}),
+    // v0.8 (D312): a Wright's use-skill; Apprentices have none, so their snapshots are unchanged.
+    ...(h.rank !== 'apprentice' ? { skill: useSkillOf(id).id } : {}),
   };
 };
 

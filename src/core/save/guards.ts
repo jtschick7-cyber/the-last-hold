@@ -4,6 +4,7 @@ import { BONUS_LINE_IDS } from '../../content/items';
 import { GEAR_IDS, type GearId } from '../../content/gear';
 import { HUNTER_IDS, ROLE_IDS, type HunterId } from '../../content/hunters';
 import { TRAIT_IDS, type TraitId } from '../../content/traits';
+import { USE_SKILL_IDS } from '../../content/use-skills';
 import type { HunterSnapshot } from '../combat';
 import type { Preparation } from '../state/game-state';
 import type { ItemLine } from '../state/item-state';
@@ -111,6 +112,7 @@ export const snapshot = (v: unknown, where: string): HunterSnapshot => {
     armorGear: gear(o.armorGear, `${where}.armorGear`),
     ...(o.lines === undefined ? {} : { lines: itemLines(o.lines, `${where}.lines`) }),
     ...(o.stars === undefined ? {} : { stars: count(o.stars, `${where}.stars`) }),
+    ...(o.skill === undefined ? {} : { skill: oneOf(o.skill, USE_SKILL_IDS, `${where}.skill`) }),
   };
 };
 

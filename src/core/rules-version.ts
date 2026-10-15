@@ -7,5 +7,8 @@
 // before v0.5 would replay with other monsters; contract fights are unchanged. Version 4
 // (owner-approved, D251): Delve group fights (several monsters, targeting by role, group order
 // in the same-tick rule); a one-monster fight takes exactly the steps it always did, so every
-// contract fight and Last Stand wave recorded under versions 1 to 3 replays unchanged.
-export const RULES_VERSION = 4;
+// contract fight and Last Stand wave recorded under versions 1 to 3 replays unchanged. Version 5
+// (owner-approved, D308): the Wrights' use-skills, with the meter knock-back as a general fight
+// rule, and the bonus lines of items; a hunter with no rank, no stars and only Common items fights
+// exactly as before, so every golden fight and every recorded fight replays unchanged.
+export const RULES_VERSION = 5;
