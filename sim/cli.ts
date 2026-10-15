@@ -89,17 +89,22 @@ const parse = (args: readonly string[]): Options => {
 
 const specs = (o: Options): RunSpec[] =>
   o.policies.flatMap((policy) =>
-    o.starts.flatMap((start) =>
-      Array.from({ length: o.seeds }, (_, i) => ({
-        policy,
-        seed: `sim-${i + 1}`,
-        start,
-        days: o.days,
-        ...(o.fast ? { stopAt: FAST_UNTIL_TARGETS } : {}),
-        // GDD §6.3 #7 (D114): the Standard runs go on through 3 Long Nights, up to 6 weeks.
-        ...(!o.fast && policy === 'standard' ? { minCycles: OVERFLOW_CYCLES, maxDays: 42 } : {}),
-      })),
-    ),
+    // D272: the Delver runs the Monday seeds only.
+    o.starts
+      .filter((start) => policy !== 'delver' || start === 'mon')
+      .flatMap((start) =>
+        Array.from({ length: o.seeds }, (_, i) => ({
+          policy,
+          seed: `sim-${i + 1}`,
+          start,
+          days: o.days,
+          ...(o.fast ? { stopAt: FAST_UNTIL_TARGETS } : {}),
+          // GDD §6.3 #7 (D114): the Standard runs go on through 3 Long Nights, up to 6 weeks.
+          ...(!o.fast && (policy === 'standard' || policy === 'delver')
+            ? { minCycles: OVERFLOW_CYCLES, maxDays: 42 }
+            : {}),
+        })),
+      ),
   );
 
 const readBaseline = (): Baseline | null =>

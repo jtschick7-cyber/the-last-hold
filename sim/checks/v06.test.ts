@@ -32,6 +32,16 @@ const run = (m: Made = {}): RunResult =>
       trustRoseInCycle1: 0,
     },
     discovery: m.discovery ?? { hutHours: null, firstNewBrewHours: null, cycles: [] },
+    delve: {
+      runs: [],
+      riftglassHeld: 0,
+      lateHours: 0,
+      chosenStart: false,
+      reroll: false,
+      relics: [],
+      totalHours: 0,
+    },
+    content: { book36Hours: null, skills4Hours: null },
   }) as unknown as RunResult;
 
 const skills = (a: number, s: number, l: number, c: number) => ({

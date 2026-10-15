@@ -65,6 +65,16 @@ const run = (
     trustRoseInCycle1: 0,
   },
   discovery: { hutHours: null, firstNewBrewHours: null, cycles: [] },
+  delve: {
+    runs: [],
+    riftglassHeld: 0,
+    lateHours: 0,
+    chosenStart: false,
+    reroll: false,
+    relics: [],
+    totalHours: 0,
+  },
+  content: { book36Hours: null, skills4Hours: null },
 });
 
 describe('time targets', () => {

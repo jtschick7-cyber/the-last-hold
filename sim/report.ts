@@ -108,6 +108,45 @@ export const discoveryLines = (runs: readonly RunResult[]): string[] =>
       return `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${brew}; ${cycles}`;
     });
 
+const WEEK_HOURS = 24 * 7;
+
+/**
+ * Reported, not judged (GDD §6.1 v0.7, T7.14): what each Delver's Delves did. Riftglass per week
+ * is what its runs were paid (the allowance's 70 a week is the ceiling), floors are per run with
+ * the guardian counting as a seventh, relics are every Delve relic owned at the end.
+ */
+export const delveLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.spec.policy === 'delver')
+    .map((r) => {
+      const d = r.delve;
+      const floors = d.runs.map((x) => x.floors).sort((a, b) => a - b);
+      const mid = Math.floor(floors.length / 2);
+      const median =
+        floors.length === 0
+          ? 0
+          : floors.length % 2
+            ? (floors[mid] ?? 0)
+            : ((floors[mid - 1] ?? 0) + (floors[mid] ?? 0)) / 2;
+      const beaten = d.runs.filter((x) => x.guardianBeaten).length;
+      const earned = d.runs.reduce((n, x) => n + x.riftglass, 0);
+      const weekly = d.totalHours > 0 ? earned / (d.totalHours / WEEK_HOURS) : 0;
+      const first = d.runs.find((x) => x.guardianBeaten);
+      const shop = [
+        d.chosenStart ? 'Chosen start' : null,
+        d.reroll ? 'Re-roll' : null,
+        d.lateHours > 0 ? `Late hours ${d.lateHours}` : null,
+      ].filter((x) => x !== null);
+      return (
+        `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${d.runs.length} runs, ` +
+        `guardian beaten in ${beaten}, median ${median} floors a run; ` +
+        `${weekly.toFixed(1)} Riftglass a week (${d.riftglassHeld} held, bought: ${shop.join(', ') || 'nothing'}); ` +
+        `${d.relics.length} of 6 relics; first guardian ${
+          first ? `in cycle ${first.cycle} (${hoursText(first.hours)})` : 'never'
+        }`
+      );
+    });
+
 export const markdown = (report: Report, previous: Baseline | null): string => {
   const out: string[] = [
     `# Simulator report: ${report.name}`,
@@ -130,6 +169,7 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
     '',
     ...discoveryLines(report.runs),
   );
+  out.push('', '## Delves (reported only)', '', ...delveLines(report.runs));
   out.push('', '## Times to each moment (median over seeds)', '');
   out.push(`| Run | ${MOMENTS.join(' | ')} |`, `|---|${MOMENTS.map(() => '---').join('|')}|`);
   for (const [k, ms] of Object.entries(report.baseline.groups)) {

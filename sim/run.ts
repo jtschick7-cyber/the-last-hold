@@ -18,6 +18,9 @@ import { VILLAGE_IDS } from '../src/content/villages';
 /** GDD §5.9.4: the best-stand samples run from Bastion up to day 7 of cycle 1. */
 const BEST_STAND_UNTIL = 7 * 24;
 
+/** GDD §6.2 v0.7 (D271): "every warden skill at level 4" is part of "all content". */
+const SKILL_LEVEL_FOR_ALL_CONTENT = 4;
+
 // Technical design §13.1: one simulated game, played by a policy on a virtual
 // clock through the real core. Records what the checks and the report need.
 
@@ -160,6 +163,45 @@ export interface DiscoveryRecord {
   }[];
 }
 
+/** One Delve run the Delver finished (GDD §6.1, plan T7.14). */
+export interface DelveRunRecord {
+  /** Hours since the start, and the cycle the session was in. */
+  readonly hours: number;
+  readonly cycle: number;
+  /** Floors cleared (the guardian counts as a seventh once beaten). */
+  readonly floors: number;
+  readonly outcome: 'guardian' | 'defeated' | 'left';
+  readonly guardianBeaten: boolean;
+  /** Riftglass the run paid out of the allowance. */
+  readonly riftglass: number;
+  /** Delve relics the run itself found (the idle sources are counted in `relics`). */
+  readonly relics: readonly string[];
+}
+
+/** What Delves did over a run; empty for a policy that never Delves (GDD §6.1, D269). */
+export interface DelveRecord {
+  readonly runs: readonly DelveRunRecord[];
+  /** Riftglass on hand and the shop's levels at the end of the run. */
+  readonly riftglassHeld: number;
+  readonly lateHours: number;
+  readonly chosenStart: boolean;
+  readonly reroll: boolean;
+  /** Every Delve relic owned at the end, with the cycle it was found in. */
+  readonly relics: readonly { readonly id: string; readonly cycle: number }[];
+  /** Hours of the run (start to its last check-in), to turn Riftglass into a weekly rate. */
+  readonly totalHours: number;
+}
+
+/**
+ * Hours to the milestones of "all content" that the existing records do not already hold
+ * (GDD §6.2 v0.7, D271): the recipe book at 36 of 36, and every warden skill at level 4.
+ * Null if never reached.
+ */
+export interface ContentRecord {
+  readonly book36Hours: number | null;
+  readonly skills4Hours: number | null;
+}
+
 export interface RunResult {
   readonly spec: RunSpec;
   /** Hours from the start to each GDD §6.2 moment, or null if never reached. */
@@ -180,6 +222,8 @@ export interface RunResult {
   readonly keepPhase: KeepPhase;
   readonly story: StoryRecord;
   readonly discovery: DiscoveryRecord;
+  readonly delve: DelveRecord;
+  readonly content: ContentRecord;
 }
 
 const largest = (value: unknown): number => {
@@ -226,6 +270,9 @@ export const runOne = (spec: RunSpec): RunResult => {
   let prevCycle = state.cycle.number;
   const standSamples: StandSample[] = [];
   const trust: { cycle: number; levels: Record<string, string> }[] = [];
+  const delveRuns: DelveRunRecord[] = [];
+  let book36Hours: number | null = null;
+  let skills4Hours: number | null = null;
   let hutHours: number | null = null;
   let firstNewBrewHours: number | null = null;
   const discoveryCycles: { cycle: number; properties: number; skills: Record<string, number> }[] =
@@ -241,7 +288,7 @@ export const runOne = (spec: RunSpec): RunResult => {
   play(state, {
     // D62 (Q4a): a fresh start under Standard begins with the Opening's 15
     // active minutes, which then switches to Standard (GDD §6.1).
-    policy: spec.policy === 'standard' ? 'opening' : spec.policy,
+    policy: spec.policy === 'standard' ? 'opening' : spec.policy, // the Delver opens the same way (nextCheckIn)
     startedAt: start,
     until: start + Math.max(spec.days, spec.minCycles ? (spec.maxDays ?? spec.days) : 0) * DAY,
     stop: (st) =>
@@ -261,6 +308,23 @@ export const runOne = (spec: RunSpec): RunResult => {
         if (c.type === 'build.buy' && c.building === 'cottage') mark('first-cottage', rec.at);
         if (c.type === 'build.buy' && c.building === 'mine') mark('first-mine', rec.at);
       }
+      for (const r of rec.delveResults ?? []) {
+        delveRuns.push({
+          hours: (rec.at - start) / HOUR,
+          cycle: s.cycle.number,
+          floors: r.floors,
+          outcome: r.outcome,
+          guardianBeaten: r.guardianBeaten,
+          riftglass: r.riftglass,
+          relics: [...r.relics],
+        });
+      }
+      if (book36Hours === null && propertiesFound(s) >= 36) book36Hours = (rec.at - start) / HOUR;
+      if (
+        skills4Hours === null &&
+        Object.values(skillLevels(s)).every((level) => level >= SKILL_LEVEL_FOR_ALL_CONTENT)
+      )
+        skills4Hours = (rec.at - start) / HOUR;
       if (s.buildings.mill >= 3) mark('mill-3', rec.at);
       if (s.peasants.total >= 10) mark('peasants-10', rec.at);
       if (rec.agedUp) mark('keep', rec.at);
@@ -334,7 +398,7 @@ export const runOne = (spec: RunSpec): RunResult => {
         saving: rec.saving,
         agedUp: rec.agedUp,
         opening:
-          (spec.policy === 'opening' || spec.policy === 'standard') &&
+          (spec.policy === 'opening' || spec.policy === 'standard' || spec.policy === 'delver') &&
           rec.at <= start + OPENING_LENGTH,
         cycle: prevCycle,
       });
@@ -400,6 +464,16 @@ export const runOne = (spec: RunSpec): RunResult => {
     contracts,
     story,
     discovery: { hutHours, firstNewBrewHours, cycles: discoveryCycles },
+    content: { book36Hours, skills4Hours },
+    delve: {
+      runs: delveRuns,
+      riftglassHeld: state.delve.riftglass,
+      lateHours: state.delve.shop.lateHours,
+      chosenStart: state.delve.shop.chosenStart,
+      reroll: state.delve.shop.reroll,
+      relics: state.delve.relics.map((r) => ({ id: r.id, cycle: r.cycle })),
+      totalHours: (state.time - start) / HOUR,
+    },
     keepPhase: {
       bountySilver: [...stretches.values()].reduce((n, x) => n + x.bountySilver, 0),
       jobSilver: [...stretches.values()].reduce((n, x) => n + x.jobSilver, 0),
