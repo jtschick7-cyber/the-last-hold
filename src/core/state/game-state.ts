@@ -15,6 +15,7 @@ import type { UpgradeId } from '../../content/warden-upgrades';
 import type { HunterSnapshot } from '../combat';
 import type { Band } from '../../content/story/scenes';
 import type { RecipeBook, SkillXp } from './book-state';
+import type { DelveState } from './delve-state';
 import type { StoryState } from './story-state';
 import type { InjuryKind } from '../contracts/injury';
 
@@ -316,6 +317,8 @@ export interface GameState {
   book: RecipeBook;
   /** Warden skill XP (v6, GDD §5.8.6). Kept forever. */
   skills: SkillXp;
+  /** Delves, Riftglass, relics and echoes (v7, GDD §5.10). Kept forever. */
+  delve: DelveState;
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;

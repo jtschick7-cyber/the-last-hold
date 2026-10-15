@@ -173,6 +173,17 @@ export const DebugSheet = () => {
         <button
           type="button"
           class={styles.btn}
+          onClick={() => {
+            const r = dispatch({ type: 'debug.startActIV' });
+            setNote(r.ok ? 'Done.' : r.reason);
+            if (r.ok) openSheet('The bundle', () => <DocumentReader id="D4-01" />);
+          }}
+        >
+          Start Act IV
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
           onClick={() => run({ type: 'debug.runV05Arrival' })}
         >
           Meet Ilse again
