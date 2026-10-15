@@ -1,3 +1,4 @@
+import { HUNTER_IDS } from '../src/content/hunters';
 import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
 import { play, type PolicyId } from '../src/core/policies';
 import { OPENING_LENGTH } from '../src/core/policies/schedules';
@@ -200,12 +201,14 @@ export interface DelveRecord {
 
 /**
  * Hours to the milestones of "all content" that the existing records do not already hold
- * (GDD §6.2 v0.7, D271): the recipe book at 36 of 36, and every warden skill at level 4.
- * Null if never reached.
+ * (GDD §6.2 v0.7, D271; v0.8, D322): the recipe book at 36 of 36, every warden skill at level 4, and
+ * every hunter at Wright. Null if never reached.
  */
 export interface ContentRecord {
   readonly book36Hours: number | null;
   readonly skills4Hours: number | null;
+  /** v0.8 (D322): hours to every hunter owned and at Wright or above, or null. */
+  readonly wrightsHours: number | null;
 }
 
 /**
@@ -320,10 +323,15 @@ export const runOne = (spec: RunSpec): RunResult => {
   const contentDone = (s: GameState): boolean =>
     book36Hours !== null &&
     skills4Hours !== null &&
+    wrightsHours !== null &&
+    ALL_CONTENT.letters.every((l) =>
+      s.story.letters.some((x) => x.hunter === l.hunter && x.slot === l.slot),
+    ) &&
     ALL_CONTENT.documents.every((id) => s.story.documents.some((d) => d.id === id)) &&
     STORY.ribbonNames.every((n) => s.story.names.some((x) => x.n === n));
   let book36Hours: number | null = null;
   let skills4Hours: number | null = null;
+  let wrightsHours: number | null = null;
   let hutHours: number | null = null;
   let firstNewBrewHours: number | null = null;
   const discoveryCycles: { cycle: number; properties: number; skills: Record<string, number> }[] =
@@ -379,6 +387,15 @@ export const runOne = (spec: RunSpec): RunResult => {
         Object.values(skillLevels(s)).every((level) => level >= SKILL_LEVEL_FOR_ALL_CONTENT)
       )
         skills4Hours = (rec.at - start) / HOUR;
+      // v0.8 (D322): "every hunter at Wright" is part of all content: all of them owned, none an Apprentice.
+      if (
+        wrightsHours === null &&
+        HUNTER_IDS.every((id) => {
+          const h = s.hunters[id];
+          return h !== undefined && h.rank !== 'apprentice';
+        })
+      )
+        wrightsHours = (rec.at - start) / HOUR;
       if (s.buildings.mill >= 3) mark('mill-3', rec.at);
       if (s.peasants.total >= 10) mark('peasants-10', rec.at);
       if (rec.agedUp) mark('keep', rec.at);
@@ -522,7 +539,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     contracts,
     story,
     discovery: { hutHours, firstNewBrewHours, cycles: discoveryCycles },
-    content: { book36Hours, skills4Hours },
+    content: { book36Hours, skills4Hours, wrightsHours },
     depth: {
       cycles: depthCycles,
       legendaries: state.legendaries.map((l) => ({ id: l.id, cycle: l.cycle })),

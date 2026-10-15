@@ -23,7 +23,7 @@ const foundIn = (run: RunResult, id: string): number =>
 
 const cycleText = (c: number): string => (Number.isFinite(c) ? `cycle ${c}` : 'never');
 
-const actCheck = (id: 'act-1' | 'act-2' | 'act-3' | 'act-4', act: ActRows): Check => {
+const actCheck = (id: 'act-1' | 'act-2' | 'act-3' | 'act-4' | 'act-5', act: ActRows): Check => {
   const target = TIME_TARGETS.find((t) => t.id === id);
   if (!target) throw new Error(`targets.ts has no "${id}" row`);
   return {
@@ -66,3 +66,5 @@ export const act2Check = actCheck('act-2', STORY.act2);
 export const act3Check = actCheck('act-3', STORY.act3);
 // v0.7 (D271): Act IV, D4-01 to D4-06 and D4-08 by the end of cycle 4, D4-07 with the next warden.
 export const act4Check = actCheck('act-4', STORY.act4);
+// v0.8 (D322): Act V, D5-01 to D5-06 and D5-08 by the end of cycle 5, D5-07 with the next warden.
+export const act5Check = actCheck('act-5', STORY.act5);

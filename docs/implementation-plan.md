@@ -1009,7 +1009,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - Rank up when qualified; Embers on the Hearth first, then the cheapest star; talents in a fixed order per role; Legendaries by a fixed table.
   - The Delver's Re-roll rule.
   - Report: stars per cycle, items by rarity per cycle, Legendaries found, Delve XP.
-- [ ] **T8.17 Checks** (D322).
+- [x] **T8.17 Checks** (D322; readings D353). *The rows are in (own commit `18843c8`); on the first full run `act-5` and `first-wright` pass and `late-letters` and `idle-only` fail, which is T8.18's to tune or ask about.*
   - In **their own commit**: the `act-5`, `late-letters` and `first-wright` rows and the new `idle-only` definition in `sim/targets.ts` (owner-approved). The milestone becomes v0.8.
   - The Monday Standard and Delver runs play on until all content (up to 42 days), as in v0.7.
   - Suite time per CI job measured; **over 5 minutes in any job: stop and ask.**
