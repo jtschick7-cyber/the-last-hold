@@ -869,7 +869,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
 
 ### v0.8 — Hunter depth
 
-**Status:** not started *(fleshed out 2026-10-15, D300–D328)*
+**Status:** complete *(fleshed out 2026-10-15, D300–D329; playtest passed 2026-10-15, D356)*
 
 **Goal:** hunters grow in ways that last.
 - **Items:** gear becomes items. Today's pieces become Common items, the Smithy crafts and reworks them, and contract loot adds Fine, Rare and Heroic pieces, with Stores and Salvage.
