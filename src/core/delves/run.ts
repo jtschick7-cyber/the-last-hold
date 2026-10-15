@@ -68,6 +68,8 @@ export const startRun = (state: GameState, party: readonly HunterId[]): ApplyRes
       return refuse(`${state.hunters[id] ? id : 'That hunter'} cannot go down: ${problem}.`);
   }
   const d = state.delve;
+  // A relic the idle sources owe from before the Delves opened is found now (D261).
+  grantIdleDelveRelics(state);
   d.runs += 1;
   d.result = null;
   const run: DelveRun = {

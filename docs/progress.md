@@ -615,3 +615,15 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Check time:** `npm run check` is green, 1,525 tests, but now **82 s** (the rule is 90 s); a second near-limit test (the determinism scenario) got a 30 s timeout like `play.test.ts`. If the suite keeps growing I'll have to ask whether to move slow tests out of `check`.
 - **Next:** T7.7 the Deep guardians (Chill, Drain, Nameless, Settling), T7.8 blessings in combat, then T7.9–T7.11.
 - **Open questions:** none.
+
+## 2026-10-15 — v0.7 session 3: T7.7–T7.11 (guardians, blessings, the run, Riftglass, relics)
+- **T7.7 guardians:** the three Deep guardians fight with Chill, Drain, Nameless and Settling; they have Health and Might multipliers and a count of Nameless. **T7.8 blessings in combat:** the 48 blessings, their special rules and the six Delve relics are worked out in one place, with a breakdown for each number (D254–D257, D261); reading choices are in D286 (Proposed).
+- **T7.9 the run:** access from the first Keep, depth from the Rank, groups, doors, offers and rarity, Health carried with 20% recovery, downing, the end and its rewards, saved at every step. Time does not move a run; only the allowance moves with time. The Last Stand ends a paused run and keeps what it earned. Hunters in a run cannot be sent on contracts, and the roster cannot swap them.
+- **T7.10 Riftglass and the shop:** the allowance grows 10 a day, banks to 140 (also while away); Late hours (30/45/60/75/90, refused at the 24 h ceiling), alternate traits (bought once for 40, switched freely when the hunter is free; effects in fights, recovery and provisions), cosmetics, Chosen start, Re-roll. The allowance clock starts when a warden first reaches the Keep, or at migration for your save (D287 Proposed).
+- **T7.11 relics, echoes, Deep bestiary:** relics from either source, once (D288 Proposed); relics change nothing outside Delves (a contract fight and a Last Stand are identical with all six owned, tested); the first Faint, Warm and Bright of each patron find their echoes; the Deep species' knowledge is kept apart from the contract bestiary.
+- **Checks:** `npm run check` green. No golden fight, `sim/targets.ts` or locked constant changed; `rulesVersion` is 4. A test that sped through a week of play exposed that the allowance had started lazily; its clock now starts at Rank-up.
+- **Not done on purpose:** there is no true-ending count yet (Act V), so the "Deep excluded from it" rule is tested as "the Deep never touches the contract bestiary" and noted for Act V.
+- **Next:** T7.12 art (contact sheet of sprites one session before the screens), T7.13a/b the Delve screens, shop on the Rank screen, Echoes shelf, Act IV on-load card and the browser smoke test, T7.14 the Delver player policy, T7.15 simulator checks (own commit; if the full suite runs over 5 minutes, stop and ask), T7.16 tuning.
+- **Open questions:** none new. **Waiting on you (not blocking):** D287 and D288 (Proposed) and the drafted blurbs, relic lines and Pechko lines.
+- **Heads-up:** the check takes about 80–85 s against a 90 s limit; WebKit browser tests only run in CI.
+
