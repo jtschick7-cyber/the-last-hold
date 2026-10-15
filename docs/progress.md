@@ -680,3 +680,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Merge and tag:** pull request from `milestone/v0.7` into `main`, then tag `v0.7.0` on the merge commit.
 - **Next:** v0.8 (hunter depth) needs its flesh-out session in chat first (plan §0.4); Claude Code does not start it before that. Carried over: WebKit browser tests run only in CI; the Delver never uses Re-roll (D294); the on-load Arvid card has no UI test; the nine older brews have no icons.
 
+
+## 2026-10-15 — Maintenance session: docs sync and enforcement (branch `chore/docs-sync`)
+- **Done (owner-authorized, outside the milestones):** six stale doc copies fixed (M1; the simulator trigger now matches `sim.yml`, and the doc says the workflow is still a stub); a Context hygiene section in CLAUDE.md (M2); the decisions sweep in plan §0.4 and an Actuals paragraph in §0.7 (M3, M4); a 90-second budget step for `npm run check` in `ci.yml` (M5); a pre-commit hook for typecheck and lint (M6). Logged as D338 and D339.
+- **Check time (M5):** `npm run check` took 57–61 s here on three runs; CI's own step took 40 s on the latest v0.8 run. The hard fail at 90 s has plenty of margin, so no question was needed.
+- **Hook (M6) verification, partly done:** the hook script was tested directly against sample commands: it blocks a real `git commit` while typecheck or lint fails, and lets `git status`, `git commit-tree`, `echo git commit` and a clean commit through. A live commit attempt in this session was **not** blocked, because Claude Code reads its settings when a session starts. Please check once in your next session: a commit with a deliberately broken file should be refused.
+- **Heads-up for merging:** `milestone/v0.8` already uses decision numbers D300–D337, so this branch's rows are D338 and D339 (v0.8 may take those numbers before this merges; renumber ours if so). v0.8 also edits the GDD, technical design and plan; expect small merge conflicts in `decisions.md` and the plan.
+- **Skipped or deferred:** technical design §11.2 and judgment call text about the 90-second budget were not touched (not in the authorized edits); it may now want a line saying CI enforces it.
+- **Next:** the owner merges this PR, then v0.8 continues on `milestone/v0.8`.
