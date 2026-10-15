@@ -970,10 +970,10 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - Yard XP when a contract finishes, for every hunter at the hold not on it (not the dead, not in a Delve), at 25% of each party member's XP, capped at the third-highest hunter's level.
   - The away-sheet line.
   - Tests: the cap; an injured hunter earning; a Delving hunter not earning.
-- [ ] **T8.11 Delve rewards** (D316).
+- [x] **T8.11 Delve rewards** (D316; readings D342).
   - Hunter XP per floor and guardian, the guardian item, all only while the run pays Riftglass.
-  - `[?]` **Command +1 XP per floor** waits for Q26 (where the constant lives).
   - Tests: a quiet-night run pays none of them; a paying run pays exactly the table.
+- [?] **T8.11b Command +1 XP per floor** (D316) waits for Q26 (where the constant lives). Not started; do not pick a place for the constant without the owner's answer.
 - [ ] **T8.12 The older-rules note** (D319): show "recorded with an older rules version" only when a replay comes out different from the record. Applies to contract fights, stand waves and Delve floors. Tests both ways.
 
 #### C. UI

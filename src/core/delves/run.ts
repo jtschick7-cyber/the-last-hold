@@ -25,6 +25,7 @@ import {
   pechkoLineIndex,
 } from './generate';
 import { namelessBonus } from './nameless';
+import { payHunterRewards } from './hunter-rewards';
 import { payRiftglass } from './riftglass';
 import { grantIdleDelveRelics, grantRelic, noteBlessingTaken, recordDeepFight } from './rewards';
 
@@ -279,6 +280,7 @@ const payFloor = (state: GameState, run: DelveRun, floor: number): void => {
   const wanted = guardian ? balance.riftglass.guardian.value : balance.riftglass.perFloor.value;
   const paid = hasDrawback(state, run, 'no-riftglass') ? 0 : payRiftglass(state, wanted);
   run.earned.riftglass += paid;
+  payHunterRewards(state, run, floor, paid, guardian); // v0.8 (D316): only while the run pays
   if (guardian) {
     const g = guardians[guardianOf(run.seed)];
     const spoon = delveRelics['horn-spoon'].effect;

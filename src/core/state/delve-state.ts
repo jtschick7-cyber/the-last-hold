@@ -25,6 +25,10 @@ export interface DelveEarned {
   /** Monsters killed this run. */
   kills: number;
   guardianBeaten: boolean;
+  /** Hunter XP each of the three earned this run (v0.8, D316); absent in a save from before. */
+  xp?: number;
+  /** The guardian's item as a result key (`loot:<rarity>:<base>` or `salvaged:…`), once beaten (v0.8, D316). */
+  item?: string;
 }
 
 /** What is on screen between fights, so a paused run resumes exactly there (D248). */

@@ -79,6 +79,9 @@ const earned = (v: unknown, where: string, warnings: string[]): DelveEarned => {
     ),
     kills: count(o.kills, `${where}.kills`),
     guardianBeaten: bool(o.guardianBeaten, `${where}.guardianBeaten`),
+    // v0.8 (D316): absent in a v7 or an early v8 save.
+    ...(o.xp === undefined ? {} : { xp: count(o.xp, `${where}.xp`) }),
+    ...(o.item === undefined ? {} : { item: str(o.item, `${where}.item`) }),
   };
 };
 
