@@ -215,3 +215,12 @@ Claude Code adds a question here when a task is blocked and the owner isn't avai
 - **Options per sprite:** (a) keep; (b) redraw, with what to change; (c) drop it, so the floor shows the 64 px portrait shrunk to 32 px (D265).
 - **Recommendation:** (a) for the hunters and most species, with a close look at the Ribbonshade (its ribbon reads weakly), the Gloam-Moths and the Deep guardians, which are the least like their portraits.
 - **Blocks:** nothing in T7.13a's build (it uses whatever is drawn); a rejected sprite is a redraw or the portrait fallback.
+
+### Q23 — `npm run check` now takes 91–95 s; the limit is 90 s (not blocking; decide before T7.15)
+- **What I measured (end of T7.13b, idle machine):** typecheck 15 s, lint 14 s, format check 13.5 s, tests 46 s, fast simulator 9 s: about 98 s one after another, 91–95 s as `npm run check` runs it. It was 82 s at the end of T7.6. The growth is the Delve work (new tests: sprites 96, whole Delve runs, views). The slowest test files are `sim/parallel.test.ts` 13 s, `tests/contracts/equivalence.test.ts` 12 s, `tests/contracts/flow.test.ts` 11 s, `src/core/policies/play.test.ts` 7 s.
+- **Options:**
+  (a) **Run typecheck, lint and the format check at the same time** inside `npm run check` (the same checks, fewer minutes: roughly 30 s saved). No test, threshold or rule changes.
+  (b) Speed up the slowest tests without weakening them (for example share one built state between cases).
+  (c) Raise the rule from 90 s to 120 s in CLAUDE.md.
+- **Recommendation:** (a), with (b) if it is still close.
+- **Blocks:** nothing now. The rule says check must be green in 90 s or less, so I did not claim it passes: everything passes, but the time is over.
