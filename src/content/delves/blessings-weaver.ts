@@ -1,0 +1,81 @@
+import type { BlessingDef } from './blessing-types';
+
+// GDD §8.8 (D255, D257): The Weaver's eight blessings, exact effects as the GDD gives them.
+// `effects` and `rule` are what combat reads (T7.8); `text` is what the card shows.
+
+export const weaverBlessings: readonly BlessingDef[] = [
+  {
+    id: 'close-weave',
+    patron: 'weaver',
+    rarity: 'faint',
+    name: 'Close Weave',
+    text: '+4% Might per different role in the party',
+    star: false,
+    effects: [{ kind: 'mightPctPerRole', amount: 0.04 }],
+  },
+  {
+    id: 'many-colours',
+    patron: 'weaver',
+    rarity: 'faint',
+    name: 'Many Colours',
+    text: '+4% damage dealt per different damage type in the party',
+    star: false,
+    effects: [{ kind: 'dealtPctPerDamageType', amount: 0.04 }],
+  },
+  {
+    id: 'shared-bread',
+    patron: 'weaver',
+    rarity: 'faint',
+    name: 'Shared Bread',
+    text: "The Mender's heals +15%",
+    star: false,
+    effects: [{ kind: 'healPct', amount: 0.15 }],
+  },
+  {
+    id: 'shoulder-to-shoulder',
+    patron: 'weaver',
+    rarity: 'faint',
+    name: 'Shoulder to Shoulder',
+    text: '−4% damage taken per different role in the party',
+    star: false,
+    effects: [{ kind: 'takenPctPerRole', amount: 0.04 }],
+  },
+  {
+    id: 'one-thread',
+    patron: 'weaver',
+    rarity: 'warm',
+    name: 'One Thread',
+    text: 'When the Mender heals, every other standing hunter also recovers 25% of the amount healed (rounded half up)',
+    star: true,
+    effects: [],
+    rule: { rule: 'one-thread', params: { share: 0.25 } },
+  },
+  {
+    id: 'the-pattern-holds',
+    patron: 'weaver',
+    rarity: 'warm',
+    name: 'The Pattern Holds',
+    text: '+1 Speed per different role in the party',
+    star: false,
+    effects: [{ kind: 'speedPerRole', amount: 1 }],
+  },
+  {
+    id: 'warp-and-weft',
+    patron: 'weaver',
+    rarity: 'warm',
+    name: 'Warp and Weft',
+    text: 'While a Vanguard stands, the other hunters take −8% damage',
+    star: false,
+    effects: [{ kind: 'takenPctOthersWhileVanguard', amount: 0.08 }],
+  },
+  {
+    id: 'mended-cloth',
+    patron: 'weaver',
+    rarity: 'bright',
+    name: 'Mended Cloth',
+    text: "Once per floor, the first hunter downed on that floor gets up at 30% of max Health on the Mender's next action, if she is standing (that action is spent on it)",
+    star: true,
+    effects: [],
+    rule: { rule: 'mended-cloth', params: { health: 0.3 } },
+  },
+];

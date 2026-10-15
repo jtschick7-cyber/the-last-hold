@@ -1380,7 +1380,6 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Preparation limits | bombs per party; the resistance from which a species is weak to a damage type (§8.3 bold) | `prep.bombSlots` = 2, `prep.weakAt` = 1.25 | 5.7 |
 | Suggested party | Stage 1: k samples per party (same seeds); stage 2: top N at `stage2Samples`, then the winner at full samples | `suggest.stage1Samples` = 50, `suggest.stage1PerCandidate` = 20, `suggest.finalists` = 3, `suggest.stage2Samples` = 200 *(D73)* | 6.5 |
 | World-boss tokens *(v0.9)* | 1 per interval, banking up to the max; hunters rest after an attempt | `boss.tokenInterval` = 8 h, `boss.tokenMax` = 6, `boss.hunterRest` = 24 h | 5.12 |
-| Riftglass allowance *(v0.7)* | weekly cap ÷ 7 accrues per day, banking up to N weeks | `riftglass.bankWeeks` = 2 | 5.10 |
 
 ### 7.5 Bestiary & preparation
 
@@ -1442,6 +1441,26 @@ Every constant here is tunable unless marked locked.
 
 Brew numbers live with their content, like every consumable (§5.8.5): Coldwater 0.40 Fire taken; Owl-Eye 0.10 hit chance; Steadfast 1 use; Poppy Smoke 1 lost action; the new oils use `oil.familyBonus`. The properties table is content (§8.6).
 
+
+### 7.9 Delves *(v0.7, D244–D272)*
+
+Every constant here is tunable unless marked **locked** (D268).
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Party, floors, doors, offers | fixed shape of a run | `delve.partySize` = 3 **(locked)**, `delve.floors` = 6 **(locked)**, `delve.doors` = 2 **(locked)**, `delve.offers` = 3 **(locked)** | 5.10.2, 5.10.5 |
+| Depth | floors 1–3 at base; 4–6 at base + step; guardian at base + guardian step | `delve.baseTier` = { keep: 2, citadel: 3, bastion: 4 }, `delve.upperTierStep` = 1, `delve.guardianTierStep` = 2 | 5.10.3 |
+| Group | members per floor; each a contract monster of the tier × these | `delve.groupSize` = { floors1to3: 2, floors4to6: 3 }, `delve.memberHealth` = 0.5, `delve.memberMight` = 0.6 | 5.10.4 |
+| Guardian | Deep species of the tier × this Health | `delve.guardianHealth` = 2 | 5.10.4, 8.3 |
+| Recovery | standing hunters recover this share of max Health before each floor | `delve.recovery` = 0.2 | 5.10.6 |
+| Rarity | weights per offered card; floor 6's minimum | `delve.rarityWeights` = { faint: 70, warm: 25, bright: 5 }, `delve.lastFloorMinRarity` = 'warm' | 5.10.5 |
+| The Unlit's door | chance per floor once unlocked; at most per run | `delve.unlitDoorChance` = 0.25, `delve.unlitDoorsPerRun` = 1 **(locked)** | 5.10.5 |
+| Reagents | per floor cleared; from the guardian | `delve.reagentsPerFloor` = 1, `delve.guardianReagents` = 2 | 5.10.7 |
+| Riftglass pay | per floor cleared; for the guardian | `riftglass.perFloor` = 2, `riftglass.guardian` = 4 | 5.10.7 |
+| Allowance | grows `weeklyCap ÷ 7` a day; banks up to `bankWeeks × weeklyCap` | `riftglass.weeklyCap` = 70 **(locked)**, `riftglass.bankWeeks` = 2 **(locked, existing)** | 5.10.8 |
+| Shop | costs | `riftglass.shop.lateHours` = [30, 45, 60, 75, 90], `riftglass.shop.trait` = 40, `riftglass.shop.cosmetic` = 25, `riftglass.shop.chosenStart` = 60, `riftglass.shop.reroll` = 60 | 5.10.8 |
+
+Blessing numbers live with their content (§8.8), the guardians' with the monsters (§8.3), the Delve relics' with the relics (§8.10a), the alternate traits' with the traits (§8.5a), as every earlier ability, trait and brew does.
 
 ---
 

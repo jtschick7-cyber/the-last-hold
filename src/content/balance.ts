@@ -157,7 +157,40 @@ export const balance = {
     tokenMax: locked(6),
     hunterRest: locked(24 * HOUR, 'seconds'), // 24 h
   },
-  riftglass: { bankWeeks: locked(2) },
+  // ---- GDD §7.9 Delves (v0.7, D244–D272) ----
+  delve: {
+    partySize: locked(3),
+    floors: locked(6),
+    doors: locked(2),
+    offers: locked(3),
+    baseTier: tunable({ keep: 2, citadel: 3, bastion: 4 }),
+    upperTierStep: tunable(1),
+    guardianTierStep: tunable(2),
+    groupSize: tunable({ floors1to3: 2, floors4to6: 3 }),
+    memberHealth: tunable(0.5),
+    memberMight: tunable(0.6),
+    guardianHealth: tunable(2),
+    recovery: tunable(0.2),
+    rarityWeights: tunable({ faint: 70, warm: 25, bright: 5 }),
+    lastFloorMinRarity: tunable('warm'),
+    unlitDoorChance: tunable(0.25),
+    unlitDoorsPerRun: locked(1),
+    reagentsPerFloor: tunable(1),
+    guardianReagents: tunable(2),
+  },
+  riftglass: {
+    perFloor: tunable(2),
+    guardian: tunable(4),
+    weeklyCap: locked(70),
+    bankWeeks: locked(2),
+    shop: {
+      lateHours: tunable([30, 45, 60, 75, 90]),
+      trait: tunable(40),
+      cosmetic: tunable(25),
+      chosenStart: tunable(60),
+      reroll: tunable(60),
+    },
+  },
 
   // ---- GDD §7.5 Bestiary & preparation ----
   knowledge: {
