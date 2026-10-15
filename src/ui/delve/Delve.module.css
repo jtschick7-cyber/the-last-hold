@@ -147,7 +147,7 @@
 }
 
 .but {
-  color: var(--c-warn);
+  color: var(--c-bad);
   font-size: 0.875rem;
 }
 

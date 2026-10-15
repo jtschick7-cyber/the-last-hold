@@ -17,6 +17,8 @@
   --c-on-ember: #302c2e;
   --c-warn: #f4b41b;
   --c-good: #71aa34;
+  /* v0.7: a drawback (the Unlit's "but…" line, GDD §9.15): Zughy 32's bright red. */
+  --c-bad: #e6482e;
   --c-preview: #f4b41b;
   /* v0.5: the Archive reader's parchment card (GDD §9.14). */
   --c-parchment: #cfc6b8;
@@ -41,6 +43,7 @@
   --c-on-ember: #dff6f5;
   --c-warn: #7a444a;
   --c-good: #397b44;
+  --c-bad: #a93b3b;
   --c-parchment: #f4cca1;
   --c-ink: #302c2e;
   color-scheme: light;
