@@ -60,7 +60,7 @@ describe('the §7.10 constants (D325)', () => {
     });
     expect(balance.salvage.share.value).toBe(0.25);
     expect(balance.salvage.perLine.value).toBe(20);
-    expect(balance.rank.wrightTrophies.value).toBe(20);
+    expect(balance.rank.wrightTrophies.value).toBe(10); // 20 at the flesh-out; tuned in T8.18 (D354)
     expect(balance.rank.masterTrophies.value).toBe(60);
     expect(balance.star.embersPerStar.value).toBe(20);
     expect(balance.star.trophiesPerStar.value).toBe(10);

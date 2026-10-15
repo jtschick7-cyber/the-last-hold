@@ -69,7 +69,7 @@ export const balance = {
   },
   xp: {
     base: tunable(50),
-    growth: tunable(1.5),
+    growth: tunable(1.3),
     perTier: tunable(20),
   },
   barracks: { maxLevel: locked(5) },
@@ -210,7 +210,7 @@ export const balance = {
   rank: {
     wrightLevel: locked(5),
     masterLevel: locked(10),
-    wrightTrophies: tunable(20),
+    wrightTrophies: tunable(10),
     masterTrophies: tunable(60),
   },
   talent: {
@@ -289,7 +289,7 @@ export const balance = {
   // Hunter letters at these levels, counting the highest level ever reached (D155).
   letters: { levels: tunable([5, 8]) },
   // Until all six Ribbonshade names are found, this share of ruin contracts is a Ribbonshade (Q17, D190).
-  ruin: { ribbonshadeShare: tunable(0.5) },
+  ruin: { ribbonshadeShare: tunable(0.75) },
 
   // ---- GDD §7.8 Alchemy discovery & skills (v0.6, D193–D220) ----
   experiment: { time: tunable(10 * MIN, 'seconds'), units: tunable(1) }, // 10 min, 1 unit each

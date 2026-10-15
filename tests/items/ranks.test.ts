@@ -1,6 +1,7 @@
 // Plan T8.7 (GDD §5.11.3, D309, D310, D328): hunter ranks and stars, the trophies on hand, and
 // that they are kept through the Long Night.
 import { describe, expect, it } from 'vitest';
+import { num } from '../../src/core/balance-access';
 import { buildHunter } from '../../src/core/combat/build';
 import { mightEff } from '../../src/core/combat/stats';
 import type { GameState } from '../../src/core/state/game-state';
@@ -55,13 +56,14 @@ describe('trophies on hand (D328 (3))', () => {
     s.embers = 100;
     expect(run(s, { type: 'hunter.addStar', hunter: 'zora' }).ok).toBe(true);
     expect(s.stats.trophies).toBe(80); // earned stays
-    expect(s.stats.trophiesSpent).toBe(30);
+    expect(s.stats.trophiesSpent).toBe(num('rank.wrightTrophies') + num('star.trophiesPerStar'));
     expect(rate()).toBe(before);
   });
 });
 
 describe('ranks (D309)', () => {
-  it('Wright needs the highest level ever at 5 and 20 trophies; the refusal says which', () => {
+  it('Wright needs the highest level ever at 5 and the trophies; the refusal says which', () => {
+    const need = num('rank.wrightTrophies'); // 10 since the T8.18 tuning (D354)
     const s = keepRich('wright');
     earn(s, 100, 4);
     const low = rankUpView(s, 'zora');
@@ -73,9 +75,9 @@ describe('ranks (D309)', () => {
     const r = run(s, { type: 'hunter.rankUp', hunter: 'zora' });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.reason).toBe('Zora: needs highest level 5.');
-    earn(s, 19, 5);
-    expect(rankUpView(s, 'zora')?.reason).toBe('needs 20 trophies');
-    earn(s, 20, 5);
+    earn(s, need - 1, 5);
+    expect(rankUpView(s, 'zora')?.reason).toBe(`needs ${need} trophies`);
+    earn(s, need, 5);
     expect(run(s, { type: 'hunter.rankUp', hunter: 'zora' }).ok).toBe(true);
     expect(hunter(s).rank).toBe('wright');
     expect(trophiesOnHand(s)).toBe(0);
@@ -99,10 +101,11 @@ describe('ranks (D309)', () => {
       label: 'Master-Wright',
       reason: 'needs highest level 10',
     });
-    earn(s, 79, 10);
-    s.stats.trophiesSpent = 20;
+    const spent = num('rank.wrightTrophies'); // what the Wright rank cost
+    s.stats.trophiesSpent = spent;
+    earn(s, 59 + spent, 10); // 59 on hand
     expect(rankUpView(s, 'zora')?.reason).toBe('needs 60 trophies');
-    earn(s, 80, 10);
+    earn(s, 60 + spent, 10);
     expect(run(s, { type: 'hunter.rankUp', hunter: 'zora' }).ok).toBe(true);
     expect(hunter(s).rank).toBe('masterWright');
     expect(run(s, { type: 'hunter.rankUp', hunter: 'zora' }).ok).toBe(false);
@@ -118,7 +121,7 @@ describe('ranks (D309)', () => {
     expect(unspentTalentPoints(hunter(s))).toBe(0);
     earn(s, 100);
     expect(rankUpView(s, 'zora')?.trophies.breakdown).toMatchObject({
-      value: 20,
+      value: num('rank.wrightTrophies'),
       key: 'rank.wrightTrophies',
     });
   });

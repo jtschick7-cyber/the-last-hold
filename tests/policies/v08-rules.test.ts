@@ -6,6 +6,7 @@ import { blessingById } from '../../src/content/delves/blessings';
 import { gear } from '../../src/content/gear';
 import { HUNTER_IDS, hunters } from '../../src/content/hunters';
 import { talentsOf } from '../../src/content/talents';
+import { num } from '../../src/core/balance-access';
 import { apply, type Command } from '../../src/core/commands';
 import {
   itemMoves,
@@ -119,13 +120,13 @@ describe('items (GDD §6.1, D321)', () => {
 describe('ranks and stars (GDD §6.1, D321)', () => {
   it('ranks up everyone who qualifies, the highest peak level first when trophies are short', () => {
     const s = keepRich('ranks');
-    s.stats.trophies = 20; // one Wright's worth
+    s.stats.trophies = num('rank.wrightTrophies'); // one Wright's worth
     s.story.peakLevels.zora = 6;
     s.story.peakLevels.halvar = 9;
     rankMoves(s, act(s));
     expect(s.hunters.halvar?.rank).toBe('wright');
     expect(s.hunters.zora?.rank).toBe('apprentice');
-    expect(s.stats.trophiesSpent).toBe(20);
+    expect(s.stats.trophiesSpent).toBe(num('rank.wrightTrophies'));
   });
 
   it('does nothing below the level or without the trophies', () => {

@@ -20,15 +20,15 @@ const ruins = (named: boolean): ContractInstance[] => {
 };
 
 describe('Ribbonshades in ruin contracts', () => {
-  it('are about half of them until the six names are found (ruin.ribbonshadeShare)', () => {
+  it('are most of them until the six names are found (ruin.ribbonshadeShare)', () => {
     const share = num('ruin.ribbonshadeShare');
-    expect(share).toBe(0.5);
+    expect(share).toBe(0.75); // 0.5 until the T8.18 tuning (D354)
     const list = ruins(false).filter((c) => c.tier <= 4);
     expect(list.length).toBeGreaterThan(150);
     const got = list.filter((c) => c.monster === 'ribbonshade').length / list.length;
     // The share, plus a Ribbonshade's ordinary chance among the others.
     expect(got).toBeGreaterThan(share);
-    expect(got).toBeLessThan(share + 0.3);
+    expect(got).toBeLessThanOrEqual(1);
   });
 
   it('go back to their ordinary chance once all six names are found', () => {

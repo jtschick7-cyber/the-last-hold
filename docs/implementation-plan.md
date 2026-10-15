@@ -1013,7 +1013,7 @@ Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday 
   - In **their own commit**: the `act-5`, `late-letters` and `first-wright` rows and the new `idle-only` definition in `sim/targets.ts` (owner-approved). The milestone becomes v0.8.
   - The Monday Standard and Delver runs play on until all content (up to 42 days), as in v0.7.
   - Suite time per CI job measured; **over 5 minutes in any job: stop and ask.**
-- [ ] **T8.18 Tuning** (tunables only) against every check.
+- [x] **T8.18 Tuning** (tunables only) against every check. *(`xp.growth` 1.3, `rank.wrightTrophies` 10, `ruin.ribbonshadeShare` 0.75; all 41 rows pass; D354.)*
   - Likely levers: `yard.share`, `star.growthPerStar`, `star.embersPerStar`, `loot.chanceBase`, `loot.lines`, `delve.xpPerTier`, `rank.wrightTrophies`.
   - The 38 earlier checks judge `standard`. Items, yard XP and stars move them through shared rules (watch "later cycles", "contracts own silver" and "provisions matter").
   - If no reasonable values pass, stop and ask.

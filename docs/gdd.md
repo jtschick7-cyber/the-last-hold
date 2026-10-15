@@ -510,7 +510,7 @@ Every hunter is a **hand-authored named character** **[JC]**. There are no proce
 - **Level 1–10 in Keep** (later Ranks raise the cap). **Health and Might** scale as `base × (1 + g × (level − 1))`, where g = 0.10 plus 0.01 per **star** (v0.8, §5.11.3). **Armor and Speed don't scale with level** *(⚑ revision [JC]: under the turn meter, Speed growth would compound into extra actions)*.
 - **Displayed stats include gear and traits** *(⚑ revision A14)*. The breakdown separates base, level, gear and traits.
 - **XP per contract:** 20 × tier on a success, half that on a failure.
-- **XP to go from level L to L+1:** `50 × 1.5^(L−1)`.
+- **XP to go from level L to L+1:** `50 × 1.3^(L−1)` *(v0.8 tuning, D354: was 1.5)*.
 
 #### 5.3.3 Roles (D24.2 names)
 
@@ -1098,7 +1098,7 @@ Hunters grow in four ways that last: **ranks**, **stars**, **talents** and a per
 | Rank | Needs | Gives |
 |---|---|---|
 | Apprentice | — | 1 talent point |
-| **Wright** | Highest level ever ≥ `rank.wrightLevel` 5, and `rank.wrightTrophies` 20 trophies | The use-skill (§5.11.4); 3 talent points in all |
+| **Wright** | Highest level ever ≥ `rank.wrightLevel` 5, and `rank.wrightTrophies` 10 trophies | The use-skill (§5.11.4); 3 talent points in all |
 | **Master-Wright** | Highest level ever ≥ `rank.masterLevel` 10, and `rank.masterTrophies` 60 trophies | 5 talent points in all |
 
 - Trophies of **any family** pay for ranks, from the trophies **on hand** this cycle (earned minus spent). Spending never lowers the Trophy Hall bonus or the Embers conversion, which count trophies earned (A7).
@@ -1216,7 +1216,7 @@ Hunters grow in four ways that last: **ranks**, **stars**, **talents** and a per
 
 - **40 names, each from exactly one source** (`lore-secrets.md` §8, §20): act documents 28, Ribbonshades 6, hunter letters 5, Sigrun's confession 1.
 - **A name is found** when the document, defeat or letter that carries it is found. Found names are kept forever.
-- **Ribbonshades** (§8.3): each Ribbonshade defeated carries the next of the six Ribbonshade names in a fixed order, the first being Jaro's (roll #39), until all six are found. After that, a Ribbonshade carries a ribbon with no name. The scene line comes with the contract result. **Until all six names are found, half of the ruin contracts that can hold a Ribbonshade (tiers 2–4) are one** (`ruin.ribbonshadeShare`, Q17, D190); the other ruin creatures still appear, and once the six are found the ordinary mix returns.
+- **Ribbonshades** (§8.3): each Ribbonshade defeated carries the next of the six Ribbonshade names in a fixed order, the first being Jaro's (roll #39), until all six are found. After that, a Ribbonshade carries a ribbon with no name. The scene line comes with the contract result. **Until all six names are found, three in four of the ruin contracts that can hold a Ribbonshade (tiers 2–4) are one** (`ruin.ribbonshadeShare`, Q17, D190; 0.5 until the v0.8 tuning, D354); the other ruin creatures still appear, and once the six are found the ordinary mix returns.
 
 #### 5.14.5 Wardens
 
@@ -1434,7 +1434,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Level scaling | Health and Might: `stat × (1 + s × (L − 1))`; Armor and Speed don't scale | `hunter.levelStatGrowth` = 0.10, `hunter.levelCap` = { keep 10, citadel 15, bastion 20 } (Hamlet uses the Keep's cap, D72; D106) | 5.3.2 |
-| XP to next level | `x × g^(L−1)` | `xp.base` = 50, `xp.growth` = 1.5 | 5.3.2 |
+| XP to next level | `x × g^(L−1)` | `xp.base` = 50, `xp.growth` = 1.3 | 5.3.2 |
 | XP per contract | `per × tier` (half on failure) | `xp.perTier` = 20 | 5.3.2 |
 | Recruitment cost | Fixed price per hunter (G5) | `hunter.recruitPrice`, in each hunter's content entry (§8.5) | 5.3.1 |
 | Active roster cap | Hamlet 3; Keep `3 + barracksLevel`; +2 at Citadel, +2 at Bastion; reserve unlimited (G5) | `barracks.maxLevel` = 5, `roster.hamletCap` = 3, `roster.ageBonus` = { citadel 2, bastion 2 } | 5.3.1 |
@@ -1512,7 +1512,7 @@ Every constant here is tunable (D166).
 | Trust steps | contracts won for a village to rise from each level (Cold, Wary, Hopeful, Trusting); a Triumphant stand counts as `trust.triumphantContracts` contracts for every village | `trust.stepContracts` = [8, 15, 20, 25] *(D237; first was 10)*, `trust.triumphantContracts` = 10 *(D195)* | 5.14.6 |
 | Hunter letters | at the highest level ever reached | `letters.levels` = [5, 8] | 5.14.7 |
 | Runed sub-hit | `f × Might_eff × variance × crit × resist[Rune]`, no Armor | `gear.runedFraction` = 0.25 | 5.3.6 |
-| Ribbonshade share | the share of ruin contracts (tiers 2–4) that is a Ribbonshade while a Ribbonshade name is still missing | `ruin.ribbonshadeShare` = 0.5 | 5.14.4 |
+| Ribbonshade share | the share of ruin contracts (tiers 2–4) that is a Ribbonshade while a Ribbonshade name is still missing | `ruin.ribbonshadeShare` = 0.75 | 5.14.4 |
 
 Trait and ability numbers (Shield-companion, Old Wright, and the Cursed creatures' abilities) live with their content, like every earlier trait and ability (§8.3, §8.5). The Wright's Blade's Might and cost live with the gear content (§5.3.6).
 
@@ -1561,7 +1561,7 @@ Every constant here is tunable unless marked **locked** (D325).
 | Bonus lines | sizes | `loot.lines` = { might: 0.06, health: 0.08, armor: 2, speed: 1, crit: 0.04, bane: 0.12 } | 5.11.2 |
 | Stores | cap | `stores.cap` = 40 **(locked)** | 5.11.7 |
 | Salvage | share of iron and silver put in; silver per line | `salvage.share` = 0.25, `salvage.perLine` = 20 | 5.11.7 |
-| Ranks | highest level ever needed; trophies | `rank.wrightLevel` = 5 **(locked)**, `rank.masterLevel` = 10 **(locked)**, `rank.wrightTrophies` = 20, `rank.masterTrophies` = 60 | 5.11.3 |
+| Ranks | highest level ever needed; trophies | `rank.wrightLevel` = 5 **(locked)**, `rank.masterLevel` = 10 **(locked)**, `rank.wrightTrophies` = 10, `rank.masterTrophies` = 60 | 5.11.3 |
 | Talent points | by rank | `talent.points` = { apprentice: 1, wright: 3, masterWright: 5 } **(locked)** | 5.11.3 |
 | Talent tiers | stars to open tiers 1–3 | `talent.tierStars` = [0, 2, 4] **(locked)** | 5.11.3 |
 | Stars | star n costs n × these; growth per star | `star.max` = 5 **(locked)**, `star.embersPerStar` = 20, `star.trophiesPerStar` = 10, `star.growthPerStar` = 0.01 | 5.11.3 |
