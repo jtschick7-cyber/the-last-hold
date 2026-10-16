@@ -20,10 +20,10 @@ sim/reports/*.json
 # Simulator shard results (regenerated, uploaded as CI artifacts)
 sim/shards/
 
-# Art sources: zips and unpacked packs are binary —
-# but license checks are a real session task, so keep the License.txt files
+# Art sources: ignore the binary files, keep text (License.txt, readmes) readable
 art-src/*.zip
-art-src/packs/**
-!art-src/packs/**/License.txt
+art-src/packs/**/*.png
+art-src/packs/**/*.gif
+art-src/packs/**/*.jpg
 
 *.log
