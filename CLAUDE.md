@@ -33,6 +33,9 @@ Keep it short and plain.
 
 - **When the context is compacted:** preserve the current task, the list of files changed this session, any open questions, and the exact test command.
 - **End sessions at task boundaries.** Don't start a new task with a long context: finish the task (green `npm run check`, `progress.md` updated) and let the next session run the start ritual instead.
+- Bash output is compressed by a global tool (RTK). If a line-by-line
+  comparison (golden fights, save round-trips) needs raw output, say so
+  in the session or check the terminal.
 
 ## Working with the owner
 
