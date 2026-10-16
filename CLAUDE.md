@@ -9,14 +9,16 @@ An original single-player idle/incremental browser game.
 
 ## Session start
 
+Read **targeted slices**, not whole files. The history is archived under `docs/archive/` on purpose; don't open it unless a task points there.
+
 1. **Read this file.**
-2. **Read `docs/progress.md`:** where the last session stopped.
-3. **Read `docs/implementation-plan.md`:** the current milestone (the first whose `Status:` isn't `complete`) and its first unchecked task that isn't marked `[?]`.
-4. **Read the GDD and technical-design sections** that milestone lists under "Reads".
-5. **Read `docs/questions.md`:** any answered questions unblock `[?]` tasks.
+2. **Read the top of `docs/progress.md`** (the "Current state" block) **and its last entry only.**
+3. **Find the current milestone** with a search for the `Status:` lines in `docs/implementation-plan.md`. Read that milestone's section and its first unchecked task that isn't marked `[?]`. Completed milestones are archived in `docs/archive/implementation-plan-v0.0-v0.8.md`.
+4. **Read only the GDD and technical-design sections** that milestone lists under "Reads". Look up a decision by its number with a search; never open `docs/decisions.md` whole.
+5. **Read `docs/questions.md`** (it holds only open and recent questions): any answered question unblocks a `[?]` task.
 6. **Run `npm run check`.** If it's red, fixing it is the first task.
 
-**Lore:** read `docs/setting-primer.md` freely. The story's secrets aren't in the repo until v0.5. **Never look for them in git history** (owner gates, below).
+**Lore:** read `docs/setting-primer.md` freely. `docs/lore-secrets.md` is large: read only the section the task names, never the whole file.
 
 ## Session end
 
@@ -27,12 +29,13 @@ Append an entry to **`docs/progress.md`**:
 - open questions;
 - anything skipped, deferred, or deprioritized, and why.
 
-Keep it short and plain.
+Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the long story (how a tuning was found, timings, trade-offs) in the pull request or the decisions log, not here. Also keep the "Current state" block at the top of `progress.md` up to date (branch, milestone, last task, next task). When `progress.md` passes about 20 KB, move older entries to `docs/archive/` and leave the last 3.
 
 ## Context hygiene
 
 - **When the context is compacted:** preserve the current task, the list of files changed this session, any open questions, and the exact test command.
-- **End sessions at task boundaries.** Don't start a new task with a long context: finish the task (green `npm run check`, `progress.md` updated) and let the next session run the start ritual instead.
+- **End sessions at task boundaries. One task per session by default** (two only when both are small and in the same files). Don't start a new task with a long context: finish the task (green `npm run check`, `progress.md` updated) and let the next session run the start ritual instead. Don't chain "session N (continued)" tasks.
+- **Search before reading.** For big files (`gdd.md`, `decisions.md`, `lore-secrets.md`, the archive), search for the section or decision number, then read just that range.
 - Bash output is compressed by a global tool (RTK). If a line-by-line
   comparison (golden fights, save round-trips) needs raw output, say so
   in the session or check the terminal.

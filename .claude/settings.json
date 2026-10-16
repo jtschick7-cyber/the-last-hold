@@ -1,6 +1,18 @@
 {
   "permissions": {
-    "deny": []
+    "deny": [
+      "Read(./dist/**)",
+      "Read(./dist-preview/**)",
+      "Read(./dev-dist/**)",
+      "Read(./coverage/**)",
+      "Read(./test-results/**)",
+      "Read(./playwright-report/**)",
+      "Read(./sim/reports/*.json)",
+      "Read(./sim/shards/**)",
+      "Read(./art-src/packs/**/*.png)",
+      "Read(./art-src/packs/**/*.gif)",
+      "Read(./art-src/packs/**/*.zip)"
+    ]
   },
   "hooks": {
     "PreToolUse": [
