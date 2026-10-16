@@ -1,0 +1,961 @@
+# Implementation plan — archived milestones v0.0–v0.8
+
+Moved out of `docs/implementation-plan.md` on 2026-10-16 to save session-start reading. All of these milestones are complete (playtests passed). Content is unchanged. Task ids (T0.1–T8.18) and the decisions log still refer to it.
+
+## v0.0 — Bootstrap
+
+**Status:** complete
+
+**Goal:** an empty, deployable, installable shell, with every guard-rail and the preview channel in place. No game logic.
+**Reads:** technical design §2–4, §7.4 (the ban list only), §9.1 (namespacing), §11.
+
+**Before you start 👤**
+
+| Owner task | Needed by |
+|---|---|
+| ~~Put the docs and `CLAUDE.md` in the repo~~ **Done.** `lore-secrets.md` stays out until v0.5 (D36). | T0.0 |
+| Enable GitHub Pages with Source = GitHub Actions (repo Settings → Pages) | T0.6 |
+| Let milestone branches deploy: repo Settings → Environments → `github-pages` → Deployment branches and tags → add the rule `milestone/*` (Pages only allows `main` by default) | T0.6 |
+| Create the branch `milestone/v0.0` from the v0.0 work branch, or allow Claude Code to push it (previews deploy only from `milestone/*`) | T0.6 |
+
+### Tasks
+
+- [x] **T0.0 👤 Docs in the repo.** `gdd.md`, `technical-design.md`, `implementation-plan.md`, `decisions.md`, `setting-primer.md`, and `CLAUDE.md` are committed; `lore-secrets.md` is excluded (D36).
+- [x] **T0.1 Scaffold.**
+  - Vite + TypeScript + Preact + signals.
+  - Strict `tsconfig` with `noUncheckedIndexedAccess`.
+  - The folder structure (technical design §3); Node 22 (`.nvmrc`); exact dependency versions.
+- [x] **T0.2 Scripts.** `dev`, `build`, `preview`, `typecheck`, `lint`, `format`, `test`, `sim` (a stub that exits 0), `check`.
+- [x] **T0.3 Lint guard-rails.**
+  - Layer import rules.
+  - The full `core/` ban list (technical design §4.2, §7.4).
+  - The numeric-literal rule with its allowlist (0, 1, −1, 2, 100, array indices; test files exempt).
+  - Named exports only.
+  - **Test:** fixture files that break each rule must fail lint (checked through the ESLint Node API).
+- [x] **T0.4 PWA shell.**
+  - vite-plugin-pwa with base `/the-last-hold/`.
+  - A **build channel** (`live` or `preview`) that sets the storage namespace, the manifest name and scope, and a PREVIEW ribbon (technical design §11.3).
+  - A version and commit screen; the update banner.
+- [x] **T0.5 CI.** `ci.yml` (check + build). Empty stubs for `sim.yml` and `bench.yml`.
+- [x] **T0.6 Deploy with preview.**
+  - `deploy.yml` builds the latest `main` at the root and the latest `milestone/*` at `/preview/`, as one Pages artifact.
+  - The live service worker's `navigateFallbackDenylist` excludes `/preview/`.
+  - *First deploy succeeded on 2026-10-11: a placeholder page at the root (main has no app until v0.0 merges) and `milestone/v0.0` at `/preview/`.*
+- [x] **T0.7 Repo hygiene.**
+  - README.
+  - `.github/pull_request_template.md`.
+  - Check that `.claude/settings.json` (the lore deny rule) is in place.
+  - Initialize `docs/progress.md` and `docs/questions.md` if they're missing.
+
+### Acceptance criteria
+
+1. CI is green.
+2. The live URL and `/preview/` both load; each shows its channel and version.
+3. **Isolation test:** a value saved in the preview is not visible in live, and vice versa. Each has its own install name.
+4. The lint guard-rail tests prove each banned pattern fails.
+
+**👤 Playtest checklist**
+- [x] **On iPhone, install to the Home Screen before playing.** The installed app keeps its own storage, separate from Safari. Use export and import to move a save between them (from v0.1).
+- [x] Install **both** live and preview. Each opens in airplane mode after its first load.
+- [x] The version and the PREVIEW ribbon show correctly.
+
+**Out of scope:** any game content or state.
+
+---
+
+## v0.1 — The Hold
+
+**Status:** complete
+
+**Goal:** the idle economy from Hamlet to Keep, playable on a phone, saving reliably, with offline progress, a debug panel, diagnostics, a working simulator, and the art pipeline.
+**Reads:** GDD §1–5.2, §6, §7.1–7.2, §9 (the v0.1 screens), §10; technical design §4–9, §11–15; `setting-primer.md` §5–7.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| Approve any replacement names | T1.6 | When T1.6 raises them in `questions.md` |
+| **Pick the palette** from the rendered candidates | T1.28 | When T1.28 posts the swatch page |
+| **Download the CC0 packs** from the exact list T1.30 gives you (pack names, links, licenses) into `art-src/packs/<pack>/` | T1.31 | **One session ahead:** T1.30 delivers the list a session before T1.31 needs the files |
+
+### A. Foundations
+
+- [x] **T1.1 RNG.** `core/rng`: sfc32, cyrb128, streams, `RollSource` (`seeded`, `scripted`). **Tests:** goldens for 3 seeds; `scripted` throws if it runs out or isn't fully consumed.
+- [x] **T1.2 Portable math.** `core/math`: `intPow` and `maxAffordable` (search). **Tests:** both match `Math.pow` and the GDD log formula over a table of cases (computed in the tests only) (technical design §7.4).
+- [x] **T1.3 Formatting.** Numbers and durations (technical design §8), with suffixes chosen by thresholds. **Tests:** the full boundary table.
+- [x] **T1.4 Balance file.** `content/balance.ts` with every v0.1 key, each marked `tunable` or `locked` per §0.6.
+- [x] **T1.5 v0.1 content.** Resources, jobs, buildings (Silver Seam max 2), Ranks (Hamlet, Keep, plus the restoration text), and the starting state (GDD §5.1.4).
+- [x] **T1.6 Names.** Collision-search every v0.1 proper noun. Create `tests/content/names.ts` and the name-finding test (technical design §14). Any collision or unchecked name goes to `questions.md` as `[?]`.
+- [x] **T1.7 v0.1 text.** Building blurbs; Brana and Pechko lines for every primer §6.2 trigger (3–5 variants each); the Keep inscription.
+- [x] **T1.8 Content integrity test.** IDs, text keys and unlocks resolve; **the GDD §7 key list equals the `balance.ts` keys** (technical design §5.1).
+
+### B. State, selectors, commands
+
+- [x] **T1.9 State v1.** `GameState` with only the v0.1 fields; `createNewGame(seed, now)`.
+- [x] **T1.10 Breakdowns and selectors.** Rates, costs (n includes starting buildings), housing, slots, and the offline cap, each with a breakdown. **Tests:** every GDD §7.1 formula, using the GDD's numbers.
+- [x] **T1.11 Silver rules.** Silver-digger output gets only the relic and event buckets. **Test:** Keep's +50% doesn't change silver.
+- [x] **T1.12 Commands.**
+  - `build.buy` (×1, ×10, Max), `build.upgrade`.
+  - `peasants.*`, `age.up`, `settings.*`.
+  - **Tests:** refused commands never change state.
+- [x] **T1.13 Valuation.** Best payback and the ● selector (GDD §5.1.2). **Tests:** mixed-cost and housing cases.
+
+### C. Time
+
+- [x] **T1.14 Event-driven `advance`.** Settle events and the tie order (technical design §6.2).
+- [x] **T1.15 Offline catch-up.** Cap, backward clock, chunks with yields, the away summary.
+- [x] **T1.16 Required tests.**
+  - **Offline equivalence**, with the comparison rule from technical design §6.2.
+  - Backward clock; determinism; cap reporting.
+
+### D. Saves
+
+- [x] **T1.17 Envelope and storage.** Namespaced keys (live or preview); main, backup, and quarantine slots; autosave; the `persist()` request.
+- [x] **T1.18 Export and import.** `LH1.` and `LH0.` codes, the save file, clear errors.
+- [x] **T1.19 Migrations framework.** An empty list, the v1 fixture, validation, the newer-version refusal. **Tests:** round-trip; corrupted codes; unknown IDs.
+
+### E. UI
+
+- [x] **T1.20 Shell.** Resource bar and rates sheet; tabs **Hold** and **More** only; sheet stack; themes.
+- [x] **T1.20a Pixel font.** The CC0 pixel font for headings and the resource bar (split from T1.20: no CC0 font source is reachable from Claude Code's sessions; see `questions.md` Q1). Done 2026-10-12: Kenney Pixel (CC0), from the owner's upload.
+- [x] **T1.21 Hold screen.** Peasants panel, build list (×1 / ×10 / Max, "ready in", the ● hint), and the hold header.
+- [x] **T1.22 Rank screen.** Checklist, costs, unlocks, the restored part of the hold. Citadel shows "Coming in a later milestone".
+- [x] **T1.23 Away sheet and Reports** (the last 3 sheets).
+- [x] **T1.24 Breakdown sheet.** Long-press and hover; ⓘ markers.
+- [x] **T1.25 More menu.** Save & Data; Settings; About & Credits (version, channel, commit, `debugUsed`); and the **install tip, including the iPhone storage note** (technical design §9.1).
+- [x] **T1.26 Debug panel** (`?debug`). Time skip through the offline path, add resources, seed, Rank unlock, raw state, timing readout. *(The "simulator run" button moved to T1.35, since it needs the simulator.)*
+- [x] **T1.27 Diagnostics** (technical design §15.1). The error capture list, **More → Diagnostics**, "Copy diagnostics", and the crash fallback screen.
+
+### F. Art pipeline
+
+- [x] **T1.28 Palette.** Render 2–3 free-use 32-color candidates as a swatch page. 👤 **The owner picks one.** Record it in `palette.ts` and `credits.md`.
+- [x] **T1.29 Manifest and `<Sprite>`.** Placeholder fallback; `gen-placeholders`.
+- [x] **T1.30 Pack list for the owner.** Write `art-src/PACKS-NEEDED.md` with the exact CC0 packs, links, licenses, and target folders for v0.1 (hold-scene tiles, resource icons, building icons, UI frames). Post it to `questions.md` **one session before T1.31**.
+- [x] **T1.31 Recolor tool.** `tools/recolor.ts` (OKLab nearest color) and `tools/recolor-cli.ts`, tested on generated images.
+- [x] **T1.31a Process the packs.** Unpack the owner's uploads, check each `License.txt`, recolor to the chosen palette, add manifest rows, and add the Kenney font (T1.20a). Done 2026-10-12 with recipes in `tools/art-recipes.ts`; the Pixel UI Pack's frames are kept for the v1.0 art pass (D59).
+- [x] **T1.32 Credits.** Generate `credits.md`; add the CI license test.
+- [x] **T1.33 Contact sheet tool.**
+
+### G. Simulator
+
+- [x] **T1.34 Simulator CLI and report.** Virtual clock, seeds, JSON and Markdown, baseline diff, `sim:accept`, and the **fast set** for `check` (technical design §11.2).
+- [x] **T1.35 Policies.** Opening, Standard, Light, Heavy, using the shared valuation. Then add the debug panel's "run the Standard policy for N hours" button (moved from T1.26). *(Rules: D60.)*
+- [x] **T1.36 v0.1 checks**, with `sim/targets.ts` locked. *(Written and tested; they run in `sim:check` and `sim.yml`. Enforcing them inside `npm run check` is T1.36a.)*
+- [x] **T1.36a Enforce the fast set in `check`** (`sim:check -- --fast`), once T1.37 makes the checks pass.
+- [x] **T1.37 Tuning pass.** `tunable` constants only (§0.6). *(D62: starting wood 75, Keep silver 250; every v0.1 check passes on 5 seeds.)*
+
+### H. Browser tests
+
+- [x] **T1.38 Playwright.** *(D61; WebKit runs in CI.)*
+  - **Smoke** (phone viewport): load → buy a Cottage → reload → state persists → offline reload works.
+  - Run the **determinism suite in WebKit and Chromium** (technical design §14).
+
+### v0.1 acceptance criteria
+
+1. A fresh game can reach Keep. The Rank-up applies the Keep grants and shows the Roll of Honor.
+2. Every on-screen number that has a formula opens a breakdown that matches the engine.
+3. Reopening after up to 12 h shows a correct away sheet; time beyond the cap is reported.
+4. A save survives a reload; an export code moves it between browsers; corrupted codes are refused with a reason; preview and live saves never mix.
+5. An error anywhere shows in Diagnostics, and "Copy diagnostics" works.
+6. The game works offline after installation.
+7. `npm run check` is green in 90 s or less. The Playwright smoke and the cross-engine determinism tests pass.
+8. Every v0.1 simulator check passes on 5 seeds.
+
+### v0.1 simulator checks (GDD §6.2–6.3)
+
+| Check | Target |
+|---|---|
+| First Cottage (Opening) | ≤ 1 min |
+| First Mine (Opening) | ≤ 5 min. If missed, raise starting wood (D30); that's a tunable. Now 75 (D62). |
+| Mill level 3 | 2–5 h |
+| 10 peasants | 3–6 h |
+| **Keep** | **8–14 h** (Standard, median); ≤ 24 h (Light); ≥ 6 h (Heavy) |
+| Something to do | ≥ 90% of Standard check-ins |
+| No dry spells | Never 2 empty check-ins in a row |
+| No walls | ≤ 3 check-ins of saving (≤ 5 for Rank-ups) |
+| No overflow | < 1e300 over 14 days |
+
+### v0.1 owner playtest checklist 👤 (on the preview build)
+
+- [ ] **Play until Keep, plus one overnight.**
+- [ ] A routine check-in takes 15 taps or fewer.
+- [ ] Numbers are readable; long-press breakdowns make sense.
+- [ ] The away sheet after the overnight is right.
+- [ ] Export from the phone → import on desktop → back to the phone.
+- [ ] Screenshot pass ("looks wrong on my phone").
+- [ ] Contact sheet: palette and placeholders.
+- [ ] The next goal always feels visible.
+
+**Out of scope:** hunters, contracts, combat, the bestiary, alchemy, Citadel and later, the Long Night, and any story secrets.
+
+---
+
+## v0.2 — Hunters & contracts
+
+**Status:** complete
+
+**Goal:** contracts from Hamlet onward, an active and reserve roster, transparent turn-meter combat, rewards that feed the Hold, and honest odds.
+**Reads:** GDD §3.3, §4, §5.0, §5.3–5.5, §6 (v0.2 rows), §6.5, §7.3–7.4, §8.1–8.3, §8.5, §9.4–9.7; technical design §5.2–5.3, §7, §10.1, §14; `setting-primer.md` §3, §5, §6.3, §6.6–6.7.
+
+**Before you start 👤**
+
+| Owner task | Needed by |
+|---|---|
+| **Export your real v0.1 save** (Copy diagnostics or the save code) and paste it into a session | T2.4 (the migration fixture) |
+| Review the hunter portraits | T2.23 |
+| Review the monster portraits | T2.24 |
+
+### A. Content and state
+
+- [x] **T2.1a Content.** 8 hunters (prices, story-hunter flags), traits, gear tiers; all **12 monsters** (identified for free in v0.2); villages with heads (trust kept silent). The balance keys this needs were already in `balance.ts` from v0.1; per-item numbers live in the content files (D44).
+- [x] **T2.1b Barracks and Trophy Hall** as buildings. They add building ids, which changes the saved state, so they go in together with the migration (T2.4, Q5).
+- [x] **T2.2 Text.** Notices (3+ per village × location; seeds at most 1 in 10); the vow and first-contract scenes; hunter bios.
+- [x] **T2.3 Names** for the new proper nouns (hunters, villages and heads, monsters, abilities, traits, gear). Searched 2026-10-13; one collision found (Gloam Wolf, Q6). Names for the notices and scenes (T2.2) get checked when that text is written.
+- [x] **T2.4 Migration v1 → v2,** using the **owner's real v0.1 save** as the fixture. `[?]` until it's provided (Q5).
+
+### B. Combat
+
+- [x] **T2.5 Turn meter.**
+- [x] **T2.6 Attack resolution.** Buckets, Armor on direct attacks only, taken%, immunity, rounding, crits, targeting, Mender, Silver sub-hits (portable math only).
+- [x] **T2.7 All 12 monster abilities.**
+- [x] **T2.8 Golden test, GDD §5.5.1, line for line.** **This test gates the milestone.** It runs in Node, WebKit, and Chromium.
+- [x] **T2.9 More combat tests.** Seeded goldens (record 5, then freeze them; they're locked), determinism, one test per ability, `rulesVersion`.
+
+### C. Contracts and roster
+
+- [x] **T2.10 Board.** Opens at the first Mine; refill; tier unlocks and mix; barrow from T2; every generated cell has ≥ 1 species; Decline.
+- [x] **T2.11 Launch.** Party rules, provisions, the Reckless confirmation with death chances, the fight seed.
+- [x] **T2.12a Reward and injury rules** (pure, in `core/contracts/`): bounty, provisions, trophies, XP, injury outcomes and recovery times, the death roll, seeds.
+- [x] **T2.12b Completion events.** Rewards at completion, injuries, death (story hunters downgraded), recovery, return after 3 days, results. Needs the saved state (T2.4).
+- [x] **T2.13 Roster.** Active and reserve, caps, candidates, prices, swaps, level-ups (Health and Might only).
+- [x] **T2.14 Gear** upgrades in place.
+- [x] **T2.15 Trophy Hall** (cumulative, silver excluded).
+
+### D. Odds and suggest
+
+- [x] **T2.16 Odds.** 500 samples, margin, injuries, death chance, rewards, "Why?" per 100 ticks.
+- [x] **T2.17 Worker.** Protocol, debounce, main-thread fallback labeled "quick estimate".
+- [x] **T2.18 Suggest.** Two-stage search with common seeds. Built exactly as the GDD says; it misses the speed budget (Q8).
+- [x] **T2.19 Benchmarks** (D73 answered Q8). Measured at a 4× slowdown: odds 96 ms (budget 100), Suggest 324 ms (budget 300): a small warning, well under the 2× fail line. in `bench.yml`: warn at the budget, fail at 2×. The debug timing readout too.
+
+### E. UI and tests
+
+- [x] **T2.20 Contracts tab.** Board, running and collect sections, Decline, the launch sheet, the fight log (ticks, rolls, seed and replay, collapse, the older-rules label).
+- [x] **T2.21 Hunters tab.** Active, reserve, candidates, locked silhouettes, detail, gear, Hall of the Fallen.
+- [x] **T2.22 Away sheet** additions; **extend the Playwright smoke:** launch a contract → skip time → collect.
+
+### F. Art
+
+- [x] **T2.23 Portrait generator.** The 8 hunters plus a contact sheet. 👤 Review *(built, D78; owner review pending: keep, regenerate or placeholder)*.
+- [x] **T2.24 Monster portraits.** The 12 species plus a contact sheet *(built, D78; owner review pending)*. 👤 Review; placeholders where rejected. **No battle sprites** (built when a screen needs them, v0.7 Delves) *(A17)*.
+
+### G. Simulator
+
+- [x] **T2.25 Contract policy.** Highest expected value, suggested party, never Reckless, pays provisions.
+- [x] **T2.26 v0.2 checks and tuning** (tunables only). Done. The provisions check (20–40% of food income) was pending Q9 while provisions were flat (about 0.2%); the owner chose income-scaled provisions (D81) and the tunable values in D82, and the check is now enforced like the others.
+
+### v0.2 acceptance criteria
+
+1. The §5.5.1 golden test passes **exactly**, in all three engines.
+2. Contracts run from Hamlet. The roster has a reserve. A non-story hunter can die only on a confirmed Reckless contract.
+3. Every fight log replays from its seed and matches the original.
+4. The odds are honest (simulator check), and every v0.1 check still passes.
+5. The benchmarks are under 2× the budget (CI), and within budget on the owner's phone (debug readout).
+
+### v0.2 simulator checks
+
+| Check | Target |
+|---|---|
+| All v0.1 checks | Still pass |
+| First contract | Within 15 min of the first Mine |
+| Roster of 4 | By the end of day 2 |
+| First tier-3 success | Day 2 |
+| Odds honesty | Within ±5 points per bucket over 2,000 contracts |
+| Silver share | ≥ 70% from bounties, cumulative over the Keep phase (14 days) |
+| Provisions | 20–40% of food income from Keep onward |
+
+### v0.2 owner playtest checklist 👤 (on the preview build)
+
+- [ ] Launch a contract in under 5 taps with Suggest.
+- [ ] The odds feel believable, and "Why?" explains them.
+- [ ] Fight logs read at a glance; "show rolls" makes sense.
+- [ ] Injuries feel fair.
+- [ ] Portraits: keep, regenerate, or placeholder.
+- [ ] Odds and Suggest feel instant (check the debug timing readout).
+- [ ] Screenshot pass.
+
+**Out of scope:** investigation, preparation, alchemy, the bestiary screen, Arvid, letters, the Long Night.
+
+---
+
+## v0.3 — Bestiary & preparation
+
+**Status:** complete
+
+**Goal:** contracts against unknown monsters, clue-based investigation, a bestiary that speeds up later play, and preparation that clearly matters.
+**Reads:** GDD §5.6–5.7, §6 (v0.3 rows), §7.5, §8.3.1, §8.4, §8.6–8.7, §9.8–9.9; `setting-primer.md` §6.4.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| **Define the 2 new hunters** (a Wolf-friend Striker with Venom; a Tracker Mender) **in a chat session** | T3.1 | **Before v0.3 starts**, not mid-milestone |
+| **Export your real v0.2 save** | T3.4 | Before T3.4 |
+| Review the new portraits | T3.1 | — |
+
+### Tasks
+
+- [x] **T3.1 New hunters** (Q12 answered: Stanko Sleepless and Herdis Strayfinder, D101). Add the 2 hunters from the owner's chat-session definitions: content, prices, generated portraits.
+- [x] **T3.2a Content.** Knowledge levels; the clue library (20 tags × 3+ texts); 12 ingredients; 9 consumables; gift reagents; drops. (The v0.3 traits were already in the v0.2 content.)
+- [x] **T3.2b Buildings.** Hunter's Lodge, Alchemist's Hut, Herb Garden. These add building ids to the saved state, so they wait for the migration (T3.4), as the Barracks did in v0.2.
+- [x] **T3.3 Text.** A bestiary blurb plus a "What it was" line for all 12 species.
+- [x] **T3.4 Migration v2 → v3,** using the owner's real v0.2 save.
+- [x] **T3.5 Full coverage test** (GDD §8.3.1; the rules are locked).
+- [x] **T3.6 Unknown-monster contracts.** Candidates, clues as `advance` events, Lodge slots, Studied halving, Mastered auto-identify, Tracker.
+- [x] **T3.7 Knowledge.** Level transitions, kills, bonuses.
+- [x] **T3.8 Alchemy brewing.** Queues and the Herb Garden event.
+- [x] **T3.9 Preparation in combat.** Slots, potions, bombs, Saltburst, Spoil, Herbwise, the well-prepared bonus, each with tests.
+- [x] **T3.10 Odds with uncertainty.** (Also switches contract generation to post unknown monsters, D89 point 7; until then every contract arrives identified.) Averaging over candidates; oil effects per candidate; Suggest at 20 samples per candidate; benchmarks.
+- [x] **T3.11 UI.** The bestiary; investigation; preparation pickers with "unprepared would be X%"; the Alchemist's Hut.
+- [x] **T3.12 Simulator.** The policy brews, prepares, and investigates; v0.3 checks; tuning.
+
+### v0.3 acceptance criteria
+
+1. Every generated cell meets the coverage rules.
+2. Three clues always identify exactly one species.
+3. Preparation visibly changes the odds, and the simulator confirms it (≥ 15 points).
+4. Knowledge persists and speeds up later contracts.
+5. Every earlier check passes.
+
+### v0.3 simulator checks
+
+| Check | Target |
+|---|---|
+| Preparation matters | ≥ 15 points at equal tier |
+| First Identified via investigation | ≤ 2 h after the Lodge |
+| First Studied | Days 2–3 |
+| All earlier checks | Pass |
+
+### v0.3 owner playtest checklist 👤 (on the preview build)
+
+- [x] Investigating feels like studying a case.
+- [x] Preparation is a real decision.
+- [x] The bestiary is pleasant to browse, and the "What it was" lines land.
+- [x] Brewing isn't a chore.
+- [x] Screenshot pass and monster art review.
+
+**Out of scope:** alchemy discovery, skills, the Long Night, story secrets.
+
+---
+
+## v0.4 — The Long Night: mechanics
+
+**Status:** complete *(fleshed out 2026-10-13, D106–D115; playtest passed 2026-10-14, D141)*
+
+**Goal:** the cycle loop. Citadel and Bastion, Threat, a Last Stand you choose the moment for, Embers and warden upgrades, relics, and a Long Night that resets the hold and keeps what matters, plus the first Long Night for saves from before v0.4. Mechanics only: the text stays neutral (`setting-primer.md` §6.8).
+**Reads:** GDD §4.1, §5.1.2–5.1.3, §5.3.7, §5.4.1–5.4.2, §5.9, §6 (v0.4 rows, §6.1 policy, §6.3, §6.5), §7.1, §7.3–7.4, §7.6, §8.1, §8.9–8.10, §9.11, §9.13; technical design §5.2–5.3, §7.2, §9.4, §10.1, §13; `setting-primer.md` §6.5, §6.8.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| **Export your real v0.3 save** (More → Save & Data → Copy save code) and paste it into a session | T4.3 (the migration fixture) and T4.10 (the arrival test) | Before T4.3 |
+| Decide any name collisions the search finds | T4.2 | When asked |
+| Review the new art (Walls, Watchtower, the Citadel and Bastion scenes, Embers, Threat and relic icons) | T4.12 | — |
+
+### A. Content and state
+
+- [x] **T4.1 Content.** Citadel and Bastion (requirements, costs, grants, restoration text, no inscription); Walls and Watchtower; the 8 warden upgrades (GDD §8.9) and the 6 relics (§8.10); every new balance key from GDD §7.1, §7.3, §7.4 and §7.6, marked tunable or locked (locked: `laststand.partyMax`, and the new `contract.ageTierCap` entries, D106). New Rank and building ids change the saved state, so wiring them in waits for T4.3, as in v0.2 and v0.3.
+- [x] **T4.2 Names.** Collision search (GDD §2.3) for Warm Hearth, Full Larder, Young Families, Seasoned Hunters, Drill Yard, Village Goodwill, Swift Roads, Long Watch, The Hearth, Plough-Share, Mason's Plumb, Tally Stick, Bone Whistle, Copper Still, Iron Shutter and Forge Hall; add them to `tests/content/names.ts`. Citadel, Bastion, Walls, Watchtower, Threat, Last Stand, Long Night and Embers go in as generic or already checked. Any collision: stop and ask, with alternatives. *Done: three collided and were renamed Kept Coals, Old Hands and Late Lantern; The Hearth kept (D116).*
+- [x] **T4.3 Migration v3 → v4** (D113), using the **owner's real v0.3 save** as the fixture, with a round-trip test; the parts in technical design §5.2. *(Split, D117:)*
+  - [x] **T4.3a** Citadel, Bastion, Walls and Watchtower join the Rank and building lists (placeholder art until T4.12; Walls and Watchtower blurbs). A level cap missing for a Rank carries the last earlier one (Barracks 5 in every Rank, GDD §8.1). Until T4.13 the simulated player stops at the Keep (D118), so the v0.3 checks measure what they did before.
+  - [x] **T4.3b** Schema v4: Threat, Embers, upgrades, relics, the arrival flag and the cycle history; the migration; `v3-owner.json` (the owner's save code of 2026-10-13) and `v4.json` (that save played 72 h by the simulated player); tests in `tests/saves/v4-migration.test.ts`.
+
+### B. Ranks, Threat and defenses
+
+- [x] **T4.4 Citadel and Bastion.** Requirements and costs; the age-bucket bonuses; level caps for buildings and hunters (a carried level above the cap is kept); the roster bonus; bounty multipliers; provisions minutes; tier cap 5; the restoration sheets.
+- [x] **T4.5 Threat and defenses.** Rates by Rank inside `advance()` (the offline cap applies); contract spikes and reductions; the floor at 0; Walls and Watchtower as buildings, slowing the rate; breakdowns. Threat counts only once any arrival is done.
+
+### C. The Last Stand
+
+- [x] **T4.6 Stand engine.** The seeded wave list, fixed at Bastion; escalation past tier 5; strength from Threat; one wave at a time through the fight engine with Health carried over, **with contract fights and every golden fight unchanged** (`rulesVersion` stays 1; if a golden changes, stop and ask); recovery between waves; the Watchtower volley and bombs at tick 1; Walls and Iron Shutter as taken%; potions once per stand; location traits off; the tick limit ends the stand; no injuries or deaths; wave logs rebuilt from the saved inputs.
+- [x] **T4.7 Preview, payout and relics.** 100 practice stands in the worker (range, Embers now and per day, Threat and Embers tomorrow as an estimate); the payout formula with its breakdown; relic milestones; the preview-honesty test (D114); the benchmark (≤ 1 s at 4× slowdown; warn at the budget, fail at 2×).
+
+### D. The Long Night
+
+- [x] **T4.8 Reset.** Everything in GDD §5.9.7, in this order: running contracts finish, the stand, conversion, the reset, the new cycle. Levels kept; dead hunters as candidates; the cycle history entry. Tested row by row against the "resets / kept" table.
+- [x] **T4.9 Warden upgrades and relic effects.** The Hearth (buying, costs, max levels, no re-spending); each upgrade's effect (ember bucket, starting state, levels kept, XP, bounties, durations, offline cap within the 24 h ceiling); each relic's effect (relic bucket; none touches silver).
+- [x] **T4.10 The v0.4 arrival** *(done last, after T4.15, D127)*. The arrival flag, sheet and stand (Threat 0, no defenses, the save's Rank multiplier, the capped trophies part); the debug action; a test that takes the owner's save through migration, arrival and reset. `[?]` until the save is provided.
+
+### E. UI
+
+- [x] **T4.11a Hold-side screens.** The Threat meter and breakdown; Citadel and Bastion on the Rank screen; Walls and Watchtower; The Hearth, with upgrades and relics.
+- [x] **T4.11b The stand and the Long Night.** The stand screen (wave list with "?", six slots and the suggestion, preparation pickers, preview, confirmation); the four Long Night sheets; wave logs; the arrival sheet. **Extend the Playwright smoke:** debug to Bastion → stand → new cycle.
+
+### F. Art
+
+- [x] **T4.12 Art.** *(Built; the owner's review is in the playtest.)* Icons for Walls, Watchtower, Embers, Threat and the 6 relics; the Citadel and Bastion hold scenes (Tiny Town tiles, the D59 method). 👤 Review.
+
+### G. Simulator
+
+- [x] **T4.13 Policy rules** (GDD §6.1, D114; first lift the D118 hold at the Keep in `src/core/policies/goals.ts`, and keep the Rank-up silver aside only once the Rank-up's requirements are met, or the Citadel's 1,000 silver stops all recruiting): Rank-ups to Citadel and Bastion; v0.3 buildings first; a Tracker kept home; defenses; the stand rule (Standard, Light and Heavy); Embers cheapest first; the default three each cycle.
+- [x] **T4.14 Checks.** *(Citadel and Bastion join the fast set in T4.15's commit, once tuning puts them on target: before that they would turn `npm run check` red, D130.)* Citadel; Bastion; best Last Stand (practice stands to day 7); first Long Night (Standard, Light, Heavy); later cycles (≥ 15% faster, 2-day floor; against the first cycle, D134); overflow through 3 cycles (the `sim/targets.ts` row change the owner approved in D114); engagement checks over all of cycle 1; the economy checks over every stretch from the Keep in every cycle (from D135, cycle 1 judged, later cycles reported). Citadel and Bastion join the fast set; runs are 14 days.
+- [x] **T4.15 Tuning** (tunables only) against every check, then set `longNightArrival.cycle1MedianEmbers` from the tuned simulator (decisions row with the value). If no reasonable values pass (the "later cycles" check is the known risk, GDD §5.9.5), stop and ask.
+
+### v0.4 acceptance criteria
+
+1. Citadel and Bastion arrive on their targets, with neutral restorations and no inscriptions.
+2. Threat rises, falls and explains itself; only the stand and the payout read it.
+3. The Last Stand runs wave by wave with readable logs; its preview is honest (test) and within budget.
+4. The Long Night resets and keeps exactly what GDD §5.9.7 says, tested on the owner's save.
+5. Warden upgrades and relics work and persist, and later cycles are faster.
+6. An old save gets the arrival exactly once, with the capped trophies part.
+7. Contract fights and every golden fight are unchanged (`rulesVersion` 1).
+8. Every earlier check passes.
+
+### v0.4 simulator checks
+
+| Check | Target |
+|---|---|
+| Citadel reached | Day 2 (24–48 h) |
+| Bastion reached; Last Stand available | Days 3–4 (48–96 h, D137) |
+| Best Last Stand timing (peak Embers per day of cycle) | Days 4–5 |
+| First Long Night | Days 3–5 (Standard); ≤ 7 days (Light); ≥ 2.5 days (Heavy) |
+| Later cycles | Each ≥ 15% faster than the first, floor 2 days (D134) |
+| No overflow | Through 3 cycles |
+| Engagement checks 1–3 | Over all of cycle 1, up to the stand |
+| Bounty and provisions shares | Every stretch from the Keep, in every cycle |
+| All earlier checks | Pass |
+
+### v0.4 owner playtest checklist 👤 (on the preview build)
+
+- [x] Citadel and Bastion feel like new chapters, not just bigger numbers.
+- [x] Threat is easy to read, and the pressure feels fair rather than punishing.
+- [x] The stand screen makes "stand now or wait a day" a real, readable choice.
+- [x] The stand's wave logs make sense.
+- [x] The Long Night sheets are clear and short.
+- [x] Cycle 2 feels faster, and the upgrades feel worth buying.
+- [x] Your old save's arrival went smoothly.
+- [x] Screenshot pass and new art review.
+
+**Out of scope:** the story (Act I, documents, inscriptions); warden naming and the Roll of Wardens display; relics for hunters and relic slots; re-spending Embers; contract tiers above 5; paying resources to lower Threat.
+
+---
+
+
+---
+
+### v0.5 — The Long Night: Act I and the story systems
+
+**Status:** complete *(fleshed out 2026-10-14, D144–D169; playtest passed 2026-10-14, D192)*
+
+**Goal:** the story arrives. Acts I and II, documents and Ilse's Archive, the forty names, warden naming and the Roll of Wardens, hunter letters, village trust on screen, the stand's band, the Citadel and Bastion inscriptions; and the mechanics the story needs: ruin contracts with four Cursed creatures, Rune damage, the Wright's Blade and Arvid Netmender. Existing saves start Act I at once (D149).
+**Reads:** GDD §5.1.3 (restores), §5.3.4, §5.3.6, §5.4.1, §5.4.3, §5.6.1, §5.9.3, §5.9.7, §5.14, §6.1–6.3 and §6.5 (v0.5 lines), §7.7, §8.2–§8.6, §9.11, §9.14, the v0.5 judgment calls; `lore-secrets.md` §8, §10–§12, §15, §20–§25; `setting-primer.md` (voice); technical design §5.2, §7.2, §9.4, §13.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| ~~Restore `lore-secrets.md` and `outline.md`~~ | — | Done 2026-10-14 (D36, D38) |
+| **Export your real v0.4 save** (More → Save & Data → Copy save code) and paste it into a session | T5.3 (the migration fixture) and T5.10 (the arrival test) | Before T5.3 |
+| Decide any name collisions the search finds | T5.2 | When asked |
+| Approve the 17 drafted letters and the warden-name list | T5.12 | When asked |
+| Review the new art (the four Cursed creatures, Arvid, the Wright's Blade, the Archive icons) | T5.13 | In the playtest |
+
+### A. Content and state
+
+- [x] **T5.1 Content and keys.** *(Split, as planned: T5.1a mechanics content, T5.1b story content.)*
+  - [x] **T5.1a Keys and mechanics content.**
+    - The v0.5 keys from GDD §7.7 into `balance.ts`, all tunable, and the §7.7 rows rewritten into the `key` = value form in the same commit (D166).
+    - The four Cursed creatures (stats, resistances, abilities, clue tags and texts, drops) and the ruin row of the coverage table, checked against the GDD in `tests/content/v05-content.test.ts` (the live coverage test covers ruins once they join the board, T5.4).
+    - The ruin tag on Kozly Hollow, Velkvik and Ravenfell; the Wright's Blade (was "Runed Blade", D170); Arvid Netmender and his two traits. Outside the saved-state id lists until their wiring tasks (D171).
+  - [x] **T5.1b Story content.** *(In `src/content/story/`; readings in D172.)*
+    - Story content in `src/content/`: acts, every Act I and II document with its condition and text, the forty names with their sources and hints, the five name-bearing letters (and slots for the other 17), the residents' band lines, the trust text, the inscriptions, and the warden-name list.
+    - A test against the GDD and `lore-secrets.md` tables.
+  - Wiring that changes saved state waits for T5.3.
+- [x] **T5.2 Names.** Collision search (GDD §2.3) for every new proper noun:
+  - the 36 new roll names;
+  - Věra, Dana Lisová, Master Hrafn, Hallvard, Master Bielik, and the four non-Sent apprentices on the Mirograd roll;
+  - Kamenfell and the warden-name list.
+  Ribbonshade, Anvil-wight, Gloam-moths, Rimewrought, Arvid Netmender, Shield-companion and Old Wright are already clear (D154, D158). Add all of them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives. *Done: "Runed Blade" became the Wright's Blade (D170); the owner set the rule for people's names and roll #20 became Torgils Torkelsson (D173); 11 warden names with any influence namesake were dropped.*
+- [x] **T5.3 Migration v4 → v5**, using the **owner's real v0.4 save** as the fixture, with a round-trip test. New saved state:
+  - the act per cycle and its counters;
+  - documents found (with cycle and how);
+  - names found and the Ribbonshade count;
+  - each hunter's highest level ever and the letters read;
+  - trust progress per village;
+  - warden names per cycle;
+  - Ilse's arrival;
+  - the v0.5 arrival flag;
+  - unread-item badges.
+  Technical design §5.2 updated in the same commit. *Done with the owner's save code of 2026-10-14 (`v4-owner.json`); readings in D174.*
+
+### B. Ruins, the Cursed and Rune
+
+- [x] **T5.4 Ruins and the Cursed.** *(Readings in D176; `rulesVersion` 3, owner-approved, D175.)*
+  - Ruin contracts from the Keep at tier 2 and up; clue generation for the new tags.
+  - The four abilities in the fight engine: Lightless (hit chance), Seal-burn (Fire back to a direct attacker, no Armor), Re-forge (Saltburst cancels it), Unthawed (first Fire hit, stat%).
+  - The creatures join the Last Stand's waves at their tiers.
+  - **Contract fights and every golden fight unchanged.** If a golden changes, stop and ask; bump `rulesVersion` only with the owner's OK.
+- [x] **T5.5 Rune.** *(Readings in D177.)*
+  - The Wright's Blade: Citadel and Smithy 8; the Rune sub-hit on its own log line; the breakdowns.
+  - Arvid's traits (Shield-companion as taken%, within the 75% cap; Old Wright).
+  - Arvid's unlock: when Act III begins. He can't arrive in v0.5, so a debug action adds him for testing.
+
+### C. Story systems
+
+- [x] **T5.6 Acts and documents.** *(Readings in D178; the row-by-row test is `tests/story/documents.test.ts`.)*
+  - One act per cycle; counters per act; an unwritten act closes with "The story continues in a later version."
+  - In Act II, fell villages' ruin notices end "…up at the old Kamenfell outpost." (moved here from T5.4, D176).
+  - Every condition kind (§5.14.2), and delivery: contract results, Rank-up sheets, the stand result, scenes.
+  - Documents stay obtainable in later cycles.
+  - **A test for every Act I and Act II document's condition,** row by row against `lore-secrets.md` §21–§22.
+- [x] **T5.7 Names and Ribbonshades.** *(Readings in D179; the gate test is `tests/story/names.test.ts`.)*
+  - A name is found with its source. Ribbonshades give the six names in their fixed order, Jaro's first, with the scene and Halina's note; after six, a ribbon with no name.
+  - **The true-ending gate test:** all 40 names have exactly one source, and none is Delve-only, event-only or missable (`lore-secrets.md` §8).
+- [x] **T5.8 Trust.** *(D180; the notices' closing lines go to the owner with T5.12.)*
+  - Contract progress, steps (`trust.stepContracts`), a step from each Triumphant stand, carry-over, never down.
+  - Notices read the trust level; trust-gated documents; the breakdown; the away-sheet line.
+- [x] **T5.9 Wardens, bands and letters.** *(Readings in D181.)*
+  - The band from waves held.
+  - Warden names (24 characters, Suggest) and the Roll of Wardens data (years formula, worn first line).
+  - Letters at levels 5 and 8 from the highest level ever reached.
+  - Inscriptions on the Citadel and Bastion restorations.
+- [x] **T5.10 The v0.5 arrival** (D149). *(Core and test; the scene and the naming fields are UI, T5.11b. Readings in D182.)*
+  - For a pre-v0.5 save, after any v0.4 arrival: Ilse's arrival scene, which finds the documents already behind the save; naming the earlier wardens; Act I starts.
+  - A debug action.
+  - A test that takes the owner's real v0.4 save through migration and the arrival.
+
+### D. UI
+
+- [x] **T5.11a The Archive.** *(Data in `core/story/archive.ts`; screen and reader in `ui/screens/ArchiveScreen.tsx`; checked in the browser with T5.11b.)*
+  - The tab renames when Ilse arrives.
+  - Bestiary, Library (with the letters shelf), Accounts, Names; the reader; badges.
+- [x] **T5.11b Story across the game.** *(All three parts done 2026-10-14 (D183, D184); the Archive and every new screen were checked at phone size in the screenshot pass. Split, 2026-10-14: **b1** story scenes (Ilse's arrival for new games, Sigrun at the door, then her vow line), the v0.5 arrival view for old saves with naming fields, the new-warden sheet (naming, Suggest, closing scene, Ilse's return), the Roll of Wardens, bands and residents' lines on the stand screen and result sheet, trust steps and the testament, the §5.14.9 Long Night order; **b2** the Villages panel, Letters on the hunter sheet, inscriptions on the Rank sheets, away-sheet and results lines for documents, ribbons, letters and trust; **b3** the Playwright smoke and the screenshot pass.)*
+  - Scene sheets; the Villages panel; Letters on the hunter sheet; warden naming; the Roll of Wardens; inscriptions on the Rank sheets; bands on the stand screen and result sheet; the Long Night order (§5.14.9); away-sheet lines.
+  - **Extend the Playwright smoke:** debug → a won contract → Ilse arrives → open a document in the Archive; and stand → band → naming the new warden.
+  - Screenshot pass.
+
+### E. Writing
+
+- [x] **T5.12 Letters and lists.** *(Done 2026-10-14: the owner approved everything as drafted, D185, D186.)* 👤 Draft the 17 letters without names (`lore-secrets.md` §23 voice) and the warden-name list, for the owner's approval; with them, the four trust closing lines for notices (D180).
+
+### F. Art
+
+- [x] **T5.13 Art** (the D59 method). *(Built 2026-10-14, D187; the owner reviews it in the playtest.)*
+  - Portraits for the four Cursed creatures (a new family template) and Arvid (the portrait generator, from his look in GDD §8.5).
+  - Icons for the Wright's Blade, the ribbon and the document types (letter, journal, ledger, testament).
+  - 👤 Review.
+
+### G. Simulator
+
+- [x] **T5.14 Policy rules** *(D188)* (GDD §6.1, D167): refill the active roster from the reserve whenever there's room (highest levels first); buy the Wright's Blade like any gear; report bands, letters reached, trust levels and names found per cycle.
+- [x] **T5.15 Checks and speed.** *(Rows in their own commit, D168; the full suite's CI time is measured with T5.16.)*
+  - The v0.5 rows in `sim/targets.ts` (owner-approved, D168; their own commit); the milestone becomes v0.5.
+  - **The suite runs in parallel,** one run per core (D169), with a test that the parallel report matches a sequential one.
+  - Full suite ≤ 5 min in CI.
+- [x] **T5.16 Tuning** *(Done 2026-10-14, D189–D191: two tunables moved, Ribbonshades favoured in ruins, two target rows moved a cycle with the owner's approval, Q17 and Q18. Every check passes; the full suite takes about 2.3 minutes.)* (tunables only) against every check; likely levers are the ruin creatures' numbers and the trust steps. If no reasonable values pass, stop and ask.
+
+### v0.5 acceptance criteria
+
+1. Act I and Act II run in their cycles; every document arrives on its condition and stays obtainable (tests, row by row).
+2. A pre-v0.5 save meets Ilse on load, names its earlier wardens, and starts Act I, tested on the owner's real v0.4 save.
+3. All 40 names have exactly one source, none missable (test); the Names view shows found and missing names with hints.
+4. Trust rises, never falls, and explains itself; it changes no numbers.
+5. Ruin contracts, the four Cursed creatures, the Wright's Blade and Arvid work, with breakdowns and readable logs.
+6. Every stand has a band; the Roll of Wardens shows every warden.
+7. Contract fights for v0.4 species and every golden fight are unchanged.
+8. Every earlier check passes; the full suite runs in ≤ 5 min.
+
+### v0.5 simulator checks
+
+| Check | Target |
+|---|---|
+| Act I lands in its cycle | Every Act I document with a contract, Rank or stand condition (D1-01, -03, -04, -06, -09, -10) found by the end of cycle 1; D1-07 at the next warden. D1-02 and D1-05 reported only |
+| Act II lands in its cycle | D2-01, D2-02, D2-07 and D2-09 found in cycle 2; D2-03 to D2-06 (the 2nd to 5th ruin win) by the end of cycle 4 (Q17, Q18, D191); D2-10 at the next warden; D2-08 (Sigrun) reported only |
+| Ruins show up | First ruin contract won ≤ 24 h after the Keep |
+| Ribbonshade names | All six found by the end of cycle 4 (Q18, D191) |
+| Trust moves | At least one village rises a step in cycle 1 |
+| All earlier checks | Pass |
+| Suite time | ≤ 5 min in CI (parallel, D169) |
+
+Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: stand bands, letters reached, trust per cycle.
+
+### v0.5 owner playtest checklist 👤 (on the preview build)
+
+- [x] Ilse's arrival and the Archive feel like the story arriving, not a menu.
+- [x] Act I's documents read well, arrive at sensible moments, and each has one wrongness, not more.
+- [x] Your save started Act I smoothly, and naming your earlier wardens felt right.
+- [x] The Names view makes you want to find the next one; the hints are fair.
+- [x] Ruins and the Cursed feel different from the folklore monsters; the Wright's Blade feels worth it.
+- [x] Trust is easy to read; the band on your stand felt fair.
+- [x] The Roll of Wardens and the inscriptions land.
+- [x] Screenshot pass and new art review.
+- [x] (If you reach it) Act II and Sigrun's confession.
+
+**Out of scope:** Acts III–VI and their documents (Act III is written at the v0.6 flesh-out); Arvid arriving in play; the Deep family (D161); Ember-echoes (Delves, v0.7); trust rewards (v0.10); hunter relics.
+
+### v0.6 — Alchemy discovery & skills through use
+
+**Status:** complete *(fleshed out 2026-10-14, D193–D220; playtest passed 2026-10-14, D242)*
+
+**Goal:** alchemy becomes discovery: hidden properties, experiments and a recipe book, with six new brews that answer named gaps; four warden skills that grow with use and survive the Long Night; Act III and Arvid's arrival; and the v0.5 lessons applied to bands and trust.
+**Reads:** GDD §4.1, §5.7, §5.8, §5.9.3, §5.9.7, §5.14.1, §5.14.3, §5.14.6, §5.14.8–5.14.9, §6.1–6.3 and §6.5 (v0.6 lines), §7.7, §7.8, §8.5–8.7, §9.9, §9.11, §9.13; `lore-secrets.md` §10, §20, §26; technical design §5.2, §7.2, §13.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| **Export your real v0.5 save** (More → Save & Data → Copy save code) and paste it into a session | T6.3 (the migration fixture) | Before T6.3 |
+| Decide any name collisions the search finds | T6.2 | When asked |
+| Review the new art (six brew icons, four skill icons) | T6.12 | In the playtest |
+
+#### A. Content and state
+- [x] **T6.1a Content and keys: mechanics.**
+  - **a:** the §7.8 keys into `balance.ts` (`skill.maxLevel` locked, the rest tunable) and the §7.7 changes (`band.heldFrom` 12, `band.triumphantFrom` 15, `trust.triumphantContracts` 10), with §7.7–§7.8 rewritten to the `key` = value form in the same commit, and the `skill.maxLevel` row in §0.6 written with backticks in that commit too; the properties table (§8.6) and the six new brews (§5.8.5) in content, outside the saved-state id lists until T6.3 (as D171); a content test for the table's rules (§8.6 A13).
+- [x] **T6.1b Content: the story.** *(Done: content and its tests; the core machinery for D3-01's and D3-08's conditions, Arvid's arrival and the on-load start is T6.7.)*
+  - Act III in `src/content/story/` (every document's condition and text word for word from `lore-secrets.md` §26, the arrival lines, the "Yrsa's choice" Accounts event with its excerpts, D3-08); Arvid's unlock changed to "arrives with Ilse when Act III begins"; a test against `lore-secrets.md` §26 word for word, and the true-ending gate's counts with the new sources.
+- [x] **T6.2 Names.** Collision search (GDD §2.3, D173 rule) for Hidebane Oil, Wright's Oil, Coldwater Draught, Owl-Eye Drops, Steadfast Draught, Poppy Smoke (backups ready: Forgebane Oil, Hearthward Draught), Torvald Aslaksson, Hrefna Sigvaldsdóttir, Běla Dvorská, Sindri Eyvindsson. Alchemy, Smithing, Lore and Command are generic (D208). Add all to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
+- [x] **T6.3 Migration v5 → v6** *(Done as D224. Fixtures `v5-owner.json` and `v6.json`; the Alchemy level is saved as 0 until T6.6 fills it in, and the readers of a stand's band switch to the recorded one in T6.8.)*, using the **owner's real v0.5 save** as the fixture, with a round-trip test. New saved state:
+  - the recipe book (properties revealed per ingredient: the 15 from the start; pairs tried);
+  - warden skill XP (all 0 for an old save, D205);
+  - experiment jobs in the brewing queue;
+  - store slots for the six new brews (0);
+  - the Alchemy level on running contracts, fight records and stand records (0 for old records, so replays are unchanged);
+  - each past stand's band, recorded with the thresholds it was made under (9 / 12), so it keeps its band (D194).
+  Technical design §5.2 updated in the same commit.
+
+#### B. Alchemy
+- [x] **T6.4 The recipe book and experiments** (core) *(Done as D225; the UI is T6.9a, and the simulated player's use of experiments is T6.11.)*: the known-recipe rule and the shapes (GDD §5.8.2), alternate recipes and the 2:1 split, experiment jobs (paid when queued, refunds, Copper Still), the reveal rule in §8.6 order, refusals ("already tried", "nothing left to learn"), "Discovered:" results. Test-first, rule by rule.
+- [x] **T6.5 The new brews in combat.** *(Done as D226. The Alchemy potency on brew numbers is T6.6.)* The two oils (and well-prepared), Coldwater (taken%, cap), Owl-Eye (hit chance), Steadfast (first lost action prevented; other effects kept), Poppy Smoke (the monster's next action lost at tick 1); Herbwise, Spoil and Saltburst as GDD §5.8.5 says; the stand's bomb order and once-per-stand potions. **Contract fights for every existing item and every golden fight unchanged; `rulesVersion` stays 3 — if a golden changes, stop and ask** (D218). One test per new effect; benchmarks unchanged in budget.
+
+#### C. Skills
+- [x] **T6.6 Warden skills.** *(Done as D227; the red fast check `bastion` was fixed with `skill.smithingCost` 0.0175, D228. It had been red, 105 h against its band, because Smithing makes gear cheaper so the simulated player buys gear sooner. Zeroing `skill.smithingCost` makes it pass. It is a tuning matter for T6.13 (the per-level cost cut or the Smithing XP), or a question for the owner if no reasonable value passes. Not fixed in this task so the lever is chosen on the full suite.)* XP from every activity in §5.8.6; levels with the curve and the locked cap; the four bonuses (Alchemy potency on every brew number, frozen at launch on contracts, fight records and stands; Smithing gear costs; Lore clue time; Command contract XP); kept through the Long Night (test it in the reset's row-by-row test); breakdown lines; level-up lines.
+
+#### D. Story, bands and trust
+- [x] **T6.7 Act III** *(Done as D229. The sheet that shows the on-load arrival and the debug button are T6.9b.)*. Every condition (row-by-row test against `lore-secrets.md` §26); Arvid's arrival (joins directly, active if room, at the highest hunter's level within the Rank cap; the new-warden line, then D3-01); Act III starting on load for a save in a no-act cycle (D214), with D3-04 / D3-05 found if their Rank is already behind it; D3-05's scene then strip; D3-08's condition; the Accounts event. The debug panel's "Add Arvid" stays; add "Start Act III" for testing.
+- [x] **T6.8 Bands and trust** *(Done as D230; "Held from 12 · Triumphant from 15" on the stand screen was already there.)*. Thresholds 12 / 15 from `balance.ts`; a Triumphant stand adds `trust.triumphantContracts` progress to every village (carry-over, Sworn stops counting; each step it completes gets its line); past stands keep their recorded band (Roll of Wardens, result sheets).
+
+#### E. UI
+- [x] **T6.9a The Hut** *(Done as D231; the Playwright smoke for it is with T6.9b.)*. Brew, Experiment and Book sections (GDD §9.9); discovery lines on the away sheet and results.
+- [x] **T6.9b Skills and Act III on screen** *(Done as D232. Playwright: tests/e2e/alchemy-skills.spec.ts; the phone-size screenshots were checked.)* "What the ember remembers" on the Rank screen with breakdowns; the skill lines on the away sheet and new-warden sheet; Arvid's arrival and the Act III scenes; "Held from 12 · Triumphant from 15" on the stand screen. **Extend the Playwright smoke:** debug → queue an experiment → skip time → a property revealed in the Book; and debug "Start Act III" → Arvid arrives → D3-01. Screenshot pass at phone size.
+
+#### F. Art
+- [x] **T6.10 Art** *(Done as D233; 👤 review in the playtest.)* (the D59 method): 16 px icons for the six new brews and the four skills (1-Bit Pack where it fits, recolored). 👤 Review.
+
+#### G. Simulator
+- [x] **T6.11 Policy rules** *(Done as D234.)* (GDD §6.1, D215): experiments in spare kettles; the new brews in the kit; Arvid used through the roster rule.
+- [x] **T6.12 Checks** *(Done as D235 and D236: the rows are in their own commit; the milestone is v0.6. With the policy fixed the full suite shows the remaining misses for T6.13.)* The v0.6 rows in `sim/targets.ts` in **their own commit** (owner-approved, D216); the milestone becomes v0.6; the reported lines (bands per cycle, skill levels, properties found). No new simulated runs: the new checks read the existing runs (D196).
+- [x] **T6.13 Tuning** *(Done as D237, D239 and D240 after Q19; the full suite passes on 5 seeds.)* (tunables only) against every check. Likely levers: `skill.*` XP values (for "skills pace"), `band.*`, `trust.stepContracts` and `trust.triumphantContracts` (for "trust rises in cycle 1" against "no Sworn before cycle 4"), `experiment.time`. If no reasonable values pass, stop and ask.
+
+### v0.6 acceptance criteria
+1. Experiments reveal properties by the rule, never waste a pair, and the book persists through the Long Night; every brew is makeable (content test).
+2. The six new brews work in contracts and the stand as GDD §5.8.5 says, with readable log lines and honest odds; Beasts & Wilds and Cursed contracts can be well prepared.
+3. Warden skills rise from their activities, show their bonuses in breakdowns, survive the Long Night, and only Alchemy changes a fight (frozen at launch).
+4. Act III runs in its cycle; every document arrives on its condition (row-by-row test); Arvid arrives as designed; all 40 names still have exactly one source (gate test).
+5. Bands use 12 / 15, old stands keep their band, and a Triumphant stand adds 10 contracts of trust.
+6. The owner's real v0.5 save migrates and round-trips; old fights and stands replay unchanged; every golden fight unchanged (`rulesVersion` 3).
+7. Every earlier check passes; the full suite stays ≤ 5 min.
+
+### v0.6 simulator checks
+
+| Check | Target |
+|---|---|
+| First new brew discovered | ≤ 24 h after the Alchemist's Hut |
+| Recipe book complete | 36 of 36 by the end of cycle 3 |
+| Skills start moving | Every skill ≥ 1 by the end of cycle 1 |
+| Skills pace | Every skill between 4 and 8 at the end of cycle 3 |
+| Act III lands in its cycle | D3-01 to D3-06 by the end of cycle 3; D3-07 with the next warden; D3-08 reported only |
+| Arvid's level-5 letter | By the end of cycle 4 |
+| Trust keeps an arc | No village Sworn before the end of cycle 4 |
+| All earlier checks | Pass (including trust rises in cycle 1, preparation matters, later cycles) |
+| Suite time | ≤ 5 min in CI |
+
+Standard, Monday start, 5 seeds (median), as in §0.3. Reported, not judged: bands per cycle, skill levels per cycle, properties found per cycle.
+
+### v0.6 owner playtest checklist 👤 (on the preview build)
+- [x] An experiment session (a few pairs, come back) feels like discovery, not a chore.
+- [x] The book is easy to read; you can tell what to try next.
+- [x] At least one new brew changes a contract decision (check "unprepared would be X%").
+- [x] Skills are visible and their bonuses make sense in breakdowns.
+- [x] Your save migrated smoothly; your old stands kept their bands on the Roll.
+- [x] Held feels like a good night and Triumphant like an earned one.
+- [x] (Via debug "Start Act III", or if you reach it) Arvid's arrival and Act III's documents read well, one wrongness each.
+- [x] Screenshot pass and new art review.
+
+**Out of scope:** hunter use-skills (v0.8 flesh-out); three-ingredient brews; Acts IV–VI; the Deep family; Ember-echoes; trust rewards; the extras not taken (D213).
+
+### v0.7 — Delves
+
+**Status:** complete *(fleshed out 2026-10-14, D244–D279; playtest passed 2026-10-15, D299)*
+
+**Goal:** Delves arrive: short, optional runs into the rift under the Hearth Hall, with fights against groups of monsters played back with battle sprites, five patrons' blessings (the Unlit built but locked until Act V), the Deep family as guardians, the Riftglass allowance and shop, six Delve relics and Ember-echoes. Delves never speed up the idle path: everything they give has an idle source or is a sidegrade, a convenience, or works only in Delves (D20). And **Act IV, The Keeper**, written in full, reaches the owner's save on load.
+**Reads:** GDD §4.1, §4.3, §5.0, §5.3, §5.5, §5.6.1, §5.9.3, §5.9.6, §5.10 (all), §5.14.1–5.14.3, §6.1–6.3 (v0.7 lines), §7.9, §8.3, §8.5 and §8.5a, §8.8, §8.10 and §8.10a, §9.6, §9.11, §9.12, §9.15; `lore-secrets.md` §8, §12.2, §13, §15, §20, §28, §29; technical design §5.2, §5.3, §7.2, §9, §12, §13.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| ~~Export your real v0.6 save~~ **Done:** the save code pasted in the flesh-out (2026-10-14, cycle 19) is in `OUT-8-v6-owner-save-code.txt`; it becomes `tests/saves/fixtures/v6-owner.json` | T7.5 | — |
+| ~~Answer Q20 and Q21~~ **Done** (2026-10-15: both (a), D280 and D281) | T7.6, T7.9 | — |
+| Decide any name collisions the search finds | T7.4 | When asked |
+| Approve the drafted blurbs, relic lines and Pechko's result lines (`lore-secrets.md` §29, marked "Proposed") | T7.3 | With the sprite contact sheet |
+| Review the battle-sprite contact sheet | T7.12 | One session before T7.13a |
+| Review the new art (sprites, sigils, rarity frames, relic and Riftglass icons, cosmetics) | T7.12 | In the playtest |
+
+#### A. Story, content and state
+- [x] **T7.1 Act IV** *(the first task, D245–D247)*. Act IV in `src/content/story/act4.ts`, word for word from `lore-secrets.md` §28: every document with its condition and text, the two arrival lines, the Accounts event "The light in the window" and the additions to "The apprentices" and "Yrsa's choice" with their excerpts. Two new condition kinds, typed and judged: **the act beginning** (D4-01) and **the nth contract won in an act against a family** (D4-02, D4-03). The last written act becomes 4. Tests: every Act IV document's condition, row by row against §28; the text word for word; the true-ending gate (40 names, exactly one source each; #21, #22, #24–#27 now from D4-02/D4-03). The on-load start and its re-based counters need saved state, so they are T7.5. Also the lore doc fixes of D263 (D1-08 → E-01).
+- [x] **T7.2 Check D244: Arvid's level on arrival** *(done: the rule works as written; the fix is for the debug-added Arvid, D282, Proposed)*. The owner's save has Arvid at level 1 after arriving on load in cycle 18, against D211 ("the highest hunter's level, within the Rank's level cap"). Reproduce with the `v6-owner` save (or the v5 fixture through the Act III on-load path). If it's a bug, fix it as a documented drift (decisions row, Proposed) with a test; if it's correct by the rules (for example the Hamlet cap at that moment), write that down and ask the owner whether to change it. Don't change the D211 rule silently.
+- [x] **T7.3 Content and keys: mechanics** *(done; the drafted blurbs, relic lines and Pechko's result lines in the content are still Proposed, waiting for the owner's OK with the sprites)*. The §7.9 keys into `balance.ts` (the six locked ones marked locked; `riftglass.bankWeeks` already is), and §7.9 written in the `key` = value form in the same commit; the plan §0.6 row (below) in that commit too. Content, outside the saved-state id lists until T7.5 (as D171): the 48 blessings (§8.8) with their exact effects, the 3 Deep guardians (§8.3, with bestiary lines and the drafted blurbs), the 6 Delve relics (§8.10a), the 11 alternate traits (§8.5a), the shop items (§5.10.8), the 18 Ember-echoes (`lore-secrets.md` §29) and the rift scene. Content tests: every patron has 4 / 3 / 1 by rarity; at most two ★ kinds per patron (the Unlit four); every relic has both sources; the **D20 content test** (D271): every Delve reward listed with its idle source or marked sidegrade / convenience / Delve-only.
+- [x] **T7.4 Names** *(done: no collision, D283, Proposed)*. Collision search (GDD §2.3, D173 rule) for every name in `OUT-6-new-names.md`; add them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
+- [x] **T7.5 Migration v6 → v7** *(done; readings in D284, Proposed)* (D267), using the **owner's real v0.6 save** (`v6-owner.json`, from the flesh-out's save code) as the fixture, with a round-trip test, and a `v7.json` fixture (that save played 72 h). New saved state: the active run (seed, depth, floor, party, each hunter's Health, blessings taken, the doors or offer on screen, rewards so far); Riftglass on hand; the allowance and its last accrual time; shop purchases (Late hours level, alternate traits unlocked and chosen, cosmetics, Chosen start, Re-roll); the Deep species in the bestiary; the six Delve relics; Ember-echoes found; the rift scene seen; Delve kills per family and guardians beaten (D278); **Act IV's start re-based (D246)**: in a story-less cycle, the act starts on load in the current cycle with fresh counters, and counts recorded for story-less cycles are ignored. **Test on the owner's save:** after migration and load, the save is in Act IV in cycle 19, D4-01 is found with `via` 'arrival', no other Act IV document is found (the save is in Hamlet), and the next Field & Forest win finds D4-02. Add the debug action "Start Act IV" (as "Start Act III", D229). Technical design §5.2 updated in the same commit.
+
+#### B. Combat
+- [x] **T7.6 Group fights** *(done; WebKit runs only in CI)* *(Q20 answered (a), D280)*. The fight engine takes a group of monsters (D251): targeting by role (front; lowest Health for Strikers; ties by group order), the same-tick order extended (hunters, party order, group order), same-name passives not stacking, every monster ability acting on the group's member that owns it, success when every monster is down. **Test-first. `rulesVersion` 4 (owner-approved, D251): the §5.5.1 fight, every seeded golden fight and every existing contract and stand fight replay line for line, in Node, WebKit and Chromium; if one changes, stop and ask.** Log lines name group targets ("the second Upyr"). One test per rule.
+- [x] **T7.7 The Deep guardians** *(done)*. Chill, Drain, Nameless (with its breakdown from the bestiary), Settling (each hit resolved as a direct attack); guardian Health ×2; tier scaling past 5. One test per ability.
+- [x] **T7.8 Blessings in combat** *(done; readings in D286, Proposed)*. All 48: the bucket effects through the existing buckets; the ★ rules (the Smith's Mark sub-hit; Forge-Welded; One Thread; Mended Cloth; the Pack Grows; the Wolf's Share; A Price Paid; the Long Vigil; Toll and meter knock-back; Struck Bronze) and the Unlit's four switches. Each blessing has a test; each ★ rule's log line; breakdown lines (the Unlit's negative lines). Benchmarks unchanged in budget.
+
+#### C. Delves
+- [x] **T7.9 The run** *(Q21 answered (a), D281)*. Commands (`delve.start`, `delve.chooseDoor`, `delve.chooseBlessing`, `delve.reroll`, `delve.leave`) and the run's rules in `core/delves/`: access from the first Keep; depth from the Rank at the start (D249); groups by seed (D250); doors (two different patrons, never the same pair twice running, the family ahead); offers and the rarity roll (D255, floor 6's minimum); Health carried, 20% recovery, downing, the end (D253); rewards (Riftglass from the allowance, reagents, Deep kills, echoes, relics, D258–D263); the run saved at every floor; no progress in `advance()` except the allowance; the Last Stand ends a paused run (D267); hunters in a run can't be launched on contracts and vice versa. Test-first: a whole seeded run reproduced from its commands; a paused run resumed after reload equals an unpaused one.
+- [x] **T7.10 Riftglass and the shop.** The allowance in `advance()` (10 a day, continuous, banked to 140, offline included) with its breakdown; earning; the shop (Late hours within the 24 h ceiling, alternate traits and the switch command, cosmetics flags, Chosen start, Re-roll) with breakdowns. Tests: the allowance over a week and two weeks; the ceiling; a trait switch refused while on a contract or in a run.
+- [x] **T7.11 Relics, echoes and the Deep bestiary.** The six Delve relics from either source (the idle sources checked on the same events as other unlocks); their effects only inside Delves (a test that a contract fight and a stand are unchanged with all six owned); echoes on first Faint / Warm / Bright per patron; the Deep species' knowledge from guardian kills, excluded from the true-ending count (gate test).
+
+#### D. Art
+- [x] **T7.12 Art** (the D59 method). Battle sprites (D265): 32 px part templates per family (Beasts & Wilds, Restless Dead, Water Spirits, Field & Forest Spirits, Cursed, Deep) for the 19 monsters, and the 11 hunters from their portrait parts; 2-frame idle, lunge, hit flash, downed pose. **The contact sheet goes to the owner one session before T7.13a** (`questions.md`). Also: 6 patron sigils (16 px), 3 rarity frames, the Riftglass icon, 6 Delve relic icons, the four cosmetics in the hold scene. Manifest entries; `credits.md` regenerated. 👤 Review.
+
+#### E. UI
+- [x] **T7.13a The Rift and the floor.** The Rift card on the Hold screen and its badge; the rift scene; the entry sheet; the floor playback (sprites, Health bars, Skip, Log; reduce-motion respected); the guardian's line; the away-sheet lines.
+- [x] **T7.13b Choices, results and the rest.** *(Also: replace T7.13a's stopgaps, the plain "doors arrive next build" panel and the plain result, with the real screens; keep the way-down scene in the Library, D290.)* The doors, blessing cards (rarity frames, the Unlit's red line), Your blessings with breakdowns, Re-roll, the result sheet with Pechko's line, Leave run; the shop on the Rank screen; the alternate-trait switch on the hunter sheet; the Echoes shelf in the Library; Act IV's scenes and the on-load card; the Last Stand confirmation's line. **Extend the Playwright smoke:** debug to Keep → the rift scene → a full Delve (pick doors and blessings) → the result; and debug "Start Act IV" → D4-01. Screenshot pass at phone size.
+
+#### F. Simulator
+- [x] **T7.14 The Delver** *(done; readings in D294, Proposed; the "all content" milestone report is built in T7.15, which holds Act IV's document list, from the hours T7.14 records)* (GDD §6.1, D269, D270). The `delver` policy: Standard plus the Delve sessions (weekends 15:00, Wednesday 19:00), up to 3 runs a session until the allowance is empty, the door and blessing rules, Riftglass on Chosen start and Re-roll then Late hours. `standard` is unchanged. Report: Riftglass per week, floors reached per run, Delve relics found; the "all content" milestones per player.
+- [x] **T7.15 Checks** *(done; D295 Proposed; full suite measured at 249 s on 4 cores)* (D271, D272). In **their own commit**: the `act-4` and `first-guardian` rows and the `idle-only` definition in `sim/targets.ts` (owner-approved); the milestone becomes v0.7. The Delver runs the Monday seeds only. Suite time measured; **if the full suite goes over 5 minutes in CI, stop and ask** (don't trim seeds or rows).
+- [x] **T7.16 Tuning** *(done: one tunable, `delve.baseTier` one tier deeper, D296 Proposed, Q24 asks the owner; all 38 checks pass)* (tunables only) against every check. Likely levers: `delve.memberHealth`, `delve.memberMight`, `delve.guardianHealth`, `delve.recovery`, `delve.baseTier` (for first-guardian); `riftglass.perFloor` and the allowance's use (reported). The 35 earlier checks judge `standard`, so they should move only through shared rules (Act IV adds no economy). If no reasonable values pass, stop and ask.
+
+### v0.7 acceptance criteria
+1. A Delve runs from the Hold screen: 6 floors and a guardian, two patron doors and three blessing offers per floor, played back with battle sprites, saved at every floor, paused when closed, with honest breakdowns.
+2. Group fights follow D251; every golden fight, every contract fight and every stand fight replays line for line (`rulesVersion` 4).
+3. All 48 blessings work as §8.8 says (tests); the Unlit is locked until Act V and opens with the debug switch.
+4. Riftglass accrues, banks and pays as §5.10.8 says; the shop works; Late hours never pass 24 h.
+5. The six Delve relics come from either source and work only in Delves; echoes and the Deep bestiary work; the true-ending gate still passes (40 names, one source each; no Delve-only requirement).
+6. Act IV runs in its cycle (row-by-row tests); the owner's real v0.6 save migrates, round-trips and starts Act IV on load in cycle 19 with fresh counters.
+7. The D20 content test passes; every earlier check passes on `standard`; the new rows pass; the full suite stays ≤ 5 min.
+
+### v0.7 simulator checks
+
+| Check | Target |
+|---|---|
+| Act IV lands in its cycle | D4-01 to D4-06 and D4-08 by the end of cycle 4; D4-07 with the next warden (Standard) |
+| First guardian beaten | By the end of cycle 2 (Delver) |
+| Idle-only vs Delver | Standard reaches the last of "all content" (Acts I–IV judged documents; book 36/36; six Ribbonshade names; every skill ≥ 4) ≤ 1.3× later than the Delver |
+| D20 content test | Every Delve reward has an idle source or is marked sidegrade / convenience / Delve-only (not a simulator check) |
+| All earlier checks | Pass, on `standard` |
+| Suite time | ≤ 5 min in CI |
+
+Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday seeds only (D272). Reported, not judged: Riftglass per week, floors reached per run, Delve relics found.
+
+### v0.7 owner playtest checklist 👤 (on the preview build)
+- [x] The rift scene and the Rift card make Delves easy to find and clearly optional.
+- [x] A run takes about 5 minutes and you understand every fight (watch one, skip one, read one log).
+- [x] Doors and blessings feel like choices: at least one run where you built around a patron.
+- [x] Group fights read well: you can tell who hit whom.
+- [x] The allowance makes sense ("The rift is quiet tonight" when it's empty) and the shop has something you want.
+- [x] (Debug switch) The Unlit's cards show their drawbacks clearly.
+- [x] Your save meets Act IV on load: D4-01 plays; the margins and Pechko's scenes read well, one wrongness each (D4-06 and D4-07 deliberately say more).
+- [x] Battle sprites, sigils and the new art: keep, regenerate or placeholder.
+- [x] Screenshot pass.
+
+**Out of scope:** Act V and the Unlit's door in normal play (Act V is written at the v0.8 flesh-out, D247); hunter XP, trophies or loot from Delves (v0.8, D278); relic slots; the Deep family in the Last Stand; items, ranks, stars, talents and use-skills (v0.8); trust rewards and Orders (v0.10).
+
+### v0.8 — Hunter depth` section with:
+
+### v0.8 — Hunter depth
+
+**Status:** complete *(fleshed out 2026-10-15, D300–D329; playtest passed 2026-10-15, D356)*
+
+**Goal:** hunters grow in ways that last.
+- **Items:** gear becomes items. Today's pieces become Common items, the Smithy crafts and reworks them, and contract loot adds Fine, Rare and Heroic pieces, with Stores and Salvage.
+- **Legendaries:** six of them, kept forever in a new keepsake slot.
+- **Ranks, stars and talents:** hunter ranks (Apprentice → Wright → Master-Wright) and stars, both kept forever, with stars bought with Embers. A personal use-skill for every hunter. Talent trees.
+- **The yard:** benched hunters catch up.
+- **Delves:** XP, Command XP and a guardian item, only while a run pays Riftglass.
+- **Act V, The Hearthblade,** written in full, opening the Unlit's door after its stand.
+- **The simulator** splits into parallel CI jobs so every job stays under 5 minutes.
+
+**Reads:**
+- GDD §4.1, §4.3, §5.0, §5.3.1–5.3.2, §5.3.6, §5.4.3, §5.5, §5.9.5–5.9.7, §5.10.6–5.10.7, §5.11 (all), §5.14.1–5.14.3, §5.14.9, §6.1–6.2, §6.5, §7.10, §8.5b, §8.11, §8.12, §9.11, §9.12, §9.16;
+- `lore-secrets.md` §7, §8, §20, §30, §31, §32;
+- technical design §5.2, §5.3, §7.2, §11.2, §13.
+
+**Before you start 👤**
+
+| Owner task | Needed by | When |
+|---|---|---|
+| ~~Export your real v0.7 save~~ **Done:** the save code pasted in the flesh-out (2026-10-15, cycle 19, Bastion) is in `OUT-8-v7-owner-save-code.txt`; it becomes `tests/saves/fixtures/v7-owner.json` | T8.5 | — |
+| ~~Answer Q25~~ **Done:** (a), all ten write-up details accepted (D329) | T8.3, T8.6 | — |
+| Decide any name collisions the search finds | T8.4 | When asked |
+| Review the new art (item icons, rarity frames, keepsakes, star, rank badges, brew icons) | T8.14 | In the playtest |
+
+#### A. Story, fixes and content
+- [x] **T8.1 Act V** *(the first task, D301–D302)*.
+  - Act V in `src/content/story/act5.ts`, word for word from `lore-secrets.md` §30: every document with its condition and text, the two arrival lines, the delivery line ("Pechko found a letter at the crack: '…'."), the new Accounts event "What the hearth leaves" and the additions to three earlier events with their excerpts.
+  - Opening **the Unlit's door after Act V's stand** (D257), with the Rift card line, and Yrsa's Thole's result-sheet line after D5-06. The Legendary itself is built in T8.9; until then the line shows alone.
+  - The last written act becomes 5. No new condition kinds.
+  - Tests: every Act V document's condition, row by row against §30; the text word for word; the true-ending gate (40 names, exactly one source each; #4–7 now from D5-03).
+  - The on-load start for a story-less cycle needs saved state, so it is T8.5.
+- [x] **T8.2 Per-act family counters** (D318; finding in D331: no shared counter, tests added).
+  - Reproduce on `v7-owner.json`: every act's `winsByFamily` shows Act IV's numbers.
+  - Fix the code so each act begun gets its own counter, with a test that two acts' counters move independently.
+  - The migration step (keep Act IV's counts, clear Acts I–III's) is part of T8.5.
+  - Log the fix as a documented drift (Proposed row).
+- [x] **T8.3 Content and keys: mechanics.** *(All but `skill.xp.command.delveFloor`, which waits for Q26; D333.)*
+  - The §7.10 keys into `balance.ts` (the eight locked ones marked locked), with GDD §7.10 added in the `key` = value form and the plan §0.6 row (below), all in the same commit.
+  - Content, outside the saved-state id lists until T8.5 (as D171):
+    - the Common item bases (today's 7 pieces with today's numbers);
+    - the loot table and the line pool (§5.11.2);
+    - the 11 use-skills (§8.5b);
+    - the 27 talents (§8.11);
+    - the 6 Legendaries (§8.12);
+    - the rank and star rules (§5.11.3).
+  - Content tests:
+    - every hunter has one use-skill;
+    - every role has 3 branches × 3 tiers;
+    - every Legendary has exactly one milestone and none is Delve-only;
+    - the Common items equal today's gear table number for number;
+    - the **D20 content test** updated: Delve XP, Command XP and guardian items each have their idle source (contract XP, contract loot).
+- [x] **T8.4 Names.** *(Done with T8.3, D332: no collisions.)* Collision search (GDD §2.3, D173 rule) for every name in `OUT-6-new-names.md`; add them to `tests/content/names.ts`. Any collision: stop and ask, with alternatives.
+- [x] **T8.5 Migration v7 → v8** (D317; readings in D334), using the **owner's real v0.7 save** (`v7-owner.json`) as the fixture, with a round-trip test, and a `v8.json` fixture (that save played 72 h).
+  - **New saved state:**
+    - items (each with base, tier, rarity, lines; equipped or in Stores);
+    - each hunter's rank, stars, talent picks and keepsake;
+    - Legendaries found (id, cycle);
+    - trophies spent this cycle.
+  - **What the migration does:**
+    - gear slots become equipped Common items with the same numbers;
+    - ranks from each hunter's highest level ever, free (D311);
+    - stars 0; talent points given but unspent;
+    - Legendaries whose milestone is already met are found on load;
+    - Acts I–III's `winsByFamily` cleared and Act IV's kept (D318);
+    - the paused Delve run kept.
+  - **Act V's start:** in a story-less cycle it starts on load with fresh counters (D246). Generalise v0.7's `story.startActIV` to any newly written act, with the on-load line, and D5-01 found `via` 'arrival'. A save still in Act IV's cycle reaches Act V with the next warden.
+  - **Tests on the owner's save:**
+    - after migration and load, Halvar, Zora, Ostap, Vesna, Herdis, Bjarna and Radek are Wrights, and the others are Apprentices;
+    - every hunter's weapon and armor numbers are unchanged;
+    - the Legendaries found match the bestiary (Wolf-Tooth String expected; confirm);
+    - the save's cycle-19 stand, played through, reaches Act V with the next warden;
+    - the same save made story-less starts Act V on load.
+  - Add the debug action "Start Act V" (as "Start Act IV").
+  - Technical design §5.2 and §7.2 are already updated by the docs commit (OUT-9). Check they match.
+
+#### B. Systems
+- [x] **T8.6 Items, loot, Stores and Salvage** (D304, D305, D307).
+  - **Commands:** craft, rework, equip, unequip and salvage, all refused while the hunter is on a contract or in a Delve.
+  - **Rules:** loot on every contract won (seeded); auto-salvage when Stores is full; the reset at the Long Night (Legendaries kept); the Smithing cut on crafting and rework.
+  - **Breakdowns:** every item line in the stat breakdowns.
+  - **Test-first. Golden check:** with Common items, the §5.5.1 fight, every seeded golden fight and every recorded fight in the fixtures replay **line for line**. If one changes, stop and ask.
+- [x] **T8.7 Ranks, stars and the trophies on hand** (D309, D310).
+  - Commands `hunter.rankUp` and `hunter.addStar`, with their refusals.
+  - The growth formula with the star line in every breakdown; trophies on hand (earned minus spent).
+  - Kept through the Long Night (in the reset's row-by-row test).
+  - Tests: a rank never lost to halving; a star raising stats at once; spending never changing the Trophy Hall bonus or the Embers conversion.
+- [x] **T8.8 Use-skills in the fight engine** (D312, D314).
+  - All 11, each on its trigger, with no new dice, a log line each, and the general meter knock-back.
+  - **`rulesVersion` 5** (owner-approved, D308): every golden fight and every recorded fight replays line for line in Node, WebKit and Chromium. **If one changes, stop and ask.**
+  - The odds and Suggest include use-skills. Benchmarks stay in budget.
+  - One test per use-skill.
+- [x] **T8.9 Talents and Legendaries** (D313, D306).
+  - The talent pick and free respec commands; the 27 effects (Herbs off in Delves, shown).
+  - Keepsakes: equip and swap.
+  - The six Legendary effects in fights; the milestone checks, on the same events as the Delve relics' idle sources.
+  - One test per talent and per Legendary.
+- [x] **T8.10 The yard** (D315).
+  - Yard XP when a contract finishes, for every hunter at the hold not on it (not the dead, not in a Delve), at 25% of each party member's XP, capped at the third-highest hunter's level.
+  - The away-sheet line.
+  - Tests: the cap; an injured hunter earning; a Delving hunter not earning.
+- [x] **T8.11 Delve rewards** (D316; readings D342).
+  - Hunter XP per floor and guardian, the guardian item, all only while the run pays Riftglass.
+  - Tests: a quiet-night run pays none of them; a paying run pays exactly the table.
+- [x] **T8.11b Command +1 XP per floor** (D316). Q26 answered (a), D345: `skill.xp.command.delveFloor` is a field of `skill.xp.command`. Reading D346.
+- [x] **T8.12 The older-rules note** (D319; readings D344): show "recorded with an older rules version" only when a replay comes out different from the record. Applies to contract fights, stand waves and Delve floors. Tests both ways.
+
+#### C. UI
+- [x] **T8.13a The hunter sheet and the picker** (§9.16; readings D347).
+  - Rank badge, stars, use-skill, three slots, talents with tier locks and respec, Rank up and Add a star with costs and breakdowns.
+  - The slot picker (best first, differences, Craft, Rework).
+  - The Hearth's pointer line.
+- [x] **T8.13b Stores, lines, Act V and the smoke.** *(Done except the "rank-up" line, `[?]` Q27: a rank only changes by command, so nothing happens while away to line; Q27 answered (b): not built, D349; readings D348.)*
+  - Stores with Salvage under Hunters.
+  - The away-sheet and results lines (loot, auto-salvage, Legendary found, rank-up, yard).
+  - Act V's scenes and on-load card, and the Rift card's sixth-door line.
+  - **Extend the Playwright smoke:**
+    - debug a won contract → loot in Stores → equip → rework;
+    - debug to Wright → Rank up → pick a talent;
+    - debug "Start Act V" → D5-01.
+  - **The on-load card helper:** one shared helper drives both the Act V on-load card and the Arvid on-load card (D323), each with a test.
+  - Screenshot pass at phone size.
+
+#### D. Art
+- [x] **T8.14 Art** (the D59 method, D324; readings D350).
+  - 16 px icons for the 7 base pieces; 4 item rarity frames (Common, Fine, Rare, Heroic), distinct from the Delve frames; 6 keepsake icons; a star icon; 3 rank badges; icons for the nine older brews (D323).
+  - Manifest entries; `credits.md` regenerated; the contact sheet updated. 👤 Review in the playtest.
+
+#### E. CI and simulator
+- [x] **T8.15 CI: split the simulator job, and move off Node 20** (D320, D323; readings D351). *CI timings are in `progress.md`; the full suite currently fails `trust-moves`, a balance matter for T8.18.*
+  - `sim.yml` runs the full suite as parallel jobs (for example, the Monday Standard and Delver runs in one, everything else in another) plus a final job that combines their results and judges every row.
+  - Same runs, seeds and rows; the combined report equals a single-machine run (a test, like `sim/parallel.test.ts`).
+  - Workflow actions on versions that don't use the deprecated Node 20.
+  - Measure each job. **If any job goes over 5 minutes, stop and ask** (never trim seeds or rows).
+  - Optional: a short profiling look at the simulator.
+- [x] **T8.16 Policy rules** (GDD §6.1, D321; readings D352).
+  - Items (rework the weakest slot first; equip loot by a fixed item score; salvage the lowest scorers once Stores passes 30).
+  - Rank up when qualified; Embers on the Hearth first, then the cheapest star; talents in a fixed order per role; Legendaries by a fixed table.
+  - The Delver's Re-roll rule.
+  - Report: stars per cycle, items by rarity per cycle, Legendaries found, Delve XP.
+- [x] **T8.17 Checks** (D322; readings D353). *The rows are in (own commit `18843c8`); on the first full run `act-5` and `first-wright` pass and `late-letters` and `idle-only` fail, which is T8.18's to tune or ask about.*
+  - In **their own commit**: the `act-5`, `late-letters` and `first-wright` rows and the new `idle-only` definition in `sim/targets.ts` (owner-approved). The milestone becomes v0.8.
+  - The Monday Standard and Delver runs play on until all content (up to 42 days), as in v0.7.
+  - Suite time per CI job measured; **over 5 minutes in any job: stop and ask.**
+- [x] **T8.18 Tuning** (tunables only) against every check. *(`xp.growth` 1.3, `rank.wrightTrophies` 10, `ruin.ribbonshadeShare` 0.75; all 41 rows pass; D354.)*
+  - Likely levers: `yard.share`, `star.growthPerStar`, `star.embersPerStar`, `loot.chanceBase`, `loot.lines`, `delve.xpPerTier`, `rank.wrightTrophies`.
+  - The 38 earlier checks judge `standard`. Items, yard XP and stars move them through shared rules (watch "later cycles", "contracts own silver" and "provisions matter").
+  - If no reasonable values pass, stop and ask.
+
+### v0.8 acceptance criteria
+1. Act V runs in its cycle (row-by-row tests). The owner's real v0.7 save migrates, round-trips, keeps every number of its gear, gets its ranks, and reaches Act V both ways (next warden, or on load in a story-less cycle). The Unlit's door opens after Act V's stand.
+2. Items: craft, rework (bonus lines kept), loot, equip, Stores (40), Salvage and auto-salvage work, with breakdowns. Everything except Legendaries resets at the Long Night.
+3. Ranks, stars and talents work, show their costs and breakdowns, and survive the Long Night. A rank is never lost to halving. Stars cost Embers and trophies.
+4. All 11 use-skills, 27 talents and 6 Legendaries work as §8.5b, §8.11 and §8.12 say (a test each). Every golden fight and every recorded fight replays line for line (`rulesVersion` 5). The older-rules note shows only when a replay differs.
+5. Yard XP catches benched hunters up to the third-highest level and no further.
+6. Delve XP, Command XP and the guardian item come only while a run pays Riftglass. The D20 content test passes. The true-ending gate still passes (40 names, one source each; no Delve-only requirement).
+7. Every earlier check passes on `standard`; the new rows pass; **every simulator CI job stays ≤ 5 min**; `npm run check` stays ≤ 90 s.
+
+### v0.8 simulator checks
+
+| Check | Target |
+|---|---|
+| Act V lands in its cycle | D5-01 to D5-06 and D5-08 by the end of cycle 5; D5-07 with the next warden (Standard) |
+| Late recruits catch up | All five name letters (Ostap at levels 5 and 8; Toma, Sigrun and Arvid at 5) by the end of cycle 5 (Standard) |
+| First Wright | By the end of cycle 1 (Standard) |
+| Idle-only vs Delver | Standard reaches the last of "all content" (Acts I–V judged documents; book 36/36; six Ribbonshade names; every skill ≥ 4; the five letter names; every hunter at Wright) ≤ 1.3× later than the Delver |
+| D20 content test | Every Delve reward has an idle source or is marked sidegrade / convenience / Delve-only (not a simulator check) |
+| All earlier checks | Pass, on `standard` |
+| Suite time | Every simulator CI job ≤ 5 min (D320) |
+
+Standard, Monday start, 5 seeds (median), as in §0.3; the Delver on the Monday seeds only (D272).
+
+Reported, not judged: stars per cycle, items by rarity per cycle, Legendaries found, Delve XP, and v0.7's Riftglass per week, floors per run and Delve relics.
+
+### v0.8 owner playtest checklist 👤 (on the preview build)
+- [ ] Your save arrived cleanly: same gear numbers, the seven Wrights, any Legendary found on load (Wolf-Tooth String?).
+- [ ] Loot feels like a nice surprise, not a chore: the picker makes "is this better?" obvious, and Stores and Salvage stay tidy.
+- [ ] Reworking a lucky early drop into a better tier feels good.
+- [ ] Rank up and Add a star are easy to find and clearly priced, and stars give your 481 Embers a real use.
+- [ ] Use-skills show in fight logs, and you can tell when one fired. At least one changed a fight you watched.
+- [ ] Talents are a real choice; respec feels free.
+- [ ] Arvid, Sigrun and Toma catch up in the yard and their name letters arrive.
+- [ ] Delves feel worth a run again (XP and a guardian item), and a quiet night still feels fair.
+- [ ] Act V reads well, one wrongness each (D5-06 deliberately says more); the letters arriving at the crack land; the Unlit's door opening after the stand feels earned.
+- [ ] New art: keep, regenerate or placeholder. Screenshot pass.
+
+**Out of scope:** Act VI's texts (written at the v0.9 flesh-out, D303); the Dross-Tide in the Last Stand; trophies from Delves; Delve-only rewards of any new kind; random Legendaries; more keepsake or relic slots; use-skill upgrades at Master-Wright; events (v0.9); trust rewards and Orders (v0.10).
+
