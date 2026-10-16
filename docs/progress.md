@@ -42,4 +42,4 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 
 - **Done:** older `progress.md` entries, completed plan milestones (v0.0 to v0.8) and answered questions Q1–Q25 moved to `docs/archive/` unchanged. Start of session now reads about 20 KB instead of about 320 KB. `CLAUDE.md`: targeted start ritual, entry-size cap, one task per session, search-before-read. `.claude/settings.json`: Read deny rules for build output, caches, sim JSON and art binaries.
 - **Next:** v0.9 flesh-out session.
-- **Open questions:** none. **Not verified:** whether `.claudeignore` is honored by Claude Code (the deny rules are the documented mechanism). `npm run check` is green. Nothing committed yet.
+- **Open questions:** none. `.claudeignore` removed (Claude Code doesn't document it; the Read deny rules are the mechanism). `npm run check` is green.
