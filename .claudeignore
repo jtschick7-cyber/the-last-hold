@@ -1,0 +1,29 @@
+# Build output — the bundled/minified game is worse than useless in context
+dist/
+dist-preview/
+dev-dist/
+.vite/
+
+# Dependencies and caches
+node_modules/
+*.tsbuildinfo
+.eslintcache
+
+# Test artifacts
+coverage/
+test-results/
+playwright-report/
+
+# Simulator raw output: JSON is huge; .md summaries stay readable
+sim/reports/*.json
+
+# Simulator shard results (regenerated, uploaded as CI artifacts)
+sim/shards/
+
+# Art sources: zips and unpacked packs are binary —
+# but license checks are a real session task, so keep the License.txt files
+art-src/*.zip
+art-src/packs/**
+!art-src/packs/**/License.txt
+
+*.log
