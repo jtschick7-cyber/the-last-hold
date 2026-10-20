@@ -77,3 +77,9 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - 16 new tests in `tests/events/timers.test.ts`: 30 h jump equals 12 + 12 + 6 h loads; a spend equals ticking to it; rewind and round trip give no free time; the offline cap does not touch the bank. Goldens unchanged. `npm run check` green.
 - Nothing deferred. The unit shown on rest reasons follows the game's duration format ("14h 40m"), not the GDD's "14 h 40 m" example.
 
+## 2026-10-20 — v0.9 session 1: handoff (stopped at the owner's request)
+- Done and pushed on `milestone/v0.9`: the docs commit, T9.1, T9.2, T9.3. `npm run check` green. Nothing half-finished; no T9.4 code written.
+- **T9.4 starts next.** It needs: the three hunters, three traits, nine tracks, six creatures (GDD §8.5, §8.13, §8.14), and the three use-skill rows held back from GDD §8.5b (note on T9.4; update `tests/content/v08-content.test.ts`'s count of 11 with them). Hunter ids are fixed in the technical design (`gest-tall-torch`, `ragnhild-eye-taker`, `radmila-of-the-reeds`; `lindworm-of-velk-fjord`, `barrow-king`, `mother-of-the-river`; `stoneback-fell-troll`, `mara-of-kettle-barrow`, `likho-one-eyed`). `HUNT_IDS` already exists in `src/content/hunts.ts`.
+- Names: OUT-6 lists them for the web collision search. If search is not available, put them in `docs/questions.md`, mark T9.4 `[?]`, leave the names test red. A collision: stop and ask.
+- Branch note: the harness named `claude/affectionate-brahmagupta-3n955f`; the owner's `milestone/v0.9` was used.
+
