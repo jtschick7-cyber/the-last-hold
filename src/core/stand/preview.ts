@@ -36,7 +36,7 @@ export interface StandPreview {
 }
 
 /** The value at quantile q of a sorted list (nearest rank, lower). */
-const at = (sorted: readonly number[], q: number): number =>
+export const at = (sorted: readonly number[], q: number): number =>
   sorted[Math.floor(q * (sorted.length - 1))] ?? 0;
 
 /** The waves a set of practice stands held, sorted. */
@@ -48,9 +48,9 @@ export const practiceWaves = (stand: StandInput, samples: number): number[] => {
 };
 
 /** The 10th–90th percentile range the preview shows. */
-const LOW = 0.1;
-const HIGH = 0.9;
-const MID = 0.5;
+export const LOW = 0.1;
+export const HIGH = 0.9;
+export const MID = 0.5;
 
 export const previewStand = (input: StandPreviewInput): StandPreview => {
   const held = practiceWaves(input.stand, input.samples);

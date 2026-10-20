@@ -3,13 +3,16 @@ import { expect, test } from '@playwright/test';
 // Plan T2.19 / GDD §6.5: warn at the budget, fail at 2× the budget, on a 4× CPU
 // slowdown. Live odds (500 fights): budget 100 ms. Suggested party: budget 300 ms.
 // Last Stand preview (100 practice stands, D114): budget 1 s.
-const BUDGET = { odds: 100, suggest: 300, stand: 1000 };
+// Boss preview and boss Suggest (plan T9.7, D391): proposed budgets, until the owner sets the GDD §6.5 rows.
+const BUDGET = { odds: 100, suggest: 300, stand: 1000, bossPreview: 150, bossSuggest: 500 };
 type Bench = {
   odds: number;
   suggest4: number;
   oddsUnknown: number;
   suggestUnknown: number;
   stand: number;
+  bossPreview: number;
+  bossSuggest: number;
 };
 
 test('odds, Suggest and the stand preview stay within 2× their budget on a throttled CPU', async ({
@@ -25,7 +28,8 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     `bench (4× slowdown): odds ${ms.odds.toFixed(0)} ms, Suggest ${ms.suggest4.toFixed(0)} ms, ` +
       `odds (3 candidates, prepared) ${ms.oddsUnknown.toFixed(0)} ms, ` +
       `Suggest (3 candidates, prepared) ${ms.suggestUnknown.toFixed(0)} ms, ` +
-      `Last Stand preview ${ms.stand.toFixed(0)} ms`,
+      `Last Stand preview ${ms.stand.toFixed(0)} ms, boss preview ${ms.bossPreview.toFixed(0)} ms, ` +
+      `boss Suggest (14 hunters, 10 tries) ${ms.bossSuggest.toFixed(0)} ms`,
   );
   for (const [name, took, budget] of [
     ['odds', ms.odds, BUDGET.odds],

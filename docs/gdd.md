@@ -1186,7 +1186,7 @@ Two kinds of event, both spent from **one bank of attempt tokens**: a **world bo
 - **A visit** is one boss from first arrival to its fall. Its **tier is fixed by the hold's Rank when the visit's first attempt is made** (`boss.baseTier`: Citadel 4, Bastion 5), plus one for each completed pass through the three. A Rank-up in the middle of a visit changes nothing. Past tier 5 the usual scaling goes on (Health and Might ×1.35, Armor ×1.15 per tier above the base tier, §7.4). The boss sheet shows the tier before the first attempt, and the preview says what the tier would be.
 - **The pool** is the boss's Health, shared by every attempt in the visit: `boss.poolBase` at base tier 3, scaled by tier (§7.11). It is sized so that a good party takes about 12 attempts to empty it.
 - **An attempt** is worked out at once from its seed and **played back** with Skip and Log, like a Delve floor:
-  1. Pick up to 4 eligible hunters (**Suggest** fills four, with the highest expected damage, using the same stage-1 method and the same dice for every party as Suggest on a contract, §6.5) and the preparation: one oil and one potion per hunter, up to 2 bombs (`prep.bombSlots`). Oils, traits and bane lines follow the boss's named family (§8.13); location traits (Fen-born and so on) do not apply, as in the Last Stand. **Suggest** has a budget: it tries parties in a fixed order and stops at the first that clears a damage floor (a boss cannot be "won", so the contract shortcut of D74 does not apply), and the preview runs in the odds worker (budgets in plan T9.7).
+  1. Pick up to 4 eligible hunters (**Suggest** fills four, with the highest expected damage, using the same stage-1 method and the same dice for every party as Suggest on a contract, §6.5) and the preparation: one oil and one potion per hunter, up to 2 bombs (`prep.bombSlots`). Oils, traits and bane lines follow the boss's named family (§8.13); location traits (Fen-born and so on) do not apply, as in the Last Stand. **Suggest** has a budget: it tries parties in a fixed order and stops at the first that clears a damage floor (`events.suggestFloor`, a share of the starting pool) or after `events.suggestTries` parties, taking the best seen (a boss cannot be "won", so the contract shortcut of D74 does not apply), and the preview runs in the odds worker (budgets in plan T9.7).
   2. Pay 1 token. The attendees rest 24 h from that moment.
   3. The fight is an ordinary fight (§5.0, §5.5): the boss enters with **Health equal to the pool still standing.** It ends when the party is down or at tick 400. **The pool afterwards is the boss's Health at the end,** so everything the party dealt counts, a hunter who went down early still counts what they dealt, and the boss can never end above the pool it started with.
   4. Potions and bombs are spent whether or not the attempt goes well.
@@ -1679,7 +1679,7 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 
 ### 7.11 Events *(v0.9, D357–D387)*
 
-**Every `boss.*` constant is `locked`** (plan §0.6): it changes only through a decisions row the owner approves. Every `hunt.*` constant, and `events.recentKeep`, is tunable. Starting values marked *sketch* are first estimates for the simulator to calibrate in T9.13; a changed locked value comes back to the owner as a new row, never silently.
+**Every `boss.*` constant is `locked`** (plan §0.6): it changes only through a decisions row the owner approves. Every `hunt.*` constant, `events.recentKeep`, `events.suggestFloor` and `events.suggestTries` are tunable. Starting values marked *sketch* are first estimates for the simulator to calibrate in T9.13; a changed locked value comes back to the owner as a new row, never silently.
 
 | Formula | Expression | Constants (key = starting value) | § |
 |---|---|---|---|
@@ -1702,6 +1702,8 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 | Hunt XP | per attendee: `xpPerTier × track tier` for a win; the loss share of that for a loss | `hunt.xpPerTier` = 15, `hunt.lossXpShare` = 0.5 | 5.12.6 |
 | Hunt replay | reagents of the quarry's kind on a replay win | `hunt.replayReagents` = 1 | 5.12.6 |
 | Recent list | event fights kept for the "recent" list | `events.recentKeep` = 10 | 9.17 |
+| Boss Suggest floor | boss Suggest stops at the first party whose typical attempt (median of the shared stage-1 fights) takes off at least this share of the visit's starting pool (D391) | `events.suggestFloor` = 0.08 | 5.12.4 |
+| Boss Suggest tries | boss Suggest also stops after this many parties, in its fixed order, and takes the best seen (D391) | `events.suggestTries` = 10 | 5.12.4 |
 
 **Notes**
 - The 8 h, 6 and 24 h values are the same numbers as the old §7.4 row (D31, G7) and are re-proposed as D371.

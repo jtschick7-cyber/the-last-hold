@@ -1,6 +1,7 @@
 import { HUNTER_IDS } from '../../src/content/hunters';
 import { computeOdds } from '../../src/core/contracts/odds';
 import { suggestParty } from '../../src/core/contracts/suggest';
+import { previewBoss, suggestBossParty } from '../../src/core/systems/boss-odds';
 import { previewStand } from '../../src/core/stand/preview';
 import { snap } from '../combat/helpers';
 
@@ -34,6 +35,8 @@ type Bench = {
   oddsUnknown: number;
   suggestUnknown: number;
   stand: number;
+  bossPreview: number;
+  bossSuggest: number;
 };
 
 (window as unknown as { __bench: () => Bench }).__bench = () => {
@@ -54,6 +57,18 @@ type Bench = {
       bombs: ['fire-pot' as const, 'saltburst' as const],
     },
   };
+  // Plan T9.7: the boss preview (100 practice fights) and Suggest for a boss with all 14 hunters
+  // free, when no party clears the floor (the worst case: it runs out its tries).
+  const boss = {
+    gameSeed: 'bench',
+    visit: 0,
+    boss: 'lindworm-of-velk-fjord' as const,
+    tier: 4,
+    poolStart: 32400,
+    pool: 32400,
+    paid: 0,
+  };
+  const fourteen = HUNTER_IDS.slice(0, 14).map((id) => snap(id, { level: 9 }));
   return {
     odds: best(() => computeOdds({ ...base, party })),
     suggest4: best(() => suggestParty({ ...base, available: free, maxParty: 3 })),
@@ -82,6 +97,16 @@ type Bench = {
         cycleDays: 3,
         threatPerDay: 40,
         trophiesPerDay: 20,
+      }),
+    ),
+    bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),
+    bossSuggest: best(() =>
+      suggestBossParty({
+        ...boss,
+        available: fourteen,
+        maxParty: 4,
+        floor: Number.MAX_SAFE_INTEGER,
+        tries: 10,
       }),
     ),
   };

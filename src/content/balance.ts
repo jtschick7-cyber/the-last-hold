@@ -183,7 +183,11 @@ export const balance = {
     lossXpShare: tunable(0.5),
     replayReagents: tunable(1),
   },
-  events: { recentKeep: tunable(10) },
+  events: {
+    recentKeep: tunable(10),
+    suggestFloor: tunable(0.08), // D391: boss Suggest stops at a party dealing this share of the starting pool
+    suggestTries: tunable(10), // D391: ... or after this many parties (the full search of 14 hunters took 9.5 s)
+  },
   // ---- GDD §7.9 Delves (v0.7, D244–D272) ----
   delve: {
     partySize: locked(3),

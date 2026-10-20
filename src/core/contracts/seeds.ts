@@ -41,3 +41,15 @@ export const eventSeed = (
   party: readonly string[],
   prep: readonly string[] = [],
 ): string => streamSeed(gameSeed, 'event', kind, attempt, ids(party), ids(prep));
+
+/** Boss preview, sample i (technical design §7.2): a distinct prefix, so it never equals the real attempt. Party only, as D98. */
+export const bossOddsSeed = (
+  gameSeed: string,
+  visit: number,
+  party: readonly string[],
+  i: number,
+): string => streamSeed(gameSeed, 'bossodds', visit, ids(party), i);
+
+/** Suggest for events, stage 1, sample i: the same seeds for every party (technical design §7.2). */
+export const eventSuggestSeed = (gameSeed: string, key: string, i: number): string =>
+  streamSeed(gameSeed, 'eventsuggest', key, i);

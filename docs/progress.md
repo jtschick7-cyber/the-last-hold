@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.6 — boss attempts (done).
-- **Next:** T9.7 — boss preview and Suggest for events.
+- **Last task:** T9.7 — boss preview and Suggest for events (done).
+- **Next:** T9.8 — Hunts.
 - **Open questions:** Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -105,4 +105,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - Three small edits outside events: two UI/test spots now check the fight is a contract before reading its species; `assets.ts` re-exports the creature ids from `hunts.ts`.
 - **Not in this task:** the result sheet and playback (T9.14–T9.15), Suggest and the preview (T9.7). The Archive shelf's "Identified" is derived (D390 (6)).
 - Nothing skipped. No golden, recorded fight or stand changed.
+
+## 2026-10-20 — v0.9 session 3: T9.7 boss preview and Suggest
+- **T9.7 is built** (D391 Proposed). The preview (`previewBoss`, odds worker, new `bossPreview` message) runs 100 practice fights on their own dice and shows the median damage and 10th–90th range as a share of the pool standing, which marks the typical attempt would bring, and a Why? whose top number is the median. Over 120 real attempts the range held 65–95% (test), about the 80% it claims.
+- **Suggest for events** (`suggestBossParty`, worker message `bossSuggest`): parties in a fixed order (highest level, then roster), the same 50 dice for every party, stops at the first whose typical attempt clears the floor, else after 10 parties; it only sees hunters who can attend (tested with resting hunters).
+- **You chose the floor:** new tunable `events.suggestFloor` 0.08 (of the starting pool). **I added, for a yes or no:** `events.suggestTries` 10, because the full search of 14 hunters took 9.5 s. Both are in GDD §7.11; no `boss.*` value moved.
+- **Timings (4× slowdown, bench):** preview 52 ms, Suggest with 14 hunters and no party clearing the floor 375 ms. **Proposed §6.5 rows:** preview ≤ 150 ms, boss Suggest ≤ 500 ms (warn at the budget, fail at 2×); the bench uses them until you set the rows.
+- On your save the first party tried already clears the floor (about 10% of the pool per attempt, a sketch pool).
+- Nothing skipped. The stand preview's percentile helpers are now shared. Golden fights, recorded fights and stands unchanged. `npm run check` green (35 s).
 

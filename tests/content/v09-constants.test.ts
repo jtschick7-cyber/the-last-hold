@@ -39,6 +39,8 @@ describe('GDD §7.11 Events constants', () => {
     expect(value('hunt.lossXpShare')).toBe(0.5);
     expect(value('hunt.replayReagents')).toBe(1);
     expect(value('events.recentKeep')).toBe(10);
+    expect(value('events.suggestFloor')).toBe(0.08);
+    expect(value('events.suggestTries')).toBe(10);
   });
 
   it('locks the whole boss.* namespace and nothing else here', () => {
