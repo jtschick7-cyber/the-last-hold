@@ -229,6 +229,7 @@ describe('the Long Night (GDD §5.9.7)', () => {
         stand: null,
         act: 2, // v5 (T5.3, GDD §5.14.1): one act per cycle
         warden: null,
+        standPool: null, // v9 (D363): fixed when the wave list is, at Bastion
       });
     });
 

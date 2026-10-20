@@ -158,7 +158,7 @@ Moved to [`docs/archive/implementation-plan-v0.0-v0.8.md`](archive/implementatio
 
 Each task is one Claude Code session; **most milestones finish in fewer sessions than tasks, since two small tasks can share one** (the progress entries record this). Tests come first for formulas, rules and saved data (§0.2). Every task ends with `npm run check` green and a short progress entry. Tick the box when its acceptance criteria all hold.
 
-- [ ] **T9.1 — Save v9: the `events` state and `standPool`** *(core/save)*
+- [x] **T9.1 — Save v9: the `events` state and `standPool`** *(core/save)*
   - Add `EventsState` and `CycleRecord.standPool` (technical design §5.2), the v8 → v9 migration (`save/migration-v9.ts`), validation, and the load-path `openEvents(state, now)`.
   - Fixtures: `tests/saves/fixtures/v8-owner.json` (OUT-8, **copied unchanged**) and `v9.json` (that save migrated and played 72 h under a fixed seed).
   - *Acceptance:*
@@ -172,6 +172,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - *Acceptance:* 1. Every `boss.*`, `hunt.*` key and `events.recentKeep` exists once with the §7.11 value. 2. `boss.*` keys are marked locked. 3. The key test passes. 4. No numeric literal in `core/systems/` outside the allowlist.
 
 - [ ] **T9.3 — Tokens, rest, eligibility and debug commands** *(core/systems/events.ts)*
+  - **Also (moved from T9.1, D388):** the load-path clamps that need the constants: `tokens.count` to 0–`boss.tokenMax`, `points` to 0–`hunt.unlockPoints`, `boss.tier` to null or 3–12, `paid` to 0–4, and dropping a `rest` entry already in the past.
   - The token bank and rest as functions of stored timestamps, the monotone `events.clock` and `now` (technical design §5.2, §6.2): selectors with breakdowns, spend, `openEvents`, the eligibility selector (not on a contract, in a Delve, recovering or resting).
   - **Debug commands in core** (each sets `debugUsed`): add a token, fill the bank, end all rests, **start Act VI** (`debug.startAct`, so the playtest does not wait for Act V's stand).
   - *Acceptance:* 1. A 30 h jump equals a 12 + 12 + 6 h sequence. 2. A spend equals ticking to it. 3. A clock set back changes no remaining time, and set back then forward gives no free time. 4. A full bank restarts the clock on a spend; a part-full bank keeps its progress. 5. A resting hunter can still take a contract; a hunter on a contract is not eligible. 6. Locked check-ins never count toward the bank-full badge.

@@ -100,6 +100,9 @@ const cycleRecord = (v: unknown, where: string, warnings: string[]): CycleRecord
     stand: orNull(o.stand, (x) => stand(x, `${where}.stand`, warnings)),
     act: orNull(o.act, (x) => count(x, `${where}.act`)),
     warden: wardenName(o.warden, `${where}.warden`),
+    standPool: orNull(o.standPool, (x) =>
+      oneOf(x, ['base', 'dross'] as const, `${where}.standPool`),
+    ),
   };
 };
 

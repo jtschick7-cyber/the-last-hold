@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** the v0.9 docs commit (no code).
-- **Next:** T9.1 — save v9 (`events`, `standPool`, v8 → v9 migration, fixtures from `v8-owner.json`).
+- **Last task:** T9.1 — save v9 (done).
+- **Next:** T9.2 — the constants (needs the owner's answer on `riftglass.bankWeeks`, below), then T9.3.
 - **Open questions:** Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13); one stop-and-ask below (`riftglass.bankWeeks`).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -53,3 +53,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - `.prettierignore` now skips the copied save (`v8-owner.json`, must stay unchanged). `npm ci` was needed: the installed Prettier was older than the pinned one.
 - v0.8 actuals added to plan §0.7: 9 entries over 4 numbered sessions against 15–19 estimated; v0.9's 10–15 is likely an upper bound.
 - Branch note: the harness named `claude/affectionate-brahmagupta-3n955f`; the owner's instruction (`milestone/v0.9`) was followed.
+
+## 2026-10-20 — v0.9 session 1 (continued): T9.1 save v9
+- **T9.1 is built** (D388 Proposed). Schema is now 9: `events` (closed on migration; the load path opens it for a save at the Citadel, with an empty bank and the scene pending) and `standPool` on each cycle (`base` for past cycles and for cycle 19; null if Bastion not reached).
+- The owner's real v0.8 save is `tests/saves/fixtures/v8-owner.json` (copied unchanged); `v9.json` is that save migrated and played 72 h (`scripts/make-v9-fixture.ts`, regenerated at T9.9).
+- `openEvents` is called on load (catch-up) and at the Rank-up. The event clock is folded in `advance` too, so live ticks and catch-up match.
+- Tests: 18 new (migration, opening, backward clock and round trip, guard, fixture). The older migration tests now look at the cycle history without `standPool`, as v8 did for gear.
+- Every golden fight, recorded fight and recorded stand still gives its result; `rulesVersion` stays 5. `npm run check` green.
+- **Deferred to T9.3 (noted there):** the clamps that need `boss.*` and `hunt.*` values, because those keys arrive in T9.2.
+- **Still to ask before T9.2:** OUT-4b lists `riftglass.bankWeeks` in the locked Events row, but OUT-2b's §7.11 does not.

@@ -27,6 +27,16 @@ export const oldStats = (s: GameState): Record<string, unknown> => {
   return rest;
 };
 
+// The v9 schema added `standPool` to each cycle record (D363) and the `events` object.
+export const oldCycles = (s: GameState): Record<string, unknown>[] =>
+  s.cycles.map(({ standPool: _p, ...rest }) => rest);
+
 /** A migrated state's key, in the form the original save had. */
 export const oldKey = (s: GameState, key: keyof GameState): unknown =>
-  key === 'hunters' ? oldHunters(s) : key === 'stats' ? oldStats(s) : s[key];
+  key === 'hunters'
+    ? oldHunters(s)
+    : key === 'stats'
+      ? oldStats(s)
+      : key === 'cycles'
+        ? oldCycles(s)
+        : s[key];

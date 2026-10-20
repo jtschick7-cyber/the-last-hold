@@ -11,3 +11,4 @@ tests/lint/fixtures
 art-src
 # The owner's real save, copied unchanged (OUT-8); never reformat it.
 docs/flesh-out/v0.9/v8-owner.json
+tests/saves/fixtures/v8-owner.json

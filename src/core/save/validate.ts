@@ -35,6 +35,7 @@ import { growthFrom, itemsFrom } from './validate-items';
 import { alchemyLevel, bookFrom, kettleJob, skillsFrom } from './validate-alchemy';
 import { delveFrom } from './validate-delve';
 import { longNightFrom } from './validate-long-night';
+import { eventsFrom } from './validate-events';
 import type {
   ContractInstance,
   ContractResult,
@@ -214,6 +215,15 @@ const result = (v: unknown, where: string): ContractResult => {
   };
 };
 
+const eventRef = (v: unknown, where: string): NonNullable<FightRef['event']> => {
+  const e = obj(v, where);
+  return {
+    kind: oneOf(e.kind, ['boss', 'hunt'] as const, `${where}.kind`),
+    attempt: count(e.attempt, `${where}.attempt`),
+    id: str(e.id, `${where}.id`),
+  };
+};
+
 const fightRef = (v: unknown, where: string): FightRef => {
   const o = obj(v, where);
   const m = obj(o.monster, `${where}.monster`);
@@ -232,6 +242,7 @@ const fightRef = (v: unknown, where: string): FightRef => {
     at: finite(o.at, `${where}.at`),
     prep: preparation(o.prep, `${where}.prep`),
     alchemy: alchemyLevel(o.alchemy, `${where}.alchemy`),
+    ...(o.event === undefined ? {} : { event: eventRef(o.event, `${where}.event`) }),
   };
 };
 
@@ -378,6 +389,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
     book: bookFrom(s.book, warnings),
     skills: skillsFrom(s.skills, warnings),
     delve: delveFrom(s.delve, warnings),
+    events: eventsFrom(s.events, fightRef, warnings),
     ...itemsFrom(s, owned, warnings),
     settings: settingsFrom(s.settings, warnings),
   };

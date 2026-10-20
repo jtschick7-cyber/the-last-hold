@@ -45,7 +45,7 @@ describe('the v4 → v5 migration (plan T5.3)', () => {
       else if (key === 'cycles')
         // v5 adds `act` and `warden` to each cycle, and an empty `trustSteps` to a recorded stand (D183).
         expect(
-          after.cycles.map(({ act: _a, warden: _w, ...rest }) => ({
+          after.cycles.map(({ act: _a, warden: _w, standPool: _p, ...rest }) => ({
             ...rest,
             stand: rest.stand ? withoutSteps(rest.stand) : rest.stand,
           })),

@@ -8,6 +8,7 @@ import { SCHEMA_VERSION, type CycleRecord, type GameState, type Settings } from 
 import { freshHunter, startingHunters } from './hunters-state';
 import { startingBook, startingSkills } from './book-state';
 import { startingDelve } from './delve-state';
+import { newEventsState } from './events-state';
 import { freshAct, startingVillageTrust } from './story-state';
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -32,6 +33,7 @@ export const freshCycleRecord = (number: number, now: number, act: number | null
   stand: null,
   act,
   warden: null,
+  standPool: null,
 });
 
 /** A fresh game in the GDD §5.1.4 starting state. */
@@ -95,6 +97,7 @@ export const createNewGame = (seed: string, now: number): GameState => {
     items: [],
     itemSeq: 0,
     legendaries: [],
+    events: newEventsState(now),
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,
