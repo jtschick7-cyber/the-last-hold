@@ -3,10 +3,11 @@ import { act2Documents } from './act2';
 import { act3Documents } from './act3';
 import { act4Documents } from './act4';
 import { act5Documents } from './act5';
+import { act6Documents } from './act6';
 import type { DocumentDef } from './documents';
 
 // GDD §5.14.1 and lore-secrets §5: one act per cycle. Acts I to V are written
-// (D163, D164, D209, D245, D302). An act that isn't written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
+// (D163, D164, D209, D245, D302); Act VI (D364) is written once its documents are in. An act that isn't written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
 
 export interface ActDef {
   readonly act: number;
@@ -22,10 +23,15 @@ export const acts: readonly ActDef[] = [
   { act: 3, heading: 'III. The Night', witness: 'Arvid Netmender', documents: act3Documents },
   { act: 4, heading: 'IV. The Keeper', witness: 'Dobrava Halsten', documents: act4Documents },
   { act: 5, heading: 'V. The Hearthblade', witness: 'Yrsa Varn', documents: act5Documents },
+  // Act VI's machinery is built (v0.9, T9.10) but its texts arrive in T9.11; an act with no
+  // documents is not an act yet, so nothing of it shows or plays until they are in.
+  ...(act6Documents.length > 0
+    ? [{ act: 6, heading: 'VI. The Unlit', witness: 'The Unlit', documents: act6Documents }]
+    : []),
 ];
 
 /** The last act whose text is in the game. */
-export const LAST_WRITTEN_ACT = 5;
+export const LAST_WRITTEN_ACT = Math.max(...acts.map((a) => a.act));
 
 /** "III" for act 3 (lore-secrets §5 has six acts). */
 export const actNumeral = (act: number): string =>
@@ -41,7 +47,7 @@ export const allDocuments: readonly DocumentDef[] = acts.flatMap((a) => a.docume
  * word for word from their documents (lore-secrets §21.3, §22.3, §26.3, §28.3, §30.3).
  */
 export interface AccountEvent {
-  readonly id: 'fall' | 'apprentices' | 'bell' | 'yrsa' | 'light' | 'hearth';
+  readonly id: 'fall' | 'apprentices' | 'bell' | 'yrsa' | 'light' | 'hearth' | 'cold';
   readonly heading: string;
   readonly accounts: readonly { readonly document: string; readonly excerpt: string }[];
 }
@@ -181,5 +187,11 @@ export const accountEvents: readonly AccountEvent[] = [
       },
       { document: 'D5-08', excerpt: "It's a mouth." },
     ],
+  },
+  {
+    id: 'cold',
+    heading: 'What the cold wants',
+    // Act VI's accounts are quoted word for word from its documents in T9.11.
+    accounts: [],
   },
 ];

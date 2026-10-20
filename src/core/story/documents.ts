@@ -61,6 +61,12 @@ const rankSince = (state: GameState, p: ActProgress, age: string): boolean =>
     (c) => c.number >= p.cycle && c.ranks[age as keyof typeof c.ranks] !== undefined,
   );
 
+/** A win-count document that also needs a hunter waits until they are on the roster (D6-10). */
+const hunterPresent = (
+  state: GameState,
+  c: Extract<DocumentCondition, { kind: 'contractWon' }>,
+): boolean => c.withHunter === undefined || state.hunters[c.withHunter] !== undefined;
+
 const winCount = (
   p: ActProgress,
   c: Extract<DocumentCondition, { kind: 'contractWon' }>,
@@ -73,7 +79,7 @@ const standingMet = (state: GameState, doc: DocumentDef, p: ActProgress): boolea
   switch (c.kind) {
     case 'contractWon':
       // A trust-gated win is judged the moment it's won (recordWin), never later.
-      return c.minTrust === undefined && winCount(p, c) >= c.nth;
+      return c.minTrust === undefined && winCount(p, c) >= c.nth && hunterPresent(state, c);
     case 'rankReached':
       return rankSince(state, p, c.age);
     case 'knowledge':
@@ -147,7 +153,7 @@ export const recordWin = (state: GameState, contract: ContractInstance): string[
     if (c.kind === 'contractWon')
       met =
         c.minTrust === undefined
-          ? winCount(p, c) >= c.nth
+          ? winCount(p, c) >= c.nth && hunterPresent(state, c)
           : contract.village === c.village && trustAtLeast(state, contract.village, c.minTrust);
     else if (c.kind === 'familyWon') met = standingMet(state, doc, p);
     if (met) keys.push(...findDocument(state, doc, 'contract'));

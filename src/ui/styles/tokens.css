@@ -23,6 +23,9 @@
   /* v0.5: the Archive reader's parchment card (GDD §9.14). */
   --c-parchment: #cfc6b8;
   --c-ink: #302c2e;
+  /* v0.9: a Rime reader is pale text on a dark card in both themes (GDD §5.14.2, D364). */
+  --c-rime-bg: #302c2e;
+  --c-rime-text: #dff6f5;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 1rem;

@@ -18,6 +18,8 @@ export const DOCUMENT_TYPES = [
   'testament',
   'field-note',
   'scene',
+  /** v0.9 (D364): the Unlit's writing in frost, on its own Library shelf. */
+  'rime',
 ] as const;
 export type DocumentType = (typeof DOCUMENT_TYPES)[number];
 
@@ -28,6 +30,7 @@ export const documentTypeNames: Readonly<Record<DocumentType, string>> = {
   testament: 'Testament',
   'field-note': 'Field note',
   scene: 'Resident scene',
+  rime: 'Rime',
 };
 
 /**
@@ -44,6 +47,8 @@ export type DocumentCondition =
       readonly location?: 'ruin';
       /** Only wins while the village is at least this trusting count (D147). */
       readonly minTrust?: TrustLevel;
+      /** Also needs this hunter on the roster; the document waits until they join (D6-10, lore §31). */
+      readonly withHunter?: HunterId;
     }
   | { readonly kind: 'rankReached'; readonly age: AgeId }
   | { readonly kind: 'knowledge'; readonly monster: MonsterId; readonly level: KnowledgeLevel }

@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.9 — the Dross-Tide in the Last Stand (done).
-- **Next:** T9.10 — Act VI machinery.
+- **Last task:** T9.10 — Act VI machinery (done).
+- **Next:** T9.11 — Act VI texts.
 - **Open questions:** Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -128,4 +128,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - A stand record gets a `pool` field only when it is `dross`, so every saved stand reads and replays as before. It is saved and validated; the preview, the real stand and the Long Night kit all read the same pool.
 - Every `base` stand replays exactly; all golden fights, recorded fights and recorded stands are unchanged, so nothing to ask. `rulesVersion` stays 5.
 - "Act VI has begun" is read from the act progress for now; the Act VI machinery is T9.10. 12 tests in `tests/stand/dross.test.ts`. `npm run check` green (37 s).
+
+## 2026-10-20 — v0.9 session 3 (continued): T9.10 Act VI machinery
+- **T9.10 is built** (D394 Proposed). Act VI is an act only once its documents exist, so nothing shows until T9.11; the machinery is in and tested with stand-in documents that carry OUT-3's conditions and none of its text (`tests/story/act6-machinery.test.ts`).
+- **Starts on load** in a story-less cycle (the v8 → v9 migration re-bases it with fresh counters, as v8 did for Act V); **with the next warden** from Act V's cycle (tested through a real stand). An act with no opening scene is never asked for on load.
+- **D6-10 waits for Sigrun** (new `withHunter` on the win-count condition) and is never lost. No Act VI condition uses a ruin, family or Delve count (checked on the real documents in T9.11).
+- **Rime**: a new document type with its own Library shelf ("Nothing here yet." when empty; pale text on a dark card) and its own away-sheet line. The arrival lines (new-warden and on-load) are OUT-3's words. The Accounts event "What the cold wants" exists, empty until T9.11. Debug panel has Start Act VI.
+- **Not done:** the Rank-up sheet shows no Rank documents for any act today, so no Rime wording there (D394 (6)). No Act VI text beyond OUT-3 was written.
+- Owner's save is in Act IV, so it reaches Act VI after Acts IV and V. `npm run check` green (35 s).
 

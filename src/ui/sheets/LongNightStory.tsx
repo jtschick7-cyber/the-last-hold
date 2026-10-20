@@ -3,6 +3,7 @@ import { emberRemembers } from '../../content/skills';
 import { arvidArrival } from '../../content/story/act3';
 import { act4Arrival } from '../../content/story/act4';
 import { act5Arrival } from '../../content/story/act5';
+import { act6Arrival } from '../../content/story/act6';
 import { bandLabels, ilseReturns } from '../../content/story/scenes';
 import { skillViews } from '../../core/skills/skills';
 import { trustStepLine } from '../../content/story/trust';
@@ -104,7 +105,13 @@ export const WardenScenes = ({ stand }: { stand: StandRecord }) => {
   // D3-01 plays after Ilse's line, which names Arvid (GDD §5.14.3, D211).
   const arvid = ids.includes('D3-01');
   // D4-01 and D5-01 play after Pechko's line, which names the oilcloth bundle or the crack (GDD §5.14.3, D245, D302).
-  const opening = ids.includes('D5-01') ? 'D5-01' : ids.includes('D4-01') ? 'D4-01' : null;
+  const opening = ids.includes('D6-01')
+    ? 'D6-01'
+    : ids.includes('D5-01')
+      ? 'D5-01'
+      : ids.includes('D4-01')
+        ? 'D4-01'
+        : null;
   return (
     <>
       {ids
@@ -115,13 +122,15 @@ export const WardenScenes = ({ stand }: { stand: StandRecord }) => {
       {s.story.ilseAt !== null && (
         <p class={styles.small}>
           <em>
-            {opening === 'D5-01'
-              ? act5Arrival
-              : opening === 'D4-01'
-                ? act4Arrival
-                : arvid
-                  ? arvidArrival
-                  : ilseReturns}
+            {opening === 'D6-01'
+              ? act6Arrival
+              : opening === 'D5-01'
+                ? act5Arrival
+                : opening === 'D4-01'
+                  ? act4Arrival
+                  : arvid
+                    ? arvidArrival
+                    : ilseReturns}
           </em>
         </p>
       )}

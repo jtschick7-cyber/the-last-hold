@@ -1,4 +1,4 @@
-import { LAST_WRITTEN_ACT } from '../../content/story/acts';
+import { allDocuments, LAST_WRITTEN_ACT } from '../../content/story/acts';
 import type { GameState } from '../state/game-state';
 import { beginAct, currentAct, isFound } from './documents';
 
@@ -11,6 +11,8 @@ import { beginAct, currentAct, isFound } from './documents';
 export const actDue = (state: GameState): number | null => {
   const act = currentAct(state);
   if (act === null || act < 4 || act > LAST_WRITTEN_ACT) return null;
+  // An act whose opening scene is not in the game yet has nothing to play on load.
+  if (!allDocuments.some((d) => d.id === `D${act}-01`)) return null;
   const due =
     state.story.acts.some((a) => a.act === act) &&
     !isFound(state, `D${act}-01`) &&

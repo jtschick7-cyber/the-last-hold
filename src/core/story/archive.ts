@@ -87,7 +87,8 @@ export const library = (state: GameState): LibraryGroup[] =>
   acts
     .map((a) => ({
       act: a.heading,
-      types: [...new Set(a.documents.map((d) => d.type))]
+      // The Rime has its own shelf (GDD §5.14.3, D364), as the letters have.
+      types: [...new Set(a.documents.filter((d) => d.type !== 'rime').map((d) => d.type))]
         .map((type) => ({
           type: documentTypeNames[type],
           rows: a.documents
@@ -112,6 +113,27 @@ export const library = (state: GameState): LibraryGroup[] =>
         .filter((t) => t.rows.length > 0),
     }))
     .filter((g) => g.types.length > 0);
+
+/** Every Rime found (the Unlit's writing in frost), newest first, for the Library's Rime shelf. */
+export const rimeShelf = (state: GameState): LibraryRow[] =>
+  allDocuments
+    .filter((d) => d.type === 'rime')
+    .flatMap((d) => {
+      const found = state.story.documents.find((x) => x.id === d.id);
+      return found
+        ? [
+            {
+              id: d.id,
+              heading: d.heading,
+              witness: d.witness,
+              found,
+              foundLine: foundLine(d, found),
+              unread: state.story.unread.includes(docKey(d.id)),
+            },
+          ]
+        : [];
+    })
+    .sort((x, y) => y.found.at - x.found.at);
 
 /** The reader's extra note under a document: Halina's ribbon, once Jaro's name is found. */
 export const laterNote = (state: GameState, id: string): string | null =>

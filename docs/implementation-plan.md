@@ -206,7 +206,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - `standPool` set when the wave list is fixed (`dross` if Act VI has begun in the save); the wave pool adds the Dross-Tide for `dross` with no wave guaranteed; shown by name; stand kills count nowhere; the preview uses the same pool.
   - *Acceptance:* 1. **Every `base` stand replays exactly as before.** 2. A `dross` stand differs only by the Dross-Tide. 3. No bestiary entry, knowledge level or drop appears from it. 4. A save that begins Act VI after its pool was fixed keeps `base`. 5. **Stop and ask if any recorded stand changes its result.**
 
-- [ ] **T9.10 — Act VI machinery** *(core/story)*
+- [x] **T9.10 — Act VI machinery** *(core/story)*
   - Act VI starts with the next warden or on load (D246); the condition "Act VI begins"; the Rank, village and "nth contract" conditions with the Act VI documents; the Rime type; the arrival lines; the away-sheet Rime line; the Accounts event "What the cold wants" and the added lines; after Act VI the cycles carry no act.
   - *Acceptance:* 1. A save in a story-less cycle starts Act VI on load with fresh counters. 2. A save in Act V's cycle reaches it with the next warden. 3. D6-10 waits for Sigrun. 4. No ruin, family or Delve condition appears. 5. **No Act VI text beyond OUT-3 is written.**
 

@@ -202,6 +202,17 @@ export const DebugSheet = () => {
           type="button"
           class={styles.btn}
           onClick={() => {
+            const r = dispatch({ type: 'debug.startAct', act: 6 });
+            setNote(r.ok ? 'Done.' : r.reason);
+            if (r.ok) openSheet('Frost on the floor', () => <DocumentReader id="D6-01" />);
+          }}
+        >
+          Start Act VI
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
             const open = !game().delve.unlitOpen;
             const r = dispatch({ type: 'debug.unlit', open });
             setNote(

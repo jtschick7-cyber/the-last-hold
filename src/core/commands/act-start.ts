@@ -1,4 +1,4 @@
-import { LAST_WRITTEN_ACT } from '../../content/story/acts';
+import { actNumeral, LAST_WRITTEN_ACT } from '../../content/story/acts';
 import type { GameState } from '../state/game-state';
 import { freshAct } from '../state/story-state';
 import { actDue, startAct } from '../story/act-start';
@@ -21,9 +21,8 @@ export const startActOnLoad = (state: GameState): ApplyResult => {
  */
 export const debugStartAct = (state: GameState, act: number): ApplyResult => {
   if (!Number.isInteger(act) || act < 4 || act > LAST_WRITTEN_ACT)
-    return refuse('Only Acts IV and V can be started here.');
-  if (isFound(state, `D${act}-01`))
-    return refuse(`Act ${act === 4 ? 'IV' : 'V'} is already under way.`);
+    return refuse('Only Acts IV, V and VI can be started here.');
+  if (isFound(state, `D${act}-01`)) return refuse(`Act ${actNumeral(act)} is already under way.`);
   const record = state.cycles[state.cycles.length - 1];
   if (!record) return refuse('There is no cycle to begin it in.');
   if (!state.story.acts.some((a) => a.act === act)) {
