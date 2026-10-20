@@ -136,6 +136,7 @@ describe('runStand (GDD §5.9.3)', () => {
     const r = runStand(input({ threat: 100 }));
     const w = r.waves[0];
     if (!w) throw new Error('no wave');
+    if (w.wave.monster === 'dross-tide') throw new Error('a base stand has no Dross-Tide');
     const def = monsters[w.wave.monster];
     const steps = w.wave.tier - def.tiers[0];
     let scale = 1;

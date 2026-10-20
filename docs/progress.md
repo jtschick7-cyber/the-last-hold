@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.8 — Hunts (done).
-- **Next:** T9.9 — the Dross-Tide in the Last Stand.
+- **Last task:** T9.9 — the Dross-Tide in the Last Stand (done).
+- **Next:** T9.10 — Act VI machinery.
 - **Open questions:** Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -121,4 +121,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Save:** the last hunt result is saved and validated (still schema v9); points and unlocks survive the Long Night (tested).
 - **Not here (D392 (6)):** Suggest for hunts and the worker message for the hunt odds; they go with the hunt sheet (T9.14).
 - 22 tests in `tests/events/hunt.test.ts`. No golden fight, recorded fight or stand changed. `npm run check` green (36 s).
+
+## 2026-10-20 — v0.9 session 3 (continued): T9.9 the Dross-Tide in the Last Stand
+- **T9.9 is built** (D393 Proposed). The cycle record's pool is fixed at the Rank-up to Bastion (or when the stand is made, if still unset): `dross` if Act VI has begun in the save, else `base`. A `dross` wave list is the old list with the Dross-Tide swapped in on a separate roll, so it differs from `base` only by the Dross-Tide; no wave is guaranteed.
+- The Dross-Tide fights as itself with ordinary tier-scaled Health (320 at tier 2, no Delve multiplier). It is named in the stand screen's wave list at once and in the result log. A stand touches no bestiary or kill count (tested).
+- A stand record gets a `pool` field only when it is `dross`, so every saved stand reads and replays as before. It is saved and validated; the preview, the real stand and the Long Night kit all read the same pool.
+- Every `base` stand replays exactly; all golden fights, recorded fights and recorded stands are unchanged, so nothing to ask. `rulesVersion` stays 5.
+- "Act VI has begun" is read from the act progress for now; the Act VI machinery is T9.10. 12 tests in `tests/stand/dross.test.ts`. `npm run check` green (37 s).
 

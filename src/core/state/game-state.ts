@@ -231,6 +231,8 @@ export interface StandRecord {
   band: Band;
   /** v6: the Alchemy level it was made at (D206); 0 for stands before v0.6. */
   alchemy: number;
+  /** v9 (D363): set only when the stand drew from the `dross` pool; absent means the species of §8.3.1 only. */
+  pool?: 'dross';
   /** The result sheet has been seen. */
   seen: boolean;
 }

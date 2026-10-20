@@ -1,6 +1,5 @@
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
 import type { HunterId } from '../../content/hunters';
-import { monsters } from '../../content/monsters';
 import { UPGRADE_IDS } from '../../content/warden-upgrades';
 import { num } from '../balance-access';
 import type { Command } from '../commands';
@@ -9,7 +8,8 @@ import { upgradeCost } from '../long-night/hearth';
 import { previewInputFor } from '../stand/from-state';
 import { previewStand } from '../stand/preview';
 import { suggestSix } from '../stand/suggest';
-import { standSeed, waveList } from '../stand/waves';
+import { standPoolOf } from '../stand/pool';
+import { creatureOf, standSeed, waveList } from '../stand/waves';
 import type { GameState, Preparation } from '../state/game-state';
 import { affordable, type Bundle } from './goals';
 
@@ -70,8 +70,8 @@ export const standKit = (
   party: readonly HunterId[],
 ): Pick<Preparation, 'oils' | 'potions'> => {
   const count = new Map<string, number>();
-  for (const w of waveList(standSeed(s), SHOWN)) {
-    const f = monsters[w.monster].family;
+  for (const w of waveList(standSeed(s), SHOWN, standPoolOf(s))) {
+    const f = creatureOf(w.monster).family;
     count.set(f, (count.get(f) ?? 0) + 1);
   }
   // The most common family among those an oil exists for (D129).

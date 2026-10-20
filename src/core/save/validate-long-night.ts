@@ -73,6 +73,7 @@ const stand = (v: unknown, where: string, warnings: string[]): StandRecord => {
     },
     relicsFound: relicList(o.relicsFound, `${where}.relicsFound`),
     arrival: bool(o.arrival, `${where}.arrival`),
+    ...(o.pool === undefined ? {} : { pool: oneOf(o.pool, ['dross'] as const, `${where}.pool`) }),
     // D183: stands saved before this field existed brought no recorded steps.
     trustSteps:
       o.trustSteps === undefined

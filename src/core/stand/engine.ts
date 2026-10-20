@@ -1,5 +1,6 @@
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
+import { guardians } from '../../content/delves/guardians';
 import { monsters, type MonsterId } from '../../content/monsters';
 import { relics, type RelicId } from '../../content/relics';
 import { num } from '../balance-access';
@@ -7,7 +8,7 @@ import { runFight, type FightResult, type HunterSnapshot } from '../combat';
 import { roundHalfUp } from '../combat/build';
 import { seeded } from '../rng';
 import type { Preparation } from '../state/game-state';
-import { waveAt, type Wave } from './waves';
+import { DROSS_TIDE, waveAt, type StandPool, type Wave } from './waves';
 
 // GDD §5.9.3 (D107, D115): the Last Stand runs one wave at a time through the
 // contract fight engine, with these differences: Health carries over and standing
@@ -36,6 +37,8 @@ export interface StandInput {
   readonly log?: boolean;
   /** The warden's Alchemy level, frozen when the stand was made (GDD §5.8.6). */
   readonly alchemy?: number;
+  /** The species pool (GDD §5.9.3, D363); absent means `base`, as every stand before v0.9. */
+  readonly pool?: StandPool;
 }
 
 export interface WaveOutcome {
@@ -90,12 +93,12 @@ export const standVolley = (defenses: StandInput['defenses']): number => {
  * up to `prep.bombSlots`.
  */
 export const waveBombs = (
-  monster: MonsterId,
+  monster: MonsterId | typeof DROSS_TIDE,
   stock: Partial<Record<ConsumableId, number>>,
 ): ConsumableId[] => {
   const slots = num('prep.bombSlots');
   const weakAt = num('prep.weakAt');
-  const resist = monsters[monster].resist;
+  const resist = (monster === DROSS_TIDE ? guardians[monster] : monsters[monster]).resist;
   const picks: ConsumableId[] = [];
   for (const id of CONSUMABLE_IDS) {
     const e = consumables[id].effect;
@@ -142,18 +145,23 @@ export const runStand = (input: StandInput): StandResult => {
   for (let n = 1; n <= MAX_WAVES; n++) {
     const party = input.party.filter((h) => !down.has(h.id));
     if (party.length === 0) break;
-    const wave = waveAt(input.seed, n);
+    const wave = waveAt(input.seed, n, input.pool);
     const bombs = waveBombs(wave.monster, stock);
     const potions = Object.fromEntries(
       Object.entries(input.prep.potions).filter(([id]) => !potionUsed.has(id)),
     );
     const fight = runFight({
       party,
-      monster: {
-        monster: wave.monster,
-        tier: wave.tier,
-        knowledge: input.knowledge[wave.monster] ?? 0,
-      },
+      // The Dross-Tide fights with its ordinary tier-scaled stats: no Delve guardian multiplier,
+      // no knowledge, and its kills count nowhere (D363, D369).
+      monster:
+        wave.monster === DROSS_TIDE
+          ? { guardian: DROSS_TIDE, tier: wave.tier }
+          : {
+              monster: wave.monster,
+              tier: wave.tier,
+              knowledge: input.knowledge[wave.monster] ?? 0,
+            },
       location: null,
       rolls: seeded(`${input.rolls ?? input.seed}:wave:${n}`),
       log: input.log === true,
