@@ -66,10 +66,12 @@ Claude Code doesn't start an outline-level milestone until its flesh-out is done
 | Knowledge | `knowledge.studiedKills`, `knowledge.masteredKills` |
 | Death and Long Night | `death.returnDaysBeforeLongNight`, `longNightArrival.emberCapShare`, `laststand.partyMax` (D107) |
 | Simulated player | `value.weights` (they define the simulated player, so tuning them would game the checks) |
-| Events | `boss.*`, `riftglass.bankWeeks` |
+| Events | `boss.partySize`, `boss.tokenInterval`, `boss.tokenMax`, `boss.hunterRest`, `boss.openAge`, `boss.order`, `boss.poolBase`, `boss.baseTier`, `boss.passTierStep`, `boss.milestones`, `boss.silverBounties`, `boss.reagents`, `boss.itemChance`, `boss.itemRarityWeights`, `boss.xpPerTier`, `boss.previewSamples` (the whole `boss.*` namespace, D370–D379), `riftglass.bankWeeks` |
 | Delves | `delve.partySize`, `delve.floors`, `delve.doors`, `delve.offers`, `delve.unlitDoorsPerRun`, `riftglass.weeklyCap` (D268) |
 | Skills | `skill.maxLevel` (D217) |
 | Hunter depth | `stores.cap`, `star.max`, `keepsake.slots`, `talent.points`, `talent.tierStars`, `rank.wrightLevel`, `rank.masterLevel`, `yard.capRank` (D325) |
+
+*The `hunt.*` constants (`hunt.unlockPoints`, `hunt.trackPoints`, `hunt.trackTiers`, `hunt.xpPerTier`, `hunt.lossXpShare`, `hunt.replayReagents`, D380) are **tunable.** `boss.poolBase` starts as a sketch and is replaced only by a decisions row the owner approves (T9.13).*
 
 Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage rules**. Everything else in `balance.ts` is tunable.
 
@@ -167,7 +169,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
     3. Unknown ids drop with a warning.
     4. **Every golden fight replays line for line; every recorded fight and stand keeps its result** (D344 (1)).
 
-- [ ] **T9.2 — The constants** *(GDD §7.11, plan §0.6, `balance.ts`)*
+- [x] **T9.2 — The constants** *(GDD §7.11, plan §0.6, `balance.ts`)*
   - Apply OUT-2b (the §7.11 table and the §7.4 pointer) and OUT-4b (the §0.6 locked row) with the `balance.ts` keys that read them. `tests/content/balance.test.ts` must match.
   - *Acceptance:* 1. Every `boss.*`, `hunt.*` key and `events.recentKeep` exists once with the §7.11 value. 2. `boss.*` keys are marked locked. 3. The key test passes. 4. No numeric literal in `core/systems/` outside the allowlist.
 

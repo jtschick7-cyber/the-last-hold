@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.1 — save v9 (done).
-- **Next:** T9.2 — the constants (needs the owner's answer on `riftglass.bankWeeks`, below), then T9.3.
-- **Open questions:** Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13); one stop-and-ask below (`riftglass.bankWeeks`).
+- **Last task:** T9.2 — the constants (done).
+- **Next:** T9.3 — tokens, rest, eligibility and debug commands.
+- **Open questions:** Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -62,3 +62,10 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - Every golden fight, recorded fight and recorded stand still gives its result; `rulesVersion` stays 5. `npm run check` green.
 - **Deferred to T9.3 (noted there):** the clamps that need `boss.*` and `hunt.*` values, because those keys arrive in T9.2.
 - **Still to ask before T9.2:** OUT-4b lists `riftglass.bankWeeks` in the locked Events row, but OUT-2b's §7.11 does not.
+
+## 2026-10-20 — v0.9 session 1 (continued): T9.2 the constants
+- **T9.2 is built.** GDD §7.11 and the §7.4 pointer (OUT-2b) and plan §0.6's Events row and `hunt.*` sentence (OUT-4b) are in, with the `balance.ts` keys: 16 `boss.*` (all locked), 6 `hunt.*` and `events.recentKeep` (tunable). `boss.poolBase` 24,000 is a sketch until T9.13.
+- The earlier open point about `riftglass.bankWeeks` is **resolved by reading**: it was already in the plan's Events row (a v0.7 locked key, GDD §7.9), and OUT-4b keeps it. No owner question needed.
+- New test `tests/content/v09-constants.test.ts` pins every value; the existing key test and the lock test pass, and the "no game constants in `core/systems`" lint is clean.
+- Nothing deferred.
+

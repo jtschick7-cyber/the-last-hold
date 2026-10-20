@@ -152,11 +152,38 @@ export const balance = {
     finalists: locked(3),
     stage2Samples: locked(200),
   },
+  // ---- GDD §7.11 Events (v0.9, D357–D387). Every `boss.*` constant is locked (plan §0.6). ----
   boss: {
+    partySize: locked(4),
     tokenInterval: locked(8 * HOUR, 'seconds'), // 8 h
     tokenMax: locked(6),
     hunterRest: locked(24 * HOUR, 'seconds'), // 24 h
+    openAge: locked('citadel'),
+    order: locked(['lindworm', 'barrow-king', 'mother-of-the-river']),
+    poolBase: locked(24000), // a sketch (D372); T9.13 returns the measured figure as a decisions row
+    baseTier: locked({ citadel: 4, bastion: 5 }),
+    passTierStep: locked(1),
+    milestones: locked([0.25, 0.5, 0.75, 1.0]),
+    silverBounties: locked({ milestone: 1, kill: 3 }),
+    reagents: locked({ milestone: 3, kill: 6 }),
+    itemChance: locked(1),
+    itemRarityWeights: locked({ fine: 40, rare: 40, heroic: 20 }),
+    xpPerTier: locked(15),
+    previewSamples: locked(100),
   },
+  hunt: {
+    unlockPoints: tunable(100),
+    trackPoints: tunable({
+      I: { win: 12, loss: 4 },
+      II: { win: 20, loss: 6 },
+      III: { win: 32, loss: 10 },
+    }),
+    trackTiers: tunable([3, 4, 5]),
+    xpPerTier: tunable(15),
+    lossXpShare: tunable(0.5),
+    replayReagents: tunable(1),
+  },
+  events: { recentKeep: tunable(10) },
   // ---- GDD §7.9 Delves (v0.7, D244–D272) ----
   delve: {
     partySize: locked(3),
