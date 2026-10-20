@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `main`; v0.8 is complete and merged (playtest passed, D356; PR #11), baseline accepted.
-- **Last task:** T8.18 tuning, plus the owner-requested keepsake art redraw (D355).
-- **Next:** v0.9 — Events needs a **flesh-out session first** (plan §0.4); Act VI is written there (D303). Nothing to build before that.
-- **Open questions:** none (Q26 and Q27 are answered).
+- **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
+- **Last task:** the v0.9 docs commit (no code).
+- **Next:** T9.1 — save v9 (`events`, `standPool`, v8 → v9 migration, fixtures from `v8-owner.json`).
+- **Open questions:** Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13); one stop-and-ask below (`riftglass.bankWeeks`).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -43,3 +43,13 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Done:** older `progress.md` entries, completed plan milestones (v0.0 to v0.8) and answered questions Q1–Q25 moved to `docs/archive/` unchanged. Start of session now reads about 20 KB instead of about 320 KB. `CLAUDE.md`: targeted start ritual, entry-size cap, one task per session, search-before-read. `.claude/settings.json`: Read deny rules for build output, caches, sim JSON and art binaries.
 - **Next:** v0.9 flesh-out session.
 - **Open questions:** none. `.claudeignore` removed (Claude Code doesn't document it; the Read deny rules are the mechanism). `npm run check` is green.
+
+## 2026-10-20 — v0.9 session 1: the flesh-out is applied (docs only)
+- Created `milestone/v0.9` from `main`. Copied OUT-1 to OUT-9 and `v8-owner.json` into `docs/flesh-out/v0.9/`, and OUT-7 to `docs/flesh-out/v0.9-summary.md`.
+- Applied: OUT-1 rows D357–D387 (added only), OUT-2a to the GDD, OUT-3 to lore §31 and its neighbours, OUT-4a to the plan (not the §0.6 row), OUT-5 (Q28, Q29), OUT-9 to the technical design. OUT-2b and OUT-4b wait for T9.2.
+- **Held back, with the reason:** the three new use-skill rows of GDD §8.5b. An existing test counts those rows against the code (11), so they go in with T9.4 and an updated test. Noted on T9.4.
+- **Not applicable in this repo:** the lore Appendix 1 edit and the technical-design "v0.9 appendix" do not exist here, so nothing to mark.
+- **To ask the owner:** OUT-4b puts `riftglass.bankWeeks` in the locked Events row, but OUT-2b's §7.11 does not list it. Settled before T9.2 applies OUT-4b.
+- `.prettierignore` now skips the copied save (`v8-owner.json`, must stay unchanged). `npm ci` was needed: the installed Prettier was older than the pinned one.
+- v0.8 actuals added to plan §0.7: 9 entries over 4 numbered sessions against 15–19 estimated; v0.9's 10–15 is likely an upper bound.
+- Branch note: the harness named `claude/affectionate-brahmagupta-3n955f`; the owner's instruction (`milestone/v0.9`) was followed.
