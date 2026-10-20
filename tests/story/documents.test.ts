@@ -465,6 +465,16 @@ describe('Act V (lore-secrets §30, D302)', () => {
   });
 });
 
+describe('Act VI (lore-secrets §31, D364)', () => {
+  it('D6-01 to D6-10 arrive on their conditions (proved in act6-machinery.test.ts)', () => {
+    const six = allDocuments.filter((d) => d.act === 6);
+    expect(six.map((d) => d.id)).toEqual(
+      Array.from({ length: 10 }, (_, i) => `D6-${String(i + 1).padStart(2, '0')}`),
+    );
+    mark(...six.map((d) => d.id));
+  });
+});
+
 describe('acts (GDD §5.14.1)', () => {
   it('documents stay obtainable in later cycles', () => {
     const s = createNewGame('later', T0);
@@ -493,9 +503,10 @@ describe('acts (GDD §5.14.1)', () => {
     expect(actClosing(3)).toMatchObject({ id: 'D3-06' });
     expect(actClosing(4)).toMatchObject({ id: 'D4-06' });
     expect(actClosing(5)).toMatchObject({ id: 'D5-06' });
-    expect(actClosing(6)).toBe(UNWRITTEN_ACT_LINE);
+    expect(actClosing(6)).toMatchObject({ id: 'D6-06' });
+    expect(actClosing(7)).toBe(UNWRITTEN_ACT_LINE);
     expect(actClosing(null)).toBeNull();
-    expect(allDocuments.some((d) => d.act >= 6)).toBe(false);
+    expect(allDocuments.some((d) => d.act >= 7)).toBe(false);
   });
 
   it('in Act II, a fell village’s ruin notice names Kamenfell; never in Act I or the lowlands', () => {

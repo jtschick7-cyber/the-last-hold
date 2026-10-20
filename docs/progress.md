@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.10 — Act VI machinery (done).
-- **Next:** T9.11 — Act VI texts.
+- **Last task:** T9.11 — Act VI texts (done).
+- **Next:** T9.12 — the Eventer policy and the events shard.
 - **Open questions:** Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -136,4 +136,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Rime**: a new document type with its own Library shelf ("Nothing here yet." when empty; pale text on a dark card) and its own away-sheet line. The arrival lines (new-warden and on-load) are OUT-3's words. The Accounts event "What the cold wants" exists, empty until T9.11. Debug panel has Start Act VI.
 - **Not done:** the Rank-up sheet shows no Rank documents for any act today, so no Rime wording there (D394 (6)). No Act VI text beyond OUT-3 was written.
 - Owner's save is in Act IV, so it reaches Act VI after Acts IV and V. `npm run check` green (35 s).
+
+## 2026-10-20 — v0.9 session 3 (continued): T9.11 Act VI texts
+- **T9.11 is built** (D395 Proposed). The ten documents D6-01 to D6-10 are in, generated from OUT-3 (and checked line by line against `lore-secrets.md` §31), with Ilse's notes, the Accounts lines for What the cold wants and the two added events, and the names #1 to #3 on the Keep, Citadel and Bastion documents. No text beyond OUT-3 was written.
+- Act VI is now the last written act: it plays on load, with the next warden and from the debug panel; the Rime shelf fills; the Names view shows #1 to #3 (tested).
+- **One mismatch, your choice:** Sigrun's Accounts line in OUT-3 ended in a full stop, her scene has a comma. The line is shown without the mark; the scene is untouched.
+- Content test (`tests/content/v09-act6.test.ts`): texts equal §31 line by line; names exactly #1–3 once each; nobody says or asks for the names; none of the avoid-list words; no counts of years; no ruin, family or Delve condition. Four older tests moved from "Act V is the last" to VI.
+- `npm run check` green (35 s). Nothing deferred.
 

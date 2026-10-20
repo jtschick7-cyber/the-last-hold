@@ -210,7 +210,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - Act VI starts with the next warden or on load (D246); the condition "Act VI begins"; the Rank, village and "nth contract" conditions with the Act VI documents; the Rime type; the arrival lines; the away-sheet Rime line; the Accounts event "What the cold wants" and the added lines; after Act VI the cycles carry no act.
   - *Acceptance:* 1. A save in a story-less cycle starts Act VI on load with fresh counters. 2. A save in Act V's cycle reaches it with the next warden. 3. D6-10 waits for Sigrun. 4. No ruin, family or Delve condition appears. 5. **No Act VI text beyond OUT-3 is written.**
 
-- [ ] **T9.11 — Act VI texts** *(content/story)*
+- [x] **T9.11 — Act VI texts** *(content/story)*
   - The ten documents D6-01 to D6-10, Ilse's notes, the Accounts excerpts and the names #1–3, **word for word from OUT-3**.
   - *Acceptance:* 1. The Names column is exactly #1–3, each once. 2. None of the avoid-list words appears (*ash, cinder, kindle, hollow* other than Kozly Hollow, *tithe, bonfire, throne, souls*, "fed/feeding" as imagery). 3. No relative counts of years. 4. **No text says, asks for or begins the names.** 5. Every document found from its condition in a scripted run. 6. The Names view shows #1–3 correctly. 7. Content test: the texts match OUT-3 exactly.
 

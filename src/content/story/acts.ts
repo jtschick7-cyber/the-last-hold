@@ -105,6 +105,12 @@ export const accountEvents: readonly AccountEvent[] = [
           'I have written them where the order kept the things it hunted, because nobody opens this book but me.',
       },
       { document: 'D5-03', excerpt: 'Whoever cut them stopped.' },
+      {
+        document: 'D6-03',
+        excerpt:
+          'She went down the stair counting the steps aloud, because no one had told her what to count them toward.',
+      },
+      { document: 'D6-04', excerpt: 'I felt his hands tie it off.' },
     ],
   },
   {
@@ -186,12 +192,27 @@ export const accountEvents: readonly AccountEvent[] = [
         excerpt: 'The order built a fire to hold the cold back, and the fire is what grows it.',
       },
       { document: 'D5-08', excerpt: "It's a mouth." },
+      {
+        document: 'D6-06',
+        excerpt:
+          'Every warm thing this hold was given went somewhere when it was spent. I am where it went.',
+      },
     ],
   },
   {
     id: 'cold',
     heading: 'What the cold wants',
-    // Act VI's accounts are quoted word for word from its documents in T9.11.
-    accounts: [],
+    accounts: [
+      { document: 'D6-02', excerpt: 'I have kept a count of the ones who were sent down to me.' },
+      {
+        document: 'D6-05',
+        excerpt: 'I do not blame the seal. It was a lock, and locks do not choose.',
+      },
+      { document: 'D6-06', excerpt: 'I am asking to be known: what was spent, and who it was.' },
+      { document: 'D6-07', excerpt: "It wrote back, 'I wait well.'" },
+      { document: 'D6-08', excerpt: 'Is anyone down there?' },
+      { document: 'D6-09', excerpt: "That's what I've got. It isn't much to have kept." },
+      { document: 'D6-10', excerpt: 'I was meant to be the fortieth' },
+    ],
   },
 ];

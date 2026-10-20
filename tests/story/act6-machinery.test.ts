@@ -1,56 +1,27 @@
-// Plan T9.10 (GDD §5.14.1–§5.14.3, lore §31, D364, D386): Act VI's machinery. The ten real
-// documents arrive in T9.11, so these tests stand in documents with OUT-3's conditions and none of
-// its text; they prove the conditions, the order and the delivery, not the writing.
+// Plan T9.10 and T9.11 (GDD §5.14.1–§5.14.3, lore §31, D364, D386): Act VI's machinery on its real
+// documents.
 import { readFileSync } from 'node:fs';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-vi.mock('../../src/content/story/act6', async (original) => {
-  const real = await original<typeof import('../../src/content/story/act6')>();
-  const doc = (id: string, type: 'scene' | 'rime', condition: unknown, names: number[] = []) => ({
-    id,
-    act: 6,
-    heading: `Heading ${id}`,
-    type,
-    witness: 'test',
-    condition,
-    body: ['test'],
-    names,
-  });
-  return {
-    ...real,
-    act6Documents: [
-      doc('D6-01', 'scene', { kind: 'actBegins' }),
-      doc('D6-02', 'rime', { kind: 'contractWon', nth: 1 }),
-      doc('D6-03', 'rime', { kind: 'rankReached', age: 'keep' }, [1]),
-      doc('D6-04', 'rime', { kind: 'rankReached', age: 'citadel' }, [2]),
-      doc('D6-05', 'rime', { kind: 'rankReached', age: 'bastion' }, [3]),
-      doc('D6-06', 'rime', { kind: 'actStand' }),
-      doc('D6-07', 'scene', { kind: 'nextWarden' }),
-      doc('D6-08', 'scene', { kind: 'contractWon', nth: 2, village: 'mirograd' }),
-      doc('D6-09', 'scene', { kind: 'contractWon', nth: 4 }),
-      doc('D6-10', 'scene', {
-        kind: 'contractWon',
-        nth: 2,
-        village: 'ravenfell',
-        withHunter: 'sigrun',
-      }),
-    ],
-  };
-});
-
-const { actDue } = await import('../../src/core/story/act-start');
-const { startActOnLoad } = await import('../../src/core/commands/act-start');
-const { apply } = await import('../../src/core/commands/apply');
-const { createNewGame, freshCycleRecord } = await import('../../src/core/state/new-game');
-const { freshAct } = await import('../../src/core/state/story-state');
-const { freshHunter } = await import('../../src/core/state/hunters-state');
-const { loadEnvelope } = await import('../../src/core/save');
-const { catchUpNow } = await import('../../src/core/sim/offline');
-const { foundLines } = await import('../../src/core/story/found-lines');
-const { library, rimeShelf } = await import('../../src/core/story/archive');
-const { beginAct, isFound, recordWin, standDocuments, sweepDocuments, wardenDocuments } =
-  await import('../../src/core/story/documents');
-const { rimeLine } = await import('../../src/content/story/act6');
+import { actDue } from '../../src/core/story/act-start';
+import { startActOnLoad } from '../../src/core/commands/act-start';
+import { apply } from '../../src/core/commands/apply';
+import { createNewGame, freshCycleRecord } from '../../src/core/state/new-game';
+import { freshAct } from '../../src/core/state/story-state';
+import { freshHunter } from '../../src/core/state/hunters-state';
+import { loadEnvelope } from '../../src/core/save';
+import { catchUpNow } from '../../src/core/sim/offline';
+import { foundLines } from '../../src/core/story/found-lines';
+import { accounts, library, namesView, rimeShelf } from '../../src/core/story/archive';
+import {
+  beginAct,
+  isFound,
+  recordWin,
+  standDocuments,
+  sweepDocuments,
+  wardenDocuments,
+} from '../../src/core/story/documents';
+import { rimeLine } from '../../src/content/story/act6';
 import type { ContractInstance, GameState } from '../../src/core/state/game-state';
 
 const T0 = Date.UTC(2026, 9, 20, 8);
@@ -208,13 +179,37 @@ describe('the debug panel', () => {
   });
 });
 
+describe('the Archive', () => {
+  it('the Names view shows #1 to #3 as the roll gives them', () => {
+    const s = inActSix();
+    for (const age of ['keep', 'citadel', 'bastion'] as const) {
+      s.cycle.age = age;
+      const rec = s.cycles[s.cycles.length - 1];
+      if (rec) rec.ranks[age] = s.time;
+      sweepDocuments(s);
+    }
+    const rows = namesView(s).rows;
+    expect(rows[0]?.text).toBe('Milena Horská — Mirograd — onward, year 200 of the order.');
+    expect(rows[1]?.text).toBe('Ketil Ormsson — Velkvik — onward, year 202 of the order.');
+    expect(rows[2]?.text).toBe('Mirek Bárta — Kozly Hollow — onward, year 204 of the order.');
+  });
+
+  it('the Accounts view lists What the cold wants, and adds Act VI to two older events', () => {
+    const s = inActSix();
+    win(s, 'dubno-ford');
+    const cards = accounts(s);
+    const cold = cards.find((c) => c.heading === 'What the cold wants');
+    expect(cold?.accounts.map((a) => a.document)).toEqual(['D6-02']);
+  });
+});
+
 describe('delivery', () => {
   it('a Rime shows as new writing in the rime, not as a letter with a bounty', () => {
     const s = inActSix();
     const keys = win(s, 'dubno-ford');
     const lines = foundLines(s, keys);
-    expect(lines).toContain(rimeLine('Heading D6-02'));
-    expect(lines.join(' ')).not.toContain("came with the bounty: 'Heading D6-02'");
+    expect(lines).toContain(rimeLine('You came back warm'));
+    expect(lines.join(' ')).not.toContain("came with the bounty: 'You came back warm'");
     expect(rimeLine('You came back warm')).toBe(
       "There is new writing in the rime by the crack: 'You came back warm'.",
     );
