@@ -39,6 +39,8 @@ export type Command =
       prep?: Preparation;
     }
   | { type: 'contract.decline'; contract: string }
+  /** GDD §5.12.4: one attempt at the Great Beast; costs a token, rests the party (v0.9). */
+  | { type: 'boss.attempt'; party: HunterId[]; prep?: Preparation }
   /** Puts a board contract in a free Lodge slot (GDD §5.6.3). */
   | { type: 'investigate.assign'; contract: string }
   /** Takes a contract off its Lodge slot; the clues shown stay. */

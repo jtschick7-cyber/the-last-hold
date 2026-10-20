@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import { monsters } from '../../content/monsters';
 import { runFight } from '../../core/combat';
+import { speciesOf } from '../../core/combat/species';
 import { seeded } from '../../core/rng';
 import { fightReplayDiffers, OLDER_RULES_NOTE } from '../../core/replay-check';
 import type { FightRef } from '../../core/state/game-state';
@@ -30,7 +31,10 @@ export const FightLogView = ({ fight }: { fight: FightRef }) => {
   const first = replay(fight);
   const lines = first.log;
   const older = fightReplayDiffers(fight, first);
-  const name = monsters[fight.monster.monster].name;
+  const name =
+    'monster' in fight.monster
+      ? monsters[fight.monster.monster].name
+      : speciesOf(fight.monster).name;
   const buckets = new Map<number, typeof lines>();
   for (const l of lines) {
     const k = Math.floor((l.tick - 1) / COLLAPSE_EVERY);

@@ -3,6 +3,7 @@ import { BUILDING_IDS } from '../../content/buildings';
 import { CONSUMABLE_IDS } from '../../content/consumables';
 import { LOCATION_IDS, type LocationId } from '../../content/damage';
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
+import { EVENT_CREATURE_IDS } from '../../content/hunts';
 import { INGREDIENT_IDS, type IngredientId } from '../../content/ingredients';
 import { JOB_IDS } from '../../content/jobs';
 import { MONSTER_IDS, type MonsterId } from '../../content/monsters';
@@ -231,12 +232,22 @@ const fightRef = (v: unknown, where: string): FightRef => {
     contractId: str(o.contractId, `${where}.contractId`),
     seed: str(o.seed, `${where}.seed`),
     party: arr(o.party, `${where}.party`).map((x, i) => snapshot(x, `${where}.party[${i}]`)),
-    monster: {
-      monster: oneOf<MonsterId>(m.monster, MONSTER_IDS, `${where}.monster.monster`),
-      tier: count(m.tier, `${where}.monster.tier`),
-      knowledge: knowledgeLevel(m.knowledge, `${where}.monster.knowledge`),
-    },
-    location: oneOf<LocationId>(o.location, LOCATION_IDS, `${where}.location`),
+    monster:
+      m.event === undefined
+        ? {
+            monster: oneOf<MonsterId>(m.monster, MONSTER_IDS, `${where}.monster.monster`),
+            tier: count(m.tier, `${where}.monster.tier`),
+            knowledge: knowledgeLevel(m.knowledge, `${where}.monster.knowledge`),
+          }
+        : {
+            // v9 (D358): a Great Beast or quarry, with the pool at launch for a boss.
+            event: oneOf(m.event, EVENT_CREATURE_IDS, `${where}.monster.event`),
+            tier: count(m.tier, `${where}.monster.tier`),
+            ...(m.healthOverride === undefined
+              ? {}
+              : { healthOverride: count(m.healthOverride, `${where}.monster.healthOverride`) }),
+          },
+    location: orNull(o.location, (x) => oneOf<LocationId>(x, LOCATION_IDS, `${where}.location`)),
     result: oneOf(o.result, ['win', 'loss'] as const, `${where}.result`),
     rulesVersion: count(o.rulesVersion, `${where}.rulesVersion`),
     at: finite(o.at, `${where}.at`),

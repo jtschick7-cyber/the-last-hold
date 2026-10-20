@@ -2,9 +2,23 @@ import { HUNTER_IDS, type HunterId } from '../../content/hunters';
 import { balance } from '../../content/balance';
 import { num } from '../balance-access';
 import { HUNT_IDS, type HuntId } from '../../content/hunts';
-import type { EventResult, EventsState } from '../state/events-state';
+import type { BossReport, EventResult, EventsState } from '../state/events-state';
 import type { FightRef } from '../state/game-state';
-import { arr, bool, count, finite, nonNegative, obj, oneOf, orNull, type Obj } from './guards';
+import { BOSS_IDS } from '../../content/great-beasts';
+import { INGREDIENT_IDS } from '../../content/ingredients';
+import {
+  arr,
+  bool,
+  count,
+  finite,
+  hunterId,
+  nonNegative,
+  obj,
+  oneOf,
+  orNull,
+  str,
+  type Obj,
+} from './guards';
 
 // Technical design §9.4 (v9): the events part of the save guard. Unknown hunter, hunt and boss ids
 // drop with a warning, never a crash; counts outside their range are clamped with a warning, and a
@@ -18,12 +32,47 @@ const clamp = (x: number, lo: number, hi: number, where: string, warnings: strin
   return c;
 };
 
+const report = (v: unknown, where: string): BossReport => {
+  const o = obj(v, where);
+  return {
+    boss: oneOf(o.boss, BOSS_IDS, `${where}.boss`),
+    tier: count(o.tier, `${where}.tier`),
+    poolStart: nonNegative(o.poolStart, `${where}.poolStart`),
+    poolBefore: nonNegative(o.poolBefore, `${where}.poolBefore`),
+    poolAfter: nonNegative(o.poolAfter, `${where}.poolAfter`),
+    damage: nonNegative(o.damage, `${where}.damage`),
+    killed: bool(o.killed, `${where}.killed`),
+    milestones: arr(o.milestones, `${where}.milestones`).map((x, i) =>
+      count(x, `${where}.milestones[${i}]`),
+    ),
+    silver: nonNegative(o.silver, `${where}.silver`),
+    reagents: Object.fromEntries(
+      Object.entries(obj(o.reagents, `${where}.reagents`)).map(([k, x]) => [
+        oneOf(k, INGREDIENT_IDS, `${where}.reagents key`),
+        count(x, `${where}.reagents.${k}`),
+      ]),
+    ),
+    xp: nonNegative(o.xp, `${where}.xp`),
+    levelUps: arr(o.levelUps, `${where}.levelUps`).map((x, i) => {
+      const l = obj(x, `${where}.levelUps[${i}]`);
+      return {
+        hunter: hunterId(l.hunter, `${where}.levelUps[${i}].hunter`),
+        level: count(l.level, `${where}.levelUps[${i}].level`),
+      };
+    }),
+    found: arr(o.found, `${where}.found`).map((x, i) => str(x, `${where}.found[${i}]`)),
+    party: arr(o.party, `${where}.party`).map((x, i) => hunterId(x, `${where}.party[${i}]`)),
+    restUntil: finite(o.restUntil, `${where}.restUntil`),
+  };
+};
+
 const result = (v: unknown, where: string): EventResult => {
   const o = obj(v, where);
   return {
     kind: oneOf(o.kind, ['boss', 'hunt'] as const, `${where}.kind`),
     attempt: count(o.attempt, `${where}.attempt`),
     at: finite(o.at, `${where}.at`),
+    ...(o.boss === undefined ? {} : { boss: report(o.boss, `${where}.boss`) }),
   };
 };
 

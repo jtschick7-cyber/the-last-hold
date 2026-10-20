@@ -32,3 +32,12 @@ export const deathSeed = (gameSeed: string, contractId: string, hunterId: string
 /** Suggest, stage 1, sample i: the same seeds for every party, so comparisons are fair (GDD §6.5). */
 export const suggestSeed = (gameSeed: string, contractId: string, i: number): string =>
   streamSeed(gameSeed, 'suggest', contractId, i);
+
+/** An event attempt (boss or hunt, v0.9): the attempt number is a monotone counter in the save (technical design §5.2). */
+export const eventSeed = (
+  gameSeed: string,
+  kind: 'boss' | 'hunt',
+  attempt: number,
+  party: readonly string[],
+  prep: readonly string[] = [],
+): string => streamSeed(gameSeed, 'event', kind, attempt, ids(party), ids(prep));

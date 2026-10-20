@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.5 — the fight engine for events (done).
-- **Next:** T9.6 — boss attempts.
+- **Last task:** T9.6 — boss attempts (done).
+- **Next:** T9.7 — boss preview and Suggest for events.
 - **Open questions:** Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -97,4 +97,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Readings (not in the GDD):** a monster with two attacks (the Lindworm) **holds one target per Coil action**, not one per hit; Night-Weight and Misfortune do not replace the attack; Grave Chill and Moss-Mend run each action like Noon Heat / Root-Wall; Sit the Vigil covers direct hits only (as Hold the Stair does), not ability damage.
 - **Unchanged:** every golden fight, recorded fight and stand (the full suite is green), and `rulesVersion` stays 5. Old fights add no field to their context; the new ones appear only for events.
 - Nothing deferred. The fight-reference shape for saves (`event`, `healthOverride`) arrives with T9.6.
+
+## 2026-10-20 — v0.9 session 2 (continued): T9.6 boss attempts
+- **T9.6 is built** (`boss.attempt`, `src/core/systems/boss.ts`; D390 Proposed). One token, up to 4 eligible hunters, 24 h rest, a seeded fight, and the pool falls by exactly the damage dealt. Milestones (25/50/75%, kill) pay once per visit, an attempt crossing two pays both; a kill pays one item (Stores full: salvaged, and the result says so) and the next boss arrives at once. The tier is fixed at the visit's first attempt (Citadel 4, Bastion 5, +1 each pass).
+- Hunter XP goes to every attendee, win or lose. No Embers, trophies, threat, bestiary, contract counters, hunter records or yard XP; boss silver stays out of `bountySilver` (D387). The Long Night keeps the whole visit (tested).
+- The fight reference and the result are saved: `FightRef.monster` can be an event creature and `location` can be null; `events.last` holds a report of the latest attempt. Still schema v9. 33 tests in `tests/events/` on the real v8 fixture.
+- Three small edits outside events: two UI/test spots now check the fight is a contract before reading its species; `assets.ts` re-exports the creature ids from `hunts.ts`.
+- **Not in this task:** the result sheet and playback (T9.14–T9.15), Suggest and the preview (T9.7). The Archive shelf's "Identified" is derived (D390 (6)).
+- Nothing skipped. No golden, recorded fight or stand changed.
 

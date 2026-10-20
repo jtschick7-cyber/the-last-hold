@@ -1,15 +1,42 @@
+import type { BossId } from '../../content/great-beasts';
 import type { HunterId } from '../../content/hunters';
+import type { IngredientId } from '../../content/ingredients';
 import { HUNT_IDS, type HuntId } from '../../content/hunts';
 import type { FightRef } from './game-state';
 
 // Technical design §5.2 (v9, D358–D387): everything events keep. Kept through the Long Night
 // (GDD §5.12.10) and small. Times are event time in milliseconds (`clock`), not wall-clock.
 
+/** What one boss attempt did (GDD §5.12.5): everything the result sheet shows, kept as numbers. */
+export interface BossReport {
+  boss: BossId;
+  tier: number;
+  /** The pool the visit started with, and before and after this attempt. */
+  poolStart: number;
+  poolBefore: number;
+  poolAfter: number;
+  damage: number;
+  killed: boolean;
+  /** 0-based milestones this attempt paid (25%, 50%, 75%, the kill). */
+  milestones: number[];
+  silver: number;
+  reagents: Partial<Record<IngredientId, number>>;
+  /** Hunter XP each attendee earned. */
+  xp: number;
+  levelUps: { hunter: HunterId; level: number }[];
+  /** Result keys: the kill's item (`loot:…` or `salvaged:…`) and any letter a level-up reached. */
+  found: string[];
+  party: HunterId[];
+  /** Event time the attendees are rested until. */
+  restUntil: number;
+}
+
 /** A short result of the latest attempt, kept until read so a closed app still shows it. */
 export interface EventResult {
   kind: 'boss' | 'hunt';
   attempt: number;
   at: number;
+  boss?: BossReport;
 }
 
 export interface EventsState {

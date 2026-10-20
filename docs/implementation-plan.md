@@ -188,7 +188,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - A boss as a `MonsterInstance` with Health equal to the pool at launch, scaled by the visit's tier (an optional field on the monster record); family for oils, traits and banes (D369); no location traits; the three use-skills and traits; the new effects of box item 4, with the Hold the Stair → Sit the Vigil order (Arvid's moved hit first); snapshots carry the new fields only when present.
   - *Acceptance:* 1. Every golden fight replays line for line, and every recorded fight and stand keeps its result (**stop and ask otherwise**). 2. Sit the Vigil works once per fight and only for another hunter. 3. The pool never rises. 4. `rulesVersion` stays 5. 5. Each new effect has a test.
 
-- [ ] **T9.6 — Boss attempts** *(core/systems/boss.ts, commands)*
+- [x] **T9.6 — Boss attempts** *(core/systems/boss.ts, commands)*
   - `boss.attempt`: eligibility, one token, rest, seeded fight, net damage to the pool, milestones paid once per visit and in order, silver (not bounty silver), reagents, the kill item (the loot rules, Stores cap, salvage), hunter XP, the next visit after a kill, the visit tier fixed at the first attempt, the second pass one tier higher, `last` result, `recent` fight refs (kept `events.recentKeep`).
   - *Acceptance:* 1. The seeded fight replays. 2. The same inputs twice give the same pool. 3. The tier does not change on a Rank-up mid-visit. 4. A kill starts the next visit. 5. An attempt that crosses two milestones pays both. 6. A Long Night keeps the visit. 7. No Embers or trophies are paid. 8. Event wins touch no contract counter (D387).
 

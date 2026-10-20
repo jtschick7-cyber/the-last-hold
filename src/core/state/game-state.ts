@@ -13,7 +13,7 @@ import type { ResourceId } from '../../content/resources';
 import type { SceneId } from '../../content/text/scenes';
 import type { VillageId } from '../../content/villages';
 import type { UpgradeId } from '../../content/warden-upgrades';
-import type { HunterSnapshot } from '../combat';
+import type { EventInstance, HunterSnapshot } from '../combat';
 import type { Band } from '../../content/story/scenes';
 import type { RecipeBook, SkillXp } from './book-state';
 import type { DelveState } from './delve-state';
@@ -132,8 +132,10 @@ export interface FightRef {
   contractId: string;
   seed: string;
   party: HunterSnapshot[];
-  monster: { monster: MonsterId; tier: number; knowledge: number };
-  location: LocationId;
+  /** A contract's species, or (v9, D358) a Great Beast or quarry with its tier and the pool at launch. */
+  monster: { monster: MonsterId; tier: number; knowledge: number } | EventInstance;
+  /** Null on an event fight: no location traits apply there (GDD §5.12.4). */
+  location: LocationId | null;
   result: 'win' | 'loss';
   rulesVersion: number;
   at: number;

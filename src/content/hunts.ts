@@ -1,4 +1,4 @@
-import type { EventCreature } from './great-beasts';
+import { BOSS_IDS, type BossId, type EventCreature } from './great-beasts';
 import type { DamageType } from './damage';
 import type { LegendaryHunterId } from './hunters-v09';
 import type { RoleId } from './hunters';
@@ -17,6 +17,10 @@ export const QUARRY_IDS = [
   'likho-one-eyed',
 ] as const;
 export type QuarryId = (typeof QUARRY_IDS)[number];
+
+/** The six creatures of the Events shelf: three Great Beasts and three quarries (GDD §8.13, §8.14). */
+export const EVENT_CREATURE_IDS = [...BOSS_IDS, ...QUARRY_IDS] as const;
+export type EventCreatureId = BossId | QuarryId;
 
 export const TRACK_IDS = [
   'stoneback-1',

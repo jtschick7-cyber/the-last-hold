@@ -36,7 +36,7 @@ export const BestiaryEntryView = ({ monster }: { monster: MonsterId }) => {
   const text = bestiaryText[monster];
   const { weak, resists } = resistLines(monster);
   const fights = s.log.recentFights
-    .filter((f) => f.monster.monster === monster)
+    .filter((f) => 'monster' in f.monster && f.monster.monster === monster)
     .slice(-5)
     .reverse();
   return (

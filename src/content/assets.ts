@@ -2,10 +2,10 @@ import { CONSUMABLE_IDS, consumables, type ConsumableId } from './consumables';
 import { SKILL_IDS, skills, type SkillId } from './skills';
 import { AGE_IDS, type AgeId } from './ages';
 import { BUILDING_IDS, type BuildingId } from './buildings';
-import { BOSS_IDS, bosses, type BossId } from './great-beasts';
+import { bosses, type BossId } from './great-beasts';
 import { HUNTER_IDS, hunters, type HunterId } from './hunters';
 import { LEGENDARY_HUNTER_IDS } from './hunters-v09';
-import { QUARRY_IDS, quarries, type QuarryId } from './hunts';
+import { EVENT_CREATURE_IDS, quarries, type EventCreatureId, type QuarryId } from './hunts';
 import { MONSTER_IDS, monsters, type MonsterId } from './monsters';
 import { RELIC_IDS, relics, type RelicId } from './relics';
 import { RESOURCE_IDS, type ResourceId } from './resources';
@@ -28,9 +28,6 @@ export type AssetKind = 'icon' | 'building' | 'scene' | 'portrait' | 'sprite' | 
 /** GDD §9.12 (D265): a battle sprite is one strip of these 32 px frames, left to right. */
 export const SPRITE_FRAME_NAMES = ['idle', 'idle2', 'lunge', 'hit', 'downed'] as const;
 export type SpriteFrameName = (typeof SPRITE_FRAME_NAMES)[number];
-/** The six creatures of the Events shelf: three Great Beasts and three quarries (v0.9, GDD §8.13, §8.14). */
-export const EVENT_CREATURE_IDS = [...BOSS_IDS, ...QUARRY_IDS] as const;
-export type EventCreatureId = BossId | QuarryId;
 const eventCreatureName = (c: EventCreatureId): string =>
   c in bosses ? bosses[c as BossId].name : quarries[c as QuarryId].name;
 const isLegendary = (h: HunterId): boolean =>
@@ -101,6 +98,7 @@ export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
 export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m}`;
 // v0.7 (plan T7.12, D265): battle sprites, the patron sigils, the Riftglass, the Delve relics, the
 // rarity frames and the hold cosmetics, all code-drawn.
+export { EVENT_CREATURE_IDS };
 export const eventCreaturePortraitId = (c: EventCreatureId): string => `portrait.creature.${c}`;
 export const eventCreatureSpriteId = (c: EventCreatureId): string => `sprite.creature.${c}`;
 export const hunterSpriteId = (h: HunterId): string => `sprite.hunter.${h}`;

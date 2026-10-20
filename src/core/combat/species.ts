@@ -32,7 +32,7 @@ export const isGuardian = (m: FightMonster): m is Extract<FightMonster, { guardi
 export const isEvent = (m: FightMonster): m is EventInstance => 'event' in m;
 
 /** GDD §8.13, §8.14: event creatures are written at base tier 3; a boss's Health is the pool. */
-const EVENT_BASE_TIER = 3;
+export const EVENT_BASE_TIER = 3;
 
 export const speciesOf = (m: FightMonster): SpeciesDef => {
   if (isEvent(m)) {
