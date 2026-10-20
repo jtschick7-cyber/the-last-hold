@@ -37,6 +37,8 @@ const kit = {
   skillUsed: false,
   skillArmed: false,
   useTaken: 0,
+  useDealt: 0,
+  coilAction: 0,
   rimeLeft: 0,
   rimeCut: 0,
   rootLeft: 0,
@@ -246,7 +248,12 @@ export const buildMonster = (
     }
   const healthBase =
     m.healthMult === undefined ? def.health * statScale : def.health * statScale * m.healthMult;
-  const maxHealth = roundHalfUp(namelessHealth === 1 ? healthBase : healthBase * namelessHealth);
+  // GDD §5.12.4: a Great Beast enters with the pool still standing as its Health (the pool is
+  // already scaled by the visit's tier), so it can never end above what it started with.
+  const maxHealth =
+    'healthOverride' in m && m.healthOverride !== undefined
+      ? m.healthOverride
+      : roundHalfUp(namelessHealth === 1 ? healthBase : healthBase * namelessHealth);
   const mightBase =
     m.mightMult === undefined ? def.might * statScale : def.might * statScale * m.mightMult;
   const might = namelessMight === 1 ? mightBase : mightBase * namelessMight;

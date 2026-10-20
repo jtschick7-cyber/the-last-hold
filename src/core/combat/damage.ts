@@ -2,7 +2,7 @@ import { num } from '../balance-access';
 import { abilityTaken, finalDamage, hurt } from './formula';
 import { cap as capName, emit, fmt2, type Fight } from './fight-state';
 import { afterOwnHit } from './abilities';
-import { rimeSlow, skillOf, stairHolder } from './skills';
+import { rimeSlow, skillOf, stairHolder, vigilHolder } from './skills';
 import { knockBack } from './fight-state';
 import { checkPotion } from './prep';
 import {
@@ -87,7 +87,12 @@ export const directAttack = (
     return `Damage spread ${fmt3(r)} → ×${fmt2(v)}`;
   });
   const variance = attacker.varianceLo + (attacker.varianceHi - attacker.varianceLo) * spread;
-  const critChance = attacker.critChance;
+  // Ill Luck (v0.9, GDD §8.14): while Likho stands every hunter's crit chance is lower. The roll is still drawn.
+  const critCut = f.ctx.critCut;
+  const critChance =
+    critCut !== undefined && attacker.side === 'hunter'
+      ? Math.max(0, attacker.critChance - critCut)
+      : attacker.critChance;
   const rolledCrit =
     draw((r) =>
       r < critChance
@@ -140,9 +145,31 @@ export const directAttack = (
     amount = finalDamage(dealt, target, resistance, true, taken, hitMult);
     notes.push(`Hold the Stair: ${holder.name} takes the hit meant for ${spared.name}`);
   }
+  // Sit the Vigil (GDD §8.5b, v0.9): once a fight, Radmila keeps another hunter on their feet at 1
+  // Health when this hit would down them, after Armor and taken%. It looks at what is left after
+  // Hold the Stair (Arvid's moved hit resolves first, D369 (8)). No new dice.
+  if (attacker.side === 'monster' && amount >= target.health) {
+    const vigil = vigilHolder(f, target);
+    if (vigil) {
+      vigil.skillUsed = true;
+      amount = target.health - 1;
+      notes.push(`Sit the Vigil: ${vigil.name} keeps ${target.name} on their feet at 1 Health`);
+    }
+  }
   hurt(target, amount);
   notes.push(...afterOwnHit(f, attacker, target, amount, draw));
   if (otherHand) notes.push(`The Other Hand: ${attacker.name}'s first hit is a crit`);
+  // Take the Eye (GDD §8.5b, v0.9): her first hit in a fight cuts the target's Might for the rest of it.
+  if (attacker.skill === 'take-the-eye' && !attacker.skillUsed && target.side === 'monster') {
+    const cut = skillOf(attacker)?.effect;
+    if (cut?.kind === 'mightCutOnHit') {
+      attacker.skillUsed = true;
+      target.statusPct.might += cut.amount;
+      notes.push(
+        `Take the Eye: ${target.name}'s Might is ${Math.round(cut.amount * 100)}% for the rest of the fight`,
+      );
+    }
+  }
   if (armed && attacker.side === 'hunter') hitSkill(armed.effect, target, notes);
   if (attacker.side === 'hunter') delveHitRules(f, attacker, target, crit, notes);
   if (attacker.damage === 'fire') {

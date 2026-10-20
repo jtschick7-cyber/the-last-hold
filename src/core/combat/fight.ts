@@ -8,6 +8,7 @@ import { cap, emit, knockBack, type Fight } from './fight-state';
 import {
   clearAbilityEffects,
   clearSmoke,
+  clearTorch,
   endRime,
   firesThisAction,
   plantRoot,
@@ -19,6 +20,7 @@ import { activeEffects, boostFor, monsterBoostFrom, NO_RULES, rulesFrom } from '
 import {
   alchemyPotency,
   healthPct,
+  illLuck,
   knowledgeBonus,
   lightlessCut,
   present,
@@ -164,8 +166,9 @@ const resolveEnds = (f: Fight): void => {
     }
     f.over = 'party-down';
   }
-  // Banked Smoke ends when its holder goes down (GDD §8.5b).
+  // Banked Smoke ends when its holder goes down (GDD §8.5b); so does Torch Held High.
   if (f.smokeHolder && !standing(f.smokeHolder)) clearSmoke(f);
+  if (f.torchHolder && !standing(f.torchHolder)) clearTorch(f);
 };
 
 /** The front monster: the first standing in group order (D251). */
@@ -186,6 +189,7 @@ const loseAction = (f: Fight, c: Combatant): void => {
 const hunterAct = (f: Fight, c: Combatant, extra = false): void => {
   c.skillArmed = false;
   if (f.smokeHolder === c) clearSmoke(f); // Banked Smoke lasts until the holder's next action
+  if (f.torchHolder === c) clearTorch(f); // so does Torch Held High
   const mender = c.role === 'mender';
   const pending = f.clothPending;
   if (mender && pending && pending !== c && !extra) {
@@ -355,19 +359,23 @@ const monsterAct = (f: Fight, m: Combatant): void => {
   }
   const skipAttack = startOfMonsterAction(f, m);
   resolveEnds(f);
-  const settling = m.abilities.find((a) => a.kind === 'settling');
+  const settling = m.abilities.find((a) => a.kind === 'settling' || a.kind === 'boulderToss');
   if (
     !skipAttack &&
     settling &&
     m.actions % settling.every === 0 &&
-    !cancelsAbility(f, m, 'Settling')
+    !cancelsAbility(f, m, settling.name)
   ) {
-    // The Dross-Tide (Deep): every `every`th action its attack reaches every standing hunter, each
-    // hit rolled and resolved as a direct attack (Armor applies); no target roll is drawn.
+    // The Dross-Tide (Deep) and Stoneback's Boulder Toss (v0.9): every `every`th action its attack
+    // reaches every standing hunter, each hit rolled and resolved as a direct attack (Armor
+    // applies); no target roll is drawn.
     emit(f, {
       actor: m.id,
       kind: 'ability',
-      text: () => `${cap(m.name)} settles over the whole party`,
+      text: () =>
+        settling.kind === 'settling'
+          ? `${cap(m.name)} settles over the whole party`
+          : `${cap(m.name)} hurls a boulder at the whole party`,
       rolls: [],
     });
     for (const h of f.hunters.filter(present)) {
@@ -467,6 +475,8 @@ export const runFight = (input: FightInput): FightResult => {
     attacks: first.attacks,
     hitCut: lightlessCut(first),
     oilBonus: K.oilBonus * potency,
+    // Ill Luck (v0.9): only set when the monster has it, so the context of every old fight is unchanged.
+    ...(illLuck(first) > 0 ? { critCut: illLuck(first) } : {}),
   };
   const f: Fight = {
     tick: 0,
@@ -499,6 +509,7 @@ export const runFight = (input: FightInput): FightResult => {
     volley: stand?.volley ?? 0,
     potency,
     smokeHolder: null,
+    torchHolder: null,
   };
   // Potions that work from the start, then the bombs, before anyone acts (GDD §5.7).
   startOfFight(f);

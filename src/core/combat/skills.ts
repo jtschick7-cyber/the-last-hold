@@ -54,7 +54,26 @@ export const replaceAction = (f: Fight, c: Combatant, def: UseSkillDef): boolean
     });
     return true;
   }
+  if (e.kind === 'partyOutgoingUntilNextAction') {
+    // Torch Held High (v0.9): every hunter deals more until the holder's next action.
+    for (const h of f.hunters) h.useDealt = e.amount;
+    f.torchHolder = c;
+    emit(f, {
+      actor: c.id,
+      kind: 'skill',
+      text: () =>
+        `${label(c, def)} lifts the torch: every hunter deals +${Math.round(e.amount * 100)}% damage until ${c.name}'s next action`,
+      rolls: [],
+    });
+    return true;
+  }
   return false;
+};
+
+/** Torch Held High ends at its holder's next action, or when the holder goes down. */
+export const clearTorch = (f: Fight): void => {
+  for (const h of f.hunters) h.useDealt = 0;
+  f.torchHolder = null;
 };
 
 /** Banked Smoke ends at its holder's next action, or when the holder goes down. */
@@ -144,6 +163,16 @@ export const stairHolder = (f: Fight, hit: Combatant): Combatant | null => {
   if (hit.side !== 'hunter') return null;
   for (const h of f.hunters) {
     if (h === hit || h.skill !== 'hold-the-stair' || h.skillUsed || !present(h)) continue;
+    return h;
+  }
+  return null;
+};
+
+/** Sit the Vigil: a standing Radmila who has not yet used it, and is not the one hit. */
+export const vigilHolder = (f: Fight, hit: Combatant): Combatant | null => {
+  if (hit.side !== 'hunter') return null;
+  for (const h of f.hunters) {
+    if (h === hit || h.skill !== 'sit-the-vigil' || h.skillUsed || !present(h)) continue;
     return h;
   }
   return null;

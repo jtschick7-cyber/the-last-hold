@@ -184,7 +184,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - The rows of GDD §8.13, §8.14, §8.5 (three hunters, three traits) and §8.5b (three use-skills): stats, resistances, abilities, "What it was" lines and hunter's-notebook lines, the nine tracks and restrictions, the unlock lines, placeholder sprites with the manifest fallback.
   - *Acceptance:* 1. Every track has at least 4 legal hunters among the starting eleven. 2. Every Great Beast and quarry has a resistance row, a "What it was" and a notebook line. 3. No required name or bestiary entry is event-only. 4. The Act VI Names column is #1–3. 5. The names are in `tests/content/names.ts`, or the task is `[?]` (see the box).
 
-- [ ] **T9.5 — The fight engine for events** *(core/systems/combat)*
+- [x] **T9.5 — The fight engine for events** *(core/systems/combat)*
   - A boss as a `MonsterInstance` with Health equal to the pool at launch, scaled by the visit's tier (an optional field on the monster record); family for oils, traits and banes (D369); no location traits; the three use-skills and traits; the new effects of box item 4, with the Hold the Stair → Sit the Vigil order (Arvid's moved hit first); snapshots carry the new fields only when present.
   - *Acceptance:* 1. Every golden fight replays line for line, and every recorded fight and stand keeps its result (**stop and ask otherwise**). 2. Sit the Vigil works once per fight and only for another hunter. 3. The pool never rises. 4. `rulesVersion` stays 5. 5. Each new effect has a test.
 

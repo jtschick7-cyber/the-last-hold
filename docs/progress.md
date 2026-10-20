@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.4 — content: Great Beasts, quarries, hunts, legendary hunters (done).
-- **Next:** T9.5 — the fight engine for events.
+- **Last task:** T9.5 — the fight engine for events (done).
+- **Next:** T9.6 — boss attempts.
 - **Open questions:** Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -90,4 +90,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Side effects:** the legendary hunters have no letters and are hidden from the locked silhouettes; art rows are placeholders (T9.16); **"Radmila" removed from the warden-name list** (clash with the hunter); the art tests now cover the 11 drawn hunters. A TS limit made me widen one command argument in `HunterDepth.tsx`.
 - **Owner to look at (stats are sketches):** GDD §8.13, §8.14.
 - **Open:** Q30 (boss.order short keys vs long ids; not blocking). Nothing skipped. Combat code is untouched: the new effects arrive in T9.5.
+
+## 2026-10-20 — v0.9 session 2 (continued): T9.5 fight engine for events
+- **T9.5 is built.** A Great Beast or quarry is a new kind of fight monster (`event`, tier, and for a boss `healthOverride` = the pool). Its Health is the pool, so it can end only at or below it; no Great Beast has a heal. Event creatures count for no knowledge.
+- **New effects, each with a test** (`tests/combat/events.test.ts`, 26 tests): Coil, Fjord Roar and Weir-Pull (hunters' meters knocked back 20 / 25), Grave Chill, Boulder Toss, Moss-Mend, Night-Weight, Quick Dark, Ill Luck (crit chance −10 points), Misfortune, the three traits and the three use-skills. Sit the Vigil works once a fight, only for another hunter, and after Hold the Stair's moved hit.
+- **Readings (not in the GDD):** a monster with two attacks (the Lindworm) **holds one target per Coil action**, not one per hit; Night-Weight and Misfortune do not replace the attack; Grave Chill and Moss-Mend run each action like Noon Heat / Root-Wall; Sit the Vigil covers direct hits only (as Hold the Stair does), not ability damage.
+- **Unchanged:** every golden fight, recorded fight and stand (the full suite is green), and `rulesVersion` stays 5. Old fights add no field to their context; the new ones appear only for events.
+- Nothing deferred. The fight-reference shape for saves (`event`, `healthOverride`) arrives with T9.6.
 

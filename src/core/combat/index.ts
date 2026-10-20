@@ -3,6 +3,7 @@ export type {
   FightInput,
   FightMonster,
   FightResult,
+  EventInstance,
   GuardianInstance,
   HunterSnapshot,
   LogEntry,
