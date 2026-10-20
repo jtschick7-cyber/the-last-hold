@@ -2,7 +2,7 @@ import { HUNTER_IDS, type HunterId } from '../../content/hunters';
 import { balance } from '../../content/balance';
 import { num } from '../balance-access';
 import { HUNT_IDS, type HuntId } from '../../content/hunts';
-import type { BossReport, EventResult, EventsState } from '../state/events-state';
+import type { BossReport, EventResult, EventsState, HuntReport } from '../state/events-state';
 import type { FightRef } from '../state/game-state';
 import { BOSS_IDS } from '../../content/great-beasts';
 import { INGREDIENT_IDS } from '../../content/ingredients';
@@ -12,6 +12,7 @@ import {
   count,
   finite,
   hunterId,
+  Invalid,
   nonNegative,
   obj,
   oneOf,
@@ -66,6 +67,50 @@ const report = (v: unknown, where: string): BossReport => {
   };
 };
 
+const huntReport = (v: unknown, where: string): HuntReport => {
+  const o = obj(v, where);
+  const n = count(o.track, `${where}.track`);
+  if (n !== 1 && n !== 2 && n !== 3) throw new Invalid(`${where}.track isn't one we know.`);
+  const track: 1 | 2 | 3 = n;
+  const arrival = o.arrival === undefined ? null : obj(o.arrival, `${where}.arrival`);
+  return {
+    hunt: oneOf(o.hunt, HUNT_IDS, `${where}.hunt`),
+    track,
+    tier: count(o.tier, `${where}.tier`),
+    result: oneOf(o.result, ['win', 'loss'] as const, `${where}.result`),
+    replay: bool(o.replay, `${where}.replay`),
+    points: nonNegative(o.points, `${where}.points`),
+    pointsTotal: nonNegative(o.pointsTotal, `${where}.pointsTotal`),
+    unlocked: bool(o.unlocked, `${where}.unlocked`),
+    xp: nonNegative(o.xp, `${where}.xp`),
+    levelUps: arr(o.levelUps, `${where}.levelUps`).map((x, i) => {
+      const l = obj(x, `${where}.levelUps[${i}]`);
+      return {
+        hunter: hunterId(l.hunter, `${where}.levelUps[${i}].hunter`),
+        level: count(l.level, `${where}.levelUps[${i}].level`),
+      };
+    }),
+    reagents: Object.fromEntries(
+      Object.entries(obj(o.reagents, `${where}.reagents`)).map(([k, x]) => [
+        oneOf(k, INGREDIENT_IDS, `${where}.reagents key`),
+        count(x, `${where}.reagents.${k}`),
+      ]),
+    ),
+    found: arr(o.found, `${where}.found`).map((x, i) => str(x, `${where}.found[${i}]`)),
+    party: arr(o.party, `${where}.party`).map((x, i) => hunterId(x, `${where}.party[${i}]`)),
+    restUntil: finite(o.restUntil, `${where}.restUntil`),
+    ...(arrival === null
+      ? {}
+      : {
+          arrival: {
+            hunter: hunterId(arrival.hunter, `${where}.arrival.hunter`),
+            level: count(arrival.level, `${where}.arrival.level`),
+            rank: oneOf(arrival.rank, ['apprentice', 'wright'] as const, `${where}.arrival.rank`),
+          },
+        }),
+  };
+};
+
 const result = (v: unknown, where: string): EventResult => {
   const o = obj(v, where);
   return {
@@ -73,6 +118,7 @@ const result = (v: unknown, where: string): EventResult => {
     attempt: count(o.attempt, `${where}.attempt`),
     at: finite(o.at, `${where}.at`),
     ...(o.boss === undefined ? {} : { boss: report(o.boss, `${where}.boss`) }),
+    ...(o.hunt === undefined ? {} : { hunt: huntReport(o.hunt, `${where}.hunt`) }),
   };
 };
 

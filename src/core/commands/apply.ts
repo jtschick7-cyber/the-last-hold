@@ -32,6 +32,7 @@ import { ageUp } from './age';
 import { collect, decline, launch, markSeen } from './contracts';
 import { cancelBrew, queueBrew, queueExperiment } from './brew';
 import { assign, stop } from './investigate';
+import { huntAttempt } from './hunt';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
 import {
@@ -102,6 +103,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return upgradeGear(state, cmd.hunter, cmd.slot);
     case 'boss.attempt':
       return bossAttempt(state, cmd.party, cmd.prep, now);
+    case 'hunt.attempt':
+      return huntAttempt(state, cmd.track, cmd.party, cmd.prep, now);
     case 'settings.set':
       return setSettings(state, cmd.patch);
     case 'stand.make':

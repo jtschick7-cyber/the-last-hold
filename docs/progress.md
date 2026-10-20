@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.7 — boss preview and Suggest for events (done).
-- **Next:** T9.8 — Hunts.
+- **Last task:** T9.8 — Hunts (done).
+- **Next:** T9.9 — the Dross-Tide in the Last Stand.
 - **Open questions:** Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -113,4 +113,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Timings (4× slowdown, bench):** preview 52 ms, Suggest with 14 hunters and no party clearing the floor 375 ms. **Proposed §6.5 rows:** preview ≤ 150 ms, boss Suggest ≤ 500 ms (warn at the budget, fail at 2×); the bench uses them until you set the rows.
 - On your save the first party tried already clears the floor (about 10% of the pool per attempt, a sketch pool).
 - Nothing skipped. The stand preview's percentile helpers are now shared. Golden fights, recorded fights and stands unchanged. `npm run check` green (35 s).
+
+## 2026-10-20 — v0.9 session 3 (continued): T9.8 Hunts
+- **T9.8 is built** (D392 Proposed). `hunt.attempt` takes a track and up to 4 legal hunters: the track's restriction, one token, the 24 h rest, a seeded fight against the quarry at the track's tier (no location traits), win or loss points that stop at 100, hunter XP (a loss pays half), and replays (XP and one reagent on a win, no points, no item).
+- **Unlock:** at 100 points the hunt unlocks once and the legendary hunter arrives free: highest level among your hunters within the cap, a Wright from level 5 else an Apprentice, no stars or talents, first-tier Common pieces made new for them (nothing taken from Stores; no iron or silver recorded, so salvaging them returns nothing). Active if there is room, else the reserve.
+- **Odds panel:** `computeHuntOdds` gives the win chance, its margin and the unprepared figure; the real win rate over 300 fights sits inside the margin (test).
+- **Save:** the last hunt result is saved and validated (still schema v9); points and unlocks survive the Long Night (tested).
+- **Not here (D392 (6)):** Suggest for hunts and the worker message for the hunt odds; they go with the hunt sheet (T9.14).
+- 22 tests in `tests/events/hunt.test.ts`. No golden fight, recorded fight or stand changed. `npm run check` green (36 s).
 

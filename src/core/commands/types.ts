@@ -5,6 +5,7 @@ import type { PatronId } from '../../content/delves/patrons';
 import type { CosmeticId } from '../../content/delves/shop';
 import type { SceneId } from '../../content/text/scenes';
 import type { HunterId } from '../../content/hunters';
+import type { TrackId } from '../../content/hunts';
 import type { JobId } from '../../content/jobs';
 import type { ConsumableId } from '../../content/consumables';
 import type { IngredientId } from '../../content/ingredients';
@@ -41,6 +42,8 @@ export type Command =
   | { type: 'contract.decline'; contract: string }
   /** GDD §5.12.4: one attempt at the Great Beast; costs a token, rests the party (v0.9). */
   | { type: 'boss.attempt'; party: HunterId[]; prep?: Preparation }
+  /** GDD §5.12.6: one attempt on a Legendary Hunt track; costs a token, rests the party (v0.9). */
+  | { type: 'hunt.attempt'; track: TrackId; party: HunterId[]; prep?: Preparation }
   /** Puts a board contract in a free Lodge slot (GDD §5.6.3). */
   | { type: 'investigate.assign'; contract: string }
   /** Takes a contract off its Lodge slot; the clues shown stay. */

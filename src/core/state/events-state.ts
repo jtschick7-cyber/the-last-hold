@@ -31,12 +31,40 @@ export interface BossReport {
   restUntil: number;
 }
 
+/** What one Legendary Hunt attempt did (GDD §5.12.6): everything the result sheet shows. */
+export interface HuntReport {
+  hunt: HuntId;
+  /** 1, 2 or 3. */
+  track: 1 | 2 | 3;
+  tier: number;
+  result: 'win' | 'loss';
+  /** The hunt was already unlocked: a replay pays no points. */
+  replay: boolean;
+  /** Points this attempt paid, and the hunt's total afterwards. */
+  points: number;
+  pointsTotal: number;
+  /** This attempt unlocked the hunt (the legendary hunter arrived). */
+  unlocked: boolean;
+  /** Hunter XP each attendee earned. */
+  xp: number;
+  levelUps: { hunter: HunterId; level: number }[];
+  /** Replay reagents (a win on an unlocked hunt). */
+  reagents: Partial<Record<IngredientId, number>>;
+  /** Result keys: any letter a level-up reached. */
+  found: string[];
+  party: HunterId[];
+  restUntil: number;
+  /** The legendary hunter's arrival, when this attempt unlocked the hunt. */
+  arrival?: { hunter: HunterId; level: number; rank: 'apprentice' | 'wright' };
+}
+
 /** A short result of the latest attempt, kept until read so a closed app still shows it. */
 export interface EventResult {
   kind: 'boss' | 'hunt';
   attempt: number;
   at: number;
   boss?: BossReport;
+  hunt?: HuntReport;
 }
 
 export interface EventsState {

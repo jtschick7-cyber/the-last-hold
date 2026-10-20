@@ -197,7 +197,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - **Performance budgets (proposals; measure first, then ask the owner to set them as §6.5 rows):** the preview inside the existing odds-worker budget scaled by its sample count; Suggest for a boss within a stated time on the reference phone, with up to 14 eligible hunters.
   - *Acceptance:* 1. The preview's range holds the real result about as often as it says. 2. The measured timings are in the progress entry and proposed as §6.5 rows. 3. Suggest never picks an ineligible hunter.
 
-- [ ] **T9.8 — Hunts** *(core/systems/hunt.ts, commands)* `[ ]`
+- [x] **T9.8 — Hunts** *(core/systems/hunt.ts, commands)*
   - `hunt.attempt`: the track's restriction, one token, rest, the fight at the track's tier, no location traits, win and loss points, XP, carry-over, the unlock at `hunt.unlockPoints`, replays (XP and one reagent, no points).
   - **Arrival (D362, D386):** the legendary hunter joins free, active or reserve, at the highest level within the Rank's cap, wearing first-tier Common pieces made for them; a **Wright if the level is 5 or more, else an Apprentice**; hidden from the Hunters tab until unlocked.
   - *Acceptance:* 1. A restriction admits exactly the legal hunters. 2. Points cap at the total. 3. The unlock happens once. 4. An unlocked hunt pays no points. 5. A Long Night keeps points and unlocked hunts. 6. The odds panel matches the real win rate (§6.3 #5 pattern). 7. Arrival at level 4 gives an Apprentice; at level 5 a Wright.

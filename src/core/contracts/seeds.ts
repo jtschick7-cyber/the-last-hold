@@ -53,3 +53,22 @@ export const bossOddsSeed = (
 /** Suggest for events, stage 1, sample i: the same seeds for every party (technical design §7.2). */
 export const eventSuggestSeed = (gameSeed: string, key: string, i: number): string =>
   streamSeed(gameSeed, 'eventsuggest', key, i);
+
+/** A hunt attempt (v0.9, technical design §7.2): the attempt counter makes the same party twice differ. */
+export const huntSeed = (
+  gameSeed: string,
+  attempt: number,
+  hunt: string,
+  track: number,
+  party: readonly string[],
+  prep: readonly string[] = [],
+): string => streamSeed(gameSeed, 'hunt', attempt, hunt, track, ids(party), ids(prep));
+
+/** Hunt odds, sample i: a distinct prefix; party only, so prepared and unprepared share dice (D98). */
+export const huntOddsSeed = (
+  gameSeed: string,
+  hunt: string,
+  track: number,
+  party: readonly string[],
+  i: number,
+): string => streamSeed(gameSeed, 'huntodds', hunt, track, ids(party), i);
