@@ -1,13 +1,22 @@
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
+import { balance } from '../../content/balance';
+import { num } from '../balance-access';
 import { HUNT_IDS, type HuntId } from '../../content/hunts';
 import type { EventResult, EventsState } from '../state/events-state';
 import type { FightRef } from '../state/game-state';
 import { arr, bool, count, finite, nonNegative, obj, oneOf, orNull, type Obj } from './guards';
 
 // Technical design §9.4 (v9): the events part of the save guard. Unknown hunter, hunt and boss ids
-// drop with a warning, never a crash. The clamps that need the `boss.*` and `hunt.*` constants
-// (tokens to the bank maximum, points to the unlock total, a rest already over) wait for T9.3,
-// which reads those constants.
+// drop with a warning, never a crash; counts outside their range are clamped with a warning, and a
+// rest already over is dropped (plan T9.3).
+const TIER_MIN = 3;
+const TIER_MAX = 12;
+
+const clamp = (x: number, lo: number, hi: number, where: string, warnings: string[]): number => {
+  const c = Math.max(lo, Math.min(hi, x));
+  if (c !== x) warnings.push(`${where} was out of range; set to ${c}.`);
+  return c;
+};
 
 const result = (v: unknown, where: string): EventResult => {
   const o = obj(v, where);
@@ -18,14 +27,19 @@ const result = (v: unknown, where: string): EventResult => {
   };
 };
 
-const restRecord = (v: unknown, warnings: string[]): Partial<Record<HunterId, number>> => {
+const restRecord = (
+  v: unknown,
+  now: number,
+  warnings: string[],
+): Partial<Record<HunterId, number>> => {
   const out: Partial<Record<HunterId, number>> = {};
   for (const [k, x] of Object.entries(obj(v, 'events.rest'))) {
     if (!(HUNTER_IDS as readonly string[]).includes(k)) {
       warnings.push(`Dropped unknown events.rest entry "${k}".`);
       continue;
     }
-    out[k as HunterId] = nonNegative(x, `events.rest.${k}`);
+    const until = nonNegative(x, `events.rest.${k}`);
+    if (until > now) out[k as HunterId] = until; // a rest already over is dropped
   }
   return out;
 };
@@ -45,7 +59,13 @@ const huntRecord = (v: unknown, warnings: string[]): EventsState['hunts'] => {
       return [
         id,
         {
-          points: count(h.points, `events.hunts.${id}.points`),
+          points: clamp(
+            count(h.points, `events.hunts.${id}.points`),
+            0,
+            num('hunt.unlockPoints'),
+            `events.hunts.${id}.points`,
+            warnings,
+          ),
           unlocked: bool(h.unlocked, `events.hunts.${id}.unlocked`),
         },
       ];
@@ -71,16 +91,30 @@ export const eventsFrom = (
       high: finite(clock.high, 'events.clock.high'),
     },
     tokens: {
-      count: count(tokens.count, 'events.tokens.count'),
+      count: clamp(
+        count(tokens.count, 'events.tokens.count'),
+        0,
+        num('boss.tokenMax'),
+        'events.tokens.count',
+        warnings,
+      ),
       at: orNull(tokens.at, (x) => finite(x, 'events.tokens.at')),
     },
     attempts: count(o.attempts, 'events.attempts'),
-    rest: restRecord(o.rest, warnings),
+    rest: restRecord(o.rest, nonNegative(clock.value, 'events.clock.value'), warnings),
     boss: {
       visit: count(boss.visit, 'events.boss.visit'),
-      tier: orNull(boss.tier, (x) => count(x, 'events.boss.tier')),
+      tier: orNull(boss.tier, (x) =>
+        clamp(count(x, 'events.boss.tier'), TIER_MIN, TIER_MAX, 'events.boss.tier', warnings),
+      ),
       pool: orNull(boss.pool, (x) => nonNegative(x, 'events.boss.pool')),
-      paid: count(boss.paid, 'events.boss.paid'),
+      paid: clamp(
+        count(boss.paid, 'events.boss.paid'),
+        0,
+        (balance.boss.milestones.value as readonly number[]).length,
+        'events.boss.paid',
+        warnings,
+      ),
       attempts: count(boss.attempts, 'events.boss.attempts'),
     },
     hunts: huntRecord(o.hunts, warnings),

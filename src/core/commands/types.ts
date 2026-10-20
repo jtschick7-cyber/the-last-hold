@@ -127,6 +127,10 @@ export type Command =
   | { type: 'debug.readyRanks' }
   /** Plan T5.5: Arvid can't arrive in v0.5 (Act III isn't written), so this adds him. */
   | { type: 'debug.addArvid' }
+  /** Plan T9.3: events debug actions (a token, a full bank, rests over). */
+  | { type: 'debug.addToken' }
+  | { type: 'debug.fillBank' }
+  | { type: 'debug.endRests' }
   | { type: 'debug.unlockAge'; age: AgeId };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };

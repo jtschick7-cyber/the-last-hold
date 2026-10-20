@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.2 — the constants (done).
-- **Next:** T9.3 — tokens, rest, eligibility and debug commands.
+- **Last task:** T9.3 — tokens, rest, eligibility and debug commands (done).
+- **Next:** T9.4 — content: Great Beasts, quarries, hunts and the legendary hunters (stats are sketches; the owner looks at them after).
 - **Open questions:** Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -68,4 +68,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - The earlier open point about `riftglass.bankWeeks` is **resolved by reading**: it was already in the plan's Events row (a v0.7 locked key, GDD §7.9), and OUT-4b keeps it. No owner question needed.
 - New test `tests/content/v09-constants.test.ts` pins every value; the existing key test and the lock test pass, and the "no game constants in `core/systems`" lint is clean.
 - Nothing deferred.
+
+## 2026-10-20 — v0.9 session 1 (continued): T9.3 tokens, rest, eligibility
+- **T9.3 is built** (`src/core/systems/events.ts`). The bank, each rest and eligibility are worked out from stored event-time stamps and the monotone clock, with breakdowns (interval, time since the last token, next in; rest length and time since).
+- A full bank restarts its clock on a spend; a part-full bank keeps its progress. A resting hunter can still take a contract; a hunter on a contract, in a Delve or recovering is not eligible; reserve hunters are. Events are locked after a Long Night until the Citadel, and the full-bank badge shows only while open.
+- Debug commands in core: `debug.addToken`, `debug.fillBank`, `debug.endRests` (all set `debugUsed`). `debug.startAct` already existed and takes an act number; it gets tested for Act VI in T9.10.
+- The load-path clamps deferred from T9.1 are in (tokens to the maximum, points to 100, tier 3–12, paid 0–4, a rest already over dropped).
+- 16 new tests in `tests/events/timers.test.ts`: 30 h jump equals 12 + 12 + 6 h loads; a spend equals ticking to it; rewind and round trip give no free time; the offline cap does not touch the bank. Goldens unchanged. `npm run check` green.
+- Nothing deferred. The unit shown on rest reasons follows the game's duration format ("14h 40m"), not the GDD's "14 h 40 m" example.
 

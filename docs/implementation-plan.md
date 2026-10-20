@@ -173,7 +173,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - Apply OUT-2b (the §7.11 table and the §7.4 pointer) and OUT-4b (the §0.6 locked row) with the `balance.ts` keys that read them. `tests/content/balance.test.ts` must match.
   - *Acceptance:* 1. Every `boss.*`, `hunt.*` key and `events.recentKeep` exists once with the §7.11 value. 2. `boss.*` keys are marked locked. 3. The key test passes. 4. No numeric literal in `core/systems/` outside the allowlist.
 
-- [ ] **T9.3 — Tokens, rest, eligibility and debug commands** *(core/systems/events.ts)*
+- [x] **T9.3 — Tokens, rest, eligibility and debug commands** *(core/systems/events.ts)*
   - **Also (moved from T9.1, D388):** the load-path clamps that need the constants: `tokens.count` to 0–`boss.tokenMax`, `points` to 0–`hunt.unlockPoints`, `boss.tier` to null or 3–12, `paid` to 0–4, and dropping a `rest` entry already in the past.
   - The token bank and rest as functions of stored timestamps, the monotone `events.clock` and `now` (technical design §5.2, §6.2): selectors with breakdowns, spend, `openEvents`, the eligibility selector (not on a contract, in a Delve, recovering or resting).
   - **Debug commands in core** (each sets `debugUsed`): add a token, fill the bank, end all rests, **start Act VI** (`debug.startAct`, so the playtest does not wait for Act V's stand).
