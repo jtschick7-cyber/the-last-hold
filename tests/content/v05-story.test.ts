@@ -363,7 +363,8 @@ describe('the forty names (lore-secrets §8, §20)', () => {
 describe('hunter letters (GDD §5.14.7, lore-secrets §23)', () => {
   it('two per hunter, 22 in all, every one written; exactly five carry a name (T5.12)', () => {
     expect(HUNTER_IDS).toContain('arvid');
-    expect(letters).toHaveLength(2 * HUNTER_IDS.length);
+    // The three legendary hunters of v0.9 have no letters (GDD §8.5).
+    expect(letters).toHaveLength(2 * (HUNTER_IDS.length - 3));
     expect(letters.every((l) => l.body !== null)).toBe(true);
     expect(
       letters

@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.3 — tokens, rest, eligibility and debug commands (done).
-- **Next:** T9.4 — content: Great Beasts, quarries, hunts and the legendary hunters (stats are sketches; the owner looks at them after).
-- **Open questions:** Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
+- **Last task:** T9.4 — content: Great Beasts, quarries, hunts, legendary hunters (done).
+- **Next:** T9.5 — the fight engine for events.
+- **Open questions:** Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -82,4 +82,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **T9.4 starts next.** It needs: the three hunters, three traits, nine tracks, six creatures (GDD §8.5, §8.13, §8.14), and the three use-skill rows held back from GDD §8.5b (note on T9.4; update `tests/content/v08-content.test.ts`'s count of 11 with them). Hunter ids are fixed in the technical design (`gest-tall-torch`, `ragnhild-eye-taker`, `radmila-of-the-reeds`; `lindworm-of-velk-fjord`, `barrow-king`, `mother-of-the-river`; `stoneback-fell-troll`, `mara-of-kettle-barrow`, `likho-one-eyed`). `HUNT_IDS` already exists in `src/content/hunts.ts`.
 - Names: OUT-6 lists them for the web collision search. If search is not available, put them in `docs/questions.md`, mark T9.4 `[?]`, leave the names test red. A collision: stop and ask.
 - Branch note: the harness named `claude/affectionate-brahmagupta-3n955f`; the owner's `milestone/v0.9` was used.
+
+## 2026-10-20 — v0.9 session 2: T9.4 content
+- **T9.4 is built** (D389 Proposed). Three Great Beasts, three quarries, nine tracks, three legendary hunters, their three traits and three use-skills, all word for word from GDD §8.5, §8.13, §8.14; the three §8.5b rows are now in the GDD with the test count at 14.
+- **Names:** web-searched against the influences (no match; nearest were Skyrim's Warlord Gathrik, ESO's Stonebreaker, Warhammer's Barrow Kingdoms). All are in `tests/content/names.ts` (2026-10-20); the names test is green.
+- Every track has at least four legal hunters among the starting eleven (test). Content is not in the bestiary; none is required elsewhere.
+- **Side effects:** the legendary hunters have no letters and are hidden from the locked silhouettes; art rows are placeholders (T9.16); **"Radmila" removed from the warden-name list** (clash with the hunter); the art tests now cover the 11 drawn hunters. A TS limit made me widen one command argument in `HunterDepth.tsx`.
+- **Owner to look at (stats are sketches):** GDD §8.13, §8.14.
+- **Open:** Q30 (boss.order short keys vs long ids; not blocking). Nothing skipped. Combat code is untouched: the new effects arrive in T9.5.
 

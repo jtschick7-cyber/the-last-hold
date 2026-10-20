@@ -1997,6 +1997,9 @@ Unlocked at Wright. "Every 3rd action" counts the hunter's own actions in that f
 | Stanko Sleepless | **Up Before the Wolves** | Start of each fight | His meter starts full, so he acts at tick 1 |
 | Herdis Strayfinder | **Shepherd's Crook** | Every 3rd action | If she heals on that action, she also clears the healed hunter's ability effects: slowed (Hamstring), held, charmed, Chill |
 | Arvid Netmender | **Hold the Stair** | Once per fight, when another hunter would be downed while Arvid stands | Arvid takes that hit instead, after his own Armor and taken% (it can down him) |
+| Gest Tall-Torch | **Torch Held High** | Every 3rd action, instead of attacking | Until his next action, every hunter deals +15% damage (outgoing%) |
+| Ragnhild the Eye-Taker | **Take the Eye** | Her first hit in a fight | If the hit lands, the target's Might is −15% for the rest of the fight (status%) |
+| Radmila of the Reeds | **Sit the Vigil** | Once per fight, when another hunter would be downed while Radmila stands | That hit leaves the hunter at 1 Health instead of downing them (after Armor and taken%). *New in v0.9: it can appear only in fights that include her, so no existing fight, golden or recorded stand changes (D369). **Order:** if Hold the Stair and Sit the Vigil both trigger on one hit, Arvid's moved hit resolves first and Radmila's save applies to what is left.* |
 
 ### 8.6 Ingredients (v0.3; properties v0.6, D202)
 

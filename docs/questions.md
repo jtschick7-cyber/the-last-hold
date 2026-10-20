@@ -50,3 +50,9 @@ Answered questions Q1–Q25 are in [`docs/archive/questions-answered.md`](archiv
 - **Recommendation:** (a).
 - **Blocks:** the final pool in T9.13 and anything calibrated on it.
 - **Answer (owner):**
+
+### Q30 — `boss.order` uses short keys; the Great Beasts' ids are long (T9.6; not blocking)
+- **What I found:** the locked `boss.order` is `[lindworm, barrow-king, mother-of-the-river]` (GDD §7.11, D379), but the technical design fixes the first beast's id as `lindworm-of-velk-fjord`.
+- **Options:** (a) keep both and match them by position (what T9.4 does; a test pins it); (b) change the locked value to the full ids through a decisions row.
+- **Recommendation:** (a): nothing locked moves.
+- **Answer (owner):**

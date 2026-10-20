@@ -23,6 +23,12 @@ import { PATRON_IDS } from '../../src/content/delves/patrons';
 import { DELVE_RELIC_IDS } from '../../src/content/delves/relics';
 import { COSMETIC_IDS } from '../../src/content/delves/shop';
 import { HUNTER_IDS } from '../../src/content/hunters';
+import { LEGENDARY_HUNTER_IDS } from '../../src/content/hunters-v09';
+
+// The three legendary hunters (v0.9) have placeholder rows until the owner supplies their art (plan T9.16).
+const DRAWN_HUNTER_IDS = HUNTER_IDS.filter(
+  (h) => !(LEGENDARY_HUNTER_IDS as readonly string[]).includes(h),
+);
 import { MONSTER_IDS } from '../../src/content/monsters';
 import { drawCosmetic, SCENE_H } from '../../tools/draw-cosmetics';
 import { drawRarityFrame, drawRelicIcon, drawRiftglass, drawSigil } from '../../tools/draw-icons16';
@@ -35,7 +41,7 @@ const file = (name: string): Buffer =>
   readFileSync(new URL(`../../public/assets/${name}`, import.meta.url));
 
 const cases = [
-  ...HUNTER_IDS.map((h) => ({
+  ...DRAWN_HUNTER_IDS.map((h) => ({
     row: hunterSpriteId(h),
     drawn: () => stripPng(framesOf(drawHunterSprite(h), 'right')),
   })),
@@ -66,6 +72,11 @@ const fileOf = (row: string): string => {
 };
 
 describe('the v0.7 art', () => {
+  it('gives the three legendary hunters and the six event creatures placeholder rows', () => {
+    for (const h of LEGENDARY_HUNTER_IDS)
+      expect(assetById.get(`sprite.hunter.${h}`)?.source, h).toBe('placeholder');
+  });
+
   it('has a row for every sprite, sigil, relic, frame and cosmetic, all generated', () => {
     // 11 hunters + 16 species + 3 guardians; 6 sigils; Riftglass; 6 relics; 3 frames; 4 cosmetics × 4 ranks.
     expect(cases).toHaveLength(11 + 16 + 3 + 6 + 1 + 6 + 3 + 16);

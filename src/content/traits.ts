@@ -1,5 +1,6 @@
 import { ALT_TRAIT_IDS, alternateTraits } from './delves/alternate-traits';
 import { V05_TRAIT_IDS, v05Traits } from './hunters-v05';
+import { V09_TRAIT_IDS, v09Traits } from './hunters-v09';
 import { type DamageType, type FamilyId, type LocationId } from './damage';
 
 // GDD §8.5 traits: each with an exact numeric effect, as data. Core combat and
@@ -24,6 +25,8 @@ export const TRAIT_IDS = [
   'tracker',
   // v0.5: Arvid's (GDD §8.5, D154).
   ...V05_TRAIT_IDS,
+  // v0.9: the legendary hunters' (GDD §8.5, D368).
+  ...V09_TRAIT_IDS,
   // v0.7: the alternate second traits bought with Riftglass (GDD §8.5a, D260).
   ...ALT_TRAIT_IDS,
 ] as const;
@@ -64,7 +67,10 @@ export type TraitEffect =
   /** Flat Armor (Rock-Footed). */
   | { readonly kind: 'armorFlat'; readonly amount: number }
   /** Provisions for contracts the holder joins × this (Thrifty). */
-  | { readonly kind: 'provisionsMult'; readonly mult: number };
+  | { readonly kind: 'provisionsMult'; readonly mult: number }
+  // ---- v0.9 (GDD §8.5, D368) ----
+  /** While the holder (a Vanguard) is standing, party hit chance rises by this much (Tall Torch). */
+  | { readonly kind: 'partyHitWhileStanding'; readonly amount: number };
 
 export interface TraitDef {
   readonly id: TraitId;
@@ -72,7 +78,7 @@ export interface TraitDef {
   readonly summary: string;
   readonly effect: TraitEffect;
   /** Milestone it starts to matter in; v0.3 and reserved traits are inert in v0.2. */
-  readonly activeFrom: 'v0.2' | 'v0.3' | 'v0.5' | 'v0.7';
+  readonly activeFrom: 'v0.2' | 'v0.3' | 'v0.5' | 'v0.7' | 'v0.9';
 }
 
 export const traits: Readonly<Record<TraitId, TraitDef>> = {
@@ -183,6 +189,7 @@ export const traits: Readonly<Record<TraitId, TraitDef>> = {
     activeFrom: 'v0.3',
   },
   ...v05Traits,
+  ...v09Traits,
   // v0.7: the alternate second traits (GDD §8.5a), built from their own content entries.
   ...(Object.fromEntries(
     alternateTraits.map((a) => [

@@ -2,7 +2,10 @@ import { CONSUMABLE_IDS, consumables, type ConsumableId } from './consumables';
 import { SKILL_IDS, skills, type SkillId } from './skills';
 import { AGE_IDS, type AgeId } from './ages';
 import { BUILDING_IDS, type BuildingId } from './buildings';
+import { BOSS_IDS, bosses, type BossId } from './great-beasts';
 import { HUNTER_IDS, hunters, type HunterId } from './hunters';
+import { LEGENDARY_HUNTER_IDS } from './hunters-v09';
+import { QUARRY_IDS, quarries, type QuarryId } from './hunts';
 import { MONSTER_IDS, monsters, type MonsterId } from './monsters';
 import { RELIC_IDS, relics, type RelicId } from './relics';
 import { RESOURCE_IDS, type ResourceId } from './resources';
@@ -25,6 +28,14 @@ export type AssetKind = 'icon' | 'building' | 'scene' | 'portrait' | 'sprite' | 
 /** GDD §9.12 (D265): a battle sprite is one strip of these 32 px frames, left to right. */
 export const SPRITE_FRAME_NAMES = ['idle', 'idle2', 'lunge', 'hit', 'downed'] as const;
 export type SpriteFrameName = (typeof SPRITE_FRAME_NAMES)[number];
+/** The six creatures of the Events shelf: three Great Beasts and three quarries (v0.9, GDD §8.13, §8.14). */
+export const EVENT_CREATURE_IDS = [...BOSS_IDS, ...QUARRY_IDS] as const;
+export type EventCreatureId = BossId | QuarryId;
+const eventCreatureName = (c: EventCreatureId): string =>
+  c in bosses ? bosses[c as BossId].name : quarries[c as QuarryId].name;
+const isLegendary = (h: HunterId): boolean =>
+  (LEGENDARY_HUNTER_IDS as readonly string[]).includes(h);
+
 export const SPRITE_PX = 32;
 
 interface AssetBase {
@@ -90,6 +101,8 @@ export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
 export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m}`;
 // v0.7 (plan T7.12, D265): battle sprites, the patron sigils, the Riftglass, the Delve relics, the
 // rarity frames and the hold cosmetics, all code-drawn.
+export const eventCreaturePortraitId = (c: EventCreatureId): string => `portrait.creature.${c}`;
+export const eventCreatureSpriteId = (c: EventCreatureId): string => `sprite.creature.${c}`;
 export const hunterSpriteId = (h: HunterId): string => `sprite.hunter.${h}`;
 export const monsterSpriteId = (m: MonsterId): string => `sprite.monster.${m}`;
 export const guardianSpriteId = (g: GuardianId): string => `sprite.guardian.${g}`;
@@ -200,13 +213,20 @@ export const assets: readonly AssetEntry[] = [
         ),
   ),
   ...HUNTER_IDS.map((h) =>
-    generated(
-      hunterPortraitId(h),
-      [64, 64],
-      hunters[h].name,
-      `portraits/${h}.png`,
-      'tools/gen-portraits.ts',
-    ),
+    // v0.9 (T9.4): the legendary hunters' art is the owner's to supply or approve (T9.16); until
+    // then they have a placeholder row and no committed file.
+    isLegendary(h)
+      ? placeholder(hunterPortraitId(h), 'portrait', [64, 64], hunters[h].name)
+      : generated(
+          hunterPortraitId(h),
+          [64, 64],
+          hunters[h].name,
+          `portraits/${h}.png`,
+          'tools/gen-portraits.ts',
+        ),
+  ),
+  ...EVENT_CREATURE_IDS.map((c) =>
+    placeholder(eventCreaturePortraitId(c), 'portrait', [64, 64], eventCreatureName(c)),
   ),
   // The Cursed (v0.5) are drawn too (plan T5.13, tools/draw-cursed.ts).
   ...MONSTER_IDS.map((m) =>
@@ -305,13 +325,28 @@ export const assets: readonly AssetEntry[] = [
   ),
   // v0.7 (plan T7.12): drawn by tools/gen-sprites.ts.
   ...HUNTER_IDS.map((h) =>
-    generated(
-      hunterSpriteId(h),
-      [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
-      `${hunters[h].name}, battle sprite`,
-      `sprites/hunter-${h}.png`,
-      'tools/gen-sprites.ts',
+    isLegendary(h)
+      ? placeholder(
+          hunterSpriteId(h),
+          'sprite',
+          [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+          `${hunters[h].name}, battle sprite`,
+        )
+      : generated(
+          hunterSpriteId(h),
+          [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+          `${hunters[h].name}, battle sprite`,
+          `sprites/hunter-${h}.png`,
+          'tools/gen-sprites.ts',
+          'sprite',
+        ),
+  ),
+  ...EVENT_CREATURE_IDS.map((c) =>
+    placeholder(
+      eventCreatureSpriteId(c),
       'sprite',
+      [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+      `${eventCreatureName(c)}, battle sprite`,
     ),
   ),
   ...MONSTER_IDS.map((m) =>

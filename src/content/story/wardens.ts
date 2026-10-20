@@ -2,13 +2,13 @@
 // Slavic and Nordic given names. Drafted in T5.1b, collision-checked in T5.2, and
 // for the owner's approval in T5.12. None is a name the story already uses, and
 // none matches any named character in the influences, even a minor one (D173).
+// 'Radmila' was dropped in v0.9: it is now the name of a legendary hunter (GDD §8.5).
 
 export const wardenNames: readonly string[] = [
   // Slavic
   'Dobromila',
   'Jaromír',
   'Lidmila',
-  'Radmila',
   'Slavomír',
   'Svatava',
   'Zbyněk',

@@ -18,6 +18,10 @@ export const USE_SKILL_IDS = [
   'up-before-the-wolves',
   'shepherds-crook',
   'hold-the-stair',
+  // v0.9 (D368): the legendary hunters'.
+  'torch-held-high',
+  'take-the-eye',
+  'sit-the-vigil',
 ] as const;
 export type UseSkillId = (typeof USE_SKILL_IDS)[number];
 
@@ -51,7 +55,14 @@ export type UseSkillEffect =
   /** If the holder heals on that action, the healed hunter's ability effects are cleared. */
   | { readonly kind: 'clearAbilityEffects' }
   /** The holder takes the hit instead, after their own Armor and taken%. */
-  | { readonly kind: 'takeHitForAlly' };
+  | { readonly kind: 'takeHitForAlly' }
+  // ---- v0.9 (GDD §8.5b, D368) ----
+  /** Until the holder's next action, every hunter deals this much more damage (outgoing%). */
+  | { readonly kind: 'partyOutgoingUntilNextAction'; readonly amount: number }
+  /** If the hit lands, the target's Might changes by this much for the rest of the fight (status%). */
+  | { readonly kind: 'mightCutOnHit'; readonly amount: number }
+  /** That hit leaves the hunter at 1 Health instead of downing them (after Armor and taken%). */
+  | { readonly kind: 'leaveAtOneHealth' };
 
 export interface UseSkillDef {
   readonly id: UseSkillId;
@@ -164,6 +175,34 @@ export const useSkills: Readonly<Record<UseSkillId, UseSkillDef>> = {
     triggerText: 'Once per fight, when another hunter would be downed while Arvid stands',
     effect: { kind: 'takeHitForAlly' },
     text: 'Arvid takes that hit instead, after his own Armor and taken% (it can down him)',
+  },
+  'torch-held-high': {
+    id: 'torch-held-high',
+    name: 'Torch Held High',
+    hunter: 'gest-tall-torch',
+    trigger: { kind: 'everyNth', n: 3, insteadOfAttack: true },
+    triggerText: 'Every 3rd action, instead of attacking',
+    effect: { kind: 'partyOutgoingUntilNextAction', amount: 0.15 },
+    text: 'Until his next action, every hunter deals +15% damage (outgoing%)',
+  },
+  'take-the-eye': {
+    id: 'take-the-eye',
+    name: 'Take the Eye',
+    hunter: 'ragnhild-eye-taker',
+    trigger: { kind: 'firstHit' },
+    triggerText: 'Her first hit in a fight',
+    effect: { kind: 'mightCutOnHit', amount: -0.15 },
+    text: "If the hit lands, the target's Might is −15% for the rest of the fight (status%)",
+  },
+  // The order against Hold the Stair (D369 (8)) is in the GDD row: Arvid's moved hit resolves first.
+  'sit-the-vigil': {
+    id: 'sit-the-vigil',
+    name: 'Sit the Vigil',
+    hunter: 'radmila-of-the-reeds',
+    trigger: { kind: 'allyWouldBeDowned' },
+    triggerText: 'Once per fight, when another hunter would be downed while Radmila stands',
+    effect: { kind: 'leaveAtOneHealth' },
+    text: 'That hit leaves the hunter at 1 Health instead of downing them (after Armor and taken%).',
   },
 };
 

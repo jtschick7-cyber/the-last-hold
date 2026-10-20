@@ -27,8 +27,8 @@ describe('v0.2 content', () => {
     }
   });
 
-  it('has 11 hunters (8 from v0.2, 2 from v0.3, Arvid from v0.5), 16 monsters (4 Cursed from v0.5) and 5 villages (GDD §8)', () => {
-    expect(HUNTER_IDS).toHaveLength(11);
+  it('has 14 hunters (8 from v0.2, 2 from v0.3, Arvid from v0.5, 3 legendary from v0.9), 16 monsters (4 Cursed from v0.5) and 5 villages (GDD §8)', () => {
+    expect(HUNTER_IDS).toHaveLength(14);
     expect(MONSTER_IDS).toHaveLength(16);
     expect(VILLAGE_IDS).toHaveLength(5);
   });
@@ -49,6 +49,9 @@ describe('hunters (GDD §8.5)', () => {
       stanko: 450,
       herdis: 300,
       arvid: 0, // GDD §8.5 (v0.5): free
+      'gest-tall-torch': 0, // GDD §8.5 (v0.9): the legendary hunters join free
+      'ragnhild-eye-taker': 0,
+      'radmila-of-the-reeds': 0,
     });
     expect(HUNTER_IDS.filter((h) => hunters[h].unlock.kind === 'start').sort()).toEqual([
       'halvar',

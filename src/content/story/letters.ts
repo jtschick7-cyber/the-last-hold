@@ -1,4 +1,5 @@
 import { HUNTER_IDS, hunters, type HunterId } from '../hunters';
+import { LEGENDARY_HUNTER_IDS, type LegendaryHunterId } from '../hunters-v09';
 import { unnamedLetters } from './letters-unnamed';
 
 // GDD §5.14.7 (D155, D156) and lore-secrets §23 (D165): every hunter has two
@@ -7,7 +8,8 @@ import { unnamedLetters } from './letters-unnamed';
 // has ever reached. Five carry names and are written here word for word; the other 17
 // carry none (`letters-unnamed.ts`, approved by the owner in T5.12).
 
-export type LetterHunter = HunterId;
+/** Every hunter but the three legendary ones, who have no letters (GDD §8.5, D362). */
+export type LetterHunter = Exclude<HunterId, LegendaryHunterId>;
 export type LetterSlot = 0 | 1;
 
 export interface LetterDef {
@@ -83,12 +85,15 @@ const written: readonly LetterDef[] = [
   },
 ];
 
+export const isLetterHunter = (h: HunterId): h is LetterHunter =>
+  !(LEGENDARY_HUNTER_IDS as readonly string[]).includes(h);
+
 const signatureOf = (hunter: LetterHunter): string => `— ${hunters[hunter].shortName}`;
 
 const all: readonly LetterDef[] = [...written, ...unnamedLetters];
 
 /** All 22 letters (D156): every hunter, both slots, in roster order then Arvid. */
-export const letters: readonly LetterDef[] = HUNTER_IDS.flatMap((hunter: LetterHunter) =>
+export const letters: readonly LetterDef[] = HUNTER_IDS.filter(isLetterHunter).flatMap((hunter) =>
   ([0, 1] as const).map(
     (slot): LetterDef =>
       all.find((l) => l.hunter === hunter && l.slot === slot) ?? {
