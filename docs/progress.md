@@ -320,3 +320,4 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Tests:** `tests/orders/perk-texts.test.ts` (10). The notice text itself is unchanged (the head's line is a separate field). I did not run the app in a browser here; the screens are small additions to existing ones, so please glance at them in the T10.13 playtest.
 - `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
 - **Next:** T10.12.
+- **D430 accepted by the owner** (logged as D431 with D428 and D429). Nothing is waiting on the owner; Q35 is informational.
