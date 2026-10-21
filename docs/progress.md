@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.19 tune, smoke and the preview build (done, pushed). All v0.10 tasks are done.
-- **Next:** the owner's playtest (checklist in the plan). Then, only on the owner's word: `sim:accept`, merge, tag `v0.10.0`, set `Status: complete`.
+- **Last task:** v0.10 closed: playtest passed, `sim:accept` run, merged and tagged `v0.10.0`.
+- **Next:** v0.11 needs its flesh-out session first (plan §0.4).
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -386,3 +386,10 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Checks:** all 54 simulator rows pass on 5 Monday seeds (T10.18 full run, same constants); `npm run check` green (2,709); whole phone browser suite 24 of 24 (WebKit is not installed here); `npm run build` works (5 s). A fresh `v10.json` meets the Orders through the load path (tests/orders/opening, full-run and the phone smoke); your own save is not assumed to still hold its scenes.
 - **Measured timings (this 4-core machine, not a phone):** v9 → v10 migration of your save 5.0 ms; Orders card view 0.04 ms; Order sheet 0.02 ms; standing recompute (all four) 0.005 ms; save growth about 350 bytes (217,273 → 217,620). Simulator: 3-cycle Orderer run about 15 s; `orders` shard 59–64 s; full suite 388 s on one machine (CI splits it into shards).
 - **Waiting on you:** (1) the playtest; (2) the Orders rows for GDD §6.5 (the proposed numbers are below in the pull request text, not yet written into the GDD); (3) D438–D443 are decided; D441 stays Proposed until you accept it.
+
+## 2026-10-21 — v0.10 closed
+- **The owner said the playtest passed;** D441 approved (D444) and the Orders budgets approved (D445). The budgets are in GDD §6.5, and the four timing rows are in the throttled benchmark (card 0.10 ms, migration 18.7 ms at 4× slowdown); the save-growth row is a unit test (`tests/orders/save-size.test.ts`).
+- **`sim:accept` run** on the full suite (55 runs, 367 s): all 54 rows pass; baseline recorded with the new `orderer/mon` group.
+- **Plan:** v0.10 `Status: complete`. Merged to `main` and tagged `v0.10.0` (see the pull request).
+- **Known:** the older odds benchmark row fails on this container's CPU (215 ms against 200 ms); it is untouched and outside `npm run check`.
+- **Next:** v0.11 flesh-out (The Remembering).

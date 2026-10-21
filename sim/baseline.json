@@ -1,5 +1,5 @@
 {
-  "milestone": "v0.9",
+  "milestone": "v0.10",
   "rulesVersion": 5,
   "groups": {
     "opening/mon": {
@@ -181,6 +181,24 @@
       "best-last-stand": 96,
       "first-long-night": 101.5,
       "first-ruin": 28
+    },
+    "orderer/mon": {
+      "first-cottage": 0,
+      "first-mine": 0.075,
+      "mill-3": 3,
+      "peasants-10": 3,
+      "keep": 14,
+      "first-contract": 0.1,
+      "roster-4": 27,
+      "first-tier-3": 40,
+      "hunters-lodge": 14,
+      "first-identified": 14.4608,
+      "first-studied": 30,
+      "citadel": 48,
+      "bastion": 86,
+      "best-last-stand": 96,
+      "first-long-night": 101.5,
+      "first-ruin": 28
     }
   },
   "checks": {
@@ -231,6 +249,12 @@
     "tokens-not-wasted": true,
     "silver-with-boss": true,
     "late-letters": true,
-    "first-wright": true
+    "first-wright": true,
+    "orders-first-chapter": true,
+    "orders-level-4": true,
+    "orders-all-chapters": true,
+    "orders-silver": true,
+    "orders-provisions": true,
+    "orders-stand-rows": true
   }
 }

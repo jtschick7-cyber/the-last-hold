@@ -12,6 +12,11 @@ const BUDGET = {
   bossSuggest: 800,
   huntOdds: 1500,
   huntSuggest: 2500,
+  // Orders (v0.10, D445): set by the owner from T10.19's measurements.
+  ordersCard: 16,
+  ordersSheet: 50,
+  ordersStanding: 5,
+  ordersMigration: 100,
 };
 type Bench = {
   odds: number;
@@ -23,6 +28,10 @@ type Bench = {
   bossSuggest: number;
   huntOdds: number;
   huntSuggest: number;
+  ordersCard: number;
+  ordersSheet: number;
+  ordersStanding: number;
+  ordersMigration: number;
 };
 
 test('odds, Suggest and the stand preview stay within 2× their budget on a throttled CPU', async ({
@@ -42,6 +51,10 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
       `boss Suggest (14 hunters, 10 tries) ${ms.bossSuggest.toFixed(0)} ms`,
   );
   console.log(
+    `Orders card ${ms.ordersCard.toFixed(2)} ms, sheet ${ms.ordersSheet.toFixed(2)} ms, ` +
+      `standing ${ms.ordersStanding.toFixed(3)} ms, migration ${ms.ordersMigration.toFixed(1)} ms`,
+  );
+  console.log(
     `hunt odds ${ms.huntOdds.toFixed(0)} ms, hunt Suggest ${ms.huntSuggest.toFixed(0)} ms`,
   );
   for (const [name, took, budget] of [
@@ -54,6 +67,10 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     ['Suggest for a boss (14 hunters, 10 tries)', ms.bossSuggest, BUDGET.bossSuggest],
     ['hunt odds (prepared and unprepared)', ms.huntOdds, BUDGET.huntOdds],
     ['Suggest for a hunt (14 hunters, 10 tries)', ms.huntSuggest, BUDGET.huntSuggest],
+    ['the Orders card', ms.ordersCard, BUDGET.ordersCard],
+    ['an Order sheet', ms.ordersSheet, BUDGET.ordersSheet],
+    ['the standing of all four Orders', ms.ordersStanding, BUDGET.ordersStanding],
+    ['the v9 → v10 migration', ms.ordersMigration, BUDGET.ordersMigration],
   ] as const) {
     if (took > budget) {
       test.info().annotations.push({

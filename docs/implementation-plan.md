@@ -285,7 +285,7 @@ Orders rewards from events (v0.10); a boss shop or Boss marks; more bosses or hu
 
 ### v0.10 — Orders
 
-**Status:** not started *(fleshed out 2026-10-21; decisions D407–D425; files in `docs/flesh-out/v0.10/`)*
+**Status:** complete *(fleshed out 2026-10-21; decisions D407–D425; files in `docs/flesh-out/v0.10/`)*
 
 **Scope:** the four Orders (Thanes' Moot, Grey Wives, Bell-Watchers, the Quenchers): standing from play already done (counted for all four from v10 on, with one capped backfill at the migration), four levels each, **limited seats** (two, and a third once two Orders are at level 4 and the Quenchers have come), seat changes free at a new warden and on a 24 h event-clock cooldown mid-cycle, a number perk and a story or knowledge perk per level (seated only), sixteen chapters (four per Order, two with two endings), four opening scenes, the Orders card, Order sheets and Library shelf, and **the Orderer** simulator player. **No silver, fight number or gate comes from an Order; `rulesVersion` stays 5.** The final act is **not** here: it is v0.11 (D415).
 

@@ -5,6 +5,14 @@ import { computeHuntOdds, suggestHuntParty } from '../../src/core/systems/hunt-o
 import { previewBoss, suggestBossParty } from '../../src/core/systems/boss-odds';
 import { previewStand } from '../../src/core/stand/preview';
 import { snap } from '../combat/helpers';
+import { ORDER_IDS } from '../../src/content/orders';
+import { apply } from '../../src/core/commands/apply';
+import { loadEnvelope } from '../../src/core/save';
+import { createNewGame } from '../../src/core/state/new-game';
+import { orderStanding } from '../../src/core/systems/orders';
+import { orderSheetView } from '../../src/core/systems/orders-sheet-view';
+import { ordersCardView } from '../../src/core/systems/orders-view';
+import v9Owner from '../saves/fixtures/v9-owner.json';
 
 // GDD §6.5: the live odds panel (500 fights) and Suggested party, timed in this
 // browser. Playwright slows the CPU 4× first, as a stand-in for a mid-range phone,
@@ -40,6 +48,10 @@ type Bench = {
   bossSuggest: number;
   huntOdds: number;
   huntSuggest: number;
+  ordersCard: number;
+  ordersSheet: number;
+  ordersStanding: number;
+  ordersMigration: number;
 };
 
 (window as unknown as { __bench: () => Bench }).__bench = () => {
@@ -62,6 +74,8 @@ type Bench = {
   };
   // Plan T9.7: the boss preview (100 practice fights) and Suggest for a boss with all 14 hunters
   // free, when no party clears the floor (the worst case: it runs out its tries).
+  const orders = createNewGame('bench', 0);
+  for (const order of ORDER_IDS) apply(orders, { type: 'debug.ordersOpen', order }, orders.time);
   const boss = {
     gameSeed: 'bench',
     visit: 0,
@@ -119,6 +133,12 @@ type Bench = {
         trophiesPerDay: 20,
       }),
     ),
+    // Plan T10.19 (GDD §6.5, D445): the Orders' card, an Order sheet, the standing of all four after
+    // a command, and the v9 → v10 migration of the owner's save, on a game with every Order open.
+    ordersCard: best(() => ordersCardView(orders, orders.time)),
+    ordersSheet: best(() => orderSheetView(orders, 'moot', orders.time)),
+    ordersStanding: best(() => ORDER_IDS.forEach((id) => orderStanding(orders, id))),
+    ordersMigration: best(() => loadEnvelope(structuredClone(v9Owner))),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),
     bossSuggest: best(() =>
       suggestBossParty({

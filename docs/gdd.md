@@ -1594,8 +1594,12 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Suggested party for a boss** *(v0.9, D406)* | ≤ 800 ms on a mid-range phone | Tries at most `events.suggestTries` parties, up to 14 hunters, in the worker |
 | **Hunt odds panel** *(v0.9, D406)* | ≤ 1.5 s on a mid-range phone | The prepared and the unprepared fights (the "unprepared would be X%" line), in the worker; the screen shows a working state |
 | **Suggested party for a hunt** *(v0.9, D406)* | ≤ 2.5 s on a mid-range phone | Tries at most `events.suggestTries` parties, up to 14 hunters, in the worker; the screen shows a working state |
-| **Orders** *(v0.10, proposed, measure first)* | Not set | Orders card render, Order sheet open, standing recompute after a command, the v9 → v10 migration of the fixture, save size growth. The owner sets the numbers after T10.19 measures them |
-| **Simulator: the Orderer shard** *(v0.10, proposed)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
+| **Orders card render** *(v0.10, D445)* | ≤ 16 ms (one frame) | The Hold tab's card, from the view built in `core` |
+| **Order sheet open** *(v0.10, D445)* | ≤ 50 ms | Any of the four sheets, with its breakdown |
+| **Orders standing recompute** *(v0.10, D445)* | ≤ 5 ms | All four Orders, after a command |
+| **v9 → v10 migration** *(v0.10, D445)* | ≤ 100 ms | The owner's save, on the load path |
+| **Orders save growth** *(v0.10, D445)* | ≤ 2 KB | The whole Orders block, all four opened, every chapter read (checked by a unit test, not the throttled benchmark) |
+| **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | **≤ 5 min per CI job** *(D320)* | All policies and checks; the runs play in parallel, one per core (D169), split across parallel CI jobs whose results a final job combines and judges. Never trimmed: same runs, seeds and rows |
 
