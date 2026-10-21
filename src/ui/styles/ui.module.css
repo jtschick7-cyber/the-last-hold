@@ -327,7 +327,9 @@
 }
 
 .readingName {
-  font-family: var(--font-pixel);
+  /* Not the pixel font: it has no č, ě, ř, š, Š or ž, and eleven of the forty names use them. */
+  font-family: inherit;
+  font-weight: 700;
   font-size: 1.6rem;
   line-height: 1.2;
   overflow-wrap: anywhere;

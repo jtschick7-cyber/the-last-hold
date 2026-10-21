@@ -32,6 +32,7 @@ type Bench = {
   ordersSheet: number;
   ordersStanding: number;
   ordersMigration: number;
+  rememberingMigration: number;
 };
 
 test('odds, Suggest and the stand preview stay within 2× their budget on a throttled CPU', async ({
@@ -53,6 +54,9 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
   console.log(
     `Orders card ${ms.ordersCard.toFixed(2)} ms, sheet ${ms.ordersSheet.toFixed(2)} ms, ` +
       `standing ${ms.ordersStanding.toFixed(3)} ms, migration ${ms.ordersMigration.toFixed(1)} ms`,
+  );
+  console.log(
+    `v10 → v11 migration (played save, not yet judged): ${ms.rememberingMigration.toFixed(1)} ms`,
   );
   console.log(
     `hunt odds ${ms.huntOdds.toFixed(0)} ms, hunt Suggest ${ms.huntSuggest.toFixed(0)} ms`,

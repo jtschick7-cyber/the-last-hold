@@ -155,4 +155,4 @@ Options:
 (b) **Teach Standard to look for species it lacks.** A new rule: when two contracts are close, prefer one whose species is not yet Studied. This models a player who wants the ending, but it changes how Standard plays, so its report (and perhaps other rows) will differ from the v0.10 baseline, which D464 says must not happen. I would re-measure everything and ask you again.
 (c) **No simulator row.** Rely on the content test and your own playtest (the debug panel opens the gate).
 I have **not** touched the plan's row, `sim/targets.ts` or any baseline. What I did add is report-only: the Standard report now says when the ending first becomes choosable, or what the hold lacked at the end of the run (names, species and which ones, the stand).
-Status: **Open.**
+Status: **Answered (a)** by the owner, 2026-10-21 (D469). T11.15b proposes N for the narrower row.

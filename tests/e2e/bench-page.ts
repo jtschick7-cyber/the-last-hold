@@ -13,6 +13,7 @@ import { orderStanding } from '../../src/core/systems/orders';
 import { orderSheetView } from '../../src/core/systems/orders-sheet-view';
 import { ordersCardView } from '../../src/core/systems/orders-view';
 import v9Owner from '../saves/fixtures/v9-owner.json';
+import v10Played from '../saves/fixtures/v10-played.json';
 
 // GDD §6.5: the live odds panel (500 fights) and Suggested party, timed in this
 // browser. Playwright slows the CPU 4× first, as a stand-in for a mid-range phone,
@@ -52,6 +53,7 @@ type Bench = {
   ordersSheet: number;
   ordersStanding: number;
   ordersMigration: number;
+  rememberingMigration: number;
 };
 
 (window as unknown as { __bench: () => Bench }).__bench = () => {
@@ -139,6 +141,9 @@ type Bench = {
     ordersSheet: best(() => orderSheetView(orders, 'moot', orders.time)),
     ordersStanding: best(() => ORDER_IDS.forEach((id) => orderStanding(orders, id))),
     ordersMigration: best(() => loadEnvelope(structuredClone(v9Owner))),
+    // Plan T11.16 (D464 (5)): the v10 → v11 migration of a played v10 save, on the load path. Measured
+    // for a proposed §6.5 row; not yet judged.
+    rememberingMigration: best(() => loadEnvelope(structuredClone(v10Played))),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),
     bossSuggest: best(() =>
       suggestBossParty({

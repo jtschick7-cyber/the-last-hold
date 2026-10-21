@@ -6,9 +6,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.15a measured (blocked, Q45).
-- **Next:** T11.16 layout checks and budgets, unless the owner answers Q45 first (then T11.15b).
-- **Open questions:** Q40, Q38 and Q42 answered; Q41 and Q43 informational; **Q45 (the reachability row) blocks T11.15**.
+- **Last task:** T11.16 layout checks and budgets (owner approval of the §6.5 rows pending).
+- **Next:** T11.15 (a second measurement for the narrower row, then stop for N), then T11.17.
+- **Open questions:** Q40, Q38 and Q42 answered; Q41 and Q43 informational; Q45 answered (a).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -513,3 +513,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Built (report only):** the run record gains one field, `ending` (the first moment the ending was choosable, plus the names, species and stand the hold had at the end), and the Standard report gets a section "The Remembering". No policy, constant, target or baseline changed; the players never choose an ending. `npm run check` is green; the baseline holds only moments, so it is unchanged.
 - **Cost:** the five-run Standard measurement takes about 55 s on this machine.
 - **Next:** T11.16 (layout checks and budgets) does not depend on Q45. T11.15b waits for the owner's answer.
+
+## 2026-10-21 — v0.11 session 17: T11.16 layout checks and budgets
+- **Owner answered Q45 (a)** (D469): the row will judge "all 40 names found and Act VI's stand applied by cycle N". T11.15 is open again (measure that, propose N, stop for the owner).
+- **Layout (Playwright, production build, `tests/e2e/remembering-layout.spec.ts`):** at 320, 360, 900 and 1300 px: no sideways scroll, and nothing wider than its sheet, with Pechko's scene, the card (not open, open, after Remember Them), R-03, the reading (names 1, 20, 40 and the Unlit's line), every ending card, the Library shelf and the Names view. All 40 names with their village lines are tapped through at 320 and 360 px and each sits inside the sheet. I looked at the screenshots: nothing clips.
+- **One real finding, fixed:** the pixel font has no č, ě, ř, š, Š or ž, and eleven of the forty names use them, so the reading's names would have fallen back to another font letter by letter. The reading's name now uses the normal font, bold. (The Names view already did.)
+- **Budgets (D445 route), measured, not yet in the GDD or enforced:** reading start (tap on R-03's Continue to the first name painted), 4× CPU slowdown: **15 ms**; v10 → v11 migration of a played v10 save, 4× slowdown: **18.6 ms**. **Proposed rows for you to approve (GDD §6.5):** reading start ≤ 50 ms (the same as an Order sheet opening); v10 → v11 migration ≤ 100 ms (as v9 → v10); `remembering` save growth ≤ 0.5 KB, which is now a unit test (`tests/remembering/save-size.test.ts`; the block is about 150 bytes full). The two timing rows are logged by `bench` and become checks once you approve them.
+- **Seen, not mine:** at 360 px the Archive's section tabs ("Bestiary, Library, Accounts, Names") run past the edge, so "Names" is cut off (the row scrolls; the page does not). It has been so since v0.5. I did not change it; it is for the polish pass unless you say otherwise.
+- **Known, unchanged:** the older "odds with 3 candidates" row still fails on this container's CPU (D445); it is not part of `npm run check`.
+- **Not seen on a real phone**, only emulated (Pixel 7 at 360 and 320 px). No old test edited. Nothing skipped.
