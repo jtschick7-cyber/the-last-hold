@@ -42,20 +42,22 @@ export const perkCut = (state: GameState, id: OrderId): number =>
 /** The factor, `1 − step × level`; exactly 1 when nothing is seated. */
 export const perkFactor = (state: GameState, id: OrderId): number => 1 - perkCut(state, id);
 
-/** The breakdown line ("Thanes' Moot, Friend: −6%"), or none while unseated. */
-export const perkLines = (state: GameState, id: OrderId): Breakdown[] => {
-  const level = seatedLevel(state, id);
-  if (level === 0) return [];
+/** The number perk at a level, as its breakdown line ("Thanes' Moot, Friend: −6% food for provisions"). */
+export const perkAtLevel = (id: OrderId, level: number): Breakdown => {
   const step = STEP[id].step();
   const word = ORDER_LEVEL_WORDS[level - 1] ?? '';
-  return [
-    {
-      label: `${ORDER_NAMES[id]}, ${word}: −${Math.round(step * level * 100)}% ${STEP[id].text}`,
-      value: 1 - step * level,
-      formula: `1 − ${step} × ${level}`,
-      key: STEP[id].key as never,
-    },
-  ];
+  return {
+    label: `${ORDER_NAMES[id]}, ${word}: −${Math.round(step * level * 100)}% ${STEP[id].text}`,
+    value: 1 - step * level,
+    formula: `1 − ${step} × ${level}`,
+    key: STEP[id].key as never,
+  };
+};
+
+/** The breakdown line while the Order is seated at a level, or none. */
+export const perkLines = (state: GameState, id: OrderId): Breakdown[] => {
+  const level = seatedLevel(state, id);
+  return level === 0 ? [] : [perkAtLevel(id, level)];
 };
 
 /** What seating an Order would give, for the card's "Not seated" row (GDD §5.13.3). */

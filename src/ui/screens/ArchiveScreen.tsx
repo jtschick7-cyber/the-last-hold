@@ -9,6 +9,8 @@ import {
   namesView,
   type ShelfLetter,
 } from '../../core/story/archive';
+import { ordersShelf } from '../../core/story/orders-chapter-view';
+import { reopenChapter } from '../orders/ChapterScene';
 import { docKey } from '../../core/story/documents';
 import { letterKey } from '../../core/story/letters';
 import { dispatch, game, version } from '../app/runtime';
@@ -127,8 +129,15 @@ const Library = () => {
   const shelf = lettersShelf(s);
   const echoList = echoesShelf(s);
   const rime = rimeShelf(s);
+  const orders = ordersShelf(s);
   const wayDown = s.delve.sceneSeen;
-  if (groups.length === 0 && shelf.length === 0 && echoList.length === 0 && !wayDown)
+  if (
+    groups.length === 0 &&
+    shelf.length === 0 &&
+    echoList.length === 0 &&
+    orders.length === 0 &&
+    !wayDown
+  )
     return <p class={styles.dim}>Nothing in the archive yet.</p>;
   return (
     <>
@@ -180,6 +189,27 @@ const Library = () => {
           </ul>
         )}
       </section>
+      {orders.length > 0 && (
+        <section class={styles.card} aria-label="Orders">
+          <h2 class={styles.cardTitle}>Orders</h2>
+          <ul class={styles.list}>
+            {orders.map((e) => (
+              <li key={`${e.order}${e.n}`}>
+                <button
+                  type="button"
+                  class={styles.linkRow}
+                  onClick={() => reopenChapter(e.order, e.n)}
+                >
+                  <span class={styles.grow}>
+                    <strong>{e.title}</strong>
+                    <span class={`${styles.small} ${styles.dim}`}> · {e.readWithLine}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {echoList.length > 0 && (
         <section class={styles.card} aria-label="Echoes">
           <h2 class={styles.cardTitle}>Echoes</h2>

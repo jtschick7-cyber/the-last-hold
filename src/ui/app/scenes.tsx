@@ -7,6 +7,7 @@ import { eventsUnlocked } from '../../core/systems/events';
 import { delvesOpen } from '../../core/delves/access';
 import { isFound } from '../../core/story/documents';
 import { openOpeningScene } from '../orders/OpeningScene';
+import { openNextChapter } from '../orders/ChapterScene';
 import { SeatStepSheet } from '../orders/SeatSheets';
 import styles from '../styles/ui.module.css';
 import { WardenNameField } from '../widgets/WardenNameField';
@@ -173,6 +174,9 @@ const playOrdersScenes = (): void => {
   }
   if (o.openingQueue.length === 0 && o.seatStepPending && !shownOrders.has('seat-step')) {
     shownOrders.add('seat-step');
-    openSheet('Seat your Orders', () => <SeatStepSheet />);
+    return openSheet('Seat your Orders', () => <SeatStepSheet />);
   }
+  // Chapters come last, one at a time (D416 (6)); opening one counts it as read, so it cannot loop.
+  if (o.openingQueue.length === 0 && !(o.seatStepPending && !shownOrders.has('seat-step')))
+    openNextChapter();
 };

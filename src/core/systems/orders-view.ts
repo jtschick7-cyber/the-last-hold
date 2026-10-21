@@ -65,7 +65,7 @@ const inSeatsLineOf = (state: GameState): string => {
     : `In seats: ${seated.map((id) => ORDER_NAMES[id]).join(', ')}`;
 };
 
-const rowOf = (state: GameState, id: OrderId): OrderRow => {
+export const rowOf = (state: GameState, id: OrderId): OrderRow => {
   const level = orderLevel(state, id);
   const seated = state.orders.seats.includes(id);
   const full = state.orders.seats.length >= seatCount(state);

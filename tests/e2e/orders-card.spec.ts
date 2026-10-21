@@ -89,6 +89,11 @@ test('the opening scene, the load step, the card and a seat change', async ({ pa
   await step.getByRole('checkbox').first().check();
   await step.getByRole('button', { name: 'Done' }).click();
   await expect(step).toHaveCount(0);
+  // Seating the Moot made its first chapter playable, so it opens (T10.14); close it.
+  await page
+    .getByRole('dialog', { name: 'A table at the gate' })
+    .getByText('Close', { exact: true })
+    .click();
 
   // The card, with the card's seat lines and the step's button gone.
   await tab(page, 'Hold').click();

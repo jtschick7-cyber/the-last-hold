@@ -22,3 +22,18 @@ export const ORDER_SOURCES = {
   bellWatchers: ['document', 'letter', 'name'],
   quenchers: ['kozlyContract', 'delveFloor'],
 } as const satisfies Record<OrderId, readonly string[]>;
+
+/** What each Order's story or knowledge perk is, in a few plain words (the Order sheet's level list). */
+export const ORDER_STORY_PERK: Record<OrderId, string> = {
+  moot: "A head's word at the end of that village's notices, and on the Villages panel.",
+  greyWives:
+    "A hint in the Book from the eldest Grey Wife; an elder's note once the Book has the brew.",
+  bellWatchers:
+    'A sharper where-to-look sentence for names still missing; a remark once the group is found.',
+  quenchers: 'A Kozly Hollow voice in the Accounts\' "What the hearth leaves".',
+};
+
+/** The Quenchers' number is a trade; the Order sheet says so (GDD §5.13.5). */
+export const ORDER_NUMBER_NOTE: Partial<Record<OrderId, string>> = {
+  quenchers: 'easier waves, smaller Embers',
+};

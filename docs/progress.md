@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.13 screens, part 1 (done, pushed).
-- **Next:** T10.14, screens part 2 (Order sheets, chapters, the shelf).
+- **Last task:** T10.14 screens, part 2 (done, pushed).
+- **Next:** T10.15, art (the four marks, the icon, the opening-scene placeholders; the owner approves).
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -336,4 +336,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Please look at (D432, Proposed):** (1) the cooldown reads "Can change in 9h 20m" (the game's duration format and what the command already says); the GDD and plan write "9 h 20 m". A one-word change if you want the spaces. (2) the "Change seats" button, which T10.14's Order sheets will reuse. (3) "Skip"/"Done" use a new command that never clears a cooldown. (4) A scene closed with ✕ stays waiting and the card offers it.
 - **Not checked by a test:** the card's exact position among the cards (by code only).
 - Tests: `tests/orders/card-view.test.ts` (8), `tests/e2e/orders-card.spec.ts` (phone). `npm run check` green (2,658). Golden fights and recorded stands unchanged; no existing test edited.
-- **Next:** T10.14.
+- **Next:** T10.14. (D433: the owner accepted D432 as built, no spaces in the cooldown.)
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.14 screens, part 2
+- **Built:** the Order sheet (tap a card row: standing with its breakdown, next threshold, the four levels with the real number, chapters read, waiting or readable and why, Seat / Unseat / Swap, the cooldown line, "You keep your standing and chapters."); chapter scenes (text from lore §33, the variant by the seats at that moment, Close and Next); the Library's Orders shelf (not shown until a chapter is read, "read with …", Ilse's note); the Villages panel entry already existed from T10.11. Views are in `core/systems/orders-sheet-view.ts` and `core/story/orders-chapter-view.ts`; each level's number is the perk's own breakdown line.
+- **Chapters open by themselves** after the opening scenes and the load step (one at a time, D416 (6)); opening one counts it as read and saves the seats. The Quenchers' line says "easier waves, smaller Embers".
+- **Seen in a browser (phone size):** the Order sheet, a chapter, the shelf and unseating; no sideways scroll at 360, 900 and 1300 px.
+- **Please look at:** (1) the short "perk in words" lines on the Order sheet are interface text I wrote, not lore (e.g. "A head's word at the end of that village's notices"); (2) the plain wording for waits ("Waits for level 2.", "Waits for Vesna to be on your roster.") and for chapter 4's two endings; (3) my T10.13 browser test gained one step (close the first chapter that now opens after seating the Moot); nothing was removed from it.
+- Tests: `tests/orders/sheet-view.test.ts` (12), `tests/e2e/orders-sheets.spec.ts`. `npm run check` green (2,670). Golden fights and recorded stands unchanged.
+- **Next:** T10.15.

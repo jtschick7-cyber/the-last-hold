@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import { ORDER_NAMES, type OrderId } from '../../content/orders';
 import { ordersCardView, seatStepOrders } from '../../core/systems/orders-view';
+import type { OrderRow } from '../../core/systems/orders-view';
 import { seatCount } from '../../core/systems/orders-seats';
 import { now } from '../../platform/clock';
 import { dispatch, game, version } from '../app/runtime';
@@ -77,19 +78,67 @@ export const SeatStepSheet = () => (
   </div>
 );
 
-/** Mid-cycle: Seat, Unseat or Swap, with the cooldown line (D412). */
+/** One Order's Seat, Unseat or Swap in button, and the swap's "Instead of:" choice (D412). */
+export const SeatButtons = ({ row, keptNote = true }: { row: OrderRow; keptNote?: boolean }) => {
+  const [swapping, setSwapping] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+  const run = (cmd: Parameters<typeof dispatch>[0], kept = false): void => {
+    const r = dispatch(cmd);
+    setNote(r.ok ? (kept && keptNote ? 'You keep your standing and chapters.' : null) : r.reason);
+    if (r.ok) setSwapping(false);
+  };
+  return (
+    <div>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        {row.action === 'seat' && (
+          <button
+            type="button"
+            class={styles.btn}
+            onClick={() => run({ type: 'orders.seat', order: row.id })}
+          >
+            Seat
+          </button>
+        )}
+        {row.action === 'unseat' && (
+          <button
+            type="button"
+            class={styles.btn}
+            onClick={() => run({ type: 'orders.unseat', order: row.id }, true)}
+          >
+            Unseat
+          </button>
+        )}
+        {row.action === 'swap' && (
+          <button type="button" class={styles.btn} onClick={() => setSwapping(!swapping)}>
+            Swap in
+          </button>
+        )}
+        {row.action === 'swap' && swapping && (
+          <>
+            <span class={styles.small}>Instead of:</span>
+            {row.swapOut.map((out) => (
+              <button
+                key={out}
+                type="button"
+                class={styles.btn}
+                onClick={() => run({ type: 'orders.swap', out, in: row.id })}
+              >
+                {ORDER_NAMES[out]}
+              </button>
+            ))}
+          </>
+        )}
+      </div>
+      {note && <p class={`${styles.small} ${styles.warn}`}>{note}</p>}
+    </div>
+  );
+};
+
+/** Mid-cycle: Seat, Unseat or Swap for every open Order, with the cooldown line (D412). */
 export const SeatChangeView = () => {
   void version.value;
-  const s = game();
-  const v = ordersCardView(s, now());
-  const [swapping, setSwapping] = useState<OrderId | null>(null);
-  const [note, setNote] = useState<string | null>(null);
+  const v = ordersCardView(game(), now());
   if (!v) return <p>No Order has come yet.</p>;
-  const run = (cmd: Parameters<typeof dispatch>[0]): void => {
-    const r = dispatch(cmd);
-    setNote(r.ok ? null : r.reason);
-    if (r.ok) setSwapping(null);
-  };
   return (
     <div>
       <p>{v.seatsLine}</p>
@@ -103,50 +152,12 @@ export const SeatChangeView = () => {
                 <strong>{row.name}</strong>{' '}
                 <span class={styles.dim}>{row.seated ? 'Seated' : 'Not seated'}</span>
               </span>
-              {row.action === 'seat' && (
-                <button
-                  type="button"
-                  class={styles.btn}
-                  onClick={() => run({ type: 'orders.seat', order: row.id })}
-                >
-                  Seat
-                </button>
-              )}
-              {row.action === 'unseat' && (
-                <button
-                  type="button"
-                  class={styles.btn}
-                  onClick={() => run({ type: 'orders.unseat', order: row.id })}
-                >
-                  Unseat
-                </button>
-              )}
-              {row.action === 'swap' && (
-                <button type="button" class={styles.btn} onClick={() => setSwapping(row.id)}>
-                  Swap in
-                </button>
-              )}
             </div>
-            {row.action === 'swap' && swapping === row.id && (
-              <div class={styles.row} style={{ flexWrap: 'wrap' }}>
-                <span class={styles.small}>Instead of:</span>
-                {row.swapOut.map((out) => (
-                  <button
-                    key={out}
-                    type="button"
-                    class={styles.btn}
-                    onClick={() => run({ type: 'orders.swap', out, in: row.id })}
-                  >
-                    {ORDER_NAMES[out]}
-                  </button>
-                ))}
-              </div>
-            )}
+            <SeatButtons row={row} keptNote={false} />
           </li>
         ))}
       </ul>
       <p class={styles.small}>You keep your standing and chapters.</p>
-      {note && <p class={`${styles.small} ${styles.warn}`}>{note}</p>}
     </div>
   );
 };

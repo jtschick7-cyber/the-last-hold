@@ -5,6 +5,7 @@ import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { openOpeningScene } from './OpeningScene';
+import { OrderSheet } from './OrderSheet';
 import { SeatChangeView, SeatStepSheet } from './SeatSheets';
 
 // GDD §9.18 (D416): the Orders card on the Hold screen. Hidden until an Order has opened. The seat
@@ -22,13 +23,20 @@ export const OrdersCard = () => {
       <ul class={styles.list}>
         {v.rows.map((row) => (
           <li key={row.id} class={styles.divider}>
-            <div>
-              <strong>{row.name}</strong>
-              <span class={styles.dim}>
-                {' '}
-                · {row.levelWord} · {row.standing} · {row.seated ? 'Seated' : 'Not seated'}
+            <button
+              type="button"
+              class={styles.linkRow}
+              onClick={() => openSheet(row.name, () => <OrderSheet id={row.id} />)}
+            >
+              <span class={styles.grow}>
+                <strong>{row.name}</strong>
+                <span class={styles.dim}>
+                  {' '}
+                  · {row.levelWord} · {row.standing} · {row.seated ? 'Seated' : 'Not seated'}
+                </span>
               </span>
-            </div>
+              ▸
+            </button>
             {row.chapterWaits && <p class={styles.small}>A chapter waits for a seat.</p>}
             {row.gives && <p class={`${styles.small} ${styles.dim}`}>{row.gives}</p>}
           </li>

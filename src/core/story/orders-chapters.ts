@@ -11,7 +11,7 @@ import { orderLevel } from '../systems/orders';
 const onRoster = (s: GameState, ...ids: ('vesna' | 'ostap')[]): boolean =>
   ids.every((id) => s.hunters[id] !== undefined);
 
-const conditionHolds = (s: GameState, c: ChapterDef): boolean => {
+export const conditionHolds = (s: GameState, c: ChapterDef): boolean => {
   switch (c.condition) {
     case 'none':
       return true;
