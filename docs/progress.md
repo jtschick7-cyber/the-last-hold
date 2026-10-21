@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.2 the constants and the locked row (done, pushed).
-- **Next:** T10.3, standing hooks part 1 (contracts, stands, Delves).
-- **Open questions:** Q34 (two near-match names), Q36 (art), Q37 (Names sentence). None blocks T10.3.
+- **Last task:** T10.3 standing hooks, part 1 (done, pushed).
+- **Next:** T10.4, standing hooks part 2 (alchemy, the Archive, the Long Night).
+- **Open questions:** Q34 (two near-match names), Q36 (art), Q37 (Names sentence). None blocks T10.4.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -241,3 +241,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Test:** `tests/content/v10-constants.test.ts` fails if a locked value changes, checks each perk step × 4 ≤ the 20% ceiling, one weight per source, rising thresholds. Existing balance tests (both directions with the GDD, locked = plan §0.6) pass.
 - `npm run check` green (2,438 tests, 60 s). No locked value changed, no old row edited.
 - **Next:** T10.3.
+
+## 2026-10-21 — v0.10 session 1 (continued): T10.3 standing hooks, part 1
+- **New `core/systems/orders.ts`:** standing is derived (start + counts × weights + Triumphant stands × chunk) with its breakdown built by the same function; level is the higher of the derived one and the saved highest level, raised in the same call that adds standing.
+- **Three hooks:** a contract won (Moot for any village, Quenchers for Kozly Hollow), a Triumphant stand (the chunk to all four Orders, opened or not), a Delve floor whose result paid at least 1 Riftglass (7-day window on the event clock, capped). A lost contract, a Broken stand, a Cold Comfort run and a run past its allowance add nothing.
+- **Delve-optional test (D20, D271):** Delve standing is listed as a reward with an idle source (Kozly Hollow contracts).
+- **Tests:** `tests/orders/standing-hooks.test.ts` (16): each source adds its weight once, a 30 h catch-up equals 30 one-hour steps, the cap and a new window, a real Delve run, level never drops.
+- `npm run check` green (2,454 tests, 66 s). Golden fights and recorded stands unchanged; no existing test edited.
+- **Left for later:** the third-seat check after a level change (T10.5) will read the list `raiseLevels` returns; the full simulator is not re-run here (nothing reads standing yet; T10.17 checks the old players still equal the baseline).
+- **Next:** T10.4.

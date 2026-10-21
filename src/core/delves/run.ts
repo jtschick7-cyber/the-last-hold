@@ -26,6 +26,7 @@ import {
 } from './generate';
 import { namelessBonus } from './nameless';
 import { payHunterRewards } from './hunter-rewards';
+import { ordersDelveFloor } from '../systems/orders';
 import { payRiftglass } from './riftglass';
 import { grantIdleDelveRelics, grantRelic, noteBlessingTaken, recordDeepFight } from './rewards';
 
@@ -280,6 +281,7 @@ const payFloor = (state: GameState, run: DelveRun, floor: number): void => {
   const wanted = guardian ? balance.riftglass.guardian.value : balance.riftglass.perFloor.value;
   const paid = hasDrawback(state, run, 'no-riftglass') ? 0 : payRiftglass(state, wanted);
   run.earned.riftglass += paid;
+  ordersDelveFloor(state, paid, state.time); // GDD §5.13.2: only a floor that paid Riftglass counts
   payHunterRewards(state, run, floor, paid, guardian); // v0.8 (D316): only while the run pays
   if (guardian) {
     const g = guardians[guardianOf(run.seed)];

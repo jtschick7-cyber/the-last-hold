@@ -1,5 +1,6 @@
 import { ORDER_IDS, type OrderId } from '../../content/orders';
 import { balance } from '../../content/balance';
+import { levelOfStanding } from '../systems/orders';
 
 type Plain = Record<string, unknown>;
 const asPlain = (v: unknown): Plain => (typeof v === 'object' && v !== null ? (v as Plain) : {});
@@ -26,10 +27,6 @@ export const NOT_RECOVERED = [
 ] as const;
 export const PARTLY_RECOVERED =
   'Quenchers: Kozly Hollow contracts are counted from the village’s trust record, which stops counting once a village is Sworn, so the count may be low.';
-
-/** The level a standing gives: how many thresholds it has reached (0 to 4). */
-export const levelOf = (order: OrderId, standing: number): number =>
-  balance.orders.levelThresholds.value[order].filter((t) => standing >= t).length;
 
 export interface Backfill {
   start: Record<OrderId, number>;
@@ -71,7 +68,7 @@ export const backfillOrders = (state: Plain): Backfill => {
     const cap =
       balance.orders.levelThresholds.value[id][balance.orders.backfillCapLevel.value - 1] ?? 0;
     start[id] = Math.min(raw[id], cap);
-    levelHigh[id] = levelOf(id, start[id]);
+    levelHigh[id] = levelOfStanding(id, start[id]);
   }
   return { start, levelHigh, raw, notes: [...NOT_RECOVERED, PARTLY_RECOVERED] };
 };

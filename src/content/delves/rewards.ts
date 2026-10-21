@@ -46,6 +46,11 @@ export const delveRewards: readonly DelveRewardDef[] = [
     id: 'guardian-item',
     idleSource: 'Contract loot: the same items by the same rarities (GDD §5.11.2)',
   },
+  // v0.10 (GDD §5.13.2, D410): a floor that paid Riftglass adds a little Quenchers standing.
+  {
+    id: 'orders-standing:quenchers',
+    idleSource: 'Kozly Hollow contracts won add more Quenchers standing, with no cap (GDD §5.13.2)',
+  },
   ...DELVE_RELIC_IDS.map((id): DelveRewardDef => ({
     id: `relic:${id}`,
     idleSource:

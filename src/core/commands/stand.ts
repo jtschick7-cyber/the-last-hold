@@ -17,6 +17,7 @@ import { endRunForStand } from '../delves/run';
 import { grantLegendaries } from '../systems/legendaries';
 import { beginAct, currentAct, standDocuments, wardenDocuments } from '../story/documents';
 import { triumphantStand } from '../story/trust';
+import { ordersTriumphantStand } from '../systems/orders';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.9.3 and §5.9.7 (D107, D110): making the Last Stand, then the Long Night, in
@@ -109,7 +110,10 @@ export const makeStand = (
   // GDD §5.14.9: the stand closes the act (its testament on the result sheet), and a
   // Triumphant one raises every village's trust a step (D146).
   // The steps are kept on the record so the result sheet can show them whenever it is opened (D183).
-  if (stand.band === 'triumphant') stand.trustSteps = triumphantStand(state);
+  if (stand.band === 'triumphant') {
+    stand.trustSteps = triumphantStand(state);
+    ordersTriumphantStand(state); // GDD §5.13.2: the chunk goes to every Order
+  }
   standDocuments(state);
   grantLegendaries(state); // Yrsa's Thole comes with D5-06 (GDD §8.12)
   // GDD §5.14.1 (D257): after Act V's Last Stand the Unlit's door opens.
