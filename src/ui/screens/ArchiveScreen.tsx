@@ -12,7 +12,7 @@ import {
 import { ordersShelf } from '../../core/story/orders-chapter-view';
 import { rememberingShelf, rimeAfterEnding } from '../../core/story/remembering-view';
 import { afterTheEnding, rememberingShelfTitle } from '../../content/text/remembering';
-import { openWarmRime } from '../remembering/ReadingScene';
+import { openWarmRime, playEnding } from '../remembering/ReadingScene';
 import { openVigilScene } from '../remembering/VigilScene';
 import { reopenChapter } from '../orders/ChapterScene';
 import { docKey } from '../../core/story/documents';
@@ -246,7 +246,11 @@ const Library = () => {
           <ul class={styles.list}>
             {remembering.map((e) => (
               <li key={e.id}>
-                <button type="button" class={styles.linkRow} onClick={openVigilScene}>
+                <button
+                  type="button"
+                  class={styles.linkRow}
+                  onClick={e.id === 'reading' ? playEnding : openVigilScene}
+                >
                   <span class={styles.grow}>
                     <strong>{e.title}</strong>
                     <span class={`${styles.small} ${styles.dim}`}> · {e.blurb}</span>

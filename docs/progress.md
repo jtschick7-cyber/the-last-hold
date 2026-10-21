@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.12 the Hearth Hall look (owner approval of the look pending).
-- **Next:** T11.13 the Library shelf "The Remembering".
+- **Last task:** T11.13 the Library shelf.
+- **Next:** T11.14 the text content test.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -495,3 +495,10 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Owner: please look** at the Hold screen in the preview (debug: Finish Act VI shows the frost; Open the gate, Remember Them shows the lamp) and approve or ask for changes. The frost is a speckled band; I can thin or thicken it.
 - **Not seen on a phone** (T11.16). No old test edited. Nothing skipped.
 - **Owner's change (same session):** thicker frost, and rime on the roofs. The ground and wall-foot frost is denser, and a ragged cap of rime now sits under the top outline of roofs, towers and trees (found by reading the scene picture, so it follows each Rank). The lamp is unchanged. The look still awaits your approval.
+
+## 2026-10-21 — v0.11 session 14: T11.13 the Library shelf
+- **Owner approved the frost and lamp look** (thicker frost, rime on roofs).
+- **Built:** the shelf "The Remembering" now has "The reading" (*The roll, read aloud in the Hearth Hall.*) after Remember Them, which replays the whole ending (R-03 to R-11, Skip on the reading only), then "Later" after the vigil. It stays hidden until an entry is reached; neither depends on the gate. The card's "After Remember Them" form has a "Read it again" button doing the same, so a closed ending can now be replayed. R-11 was already on the Rime shelf (T11.10).
+- **Tests:** `tests/remembering/library-shelf.test.ts` (hidden, both entries and their order, titles and blurbs equal lore §34.8, replay is whole and changes nothing, the card's four forms, after-choice forms with the gate artificially closed).
+- **Older test edited (the plan allows it):** `tests/remembering/vigil.test.ts` expected the shelf to be just "Later" after both choices; it now expects "The reading" then "Later". Nothing loosened.
+- **Not seen on a phone** (T11.16). Nothing skipped.

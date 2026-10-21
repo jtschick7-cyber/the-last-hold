@@ -97,6 +97,7 @@ export const readingControls = {
 /** The Library's shelf "The Remembering" (lore §34.8): shown once one entry is reached. */
 export const rememberingShelfTitle = 'The Remembering';
 export const rememberingShelfEntries = {
+  reading: { title: 'The reading', blurb: 'The roll, read aloud in the Hearth Hall.' },
   later: { title: 'Later', blurb: 'Pechko, when you were not ready.' },
 } as const;
 

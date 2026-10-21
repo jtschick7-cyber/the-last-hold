@@ -73,16 +73,23 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
 };
 
 export interface RememberingShelfEntry {
-  readonly id: 'later';
+  readonly id: 'reading' | 'later';
   readonly title: string;
   readonly blurb: string;
 }
 
-/** The Library shelf: empty (so hidden) until an entry is reached (lore §34.8). "Later" follows Keep the Vigil. */
-export const rememberingShelf = (state: GameState): RememberingShelfEntry[] =>
-  state.remembering.endings.some((e) => e.ending === 'vigil')
-    ? [{ id: 'later', ...rememberingShelfEntries.later }]
-    : [];
+/**
+ * The Library shelf: empty (so hidden) until an entry is reached (lore §34.8). "The reading" follows
+ * Remember Them and replays the whole ending; "Later" follows Keep the Vigil. Neither depends on the gate.
+ */
+export const rememberingShelf = (state: GameState): RememberingShelfEntry[] => {
+  const chosen = (e: 'remember' | 'vigil'): boolean =>
+    state.remembering.endings.some((x) => x.ending === e);
+  return [
+    ...(chosen('remember') ? [{ id: 'reading' as const, ...rememberingShelfEntries.reading }] : []),
+    ...(chosen('vigil') ? [{ id: 'later' as const, ...rememberingShelfEntries.later }] : []),
+  ];
+};
 
 export interface ReadingFrame {
   readonly n: number;

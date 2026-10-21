@@ -7,7 +7,7 @@ import { openVigilScene } from './VigilScene';
 import styles from '../styles/ui.module.css';
 
 // GDD §5.15.2, §9.19 (D450): the quiet card on the Hold screen. Plain lines, no bar, no percentage,
-// no countdown. Hidden until Pechko's scene has been seen. "Read it again" comes with the Library (T11.13).
+// no countdown. Hidden until Pechko's scene has been seen. The after-choice forms do not depend on the gate (D461 (5)).
 export const RememberingCard = () => {
   void version.value;
   const v = rememberingCardView(game());
@@ -75,7 +75,14 @@ export const RememberingCard = () => {
           </button>
         </>
       )}
-      {v.form === 'afterRemember' && <p>{c.afterRemember.line}</p>}
+      {v.form === 'afterRemember' && (
+        <>
+          <p>{c.afterRemember.line}</p>
+          <button type="button" class={styles.btn} onClick={playEnding}>
+            {c.afterRemember.again}
+          </button>
+        </>
+      )}
     </section>
   );
 };

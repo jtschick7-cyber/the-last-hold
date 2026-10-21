@@ -67,7 +67,8 @@ describe('the shelf “The Remembering”', () => {
     expect(rememberingShelf(s)).toEqual([{ id: 'later', ...rememberingShelfEntries.later }]);
     expect(rememberingShelf(s)[0]?.title).toBe(vigilScene.title);
     apply(s, { type: 'remembering.choose', ending: 'remember' }, s.time);
-    expect(rememberingShelf(s).map((e) => e.id)).toEqual(['later']);
+    // T11.13: Remember Them adds "The reading" to the shelf; "Later" stays.
+    expect(rememberingShelf(s).map((e) => e.id)).toEqual(['reading', 'later']);
     expect(rememberingShelfTitle).toBe('The Remembering');
   });
 });
