@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.16 built, waiting for the owner's look (box not ticked).
-- **Next:** owner approves the art, then T9.17 (simulator rows, `[?]`), then T9.18, T9.19.
+- **Last task:** T9.16 done (art approved). T9.17 measured; stopped on Q33.
+- **Next:** the owner answers Q33 (and the two D383 rows), then T9.17 (simulator rows, `[?]`), then T9.18, T9.19.
 - **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -184,3 +184,9 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Shown in the game:** the token icon on the Events card, the Rime icon on the Rime shelf; the creatures' sprites in playback and their portraits on the shelf and hunt list.
 - **Not done:** the box stays unticked until you look at `public/contact-sheet.html` (or the preview) and approve or ask for redraws. The sprites are small and simple; the Lindworm and Likho read least clearly.
 - `npm run check` green.
+
+## 2026-10-21 — v0.9 session 5 (continued): T9.17 measured, stopped on Q33
+- **T9.16 ticked:** art approved. The braids were redrawn at your request (four hunter portraits changed).
+- **Measured** the five approved rows on 5 Monday Eventer seeds. First boss attempt passes (9 h after the Citadel). First kill is cycle 6 (needs 2), first unlock cycle 5 (needs 3), full bank about 29% (needs 15%). Cause: the Eventer's contract decisions are Standard's, so fewer than four hunters are free at about 90% of open check-ins.
+- **Tried Q28 (b)** (three hunters when four are not free): little change; reverted, nothing committed.
+- **Stopped and asked:** Q33 in `docs/questions.md` has the options and my recommendation. No row is written to `sim/targets.ts`; no `sim:accept`. The two D383 rows still need their own yes.

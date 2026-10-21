@@ -231,7 +231,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - Playback with Skip and Log, the result sheets, the away-sheet full-bank line, the hunt list and track sheets with odds, the unlock sheet, the hunter sheet's rest line, the Great Beasts shelf, the Rime shelf and reader, the last result.
   - *Acceptance:* 1. A locked track shows its restriction and reason. 2. The unlock sheet says active or reserve correctly. 3. The Rime reader is pale text on a dark card. 4. A Great Beast is Identified on first fight and shows no levels. 5. An unlocked legendary hunter appears in the Hunters tab; a locked one does not.
 
-- [ ] **T9.16 — Art** *(assets/)* `[?]` *(drawn in code at the owner's choice, 2026-10-21; waits only for the owner to look at `public/contact-sheet.html` and approve or ask for redraws)*
+- [x] **T9.16 — Art** *(assets/)* *(drawn in code at the owner's choice; art approved by the owner 2026-10-21)*
   - Battle sprites and portraits for the three hunters and six creatures, icons for the Rime shelf and tokens; the manifest fallback stays for anything missing. Owner supplies or approves the art.
   - *Acceptance:* every new entry has art or a manifest fallback; the owner has seen the placeholders and the real art.
 

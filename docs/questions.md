@@ -69,3 +69,16 @@ Answered questions Q1–Q25 are in [`docs/archive/questions-answered.md`](archiv
 - **Options:** (a) Apply the softening table (changes GDD §8.13 and the content tests); (b) leave the numbers as written and accept uneven bosses; (c) a different change you name.
 - **Recommendation:** (a) for the bosses; for hunts, soften `hunt.trackPoints` to 10/4, 15/6, 22/8 and leave the quarries.
 - **Answer (owner):** agree with the recommendations (bosses: apply the softening table; hunts: soften `hunt.trackPoints`, leave the quarries), 2026-10-21. Logged as D398.
+
+### Q33 — The Eventer cannot meet three of the approved event rows as it plays (blocks T9.17)
+- **What I measured** (5 Monday seeds, Eventer, current policy; report `sim/reports/2026-10-21T09-59-36-262Z-eventer.md`). Medians:
+  - First boss attempt: 9 h after the Citadel (needs 24 h or less). **Passes.**
+  - First boss defeated: **cycle 6** in every seed (needs cycle 2 or earlier). **Fails.**
+  - First legendary hunter unlocked: **cycle 5** (cycles 4 to 6 by seed; needs cycle 3 or earlier). **Fails.**
+  - Full bank at open check-ins: **about 29%** (26% to 30% by seed; needs 15% or less). **Fails.**
+  - Silver #6 with boss silver: not yet wired into the check; boss silver looks large next to bounty silver, so it may fail too.
+- **Why:** at 85–94 of about 95 open check-ins, fewer than four hunters are free, because the Eventer's contract decisions are Standard's and Standard keeps hunters on contracts. It spends about 1 token in 4 days of play.
+- **I tried Q28 (b)** (send three hunters when four are not free): it barely moved anything (first kill cycle 4 to 6, unlocks cycle 4 to 13, full bank about 26%). I reverted it; nothing is committed. No tunable fixes this: the boss pool and hunt points are already measured for the best parties.
+- **Options:** (a) **The Eventer is a player who cares about events:** when a token is banked it holds four hunters back from new contracts (a policy change; GDD §6.1 says "Standard's contract decisions", so it changes with your yes). The rows stay as approved. (b) **Keep the Eventer as is and move the rows** to what it reaches: first kill by cycle 6, first unlock by cycle 5, full bank at most 30% (rows move; your yes). (c) Both: the hold-back policy first, then the rows only if it is not enough.
+- **Recommendation:** (c). The approved rows say how fast a player who cares about events should see them; a player who never frees a hunter measures the wrong thing. Fix the player first, then measure again, and move a row only if it still does not pass.
+- **Blocks:** all of T9.17 (the Eventer rows). The two D383 rows (Act VI lands; the Dross-Tide probe) are still waiting for their own yes.
