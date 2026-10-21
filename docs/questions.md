@@ -51,11 +51,11 @@ Answered questions Q1–Q25 are in [`docs/archive/questions-answered.md`](archiv
 - **Blocks:** the final pool in T9.13 and anything calibrated on it.
 - **Answer (owner):** (a), 21,000. Logged as D400, 2026-10-21.
 
-### Q30 — `boss.order` uses short keys; the Great Beasts' ids are long (T9.6; not blocking)
+### Q30 — `boss.order` uses short keys; the Great Beasts' ids are long (T9.6; not blocking) — answered
 - **What I found:** the locked `boss.order` is `[lindworm, barrow-king, mother-of-the-river]` (GDD §7.11, D379), but the technical design fixes the first beast's id as `lindworm-of-velk-fjord`.
 - **Options:** (a) keep both and match them by position (what T9.4 does; a test pins it); (b) change the locked value to the full ids through a decisions row.
 - **Recommendation:** (a): nothing locked moves.
-- **Answer (owner):**
+- **Answer (owner):** (a), 2026-10-21. Nothing locked moves.
 
 ### Q31 — The Eventer never goes on a hunt as the rules are written (blocks T9.12's hunt rule, T9.13, T9.17) — answered
 - **What I found:** GDD §6.1 (D367) says the Eventer picks the boss "unless a legendary hunter is within reach", meaning one win on the hunt's best track would reach 100 points. The best track pays 32 for a win, and points only come from hunt attempts. From 0 points, no hunt is ever within reach, so the Eventer never starts one. In a 42-day run it made 49 boss attempts and 0 hunt attempts. So "first legendary hunter unlocked by the end of the third cycle" can never pass, and the hunt numbers in T9.13 would go unmeasured by the Eventer.
