@@ -7,6 +7,7 @@ import { RULES_VERSION } from '../rules-version';
 import { resetForNewCycle } from '../long-night/reset';
 import { embersPayout } from '../stand/embers';
 import { runStand } from '../stand/engine';
+import { fixStandPool } from '../stand/pool';
 import { arrivalTrophyCap, standInputFor } from '../stand/from-state';
 import { bestWavesEver, relicsFound } from '../stand/relics';
 import type { GameState, Preparation, StandRecord } from '../state/game-state';
@@ -53,6 +54,8 @@ export const makeStand = (
   const bad = prepProblem(state, party, full);
   if (bad) return refuse(bad);
 
+  // The pool is normally fixed at Bastion; the v0.4 arrival's stand can come at any Rank (D363).
+  fixStandPool(state);
   // A paused Delve ends here and keeps what it earned (GDD §5.10.2, D267).
   endRunForStand(state);
   // 1. Contracts still running finish now, with the dice fixed at launch.
@@ -96,6 +99,7 @@ export const makeStand = (
     trustSteps: [],
     band: bandFor(result.wavesHeld),
     alchemy: input.alchemy ?? 0, // frozen with the stand (D206)
+    ...(input.pool === 'dross' ? { pool: 'dross' as const } : {}),
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];

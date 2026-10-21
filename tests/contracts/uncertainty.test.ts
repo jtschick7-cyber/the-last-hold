@@ -279,7 +279,7 @@ describe('unidentified contracts on the board (GDD §5.6)', () => {
     expect(r?.winChance).toBeCloseTo(shown.winChance, 12);
     expect(r?.reckless).toBe(shown.reckless);
     advance(s, s.time + HOUR);
-    expect(s.log.recentFights[0]?.monster.monster).toBe('kikimora');
+    expect(s.log.recentFights[0]?.monster).toMatchObject({ monster: 'kikimora' });
     expect(s.bestiary.kikimora?.level).toBeGreaterThanOrEqual(2); // fighting it identified it
   });
 });

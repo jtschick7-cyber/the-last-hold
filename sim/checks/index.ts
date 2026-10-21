@@ -23,7 +23,7 @@ import { roster4Check } from './roster-4';
 import { somethingToDoCheck } from './something-to-do';
 import { firstRuinCheck } from './first-ruin';
 import { ribbonshadesCheck } from './ribbonshades';
-import { act1Check, act2Check, act3Check, act4Check, act5Check } from './story-acts';
+import { act1Check, act2Check, act3Check, act4Check, act5Check, act6Check } from './story-acts';
 import { trustMovesCheck } from './trust-moves';
 import {
   arvidLetterCheck,
@@ -35,6 +35,14 @@ import {
 } from './v06';
 import { firstGuardianCheck, idleOnlyCheck } from './v07';
 import { firstWrightCheck, lateLettersCheck } from './v08';
+import {
+  drossProbeCheck,
+  firstBossAttemptCheck,
+  firstBossKillCheck,
+  firstHunterUnlockCheck,
+  silverWithBossCheck,
+  tokensNotWastedCheck,
+} from './v09';
 import type { Check } from './types';
 
 export type { Check, CheckResult } from './types';
@@ -87,6 +95,13 @@ export const CHECKS: readonly Check[] = [
   idleOnlyCheck,
   // v0.8 (D322)
   act5Check,
+  act6Check,
+  drossProbeCheck,
+  firstBossAttemptCheck,
+  firstBossKillCheck,
+  firstHunterUnlockCheck,
+  tokensNotWastedCheck,
+  silverWithBossCheck,
   lateLettersCheck,
   firstWrightCheck,
 ];

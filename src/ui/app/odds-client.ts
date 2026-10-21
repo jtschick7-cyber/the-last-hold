@@ -3,6 +3,22 @@ import { computeOdds, type Odds, type OddsInput } from '../../core/contracts/odd
 import { suggestParty, type SuggestInput, type Suggestion } from '../../core/contracts/suggest';
 import type { WorkerRequest, WorkerResponse } from '../../platform/worker/protocol';
 import { num } from '../../core/balance-access';
+import {
+  previewBoss,
+  suggestBossParty,
+  type BossPreview,
+  type BossPreviewInput,
+  type BossSuggestInput,
+  type BossSuggestion,
+} from '../../core/systems/boss-odds';
+import {
+  computeHuntOdds,
+  suggestHuntParty,
+  type HuntOdds,
+  type HuntOddsInput,
+  type HuntSuggestInput,
+  type HuntSuggestion,
+} from '../../core/systems/hunt-odds';
 import { previewStand, type StandPreview, type StandPreviewInput } from '../../core/stand/preview';
 
 // Technical design §10.1: odds and Suggest go to a worker, debounced, with stale
@@ -125,4 +141,75 @@ export const requestStandPreview = async (input: StandPreviewInput): Promise<Sta
   const preview = previewStand({ ...input, samples: num('laststand.policySamples') });
   lastStandMs.value = performance.now() - started;
   return { preview, quick: true };
+};
+
+export const lastBossPreviewMs = signal<number | null>(null);
+export const lastBossSuggestMs = signal<number | null>(null);
+
+export interface BossPreviewAnswer {
+  preview: BossPreview;
+  /** True when the main thread answered with fewer practice fights. */
+  quick: boolean;
+}
+
+/** GDD §5.12.4, §6.5: the boss preview, in the worker (100 practice fights). */
+export const requestBossPreview = async (input: BossPreviewInput): Promise<BossPreviewAnswer> => {
+  const reply = send({ kind: 'bossPreview', input });
+  if (reply) {
+    const r = await reply;
+    if (r.kind === 'bossPreview') {
+      lastBossPreviewMs.value = r.ms;
+      return { preview: r.result, quick: false };
+    }
+  }
+  const started = performance.now();
+  const preview = previewBoss({ ...input, samples: num('laststand.policySamples') });
+  lastBossPreviewMs.value = performance.now() - started;
+  return { preview, quick: true };
+};
+
+/** Suggest for a boss, in the worker; the fallback runs the same search on the main thread. */
+export const requestBossSuggest = async (
+  input: BossSuggestInput,
+): Promise<BossSuggestion | null> => {
+  const reply = send({ kind: 'bossSuggest', input });
+  if (reply) {
+    const r = await reply;
+    if (r.kind === 'bossSuggest') {
+      lastBossSuggestMs.value = r.ms;
+      return r.result;
+    }
+  }
+  const started = performance.now();
+  const result = suggestBossParty(input);
+  lastBossSuggestMs.value = performance.now() - started;
+  return result;
+};
+
+export interface HuntOddsAnswer {
+  odds: HuntOdds;
+  /** True when the main thread answered with fewer practice fights. */
+  quick: boolean;
+}
+
+/** GDD §5.12.6, §9.17: a hunt track's odds, in the worker (500 practice fights). */
+export const requestHuntOdds = async (input: HuntOddsInput): Promise<HuntOddsAnswer> => {
+  const reply = send({ kind: 'huntOdds', input });
+  if (reply) {
+    const r = await reply;
+    if (r.kind === 'huntOdds') return { odds: r.result, quick: false };
+  }
+  return { odds: computeHuntOdds({ ...input, samples: QUICK_SAMPLES }), quick: true };
+};
+
+/** Suggest for a hunt, in the worker; the fallback runs the same search on the main thread. */
+export const requestHuntSuggest = async (
+  input: HuntSuggestInput,
+): Promise<HuntSuggestion | null> => {
+  const reply = send({ kind: 'huntSuggest', input });
+  if (reply) {
+    const r = await reply;
+    if (r.kind === 'huntSuggest') return r.result;
+  }
+  return suggestHuntParty(input);
 };

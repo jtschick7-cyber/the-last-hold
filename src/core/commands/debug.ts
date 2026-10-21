@@ -10,6 +10,7 @@ import { shiftClock } from '../state/shift';
 import { sweepDocuments } from '../story/documents';
 import { noteAllPeaks } from '../story/letters';
 import { rosterCap } from '../systems/hunters';
+import { fixStandPool } from '../stand/pool';
 import { ok, refuse, type ApplyResult } from './types';
 
 // Technical design §15 / GDD §9.10: every debug action is a command, and any of
@@ -81,6 +82,7 @@ export const unlockAge = (state: GameState, age: AgeId): ApplyResult => {
   state.cycle.age = age;
   const record = state.cycles[state.cycles.length - 1];
   if (record && record.ranks[age] === undefined) record.ranks[age] = state.time; // D113
+  if (age === 'bastion') fixStandPool(state);
   startAllowanceClock(state);
   sweepDocuments(state);
   state.meta.debugUsed = true;

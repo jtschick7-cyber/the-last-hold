@@ -3,7 +3,9 @@ import { RESOURCE_IDS } from '../../content/resources';
 import type { GameState } from '../state/game-state';
 import { ageUpStatus } from '../systems/ages';
 import { startAllowanceClock } from '../delves/riftglass';
+import { openEvents } from '../systems/events';
 import { sweepDocuments } from '../story/documents';
+import { fixStandPool } from '../stand/pool';
 import { ok, refuse, type ApplyResult } from './types';
 
 // GDD §5.1.3: the Age-up. Its grants (age bucket, higher maximum levels, new
@@ -23,7 +25,9 @@ export const ageUp = (state: GameState): ApplyResult => {
   // D113: the cycle history keeps when each Rank was reached.
   const record = state.cycles[state.cycles.length - 1];
   if (record) record.ranks[status.to] = state.time;
+  if (status.to === 'bastion') fixStandPool(state); // GDD §5.9.3: the wave list is first fixed here (D363)
   startAllowanceClock(state); // GDD §5.10.8: the Riftglass allowance begins when Delves open
   sweepDocuments(state); // GDD §5.14.2: a Rank document arrives on the Rank-up sheet
+  openEvents(state, state.time); // GDD §5.12.1: events open for good at the first Citadel
   return ok;
 };

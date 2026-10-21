@@ -3,6 +3,8 @@ import type { DamageType, FamilyId, LocationId } from '../../content/damage';
 import type { GearId } from '../../content/gear';
 import type { LegendaryDef, LegendaryId } from '../../content/legendaries';
 import type { HunterId, RoleId, Stats } from '../../content/hunters';
+import type { BossId, EventAbility } from '../../content/great-beasts';
+import type { QuarryId } from '../../content/hunts';
 import type { MonsterAbility, MonsterId } from '../../content/monsters';
 import type { GuardianId } from '../../content/delves/guardians';
 import type { DelveRelicId } from '../../content/delves/relics';
@@ -79,8 +81,26 @@ export interface GuardianInstance {
   readonly mightMult?: number;
 }
 
-/** What a fight is against: a contract species or a Deep guardian. */
-export type FightMonster = MonsterInstance | GuardianInstance;
+/**
+ * A Great Beast or a Legendary Hunt's quarry (GDD §8.13, §8.14; v0.9, D358). `healthOverride` is
+ * the pool still standing at launch (a boss) and replaces the tier-scaled Health; absent on a
+ * quarry. A contract or a stand passes none of this, so every old fight is untouched.
+ */
+export interface EventInstance {
+  readonly event: BossId | QuarryId;
+  readonly tier: number;
+  readonly healthOverride?: number;
+  /** Never set: events count for no knowledge (D369). Present so the monster shapes agree. */
+  readonly knowledge?: number;
+  readonly healthMult?: number;
+  readonly mightMult?: number;
+}
+
+/** What a fight is against: a contract species, a Deep guardian, or an event creature. */
+export type FightMonster = MonsterInstance | GuardianInstance | EventInstance;
+
+/** Every ability a monster-side combatant can carry. */
+export type FightAbility = MonsterAbility | EventAbility;
 
 /** A Delve floor's fight (GDD §5.10, D254, D255): what the run brings into it. */
 export interface DelveFightOptions {
@@ -175,7 +195,7 @@ export interface Combatant {
   readonly fireTakenReduction: number;
   readonly silverSubHit: boolean;
   readonly runeSubHit: boolean;
-  readonly abilities: readonly MonsterAbility[];
+  readonly abilities: readonly FightAbility[];
   /** Actions taken so far, including lost ones. */
   actions: number;
   /** Actions still to lose (held, charmed, enthralled). */
@@ -228,6 +248,10 @@ export interface Combatant {
   /** Stopping Root: Venom for `rootAmount` at the start of each of the monster's next `rootLeft` actions. */
   rootLeft: number;
   rootAmount: number;
+  /** outgoing% from a use-skill (Torch Held High), until its holder's next action (v0.9). */
+  useDealt: number;
+  /** Coil: the action number it last held a target in (it holds one target per action). */
+  coilAction: number;
   /** outgoing%: added to the hunter's damage bonuses. */
   dealtBonus: number;
   /** outgoing% against one contract family, from bane lines on worn items (v0.8); empty elsewhere. */

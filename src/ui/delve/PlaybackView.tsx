@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { SpriteFrameName } from '../../content/assets';
 import type { FloorPlayback } from '../../core/delves/view';
 import { reducedMotion } from '../app/motion';
-import { dispatch } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { Arena } from './Arena';
@@ -40,7 +39,18 @@ const outcomeLine = (pb: FloorPlayback): string =>
       ? 'The guardian is beaten.'
       : 'The floor is cleared.';
 
-export const PlaybackView = ({ pb, onContinue }: { pb: FloorPlayback; onContinue: () => void }) => {
+export const PlaybackView = ({
+  pb,
+  onContinue,
+  onFinish,
+  continueLabel = 'Continue',
+}: {
+  pb: FloorPlayback;
+  onContinue: () => void;
+  /** Runs once, when the playback reaches its end (or was skipped to it): a floor is fought then. */
+  onFinish?: () => void;
+  continueLabel?: string;
+}) => {
   const still = useMemo(reducedMotion, []);
   const last = pb.steps.length - 1;
   const [i, setI] = useState(still ? last : -1);
@@ -57,11 +67,11 @@ export const PlaybackView = ({ pb, onContinue }: { pb: FloorPlayback; onContinue
     return () => clearInterval(timer);
   }, [finished, last, pb.steps.length]);
 
-  // The floor is fought once the playback has reached its end (or was skipped to it).
+  // The caller's `onFinish` runs once the playback has reached its end (or was skipped to it).
   useEffect(() => {
     if (!finished || moved.current) return;
     moved.current = true;
-    dispatch({ type: 'delve.fight' });
+    onFinish?.();
   }, [finished]);
 
   const step = i >= 0 ? pb.steps[i] : undefined;
@@ -105,7 +115,7 @@ export const PlaybackView = ({ pb, onContinue }: { pb: FloorPlayback; onContinue
         <span class={styles.grow} />
         {finished && (
           <button type="button" class={styles.btnPrimary} onClick={onContinue}>
-            Continue
+            {continueLabel}
           </button>
         )}
       </div>

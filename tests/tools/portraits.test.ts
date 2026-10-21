@@ -4,8 +4,15 @@
 import { readFileSync } from 'node:fs';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
-import { assetById, hunterPortraitId, monsterPortraitId } from '../../src/content/assets';
+import {
+  assetById,
+  eventCreaturePortraitId,
+  hunterPortraitId,
+  monsterPortraitId,
+} from '../../src/content/assets';
 import { HUNTER_IDS, hunters } from '../../src/content/hunters';
+import { EVENT_CREATURE_IDS } from '../../src/content/hunts';
+import { drawCreaturePortrait } from '../../tools/draw-creatures';
 import { MONSTER_IDS } from '../../src/content/monsters';
 import { drawHunter } from '../../tools/draw-hunter';
 import { drawMonster, hasDrawing } from '../../tools/draw-monster';
@@ -15,6 +22,11 @@ const file = (name: string): Buffer =>
   readFileSync(new URL(`../../public/assets/portraits/${name}`, import.meta.url));
 
 const cases = [
+  ...EVENT_CREATURE_IDS.map((id) => ({
+    row: eventCreaturePortraitId(id),
+    name: `creature-${id}.png`,
+    drawn: () => drawCreaturePortrait(id).toPng(),
+  })),
   ...HUNTER_IDS.map((id) => ({
     row: hunterPortraitId(id),
     name: `${id}.png`,
@@ -63,7 +75,7 @@ describe('generated portraits', () => {
   });
 
   it('has a manifest row for each hunter and species, pointing at its file', () => {
-    expect(cases).toHaveLength(HUNTER_IDS.length + MONSTER_IDS.length);
+    expect(cases).toHaveLength(EVENT_CREATURE_IDS.length + HUNTER_IDS.length + MONSTER_IDS.length);
     for (const c of cases) {
       const row = assetById.get(c.row);
       expect(row?.source, c.row).toBe('generated');

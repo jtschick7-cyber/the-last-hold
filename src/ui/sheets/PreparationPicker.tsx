@@ -6,7 +6,16 @@ import {
 } from '../../content/consumables';
 import { hunters, type HunterId } from '../../content/hunters';
 import { num } from '../../core/balance-access';
-import { bombIsWeak, isWellPrepared, prepCounts } from '../../core/contracts/prep';
+import type { DamageType, FamilyId } from '../../content/damage';
+import { families } from '../../content/damage';
+import {
+  bombIsWeak,
+  bombWeakAgainst,
+  isWellPrepared,
+  oilFitsFamily,
+  prepCounts,
+} from '../../core/contracts/prep';
+import { brewSummary } from '../../core/alchemy/brew-text';
 import type { ContractIdentity } from '../../core/investigation/view';
 import type { GameState, Preparation } from '../../core/state/game-state';
 import { skillLevel } from '../../core/skills/skills';
@@ -84,12 +93,16 @@ export const PreparationPicker = ({
   party,
   prep,
   identity,
+  creature,
   onChange,
 }: {
   state: GameState;
   party: readonly HunterId[];
   prep: Preparation;
-  identity: ContractIdentity;
+  /** The contract's monster, for a contract launch. */
+  identity?: ContractIdentity;
+  /** A Great Beast or a quarry (GDD §5.12): known from the first look, so the notes name it. */
+  creature?: { family: FamilyId; resist: Readonly<Record<DamageType, number>> };
   onChange: (p: Preparation) => void;
 }) => {
   const stocked = (kind: ConsumableKind): boolean =>
@@ -105,7 +118,7 @@ export const PreparationPicker = ({
   const oils = Object.values(prep.oils);
   const bombSlots = num('prep.bombSlots');
   const wellPrepared =
-    identity.identified && identity.monster
+    identity && identity.identified && identity.monster
       ? isWellPrepared(identity.monster, prep, prep.bombs.includes('saltburst'))
       : false;
   return (
@@ -144,7 +157,13 @@ export const PreparationPicker = ({
       ))}
       {[...new Set(oils)].map((oil) => (
         <div key={oil} class={`${styles.small} ${styles.dim}`}>
-          {oilNote(oil, identity, skillLevel(state, 'alchemy'))}
+          {creature
+            ? oilFitsFamily(oil, creature.family)
+              ? `${consumables[oil].name}: ${brewSummary(skillLevel(state, 'alchemy'), oil).text}`
+              : `${consumables[oil].name}: no effect (target: ${families[creature.family].name})`
+            : identity
+              ? oilNote(oil, identity, skillLevel(state, 'alchemy'))
+              : ''}
         </div>
       ))}
       {prep.bombs.map((b, i) => {
@@ -154,11 +173,15 @@ export const PreparationPicker = ({
             ? 'cancels the monster’s first ability'
             : e.kind === 'smoke'
               ? 'the monster loses its next action'
-              : identity.identified && identity.monster
-                ? bombIsWeak(b, identity.monster)
+              : creature
+                ? bombWeakAgainst(b, creature.resist)
                   ? 'weak to it ✔'
                   : 'not especially weak to it'
-                : 'weakness depends on what it is';
+                : identity && identity.identified && identity.monster
+                  ? bombIsWeak(b, identity.monster)
+                    ? 'weak to it ✔'
+                    : 'not especially weak to it'
+                  : 'weakness depends on what it is';
         return (
           <div key={`${b}${i}`} class={`${styles.small} ${styles.dim}`}>
             {consumables[b].name}: {note}

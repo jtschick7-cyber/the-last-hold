@@ -65,7 +65,7 @@ export interface Odds {
   readonly why: Breakdown;
 }
 
-const marginFor = (p: number, n: number): number => 1.96 * Math.sqrt((p * (1 - p)) / n);
+export const marginFor = (p: number, n: number): number => 1.96 * Math.sqrt((p * (1 - p)) / n);
 
 const asPool = (m: OddsInput['monster']): readonly MonsterInstance[] =>
   Array.isArray(m) ? (m as readonly MonsterInstance[]) : [m as MonsterInstance];

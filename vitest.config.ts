@@ -13,5 +13,8 @@ export default defineConfig({
   test: {
     include: ['src/**/*.test.{ts,tsx}', 'tests/**/*.test.ts', 'sim/**/*.test.ts'],
     environment: 'node',
+    // The suite is pure and deterministic (no test leaves state behind), so files share their module
+    // cache: about a third faster, which keeps `npm run check` inside its 90 s budget on CI.
+    isolate: false,
   },
 });

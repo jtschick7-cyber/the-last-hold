@@ -5,6 +5,7 @@ import { ITEM_RARITY_IDS, type ItemRarity } from '../../content/items';
 import { itemName } from '../systems/items';
 import { allDocuments } from '../../content/story/acts';
 import { CRACK_LETTERS, crackLetterLine } from '../../content/story/act5';
+import { rimeLine } from '../../content/story/act6';
 import { documentTypeNames } from '../../content/story/documents';
 import { roll } from '../../content/story/roll';
 import { firstRibbon, laterRibbon, plainRibbon } from '../../content/story/scenes';
@@ -37,6 +38,9 @@ export const foundLines = (_state: GameState, keys: readonly string[]): string[]
       if (doc && CRACK_LETTERS.includes(doc.id)) {
         // Yrsa's letters come up through the crack behind the stove, not with a bounty (D302).
         out.push(crackLetterLine(doc.heading));
+      } else if (doc?.type === 'rime') {
+        // Act VI's writing is the cold writing for itself, not a letter that came with a bounty (D364).
+        out.push(rimeLine(doc.heading));
       } else if (doc) {
         out.push(
           `A ${documentTypeNames[doc.type].toLowerCase()} came with the bounty: '${doc.heading}'.`,

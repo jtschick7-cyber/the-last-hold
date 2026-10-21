@@ -1,6 +1,6 @@
 import { noteDocument } from '../skills/hooks';
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
-import { letters, type LetterSlot } from '../../content/story/letters';
+import { isLetterHunter, letters, type LetterSlot } from '../../content/story/letters';
 import { constantAt } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import { findName } from './documents';
@@ -16,6 +16,8 @@ export const letterKey = (hunter: HunterId, slot: LetterSlot): string => `letter
  * what's new: the letter, and the name it carries.
  */
 export const notePeak = (state: GameState, hunter: HunterId, level: number): string[] => {
+  // GDD §8.5 (D362): the legendary hunters have no letters, so nothing is noted for them.
+  if (!isLetterHunter(hunter)) return [];
   const peak = Math.max(state.story.peakLevels[hunter] ?? 0, level);
   state.story.peakLevels[hunter] = peak;
   const levels = constantAt('letters.levels').value as readonly number[];

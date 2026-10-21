@@ -5,6 +5,7 @@ import type { PatronId } from '../../content/delves/patrons';
 import type { CosmeticId } from '../../content/delves/shop';
 import type { SceneId } from '../../content/text/scenes';
 import type { HunterId } from '../../content/hunters';
+import type { TrackId } from '../../content/hunts';
 import type { JobId } from '../../content/jobs';
 import type { ConsumableId } from '../../content/consumables';
 import type { IngredientId } from '../../content/ingredients';
@@ -39,6 +40,10 @@ export type Command =
       prep?: Preparation;
     }
   | { type: 'contract.decline'; contract: string }
+  /** GDD §5.12.4: one attempt at the Great Beast; costs a token, rests the party (v0.9). */
+  | { type: 'boss.attempt'; party: HunterId[]; prep?: Preparation }
+  /** GDD §5.12.6: one attempt on a Legendary Hunt track; costs a token, rests the party (v0.9). */
+  | { type: 'hunt.attempt'; track: TrackId; party: HunterId[]; prep?: Preparation }
   /** Puts a board contract in a free Lodge slot (GDD §5.6.3). */
   | { type: 'investigate.assign'; contract: string }
   /** Takes a contract off its Lodge slot; the clues shown stay. */
@@ -109,6 +114,8 @@ export type Command =
   | { type: 'delve.leave' }
   | { type: 'delve.ackResult' }
   | { type: 'delve.seeScene' }
+  /** GDD §5.12.1: the one-time scene of the opening of events has been shown (v0.9). */
+  | { type: 'events.seeScene' }
   | { type: 'riftglass.buy'; item: 'late-hours' | 'chosen-start' | 'reroll' }
   | { type: 'riftglass.buyTrait'; hunter: HunterId }
   | { type: 'riftglass.buyCosmetic'; cosmetic: CosmeticId }
@@ -127,6 +134,10 @@ export type Command =
   | { type: 'debug.readyRanks' }
   /** Plan T5.5: Arvid can't arrive in v0.5 (Act III isn't written), so this adds him. */
   | { type: 'debug.addArvid' }
+  /** Plan T9.3: events debug actions (a token, a full bank, rests over). */
+  | { type: 'debug.addToken' }
+  | { type: 'debug.fillBank' }
+  | { type: 'debug.endRests' }
   | { type: 'debug.unlockAge'; age: AgeId };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };

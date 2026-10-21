@@ -3,10 +3,11 @@ import { act2Documents } from './act2';
 import { act3Documents } from './act3';
 import { act4Documents } from './act4';
 import { act5Documents } from './act5';
+import { act6Documents } from './act6';
 import type { DocumentDef } from './documents';
 
 // GDD §5.14.1 and lore-secrets §5: one act per cycle. Acts I to V are written
-// (D163, D164, D209, D245, D302). An act that isn't written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
+// (D163, D164, D209, D245, D302); Act VI (D364) is written once its documents are in. An act that isn't written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
 
 export interface ActDef {
   readonly act: number;
@@ -22,10 +23,15 @@ export const acts: readonly ActDef[] = [
   { act: 3, heading: 'III. The Night', witness: 'Arvid Netmender', documents: act3Documents },
   { act: 4, heading: 'IV. The Keeper', witness: 'Dobrava Halsten', documents: act4Documents },
   { act: 5, heading: 'V. The Hearthblade', witness: 'Yrsa Varn', documents: act5Documents },
+  // Act VI's machinery is built (v0.9, T9.10) but its texts arrive in T9.11; an act with no
+  // documents is not an act yet, so nothing of it shows or plays until they are in.
+  ...(act6Documents.length > 0
+    ? [{ act: 6, heading: 'VI. The Unlit', witness: 'The Unlit', documents: act6Documents }]
+    : []),
 ];
 
 /** The last act whose text is in the game. */
-export const LAST_WRITTEN_ACT = 5;
+export const LAST_WRITTEN_ACT = Math.max(...acts.map((a) => a.act));
 
 /** "III" for act 3 (lore-secrets §5 has six acts). */
 export const actNumeral = (act: number): string =>
@@ -41,7 +47,7 @@ export const allDocuments: readonly DocumentDef[] = acts.flatMap((a) => a.docume
  * word for word from their documents (lore-secrets §21.3, §22.3, §26.3, §28.3, §30.3).
  */
 export interface AccountEvent {
-  readonly id: 'fall' | 'apprentices' | 'bell' | 'yrsa' | 'light' | 'hearth';
+  readonly id: 'fall' | 'apprentices' | 'bell' | 'yrsa' | 'light' | 'hearth' | 'cold';
   readonly heading: string;
   readonly accounts: readonly { readonly document: string; readonly excerpt: string }[];
 }
@@ -99,6 +105,12 @@ export const accountEvents: readonly AccountEvent[] = [
           'I have written them where the order kept the things it hunted, because nobody opens this book but me.',
       },
       { document: 'D5-03', excerpt: 'Whoever cut them stopped.' },
+      {
+        document: 'D6-03',
+        excerpt:
+          'She went down the stair counting the steps aloud, because no one had told her what to count them toward.',
+      },
+      { document: 'D6-04', excerpt: 'I felt his hands tie it off.' },
     ],
   },
   {
@@ -180,6 +192,27 @@ export const accountEvents: readonly AccountEvent[] = [
         excerpt: 'The order built a fire to hold the cold back, and the fire is what grows it.',
       },
       { document: 'D5-08', excerpt: "It's a mouth." },
+      {
+        document: 'D6-06',
+        excerpt:
+          'Every warm thing this hold was given went somewhere when it was spent. I am where it went.',
+      },
+    ],
+  },
+  {
+    id: 'cold',
+    heading: 'What the cold wants',
+    accounts: [
+      { document: 'D6-02', excerpt: 'I have kept a count of the ones who were sent down to me.' },
+      {
+        document: 'D6-05',
+        excerpt: 'I do not blame the seal. It was a lock, and locks do not choose.',
+      },
+      { document: 'D6-06', excerpt: 'I am asking to be known: what was spent, and who it was.' },
+      { document: 'D6-07', excerpt: "It wrote back, 'I wait well.'" },
+      { document: 'D6-08', excerpt: 'Is anyone down there?' },
+      { document: 'D6-09', excerpt: "That's what I've got. It isn't much to have kept." },
+      { document: 'D6-10', excerpt: 'I was meant to be the fortieth' },
     ],
   },
 ];

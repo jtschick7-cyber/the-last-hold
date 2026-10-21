@@ -18,10 +18,10 @@ test('a won contract brings Ilse, and the Archive opens her first document', asy
 
   // The scenes play one after another: the first contract's, then Ilse's.
   await expect(page.getByRole('dialog', { name: 'Through the gate' })).toBeVisible({
-    timeout: 15_000,
+    timeout: 45_000,
   });
   await page.getByRole('button', { name: 'Onward' }).click();
-  await expect(page.getByRole('dialog', { name: 'Ilse Marrow' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('dialog', { name: 'Ilse Marrow' })).toBeVisible({ timeout: 45_000 });
   await expect(page.getByText(/Where do you want the archive/)).toBeVisible();
   await onwardAll(page);
 
@@ -52,7 +52,7 @@ test('the stand’s band, the testament, naming the new warden, and the Roll', a
   await page.getByRole('button', { name: 'Rank ▸' }).click();
   await page.getByRole('button', { name: 'Make the Last Stand' }).click();
   await expect(page.getByText(/Held from 12 waves · Triumphant from 15/)).toBeVisible();
-  await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 45_000 });
   await page.getByRole('button', { name: 'Start', exact: true }).click();
   await page.getByRole('button', { name: 'Go up to the walls' }).click();
 

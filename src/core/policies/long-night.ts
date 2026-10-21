@@ -1,6 +1,5 @@
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
 import type { HunterId } from '../../content/hunters';
-import { monsters } from '../../content/monsters';
 import { UPGRADE_IDS } from '../../content/warden-upgrades';
 import { num } from '../balance-access';
 import type { Command } from '../commands';
@@ -9,7 +8,8 @@ import { upgradeCost } from '../long-night/hearth';
 import { previewInputFor } from '../stand/from-state';
 import { previewStand } from '../stand/preview';
 import { suggestSix } from '../stand/suggest';
-import { standSeed, waveList } from '../stand/waves';
+import { standPoolOf } from '../stand/pool';
+import { creatureOf, standSeed, waveList } from '../stand/waves';
 import type { GameState, Preparation } from '../state/game-state';
 import { affordable, type Bundle } from './goals';
 
@@ -24,6 +24,8 @@ type Act = (cmd: Command) => boolean;
 export interface PolicyMemory {
   cycle: number;
   lastPerDay: number | null;
+  /** The preview the stand was made on (GDD §6.2 Dross-Tide probe); set when it stood, read and cleared by `play`. */
+  standPreview?: { readonly median: number; readonly p10: number; readonly p90: number };
 }
 
 export const freshMemory = (): PolicyMemory => ({ cycle: 0, lastPerDay: null });
@@ -70,8 +72,8 @@ export const standKit = (
   party: readonly HunterId[],
 ): Pick<Preparation, 'oils' | 'potions'> => {
   const count = new Map<string, number>();
-  for (const w of waveList(standSeed(s), SHOWN)) {
-    const f = monsters[w.monster].family;
+  for (const w of waveList(standSeed(s), SHOWN, standPoolOf(s))) {
+    const f = creatureOf(w.monster).family;
     count.set(f, (count.get(f) ?? 0) + 1);
   }
   // The most common family among those an oil exists for (D129).
@@ -114,11 +116,12 @@ export const standMove = (s: GameState, act: Act, memory: PolicyMemory): boolean
   const party = suggestSix(s);
   if (party.length === 0) return false;
   const kit = standKit(s, party);
-  const perDay = previewStand(
-    previewInputFor(s, party, kit, num('laststand.policySamples')),
-  ).embersPerDay;
+  const preview = previewStand(previewInputFor(s, party, kit, num('laststand.policySamples')));
+  const perDay = preview.embersPerDay;
   const last = memory.lastPerDay;
   memory.lastPerDay = perDay;
   if (last === null || perDay >= last) return false;
-  return act({ type: 'stand.make', party, prep: kit });
+  if (!act({ type: 'stand.make', party, prep: kit })) return false;
+  memory.standPreview = { median: preview.median, p10: preview.p10, p90: preview.p90 };
+  return true;
 };

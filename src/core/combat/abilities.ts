@@ -1,7 +1,7 @@
 import { roundHalfUp } from './build';
 import { cancelsAbility, checkPotion, spoilHit } from './prep';
 import { abilityTaken, finalDamage, heal, hurt } from './formula';
-import { cap, emit, type Fight } from './fight-state';
+import { cap, emit, knockBack, type Fight } from './fight-state';
 import { armorEff, mightEff, present, speedEff, standing, takenReduction } from './stats';
 import type { Combatant } from './types';
 
@@ -113,6 +113,34 @@ export const afterOwnHit = (
           );
         }
         break;
+      case 'coil':
+        // The Lindworm (GDD §8.13): every 3rd action its attack holds the target, as Barrow-Grip does.
+        if (
+          attacker.actions % a.every === 0 &&
+          attacker.coilAction !== attacker.actions &&
+          !cancelsAbility(f, attacker, 'Coil')
+        ) {
+          attacker.coilAction = attacker.actions; // one target held per action, however many attacks it has
+          notes.push(
+            lose(target)
+              ? `${target.name} is coiled (loses their next action)`
+              : `${target.name} is coiled, but ${keeps(target)}`,
+          );
+        }
+        break;
+      case 'quickDark': {
+        // The Mara (GDD §8.14): her first hit on each hunter ruins that hunter's unused potion, as Spoil does.
+        if (target.spoiled) break;
+        target.spoiled = true;
+        if (cancelsAbility(f, attacker, 'Quick Dark')) break;
+        const p = target.potion;
+        if (p && !p.used) {
+          p.used = true;
+          target.steadfastLeft = 0;
+          notes.push(`${attacker.name}'s Quick Dark ruins ${target.name}'s ${p.name}`);
+        }
+        break;
+      }
       case 'dragUnder':
         if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Drag Under')) {
           const lost = lose(target);
@@ -239,6 +267,105 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
           }
         }
         break;
+      case 'fjordRoar':
+      case 'weirPull': {
+        // Fjord Roar: its 1st action and every 5th after; Weir-Pull: every 4th (4th, 8th…). Instead of
+        // attacking, every present hunter's turn meter is knocked back (GDD §8.13).
+        const due =
+          a.kind === 'fjordRoar' ? everyNth(m.actions, a.every) : m.actions % a.every === 0;
+        if (due && !cancelsAbility(f, m, a.name)) {
+          skipAttack = true;
+          for (const h of standingHunters) knockBack(h, a.knockBack);
+          emit(f, {
+            actor: m.id,
+            kind: 'ability',
+            text: () =>
+              a.kind === 'fjordRoar'
+                ? `${cap(m.name)} roars: every hunter's turn comes ${a.knockBack} later`
+                : `${cap(m.name)} pulls at the weir: every hunter's turn comes ${a.knockBack} later`,
+            rolls: [],
+          });
+        }
+        break;
+      }
+      case 'mossMend': {
+        if (cancelsAbility(f, m, 'Moss-Mend')) break;
+        const healed = heal(m, roundHalfUp(m.maxHealth * a.regenFraction));
+        if (healed > 0) {
+          emit(f, {
+            actor: m.id,
+            kind: 'ability',
+            text: () =>
+              `${cap(m.name)}'s Moss-Mend closes its wounds, +${healed} · ${m.name} ${m.health}/${m.maxHealth}`,
+            rolls: [],
+            amount: healed,
+            targetHealth: m.health,
+          });
+        }
+        break;
+      }
+      case 'nightWeight':
+        if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Night-Weight')) {
+          const victim = lowestBy(standingHunters, mightEff, true);
+          if (victim) {
+            const lost = lose(victim);
+            emit(f, {
+              actor: m.id,
+              kind: 'ability',
+              target: victim.id,
+              text: () =>
+                lost
+                  ? `${cap(m.name)} settles on ${victim.name} (loses their next action)`
+                  : `${cap(m.name)} settles on ${victim.name}, but ${keeps(victim)}`,
+              rolls: [],
+            });
+          }
+        }
+        break;
+      case 'misfortune': {
+        // Likho (GDD §8.14): a chance each action that one random hunter loses their next action.
+        // The same two rolls as Lead Astray: the chance, then (if it works) who.
+        const used: number[] = [];
+        const notes: string[] = [];
+        const r = f.rolls.next();
+        used.push(r);
+        if (f.logging)
+          notes.push(
+            `Misfortune ${r.toFixed(3)} ${r < a.chance ? '<' : '≥'} ${Math.round(a.chance * 1000) / 10}% → ${r < a.chance ? 'strikes' : 'passes'}`,
+          );
+        if (r < a.chance && standingHunters.length > 0 && !cancelsAbility(f, m, 'Misfortune')) {
+          const pick = f.rolls.next();
+          used.push(pick);
+          const victim =
+            standingHunters[
+              Math.min(standingHunters.length - 1, Math.floor(pick * standingHunters.length))
+            ];
+          if (f.logging) notes.push(`Pick ${pick.toFixed(3)} → ${victim?.name ?? 'nobody'}`);
+          if (victim) {
+            const lost = lose(victim);
+            emit(f, {
+              actor: m.id,
+              kind: 'ability',
+              target: victim.id,
+              text: () =>
+                lost
+                  ? `Misfortune follows ${victim.name} (loses their next action)`
+                  : `Misfortune follows ${victim.name}, but ${keeps(victim)}`,
+              rolls: used,
+              rollNotes: notes,
+            });
+            break;
+          }
+        }
+        emit(f, {
+          actor: m.id,
+          kind: 'ability-roll',
+          text: () => `${cap(m.name)}'s Misfortune passes`,
+          rolls: used,
+          rollNotes: notes,
+        });
+        break;
+      }
       case 'enthrall':
         if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Enthrall')) {
           const victim = lowestBy(standingHunters, mightEff, true);
@@ -331,9 +458,10 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
         });
         checkPotion(f, h);
       }
-    } else if (a.kind === 'drain') {
-      // Unlit's Breath (Deep): Frost on every standing hunter, ignoring Armor; taken% still applies.
-      if (cancelsAbility(f, m, 'Drain')) continue;
+    } else if (a.kind === 'drain' || a.kind === 'graveChill') {
+      // Unlit's Breath (Deep) and the Barrow-King's Grave Chill (v0.9): Frost on every standing
+      // hunter, ignoring Armor; taken% still applies.
+      if (cancelsAbility(f, m, a.kind === 'drain' ? 'Drain' : 'Grave Chill')) continue;
       for (const h of f.hunters) {
         if (!standing(h)) continue;
         const raw = h.maxHealth * a.maxHealthFraction;
@@ -347,7 +475,7 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
           kind: 'ability',
           target: h.id,
           text: () =>
-            `The cold drains ${h.name}: Frost ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
+            `${a.kind === 'drain' ? 'The cold drains' : 'The grave chill reaches'} ${h.name}: Frost ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
           rolls: [],
           amount,
           targetHealth: h.health,

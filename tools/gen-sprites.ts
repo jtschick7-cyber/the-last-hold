@@ -11,8 +11,17 @@ import { COSMETIC_IDS } from '../src/content/delves/shop';
 import { RARITIES } from '../src/content/delves/blessing-types';
 import { MONSTER_IDS } from '../src/content/monsters';
 import { HUNTER_IDS } from '../src/content/hunters';
+import { EVENT_CREATURE_IDS } from '../src/content/hunts';
+import { drawCreaturePortrait, drawCreatureSprite } from './draw-creatures';
 import { drawCosmetic, SCENE_H } from './draw-cosmetics';
-import { drawRarityFrame, drawRelicIcon, drawRiftglass, drawSigil } from './draw-icons16';
+import {
+  drawRarityFrame,
+  drawRelicIcon,
+  drawRiftglass,
+  drawRimeIcon,
+  drawSigil,
+  drawTokenIcon,
+} from './draw-icons16';
 import { framesOf, stripPng } from './sprite-frames';
 import { drawHunterSprite } from './sprite-hunters';
 import { drawMonsterSprite } from './sprite-monsters';
@@ -32,6 +41,12 @@ for (const m of MONSTER_IDS)
 for (const g of GUARDIAN_IDS)
   write(`sprites/guardian-${g}.png`, stripPng(framesOf(drawMonsterSprite(g), 'left')));
 for (const p of PATRON_IDS) write(`icons/sigil-${p}.png`, drawSigil(p).toPng());
+for (const c of EVENT_CREATURE_IDS) {
+  write(`sprites/creature-${c}.png`, stripPng(framesOf(drawCreatureSprite(c), 'left')));
+  write(`portraits/creature-${c}.png`, drawCreaturePortrait(c).toPng());
+}
+write('icons/rime.png', drawRimeIcon().toPng());
+write('icons/token.png', drawTokenIcon().toPng());
 write('icons/riftglass.png', drawRiftglass().toPng());
 for (const r of DELVE_RELIC_IDS) write(`icons/delve-relic-${r}.png`, drawRelicIcon(r).toPng());
 for (const r of RARITIES) write(`icons/rarity-${r}.png`, drawRarityFrame(r).toPng());

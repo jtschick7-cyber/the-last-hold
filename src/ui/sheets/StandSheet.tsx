@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'preact/hooks';
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
-import { monsters } from '../../content/monsters';
 import { num } from '../../core/balance-access';
 import { standProblem } from '../../core/commands/stand';
 import { formatNumber, formatRate } from '../../core/format';
 import { bombStock, previewInputFor } from '../../core/stand/from-state';
 import { suggestSix } from '../../core/stand/suggest';
-import { standSeed, waveList } from '../../core/stand/waves';
+import { standPoolOf } from '../../core/stand/pool';
+import { creatureOf, DROSS_TIDE, standSeed, waveList } from '../../core/stand/waves';
 import type { GameState, Preparation } from '../../core/state/game-state';
 import { requestStandPreview, type StandAnswer } from '../app/odds-client';
 import { dispatch, game, version } from '../app/runtime';
@@ -33,10 +33,13 @@ const WaveList = ({ s }: { s: GameState }) => (
     class={styles.small}
     style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 var(--space-3)' }}
   >
-    {waveList(standSeed(s), SHOWN_WAVES).map((w) => (
+    {waveList(standSeed(s), SHOWN_WAVES, standPoolOf(s)).map((w) => (
       <div key={w.n}>
         <span class={styles.dim}>{w.n}.</span>{' '}
-        {(s.bestiary[w.monster]?.level ?? 0) >= IDENTIFIED ? monsters[w.monster].name : '?'}{' '}
+        {/* The Dross-Tide can never be investigated, so it is named at once (GDD §5.9.3, D363). */}
+        {w.monster === DROSS_TIDE || (s.bestiary[w.monster]?.level ?? 0) >= IDENTIFIED
+          ? creatureOf(w.monster).name
+          : '?'}{' '}
         <span class={styles.dim}>(tier {w.tier})</span>
       </div>
     ))}

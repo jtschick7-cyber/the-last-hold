@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'preact/hooks';
 import { hunters, roleNames, type HunterId } from '../../content/hunters';
-import { monsters } from '../../content/monsters';
 import { relics } from '../../content/relics';
 import { describeRelic } from '../../core/describe-long-night';
 import { formatNumber } from '../../core/format';
@@ -8,6 +7,7 @@ import { embersPayout } from '../../core/stand/embers';
 import { arrivalCapValue } from '../../core/stand/from-state';
 import { OLDER_RULES_NOTE, standReplayDiffers } from '../../core/replay-check';
 import { runStand, type StandResult } from '../../core/stand/engine';
+import { creatureOf } from '../../core/stand/waves';
 import { replayStand, standInputOf } from '../../core/stand/replay';
 import type { GameState, StandRecord } from '../../core/state/game-state';
 import { rosterCap } from '../../core/systems/hunters';
@@ -56,7 +56,7 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
     <div>
       <p class={w.fight.result === 'win' ? styles.good : styles.warn}>
         <strong>
-          Wave {n}: {monsters[w.wave.monster].name}, tier {w.wave.tier} ·{' '}
+          Wave {n}: {creatureOf(w.wave.monster).name}, tier {w.wave.tier} ·{' '}
           {w.fight.result === 'win' ? 'held' : 'the walls fell'} at tick {w.fight.ticks}
         </strong>
       </p>

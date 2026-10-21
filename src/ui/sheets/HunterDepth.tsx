@@ -72,7 +72,9 @@ export const RankStars = ({ id }: { id: HunterId }) => {
   const rank = rankUpView(s, id);
   const star = starView(s, id);
   const act = (type: 'hunter.rankUp' | 'hunter.addStar'): void => {
-    const r = dispatch({ type, hunter: id });
+    // `hunter` is widened: 2 types × 14 ids is past the 25 combinations TS will check one by one.
+    const hunter: string = id;
+    const r = dispatch({ type, hunter });
     setNote(r.ok ? null : r.reason);
   };
   return (

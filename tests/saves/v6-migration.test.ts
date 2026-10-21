@@ -46,7 +46,7 @@ describe("the v5 → v6 migration on the owner's real save (plan T6.3)", () => {
   });
 
   it("keeps everything the owner's save had", () => {
-    const strip = (c: GameState['cycles'][number]) => {
+    const strip = (c: Omit<GameState['cycles'][number], 'standPool'>) => {
       const { stand, ...rest } = c;
       if (!stand) return { ...rest, stand };
       const kept: Partial<StandRecord> = { ...stand };
@@ -56,7 +56,8 @@ describe("the v5 → v6 migration on the owner's real save (plan T6.3)", () => {
     };
     for (const key of Object.keys(before) as (keyof GameState)[]) {
       if (key === 'meta') expect({ ...after.meta, schemaVersion: 5 }).toEqual(before.meta);
-      else if (key === 'cycles') expect(after.cycles.map(strip)).toEqual(before.cycles);
+      else if (key === 'cycles')
+        expect(after.cycles.map(({ standPool: _p, ...c }) => c).map(strip)).toEqual(before.cycles); // v9 adds standPool
       else if (key === 'story')
         // v7 adds each act's family wins (D245).
         expect({

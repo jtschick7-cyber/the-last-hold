@@ -1,5 +1,7 @@
 import { computeOdds } from '../../core/contracts/odds';
 import { suggestParty } from '../../core/contracts/suggest';
+import { previewBoss, suggestBossParty } from '../../core/systems/boss-odds';
+import { computeHuntOdds, suggestHuntParty } from '../../core/systems/hunt-odds';
 import { previewStand } from '../../core/stand/preview';
 import type { WorkerRequest, WorkerResponse } from './protocol';
 
@@ -25,6 +27,34 @@ scope.onmessage = (e) => {
         id: req.id,
         kind: 'stand',
         result: previewStand(req.input),
+        ms: performance.now() - started,
+      });
+    } else if (req.kind === 'bossPreview') {
+      scope.postMessage({
+        id: req.id,
+        kind: 'bossPreview',
+        result: previewBoss(req.input),
+        ms: performance.now() - started,
+      });
+    } else if (req.kind === 'bossSuggest') {
+      scope.postMessage({
+        id: req.id,
+        kind: 'bossSuggest',
+        result: suggestBossParty(req.input),
+        ms: performance.now() - started,
+      });
+    } else if (req.kind === 'huntOdds') {
+      scope.postMessage({
+        id: req.id,
+        kind: 'huntOdds',
+        result: computeHuntOdds(req.input),
+        ms: performance.now() - started,
+      });
+    } else if (req.kind === 'huntSuggest') {
+      scope.postMessage({
+        id: req.id,
+        kind: 'huntSuggest',
+        result: suggestHuntParty(req.input),
         ms: performance.now() - started,
       });
     } else {

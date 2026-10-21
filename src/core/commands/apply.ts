@@ -1,6 +1,8 @@
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
 import { debugGrantLoot, debugReadyRanks } from './debug-depth';
+import { debugAddToken, debugEndRests, debugFillBank } from './debug-events';
+import { bossAttempt, seeEventsScene } from './boss';
 import { addStar, rankUp } from './hunter-depth';
 import { craftItem, equipFromStores, reworkItem, salvageItem, unequipItem } from './items';
 import { debugUnlit } from './unlit';
@@ -30,6 +32,7 @@ import { ageUp } from './age';
 import { collect, decline, launch, markSeen } from './contracts';
 import { cancelBrew, queueBrew, queueExperiment } from './brew';
 import { assign, stop } from './investigate';
+import { huntAttempt } from './hunt';
 import { recruit, setActive, upgradeGear } from './roster';
 import { buy, upgrade } from './build';
 import {
@@ -98,6 +101,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setActive(state, cmd.hunter, cmd.active);
     case 'gear.upgrade':
       return upgradeGear(state, cmd.hunter, cmd.slot);
+    case 'events.seeScene':
+      return seeEventsScene(state);
+    case 'boss.attempt':
+      return bossAttempt(state, cmd.party, cmd.prep, now);
+    case 'hunt.attempt':
+      return huntAttempt(state, cmd.track, cmd.party, cmd.prep, now);
     case 'settings.set':
       return setSettings(state, cmd.patch);
     case 'stand.make':
@@ -116,6 +125,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setSeed(state, cmd.seed);
     case 'debug.addEmbers':
       return addEmbers(state, cmd.amount);
+    case 'debug.addToken':
+      return debugAddToken(state, now);
+    case 'debug.fillBank':
+      return debugFillBank(state, now);
+    case 'debug.endRests':
+      return debugEndRests(state);
     case 'debug.grantLoot':
       return debugGrantLoot(state);
     case 'debug.readyRanks':

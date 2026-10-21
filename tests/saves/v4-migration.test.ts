@@ -8,7 +8,7 @@ import { apply } from '../../src/core/commands';
 import { createNewGame } from '../../src/core/state/new-game';
 import { shiftClock } from '../../src/core/state/shift';
 import type { GameState } from '../../src/core/state/game-state';
-import { oldKey } from './old-view';
+import { oldCycles, oldKey } from './old-view';
 
 const FIXTURES = new URL('./fixtures/', import.meta.url);
 const readFixture = (f: string): { state: Record<string, unknown> } =>
@@ -83,7 +83,7 @@ describe('the v3 → v4 migration (plan T4.3)', () => {
   });
 
   it('records cycle 1 from when the game was created; Rank times before v0.4 are unknown', () => {
-    expect(after.cycles).toEqual([
+    expect(oldCycles(after)).toEqual([
       {
         number: 1,
         startedAt: before.meta.createdAt,
@@ -107,7 +107,7 @@ describe('v4 state (technical design §5.2, D113)', () => {
     const g = createNewGame('seed', 5_000);
     expect(g.arrivalDue).toBe(false);
     expect(g.threat).toBe(0);
-    expect(g.cycles).toEqual([
+    expect(oldCycles(g)).toEqual([
       {
         number: 1,
         startedAt: 5_000,

@@ -5,7 +5,17 @@
 
 import type { PolicyId } from '../src/core/policies';
 
-export const MILESTONES = ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v0.5', 'v0.6', 'v0.7', 'v0.8'] as const;
+export const MILESTONES = [
+  'v0.1',
+  'v0.2',
+  'v0.3',
+  'v0.4',
+  'v0.5',
+  'v0.6',
+  'v0.7',
+  'v0.8',
+  'v0.9',
+] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
 export interface Bound {
@@ -248,7 +258,69 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.8',
   },
+  // v0.9 (GDD §6.2, D383: owner-approved 2026-10-21, their own commit). Judged by their own checks, on
+  // the median of the Monday Standard seeds. The Eventer's event rows are a separate commit (T9.17).
+  {
+    id: 'act-6',
+    text: 'Act VI lands in its cycle: D6-01 to D6-06 by the end of cycle 6, D6-07 with the next warden; D6-08 to D6-10 reported only',
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'dross-tide-stand',
+    text: "The Dross-Tide stand probe: in Act VI-era cycles Standard's stand reaches the Held band (12 or more waves) and the preview's range still agrees with the real result",
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  // v0.9 (GDD §6.2, D367; thresholds moved by the owner, D404, 2026-10-21). The Eventer's event rows,
+  // judged on the median of the 5 Monday seeds; their numbers are in EVENTS below.
+  {
+    id: 'first-boss-attempt',
+    text: 'First boss attempt: within 24 h of events opening at the Citadel (Eventer)',
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'first-boss-kill',
+    text: 'First boss defeated: by the end of the 7th cycle from the one events open in, which is cycle 1 (Eventer)',
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'first-hunter-unlock',
+    text: 'First legendary hunter unlocked: by the end of the 6th cycle from the one events open in, which is cycle 1 (Eventer)',
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'tokens-not-wasted',
+    text: "Tokens not wasted: a full bank at no more than 35% of the Eventer's unlocked check-ins",
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'silver-with-boss',
+    text: "Silver check #6 with boss silver: at least 70% of the Eventer's silver, from the Keep on in cycle 1, comes from bounties (boss silver counts in the total only)",
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
 ];
+
+/**
+ * The Eventer's event rows (v0.9, D367; the three cycle and share numbers were moved by the owner,
+ * D404, after the T9.17 measurement and the Q33 hold-back test). "Cycles" count from the cycle events
+ * opened in, which is cycle 1.
+ */
+export const EVENTS = {
+  /** First boss attempt, in hours after the first check-in that found events open. */
+  attemptWithinHours: 24,
+  killByCycle: 7,
+  unlockByCycle: 6,
+  /** Full bank on arrival, as a share of the unlocked check-ins. */
+  maxFullBankShare: 0.35,
+  /** Bounty share of the cycle-1 silver from the Keep on, boss silver included in the total. */
+  minBountyShare: 0.7,
+} as const;
 
 /**
  * GDD §6.2 (v0.5, D168): which documents and names the story rows look at. Ids are
@@ -295,6 +367,25 @@ export const STORY = {
     docs: ['D5-01', 'D5-02', 'D5-03', 'D5-04', 'D5-05', 'D5-06', 'D5-08'],
     nextWarden: { doc: 'D5-07', byCycle: 6 },
     reportedOnly: [],
+  },
+  /**
+   * Act VI (v0.9, D383): D6-01 to D6-06 by the end of cycle 6, D6-07 with the next warden. D6-08 to
+   * D6-10 depend on recruits and are reported only.
+   */
+  act6: {
+    byCycle: 6,
+    docs: ['D6-01', 'D6-02', 'D6-03', 'D6-04', 'D6-05', 'D6-06'],
+    nextWarden: { doc: 'D6-07', byCycle: 7 },
+    reportedOnly: ['D6-08', 'D6-09', 'D6-10'],
+  },
+  /**
+   * The Dross-Tide stand probe (v0.9, D383): in the stands made once Act VI has begun (the cycles that
+   * carry the Dross-Tide pool), the median waves held is at least `heldWaves`, and the real result
+   * falls inside the preview's 10th–90th percentile range in at least `previewAgreeShare` of them.
+   */
+  drossProbe: {
+    heldWaves: 12,
+    previewAgreeShare: 0.6,
   },
   /**
    * The five name-bearing letters (v0.8, D322; lore §23): Ostap's two (levels 5 and 8, slots 0 and 1)

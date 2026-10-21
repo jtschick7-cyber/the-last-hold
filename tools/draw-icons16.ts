@@ -169,3 +169,36 @@ export const drawRarityFrame = (rarity: 'faint' | 'warm' | 'bright'): Canvas => 
     }
   return c;
 };
+
+/** The Rime (v0.9, GDD §5.14.3): frost grown into a few strokes by the crack, pale on dark. */
+export const drawRimeIcon = (): Canvas =>
+  icon((c) => {
+    c.rect(7, 1, 2, 14, C.frost);
+    c.rect(1, 7, 14, 2, C.frost);
+    c.line(3, 3, 12, 12, C.ice, 1);
+    c.line(12, 3, 3, 12, C.ice, 1);
+    c.rect(7, 7, 2, 2, C.cyan);
+    for (const [x, y] of [
+      [7, 3],
+      [8, 3],
+      [3, 7],
+      [3, 8],
+      [12, 7],
+      [12, 8],
+      [7, 12],
+      [8, 12],
+    ] as const)
+      c.set(x, y, C.cyan);
+  });
+
+/** An attempt token (v0.9, GDD §5.12.2): a notched tally disc of old wood with a brass rim. */
+export const drawTokenIcon = (): Canvas =>
+  icon((c) => {
+    c.ellipse(8, 8, 6, 6, C.gold);
+    c.ellipse(8, 8, 5, 5, C.brown);
+    c.ellipse(8, 8, 5, 3, C.rust);
+    c.rect(7, 3, 2, 10, C.brownDark);
+    c.rect(5, 6, 6, 1, C.sand);
+    c.rect(5, 9, 6, 1, C.sand);
+    c.set(4, 4, C.sand);
+  });

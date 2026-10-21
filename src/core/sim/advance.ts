@@ -18,6 +18,7 @@ import {
 } from '../contracts/complete';
 import { accrueThreat } from '../threat/threat';
 import { MS_PER_MINUTE } from '../time';
+import { foldEventClock } from '../systems/events';
 
 // Technical design §6.2 (GDD §5.2, D30): advance() is event-driven. Rates are
 // constant between events, so resources move linearly to the next event, the
@@ -144,5 +145,7 @@ export const advance = (state: GameState, toTime: number): AdvanceLog => {
   // The game was running up to here (technical design §6.4 bookkeeping).
   state.meta.lastSeen = state.time;
   state.meta.clockHighWater = Math.max(state.meta.clockHighWater, state.time);
+  // The event clock (D359): live ticks and catch-up fold elapsed time the same way, so they match.
+  foldEventClock(state, state.time);
   return log;
 };

@@ -152,10 +152,41 @@ export const balance = {
     finalists: locked(3),
     stage2Samples: locked(200),
   },
+  // ---- GDD §7.11 Events (v0.9, D357–D387). Every `boss.*` constant is locked (plan §0.6). ----
   boss: {
+    partySize: locked(4),
     tokenInterval: locked(8 * HOUR, 'seconds'), // 8 h
     tokenMax: locked(6),
     hunterRest: locked(24 * HOUR, 'seconds'), // 24 h
+    openAge: locked('citadel'),
+    order: locked(['lindworm', 'barrow-king', 'mother-of-the-river']),
+    poolBase: locked(21000), // measured in T9.13 and approved by the owner (D400); was a 24,000 sketch (D372)
+    baseTier: locked({ citadel: 4, bastion: 5 }),
+    passTierStep: locked(1),
+    milestones: locked([0.25, 0.5, 0.75, 1.0]),
+    silverBounties: locked({ milestone: 1, kill: 3 }),
+    reagents: locked({ milestone: 3, kill: 6 }),
+    itemChance: locked(1),
+    itemRarityWeights: locked({ fine: 40, rare: 40, heroic: 20 }),
+    xpPerTier: locked(15),
+    previewSamples: locked(100),
+  },
+  hunt: {
+    unlockPoints: tunable(100),
+    trackPoints: tunable({
+      I: { win: 10, loss: 4 },
+      II: { win: 15, loss: 6 },
+      III: { win: 22, loss: 8 },
+    }),
+    trackTiers: tunable([3, 4, 5]),
+    xpPerTier: tunable(15),
+    lossXpShare: tunable(0.5),
+    replayReagents: tunable(1),
+  },
+  events: {
+    recentKeep: tunable(10),
+    suggestFloor: tunable(0.08), // D391: boss Suggest stops at a party dealing this share of the starting pool
+    suggestTries: tunable(10), // D391: ... or after this many parties (the full search of 14 hunters took 9.5 s)
   },
   // ---- GDD §7.9 Delves (v0.7, D244–D272) ----
   delve: {

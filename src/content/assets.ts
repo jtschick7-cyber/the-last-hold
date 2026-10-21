@@ -2,7 +2,9 @@ import { CONSUMABLE_IDS, consumables, type ConsumableId } from './consumables';
 import { SKILL_IDS, skills, type SkillId } from './skills';
 import { AGE_IDS, type AgeId } from './ages';
 import { BUILDING_IDS, type BuildingId } from './buildings';
+import { bosses, type BossId } from './great-beasts';
 import { HUNTER_IDS, hunters, type HunterId } from './hunters';
+import { EVENT_CREATURE_IDS, quarries, type EventCreatureId, type QuarryId } from './hunts';
 import { MONSTER_IDS, monsters, type MonsterId } from './monsters';
 import { RELIC_IDS, relics, type RelicId } from './relics';
 import { RESOURCE_IDS, type ResourceId } from './resources';
@@ -25,6 +27,8 @@ export type AssetKind = 'icon' | 'building' | 'scene' | 'portrait' | 'sprite' | 
 /** GDD §9.12 (D265): a battle sprite is one strip of these 32 px frames, left to right. */
 export const SPRITE_FRAME_NAMES = ['idle', 'idle2', 'lunge', 'hit', 'downed'] as const;
 export type SpriteFrameName = (typeof SPRITE_FRAME_NAMES)[number];
+const eventCreatureName = (c: EventCreatureId): string =>
+  c in bosses ? bosses[c as BossId].name : quarries[c as QuarryId].name;
 export const SPRITE_PX = 32;
 
 interface AssetBase {
@@ -90,6 +94,11 @@ export const hunterPortraitId = (h: HunterId): string => `portrait.hunter.${h}`;
 export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m}`;
 // v0.7 (plan T7.12, D265): battle sprites, the patron sigils, the Riftglass, the Delve relics, the
 // rarity frames and the hold cosmetics, all code-drawn.
+export { EVENT_CREATURE_IDS };
+export const eventCreaturePortraitId = (c: EventCreatureId): string => `portrait.creature.${c}`;
+export const RIME_ICON = 'icon.rime';
+export const TOKEN_ICON = 'icon.token';
+export const eventCreatureSpriteId = (c: EventCreatureId): string => `sprite.creature.${c}`;
 export const hunterSpriteId = (h: HunterId): string => `sprite.hunter.${h}`;
 export const monsterSpriteId = (m: MonsterId): string => `sprite.monster.${m}`;
 export const guardianSpriteId = (g: GuardianId): string => `sprite.guardian.${g}`;
@@ -208,6 +217,16 @@ export const assets: readonly AssetEntry[] = [
       'tools/gen-portraits.ts',
     ),
   ),
+  // v0.9 (T9.16): drawn in code like the monsters (tools/draw-creatures.ts).
+  ...EVENT_CREATURE_IDS.map((c) =>
+    generated(
+      eventCreaturePortraitId(c),
+      [64, 64],
+      eventCreatureName(c),
+      `portraits/creature-${c}.png`,
+      'tools/gen-sprites.ts',
+    ),
+  ),
   // The Cursed (v0.5) are drawn too (plan T5.13, tools/draw-cursed.ts).
   ...MONSTER_IDS.map((m) =>
     generated(
@@ -314,6 +333,16 @@ export const assets: readonly AssetEntry[] = [
       'sprite',
     ),
   ),
+  ...EVENT_CREATURE_IDS.map((c) =>
+    generated(
+      eventCreatureSpriteId(c),
+      [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+      `${eventCreatureName(c)}, battle sprite`,
+      `sprites/creature-${c}.png`,
+      'tools/gen-sprites.ts',
+      'sprite',
+    ),
+  ),
   ...MONSTER_IDS.map((m) =>
     generated(
       monsterSpriteId(m),
@@ -343,6 +372,15 @@ export const assets: readonly AssetEntry[] = [
       'tools/gen-sprites.ts',
       'icon',
     ),
+  ),
+  generated(RIME_ICON, [16, 16], 'Rime', 'icons/rime.png', 'tools/gen-sprites.ts', 'icon'),
+  generated(
+    TOKEN_ICON,
+    [16, 16],
+    'Attempt token',
+    'icons/token.png',
+    'tools/gen-sprites.ts',
+    'icon',
   ),
   generated(
     RIFTGLASS_ICON,

@@ -1,4 +1,5 @@
 import { awayDelveLines } from '../delves/away';
+import { awayEventsLine } from '../systems/events-results';
 import { accrueAllowance } from '../delves/riftglass';
 import { skillLevels } from '../skills/skills';
 import type { SkillId } from '../../content/skills';
@@ -6,6 +7,7 @@ import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { num } from '../balance-access';
 import type { ContractResult, GameState } from '../state/game-state';
 import { shiftClock } from '../state/shift';
+import { openEvents } from '../systems/events';
 import { offlineCap } from '../systems/offline-cap';
 import { MS_PER_SECOND } from '../time';
 import { advance, type AdvanceEvent } from './advance';
@@ -40,6 +42,8 @@ export interface AwaySummary {
   skills?: { before: Record<SkillId, number>; after: Record<SkillId, number> };
   /** GDD §9.15: "A Delve is waiting on floor 3." and the Riftglass waiting, as they stood on return. Absent in older reports. */
   delve?: string[];
+  /** GDD §5.12.2: the full attempt bank, while events are open. Absent in older reports. */
+  eventsLine?: string;
 }
 
 export interface CatchUpProgress {
@@ -88,6 +92,8 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
   accrueAllowance(state, state.time);
   state.meta.lastSeen = now;
   state.meta.clockHighWater = Math.max(state.meta.clockHighWater, now);
+  // GDD §5.12.1: the load path opens events for a save already at the Citadel (D366, D382).
+  openEvents(state, now);
 
   const resources = Object.fromEntries(
     RESOURCE_IDS.map((r) => [r, state.resources[r] - before[r]]),
@@ -106,6 +112,7 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
     events,
     skills: { before: skillsBefore, after: skillLevels(state) },
     delve: awayDelveLines(state),
+    ...(awayEventsLine(state, now) ? { eventsLine: awayEventsLine(state, now) as string } : {}),
   };
 }
 

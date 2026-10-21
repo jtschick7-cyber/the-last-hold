@@ -2,6 +2,7 @@ import { AGE_IDS, ages } from '../../content/ages';
 import { buildings, BUILDING_IDS } from '../../content/buildings';
 import { GEAR_IDS, gear, type GearDef, type GearId, type GearSlot } from '../../content/gear';
 import { bonusLines, itemRarities } from '../../content/items';
+import { hunts } from '../../content/hunts';
 import { useSkillOf } from '../../content/use-skills';
 import { legendaries } from '../../content/legendaries';
 import { TALENT_BRANCHES, talentById } from '../../content/talents';
@@ -208,6 +209,10 @@ export const unlockMet = (state: GameState, unlock: HunterUnlock): boolean => {
       // GDD §8.5 (D211): Arvid is never recruited. He joins the roster when Act III begins
       // (core/story/act3.ts), so he is never a candidate.
       return false;
+    case 'huntPoints':
+      // GDD §5.12.7 (D362): a legendary hunter is never recruited. They join the roster when their
+      // hunt reaches `hunt.unlockPoints` (core/systems/hunt.ts), so they are never a candidate.
+      return false;
   }
 };
 
@@ -233,6 +238,8 @@ export const describeUnlock = (unlock: HunterUnlock): string => {
       return `Earn ${unlock.amount.toLocaleString('en-US')} silver in bounties`;
     case 'arrivesWithIlse':
       return `Arrives with Ilse when Act ${actNumeral(unlock.act)} begins`;
+    case 'huntPoints':
+      return `The ${hunts[unlock.hunt].label} hunt: ${num('hunt.unlockPoints')} points`;
   }
 };
 
@@ -275,7 +282,9 @@ export const lockedHunters = (state: GameState): HunterDef[] =>
     (id) =>
       !isOwned(state, id) &&
       !candidates(state).some((c) => c.id === id) &&
-      hunters[id].unlock.kind !== 'start',
+      hunters[id].unlock.kind !== 'start' &&
+      // GDD §5.12.7 (D386): a legendary hunter is hidden from the Hunters tab until unlocked.
+      hunters[id].unlock.kind !== 'huntPoints',
   ).map((id) => hunters[id]);
 
 export const recoveryMs = (seconds: number): number => seconds * MS_PER_SECOND;

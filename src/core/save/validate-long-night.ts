@@ -73,6 +73,7 @@ const stand = (v: unknown, where: string, warnings: string[]): StandRecord => {
     },
     relicsFound: relicList(o.relicsFound, `${where}.relicsFound`),
     arrival: bool(o.arrival, `${where}.arrival`),
+    ...(o.pool === undefined ? {} : { pool: oneOf(o.pool, ['dross'] as const, `${where}.pool`) }),
     // D183: stands saved before this field existed brought no recorded steps.
     trustSteps:
       o.trustSteps === undefined
@@ -100,6 +101,9 @@ const cycleRecord = (v: unknown, where: string, warnings: string[]): CycleRecord
     stand: orNull(o.stand, (x) => stand(x, `${where}.stand`, warnings)),
     act: orNull(o.act, (x) => count(x, `${where}.act`)),
     warden: wardenName(o.warden, `${where}.warden`),
+    standPool: orNull(o.standPool, (x) =>
+      oneOf(x, ['base', 'dross'] as const, `${where}.standPool`),
+    ),
   };
 };
 

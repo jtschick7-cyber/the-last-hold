@@ -1,0 +1,69 @@
+/* The Events card and the boss sheet (GDD §9.17). Colors come from tokens.css. */
+.badge {
+  color: var(--c-ember);
+  margin-left: var(--space-2);
+}
+
+.poolBar {
+  position: relative;
+  height: 1.1rem;
+  background: var(--c-surface-raised);
+  border: 1px solid var(--c-border);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.poolFill {
+  height: 100%;
+  background: var(--c-ember);
+}
+
+/* A milestone falls where the pool has lost that share, so its tick sits at (1 − share) from the left. */
+.tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--c-border);
+}
+
+.tickPaid {
+  background: var(--c-good, var(--c-border));
+}
+
+.marks {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.reason {
+  color: var(--c-warn);
+}
+
+.rowDisabled {
+  opacity: 0.55;
+}
+
+.rank {
+  display: inline-block;
+  padding: 0 0.35rem;
+  border: 1px solid var(--c-border);
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  margin-right: var(--space-1);
+}
+
+/* A legendary hunter not yet won: the portrait stays, greyed (GDD §9.17). */
+.greyed {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.shelfEntry {
+  display: grid;
+  gap: var(--space-1);
+}

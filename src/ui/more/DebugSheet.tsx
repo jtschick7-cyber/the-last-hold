@@ -156,6 +156,15 @@ export const DebugSheet = () => {
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.runArrival' })}>
           Run the arrival
         </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.addToken' })}>
+          +1 attempt token
+        </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.fillBank' })}>
+          Fill the attempt bank
+        </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.endRests' })}>
+          End all event rests
+        </button>
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.grantLoot' })}>
           Grant loot
         </button>
@@ -197,6 +206,17 @@ export const DebugSheet = () => {
           }}
         >
           Start Act V
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
+            const r = dispatch({ type: 'debug.startAct', act: 6 });
+            setNote(r.ok ? 'Done.' : r.reason);
+            if (r.ok) openSheet('Frost on the floor', () => <DocumentReader id="D6-01" />);
+          }}
+        >
+          Start Act VI
         </button>
         <button
           type="button"

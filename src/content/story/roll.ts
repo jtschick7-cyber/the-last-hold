@@ -4,8 +4,7 @@ import type { VillageId } from '../villages';
 // lore-secrets §20 (D162): the forty names, one apprentice Sent every second
 // spring from year 200 to 276, and Sigrun entered as the 40th for 278. Each has
 // exactly one source (lore §8): act documents 28, Ribbonshades 6, hunter letters
-// 5, Sigrun's confession 1. Acts I–V are written; the names of Act VI are fixed
-// now and go into their documents when those acts are written (lore §20 note 5).
+// 5, Sigrun's confession 1. Acts I–VI are written; Act VI's three are in its Rank documents.
 
 /** Where a name is found (GDD §5.14.4). */
 export type NameSource =
@@ -16,7 +15,7 @@ export type NameSource =
   | { readonly kind: 'letter'; readonly hunter: HunterId | 'arvid'; readonly slot: 0 | 1 }
   /** Sigrun's own name, from her confession (counted apart from the act documents). */
   | { readonly kind: 'confession'; readonly id: string }
-  /** A document of an act not yet written (Acts III–VI). */
+  /** A document of an act not yet written. */
   | { readonly kind: 'laterAct'; readonly act: number };
 
 export interface RollName {
@@ -39,7 +38,7 @@ export const roll: readonly RollName[] = [
     year: 200,
     name: 'Milena Horská',
     village: 'mirograd',
-    source: { kind: 'laterAct', act: 6 },
+    source: { kind: 'document', id: 'D6-03' },
     hint: 'No one living remembers this one.',
   },
   {
@@ -47,7 +46,7 @@ export const roll: readonly RollName[] = [
     year: 202,
     name: 'Ketil Ormsson',
     village: 'velkvik',
-    source: { kind: 'laterAct', act: 6 },
+    source: { kind: 'document', id: 'D6-04' },
     hint: 'No one living remembers this one.',
   },
   {
@@ -55,7 +54,7 @@ export const roll: readonly RollName[] = [
     year: 204,
     name: 'Mirek Bárta',
     village: 'kozly-hollow',
-    source: { kind: 'laterAct', act: 6 },
+    source: { kind: 'document', id: 'D6-05' },
     hint: 'No one living remembers this one.',
   },
   {

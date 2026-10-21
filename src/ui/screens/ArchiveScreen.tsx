@@ -4,6 +4,7 @@ import {
   accounts,
   laterNote,
   lettersShelf,
+  rimeShelf,
   library,
   namesView,
   type ShelfLetter,
@@ -13,7 +14,7 @@ import { letterKey } from '../../core/story/letters';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
-import { docIconId } from '../../content/assets';
+import { docIconId, RIME_ICON } from '../../content/assets';
 import { Sprite } from '../widgets/Sprite';
 import { riftScene } from '../../content/delves/rift-text';
 import { echoesShelf } from '../../core/delves/view-shop';
@@ -47,13 +48,13 @@ export const DocumentReader = ({ id }: { id: string }) => {
   const s = game();
   const doc = allDocuments.find((d) => d.id === id);
   if (!doc) return null;
-  const row = library(s)
-    .flatMap((g) => g.types.flatMap((t) => t.rows))
-    .find((r) => r.id === id);
+  const row = [...library(s).flatMap((g) => g.types.flatMap((t) => t.rows)), ...rimeShelf(s)].find(
+    (r) => r.id === id,
+  );
   const later = laterNote(s, id);
   return (
     <div>
-      <article class={styles.parchment}>
+      <article class={doc.type === 'rime' ? styles.rime : styles.parchment}>
         {doc.preface && <Paragraphs lines={[doc.preface]} />}
         {doc.table && (
           <table class={styles.ledger}>
@@ -125,6 +126,7 @@ const Library = () => {
   const groups = library(s);
   const shelf = lettersShelf(s);
   const echoList = echoesShelf(s);
+  const rime = rimeShelf(s);
   const wayDown = s.delve.sceneSeen;
   if (groups.length === 0 && shelf.length === 0 && echoList.length === 0 && !wayDown)
     return <p class={styles.dim}>Nothing in the archive yet.</p>;
@@ -156,6 +158,28 @@ const Library = () => {
           ))}
         </section>
       ))}
+      <section class={styles.card} aria-label="Rime">
+        <h2 class={styles.cardTitle}>
+          <Sprite id={RIME_ICON} /> Rime
+        </h2>
+        {rime.length === 0 ? (
+          <p class={`${styles.small} ${styles.dim}`}>Nothing here yet.</p>
+        ) : (
+          <ul class={styles.list}>
+            {rime.map((r) => (
+              <li key={r.id}>
+                <button type="button" class={styles.linkRow} onClick={() => openDocument(r.id)}>
+                  <span class={styles.grow}>
+                    <strong>{r.heading}</strong>
+                    <span class={`${styles.small} ${styles.dim}`}> · {r.witness}</span>
+                  </span>
+                  {r.unread && <New />}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
       {echoList.length > 0 && (
         <section class={styles.card} aria-label="Echoes">
           <h2 class={styles.cardTitle}>Echoes</h2>

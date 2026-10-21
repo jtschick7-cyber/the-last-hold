@@ -1,8 +1,8 @@
 import type { DamageType, FamilyId, LocationId } from '../../content/damage';
-import { monsters, type MonsterAbility, type MonsterId } from '../../content/monsters';
+import { monsters, type MonsterId } from '../../content/monsters';
 import { num } from '../balance-access';
 import { K } from './constants';
-import type { Combatant } from './types';
+import type { Combatant, FightAbility } from './types';
 
 // GDD §5.0 combat modifiers: stat_eff = (base × levelScale + Σ flat) × (1 + Σ stat%)
 // × (1 + Σ status%). Only +, −, ×, ÷ here (technical design §7.4).
@@ -45,13 +45,21 @@ export interface FightContext {
   readonly attacks: number;
   /** Gloam-moths' Lightless: hunters' hit chance is this much lower while it stands (v0.5). */
   readonly hitCut: number;
+  /** Ill Luck (Likho): every hunter's crit chance is this much lower; absent elsewhere (v0.9, GDD §8.14). */
+  readonly critCut?: number;
   /** The oil bonus this fight: `oil.familyBonus`, made stronger by Alchemy (GDD §5.8.6). */
   readonly oilBonus: number;
 }
 
 /** GDD §8.3 Lightless (a passive): the cut to every hunter's hit chance. */
-export const lightlessCut = (def: { readonly abilities: readonly MonsterAbility[] }): number => {
+export const lightlessCut = (def: { readonly abilities: readonly FightAbility[] }): number => {
   for (const a of def.abilities) if (a.kind === 'lightless') return a.hitChanceCut;
+  return 0;
+};
+
+/** GDD §8.14 Ill Luck (a passive): the cut to every hunter's crit chance, in the fight's own units (0.10 = 10 points). */
+export const illLuck = (def: { readonly abilities: readonly FightAbility[] }): number => {
+  for (const a of def.abilities) if (a.kind === 'illLuck') return a.critCut / 100;
   return 0;
 };
 
@@ -76,6 +84,7 @@ export const outgoingPct = (
     else if (e.kind === 'damageType' && e.type === type) sum += e.dealt;
   }
   sum += a.dealtBonus; // Delve blessings (v0.7); 0 elsewhere
+  sum += a.useDealt; // Torch Held High (v0.9); 0 elsewhere
   if (family !== 'deep') sum += a.baneVs[family] ?? 0; // bane lines on worn items (v0.8)
   // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
   if (a.oilFamily !== null && a.oilFamily === family) sum += ctx.oilBonus;
@@ -96,6 +105,8 @@ export const hitChance = (
     for (const h of party) {
       for (const e of h.traits) {
         if (e.kind === 'partyHitOnLocation' && e.location === ctx.location) chance += e.amount;
+        // Tall Torch (v0.9): while its Vanguard is standing, the party's hit chance is higher.
+        else if (e.kind === 'partyHitWhileStanding' && present(h)) chance += e.amount;
       }
     }
   } else chance += attacker.hitBonus; // Low Tide (Delve): monsters' hit chance; 0 elsewhere

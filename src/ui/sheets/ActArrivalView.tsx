@@ -1,5 +1,6 @@
 import { act4ArrivalOnLoad } from '../../content/story/act4';
 import { act5ArrivalOnLoad } from '../../content/story/act5';
+import { act6ArrivalOnLoad } from '../../content/story/act6';
 import { DocumentReader } from '../screens/ArchiveScreen';
 import { OnLoadCard } from './OnLoadCard';
 
@@ -9,6 +10,7 @@ import { OnLoadCard } from './OnLoadCard';
 const ON_LOAD: Readonly<Record<number, { line: string; button: string; sheet: string }>> = {
   4: { line: act4ArrivalOnLoad, button: 'See what he brought', sheet: 'The bundle' },
   5: { line: act5ArrivalOnLoad, button: 'Go and look', sheet: 'The broom' },
+  6: { line: act6ArrivalOnLoad, button: 'Go and look', sheet: 'Frost on the floor' },
 };
 
 export const ActArrivalView = ({ act }: { act: number }) => {

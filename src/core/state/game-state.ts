@@ -13,10 +13,11 @@ import type { ResourceId } from '../../content/resources';
 import type { SceneId } from '../../content/text/scenes';
 import type { VillageId } from '../../content/villages';
 import type { UpgradeId } from '../../content/warden-upgrades';
-import type { HunterSnapshot } from '../combat';
+import type { EventInstance, HunterSnapshot } from '../combat';
 import type { Band } from '../../content/story/scenes';
 import type { RecipeBook, SkillXp } from './book-state';
 import type { DelveState } from './delve-state';
+import type { EventsState } from './events-state';
 import type { ItemState } from './item-state';
 import type { StoryState } from './story-state';
 import type { InjuryKind } from '../contracts/injury';
@@ -29,9 +30,10 @@ import type { InjuryKind } from '../contracts/injury';
 // v0.5 arrival (plan T5.3); v6 adds the recipe book, warden skills, experiments in the
 // kettles, the Alchemy level frozen on fights and stands, and each stand's band (plan
 // T6.3, D218); v7 adds Delves and per-act family counts (plan T7.1, T7.5); v8 adds items,
-// Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317). Times are epoch
+// Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317); v9 adds events (tokens,
+// rests, the boss visit, hunt points) and each cycle's stand pool (plan T9.1, D382). Times are epoch
 // milliseconds.
-export const SCHEMA_VERSION = 8;
+export const SCHEMA_VERSION = 9;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -130,14 +132,18 @@ export interface FightRef {
   contractId: string;
   seed: string;
   party: HunterSnapshot[];
-  monster: { monster: MonsterId; tier: number; knowledge: number };
-  location: LocationId;
+  /** A contract's species, or (v9, D358) a Great Beast or quarry with its tier and the pool at launch. */
+  monster: { monster: MonsterId; tier: number; knowledge: number } | EventInstance;
+  /** Null on an event fight: no location traits apply there (GDD §5.12.4). */
+  location: LocationId | null;
   result: 'win' | 'loss';
   rulesVersion: number;
   at: number;
   prep: Preparation;
   /** v6: the Alchemy level the fight was made at (D206); 0 for fights before v0.6. */
   alchemy: number;
+  /** v9 (D358): set on boss and hunt fights; absent on every older reference, so old replays are unchanged. */
+  event?: { kind: 'boss' | 'hunt'; attempt: number; id: string };
 }
 
 export interface FallenRecord {
@@ -225,6 +231,8 @@ export interface StandRecord {
   band: Band;
   /** v6: the Alchemy level it was made at (D206); 0 for stands before v0.6. */
   alchemy: number;
+  /** v9 (D363): set only when the stand drew from the `dross` pool; absent means the species of §8.3.1 only. */
+  pool?: 'dross';
   /** The result sheet has been seen. */
   seen: boolean;
 }
@@ -245,6 +253,11 @@ export interface CycleRecord {
   act: number | null;
   /** The warden's name (D152), up to 24 characters; null until named. */
   warden: string | null;
+  /**
+   * v9 (D363): the species pool of this cycle's Last Stand, fixed when the wave list is first fixed
+   * (Bastion reached); null before that. `dross` adds the Dross-Tide (GDD §5.9.3).
+   */
+  standPool: 'base' | 'dross' | null;
 }
 
 export interface Settings {
@@ -339,6 +352,8 @@ export interface GameState {
   itemSeq: number;
   /** Legendaries found, with the cycle (v8, GDD §5.11.6). Kept forever. */
   legendaries: { id: LegendaryId; cycle: number }[];
+  /** Events: tokens, rests, the boss visit, hunt points (v9, GDD §5.12). Kept forever. */
+  events: EventsState;
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;

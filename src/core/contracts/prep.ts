@@ -1,5 +1,6 @@
 import { consumables, type ConsumableId } from '../../content/consumables';
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
+import type { DamageType, FamilyId } from '../../content/damage';
 import { monsters, type MonsterId } from '../../content/monsters';
 import { num } from '../balance-access';
 import type { GameState, Preparation } from '../state/game-state';
@@ -89,4 +90,19 @@ export const isWellPrepared = (
   const matchingOil = Object.values(prep.oils).some((id) => oilMatches(id, monster));
   const weakBomb = prep.bombs.some((id) => bombIsWeak(id, monster));
   return matchingOil && (weakBomb || saltburstCancelled);
+};
+
+/** Does this oil's family match a named family (a Great Beast or a quarry, GDD §5.12)? */
+export const oilFitsFamily = (oil: ConsumableId, family: FamilyId): boolean => {
+  const e = consumables[oil].effect;
+  return e.kind === 'oil' && e.family === family;
+};
+
+/** Is a creature with these resistances weak (at or above `prep.weakAt`) to this bomb's damage type? */
+export const bombWeakAgainst = (
+  bomb: ConsumableId,
+  resist: Readonly<Record<DamageType, number>>,
+): boolean => {
+  const e = consumables[bomb].effect;
+  return (e.kind === 'burn' || e.kind === 'chill') && resist[e.damageType] >= num('prep.weakAt');
 };

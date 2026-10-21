@@ -1,4 +1,6 @@
 import { arvid } from './hunters-v05';
+import { LEGENDARY_HUNTER_IDS, legendaryHunters } from './hunters-v09';
+import type { HuntId } from './hunts';
 import type { DamageType } from './damage';
 import type { KnowledgeLevel } from './knowledge';
 import type { MonsterId } from './monsters';
@@ -20,6 +22,7 @@ export const HUNTER_IDS = [
   'stanko',
   'herdis',
   'arvid', // v0.5 (D154)
+  ...LEGENDARY_HUNTER_IDS, // v0.9 (D362)
 ] as const;
 export type HunterId = (typeof HUNTER_IDS)[number];
 
@@ -64,7 +67,9 @@ export type HunterUnlock =
   | { readonly kind: 'knowledgeLevel'; readonly monster: MonsterId; readonly level: KnowledgeLevel }
   | { readonly kind: 'bountySilverEarned'; readonly amount: number }
   /** He arrives with Ilse when this act begins and joins the roster directly (Arvid, Act III; D211). */
-  | { readonly kind: 'arrivesWithIlse'; readonly act: number };
+  | { readonly kind: 'arrivesWithIlse'; readonly act: number }
+  /** He or she joins free when this hunt reaches `hunt.unlockPoints` (GDD §5.12.7, §8.14; v0.9). */
+  | { readonly kind: 'huntPoints'; readonly hunt: HuntId };
 
 export type Origin = 'highland' | 'lowland' | 'wanderer';
 
@@ -391,4 +396,5 @@ export const hunters: Readonly<Record<HunterId, HunterDef>> = {
       'Can follow a week-old track across bare rock. The iron heel of her crook is rime-salted, an old Ravenfell habit against things that walk at night.',
   },
   arvid,
+  ...legendaryHunters,
 };

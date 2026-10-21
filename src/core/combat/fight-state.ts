@@ -53,6 +53,8 @@ export interface Fight {
   readonly potency: number;
   /** Banked Smoke: the Vanguard whose smoke covers the party until their next action. */
   smokeHolder: Combatant | null;
+  /** Torch Held High (v0.9): the Vanguard whose torch lifts the party's damage until their next action. */
+  torchHolder: Combatant | null;
 }
 
 /** A general fight rule (v0.8, D328 (8)): lowers a monster's turn meter. Toll, Boathook and Rattle the Pots use it. */

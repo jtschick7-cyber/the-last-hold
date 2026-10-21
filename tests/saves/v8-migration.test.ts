@@ -14,7 +14,7 @@ import { snapshotOf } from '../../src/core/systems/hunters';
 import { itemById } from '../../src/core/systems/items';
 import { actDue } from '../../src/core/story/act-start';
 import { isFound } from '../../src/core/story/documents';
-import { oldHunters, oldStats } from './old-view';
+import { oldCycles, oldHunters, oldStats } from './old-view';
 
 type Env = { schemaVersion: number; state: Record<string, unknown> };
 const readFixture = (f: string): Env =>
@@ -34,10 +34,10 @@ describe('the v7 → v8 migration on the owner’s real save', () => {
   const after = fresh();
 
   it('is a real v0.7 save: schema 7, cycle 19, Act IV, Bastion', () => {
-    expect(SCHEMA_VERSION).toBe(8);
+    expect(SCHEMA_VERSION).toBeGreaterThanOrEqual(8);
     expect(old.schemaVersion).toBe(7);
     expect(before.cycle).toEqual({ number: 19, age: 'bastion' });
-    expect(after.meta.schemaVersion).toBe(8);
+    expect(after.meta.schemaVersion).toBe(SCHEMA_VERSION);
     expect(after.cycles[after.cycles.length - 1]?.act).toBe(4);
   });
 
@@ -46,6 +46,7 @@ describe('the v7 → v8 migration on the owner’s real save', () => {
       if (key === 'meta') expect({ ...after.meta, schemaVersion: 7 }).toEqual(before.meta);
       else if (key === 'hunters') expect(oldHunters(after)).toEqual(before.hunters);
       else if (key === 'stats') expect(oldStats(after)).toEqual(before.stats);
+      else if (key === 'cycles') expect(oldCycles(after)).toEqual(before.cycles);
       else if (key === 'story') {
         expect({ ...after.story, acts: [] }).toEqual({ ...before.story, acts: [] });
         expect(after.story.acts.map(({ winsByFamily: _f, ...a }) => a)).toEqual(

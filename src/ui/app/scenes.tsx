@@ -2,6 +2,8 @@ import { useState } from 'preact/hooks';
 import { hunters } from '../../content/hunters';
 import { scenes, storyScenes, type SceneId } from '../../content/text/scenes';
 import { riftScene } from '../../content/delves/rift-text';
+import { eventsScene } from '../../content/events-text';
+import { eventsUnlocked } from '../../core/systems/events';
 import { delvesOpen } from '../../core/delves/access';
 import { isFound } from '../../core/story/documents';
 import styles from '../styles/ui.module.css';
@@ -90,6 +92,26 @@ const RiftSceneView = () => (
   </div>
 );
 
+// GDD §5.12.1 (D366): the notes at the gate, shown once when events first open at the Citadel.
+const EventsSceneView = () => (
+  <div>
+    {eventsScene.paragraphs.map((p) => (
+      <p key={p}>{p}</p>
+    ))}
+    <button
+      type="button"
+      class={styles.btnPrimary}
+      style={{ width: '100%' }}
+      onClick={() => {
+        dispatch({ type: 'events.seeScene' });
+        closeSheet();
+      }}
+    >
+      Onward
+    </button>
+  </div>
+);
+
 const showRift = (): void => openSheet('The way down', () => <RiftSceneView />);
 
 const show = (id: SceneId): void => {
@@ -130,5 +152,7 @@ export const playScenes = (): void => {
   if (s.cycle.age === 'keep' && Object.keys(s.hunters).length >= 2 && !s.scenes.includes('vow')) {
     return show('vow');
   }
-  if (delvesOpen(s) && !s.delve.sceneSeen) showRift();
+  if (delvesOpen(s) && !s.delve.sceneSeen) return showRift();
+  if (eventsUnlocked(s) && !s.events.sceneSeen)
+    openSheet(eventsScene.heading, () => <EventsSceneView />);
 };

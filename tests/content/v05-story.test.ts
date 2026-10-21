@@ -75,7 +75,8 @@ const tableRows = (): string[][] =>
     lore.slice(lore.indexOf('## 21. '), lore.indexOf('## 23. ')) +
     lore.slice(lore.indexOf('## 26. '), lore.indexOf('## 27. ')) +
     lore.slice(lore.indexOf('## 28. '), lore.indexOf('## 29. ')) +
-    lore.slice(lore.indexOf('## 30. '), lore.indexOf('## 31. '))
+    lore.slice(lore.indexOf('## 30. '), lore.indexOf('## 31. ')) +
+    lore.slice(lore.indexOf('## 31. '), lore.indexOf('#### 2. The texts', lore.indexOf('## 31. ')))
   )
     .split('\n')
     .filter((l) => /^\| D\d-\d\d/.test(l))
@@ -86,13 +87,13 @@ const tableRows = (): string[][] =>
         .map((c) => c.replace(/\*\(new\)\*/, '').trim()),
     );
 
-describe('Acts I to V (lore-secrets §21, §22, §26, §28, §30)', () => {
+describe('Acts I to VI (lore-secrets §21, §22, §26, §28, §30, §31)', () => {
   const rows = tableRows();
 
   it('have every document of the tables, and no other', () => {
     expect(allDocuments.map((d) => d.id).sort()).toEqual(rows.map((r) => r[0]).sort());
-    expect(acts.map((a) => a.act)).toEqual([1, 2, 3, 4, 5]);
-    expect(LAST_WRITTEN_ACT).toBe(5);
+    expect(acts.map((a) => a.act)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(LAST_WRITTEN_ACT).toBe(6);
     for (const a of acts) for (const d of a.documents) expect(d.act, d.id).toBe(a.act);
   });
 
@@ -104,13 +105,15 @@ describe('Acts I to V (lore-secrets §21, §22, §26, §28, §30)', () => {
       'Field note': 'field-note',
       'Resident scene': 'scene',
       'Resident scene + ledger strip': 'scene',
+      Rime: 'rime',
+      'Rime (testament)': 'rime',
       Journal: 'journal',
       'Journal page': 'journal',
     };
     for (const [id, title, type, witness] of rows) {
       const d = allDocuments.find((x) => x.id === id);
       expect(d?.heading, id).toBe(title);
-      expect(d?.type, id).toBe(types[type ?? '']);
+      expect(d?.type, id).toBe(types[(type ?? '').replace(/\*/g, '')]);
       expect(d?.witness, id).toBe(flat(witness ?? ''));
     }
   });
@@ -180,6 +183,22 @@ describe('Acts I to V (lore-secrets §21, §22, §26, §28, §30)', () => {
     expect(c('D5-06')).toEqual({ kind: 'actStand' });
     expect(c('D5-07')).toEqual({ kind: 'nextWarden' });
     expect(c('D5-08')).toEqual({ kind: 'contractWon', nth: 2, village: 'kozly-hollow' });
+    // Act VI (lore §31, D364): one new field, `withHunter`, and no new kind.
+    expect(c('D6-01')).toEqual({ kind: 'actBegins' });
+    expect(c('D6-02')).toEqual({ kind: 'contractWon', nth: 1 });
+    expect(c('D6-03')).toEqual({ kind: 'rankReached', age: 'keep' });
+    expect(c('D6-04')).toEqual({ kind: 'rankReached', age: 'citadel' });
+    expect(c('D6-05')).toEqual({ kind: 'rankReached', age: 'bastion' });
+    expect(c('D6-06')).toEqual({ kind: 'actStand' });
+    expect(c('D6-07')).toEqual({ kind: 'nextWarden' });
+    expect(c('D6-08')).toEqual({ kind: 'contractWon', nth: 2, village: 'mirograd' });
+    expect(c('D6-09')).toEqual({ kind: 'contractWon', nth: 4 });
+    expect(c('D6-10')).toEqual({
+      kind: 'contractWon',
+      nth: 2,
+      village: 'ravenfell',
+      withHunter: 'sigrun',
+    });
   });
 
   it('give Act V exactly four names, all in D5-03, and no new proper nouns', () => {
@@ -239,7 +258,10 @@ describe('Acts I to V (lore-secrets §21, §22, §26, §28, §30)', () => {
         expect(flat(docText(d)), d.id).toBe(flat(sample));
         continue;
       }
-      const section = loreSection(`##### ${d.id} `);
+      const section =
+        d.act === 6
+          ? (lore.slice(lore.indexOf(`**${d.id} · `)).split('\n---\n')[0] ?? '')
+          : loreSection(`##### ${d.id} `);
       const text = flat(quoted(section).replace(/\| ?/g, ' ').replace(/---/g, ''));
       for (const part of [
         ...d.body,
@@ -363,7 +385,8 @@ describe('the forty names (lore-secrets §8, §20)', () => {
 describe('hunter letters (GDD §5.14.7, lore-secrets §23)', () => {
   it('two per hunter, 22 in all, every one written; exactly five carry a name (T5.12)', () => {
     expect(HUNTER_IDS).toContain('arvid');
-    expect(letters).toHaveLength(2 * HUNTER_IDS.length);
+    // The three legendary hunters of v0.9 have no letters (GDD §8.5).
+    expect(letters).toHaveLength(2 * (HUNTER_IDS.length - 3));
     expect(letters.every((l) => l.body !== null)).toBe(true);
     expect(
       letters

@@ -198,9 +198,9 @@ describe('use-skills (GDD §5.11.4, §8.5b, D312, D314)', () => {
     .filter((r) => r.length === 4)
     .slice(1);
 
-  it('are eleven, one per hunter, with the GDD’s names, triggers and effects word for word', () => {
-    expect(USE_SKILL_IDS).toHaveLength(11);
-    expect(rows).toHaveLength(11);
+  it('are fourteen (eleven of v0.8 and the three of v0.9), one per hunter, with the GDD’s names, triggers and effects word for word', () => {
+    expect(USE_SKILL_IDS).toHaveLength(14);
+    expect(rows).toHaveLength(14);
     expect(new Set(HUNTER_IDS.map((h) => useSkillOf(h).id)).size).toBe(HUNTER_IDS.length);
     for (const [hunter, name, trigger, effect] of rows) {
       const id = HUNTER_IDS.find((h) => hunters[h].name === hunter);
@@ -208,7 +208,8 @@ describe('use-skills (GDD §5.11.4, §8.5b, D312, D314)', () => {
       const u = useSkillOf(id ?? 'halvar');
       expect(u.name).toBe(name);
       expect(u.triggerText).toBe(trigger);
-      expect(flat(u.text)).toBe(effect);
+      // A row may end in an italic design note ("*New in v0.9: ...*"); the sheet shows what comes before it.
+      expect(flat(u.text)).toBe(flat(effect ?? '').split(' New in v0.9')[0]);
     }
   });
 

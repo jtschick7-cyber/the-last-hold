@@ -9,6 +9,7 @@ import { threatRate } from '../threat/threat';
 import { MS_PER_DAY } from '../time';
 import type { StandInput } from './engine';
 import { previewStand, type StandPreview, type StandPreviewInput } from './preview';
+import { standPoolOf } from './pool';
 import { standSeed } from './waves';
 
 // GDD §5.9.3: a stand's inputs, read from the hold as it is now. The same function
@@ -49,6 +50,8 @@ export const standInputFor = (
   relics: state.relics.map((r) => r.id),
   knowledge: knowledgeNow(state),
   alchemy: skillLevel(state, 'alchemy'),
+  // Only a `dross` pool is named, so an ordinary stand's input is exactly what it was (D363).
+  ...(standPoolOf(state) === 'dross' ? { pool: 'dross' as const } : {}),
 });
 
 /** GDD §5.9.8 (D112): the arrival caps the trophies part at share × the cycle-1 median. */
