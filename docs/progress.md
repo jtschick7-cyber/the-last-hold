@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.7 the reading.
-- **Next:** T11.8 Orders in the ending.
+- **Last task:** T11.8 Orders in the ending.
+- **Next:** T11.9 the ending sequence.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -460,3 +460,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Choices I made:** the reading is a tall dark card inside the existing sheet, not a separate full-screen layer (less new code; T11.16 can judge it on a phone). Tapping Remember Them records the ending at once; after the reading, Continue just closes. T11.9 adds the scenes that follow, and T11.13 the "Read it again" button, so until then a closed reading cannot be replayed.
 - **No old test edited. Nothing skipped. Not seen on a phone** (T11.16).
 - **Next:** T11.8.
+
+## 2026-10-21 — v0.11 session 9: T11.8 Orders in the ending
+- **Built:** `endingOrderCards(state)` (`core/story/ending-orders.ts`) gives the Orders' cards in the fixed order Moot, Grey Wives, Bell-Watchers, Quenchers. An Order has a card only if its chapter 4 was read; the Moot and Quenchers cards pick variant A or B from `readWith` of that chapter. The Quenchers give Věra's fallback if they opened but chapter 4 was not read, and nothing if they never opened. It reads `chaptersRead`, `readWith` and `orders.opened` only.
+- **Texts:** R-05 to R-08 and the fallback, word for word from lore §34.6 (`content/text/remembering-orders.ts`).
+- **Tests:** `tests/remembering/ending-orders.test.ts`: none read; fallback only; unread but opened Orders silent; one read; unfinished Order silent; all read (A/A, B/B, mixed); changing seats, levels and counts changes nothing; texts equal the lore; none of the 40 names.
+- **Not shown yet:** the cards are data only; T11.9 puts them in the sequence.
+- **Branch:** `milestone/v0.11` created from this commit so the preview exists (the reading can be tried from the debug panel). Later pushes go to both branches.
+- **No old test edited. Nothing skipped.** **Next:** T11.9.
