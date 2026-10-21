@@ -2,12 +2,12 @@ import { rememberingCard } from '../../content/text/remembering';
 import { rememberingCardView } from '../../core/story/remembering-view';
 import { dispatch, game, version } from '../app/runtime';
 import { openArchiveSection } from '../screens/ArchiveScreen';
+import { openRememberScene } from './ReadingScene';
 import { openVigilScene } from './VigilScene';
 import styles from '../styles/ui.module.css';
 
 // GDD §5.15.2, §9.19 (D450): the quiet card on the Hold screen. Plain lines, no bar, no percentage,
-// no countdown. Hidden until Pechko's scene has been seen. The two choices of the open form and the
-// "Read it again" button are wired with the ending itself (T11.5, T11.13).
+// no countdown. Hidden until Pechko's scene has been seen. "Read it again" comes with the Library (T11.13).
 export const RememberingCard = () => {
   void version.value;
   const v = rememberingCardView(game());
@@ -41,7 +41,10 @@ export const RememberingCard = () => {
             <button
               type="button"
               class={styles.btnPrimary}
-              onClick={() => dispatch({ type: 'remembering.choose', ending: 'remember' })}
+              onClick={() => {
+                if (dispatch({ type: 'remembering.choose', ending: 'remember' }).ok)
+                  openRememberScene();
+              }}
             >
               {c.open.remember.name}
             </button>
@@ -65,7 +68,10 @@ export const RememberingCard = () => {
           <button
             type="button"
             class={styles.btnPrimary}
-            onClick={() => dispatch({ type: 'remembering.choose', ending: 'remember' })}
+            onClick={() => {
+              if (dispatch({ type: 'remembering.choose', ending: 'remember' }).ok)
+                openRememberScene();
+            }}
           >
             {c.afterVigil.remember}
           </button>

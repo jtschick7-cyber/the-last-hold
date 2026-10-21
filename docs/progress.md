@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.6 Keep the Vigil.
-- **Next:** T11.7 the reading.
+- **Last task:** T11.7 the reading.
+- **Next:** T11.8 Orders in the ending.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -452,3 +452,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Nothing skipped.** Not seen on a phone (T11.16).
 - **Next:** T11.7.
 
+## 2026-10-21 — v0.11 session 8: T11.7 the reading
+- **Built:** Remember Them now plays R-03 "The roll" (lore §34.3, word for word) and, on Continue, the reading: one name at a time on a dark rime-coloured card, in order of year, about 2 seconds each; a tap anywhere shows the next at once; Skip jumps to the last frame; after the fortieth name the Unlit's line shows (★, lore §34.5, word for word) with a Continue button.
+- **Same data as the Names view:** `readingFrames()` is built from the roll table and village names the Names view uses; a test checks both against lore §34.5 and against the Names view's own lines.
+- **Pace:** `src/ui/remembering/timing.ts` (2000 ms, outside `balance.ts`; no game constant). Reduced motion drops the fade through the existing motion rules; the speed is unchanged.
+- **Tests:** `tests/remembering/reading.test.ts` (table equals lore; R-03 and the Unlit's line equal the lore; fake timers: pace, tap restarts the interval, Skip stops it).
+- **Choices I made:** the reading is a tall dark card inside the existing sheet, not a separate full-screen layer (less new code; T11.16 can judge it on a phone). Tapping Remember Them records the ending at once; after the reading, Continue just closes. T11.9 adds the scenes that follow, and T11.13 the "Read it again" button, so until then a closed reading cannot be replayed.
+- **No old test edited. Nothing skipped. Not seen on a phone** (T11.16).
+- **Next:** T11.8.

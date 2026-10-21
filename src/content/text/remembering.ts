@@ -69,6 +69,31 @@ export const vigilScene = {
   ],
 } as const;
 
+/** R-03 (lore §34.3): plays when Remember Them is tapped; the reading starts when it is closed. */
+export const rememberScene = {
+  id: 'R-03',
+  title: 'The roll',
+  paragraphs: [
+    'Ilse has carried the roll down from the archive and set it on the table, and then, not trusting the table, picked it up again. Brana has lit every lamp in the Hall. Pechko is by the crack.',
+    '"You read," Ilse says. "I\'ve read them to myself so many times I\'m no use."',
+    'It is the first time anyone has asked you to read something aloud in this room.',
+    "The frost on the floor has gathered at the edge of the crack. It isn't writing. It is listening.",
+  ],
+} as const;
+
+/** The Unlit's answer, on the floor of the card after the fortieth name (lore §34.5). */
+export const unlitLine = {
+  heading: '— in rime, on the Hearth Hall floor —',
+  text: 'Forty. Known, every one. I can put the count down.',
+} as const;
+
+/** The reading screen's controls (not story text). */
+export const readingControls = {
+  skip: 'Skip',
+  tap: 'Tap for the next name.',
+  done: 'Continue',
+} as const;
+
 /** The Library's shelf "The Remembering" (lore §34.8): shown once one entry is reached. */
 export const rememberingShelfTitle = 'The Remembering';
 export const rememberingShelfEntries = {

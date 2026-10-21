@@ -7,7 +7,8 @@ import {
   type RememberingScene,
 } from '../../content/text/remembering';
 import { CONTRACT_SPECIES } from '../../content/remembering';
-import { namesFoundLine } from '../../content/story/roll';
+import { namesFoundLine, roll } from '../../content/story/roll';
+import { villages } from '../../content/villages';
 import type { GameState } from '../state/game-state';
 import { actVIStandApplied, namesFound, rememberingGate, speciesStudied } from './remembering';
 
@@ -80,3 +81,23 @@ export const rememberingShelf = (state: GameState): RememberingShelfEntry[] =>
   state.remembering.endings.some((e) => e.ending === 'vigil')
     ? [{ id: 'later', ...rememberingShelfEntries.later }]
     : [];
+
+export interface ReadingFrame {
+  readonly n: number;
+  readonly name: string;
+  /** "Mirograd · onward, year 200 of the order." (lore §34.5); the same data as the Names view's line. */
+  readonly line: string;
+}
+
+/**
+ * The 40 names of the reading, in order of year (lore §34.5). Built from `roll`, the Names view's own
+ * table, so the two cannot differ; every name is read, found or not, because the gate is open (D461).
+ */
+export const readingFrames = (): ReadingFrame[] =>
+  [...roll]
+    .sort((a, b) => a.year - b.year)
+    .map((r) => ({
+      n: r.n,
+      name: r.name,
+      line: `${villages[r.village].name} · onward, year ${r.year} of the order.`,
+    }));
