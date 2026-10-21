@@ -394,7 +394,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - The Order sheet (breakdown, "Brought from before the Orders", levels and perks, chapters with why they wait, Seat/Unseat/Swap), the chapter scene sheet with its variant and Close/Next, the Library's Orders shelf with the "read with …" line, the Villages panel entry.
   - *Acceptance:* 1. Every number has a breakdown. 2. The current level's perk shows as the real number, and the Quenchers' line says "easier waves, smaller Embers". 3. A waiting chapter reads "A chapter waits for a seat." and says what it waits for. 4. The shelf appears only after the first chapter is read. 5. Unseating shows "You keep your standing and chapters." 6. No sideways scroll at 360, 900 and 1300 px.
 
-- [ ] **T10.15 — Art** *(assets/)* *(built 2026-10-21; the box is ticked when the owner approves the art)*
+- [x] **T10.15 — Art** *(assets/)* *(approved by the owner, D434)*
   - Four order marks and an Orders icon, and placeholders for the four opening scenes; the manifest fallback stays for anything missing. Owner supplies or approves.
   - *Acceptance:* every new entry has art or a manifest fallback; the owner has seen the placeholders and the real art.
 

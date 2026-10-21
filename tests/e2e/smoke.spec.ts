@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { begin, onwardAll } from './helpers';
 
@@ -168,5 +169,75 @@ test('the v0.4 arrival: a Keep save faces its first Long Night, then starts over
 
   await expect(page.getByText(/Stanholm — Hamlet/)).toBeVisible();
   await expect(page.getByRole('heading', { name: 'The Long Night' })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+// Plan T10.16: the Orders on the phone viewport, from the played fixture (the owner's save, migrated
+// and played 72 h, with every Order open and none seated): seat the Moot in the step, read its first
+// chapter, change a seat from the card, and find both still there after a reload.
+test('seat an Order, read a chapter, change a seat, and reload', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  const played = JSON.parse(
+    readFileSync(new URL('../saves/fixtures/v10-played.json', import.meta.url), 'utf8'),
+  );
+  const tab = (name: string) =>
+    page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
+  await page.goto('./?debug');
+  await begin(page, 'Mira');
+  await tab('More').click();
+  await page.getByRole('button', { name: /^Save/ }).first().click();
+  await page.locator('input[type="file"]').setInputFiles({
+    name: 'save.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(played)),
+  });
+  await page.getByRole('button', { name: 'Yes, load it' }).click();
+
+  // Sheets that come first (the away sheet, scenes) are closed until the load step is up.
+  const step = page.getByRole('dialog', { name: 'Seat your Orders' });
+  for (let i = 0; i < 14 && !(await step.isVisible().catch(() => false)); i++) {
+    await page.waitForTimeout(400);
+    for (const name of ['Onward', 'Not now', 'Continue', 'Close']) {
+      const b = page.getByText(name, { exact: true });
+      if (
+        await b
+          .first()
+          .isVisible()
+          .catch(() => false)
+      ) {
+        await b.first().click();
+        break;
+      }
+    }
+  }
+  await expect(step).toBeVisible();
+  await step.getByRole('checkbox').first().check(); // the Moot
+  await step.getByRole('button', { name: 'Done' }).click();
+
+  // Its first chapter opens by itself, and is read.
+  const chapter = page.getByRole('dialog', { name: 'A table at the gate' });
+  await expect(chapter).toBeVisible();
+  await chapter.getByText('Close', { exact: true }).click();
+  await expect(chapter).toHaveCount(0);
+
+  // A seat change from the card, which starts the wait.
+  await tab('Hold').click();
+  const card = page.getByRole('region', { name: 'Orders' });
+  await expect(card.getByText("In seats: Thanes' Moot")).toBeVisible();
+  await card.getByRole('button', { name: /Change seats/ }).click();
+  const sheet = page.getByRole('dialog', { name: 'Change seats' });
+  await sheet.getByRole('button', { name: 'Seat' }).first().click();
+  await expect(sheet.getByText(/^Can change in /)).toBeVisible();
+  await page.getByRole('button', { name: 'Close' }).first().click();
+  await expect(card.getByText(/^In seats: Thanes' Moot, /)).toBeVisible();
+
+  // Saved: after a reload the seats are still there, and nothing has been read again.
+  await page.waitForTimeout(1500);
+  await page.reload();
+  await expect(
+    page.getByRole('region', { name: 'Orders' }).getByText(/^In seats: Thanes' Moot, /),
+  ).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'A table at the gate' })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
