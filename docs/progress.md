@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.17 done (all rows built and passing). T9.16 done (art approved).
-- **Next:** T9.18 (tune and baseline: nothing to tune if the suite stays green) and T9.19 (smoke and the preview build). (simulator rows, `[?]`), then T9.18, T9.19.
+- **Last task:** T9.19 done (T9.18 needed no tuning). All 19 tasks are ticked.
+- **Next:** the owner's playtest of the preview; then, on their yes, `sim:accept`, merge and tag (not done by me).
 - **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -206,3 +206,9 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **GDD §6.2 and the plan's table** carry the new numbers. No `sim:accept` (milestone end, after your playtest). No locked constant changed.
 
 - **CI after T9.17** (simulator run 39588879184, GitHub runners): events 57 s, long 121 s, rest 52 s, heavy 57 s, judge 91 s; every row passes, all under 5 minutes. The normal CI run (322) is green, e2e included, so the story e2e failure is gone.
+
+## 2026-10-21 — v0.9 session 6: T9.18 and T9.19
+- **T9.18: nothing to tune.** All simulator rows already pass on the 5 Monday seeds (T9.17 run; CI run 39588879184, every job under 5 minutes). No `balance:` commit, no tunable or `boss.*` constant changed, no `sim:accept`.
+- **T9.19:** `tests/e2e/events.spec.ts` already covers one boss attempt (scene, card, party, send, playback, result) and one hunt attempt (list, track, odds, playback, result, shelf, rest line) on the Pixel 7 phone viewport, with your real save (`v8-owner.json`) loaded into the production build. The smoke file already covers install-style offline reload. No new test needed. Phone e2e (events and smoke, 7 tests) passed here in 23 s; `npm run check` green (2,403 tests, 81 s).
+- **Open:** D402 and D403 are Proposed and need your yes. Hunt odds and hunt Suggest budgets (GDD §6.5) are not measured; you set those rows. Q30 not blocking.
+- **Not done on purpose:** `sim:accept`, merge, tag, pull request.

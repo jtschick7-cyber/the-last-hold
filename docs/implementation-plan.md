@@ -239,11 +239,11 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - The owner-approved rows of GDD §6.2 (table below) and the two proposed (D383), **Act VI lands in its cycle** and **the Dross-Tide stand probe**. No existing stand row reaches Act VI cycles, so the probe is the check on those stands.
   - *Acceptance:* 1. All rows pass on the **median of the 5 Monday seeds**. 2. The old rows pass on the re-recorded baselines. 3. **If no reasonable tunable passes a row, stop and write it to `docs/questions.md`** (Q28).
 
-- [ ] **T9.18 — Tune and baseline** *(tunables only)*
+- [x] **T9.18 — Tune and baseline** *(tunables only)*
   - Tuning commits start with `balance:` and include the report diff. A tunable moved by more than 2× gets a Proposed row. Do not run `sim:accept` until the owner passes the playtest (§0.3).
   - *Acceptance:* all simulator checks pass on 5 seeds; no `boss.*` constant changed except by an approved row.
 
-- [ ] **T9.19 — Smoke and the preview build** *(wrap-up)*
+- [x] **T9.19 — Smoke and the preview build** *(wrap-up)*
   - The Playwright smoke covers one boss attempt and one hunt attempt on the phone viewport; the preview build holds the finished milestone; `docs/progress.md` and `flesh-out/v0.9-summary.md` are current.
   - *Acceptance:* the preview build installs and opens the owner's save with events on.
 
