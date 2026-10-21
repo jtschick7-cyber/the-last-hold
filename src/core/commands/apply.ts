@@ -68,7 +68,8 @@ import {
   unseatOrder,
 } from './orders';
 import { openOrders } from '../systems/orders-open';
-import { noteReady, seeNear } from './remembering';
+import { chooseEnding, noteReady, seeNear } from './remembering';
+import { debugRememberingFinishActVI, debugRememberingOpenGate } from './debug-remembering';
 import { refuse, type ApplyResult, type Command } from './types';
 
 /**
@@ -157,6 +158,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setSeats(state, cmd.orders);
     case 'remembering.seeNear':
       return seeNear(state);
+    case 'remembering.choose':
+      return chooseEnding(state, cmd.ending, now);
+    case 'debug.rememberingOpenGate':
+      return debugRememberingOpenGate(state);
+    case 'debug.rememberingFinishActVI':
+      return debugRememberingFinishActVI(state);
     case 'remembering.noteReady':
       return noteReady(state);
     case 'debug.ordersOpen':

@@ -1,6 +1,6 @@
 import { rememberingCard } from '../../content/text/remembering';
 import { rememberingCardView } from '../../core/story/remembering-view';
-import { game, version } from '../app/runtime';
+import { dispatch, game, version } from '../app/runtime';
 import { openArchiveSection } from '../screens/ArchiveScreen';
 import styles from '../styles/ui.module.css';
 
@@ -33,8 +33,41 @@ export const RememberingCard = () => {
           </div>
         </>
       )}
-      {v.form === 'open' && <p>{c.open.line}</p>}
-      {v.form === 'afterVigil' && <p>{c.afterVigil.line}</p>}
+      {v.form === 'open' && (
+        <>
+          <p>{c.open.line}</p>
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <button
+              type="button"
+              class={styles.btnPrimary}
+              onClick={() => dispatch({ type: 'remembering.choose', ending: 'remember' })}
+            >
+              {c.open.remember.name}
+            </button>
+            <p class={styles.small}>{c.open.remember.text}</p>
+            <button
+              type="button"
+              class={styles.btn}
+              onClick={() => dispatch({ type: 'remembering.choose', ending: 'vigil' })}
+            >
+              {c.open.vigil.name}
+            </button>
+            <p class={styles.small}>{c.open.vigil.text}</p>
+          </div>
+        </>
+      )}
+      {v.form === 'afterVigil' && (
+        <>
+          <p>{c.afterVigil.line}</p>
+          <button
+            type="button"
+            class={styles.btnPrimary}
+            onClick={() => dispatch({ type: 'remembering.choose', ending: 'remember' })}
+          >
+            {c.afterVigil.remember}
+          </button>
+        </>
+      )}
       {v.form === 'afterRemember' && <p>{c.afterRemember.line}</p>}
     </section>
   );

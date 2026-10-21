@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.4 Pechko's near-scene, the card and the ready line.
-- **Next:** T11.5 the choice and the debug commands.
+- **Last task:** T11.5 the choice and the debug commands.
+- **Next:** T11.6 Keep the Vigil (R-10 and the Library entry "Later").
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -435,4 +435,13 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Left for later tasks (by plan):** the open form's two choices (T11.5), "Read it again" and the Library (T11.13). Until T11.5 the open card shows its first line only.
 - **Not seen on a phone:** no layout check yet (T11.16). If you close the scene with the ✕ it comes back on the next load; there is no button for it, because the card is hidden until the scene is seen and I may not invent text.
 - **Next:** T11.5.
+
+## 2026-10-21 — v0.11 session 6: T11.5 the choice and the debug commands
+- **Built:** `remembering.choose` (refused before Act VI's stand, with the gate closed, twice, and for the vigil after Remember Them; it records the ending and changes nothing else); the card's open form now has Remember Them and Keep the Vigil, and the after-vigil form has Remember Them. For now choosing only records: the scenes that follow come with T11.6 (R-10) and T11.9 (the sequence).
+- **Debug commands (D462):** "Open the gate" writes the 40 names and Studied species with no rewards (no document filed; Orders and skills unchanged). "Finish Act VI" begins Act VI if needed, takes the hold to Bastion and makes the real Last Stand, so it **plays the Long Night: the hold resets as in play** (hunters, Embers, the roll and the bestiary persist). I chose this over writing a stand record by hand because it is valid by construction and leaves no cycle stuck; say if you would rather have the lighter version. Both are on the debug sheet under "The Remembering".
+- **Names of the commands:** `debug.rememberingOpenGate` and `debug.rememberingFinishActVI` (the Orders debug commands are camel-cased too), `remembering.choose`; the docs say `debug.remembering.openGate()` as a description.
+- **Fixture:** `v11-played.json` made by `scripts/make-v11-played-fixture.ts` from `v11.json` through the debug and player commands: past Act VI's stand, vigil then Remember Them. It loads, validates, round-trips, and its fights and stands replay.
+- **Tests:** `tests/remembering/choose.test.ts` (every refusal; the card's forms along the owner's path; the debug commands, including no side effects and a stand that replays; the fixture).
+- **Test edit:** `tests/orders/opening.test.ts` lists the played fixtures it leaves out; `v11-played.json` is added (it has its Orders open already). Nothing loosened.
+- **Next:** T11.6.
 

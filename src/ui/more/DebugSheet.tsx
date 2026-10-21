@@ -316,6 +316,29 @@ export const DebugSheet = () => {
           Reset Orders
         </button>
       </div>
+      <h3 class={styles.cardTitle} style={{ marginTop: 'var(--space-3)' }}>
+        The Remembering
+      </h3>
+      <p class={styles.small}>
+        Finish Act VI plays Act VI's real Last Stand and Long Night (the hold resets as it does in
+        play). Open the gate writes the 40 names and the Studied species without any rewards.
+      </p>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.rememberingFinishActVI' })}
+        >
+          Finish Act VI
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.rememberingOpenGate' })}
+        >
+          Open the gate
+        </button>
+      </div>
       {note && <p class={styles.small}>{note}</p>}
       <h3 class={styles.cardTitle} style={{ marginTop: 'var(--space-3)' }}>
         Timing
