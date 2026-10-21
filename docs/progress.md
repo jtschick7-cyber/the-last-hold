@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.1 save v11 (the `remembering` block and the v10 → v11 migration).
-- **Next:** T11.2 the gate and the content tests.
+- **Last task:** T11.2 the gate and the content tests.
+- **Next:** T11.3 remove the closing line.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -411,4 +411,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Test edits (each a literal "10" that meant "the current schema"):** `tests/saves/v10-migration.test.ts` (two) and `tests/orders/full-run.test.ts` (one) now read `SCHEMA_VERSION`. Nothing loosened.
 - **Deferred to T11.2:** dropping an ending recorded before Act VI's stand, and warning when a stored ending's gate no longer holds; both need the gate and `actVIStandApplied`, which T11.2 builds.
 - **Next:** T11.2.
+
+## 2026-10-21 — v0.11 session 3: T11.2 the gate and the content tests
+- **Built (all derived, nothing stored):** `src/core/story/remembering.ts` with `namesFound`, `speciesStudied`, `rememberingGate` (40 names and all 16 contract species at the stored level Studied or better), `actVIStandApplied` (Act VI's cycle has its stand result, or a later cycle exists) and `endingChoosable`. The 16 species are the list in `src/content/remembering.ts`.
+- **T11.1's deferred checks are in:** on load, an ending recorded without Act VI's stand applied is dropped with a warning; one whose gate no longer holds is kept with a warning (`reconcileEndings`, run after the whole state is built).
+- **Tests:** `tests/remembering/gate.test.ts` (closed at 39 names; closed with one species at 3 kills; reads the stored level, not kills; open with all; Mastered counts; never stored; Act VI stand cases; the two load checks; a set-back clock changes nothing) and `tests/content/v11-gate.test.ts` (the list pinned to 16 ids; equals the species contracts name and the base stand pool, so Q39 stays closed; Great Beasts, quarries, guardians and the Dross-Tide excluded; every species and every name has a free source; a planted Order-only, Delve-only or event-only source fails).
+- **Test edit:** the T11.1 guard tests in `tests/saves/v11-migration.test.ts` now start from a save past Act VI's stand with the gate open (the new load check would otherwise drop their endings); nothing loosened.
+- **Note:** "Act VI's cycle" is read from `story.acts` (the act-6 entry's cycle), the persisted fact. 
+- **Next:** T11.3.
 

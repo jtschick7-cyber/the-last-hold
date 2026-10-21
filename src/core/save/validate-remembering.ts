@@ -1,11 +1,12 @@
 import { ENDING_IDS, type EndingRecord, type RememberingState } from '../state/remembering-state';
+import type { GameState } from '../state/game-state';
+import { actVIStandApplied, rememberingGate } from '../story/remembering';
 import { arr, bool, count, Invalid, nonNegative, obj } from './guards';
 
 // Technical design §5.2 and §9.4 (v11, D461): the ending part of the save guard. Order is array
 // order, never time: `at` is read but not compared. Unknown ending ids drop with a warning. A
 // state commands cannot make (a repeat, `vigil` after `remember`, a cycle that does not exist)
-// is refused as damage. Dropping an ending recorded before Act VI's stand, and keeping one whose
-// gate no longer holds, need the gate and are added with it (T11.2).
+// is refused as damage. `reconcileEndings` then checks the endings against the whole state.
 export const rememberingFrom = (
   v: unknown,
   cycleNumber: number,
@@ -34,4 +35,18 @@ export const rememberingFrom = (
     readyNoted: bool(o.readyNoted, 'remembering.readyNoted'),
     endings,
   };
+};
+
+/**
+ * D461 (1): an ending recorded while Act VI's stand is not applied cannot happen in play, so it is
+ * dropped with a warning; one whose gate no longer holds (content changed) is kept, with a warning.
+ */
+export const reconcileEndings = (state: GameState, warnings: string[]): GameState => {
+  if (state.remembering.endings.length === 0) return state;
+  if (!actVIStandApplied(state)) {
+    warnings.push("Dropped the recorded endings: Act VI's Last Stand has not been applied.");
+    state.remembering.endings = [];
+  } else if (!rememberingGate(state))
+    warnings.push('A recorded ending no longer matches what the roll and the bestiary hold; kept.');
+  return state;
 };

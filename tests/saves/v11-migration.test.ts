@@ -18,6 +18,8 @@ import {
 import { replayStand } from '../../src/core/stand/replay';
 import { SCHEMA_VERSION, type GameState } from '../../src/core/state/game-state';
 import { createNewGame } from '../../src/core/state/new-game';
+import { CONTRACT_SPECIES } from '../../src/content/remembering';
+import { freshAct } from '../../src/core/state/story-state';
 import { RULES_VERSION } from '../../src/core/rules-version';
 
 type Env = { schemaVersion: number; rulesVersion: number; state: Record<string, unknown> };
@@ -130,8 +132,17 @@ describe('a new game', () => {
 });
 
 describe('the remembering guard (D461)', () => {
+  // A save past Act VI's stand with the gate open, so only the structure of the list is on trial
+  // (the stand and gate checks are in tests/remembering/gate.test.ts).
   const base = (): Env => {
-    return JSON.parse(JSON.stringify(readFixture('v11.json'))) as Env; // the save is in cycle 19
+    const e = JSON.parse(JSON.stringify(readFixture('v11.json'))) as Env; // the save is in cycle 19
+    const st = e.state as unknown as GameState;
+    const past = st.cycles.find((c) => c.stand);
+    if (!past) throw new Error('the fixture has no stand');
+    st.story.acts.push(freshAct(6, past.number, 0));
+    st.story.names = Array.from({ length: 40 }, (_, i) => ({ n: i + 1, cycle: 1, at: 0 }));
+    for (const m of CONTRACT_SPECIES) st.bestiary[m] = { level: 3, kills: 4 };
+    return e;
   };
   const withEndings = (endings: unknown[], extra: object = {}) => {
     const e = base();
