@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.3 standing hooks, part 1 (done, pushed).
-- **Next:** T10.4, standing hooks part 2 (alchemy, the Archive, the Long Night).
+- **Last task:** T10.4 standing hooks, part 2 (done, pushed).
+- **Next:** T10.5, seats, the third seat and swaps.
 - **Open questions:** Q34 (two near-match names), Q36 (art), Q37 (Names sentence). None blocks T10.4.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -250,3 +250,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - `npm run check` green (2,454 tests, 66 s). Golden fights and recorded stands unchanged; no existing test edited.
 - **Left for later:** the third-seat check after a level change (T10.5) will read the list `raiseLevels` returns; the full simulator is not re-run here (nothing reads standing yet; T10.17 checks the old players still equal the baseline).
 - **Next:** T10.4.
+
+## 2026-10-21 — v0.10 session 2: T10.4 standing hooks, part 2
+- **Six hooks added** in `core/systems/orders.ts`, called where the game already notes the same event: a brew finished and an experiment finished (with one per property it revealed) for the Grey Wives; a document found, a hunter letter found and a name found for the Bell-Watchers. A name counts once, whatever found it.
+- **Long Night:** the reset never touches Orders, and a test now pins that counts, start, flags, Triumphant stands and the highest level all survive it. **Events add nothing:** a test runs a real boss attempt and a hunt on the owner's save and the Orders state is unchanged.
+- **Tests:** `tests/orders/standing-hooks-2.test.ts` (10), including a 30 h catch-up equal to 30 one-hour steps.
+- `npm run check` green (2,464 tests, 83 s). Golden fights and recorded stands unchanged; no existing test edited.
+- **Note:** this container had no installed packages at the start, so I ran `npm ci` from the lockfile first (nothing added). The "green" I saw before that was not a real run; this one is.
+- **Next:** T10.5.

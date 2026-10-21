@@ -2,6 +2,7 @@ import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
 import type { IngredientId } from '../../content/ingredients';
 import { noteBrewFinished, noteExperimentFinished } from '../skills/hooks';
+import { ordersBrewFinished, ordersExperimentFinished } from '../systems/orders';
 import { finishExperiment, type ExperimentResult } from './book';
 import { num } from '../balance-access';
 import type { BrewJob, GameState, KettleJob } from '../state/game-state';
@@ -89,10 +90,12 @@ export const applyBrew = (state: GameState): BrewDone | ExperimentDone | null =>
   if (job.kind === 'experiment') {
     const result = finishExperiment(state, job.a, job.b);
     noteExperimentFinished(state, result.revealed.length);
+    ordersExperimentFinished(state, result.revealed.length); // GDD §5.13.2: Grey Wives
     return { a: job.a, b: job.b, at: state.time, ...result };
   }
   state.stores[job.item] += 1;
   noteBrewFinished(state);
+  ordersBrewFinished(state); // GDD §5.13.2: Grey Wives
   return { item: job.item, at: state.time };
 };
 

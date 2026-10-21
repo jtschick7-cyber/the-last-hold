@@ -121,3 +121,31 @@ export const ordersDelveFloor = (state: GameState, paid: number, now: number): O
   count(state, 'quenchers', 'delveFloor', 1);
   return raiseLevels(state);
 };
+
+/** A brew finished into the stores (GDD §5.13.2): one for the Grey Wives. */
+export const ordersBrewFinished = (state: GameState): OrderId[] => {
+  count(state, 'greyWives', 'brew', 1);
+  return raiseLevels(state);
+};
+
+/** An experiment finished (GDD §5.13.2): one experiment and one per property it revealed. */
+export const ordersExperimentFinished = (
+  state: GameState,
+  propertiesRevealed: number,
+): OrderId[] => {
+  count(state, 'greyWives', 'experiment', 1);
+  count(state, 'greyWives', 'property', propertiesRevealed);
+  return raiseLevels(state);
+};
+
+/** A document or a hunter's letter was found (GDD §5.13.2): the Bell-Watchers count each once. */
+export const ordersDocumentFound = (state: GameState, source: 'document' | 'letter'): OrderId[] => {
+  count(state, 'bellWatchers', source, 1);
+  return raiseLevels(state);
+};
+
+/** A name entered the Names view (GDD §5.13.2): once per name, by whatever found it. */
+export const ordersNameFound = (state: GameState): OrderId[] => {
+  count(state, 'bellWatchers', 'name', 1);
+  return raiseLevels(state);
+};
