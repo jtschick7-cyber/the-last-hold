@@ -378,7 +378,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - The eight Bell-Watchers and Quenchers chapters, their two opening scenes, E3 (the rule, with a generator and the fallback remarks) and E4. Add the Order names, titles and level names to `tests/content/names.ts` with the OUT-6 date and notes.
   - *Acceptance:* 1. The harness passes on all texts. 2. E3's generated sentences equal the table for the full groups and for fixtures with one, two and all-but-one names found. 3. Every E4 excerpt is a substring of its chapter. 4. The names test is green. 5. **No text says, asks for or begins the names** (the phrase and name checks).
 
-- [ ] **T10.11 — Where the perk texts show** *(ui and core/story)*
+- [x] **T10.11 — Where the perk texts show** *(ui and core/story)*
   - The heads' lines at the end of notices and the Villages panel's "What the heads say about you" (Moot); the Book hint or elder's note (Grey Wives); the Names view's extra sentence or remark (Bell-Watchers); the Accounts addition (Quenchers). All **seated only.**
   - *Acceptance:* 1. Each shows only while its Order is seated and at or above its level. 2. The Names sentence appears only for names still missing, equals the rule's output, and a remark appears when the group is found. 3. The Accounts addition appears only once "What the hearth leaves" exists in the save. 4. The Book hint appears while its brew is unknown, the elder's note once it is known. 5. An unseated Order shows none.
 

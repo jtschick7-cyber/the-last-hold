@@ -257,19 +257,30 @@ const Accounts = () => {
       {cards.map((c) => (
         <section key={c.heading} class={styles.card} aria-label={c.heading}>
           <h2 class={styles.cardTitle}>{c.heading}</h2>
-          {c.accounts.map((a) => (
-            <button
-              type="button"
-              key={a.document}
-              class={styles.linkRow}
-              onClick={() => openDocument(a.document)}
-            >
-              <span class={styles.grow}>
-                <span class={`${styles.small} ${styles.dim}`}>{a.witness}</span>
-                <br />“{a.excerpt}”
-              </span>
-            </button>
-          ))}
+          {c.accounts.map((a) =>
+            a.document === null ? (
+              <div key={a.label} class={styles.linkRow}>
+                <span class={styles.grow}>
+                  <span class={`${styles.small} ${styles.dim}`}>
+                    {a.witness} {a.label}
+                  </span>
+                  <br />“{a.excerpt}”
+                </span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                key={a.document}
+                class={styles.linkRow}
+                onClick={() => openDocument(a.document ?? '')}
+              >
+                <span class={styles.grow}>
+                  <span class={`${styles.small} ${styles.dim}`}>{a.witness}</span>
+                  <br />“{a.excerpt}”
+                </span>
+              </button>
+            ),
+          )}
         </section>
       ))}
     </>
@@ -281,11 +292,13 @@ const Names = () => {
   return (
     <section class={styles.card} aria-label="Names">
       <h2 class={styles.cardTitle}>{view.title}</h2>
+      {view.remark && <p class={styles.small}>{view.remark}</p>}
       <ol class={styles.list}>
         {view.rows.map((r) => (
           <li key={r.n} class={r.found ? undefined : styles.dim}>
             {r.text}
             {r.hint && <div class={styles.small}>{r.hint}</div>}
+            {r.extra && <div class={`${styles.small} ${styles.dim}`}>{r.extra}</div>}
           </li>
         ))}
       </ol>

@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.10 the texts, part 2 (done, pushed).
-- **Next:** T10.11, where the perk texts show.
+- **Last task:** T10.11 where the perk texts show (done, pushed).
+- **Next:** T10.12, debug commands.
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -312,3 +312,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Names:** level names and the interface phrases added to `names.ts` (the four Order names and all titles were already in). Names test green.
 - `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
 - **Next:** T10.11 (where the perk texts show: heads' lines in notices and the Villages panel, the Book hint, the Names view, the Accounts).
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.11 where the perk texts show
+- **Four places, all from the core** (`core/story/orders-views.ts`, `orders-bell.ts`, `archive.ts`), the UI only draws them: a head's line at the end of that village's contract notice and the "What the heads say about you" list on the Villages panel (Moot); "The eldest Grey Wife says:" under the Book's grid (Grey Wives); the extra sentence after a missing name's hint and the remark under the Names heading (Bell-Watchers); the Quenchers' voice in "What the hearth leaves" (Quenchers).
+- **Rules:** each shows only while its Order is seated and at or above the line's level; unseated shows none; the Names sentence is only for names still missing in the level's group; the remark replaces it once the group is found; the Quenchers' voice appears only once that Account exists in the save, and only account n (not 1 to n).
+- **Please look at (D430, Proposed):** which Book hint shows when an earlier brew is still unknown but the level's own brew is known; the Quenchers' voice is a row with no document to open.
+- **Tests:** `tests/orders/perk-texts.test.ts` (10). The notice text itself is unchanged (the head's line is a separate field). I did not run the app in a browser here; the screens are small additions to existing ones, so please glance at them in the T10.13 playtest.
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.12.

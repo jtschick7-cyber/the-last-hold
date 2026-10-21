@@ -1,5 +1,6 @@
 import { TRUST_LEVELS, trustLevels, trustProgressLine } from '../../content/story/trust';
 import { VILLAGE_IDS, villages } from '../../content/villages';
+import { mootPanelEntries } from '../../core/story/orders-views';
 import { stepNeed, trustBreakdown } from '../../core/story/trust';
 import { game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
@@ -11,6 +12,7 @@ import { Num } from './Num';
 export const VillagesPanel = () => {
   void version.value;
   const s = game();
+  const heads = mootPanelEntries(s);
   return (
     <details class={styles.card} style={{ marginBottom: 'var(--space-3)' }}>
       <summary class={styles.cardTitle}>Villages</summary>
@@ -39,6 +41,20 @@ export const VillagesPanel = () => {
           );
         })}
       </ul>
+      {heads.length > 0 && (
+        <>
+          <h3 class={styles.cardTitle}>What the heads say about you</h3>
+          <ul class={styles.list}>
+            {heads.map((h) => (
+              <li key={h.head} class={styles.divider}>
+                <strong>{h.head}</strong>{' '}
+                <span class={styles.dim}>· {villages[h.village].name}</span>
+                <div class={styles.small}>{h.entry}</div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </details>
   );
 };
