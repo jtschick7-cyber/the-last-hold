@@ -74,6 +74,7 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 - `src/core/` is pure. Never import `ui/` or `platform/` from it, and never touch browser globals.
 - **Banned in `src/core/`:** `Math.random`, `Date.now`, `new Date`, `performance.now`, `crypto.getRandomValues`, `Math.pow`, `**`, and the transcendental `Math` functions (`exp`, `log*`, trig, `cbrt`, `hypot`, `fround`). Use `core/math` (`intPow`, `maxAffordable`) and `core/rng`. Lint enforces this.
 - **Every player action is a `Command` through `apply()`. Time passes only through `advance()`.** The UI, the simulator, and the debug panel all use these.
+- **Never seat an Order automatically; only the player's commands change `orders.seats`.**
 - The UI never computes game rules.
 
 **Content and balance**
@@ -94,6 +95,7 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 - Don't claim something works until a test or a run shows it.
 
 **Originality and assets**
+- **Write the Orders texts word for word from `docs/lore-secrets.md` §33; invent none.**
 - All content is original. Every new proper noun is searched against the influences (GDD §2.3) and added to `tests/content/names.ts`. If you can't search, list the names in `questions.md`; never skip the check.
 - **CC0 assets only,** each with a manifest entry. `docs/credits.md` is generated.
 

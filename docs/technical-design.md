@@ -188,6 +188,7 @@ interface GameState {
   items: ItemState[]                             // v0.8; every item owned: equipped or in Stores (cap 40)
   legendaries: { id: LegendaryId; cycle: number }[]  // v0.8; found, kept forever
   events: EventsState                            // v0.9; tokens, rests, the boss visit, hunt points (below)
+  orders: OrdersState                            // v0.10; standing, seats, chapters (Orders block below)
   stats: LifetimeStats                           // trophies this cycle, totals
   log: { recentFights: FightRef[] }              // seeds + inputs, not full logs (§5.3)
   settings: Settings
@@ -244,6 +245,42 @@ interface EventsState {
 - **Derived values** stay derived: the pool bar, the milestone marks, the tier, the preview, odds, points totals and every rest time come from selectors that take `now` and return `Breakdown` trees.
 - **Derived values are never stored:** rates, the active-roster cap, odds. They come from **selectors** (`core/state/selectors.ts`). Each selector that feeds a visible number also returns a `Breakdown` tree (§5.4).
 - **Fight logs are not stored.** A `FightRef` holds the seed and the inputs (party, preparation, monster instance), and the log is **regenerated on demand** by re-running the fight. This keeps saves small and proves determinism every time a log opens.
+
+#### Orders (v0.10, D408–D425)
+
+```ts
+type OrderId = 'moot' | 'greyWives' | 'bellWatchers' | 'quenchers'   // this is also the list order
+
+interface OrdersState {
+  opened: Partial<Record<OrderId, { at: number }>>        // for good; `at` is the wall-clock `now` the game uses for `meta.lastSeen`
+  counts: Record<OrderId, Record<string, number>>         // live per-source counts from v10 on, for ALL four Orders, opened or not
+  start: Record<OrderId, number>                           // the one migration backfill, already capped (0 in a new game)
+  triumphant: number                                       // Triumphant stands counted since v10 (applies to every Order)
+  delveWindow: { start: number; used: number } | null      // event-clock start of the current window, and standing used in it
+  levelHigh: Record<OrderId, number>                       // highest level ever reached (never drops)
+  seats: OrderId[]                                         // length ≤ seat count, kept in list order
+  thirdSeat: boolean                                       // opened once, kept forever
+  lastChange: number | null                                // eventNow() of the last seat change
+  chaptersRead: Record<OrderId, number>                    // 0 to 4
+  readWith: Record<OrderId, OrderId[][]>                   // per chapter read, the seats at the time, in list order (D419)
+  openingQueue: OrderId[]                                  // opening scenes waiting, in the order the Orders opened
+  seatStepPending: boolean                                 // the one-time load "Seat your Orders" sheet
+}
+```
+
+- **Standing is derived, never stored:** `standing(o) = start[o] + Σ counts[o][source] × weight[source] + triumphant × triumphantChunk`. **Level is derived** from standing and the thresholds and is the **higher of that and `levelHigh[o]`**, so tuning a weight down can never lower a level (D410). `levelHigh` is raised in the same command that adds standing.
+- **Counts change only in the command or event that does the thing** (a contract resolves, a brew finishes, a document is found, a Delve floor's result is applied, a stand ends) — **including events inside `advance`** — never on a timer. A source counts for an Order whether or not it has opened. **Delve floors:** a floor counts only if its applied result paid at least 1 Riftglass; `delveWindow` starts at the first counted floor (as `eventNow`), `used` is capped at `orders.delveWeeklyCap`, and a floor after `start + orders.delveWindow` starts a new window.
+- **Seat count** is `thirdSeat ? orders.seatsMax : orders.seatsStart`.
+- **The third-seat check** (`checkThirdSeat`) runs **after any level change, at the Quenchers' opening and on load**; it sets `thirdSeat` once, when two Orders have `levelHigh = 4` and `opened.quenchers` exists. It is idempotent.
+- **Cooldown:** a seat change is allowed when `lastChange === null` or `eventNow(state, now) − lastChange ≥ orders.swapCooldown`. It reuses the monotone clock of §5.2, so a rewound device clock gives no free change. A new warden's arrival sets `lastChange = null`. Seating into a free seat at an Order's opening does not set `lastChange`.
+- **Nothing seats itself** (D422): `opened` and `openingQueue` are set by `openOrders` and the triggers; `seats` only by the player's commands.
+- **Chapters are derived, not stored:** the playable chapter for an Order is `chaptersRead[o] + 1` when the Order is open and seated, `level(o) ≥` that number, and its condition holds (lore §33 Part B: OR-G1 Vesna on the roster; OR-G2 Ilse arrived; OR-G3 Ostap and Vesna on the roster; OR-M4 the Quenchers have opened; OR-Q4 the Moot has opened). The list of playable chapters is sorted by list order, then chapter number.
+- **Long Night:** `orders` is kept whole (D410). A new warden does not clear `openingQueue`.
+- **Validation:** `seats` has no duplicates, is in list order and has only opened Orders; `chaptersRead[o] ≤ levelHigh[o]`; `readWith[o].length === chaptersRead[o]`; `thirdSeat` implies two Orders with `levelHigh = 4` and `opened.quenchers`; counts are non-negative integers; unknown ids drop with a warning.
+
+#### Orders commands (v0.10; names are the debug and sim interface)
+
+`orders.seat(order)`, `orders.unseat(order)`, `orders.swap(out, in)`, `orders.setSeats(list)` (the new-warden step and the load sheet; no cooldown), `orders.readChapter(order)` (reads **that Order's** next playable chapter, records the seats in list order, raises nothing else), `orders.finishOpening(order, seatIt)` (pops that Order from `openingQueue`; seats it only if `seatIt` and a seat is free). Every command is pure on `(state, now)`, returns a result with a reason when refused, and rolls nothing.
 
 ### 5.3 Fight references
 
@@ -311,6 +348,17 @@ while state.time < toTime:
 - **Backward clock (D21) for events:** the event clock of §5.2 is monotone, so nothing special happens on a backward step: the existing handler resets `lastSeen` and applies elapsed 0, and `events.clock` simply does not move. Tests: (1) a clock moved back 3 h leaves tokens-to-next and every rest remaining exactly as they were; (2) **the round trip**: moved back 3 h and then forward 3 h, the bank and every rest equal what they were before both moves (no free time); (3) forward 3 h past the old high-water mark adds exactly 3 h.
 - **Riftglass differs on purpose:** its allowance grows inside `advance` and respects the offline cap; tokens and rests do not. After a long absence the two banks behave differently; the away sheet only mentions the token bank when it filled.
 
+#### Orders and `advance` (v0.10)
+
+`advance` **does** touch Orders, in three ways, and each needs a test:
+1. **Standing is added by events inside it** (a contract completing, a brew or experiment finishing, a clue revealing a property, a document found by a condition met in the catch-up).
+2. **The Quenchers' Threat factor works over time:** the hourly Rank rate is multiplied by `1 − threatStep × level` for the seated level, so `advance` over a long gap must equal many short steps (the **time-away equivalence test**, run with the Quenchers seated and with a seat change inside the gap).
+3. **An Order can open during the catch-up** (D5-08 found). `advance` only records the facts; **`openOrders` runs after the catch-up** so contracts finishing in it are counted once (their counts come from the events, not from a backfill).
+
+**Order of a load:** migrate → catch up (`advance`) → `openOrders` (flags, `openingQueue`, `seatStepPending` for a migrated save) → `checkThirdSeat` → the UI shows scenes (act scenes, the events scene, Orders openings, the "Seat your Orders" sheet, chapters).
+
+The only time-based Orders value besides Threat is the cooldown, derived from `eventNow`, like tokens and rest (§6.2, D359). The offline cap does not touch it.
+
 ### 6.3 The live loop
 
 - **A 1-second interval** calls `advance(state, clock.now())`. The UI redraws through signals; nothing animates by polling.
@@ -364,6 +412,8 @@ Each kind of randomness gets its own derived seed. That way, adding a roll in on
 | Simulator | `sim:${runSeed}` (the simulator also picks its own `gameSeed`) |
 
 New streams never reuse an existing prefix, so adding events shifts no other system's results.
+
+**Orders (v0.10).** Orders use no random stream. Nothing is rolled; chapter variants are chosen from the seats. This is stated so no one adds one.
 
 ### 7.3 Roll sources (for the exact test)
 
@@ -467,6 +517,12 @@ interface RollSource { next(): number }   // [0, 1)
 - **Validation** is a hand-written guard (`validateState(json): Result`) that checks types, ranges, and that every ID exists in content **[JC: no schema library]**. Unknown IDs (for example, content that was removed) are dropped with a warning in the load report, never a crash.
 - **Loading a save from a newer version** is refused with "This save is from a newer version of the game", leaving the current state untouched.
 
+- **v9 → v10** *(v0.10; `save/migration-v10.ts`; fixture `tests/saves/fixtures/v9-owner.json`, the owner's real save (see OUT-8))*:
+  - adds `orders` with empty `opened`, zero `counts`, `triumphant: 0`, `delveWindow: null`, `levelHigh` all 0, `seats: []`, `thirdSeat: false`, `lastChange: null`, `chaptersRead` 0, `readWith` empty, `openingQueue: []`, `seatStepPending: false`;
+  - **backfills once:** `start[o]` = the standing the save's history gives for the sources it holds (every source in GDD §5.13.2; past Triumphant stands from `cycles[].stand` bands), **capped at `thresholds[o][orders.backfillCapLevel − 1]`**, and `levelHigh[o]` = the level that standing gives; the backfill returns the list of sources it **could not recover**, which the load puts in the warnings and the diagnostics (those start at 0);
+  - does **not** open any Order or queue any scene: **`openOrders` does,** after the catch-up, by the same function the live game uses at a trigger;
+  - **Tests:** the fixture loads, migrates, validates and round-trips; `start` equals an independent recount, capped; the warnings name the unrecoverable sources; no `opened`, `openingQueue` or `seats` is set by the migration; **every golden fight replays line for line.** Then, in T10.6, the openings are checked against a table worked out from the fixture itself (not hard-coded to one act).
+
 ---
 
 ## 10. UI architecture
@@ -480,6 +536,10 @@ interface RollSource { next(): number }   // [0, 1)
 - **Accessibility basics:** 44 px touch targets, `prefers-reduced-motion`, rem-based type that follows system text size, and visible focus styles.
 - **Layout:** CSS grid. The 900 px and 1300 px breakpoints switch to 2 and 3 columns (GDD §9.1).
 - **Pixel art:** `image-rendering: pixelated`, integer scale factors only, and a `<Sprite id>` component (§12).
+
+#### Orders (v0.10)
+
+The Orders card, Order sheets, the seat step and the Library shelf read only `standing`, `level`, `seats`, the derived playable chapters, `openingQueue` and `readWith` through selectors. Perk factors are computed in the core and passed to the breakdown trees (§5.4) as named lines; the UI never multiplies anything itself. **Scene order on one load is fixed in the UI shell:** act scenes, the events scene, Orders openings, the "Seat your Orders" sheet, chapters.
 
 ### 10.1 The odds and suggest worker (GDD §6.5)
 
@@ -605,6 +665,13 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 - **Budgets:** a 3-cycle run in **60 s or less**; the full suite in **5 min or less per CI job** (GDD §6.5, D320); the fast set within `npm run check`'s 90 s (§11.2).
 - The simulator runs **without the worker**. Contract odds come from the core directly, at stage-1 sample counts **[JC]**. The engine is fast because `advance` is event-driven: nothing is simulated second by second.
 
+#### Orders (v0.10)
+
+- A new policy `sim/policies/orderer.ts` and a shard `orders` (Monday seeds only). Every other policy issues no `orders.*` command, so their reports equal the v0.9 baseline.
+- The Orderer plays like Standard **and runs Delves as the Delver does once they are open**; it taps "Seat it" at an opening when a seat is free; it ranks Orders to seat by chapters playable now, then chapters unread, then list order.
+- Report fields: first-open time per Order, chapter-1 time per Order, level-4 time per Order, chapter times, the silver and provisions shares, the stand results with the perk on and off, Embers per stand.
+- The shard has its own 5-minute budget (D320).
+
 ---
 
 ## 14. Testing strategy
@@ -641,6 +708,18 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 **Name collision list:** `tests/content/names.ts` lists every proper noun that has passed the GDD §2.3 search, with the date checked. v0.9 adds the names in `flesh-out/v0.9/OUT-6`; the content test fails until they are listed.
 - **How names are found** *(⚑ plan review A13)*: every `name`, `title`, `epithet`, and `place` field in `src/content/`, plus each content file's `properNouns` array (for names that appear only inside text). The content test fails if any of them is missing from the list.
 - **If a session can't search the web,** it adds the unchecked names to `docs/questions.md` and marks the task `[?]`. The test stays red for those names; it is never skipped.
+
+#### Orders (v0.10)
+
+- Standing sources (including inside `advance`), thresholds, the high-water level, the Delve window and cap, the Triumphant chunk (core unit tests).
+- Seats: the third seat for every order of events, the cooldown on `eventNow`, the new-warden step (core unit tests).
+- Perks: with nothing seated every result equals v0.9 (replay test); each factor equals `1 − step × level`; the perk-ceiling test; the **time-away equivalence test** with the Quenchers seated.
+- Chapters: waiting, no blocking, order, the two holds, variants, recorded seats, a chapter that becomes playable without a command (core story tests).
+- Content test: OUT-3 Part F (automated checks, with a planted-bad-text test for each).
+- The Delve-optional test (D20, D271) lists Delve standing as a reward with an idle source.
+- The names test: the four Order names, titles and level names are listed with the OUT-6 date.
+- The migration test (above) and a scripted full run through the debug commands.
+- Playwright: one seat change and one chapter on the phone viewport; no sideways scroll at 360, 900 and 1300 px.
 
 ---
 
@@ -683,6 +762,11 @@ A **contact sheet** (`tools/contact-sheet.ts`) renders every generated asset ont
 | **Floating-point drift** between live and offline | Low | Event-driven `advance` plus the equivalence test |
 | **Combat rule changes break replays** | Medium | `rulesVersion` plus the "older rules" label (§5.3) |
 | **Claude Code drifts across sessions** | Medium | Lint-enforced layers, content validation, golden tests, `CLAUDE.md`, a milestone-scoped plan |
+
+#### Orders (v0.10)
+
+- The backfill depends on what the owner's save keeps (Q35). A source the save does not hold starts at 0 and is named; the cap makes the start level 1 whatever the history.
+- The Quenchers' Threat perk changes stand waves **and** the Embers per stand, so it is re-judged on the Orderer only; it is not tested against the old players because they never seat it.
 
 ---
 

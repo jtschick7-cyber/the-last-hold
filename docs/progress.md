@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** v0.9 closed: playtest passed, `sim:accept` run, merged and tagged `v0.9.0` (D405).
-- **Next:** v0.10 needs a flesh-out session first (plan §0.4).
-- **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
+- **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied (docs commit).
+- **Last task:** the v0.10 docs commit (D407–D425 added; the owner said yes to OUT-3 and the readings on 2026-10-21).
+- **Next:** T10.1, save v10 and the migration. It needs the owner's choice of save fixture first (see the last entry).
+- **Open questions:** Q34 (two near-match names), Q35 (what the save keeps), Q36 (art), Q37 (Names sentence). None blocks T10.1.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -215,3 +215,13 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 
 ## 2026-10-21 — v0.9 closed
 - Owner passed the playtest (D405). `sim:accept` run: 50 runs, 318 s, all rows pass, baseline recorded in `sim/baseline.json`. Status set to complete, PR opened, merged, tagged `v0.9.0`.
+
+## 2026-10-21 — v0.10 session 1: the flesh-out is applied (docs only)
+- **Checked first:** `v0.9.0` is tagged and inside `main`; the v0.9 merge is in `main`; `sim/baseline.json` is the accepted one. Branched `milestone/v0.10` from `main` and pushed it.
+- **Owner said yes** to OUT-3 and the eighteen readings, no exceptions: **D425** added (Decided). **D407** (sweep, Decided) and **D408–D424** (Proposed) added; no old row edited.
+- **Applied:** flesh-out files to `docs/flesh-out/v0.10/` and the summary to `docs/flesh-out/v0.10-summary.md`; GDD §5.13 replaced and the other GDD edits made (OUT-2b, §7.12, waits for T10.2); lore §33 and its three edits; the plan's v0.10 section, the v0.11 outline, the v1.0 line and the §0.7 row (OUT-4b waits for T10.2); Q34–Q37; the technical-design changes; two standing rules in `CLAUDE.md`.
+- **Sweep:** every `Proposed` row from D358 to D406 is named in D407; D408–D424 are the new ones; nothing else turned up.
+- **v0.9 actual count** (§0.7): 21 entries over 6 numbered build sessions.
+- **`npm run check` green** (2,403 tests, 64 s).
+- **Save fixture, waiting on the owner:** the export they sent has `schemaVersion` 9 but `meta.debugUsed` is **true**. OUT-8 says to ask which to use (this export, or v8-owner.json carried forward). Not copied yet.
+- **Next:** T10.1.
