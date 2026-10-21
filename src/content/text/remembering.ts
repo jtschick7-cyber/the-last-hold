@@ -56,3 +56,21 @@ export const creaturesKnownLine = (known: number, total: number): string =>
 
 /** The ready line (D466 (1)): once, on the first away or result sheet after the gate opens. */
 export const rememberingReadyLine = 'The Remembering is ready. Pechko is waiting by the stove.';
+
+/** R-10 (lore §34.4): played once, when Keep the Vigil is chosen; the Library's "Later" replays it. */
+export const vigilScene = {
+  id: 'R-10',
+  title: 'Later',
+  paragraphs: [
+    'You tell Pechko you are not ready to read it yet.',
+    'He nods, as if you had told him the weather. "Aye. It\'s a lot, to read aloud in a room."',
+    'He leans the broom against the stove. "The cold has learned patience. We can learn it too. Brana will keep the roll with the lamps. It\'ll be here."',
+    'Brana puts the kettle on, which is how she says the matter is closed. The frost along the foot of the wall stays where it is, patient as a dog at a door.',
+  ],
+} as const;
+
+/** The Library's shelf "The Remembering" (lore §34.8): shown once one entry is reached. */
+export const rememberingShelfTitle = 'The Remembering';
+export const rememberingShelfEntries = {
+  later: { title: 'Later', blurb: 'Pechko, when you were not ready.' },
+} as const;

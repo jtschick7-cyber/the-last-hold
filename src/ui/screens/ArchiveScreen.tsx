@@ -10,6 +10,9 @@ import {
   type ShelfLetter,
 } from '../../core/story/archive';
 import { ordersShelf } from '../../core/story/orders-chapter-view';
+import { rememberingShelf } from '../../core/story/remembering-view';
+import { rememberingShelfTitle } from '../../content/text/remembering';
+import { openVigilScene } from '../remembering/VigilScene';
 import { reopenChapter } from '../orders/ChapterScene';
 import { docKey } from '../../core/story/documents';
 import { letterKey } from '../../core/story/letters';
@@ -136,12 +139,14 @@ const Library = () => {
   const echoList = echoesShelf(s);
   const rime = rimeShelf(s);
   const orders = ordersShelf(s);
+  const remembering = rememberingShelf(s);
   const wayDown = s.delve.sceneSeen;
   if (
     groups.length === 0 &&
     shelf.length === 0 &&
     echoList.length === 0 &&
     orders.length === 0 &&
+    remembering.length === 0 &&
     !wayDown
   )
     return <p class={styles.dim}>Nothing in the archive yet.</p>;
@@ -211,6 +216,23 @@ const Library = () => {
                   <span class={styles.grow}>
                     <strong>{e.title}</strong>
                     <span class={`${styles.small} ${styles.dim}`}> · {e.readWithLine}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {remembering.length > 0 && (
+        <section class={styles.card} aria-label={rememberingShelfTitle}>
+          <h2 class={styles.cardTitle}>{rememberingShelfTitle}</h2>
+          <ul class={styles.list}>
+            {remembering.map((e) => (
+              <li key={e.id}>
+                <button type="button" class={styles.linkRow} onClick={openVigilScene}>
+                  <span class={styles.grow}>
+                    <strong>{e.title}</strong>
+                    <span class={`${styles.small} ${styles.dim}`}> · {e.blurb}</span>
                   </span>
                 </button>
               </li>

@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.5 the choice and the debug commands.
-- **Next:** T11.6 Keep the Vigil (R-10 and the Library entry "Later").
+- **Last task:** T11.6 Keep the Vigil.
+- **Next:** T11.7 the reading.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -444,4 +444,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Tests:** `tests/remembering/choose.test.ts` (every refusal; the card's forms along the owner's path; the debug commands, including no side effects and a stand that replays; the fixture).
 - **Test edit:** `tests/orders/opening.test.ts` lists the played fixtures it leaves out; `v11-played.json` is added (it has its Orders open already). Nothing loosened.
 - **Next:** T11.6.
+
+## 2026-10-21 — v0.11 session 7: T11.6 Keep the Vigil
+- **Owner:** agreed that "Finish Act VI" plays the real Long Night (recorded in the T11.5 entry).
+- **Built:** R-10 "Later" (lore §34.4, word for word) opens when the card's Keep the Vigil succeeds, so it plays once (a second choice is refused); the Library gets the shelf "The Remembering" with one entry, "Later" (*Pechko, when you were not ready.*), shown only after the vigil and replaying the scene. The shelf has room for "The reading" (T11.13).
+- **Tests:** `tests/remembering/vigil.test.ts`: the state outside `remembering` is identical after the choice at the same time (ignoring `meta.lastSeen`, the clock high-water mark and `events.clock`); the choice is recorded once; the shelf is hidden, then shows "Later" and keeps it; the text equals the lore, with none of the 40 names and no avoid-list word.
+- **Nothing skipped.** Not seen on a phone (T11.16).
+- **Next:** T11.7.
 

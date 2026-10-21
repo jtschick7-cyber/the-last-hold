@@ -2,6 +2,7 @@ import { rememberingCard } from '../../content/text/remembering';
 import { rememberingCardView } from '../../core/story/remembering-view';
 import { dispatch, game, version } from '../app/runtime';
 import { openArchiveSection } from '../screens/ArchiveScreen';
+import { openVigilScene } from './VigilScene';
 import styles from '../styles/ui.module.css';
 
 // GDD §5.15.2, §9.19 (D450): the quiet card on the Hold screen. Plain lines, no bar, no percentage,
@@ -48,7 +49,9 @@ export const RememberingCard = () => {
             <button
               type="button"
               class={styles.btn}
-              onClick={() => dispatch({ type: 'remembering.choose', ending: 'vigil' })}
+              onClick={() => {
+                if (dispatch({ type: 'remembering.choose', ending: 'vigil' }).ok) openVigilScene();
+              }}
             >
               {c.open.vigil.name}
             </button>

@@ -3,6 +3,7 @@ import {
   nearSceneClosed,
   nearSceneOpen,
   rememberingReadyLine,
+  rememberingShelfEntries,
   type RememberingScene,
 } from '../../content/text/remembering';
 import { CONTRACT_SPECIES } from '../../content/remembering';
@@ -67,3 +68,15 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
     speciesTotal: total,
   };
 };
+
+export interface RememberingShelfEntry {
+  readonly id: 'later';
+  readonly title: string;
+  readonly blurb: string;
+}
+
+/** The Library shelf: empty (so hidden) until an entry is reached (lore §34.8). "Later" follows Keep the Vigil. */
+export const rememberingShelf = (state: GameState): RememberingShelfEntry[] =>
+  state.remembering.endings.some((e) => e.ending === 'vigil')
+    ? [{ id: 'later', ...rememberingShelfEntries.later }]
+    : [];
