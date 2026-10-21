@@ -5,6 +5,7 @@ import type { PatronId } from '../../content/delves/patrons';
 import type { CosmeticId } from '../../content/delves/shop';
 import type { SceneId } from '../../content/text/scenes';
 import type { OrderId } from '../../content/orders';
+import type { EndingId } from '../state/remembering-state';
 import type { HunterId } from '../../content/hunters';
 import type { TrackId } from '../../content/hunts';
 import type { JobId } from '../../content/jobs';
@@ -92,6 +93,16 @@ export type Command =
   | { type: 'orders.setSeats'; orders: OrderId[] }
   /** Skip or finish the load step without changing a seat or the cooldown. */
   | { type: 'orders.skipSeatStep' }
+  /** Pechko's near-scene was closed with Continue (v0.11, D461 (4)). */
+  | { type: 'remembering.seeNear' }
+  /** Chooses Remember Them or Keep the Vigil; refused unless the ending is choosable (v0.11, D461). */
+  | { type: 'remembering.choose'; ending: EndingId }
+  /** Debug (plan T11.5, D462): writes the 40 names and the Studied species the gate reads. */
+  | { type: 'debug.rememberingOpenGate' }
+  /** Debug (plan T11.5, D462): makes Act VI's Last Stand, so the ending can begin. */
+  | { type: 'debug.rememberingFinishActVI' }
+  /** The "The Remembering is ready" line has been shown (v0.11, D466 (1)). */
+  | { type: 'remembering.noteReady' }
   // Debug, Orders (plan T10.12): the debug panel only.
   | { type: 'debug.ordersOpen'; order: OrderId }
   | { type: 'debug.ordersAddStanding'; order: OrderId; amount: number }

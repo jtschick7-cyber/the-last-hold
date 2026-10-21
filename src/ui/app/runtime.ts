@@ -35,6 +35,10 @@ const CATCH_UP_FROM_MS = 60 * 1000;
 /** Away at least this long: show the "While you were away" sheet [JC 6]. */
 const AWAY_SHEET_FROM_MS = 5 * 60 * 1000;
 
+/** The screens, in tab order; a signal so a card can send the player to one (v0.11 card links). */
+export const TABS = ['hold', 'contracts', 'hunters', 'bestiary', 'more'] as const;
+export type Tab = (typeof TABS)[number];
+export const tab = signal<Tab>('hold');
 export const version = signal(0);
 export const catchUpProgress = signal<{ done: number; total: number } | null>(null);
 export const awaySummary = signal<AwaySummary | null>(null);

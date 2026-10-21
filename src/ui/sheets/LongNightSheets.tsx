@@ -17,7 +17,7 @@ import { seatStepOrders } from '../../core/systems/orders-view';
 import { SeatStep } from '../orders/SeatSheets';
 import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
-import { actClosing, actClosingNote } from '../../core/story/documents';
+import { actClosingNote, longNightTestament } from '../../core/story/documents';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { Sprite } from '../widgets/Sprite';
@@ -186,8 +186,6 @@ const NewWarden = ({ s, stand }: { s: GameState; stand: StandRecord }) => {
   );
 };
 
-const STEPS = 4;
-
 export const LongNightView = () => {
   void version.value;
   const s = game();
@@ -196,8 +194,18 @@ export const LongNightView = () => {
   if (!last) return <p>No Last Stand yet.</p>;
   // GDD §5.14.9: the act that cycle told closes with its testament.
   const act = s.cycles.find((c) => c.number === last.cycle)?.act ?? null;
+  // D455: a cycle with no act has no testament, and the Long Night skips that step.
+  const testament = longNightTestament(s, act);
+  const steps = [
+    <StandResultView key="result" stand={last.stand} />,
+    ...(testament
+      ? [<Testament key="testament" doc={testament} note={actClosingNote(s, act)} />]
+      : []),
+    <HearthView key="hearth" />,
+    <NewWarden key="warden" s={s} stand={last.stand} />,
+  ];
   const next = (): void => {
-    if (step < STEPS - 1) setStep(step + 1);
+    if (step < steps.length - 1) setStep(step + 1);
     else {
       dispatch({ type: 'stand.seen' });
       closeAllSheets();
@@ -205,12 +213,9 @@ export const LongNightView = () => {
   };
   return (
     <div>
-      {step === 0 && <StandResultView stand={last.stand} />}
-      {step === 1 && <Testament act={actClosing(act)} note={actClosingNote(s, act)} />}
-      {step === 2 && <HearthView />}
-      {step === 3 && <NewWarden s={s} stand={last.stand} />}
+      {steps[step]}
       <button type="button" class={styles.btnPrimary} style={{ width: '100%' }} onClick={next}>
-        {step < STEPS - 1 ? 'Next' : `Begin cycle ${s.cycle.number}`}
+        {step < steps.length - 1 ? 'Next' : `Begin cycle ${s.cycle.number}`}
       </button>
     </div>
   );

@@ -38,6 +38,7 @@ import { delveFrom } from './validate-delve';
 import { longNightFrom } from './validate-long-night';
 import { eventsFrom } from './validate-events';
 import { ordersFrom } from './validate-orders';
+import { reconcileEndings, rememberingFrom } from './validate-remembering';
 import type {
   ContractInstance,
   ContractResult,
@@ -406,6 +407,7 @@ const check = (raw: unknown, warnings: string[], notes: string[]): GameState => 
     delve: delveFrom(s.delve, warnings),
     events: eventsFrom(s.events, fightRef, warnings),
     orders: ordersFrom(s.orders, warnings, notes),
+    remembering: rememberingFrom(s.remembering, cycleNumber, warnings),
     ...itemsFrom(s, owned, warnings),
     settings: settingsFrom(s.settings, warnings),
   };
@@ -416,7 +418,11 @@ export const validateState = (raw: unknown): Result<Validated> => {
   const warnings: string[] = [];
   const notes: string[] = [];
   try {
-    return success({ state: check(raw, warnings, notes), warnings, notes });
+    return success({
+      state: reconcileEndings(check(raw, warnings, notes), warnings),
+      warnings,
+      notes,
+    });
   } catch (e) {
     if (e instanceof Invalid) return failure(`This save has invalid data: ${e.message}`);
     throw e;

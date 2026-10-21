@@ -18,6 +18,14 @@ import { suggestSix } from '../src/core/stand/suggest';
 import { ageIndex } from '../src/core/systems/ages';
 import { propertiesFound } from '../src/core/alchemy/book';
 import { skillLevels } from '../src/core/skills/skills';
+import { levelOf } from '../src/core/investigation/knowledge';
+import { CONTRACT_SPECIES } from '../src/content/remembering';
+import {
+  actVIStandApplied,
+  endingChoosable,
+  namesFound,
+  speciesStudied,
+} from '../src/core/story/remembering';
 import { startingTrust, TRUST_LEVELS } from '../src/content/story/trust';
 import { VILLAGE_IDS } from '../src/content/villages';
 import { ALL_CONTENT, STORY } from './targets';
@@ -59,6 +67,21 @@ export interface RunSpec {
    * Idle-only row can compare when each player finished. Only the Monday Standard and Delver runs.
    */
   readonly untilContent?: boolean;
+}
+
+/** v0.11: the first moment the ending was choosable, and what the hold had of it when the run stopped. */
+export interface EndingRecord {
+  readonly first: { readonly hours: number; readonly cycle: number } | null;
+  /** D469: all 40 names found and Act VI's stand applied, the part the Standard player does reach. */
+  readonly namesAndStand: { readonly hours: number; readonly cycle: number } | null;
+  readonly atEnd: {
+    readonly names: number;
+    readonly species: number;
+    readonly speciesTotal: number;
+    /** The contract species not yet Studied, so a report says what the player lacked. */
+    readonly missing: readonly string[];
+    readonly standApplied: boolean;
+  };
 }
 
 export interface CheckInStat {
@@ -361,6 +384,8 @@ export interface RunResult {
   readonly orders?: OrdersRecord;
   /** v0.9 (D383): the stands made once Act VI had begun, with the preview they were made on; absent in older shard files. */
   readonly drossStands?: readonly DrossStand[];
+  /** v0.11 (D464 (2)): when the ending first became choosable (the gate open and Act VI's stand applied); null if never in the run. The players never choose it. Absent in older shard files. */
+  readonly ending?: EndingRecord;
 }
 
 const largest = (value: unknown): number => {
@@ -434,6 +459,8 @@ export const runOne = (spec: RunSpec): RunResult => {
     stands: [] as OrdersStand[],
   };
   const drossStands: DrossStand[] = [];
+  let ending: { hours: number; cycle: number } | null = null;
+  let namesAndStand: { hours: number; cycle: number } | null = null;
   const eventsSeen = {
     openedHours: null as number | null,
     openedCycle: null as number | null,
@@ -563,6 +590,11 @@ export const runOne = (spec: RunSpec): RunResult => {
             ...rec.standPreview,
           });
       }
+      // The cycle is the one the check-in ended, so a stand that opens the ending counts for its own cycle.
+      if (ending === null && endingChoosable(s))
+        ending = { hours: (rec.at - start) / HOUR, cycle: prevCycle };
+      if (namesAndStand === null && namesFound(s) >= 40 && actVIStandApplied(s))
+        namesAndStand = { hours: (rec.at - start) / HOUR, cycle: prevCycle };
       if (rec.orders) noteOrders(rec, s);
       if (rec.events?.unlocked) {
         eventsSeen.checkIns += 1;
@@ -751,6 +783,17 @@ export const runOne = (spec: RunSpec): RunResult => {
     cycleHours: state.cycles.flatMap((c) => (c.stand ? [(c.stand.at - c.startedAt) / HOUR] : [])),
     standSamples,
     drossStands,
+    ending: {
+      first: ending,
+      namesAndStand,
+      atEnd: {
+        names: namesFound(state),
+        species: speciesStudied(state),
+        speciesTotal: CONTRACT_SPECIES.length,
+        missing: CONTRACT_SPECIES.filter((m) => levelOf(state, m) < 3), // 3 is Studied (GDD §5.6.2)
+        standApplied: actVIStandApplied(state),
+      },
+    },
     contracts,
     story,
     discovery: { hutHours, firstNewBrewHours, cycles: discoveryCycles },

@@ -96,6 +96,9 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 
 **Originality and assets**
 - **Write the Orders texts word for word from `docs/lore-secrets.md` §33; invent none.**
+- **Write The Remembering texts word for word from `docs/lore-secrets.md` §34; invent none.**
+- **Before the player taps Remember Them, no text says, asks for or begins the Sent's names.**
+- **The ending reads `orders.readWith` and `chaptersRead` only, never current seats or levels.**
 - All content is original. Every new proper noun is searched against the influences (GDD §2.3) and added to `tests/content/names.ts`. If you can't search, list the names in `questions.md`; never skip the check.
 - **CC0 assets only,** each with a manifest entry. `docs/credits.md` is generated.
 

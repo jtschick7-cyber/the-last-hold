@@ -49,6 +49,8 @@ export interface WardenLine {
   readonly relics: readonly RelicId[];
   /** The current warden: "…keeping the hearth". */
   readonly current: boolean;
+  /** The warden in office when Remember Them was chosen: "Read the roll aloud." (lore §34.7). */
+  readonly readAloud: boolean;
 }
 
 export const rollOfWardens = (state: GameState): WardenLine[] =>
@@ -65,6 +67,9 @@ export const rollOfWardens = (state: GameState): WardenLine[] =>
       stand: c.stand ? { band: c.stand.band, waves: c.stand.wavesHeld } : null,
       relics: c.stand?.relicsFound ?? [],
       current,
+      readAloud: state.remembering.endings.some(
+        (e) => e.ending === 'remember' && e.cycle === c.number,
+      ),
     };
   });
 

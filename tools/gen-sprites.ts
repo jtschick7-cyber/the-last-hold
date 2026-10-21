@@ -14,6 +14,7 @@ import { HUNTER_IDS } from '../src/content/hunters';
 import { EVENT_CREATURE_IDS } from '../src/content/hunts';
 import { drawCreaturePortrait, drawCreatureSprite } from './draw-creatures';
 import { drawCosmetic, SCENE_H } from './draw-cosmetics';
+import { drawFrost, drawLamp } from './draw-hold-look';
 import {
   drawRarityFrame,
   drawRelicIcon,
@@ -55,6 +56,11 @@ for (const r of RARITIES) write(`icons/rarity-${r}.png`, drawRarityFrame(r).toPn
 for (const c of COSMETIC_IDS)
   for (const a of AGE_IDS)
     write(`scenes/cosmetics/${a}-${c}.png`, drawCosmetic(c, a).toPng(SCENE_H));
+// v0.11 (plan T11.12, D457): the hold's frost (Act VI until Remember Them) and the lamp after it.
+for (const a of AGE_IDS) {
+  write(`scenes/look/${a}-frost.png`, drawFrost(a).toPng(SCENE_H));
+  write(`scenes/look/${a}-lamp.png`, drawLamp(a).toPng(SCENE_H));
+}
 // v0.10 (plan T10.15, Q36 (a)): the Orders' marks, the card's icon and the opening-scene placeholders.
 write('icons/orders.png', drawOrdersIcon().toPng());
 for (const id of ORDER_IDS) {

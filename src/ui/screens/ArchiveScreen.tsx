@@ -10,10 +10,14 @@ import {
   type ShelfLetter,
 } from '../../core/story/archive';
 import { ordersShelf } from '../../core/story/orders-chapter-view';
+import { rememberingShelf, rimeAfterEnding } from '../../core/story/remembering-view';
+import { afterTheEnding, rememberingShelfTitle } from '../../content/text/remembering';
+import { openWarmRime, playEnding } from '../remembering/ReadingScene';
+import { openVigilScene } from '../remembering/VigilScene';
 import { reopenChapter } from '../orders/ChapterScene';
 import { docKey } from '../../core/story/documents';
 import { letterKey } from '../../core/story/letters';
-import { dispatch, game, version } from '../app/runtime';
+import { dispatch, game, tab, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { docIconId, ORDERS_ICON, RIME_ICON } from '../../content/assets';
@@ -29,6 +33,12 @@ import { BestiaryScreen } from './BestiaryScreen';
 const SECTIONS = ['Bestiary', 'Library', 'Accounts', 'Names'] as const;
 type Section = (typeof SECTIONS)[number];
 const section = signal<Section>('Library');
+
+/** Sends the player to one section of the Archive (the Remembering card's links). */
+export const openArchiveSection = (name: Section): void => {
+  section.value = name;
+  tab.value = 'bestiary';
+};
 
 const markRead = (key: string): void => {
   if (game().story.unread.includes(key)) dispatch({ type: 'archive.read', key });
@@ -130,12 +140,16 @@ const Library = () => {
   const echoList = echoesShelf(s);
   const rime = rimeShelf(s);
   const orders = ordersShelf(s);
+  const remembering = rememberingShelf(s);
+  const warm = rimeAfterEnding(s);
   const wayDown = s.delve.sceneSeen;
   if (
     groups.length === 0 &&
     shelf.length === 0 &&
     echoList.length === 0 &&
     orders.length === 0 &&
+    remembering.length === 0 &&
+    !warm &&
     !wayDown
   )
     return <p class={styles.dim}>Nothing in the archive yet.</p>;
@@ -171,7 +185,7 @@ const Library = () => {
         <h2 class={styles.cardTitle}>
           <Sprite id={RIME_ICON} /> Rime
         </h2>
-        {rime.length === 0 ? (
+        {rime.length === 0 && !warm ? (
           <p class={`${styles.small} ${styles.dim}`}>Nothing here yet.</p>
         ) : (
           <ul class={styles.list}>
@@ -187,6 +201,20 @@ const Library = () => {
               </li>
             ))}
           </ul>
+        )}
+        {warm && (
+          <>
+            <h3 class={`${styles.small} ${styles.dim}`}>{afterTheEnding}</h3>
+            <ul class={styles.list}>
+              <li>
+                <button type="button" class={styles.linkRow} onClick={openWarmRime}>
+                  <span class={styles.grow}>
+                    <strong>{warm.title}</strong>
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </>
         )}
       </section>
       {orders.length > 0 && (
@@ -205,6 +233,27 @@ const Library = () => {
                   <span class={styles.grow}>
                     <strong>{e.title}</strong>
                     <span class={`${styles.small} ${styles.dim}`}> · {e.readWithLine}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {remembering.length > 0 && (
+        <section class={styles.card} aria-label={rememberingShelfTitle}>
+          <h2 class={styles.cardTitle}>{rememberingShelfTitle}</h2>
+          <ul class={styles.list}>
+            {remembering.map((e) => (
+              <li key={e.id}>
+                <button
+                  type="button"
+                  class={styles.linkRow}
+                  onClick={e.id === 'reading' ? playEnding : openVigilScene}
+                >
+                  <span class={styles.grow}>
+                    <strong>{e.title}</strong>
+                    <span class={`${styles.small} ${styles.dim}`}> · {e.blurb}</span>
                   </span>
                 </button>
               </li>

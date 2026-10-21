@@ -7,7 +7,7 @@ import { act6Documents } from './act6';
 import type { DocumentDef } from './documents';
 
 // GDD §5.14.1 and lore-secrets §5: one act per cycle. Acts I to V are written
-// (D163, D164, D209, D245, D302); Act VI (D364) is written once its documents are in. An act that isn't written yet has no documents, and its Long Night shows UNWRITTEN_ACT_LINE.
+// (D163, D164, D209, D245, D302); Act VI (D364) is written once its documents are in. A cycle with no act has no documents, and its Long Night shows nothing in that step (D455).
 
 export interface ActDef {
   readonly act: number;
@@ -36,8 +36,6 @@ export const LAST_WRITTEN_ACT = Math.max(...acts.map((a) => a.act));
 /** "III" for act 3 (lore-secrets §5 has six acts). */
 export const actNumeral = (act: number): string =>
   ['I', 'II', 'III', 'IV', 'V', 'VI'][act - 1] ?? String(act);
-
-export const UNWRITTEN_ACT_LINE = 'The story continues in a later version.';
 
 export const allDocuments: readonly DocumentDef[] = acts.flatMap((a) => a.documents);
 

@@ -1292,4 +1292,28 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'generic',
     note: 'Order level name or interface phrase (D414, D416; OUT-6): everyday English, checked as a group; none is a product or game name I know of.',
   })),
+  // v0.11 flesh-out (OUT-6, 2026-10-21): the ending and shelf names. Searched; no collision found. The search tool is weak on exact phrases (Q41).
+  ...['The Remembering', 'Remember Them', 'Keep the Vigil'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-21',
+    result: 'clear',
+    note: 'searched, no collision found; search tool weak on exact phrases (Q41)',
+  })),
+  ...[
+    'The line along the wall',
+    'Everything on the table',
+    'The roll',
+    'Later',
+    'The count',
+    'The hearth keeps itself',
+    'It is warm where I am',
+    'The reading',
+    'After the ending',
+    'The fortieth',
+  ].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-21',
+    result: 'generic',
+    note: 'Ending scene, shelf entry or Rime heading title (OUT-6, OUT-3): a plain phrase, checked as a group; none is a product or game name I know of.',
+  })),
 ];

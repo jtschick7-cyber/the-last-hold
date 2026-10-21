@@ -9,9 +9,10 @@ import { isFound } from '../../core/story/documents';
 import { openOpeningScene } from '../orders/OpeningScene';
 import { openNextChapter } from '../orders/ChapterScene';
 import { SeatStepSheet } from '../orders/SeatSheets';
+import { openNearScene } from '../remembering/NearScene';
 import styles from '../styles/ui.module.css';
 import { WardenNameField } from '../widgets/WardenNameField';
-import { dispatch, game } from './runtime';
+import { dispatch, game, tab } from './runtime';
 import { closeSheet, openSheet, sheets } from './sheets';
 
 // setting-primer §6.6: the first contract and the vow each show once, as a sheet.
@@ -177,6 +178,18 @@ const playOrdersScenes = (): void => {
   if (o.openingQueue.length === 0 && o.seatStepPending && !shownOrders.has('seat-step')) {
     shownOrders.add('seat-step');
     return openSheet('Seat your Orders', () => <SeatStepSheet />);
+  }
+  // GDD §5.15.2 (technical design §6.2): then Pechko's near-scene, once Act VI's stand result has been
+  // applied. Closing it with its X leaves it waiting for the next load; Continue sets it seen.
+  if (
+    o.openingQueue.length === 0 &&
+    !(o.seatStepPending && !shownOrders.has('seat-step')) &&
+    !shownOrders.has('near') &&
+    tab.value === 'hold' && // D459 (6): on the next visit to the Hold screen
+    openNearScene()
+  ) {
+    shownOrders.add('near');
+    return;
   }
   // Chapters come last (D416 (6)). One opens by itself on load and again after a seat change; Close
   // stops there (Next goes on, and the Orders card offers the rest), so Close is never undone.

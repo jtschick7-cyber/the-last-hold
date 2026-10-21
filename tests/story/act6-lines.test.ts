@@ -1,13 +1,13 @@
 // Plan T9.10, T9.11: Act VI's fixed lines.
 import { describe, expect, it } from 'vitest';
-import { LAST_WRITTEN_ACT, UNWRITTEN_ACT_LINE, accountEvents } from '../../src/content/story/acts';
+import { LAST_WRITTEN_ACT, accountEvents } from '../../src/content/story/acts';
 import { act6Arrival, act6ArrivalOnLoad, rimeLine } from '../../src/content/story/act6';
 import { actClosing } from '../../src/core/story/documents';
 
 describe('Act VI as shipped', () => {
-  it('is the last written act; the cycle after it shows the unwritten line', () => {
+  it('is the last written act; the cycle after it closes with nothing (D455, D465)', () => {
     expect(LAST_WRITTEN_ACT).toBe(6);
-    expect(actClosing(7)).toBe(UNWRITTEN_ACT_LINE);
+    expect(actClosing(7)).toBeNull();
   });
 
   it('has the arrival lines word for word, and the Accounts event', () => {

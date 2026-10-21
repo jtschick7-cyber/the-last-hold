@@ -12,6 +12,7 @@ import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { Sprite } from '../widgets/Sprite';
 import { FightLogView } from './FightLogSheet';
+import { ReadyLine } from '../remembering/ReadyLine';
 
 const INJURY: Record<string, string> = {
   bruised: 'bruised',
@@ -120,6 +121,7 @@ export const ResultsView = ({
           <ResultLine key={r.contractId} r={r} now={now} />
         ))}
       </ul>
+      {ember && <ReadyLine />}
     </>
   );
 };

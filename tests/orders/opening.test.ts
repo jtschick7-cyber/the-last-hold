@@ -39,12 +39,15 @@ const expectedOpen = (s: GameState): OrderId[] => {
   return table.filter(([, yes]) => yes).map(([id]) => id);
 };
 
-// A played save (v10-played.json) has already opened its Orders; it is checked in full-run.test.ts.
+// Played saves (v10-played.json, v11-played.json) have already opened their Orders; v10-played.json is checked in full-run.test.ts.
 const migrated = fixtures.filter((f) => Object.keys(load(f).orders.opened).length === 0);
 
 describe('a save on load opens exactly the Orders it is past', () => {
   it('covers every migrated fixture, and only the played ones are left out', () => {
-    expect(fixtures.filter((f) => !migrated.includes(f))).toEqual(['v10-played.json']);
+    expect(fixtures.filter((f) => !migrated.includes(f))).toEqual([
+      'v10-played.json',
+      'v11-played.json',
+    ]);
   });
 
   it.each(migrated)('%s', (file) => {

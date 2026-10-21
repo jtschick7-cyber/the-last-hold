@@ -1,6 +1,6 @@
 # The Last Hold — Game Design Document
 
-**Status:** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑.
+**Status (v0.11 flesh-out 2026-10-21):** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑.
 **Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something. The judgment-call lists at the end of each section are a historical record of when each call was added; where a list and a section body disagree, the body (with its revision trail and `decisions.md`) is authoritative.
 **Related docs:** `setting-primer.md` (spoiler-free; readable from v0.1), `lore-secrets.md` (the full truth; **kept outside the repo until v0.5**, D36), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
@@ -161,6 +161,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | v0.7 | Session loop gains Delves |
 | v0.8 | Check-ins gain loot and the Stores list; the meta loop gains hunter ranks, stars, talents, use-skills and Legendaries; Act V |
 | v0.9–v0.10 | Meta loop deepens: events (v0.9), Orders (v0.10) |
+| v0.11 | The Remembering: the end of the story, from the Hold screen's card after Act VI (§5.15) |
 
 ---
 
@@ -975,7 +976,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 - **The new cycle** starts in Hamlet from the §5.1.4 starting state, plus any warden upgrades (Full Larder, Young Families).
 - **What you see, in order:**
   1. The stand's result: waves held, the Embers breakdown, any relic. Pechko: *"The walls fell. The hearth didn't. Someone will come."*
-  2. *"The story continues in a later version."* (P4) From v0.5: the act's testament instead, while its act is written (§5.14.9).
+  2. The act's testament while the cycle has an act (§5.14.9). A cycle with no act skips this step (D455).
   3. The Hearth: spend now or later.
   4. The new-warden sheet: *"Seasons pass. Someone new walks up the road, hands warm in the cold."* You choose your 3 active hunters, and, once an Order is open, whether to seat your Orders (§5.13.4).
 
@@ -992,7 +993,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 #### 5.9.9 A new warden each cycle
 
 - **A new warden each cycle** *(⚑ lore L4)*: after each Long Night a new warden arrives; **from v0.5** you name them. The **Roll of Wardens** (L9) carves each warden's name, Ranks reached, Last Stand band and relics into the Hearth Hall. From v0.4 the save keeps one short history entry per cycle for it (technical design §5.2, D113).
-- **Story (v0.5):** Acts I and II, documents, names, letters and trust (§5.14). Residents react to how the stand went. **Until an act is written, a finished cycle closes with "The story continues in a later version"; when the act ships, its documents unlock in your current cycle** *(⚑ P4 [JC])*.
+- **Story (v0.5):** Acts I and II, documents, names, letters and trust (§5.14). Residents react to how the stand went. **Every act is written (v0.11, D455); a cycle with no act closes with nothing in that step.** *(⚑ P4 [JC], superseded by D455)*
 
 ### 5.10 Delves *(v0.7; ⚑ v0.7 flesh-out, D244–D272)*
 
@@ -1319,7 +1320,7 @@ Each level of a **seated** Order gives **one small number and one story or knowl
 - **Four chapters per Order,** each a short scene sheet. A chapter is **playable** when its Order is open and seated, the Order's level is at least the chapter's number, the previous chapter is read, and its condition holds (OUT-3 Part B). Otherwise it **waits.** What is playable is worked out from the state; an unseated Order's waiting chapter never blocks another's. The card and the Order sheet show **"A chapter waits for a seat."**
 - Scenes open **one at a time** on the Hold screen; closing a chapter counts as read. Each ends with Close and, if another waits, Next. Chapters are kept on the Library's **Orders** shelf and can be read again.
 - **The opposed pair.** The Moot's and the Quenchers' **chapter 4 each have two endings** (OUT-3 D): variant A when the other Order is also seated when the chapter is read, otherwise variant B. **Each chapter 4 waits until the other Order has opened,** and the Order sheet says which way it will read.
-- **The seated Orders at each reading are saved** (D419) for v0.11.
+- **The seated Orders at each reading are saved** (D419); the ending reads them (v0.11, §5.15.5).
 - **No chapter carries a required name, document, bestiary entry or Legendary** (lore §8), and **nobody says, asks for or begins the Sent's names** (D386). Chapter 4 of every Order ends on a threshold.
 - The sixteen titles are in D414 and the full texts in OUT-3.
 
@@ -1332,7 +1333,7 @@ Each level of a **seated** Order gives **one small number and one story or knowl
 - **The Long Night:** keeps standing, the opened flags, the third seat, the chapters read and the seats. A new warden may change seats freely.
 
 #### 5.13.8 What's still for later
-v0.11 "The Remembering" and the ending (D415); anything that gives Orders a silver or fight effect; more Orders; events adding standing.
+The ending shipped in v0.11 (§5.15, D415, D448); anything that gives Orders a silver or fight effect; more Orders; events adding standing.
 
 ### 5.14 The story *(v0.5: Act I and the story systems; ⚑ v0.5 flesh-out, D144–D166)*
 
@@ -1343,11 +1344,11 @@ v0.11 "The Remembering" and the ending (D415); anything that gives Orders a silv
 - **One act per cycle.** An act starts when its cycle starts and closes with that cycle's Last Stand. Its documents stay obtainable forever after: a condition met in any later cycle still delivers the document.
 - **New games:** Act I starts with cycle 1.
 - **Saves from before v0.5** (D149): Act I starts at once, in the current cycle, after any v0.4 arrival. Every document whose condition is already behind the save (a Rank already reached, a species already Mastered) is found on load, in Ilse's arrival scene (§5.14.3). The rest wait for their conditions. This cycle's stand closes Act I.
-- **An act that isn't written yet** (from Act IV): its cycle has no act documents, and its Long Night shows *"The story continues in a later version."* Ruins, Ribbonshade names and hunter letters carry on, because they aren't tied to an act. When the act ships, it starts in the current cycle (P4), and the next ones follow one per cycle.
+- **A cycle with no act** (after Act VI): no act documents, and its Long Night shows no closing line (D455). Ruins, Ribbonshade names and hunter letters carry on, because they aren't tied to an act.
 - **Act III (v0.6, D214):** a save already in Act I or II reaches Act III normally, the cycle after Act II's stand. A save whose current cycle has no act starts Act III **on load**: Arvid arrives (*"Ilse comes up the road early, with an old man carrying a net-needle and an axe."*), D3-01 plays, and Act III's Rank documents already behind the save this cycle (D3-04, D3-05) are found then.
 - **From Act IV on (D246):** an act that ships while a save is in a story-less cycle starts **on load in the current cycle**, with fresh counters: "the 1st Field & Forest Spirits contract won in Act IV" counts from that moment. A Rank document is found on load only if that Rank is already behind the save in this cycle. Counts recorded during story-less cycles are ignored. The on-load line is *"Pechko comes out from behind the stove before you've got your coat off, with something wrapped in oilcloth."* and D4-01 plays. A new game reaches Act IV the cycle after Act III's stand.
 - **Act V (v0.8, D301):** a save in a story-less cycle starts Act V on load with fresh counters (D246); the on-load line is *"Pechko calls you over to the crack behind the stove before you've got your coat off."* and D5-01 plays. A save in Act IV's cycle reaches Act V with the next warden. **After Act V's Last Stand the Unlit's door opens** (D257), with one line on the Rift card the first time: *"There's a sixth door in the rift now. It's colder than the others."*
-- **Act VI (v0.9, D364):** the cycle after Act V's stand. A save in a story-less cycle starts Act VI **on load** with fresh counters (D246); the on-load line is *"Pechko is sitting by the crack when you come in. The frost on the floor has shapes in it."* and D6-01 plays. A save in Act V's cycle reaches it with the next warden. **After Act VI's Last Stand, the cycles that follow carry no act**, and Act VI closes with *"The story continues in a later version."* That line stays through v0.10 and is removed when v0.11 ships (D415). Act VI carries exactly the three names #1–3, on the Keep, the Citadel and Bastion (`lore-secrets.md` §31).
+- **Act VI (v0.9, D364):** the cycle after Act V's stand. A save in a story-less cycle starts Act VI **on load** with fresh counters (D246); the on-load line is *"Pechko is sitting by the crack when you come in. The frost on the floor has shapes in it."* and D6-01 plays. A save in Act V's cycle reaches it with the next warden. **After Act VI's Last Stand, the cycles that follow carry no act**, and the Act VI closing line was removed in v0.11 (D415, D455). Act VI carries exactly the three names #1–3, on the Keep, the Citadel and Bastion (`lore-secrets.md` §31).
 - **Act counters** start fresh with each act: "the 2nd Mirograd contract won after Act I begins" counts from that act's start, and counts in any later cycle until it's met.
 
 #### 5.14.2 Documents
@@ -1412,10 +1413,63 @@ v0.11 "The Remembering" and the ending (D415); anything that gives Orders a silv
 #### 5.14.9 What the Long Night shows, from v0.5
 
 1. The stand's result: waves held, the band, the Embers breakdown, any relic, the residents' lines, any trust steps.
-2. The act's testament (Act I: D1-06; Act II: D2-09; Act III: D3-06; Act IV: D4-06; Act V: D5-06, followed by Yrsa's Thole's line; **Act VI: D6-06, a Rime**), or *"The story continues in a later version."* if the act isn't written.
+2. The act's testament (Act I: D1-06; Act II: D2-09; Act III: D3-06; Act IV: D4-06; Act V: D5-06, followed by Yrsa's Thole's line; **Act VI: D6-06, a Rime**); a cycle with no act shows nothing in this step.
 3. The Hearth.
 4. The new-warden sheet: the warden's name, any resident scene of the act's close (Act I: D1-07 *"Welcome back"*; Act II: D2-10; Act III: D3-07; Act IV: D4-07; Act V: D5-07), Ilse's return (with Arvid when Act III begins, then D3-01), and the choice of 3 active hunters.
 5. The new-warden sheet's 'Seat your Orders' step appears once an Order is open (§5.13.4).
+
+### 5.15 The Remembering *(v0.11; ⚑ v0.11 flesh-out, D446–D460)*
+
+**What it is.** The end of the story. After Act VI the player can **Remember Them** (read the Sent's 40 names aloud in the Hearth Hall) or **Keep the Vigil** (not yet). Two endings ship; **The Descent is deferred** (D448). The Orders are **not** a gate and **never change which ending is open** (D447).
+
+**5.15.1 The gate (D449).** Remember Them is open when:
+1. **all 40 names are found** (§5.14.4), and
+2. **every contract species is at Studied or better.** The gate reads the **stored knowledge level** (Studied is 4 kills, `knowledge.studiedKills`, locked; §5.6.2), not raw kills. "Contract species" are the 16 species that appear in contracts; the base Last Stand pool is exactly those species (§5.9.3, §8.3.1), so there is no stand-only species. A content test pins the list, and changing it needs a decisions row (D461). **Not counted:** the Great Beasts, hunt quarries, Delve-only species and the Dross-Tide (lore §8, D363, D365).
+
+The gate is **worked out from the state each time and never stored.** Names found and Studied knowledge never go down, so the gate does not close again in play. The card forms after a choice do **not** depend on the gate (D461).
+
+**5.15.2 When it appears (D450).**
+- **Pechko's scene.** Once, on the first visit to the Hold screen after Act VI's Last Stand result has been applied: R-01 if the gate is not open, R-02 if it is (lore §34.1). Sets `remembering.nearSeen`.
+- **The card** (Hold screen, after the Orders card; title "The Remembering"). Not shown before `nearSeen`. Three forms (lore §34.2):
+  - *Gate not open:* "Names found: n of 40." and "Creatures known well: s of t.", plus **Names** and **Bestiary** buttons. **No bar, no countdown, no percentage.**
+  - *Gate open, nothing chosen:* two buttons, **Remember Them** and **Keep the Vigil**.
+  - *After a choice:* the forms of lore §34.2.
+- **No Hold tab badge** for the card. The first time the gate opens after Pechko's scene, the next away sheet or result sheet carries one line (lore §34.2, D466), once; this needs the flag `readyNoted`.
+- **Close rule:** the scene counts as seen (`nearSeen`) when it is closed with Continue; closing with the ✕ leaves it waiting (D432 (4), D461).
+
+**5.15.3 The choice (D453, D459).**
+- **When it can be chosen:** Act VI's stand result has been applied **and** the gate is open. The command is refused otherwise (D461).
+- **Remember Them** plays the whole sequence: R-03, the reading, R-04, R-04b (only if Sigrun is on the roster), the Order cards, R-09, R-11 (5.15.5, 5.15.6). It is recorded **once,** the moment it is chosen. The Library entry replays the **whole sequence,** so an interrupted ending loses nothing (D461).
+- **Keep the Vigil** is offered only when the gate is open (D459 (1)). It plays R-10 once, is recorded once, and **changes nothing in the game.** It adds **no** difficulty (rising difficulty is a later flesh-out, §10). After it, the card shows only Remember Them.
+- Nothing locks. Both can be re-read from the Library shelf "The Remembering" (§9.19).
+- The reading never starts by itself: only a tap on the card starts it (D459 (3)).
+
+**5.15.4 The reading (D456).** One name at a time, in year order, each with its village and year in the format of lore §20 ("Name · Village · onward, year N of the order."). Automatic, about 2 s a name; a tap shows the next at once; **Skip** jumps to the end. After the fortieth name the Unlit answers with one line in rime. The 40 names come from the same table as the Names view.
+
+**5.15.5 Orders in the ending (D451, D454).** After the aftermath card, one card for each Order whose **chapter 4 was read,** in the fixed order Thanes' Moot, Grey Wives, Bell-Watchers, Quenchers:
+
+| Order | Which card | Chosen by |
+|---|---|---|
+| Thanes' Moot | R-05 A or R-05 B | `readWith[moot][3]` contains the Quenchers → A, else B |
+| Grey Wives | R-06 | chapter 4 read |
+| Bell-Watchers | R-07 | chapter 4 read |
+| Quenchers | R-08 A or R-08 B; or Věra's fallback if chapter 4 was never read | `readWith[quenchers][3]` contains the Moot → A, else B |
+
+**Current seats and levels play no part.** An Order that was never finished is silent. The Quenchers' card (or Věra's fallback) shows **only if the Quenchers have opened;** they open when D5-08 is found, which the gate does not need, so a save may reach the ending without them (D466).
+
+**5.15.6 After Remember Them (D457).**
+- *Text:* the Rime R-11 is the last card of the sequence (it is derived from the saved ending, **not a found document,** and fires no standing, skill XP or Archive hooks, D463); Pechko, Brana and Ilse get the added resident lines (lore §34.7); Pechko's R-09 plays at the end of the ending; the Roll of Wardens entry of the warden in office gets a small lamp and the line "Read the roll aloud."
+- *Look:* in the Hearth Hall scene the frost is gone and a lamp sits in the window (drawn in code, approved by the owner).
+- **No number changes anywhere.** Not Threat, not rates, not waves, not Embers. `rulesVersion` stays 5.
+
+**5.15.7 What it never does.**
+- It adds no combat, no random stream, no new resource, no gate on any other system.
+- No required content is Order-only, Delve-only, event-only or missable (lore §8). Each of the 40 names and each contract species has a source that is not an Order, a Delve or an event; a content test proves it (D458).
+- It does not use the avoid-list words, and it offers no "keep the fire or let it go out" choice (§2.3): Keep the Vigil is "not yet," not a rival ending.
+
+**5.15.8 Save (D452, D466).** One small block, `remembering`: `nearSeen`, `readyNoted` and a list of endings reached with time and cycle (order = array order; time is information only). Technical design §5.2 and §9.4 (schema 11).
+
+**5.15.9 After the ending the game carries on (D463).** The Long Night, stands, Pechko's stand line, the new-warden sheet and the Dross-Tide waves are unchanged. The hearth keeping itself is a story fact (R-09), not a rule change.
 
 ---
 
@@ -1542,12 +1596,15 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | *Proposed:* Silver check #6 with Orders *(D417)* | At least 70% of silver from bounties (Orderer, median of the 5 Monday seeds) | v0.10 |
 | *Proposed:* Provisions share with the Moot perk *(D417)* | Stays in 20–40% (Orderer, median of the 5 Monday seeds) | v0.10 |
 | *Proposed:* Stand rows with the Quenchers perk *(D417)* | 'Best Last Stand timing' (days 4–5), 'First Long Night' (days 3–5), 'Act VI lands in its cycle' and the Dross-Tide stand probe still pass; Embers per stand with and without the perk are reported (Orderer, median of the 5 Monday seeds) | v0.10 |
+| The Remembering is reachable *(D458, D464, D469)* | All 40 names are found and Act VI's stand is applied by the end of cycle **6** (Standard, median of the 5 Monday seeds; measured 6, 6, 6, 6, 7, approved by the owner). A seed that never gets there counts as later than any N. The species half of the gate (every contract species Studied) is proved by the content test, not by this row, because the Standard player does not look for species it lacks (Q45). Judged only in `sim.yml`, not in the fast set. | v0.11 |
 
 Reported only: the stand band per cycle (with waves), skill levels per cycle, properties found per cycle (v0.6); Riftglass per week, floors reached per run, Delve relics found (v0.7, Delver); stars per cycle, items by rarity per cycle, Legendaries found, Delve XP (v0.8).
 
 *Judging (v0.9):* every v0.9 row is judged on the **median of the Monday seeds** (Saturday reported only). Standard, Light, Heavy, Opening and the Delver issue no event commands, so their reports before Act VI's content equal the v0.8 baseline; from cycle 6, Act VI's documents and the Dross-Tide stands change what they see, so their baselines are re-recorded once (T9.12).
 
 *Reported only (v0.9):* boss attempts per cycle, damage per attempt, milestones paid, silver from bosses, hunt points per cycle, tokens spent and wasted, and rest-blocked check-ins (Eventer).
+
+**Content test (v0.11, D458):** every one of the 40 names and every contract species has a source that is not an Order, a Delve or an event (it extends the existing required-content tests); the contract-species list is pinned; the Remembering texts equal lore §34; the 40 names equal lore §20.
 
 **Content test (v0.10, D417):** no required content is Order-only (lore §8), and the Orders texts equal `lore-secrets.md` §33. The six *Proposed* rows above are held in their own commit until the owner approves them.
 
@@ -1599,6 +1656,9 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Orders standing recompute** *(v0.10, D445)* | ≤ 5 ms | All four Orders, after a command |
 | **v9 → v10 migration** *(v0.10, D445)* | ≤ 100 ms | The owner's save, on the load path |
 | **Orders save growth** *(v0.10, D445)* | ≤ 2 KB | The whole Orders block, all four opened, every chapter read (checked by a unit test, not the throttled benchmark) |
+| **Reading start** *(v0.11, D469)* | ≤ 50 ms | Tap on R-03's Continue to the first name painted, on the throttled profile (`tests/e2e/remembering-layout.spec.ts`) |
+| **v10 → v11 migration** *(v0.11, D469)* | ≤ 100 ms | A played v10 save, on the load path (the throttled benchmark) |
+| **Remembering save growth** *(v0.11, D469)* | ≤ 0.5 KB | The whole `remembering` block, everything recorded (checked by a unit test, not the throttled benchmark) |
 | **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | **≤ 5 min per CI job** *(D320)* | All policies and checks; the runs play in parallel, one per core (D169), split across parallel CI jobs whose results a final job combines and judges. Never trimmed: same runs, seeds and rows |
@@ -2709,6 +2769,7 @@ The Hut opens from its building row on the Hold screen.
 - Show raw state as JSON.
 - Run the simulator's Standard policy for N hours.
 - Force a contract outcome *(v0.2)*.
+- `debug.remembering.openGate()` and `debug.remembering.finishActVI()` *(v0.11, D462)*: open the ending's gate, and apply Act VI's stand result.
 
 ### 9.11 What exists when
 
@@ -2724,6 +2785,7 @@ The Hut opens from its building row on the Hold screen.
 | v0.8 | + rank, stars, talents, use-skill and three slots on the hunter sheet; the slot picker; Stores with Salvage; Rank up and Add a star; loot, Legendary, rank-up and yard lines on the away sheet and results; Act V's documents and scenes; the Rift card's sixth-door line (§9.16) |
 | v0.9 | Events: the Events card, world bosses (three Great Beasts), Legendary Hunts (three hunters, nine tracks), the Great Beasts shelf, the Rime shelf, Act VI and the Dross-Tide in the Last Stand (§5.12, §8.13, §8.14, §9.17, §7.11) |
 | v0.10 | Orders: the Orders card, the Order sheets, the "Seat your Orders" step, chapter and opening scenes, the Library's Orders shelf, the Villages panel's "What the heads say about you" entry (§5.13, §7.12, §9.18) |
+| v0.11 | The Remembering: the card (from the first Hold-screen visit after Act VI's Last Stand result), Pechko's near-scene, the reading, the ending cards, the Library shelf "The Remembering" (from the first ending reached), the Hearth Hall look after Remember Them (§9.19) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -2835,6 +2897,15 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 - **The Villages panel** gains **What the heads say about you** (Moot perk, seated only).
 - **Layout checks (Playwright, phone and the 900/1300 px breakpoints):** no sideways scroll (`scrollWidth ≤ innerWidth`) with every Orders surface open; every button reachable without overlap.
 
+### 9.19 The Remembering screens *(v0.11)*
+- **The card** (§5.15.2, lore §34.2). Phone-first; plain text lines; two buttons when open.
+- **Pechko's scene** uses the existing scene sheet.
+- **The reading screen:** full-screen dark card; name large, village and year small; Skip at the bottom; **reduced-motion:** names change without fading; speed unchanged. Tap anywhere shows the next name.
+- **The ending cards** (aftermath, Orders, R-09) use the existing scene sheet one after another, each with Continue.
+- **The Library shelf "The Remembering"** (the Rime pattern): "The reading" (replays the whole sequence, 5.15.3; Skip on the reading only) and "Later" (R-10). R-11 also sits on the Rime shelf under "After the ending."
+- **The Hearth Hall look** after Remember Them (frost gone, lamp in the window), drawn in code.
+- **Layout checks (Playwright, phone and 900/1300 px):** no sideways scroll with the card, the reading screen and every ending card open; **all 40 names with their village lines** fit without clipping at the narrowest width.
+
 ---
 
 ## 10. Out of Scope
@@ -2858,9 +2929,10 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 | Localization | English only | Text lives in content files, so translation stays possible later |
 | Anti-cheat and save validation beyond schema checks | D21 | The debug panel is a feature, not a cheat |
 | Mod support or a content editor | Content files are already plain TypeScript data | Edit content files directly |
-| Achievements | Not in the brief | **[JC: candidate for v1.0 polish]** |
+| Achievements | Not in the brief | **[JC: candidate for v1.0 polish; the owner decides at the v1.0 flesh-out]** |
 | Records screen; CSV/JSON export of history and logs | Declined in the GDD review (G9) | Reports keeps recent logs; the Roll of Wardens (v0.5) keeps per-cycle history in-world |
-| The mystery's final act | v0.11 "The Remembering" (D415) | Its own flesh-out before v0.11 |
+| The Descent (a third ending) | Deferred (D448) | Its own later flesh-out |
+| Rising difficulty for Keep the Vigil (an endless mode) | Deferred (D453) | Keep the Vigil changes nothing for now; its own later flesh-out |
 | Orders giving silver or fight bonuses; events adding standing; a seat cost; a fifth Order | Not planned (D418) | — |
 
 **Deferred, not cut.** Anything listed at outline level in §5.8–5.13 is in scope for its milestone and gets full detail just before that milestone starts.
@@ -2974,3 +3046,20 @@ Each one is also marked **[JC]** where it appears.
 5. **Two seats, a third once two Orders are at level 4 and the Quenchers have come; a 24 h event-clock cooldown mid-cycle.** **[JC]** (D412)
 6. **The readings in D420** (the unnamed eldest Grey Wife, the level-1 backfill cap, the Quenchers' trade, the four level names and the rest). **[JC]**
 7. **The final act moves to v0.11 "The Remembering".** **[JC]** (D415)
+
+## Judgment calls added in the v0.11 flesh-out (D446–D460)
+
+1. Untested Orders are read gently, never gate the ending (D447).
+2. Two endings; The Descent waits (D448).
+3. The gate is derived, never stored (D449).
+4. A quiet card, no bar, no countdown (D450).
+5. Recorded history, not current seats, decides what the Orders say (D451).
+6. One small save block (D452).
+7. Nothing locks; Keep the Vigil changes nothing (D453).
+8. The Quenchers answer in the ending, not by a button (D454).
+9. No replacement for the removed closing line (D455).
+10. The reading is automatic and skippable (D456).
+11. One look change and no number changes after Remember Them (D457).
+12. One reachability row and a content test (D458).
+13. Long Night carries on, R-11 is not a document, Sigrun's line stays as the roll has it (D463, D466).
+14. Readings in D459 (Keep the Vigil only when open; once, ever; the reading starts by tap; "Act VI has ended" = its stand result applied).
