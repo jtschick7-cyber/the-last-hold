@@ -146,3 +146,13 @@ Status: **Open (informational).**
 
 **Q44 — Housekeeping in the docs commit (no owner action).** Close Q35 (T10.1 reported its table) and mark Q33 answered. Both are recorded in D467.
 Status: **Done** in the v0.11 docs commit (D467).
+
+**Q45 — The reachability row: the Standard player never makes the ending choosable.** *(Blocks: T11.15. Opened 2026-10-21.)*
+I measured the 5 Monday Standard seeds (plan T11.15a, run to the usual cap: 8 Long Nights, about 6 weeks). **In all five, the ending never becomes choosable.** The 40 names are all found (by cycle 6) and Act VI's stand is applied (end of cycle 6) in every seed. What is missing is the species half of the gate: only 7 to 10 of the 16 contract species are Studied. The ones missing in most seeds are Draugr, Leshy, Strzyga, Anvil-wight and Rimewrought (also Poludnitsa, Vodyanoy, Nix, Bies and Gloam-moths in some). The plan and D464 say to stop here: the run is not lengthened, and the row cannot pass as planned.
+This is partly the Standard player (it takes the highest tier and the longest-waiting contract, and never goes looking for a species it lacks), and partly a question for you about real play: how many cycles should it take to Study all 16?
+Options:
+(a) **Judge the part Standard does reach (my recommendation).** The row says: all 40 names found and Act VI's stand applied by cycle N (N from the measurement; the names come in cycle 6, the stand ends it, so N is about 6). The species half stays proved by the content test (every species has an ordinary source, T11.2). Nothing else changes; every report equals the v0.10 baseline. It is honest but weaker: it does not prove a player can Study all 16.
+(b) **Teach Standard to look for species it lacks.** A new rule: when two contracts are close, prefer one whose species is not yet Studied. This models a player who wants the ending, but it changes how Standard plays, so its report (and perhaps other rows) will differ from the v0.10 baseline, which D464 says must not happen. I would re-measure everything and ask you again.
+(c) **No simulator row.** Rely on the content test and your own playtest (the debug panel opens the gate).
+I have **not** touched the plan's row, `sim/targets.ts` or any baseline. What I did add is report-only: the Standard report now says when the ending first becomes choosable, or what the hold lacked at the end of the run (names, species and which ones, the stand).
+Status: **Open.**

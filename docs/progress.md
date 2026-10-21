@@ -6,9 +6,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.14 the text content test.
-- **Next:** T11.15a the reachability measurement (stop for the owner's approval of N).
-- **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
+- **Last task:** T11.15a measured (blocked, Q45).
+- **Next:** T11.16 layout checks and budgets, unless the owner answers Q45 first (then T11.15b).
+- **Open questions:** Q40, Q38 and Q42 answered; Q41 and Q43 informational; **Q45 (the reachability row) blocks T11.15**.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -507,3 +507,9 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Built:** `tests/content/v11-texts.test.ts` runs lore §34.10 on every v0.11 text outside the reading (R-01 to R-11, the card lines, the ready line, the Unlit's line, the eight resident lines, the shelf blurbs, the Roll mark): each text is found in lore §34; the Orders' checks (forbidden words, the case rule for "hollow", relative years, the 40 names, unknown people) pass; no digits at all (so no year number); R-01, R-02 and the ready line also pass the opening-scene word list. The 40 names are also checked against the v0.11 source files (whole words, so "Lis" is not found in "Lisová"). Planted bad texts prove each check can fail. Checks 7 and 8 stay with `ending-orders.test.ts` and `ending-effects.test.ts`.
 - **Reading used:** Sigrun is allowed (lore §34's list has her, the Orders' list does not), and "Hearth Hall", "Roll of Wardens", "Remember Them" and "Keep the Vigil" are not people. The test says so in its own filters; `orders-checks.ts` is untouched.
 - **No text needed changing; no old test edited. Nothing skipped.**
+
+## 2026-10-21 — v0.11 session 16: T11.15a the reachability measurement
+- **Result: stop (D464 (1)).** Standard, 5 Monday seeds, the usual run (8 Long Nights): **the ending is never choosable in any seed** (three or more never means stop and ask). All 40 names are found by cycle 6 and Act VI's stand is applied in every seed; the species half is what is missing (7 to 10 of 16 Studied; Draugr, Leshy, Strzyga, Anvil-wight and Rimewrought most often). I did not lengthen the run. The question, with options and a recommendation, is **Q45**; T11.15 is marked `[?]`.
+- **Built (report only):** the run record gains one field, `ending` (the first moment the ending was choosable, plus the names, species and stand the hold had at the end), and the Standard report gets a section "The Remembering". No policy, constant, target or baseline changed; the players never choose an ending. `npm run check` is green; the baseline holds only moments, so it is unchanged.
+- **Cost:** the five-run Standard measurement takes about 55 s on this machine.
+- **Next:** T11.16 (layout checks and budgets) does not depend on Q45. T11.15b waits for the owner's answer.

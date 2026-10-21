@@ -224,6 +224,37 @@ export const eventLines = (runs: readonly RunResult[]): string[] =>
  * stand with the Threat it met and whether the Quenchers sat (the perk acts over a whole cycle, so
  * "on" and "off" are the cycles where they sat and did not; Embers per stand are averaged for each).
  */
+/**
+ * Reported, not judged here (GDD §6.2 v0.11, D464 (2)): when the ending first became choosable in each
+ * Standard run, and the median of the Monday seeds. The row that judges it is added in its own commit.
+ */
+export const endingLines = (runs: readonly RunResult[]): string[] => {
+  const std = runs.filter((r) => r.spec.policy === 'standard' && r.ending !== undefined);
+  const lines = std.map((r) => {
+    const e = r.ending as NonNullable<RunResult['ending']>;
+    const end = e.atEnd;
+    return (
+      `- standard ${r.spec.start} ${r.spec.seed}: ` +
+      (e.first
+        ? `choosable in cycle ${e.first.cycle}, at ${hoursText(e.first.hours)}`
+        : `never within the run (${r.cyclesDone} Long Nights); at the end ${end.names} of 40 names, ${end.species} of ${end.speciesTotal} species Studied (missing: ${end.missing.join(', ') || 'none'}), Act VI's stand ${end.standApplied ? 'applied' : 'not applied'}`)
+    );
+  });
+  const mon = std.filter((r) => r.spec.start === 'mon');
+  const cycles = mon
+    .map((r) => r.ending?.first?.cycle ?? Number.POSITIVE_INFINITY)
+    .sort((a, b) => a - b);
+  const median = cycles[Math.floor(cycles.length / 2)];
+  return [
+    ...lines,
+    ...(mon.length === 0
+      ? []
+      : [
+          `- Monday median cycle: ${median === Number.POSITIVE_INFINITY ? 'never' : median} (${mon.length} seeds, ${cycles.filter((c) => c === Number.POSITIVE_INFINITY).length} never)`,
+        ]),
+  ];
+};
+
 export const orderLines = (runs: readonly RunResult[]): string[] =>
   runs
     .filter((r) => r.spec.policy === 'orderer' && r.orders !== undefined)
@@ -294,6 +325,7 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
   );
   out.push('', '## Events (reported only; the Eventer)', '', ...eventLines(report.runs));
   out.push('', '## Orders (reported only; the Orderer)', '', ...orderLines(report.runs));
+  out.push('', '## The Remembering (reported only; Standard)', '', ...endingLines(report.runs));
   out.push(
     '',
     '## All content (reported only; the Idle-only row judges the medians)',
