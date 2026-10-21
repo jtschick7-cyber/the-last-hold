@@ -36,6 +36,9 @@ import {
   loadNotes,
   saveNow,
   savingUnavailable,
+  tab,
+  TABS,
+  type Tab,
   version,
 } from './runtime';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -47,9 +50,7 @@ export const pendingUpdate = signal<UpdateHandle | null>(null);
 
 // GDD §9.1: a tab appears only when its system unlocks. Contracts and Hunters
 // arrive with the first Mine (GDD §5.4.1).
-const ALL_TABS = ['hold', 'contracts', 'hunters', 'bestiary', 'more'] as const;
-type Tab = (typeof ALL_TABS)[number];
-const tab = signal<Tab>('hold');
+const ALL_TABS = TABS;
 const TAB_LABEL: Record<Tab, string> = {
   hold: 'Hold',
   contracts: 'Contracts',
@@ -142,7 +143,7 @@ export const App = () => {
     if (version.value === 0) return;
     const g = game();
     if (!g.arrivalDue && !g.story.arrivalDue && !actThreeDue(g) && actDue(g) === null) playScenes();
-  }, [version.value, sheets.value.length]);
+  }, [version.value, sheets.value.length, tab.value]);
 
   useEffect(() => {
     currentScreen.value = tab.value;

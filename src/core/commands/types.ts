@@ -92,6 +92,10 @@ export type Command =
   | { type: 'orders.setSeats'; orders: OrderId[] }
   /** Skip or finish the load step without changing a seat or the cooldown. */
   | { type: 'orders.skipSeatStep' }
+  /** Pechko's near-scene was closed with Continue (v0.11, D461 (4)). */
+  | { type: 'remembering.seeNear' }
+  /** The "The Remembering is ready" line has been shown (v0.11, D466 (1)). */
+  | { type: 'remembering.noteReady' }
   // Debug, Orders (plan T10.12): the debug panel only.
   | { type: 'debug.ordersOpen'; order: OrderId }
   | { type: 'debug.ordersAddStanding'; order: OrderId; amount: number }

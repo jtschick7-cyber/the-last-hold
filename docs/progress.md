@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.3 remove the closing line.
-- **Next:** T11.4 Pechko's near-scene, the card and the ready line.
+- **Last task:** T11.4 Pechko's near-scene, the card and the ready line.
+- **Next:** T11.5 the choice and the debug commands.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -427,4 +427,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **New:** `tests/story/closing-line.test.ts`: a story-less Long Night has no testament step; D6-06 still closes Act VI; the line is in none of `src/`, `public/`, `index.html`, and in `docs/` only in the decisions log, `docs/archive/` and `docs/flesh-out/`.
 - **Not done:** no screenshot or on-phone look at the shortened Long Night (three steps instead of four); it is on the playtest list under "after".
 - **Next:** T11.4.
+
+## 2026-10-21 — v0.11 session 5: T11.4 near-scene, card, ready line
+- **Built:** commands `remembering.seeNear` (only on Continue; the ✕ sends nothing) and `remembering.noteReady`; derived views in `core/story/remembering-view.ts` (which scene, the card's form and live counts, the ready note); texts in `content/text/remembering.ts`, word for word from lore §34.1–34.2; UI in `src/ui/remembering/` (scene, card, ready line).
+- **Where it shows:** the scene after the Orders openings and the "Seat your Orders" step, only on the Hold tab (D459 (6)), once a session so a ✕ cannot loop; the card after the Orders card, hidden until the scene is seen, with Names and Bestiary links (the tab signal moved to `runtime.ts` so a card can send you to the Archive); the ready line on the away sheet and on live result sheets.
+- **Tests:** `tests/remembering/near-card.test.ts` (R-01 or R-02 by the gate; waits for the stand; seen only by the command; no second scene; counts equal the Names view and the species known well; no bar or percentage; ready line once; texts equal the lore; none of the 40 names or forbidden phrases).
+- **Left for later tasks (by plan):** the open form's two choices (T11.5), "Read it again" and the Library (T11.13). Until T11.5 the open card shows its first line only.
+- **Not seen on a phone:** no layout check yet (T11.16). If you close the scene with the ✕ it comes back on the next load; there is no button for it, because the card is hidden until the scene is seen and I may not invent text.
+- **Next:** T11.5.
 

@@ -68,6 +68,7 @@ import {
   unseatOrder,
 } from './orders';
 import { openOrders } from '../systems/orders-open';
+import { noteReady, seeNear } from './remembering';
 import { refuse, type ApplyResult, type Command } from './types';
 
 /**
@@ -154,6 +155,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return skipSeatStep(state);
     case 'orders.setSeats':
       return setSeats(state, cmd.orders);
+    case 'remembering.seeNear':
+      return seeNear(state);
+    case 'remembering.noteReady':
+      return noteReady(state);
     case 'debug.ordersOpen':
       return debugOrdersOpen(state, cmd.order, now);
     case 'debug.ordersAddStanding':

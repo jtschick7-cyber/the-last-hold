@@ -10,6 +10,7 @@ import styles from '../styles/ui.module.css';
 import { levelUpLines } from '../app/lines';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { ResultsView } from './ResultsSheet';
+import { ReadyLine } from '../remembering/ReadyLine';
 
 const MS = 1000;
 
@@ -84,6 +85,7 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
         </p>
       )}
       {summary.eventsLine && <p class={styles.small}>{summary.eventsLine}</p>}
+      <ReadyLine />
       {(summary.delve ?? []).map((l) => (
         <p key={l} class={styles.small}>
           {l}

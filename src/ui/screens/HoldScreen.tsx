@@ -14,6 +14,7 @@ import { EventsCard } from '../events/EventsCard';
 import { eventsCardView } from '../../core/systems/events-view';
 import { now } from '../../platform/clock';
 import { OrdersCard } from '../orders/OrdersCard';
+import { RememberingCard } from '../remembering/RememberingCard';
 
 // GDD §9.2: the hold header (pixel hold scene, via the asset manifest), the
 // peasants panel, and the build list.
@@ -65,9 +66,11 @@ export const HoldScreen = () => {
       <EventsCard />
       {/* GDD §9.18: after the Events card when it is shown, otherwise after the last card. */}
       {eventsCardView(s, now()) && <OrdersCard />}
+      {eventsCardView(s, now()) && <RememberingCard />}
       <PeasantsPanel />
       <BuildList />
       {!eventsCardView(s, now()) && <OrdersCard />}
+      {!eventsCardView(s, now()) && <RememberingCard />}
     </div>
   );
 };

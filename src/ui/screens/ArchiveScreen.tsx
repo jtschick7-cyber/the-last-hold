@@ -13,7 +13,7 @@ import { ordersShelf } from '../../core/story/orders-chapter-view';
 import { reopenChapter } from '../orders/ChapterScene';
 import { docKey } from '../../core/story/documents';
 import { letterKey } from '../../core/story/letters';
-import { dispatch, game, version } from '../app/runtime';
+import { dispatch, game, tab, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { docIconId, ORDERS_ICON, RIME_ICON } from '../../content/assets';
@@ -29,6 +29,12 @@ import { BestiaryScreen } from './BestiaryScreen';
 const SECTIONS = ['Bestiary', 'Library', 'Accounts', 'Names'] as const;
 type Section = (typeof SECTIONS)[number];
 const section = signal<Section>('Library');
+
+/** Sends the player to one section of the Archive (the Remembering card's links). */
+export const openArchiveSection = (name: Section): void => {
+  section.value = name;
+  tab.value = 'bestiary';
+};
 
 const markRead = (key: string): void => {
   if (game().story.unread.includes(key)) dispatch({ type: 'archive.read', key });
