@@ -1,7 +1,7 @@
 import { ORDER_IDS, ORDER_SOURCES, type OrderId } from '../../content/orders';
 import type { OrdersState } from '../state/orders-state';
 import { arr, bool, count, finite, Invalid, obj, orNull, type Obj } from './guards';
-import { ORDER_LEVELS, SEATS_MAX, SEATS_START, THIRD_SEAT_TOP_ORDERS } from './orders-constants';
+import { balance } from '../../content/balance';
 
 // Technical design §5.2 and §9.4 (v10): the Orders part of the save guard. Unknown Order ids and
 // unknown sources drop with a warning, never a crash. An impossible state (a seat for an Order that
@@ -67,12 +67,12 @@ export const ordersFrom = (v: unknown, warnings: string[], notes: string[]): Ord
 
   const levelHigh = perOrder(o.levelHigh, 'orders.levelHigh', (x, w) => {
     const n = count(x, w);
-    if (n > ORDER_LEVELS) throw new Invalid(`${w} is above the top level.`);
+    if (n > balance.orders.levels.value) throw new Invalid(`${w} is above the top level.`);
     return n;
   });
   const chaptersRead = perOrder(o.chaptersRead, 'orders.chaptersRead', (x, w) => {
     const n = count(x, w);
-    if (n > ORDER_LEVELS) throw new Invalid(`${w} is above the last chapter.`);
+    if (n > balance.orders.levels.value) throw new Invalid(`${w} is above the last chapter.`);
     return n;
   });
   for (const id of ORDER_IDS)
@@ -96,11 +96,11 @@ export const ordersFrom = (v: unknown, warnings: string[], notes: string[]): Ord
     warnings.push('The seated Orders were put back in list order.');
 
   const thirdSeat = bool(o.thirdSeat, 'orders.thirdSeat');
-  if (seats.length > (thirdSeat ? SEATS_MAX : SEATS_START))
+  if (seats.length > (thirdSeat ? balance.orders.seatsMax.value : balance.orders.seatsStart.value))
     throw new Invalid('orders.seats holds more Orders than there are seats.');
   if (thirdSeat) {
-    const top = ORDER_IDS.filter((id) => levelHigh[id] >= ORDER_LEVELS).length;
-    if (top < THIRD_SEAT_TOP_ORDERS || !opened.quenchers)
+    const top = ORDER_IDS.filter((id) => levelHigh[id] >= balance.orders.levels.value).length;
+    if (top < balance.orders.thirdSeatTopOrders.value || !opened.quenchers)
       throw new Invalid('orders.thirdSeat is open without what opens it.');
   }
 

@@ -341,6 +341,39 @@ export const balance = {
     loreClueTime: tunable(0.04),
     commandXp: tunable(0.04),
   },
+  // ---- GDD §7.12 Orders (v0.10, D407–D425). Six keys are locked (plan §0.6); the rest are tunable,
+  // and the weights, thresholds, chunk and cap are sketches the Orderer measures (T10.17, T10.18). ----
+  orders: {
+    seatsStart: locked(2),
+    seatsMax: locked(3),
+    thirdSeatTopOrders: locked(2),
+    levels: locked(4),
+    opposed: locked(['moot', 'quenchers']),
+    perkCeiling: locked(0.2),
+    standing: {
+      moot: tunable({ contract: 1 }),
+      greyWives: tunable({ brew: 1, experiment: 3, property: 10 }),
+      bellWatchers: tunable({ document: 5, letter: 5, name: 10 }),
+      quenchers: tunable({ kozlyContract: 2, delveFloor: 1 }),
+    },
+    delveWindow: tunable(7 * 24 * HOUR, 'seconds'), // 7 days
+    delveWeeklyCap: tunable(20), // sketch
+    triumphantChunk: tunable(25), // sketch
+    levelThresholds: tunable({
+      moot: [10, 40, 100, 200],
+      greyWives: [30, 100, 250, 500],
+      bellWatchers: [25, 75, 160, 300],
+      quenchers: [20, 60, 140, 260],
+    }), // sketch
+    backfillCapLevel: tunable(1),
+    swapCooldown: tunable(24 * HOUR, 'seconds'), // 24 h
+    perk: {
+      moot: { foodStep: tunable(0.03) },
+      greyWives: { timeStep: tunable(0.04) },
+      bellWatchers: { clueStep: tunable(0.04) },
+      quenchers: { threatStep: tunable(0.03) },
+    },
+  },
 } as const;
 
 export type Balance = typeof balance;

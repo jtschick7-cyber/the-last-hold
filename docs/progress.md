@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.1 save v10 and the migration (done, pushed).
-- **Next:** T10.2, the constants and the locked row (moves the temporary constants into `balance.ts`).
-- **Open questions:** Q34 (two near-match names), Q35 (what the save keeps; answered by the table below), Q36 (art), Q37 (Names sentence). None blocks T10.2.
+- **Last task:** T10.2 the constants and the locked row (done, pushed).
+- **Next:** T10.3, standing hooks part 1 (contracts, stands, Delves).
+- **Open questions:** Q34 (two near-match names), Q36 (art), Q37 (Names sentence). None blocks T10.3.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -234,3 +234,10 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Timing:** migration 1.1 ms; full load 2.3 ms (198 KB file). `npm run check` green (2,432 tests, 64 s).
 - **Two readings for you (D426, Proposed):** the unrecovered sources come out as load notes, not warnings, so ten older tests that expect no warnings stay untouched; and the backfill numbers sit in one marked temporary file until T10.2 moves them to `balance.ts`.
 - **Next:** T10.2.
+
+## 2026-10-21 — v0.10 session 1 (continued): T10.2 constants
+- **GDD §7.12** (OUT-2b) added after §7.11; the §7.4 pointer was already in. **Plan §0.6** has the Orders row (six locked keys) and the note that the rest are tunable.
+- **`balance.ts`** now holds every `orders.*` key at the §7.12 value; six are locked (seats, third-seat rule, levels, the opposed pair, the perk ceiling). The temporary file from T10.1 is deleted; the migration and the guard read `balance.ts`, and the migration test takes its weights from it.
+- **Test:** `tests/content/v10-constants.test.ts` fails if a locked value changes, checks each perk step × 4 ≤ the 20% ceiling, one weight per source, rising thresholds. Existing balance tests (both directions with the GDD, locked = plan §0.6) pass.
+- `npm run check` green (2,438 tests, 60 s). No locked value changed, no old row edited.
+- **Next:** T10.3.

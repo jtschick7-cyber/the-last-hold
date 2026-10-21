@@ -1,11 +1,5 @@
 import { ORDER_IDS, type OrderId } from '../../content/orders';
-import {
-  BACKFILL_CAP_LEVEL,
-  levelOf,
-  THRESHOLDS,
-  TRIUMPHANT_CHUNK,
-  WEIGHTS,
-} from './orders-constants';
+import { balance } from '../../content/balance';
 
 type Plain = Record<string, unknown>;
 const asPlain = (v: unknown): Plain => (typeof v === 'object' && v !== null ? (v as Plain) : {});
@@ -33,6 +27,10 @@ export const NOT_RECOVERED = [
 export const PARTLY_RECOVERED =
   'Quenchers: Kozly Hollow contracts are counted from the village’s trust record, which stops counting once a village is Sworn, so the count may be low.';
 
+/** The level a standing gives: how many thresholds it has reached (0 to 4). */
+export const levelOf = (order: OrderId, standing: number): number =>
+  balance.orders.levelThresholds.value[order].filter((t) => standing >= t).length;
+
 export interface Backfill {
   start: Record<OrderId, number>;
   levelHigh: Record<OrderId, number>;
@@ -49,26 +47,29 @@ export const backfillOrders = (state: Plain): Backfill => {
   const triumphant = list(state.cycles).filter(
     (c) => asPlain(asPlain(c).stand).band === 'triumphant',
   ).length;
-  const chunk = triumphant * TRIUMPHANT_CHUNK;
+  const chunk = triumphant * balance.orders.triumphantChunk.value;
   const sum = (o: Record<string, number>): number => Object.values(o).reduce((a, b) => a + b, 0);
   const raw: Record<OrderId, number> = {
-    moot: whole(asPlain(state.stats).contractsWon) * WEIGHTS.moot.contract + chunk,
+    moot:
+      whole(asPlain(state.stats).contractsWon) * balance.orders.standing.moot.value.contract +
+      chunk,
     greyWives:
-      list(book.tried).length * WEIGHTS.greyWives.experiment +
+      list(book.tried).length * balance.orders.standing.greyWives.value.experiment +
       sum(Object.fromEntries(Object.entries(properties).map(([k, v]) => [k, list(v).length]))) *
-        WEIGHTS.greyWives.property +
+        balance.orders.standing.greyWives.value.property +
       chunk,
     bellWatchers:
-      list(story.documents).length * WEIGHTS.bellWatchers.document +
-      list(story.letters).length * WEIGHTS.bellWatchers.letter +
-      list(story.names).length * WEIGHTS.bellWatchers.name +
+      list(story.documents).length * balance.orders.standing.bellWatchers.value.document +
+      list(story.letters).length * balance.orders.standing.bellWatchers.value.letter +
+      list(story.names).length * balance.orders.standing.bellWatchers.value.name +
       chunk,
-    quenchers: whole(kozly.won) * WEIGHTS.quenchers.kozlyContract + chunk,
+    quenchers: whole(kozly.won) * balance.orders.standing.quenchers.value.kozlyContract + chunk,
   };
   const start = {} as Record<OrderId, number>;
   const levelHigh = {} as Record<OrderId, number>;
   for (const id of ORDER_IDS) {
-    const cap = THRESHOLDS[id][BACKFILL_CAP_LEVEL - 1] ?? 0;
+    const cap =
+      balance.orders.levelThresholds.value[id][balance.orders.backfillCapLevel.value - 1] ?? 0;
     start[id] = Math.min(raw[id], cap);
     levelHigh[id] = levelOf(id, start[id]);
   }

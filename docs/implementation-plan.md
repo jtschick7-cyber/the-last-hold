@@ -69,9 +69,12 @@ Claude Code doesn't start an outline-level milestone until its flesh-out is done
 | Events | `boss.partySize`, `boss.tokenInterval`, `boss.tokenMax`, `boss.hunterRest`, `boss.openAge`, `boss.order`, `boss.poolBase`, `boss.baseTier`, `boss.passTierStep`, `boss.milestones`, `boss.silverBounties`, `boss.reagents`, `boss.itemChance`, `boss.itemRarityWeights`, `boss.xpPerTier`, `boss.previewSamples` (the whole `boss.*` namespace, D370–D379), `riftglass.bankWeeks` |
 | Delves | `delve.partySize`, `delve.floors`, `delve.doors`, `delve.offers`, `delve.unlitDoorsPerRun`, `riftglass.weeklyCap` (D268) |
 | Skills | `skill.maxLevel` (D217) |
+| Orders | `orders.seatsStart`, `orders.seatsMax`, `orders.thirdSeatTopOrders`, `orders.levels`, `orders.opposed`, `orders.perkCeiling` (D412, D418) |
 | Hunter depth | `stores.cap`, `star.max`, `keepsake.slots`, `talent.points`, `talent.tierStars`, `rank.wrightLevel`, `rank.masterLevel`, `yard.capRank` (D325) |
 
 *The `hunt.*` constants (`hunt.unlockPoints`, `hunt.trackPoints`, `hunt.trackTiers`, `hunt.xpPerTier`, `hunt.lossXpShare`, `hunt.replayReagents`, D380) are **tunable.** `boss.poolBase` starts as a sketch and is replaced only by a decisions row the owner approves (T9.13).*
+
+*The `orders.*` standing weights, `orders.levelThresholds`, `orders.delveWindow`, `orders.delveWeeklyCap`, `orders.triumphantChunk`, `orders.backfillCapLevel`, `orders.swapCooldown` and the four `orders.perk.*` steps are **tunable** (D418). The thresholds, weights, chunk and cap start as sketches the Orderer measures at T10.17 and T10.18.*
 
 Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage rules**. Everything else in `balance.ts` is tunable.
 
@@ -339,7 +342,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
     5. **Every golden fight replays line for line; every recorded fight and stand keeps its result** (D344 (1)).
     6. The migration is measured on the fixture and the time is in the progress entry.
 
-- [ ] **T10.2 — Constants and the locked row** *(content/balance.ts, docs)*
+- [x] **T10.2 — Constants and the locked row** *(content/balance.ts, docs)*
   - Add GDD §7.12 (OUT-2b) and the §7.4 pointer; add every `orders.*` key to `balance.ts` and the constants test, with its locked or tunable mark; add the §0.6 row (OUT-4b) to this plan; move any constants T10.1 hard-coded.
   - *Acceptance:* 1. The constants test fails if a locked value changes. 2. `step × 4 ≤ orders.perkCeiling` is a test for all four perks. 3. No constant is written anywhere but `balance.ts`.
 

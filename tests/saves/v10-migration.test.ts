@@ -17,6 +17,7 @@ import {
 import { replayStand } from '../../src/core/stand/replay';
 import { SCHEMA_VERSION, type GameState } from '../../src/core/state/game-state';
 import { createNewGame } from '../../src/core/state/new-game';
+import { balance } from '../../src/content/balance';
 import { ORDER_IDS } from '../../src/content/orders';
 
 type Env = {
@@ -36,18 +37,29 @@ const loadFull = (env: unknown) => {
 const roundTrip = (s: GameState): GameState =>
   loadFull(JSON.parse(encodeSaveFile(makeEnvelope(s, 0)))).state;
 
-// Independent recount (typed access, written separately from the migration's plain-JSON readers).
-// The weights and thresholds are GDD §7.12 sketches; T10.2 moves them to balance.ts.
-const THRESHOLD_1 = { moot: 10, greyWives: 30, bellWatchers: 25, quenchers: 20 };
+// Independent recount (typed access, written separately from the migration's plain-JSON readers),
+// using the weights and thresholds in balance.ts (GDD §7.12).
+const w = balance.orders.standing;
+const THRESHOLD_1 = Object.fromEntries(
+  ORDER_IDS.map((id) => [id, balance.orders.levelThresholds.value[id][0]]),
+) as Record<(typeof ORDER_IDS)[number], number>;
 const recount = (s: GameState) => {
-  const chunk = s.cycles.filter((c) => c.stand?.band === 'triumphant').length * 25;
+  const chunk =
+    s.cycles.filter((c) => c.stand?.band === 'triumphant').length *
+    balance.orders.triumphantChunk.value;
   const properties = Object.values(s.book.properties).reduce((n, p) => n + p.length, 0);
   return {
-    moot: s.stats.contractsWon + chunk,
-    greyWives: s.book.tried.length * 3 + properties * 10 + chunk,
+    moot: s.stats.contractsWon * w.moot.value.contract + chunk,
+    greyWives:
+      s.book.tried.length * w.greyWives.value.experiment +
+      properties * w.greyWives.value.property +
+      chunk,
     bellWatchers:
-      s.story.documents.length * 5 + s.story.letters.length * 5 + s.story.names.length * 10 + chunk,
-    quenchers: (s.story.trust['kozly-hollow']?.won ?? 0) * 2 + chunk,
+      s.story.documents.length * w.bellWatchers.value.document +
+      s.story.letters.length * w.bellWatchers.value.letter +
+      s.story.names.length * w.bellWatchers.value.name +
+      chunk,
+    quenchers: (s.story.trust['kozly-hollow']?.won ?? 0) * w.quenchers.value.kozlyContract + chunk,
   };
 };
 
