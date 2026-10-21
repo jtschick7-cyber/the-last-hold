@@ -1,6 +1,7 @@
 import { HUNTER_IDS } from '../../src/content/hunters';
 import { computeOdds } from '../../src/core/contracts/odds';
 import { suggestParty } from '../../src/core/contracts/suggest';
+import { computeHuntOdds, suggestHuntParty } from '../../src/core/systems/hunt-odds';
 import { previewBoss, suggestBossParty } from '../../src/core/systems/boss-odds';
 import { previewStand } from '../../src/core/stand/preview';
 import { snap } from '../combat/helpers';
@@ -37,6 +38,8 @@ type Bench = {
   stand: number;
   bossPreview: number;
   bossSuggest: number;
+  huntOdds: number;
+  huntSuggest: number;
 };
 
 (window as unknown as { __bench: () => Bench }).__bench = () => {
@@ -69,7 +72,24 @@ type Bench = {
     paid: 0,
   };
   const fourteen = HUNTER_IDS.slice(0, 14).map((id) => snap(id, { level: 9 }));
+  // Plan T9.8 (measured for the GDD §6.5 rows): hunt odds on the hardest track with preparation
+  // (prepared and unprepared runs) and hunt Suggest with 14 hunters, running out its 10 tries.
+  const hunt = {
+    gameSeed: 'bench',
+    hunt: 'stoneback' as const,
+    track: 3 as const,
+    tier: 5,
+  };
+  const huntPrep = {
+    oils: { [HUNTER_IDS[0] ?? 'halvar']: 'grave-oil' as const },
+    potions: { [HUNTER_IDS[1] ?? 'zora']: 'quickfoot-tincture' as const },
+    bombs: ['fire-pot' as const, 'saltburst' as const],
+  };
   return {
+    huntOdds: best(() => computeHuntOdds({ ...hunt, party: fourteen.slice(0, 4), prep: huntPrep })),
+    huntSuggest: best(() =>
+      suggestHuntParty({ ...hunt, available: fourteen, maxParty: 4, prep: huntPrep, tries: 10 }),
+    ),
     odds: best(() => computeOdds({ ...base, party })),
     suggest4: best(() => suggestParty({ ...base, available: free, maxParty: 3 })),
     oddsUnknown: best(() => computeOdds({ ...unknown, party })),
