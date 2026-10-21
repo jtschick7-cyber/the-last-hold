@@ -272,7 +272,55 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.9',
   },
+  // v0.9 (GDD §6.2, D367; thresholds moved by the owner, D404, 2026-10-21). The Eventer's event rows,
+  // judged on the median of the 5 Monday seeds; their numbers are in EVENTS below.
+  {
+    id: 'first-boss-attempt',
+    text: 'First boss attempt: within 24 h of events opening at the Citadel (Eventer)',
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'first-boss-kill',
+    text: 'First boss defeated: by the end of the 7th cycle from the one events open in, which is cycle 1 (Eventer)',
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'first-hunter-unlock',
+    text: 'First legendary hunter unlocked: by the end of the 6th cycle from the one events open in, which is cycle 1 (Eventer)',
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'tokens-not-wasted',
+    text: "Tokens not wasted: a full bank at no more than 35% of the Eventer's unlocked check-ins",
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'silver-with-boss',
+    text: "Silver check #6 with boss silver: at least 70% of the Eventer's silver, from the Keep on in cycle 1, comes from bounties (boss silver counts in the total only)",
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
 ];
+
+/**
+ * The Eventer's event rows (v0.9, D367; the three cycle and share numbers were moved by the owner,
+ * D404, after the T9.17 measurement and the Q33 hold-back test). "Cycles" count from the cycle events
+ * opened in, which is cycle 1.
+ */
+export const EVENTS = {
+  /** First boss attempt, in hours after the first check-in that found events open. */
+  attemptWithinHours: 24,
+  killByCycle: 7,
+  unlockByCycle: 6,
+  /** Full bank on arrival, as a share of the unlocked check-ins. */
+  maxFullBankShare: 0.35,
+  /** Bounty share of the cycle-1 silver from the Keep on, boss silver included in the total. */
+  minBountyShare: 0.7,
+} as const;
 
 /**
  * GDD §6.2 (v0.5, D168): which documents and names the story rows look at. Ids are
