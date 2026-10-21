@@ -51,6 +51,7 @@ import {
   ordersSilverCheck,
   ordersStandRowsCheck,
 } from './v010';
+import { rememberingReachableCheck } from './v011';
 import type { Check } from './types';
 
 export type { Check, CheckResult } from './types';
@@ -119,4 +120,6 @@ export const CHECKS: readonly Check[] = [
   ordersSilverCheck,
   ordersProvisionsCheck,
   ordersStandRowsCheck,
+  // v0.11 (D469)
+  rememberingReachableCheck,
 ];
