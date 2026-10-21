@@ -3,7 +3,7 @@ import { openOrders } from '../systems/orders-open';
 import { ordersDocumentFound, ordersNameFound } from '../systems/orders';
 import { knowledgeLevels } from '../../content/knowledge';
 import { monsters } from '../../content/monsters';
-import { allDocuments, LAST_WRITTEN_ACT, UNWRITTEN_ACT_LINE } from '../../content/story/acts';
+import { allDocuments } from '../../content/story/acts';
 import { yrsaTholeLine } from '../../content/story/act5';
 import type { DocumentCondition, DocumentDef } from '../../content/story/documents';
 import { TRUST_LEVELS, type TrustLevel } from '../../content/story/trust';
@@ -210,9 +210,17 @@ export const beginAct = (
 export const actClosingNote = (state: GameState, act: number | null): string | null =>
   act === 5 && isFound(state, 'D5-06') ? yrsaTholeLine : null;
 
-/** What closes an act on the Long Night (GDD §5.14.9): its testament, or the unwritten line. */
-export const actClosing = (act: number | null): DocumentDef | string | null => {
+/**
+ * What closes an act on the Long Night (GDD §5.14.9): its testament. A cycle with no act has none,
+ * and the Long Night skips that step (D455; the old "story continues" line is gone).
+ */
+export const actClosing = (act: number | null): DocumentDef | null => {
   if (act === null) return null;
-  if (act > LAST_WRITTEN_ACT) return UNWRITTEN_ACT_LINE;
   return allDocuments.find((d) => d.act === act && d.condition.kind === 'actStand') ?? null;
+};
+
+/** The testament step of a Long Night, or null when the step is skipped (D455): no act, or none found. */
+export const longNightTestament = (state: GameState, act: number | null): DocumentDef | null => {
+  const doc = actClosing(act);
+  return doc && isFound(state, doc.id) ? doc : null;
 };

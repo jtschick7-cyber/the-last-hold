@@ -1,7 +1,7 @@
 // Plan T5.6: every Act I and Act II document arrives on its condition, row by row
 // against lore-secrets §21–§22 (D148) and Act III's (§26), and stays obtainable in later cycles.
 import { describe, expect, it } from 'vitest';
-import { allDocuments, UNWRITTEN_ACT_LINE } from '../../src/content/story/acts';
+import { allDocuments } from '../../src/content/story/acts';
 import { yrsaTholeLine } from '../../src/content/story/act5';
 import { kamenfellNoticeEnd } from '../../src/content/story/scenes';
 import type { MonsterId } from '../../src/content/monsters';
@@ -497,14 +497,14 @@ describe('acts (GDD §5.14.1)', () => {
     expect(win(t, 'dubno-ford')).toEqual([]);
   });
 
-  it('an unwritten act closes with "The story continues in a later version."', () => {
+  it('a cycle with no act closes with nothing: the old "story continues" line is gone (D455, D465)', () => {
     expect(actClosing(1)).toMatchObject({ id: 'D1-06' });
     expect(actClosing(2)).toMatchObject({ id: 'D2-09' });
     expect(actClosing(3)).toMatchObject({ id: 'D3-06' });
     expect(actClosing(4)).toMatchObject({ id: 'D4-06' });
     expect(actClosing(5)).toMatchObject({ id: 'D5-06' });
     expect(actClosing(6)).toMatchObject({ id: 'D6-06' });
-    expect(actClosing(7)).toBe(UNWRITTEN_ACT_LINE);
+    expect(actClosing(7)).toBeNull();
     expect(actClosing(null)).toBeNull();
     expect(allDocuments.some((d) => d.act >= 7)).toBe(false);
   });

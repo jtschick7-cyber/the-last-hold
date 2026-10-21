@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.2 the gate and the content tests.
-- **Next:** T11.3 remove the closing line.
+- **Last task:** T11.3 remove the closing line.
+- **Next:** T11.4 Pechko's near-scene, the card and the ready line.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -419,4 +419,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Test edit:** the T11.1 guard tests in `tests/saves/v11-migration.test.ts` now start from a save past Act VI's stand with the gate open (the new load check would otherwise drop their endings); nothing loosened.
 - **Note:** "Act VI's cycle" is read from `story.acts` (the act-6 entry's cycle), the persisted fact. 
 - **Next:** T11.3.
+
+## 2026-10-21 — v0.11 session 4: T11.3 remove the closing line
+- **Removed:** the line and its constant; `actClosing` now returns Act VI's testament or nothing. The Long Night builds its steps from a list, so a cycle with no act (or no testament found) skips the step; Act VI's D6-06 and Act V's Thole line still play. New helper `longNightTestament` is what the sheet uses and what the test reads.
+- **Docs:** already clean from the docs commit (GDD B1–B5, lore §5 and §31). The new test checks `docs/` too.
+- **Tests edited under D465 (to assert the line's absence, nothing else loosened):** `tests/story/documents.test.ts` ("an unwritten act closes with..." now "a cycle with no act closes with nothing") and `tests/story/act6-lines.test.ts` ("the cycle after it shows the unwritten line" now "closes with nothing"). Both now expect `null` for act 7.
+- **New:** `tests/story/closing-line.test.ts`: a story-less Long Night has no testament step; D6-06 still closes Act VI; the line is in none of `src/`, `public/`, `index.html`, and in `docs/` only in the decisions log, `docs/archive/` and `docs/flesh-out/`.
+- **Not done:** no screenshot or on-phone look at the shortened Long Night (three steps instead of four); it is on the playtest list under "after".
+- **Next:** T11.4.
 

@@ -7,11 +7,10 @@ import { act6Arrival } from '../../content/story/act6';
 import { bandLabels, ilseReturns } from '../../content/story/scenes';
 import { skillViews } from '../../core/skills/skills';
 import { trustStepLine } from '../../content/story/trust';
-import { UNWRITTEN_ACT_LINE } from '../../content/story/acts';
 import type { DocumentDef } from '../../content/story/documents';
 import { villages } from '../../content/villages';
 import type { StandRecord } from '../../core/state/game-state';
-import { docKey, isFound } from '../../core/story/documents';
+import { docKey } from '../../core/story/documents';
 import { parseTrustKey } from '../../core/story/trust';
 import { residentLines } from '../../core/story/wardens';
 import { dispatch, game } from '../app/runtime';
@@ -67,31 +66,18 @@ const useRead = (ids: readonly string[]): void => {
   }, [ids.join()]);
 };
 
-/** The act's testament (with any line the stand adds after it), or the unwritten-act line. */
-export const Testament = ({
-  act,
-  note = null,
-}: {
-  act: DocumentDef | string | null;
-  note?: string | null;
-}) => {
-  const doc = typeof act === 'object' && act !== null && isFound(game(), act.id) ? act : null;
-  useRead(doc ? [doc.id] : []);
-  if (doc)
-    return (
-      <>
-        <DocumentReader id={doc.id} />
-        {note && (
-          <p class={styles.small}>
-            <em>{note}</em>
-          </p>
-        )}
-      </>
-    );
+/** The act's testament (with any line the stand adds after it). A cycle with no act has none (D455). */
+export const Testament = ({ doc, note = null }: { doc: DocumentDef; note?: string | null }) => {
+  useRead([doc.id]);
   return (
-    <p>
-      <em>{typeof act === 'string' || act === null ? UNWRITTEN_ACT_LINE : ''}</em>
-    </p>
+    <>
+      <DocumentReader id={doc.id} />
+      {note && (
+        <p class={styles.small}>
+          <em>{note}</em>
+        </p>
+      )}
+    </>
   );
 };
 
