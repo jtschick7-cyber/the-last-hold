@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.6 opening the Orders and the load path (done, pushed).
-- **Next:** T10.7, the number perks.
+- **Last task:** T10.7 the number perks (done, pushed).
+- **Next:** T10.8, chapters.
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -276,3 +276,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Not tested yet:** acceptance 3's "no Sending, Deep or onward word" needs the scene texts, so it is checked in T10.9. The owner's own save opens Moot, Grey Wives and Bell-Watchers on load, and the Quenchers not at all (it has not found D5-08).
 - `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
 - **Next:** T10.7.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.7 number perks
+- **D428 accepted by the owner.**
+- **Four factors, each `1 − step × level`, seated only,** each its own breakdown line (for example "Thanes' Moot, Friend: −6% food for provisions"): contract provisions (Moot), brew and experiment time (Grey Wives), clue time (Bell-Watchers), the hourly Threat rate (Quenchers; failed and completed contracts are untouched). Unseated or level 0 is exactly 1, so a game with nothing seated equals v0.9. New file `core/systems/orders-perks.ts`; the Order names and the level words (Neighbour, Friend, Ally, Kin) are now in `content/orders.ts`.
+- **Fixed at the right moment:** provisions at launch; a clue as it starts; a brew or experiment as it is **queued** (a waiting job keeps its cut). That last one needed one optional saved number on a queued job (D429, Proposed; no migration, round-trip tested).
+- **Tests:** `tests/orders/perks.test.ts` (37): factors by level, all 19 saved fixtures unchanged when unseated, queue and seat-change cases, the Threat equivalence (one long advance equals hourly steps, with a seat change inside), the stand preview's Threat per day follows the seat.
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited. The simulator rows are not re-run here (nothing seats an Order until T10.17).
+- **Next:** T10.8.

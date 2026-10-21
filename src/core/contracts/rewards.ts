@@ -1,3 +1,4 @@
+import { perkFactor, perkLines } from '../systems/orders-perks';
 import type { AgeId } from '../../content/ages';
 import type { HunterId } from '../../content/hunters';
 import { traits, type TraitId } from '../../content/traits';
@@ -86,7 +87,8 @@ export const provisions = (
       const e = traits[t].effect;
       if (e.kind === 'provisionsMult') thrift *= e.mult;
     }
-  const value = perHunter * partySize * intPow(growth, tier - 1) * thrift;
+  const moot = perkFactor(state, 'moot'); // GDD §5.13.5: Thanes' Moot, seated only
+  const value = perHunter * partySize * intPow(growth, tier - 1) * thrift * moot;
   return {
     value,
     breakdown: {
@@ -105,6 +107,7 @@ export const provisions = (
         { label: 'Growth per tier', value: growth, key: 'provisions.growth' },
         { label: 'Tier', value: tier },
         ...(thrift !== 1 ? [{ label: 'Thrifty', value: thrift }] : []),
+        ...perkLines(state, 'moot'),
       ],
     },
   };

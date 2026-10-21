@@ -2,7 +2,7 @@ import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/co
 import { INGREDIENT_IDS, type IngredientId } from '../../content/ingredients';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { chosenRecipe, defaultRecipe, experimentProblem } from '../alchemy/book';
-import { brewSlots, startBrews } from '../alchemy/brewing';
+import { brewSlots, queuedOrderCut, startBrews } from '../alchemy/brewing';
 import { num } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import { ok, refuse, type ApplyResult } from './types';
@@ -33,7 +33,13 @@ export const queueBrew = (
       return refuse(`Not enough ${r} for ${consumables[item].name}.`);
   for (const id of INGREDIENT_IDS) state.stores[id] -= recipe.ingredients[id] ?? 0;
   for (const r of RESOURCE_IDS) state.resources[r as ResourceId] -= recipe.resources[r] ?? 0;
-  state.queues.brewing.push({ kind: 'brew', item, doneAt: null, paid: structuredClone(recipe) });
+  state.queues.brewing.push({
+    kind: 'brew',
+    item,
+    doneAt: null,
+    paid: structuredClone(recipe),
+    ...queuedOrderCut(state),
+  });
   startBrews(state);
   return ok;
 };
@@ -70,7 +76,14 @@ export const queueExperiment = (
     if (state.stores[id] < units) return refuse(`Not enough ${id.replace(/-/g, ' ')}.`);
   state.stores[a] -= units;
   state.stores[b] -= units;
-  state.queues.brewing.push({ kind: 'experiment', a, b, units, doneAt: null });
+  state.queues.brewing.push({
+    kind: 'experiment',
+    a,
+    b,
+    units,
+    doneAt: null,
+    ...queuedOrderCut(state),
+  });
   startBrews(state);
   return ok;
 };

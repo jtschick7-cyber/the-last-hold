@@ -176,6 +176,8 @@ export interface BrewJob {
   item: ConsumableId;
   doneAt: number | null;
   paid: Recipe;
+  /** The Grey Wives' share off the time, fixed when queued; absent when none (v10, GDD §5.13.5). */
+  orderCut?: number;
 }
 
 /** An experiment in a kettle (GDD §5.8.3): `units` of each ingredient were paid. */
@@ -185,6 +187,8 @@ export interface ExperimentJob {
   b: IngredientId;
   units: number;
   doneAt: number | null;
+  /** As on a brew: fixed when queued. */
+  orderCut?: number;
 }
 
 /** Brews and experiments share the kettles, in one queue. */

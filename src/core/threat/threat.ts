@@ -1,3 +1,4 @@
+import { perkFactor, perkLines } from '../systems/orders-perks';
 import { ages } from '../../content/ages';
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { constantAt, num } from '../balance-access';
@@ -33,7 +34,8 @@ export const threatRate = (state: GameState): Explained => {
     }
   }
   slow = Math.min(1, slow);
-  const value = counts(state) ? rankRate * (1 - slow) : 0;
+  // GDD §5.13.5: the Quenchers' factor slows the hourly rate only, never Threat from failed contracts.
+  const value = counts(state) ? rankRate * (1 - slow) * perkFactor(state, 'quenchers') : 0;
   return {
     value,
     breakdown: {
@@ -43,6 +45,7 @@ export const threatRate = (state: GameState): Explained => {
       children: [
         { label: `${ages[age].name} rate`, value: rankRate, key: 'threat.ratePerHour' },
         { label: 'Defenses slow it', value: -slow, children: defenses },
+        ...perkLines(state, 'quenchers'),
       ],
     },
   };

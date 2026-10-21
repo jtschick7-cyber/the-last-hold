@@ -1,6 +1,7 @@
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
 import type { IngredientId } from '../../content/ingredients';
+import { perkCut } from '../systems/orders-perks';
 import { noteBrewFinished, noteExperimentFinished } from '../skills/hooks';
 import { ordersBrewFinished, ordersExperimentFinished } from '../systems/orders';
 import { finishExperiment, type ExperimentResult } from './book';
@@ -34,8 +35,16 @@ export const brewMs = (state: GameState): number =>
 export const experimentMs = (state: GameState): number =>
   num('experiment.time') * MS_PER_SECOND * (1 - brewCut(state).value);
 
+// GDD §5.13.5: the Grey Wives' cut is fixed when the job is queued (`orderCut`), so a seat change
+// never alters a brew already queued; the Copper Still is read when the kettle starts, as before.
 const jobMs = (state: GameState, job: KettleJob): number =>
-  job.kind === 'experiment' ? experimentMs(state) : brewMs(state);
+  (job.kind === 'experiment' ? experimentMs(state) : brewMs(state)) * (1 - (job.orderCut ?? 0));
+
+/** The cut to store on a job queued now: the seated Grey Wives' share, or nothing. */
+export const queuedOrderCut = (state: GameState): { orderCut?: number } => {
+  const cut = perkCut(state, 'greyWives');
+  return cut > 0 ? { orderCut: cut } : {};
+};
 
 /** Starts waiting brews, in queue order, on every free kettle, from the current time. */
 export const startBrews = (state: GameState): void => {
