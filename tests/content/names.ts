@@ -1254,6 +1254,8 @@ export const checkedNames: readonly CheckedName[] = [
   ...[
     'A seat at the table',
     'A basket on the step',
+    'Who keeps the bells',
+    'Named for the metal',
     'A table at the gate',
     'Salt and a ledger',
     'The one who leaves',
@@ -1275,5 +1277,19 @@ export const checkedNames: readonly CheckedName[] = [
     checked: '2026-10-21',
     result: 'generic',
     note: 'Order chapter or opening-scene title (D414, OUT-3 Part C): a plain phrase, checked as a group: none is a product or game name I know of (OUT-6).',
+  })),
+  ...[
+    'Neighbour',
+    'Friend',
+    'Ally',
+    'Kin',
+    'Seat your Orders',
+    'What the heads say about you',
+    'the eldest Grey Wife',
+  ].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-21',
+    result: 'generic',
+    note: 'Order level name or interface phrase (D414, D416; OUT-6): everyday English, checked as a group; none is a product or game name I know of.',
   })),
 ];

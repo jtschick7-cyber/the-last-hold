@@ -90,7 +90,8 @@ const otherPeople = (): string[] =>
     (n) => !ALLOWED_PEOPLE.includes(n) && n !== 'Vesna of the Weir',
   );
 
-const CAPITAL_RUN = /(?:[\p{Lu}][\p{L}'’-]*)(?: [\p{Lu}][\p{L}'’-]*)+/gu;
+// Two letters or more, so the pronoun "I" is never read as part of a name.
+const CAPITAL_RUN = /(?:[\p{Lu}][\p{L}'’-]+)(?: [\p{Lu}][\p{L}'’-]+)+/gu;
 
 export const checkText = (text: string, kind: TextKind): string[] => {
   const bad: string[] = [];

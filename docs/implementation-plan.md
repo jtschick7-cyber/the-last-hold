@@ -374,7 +374,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - The Part F harness (OUT-3: the automated checks), then the eight Moot and Grey Wives chapters, the Moot's and Grey Wives' opening scenes, E1 and E2 (including the elder's notes), **word for word from OUT-3.**
   - *Acceptance:* 1. The harness passes on these texts and **fails on a planted bad text** for each automated check (forbidden word, relative year, a roll name, an unknown person, an opening-scene word). 2. The texts equal OUT-3. 3. E2's hints are encoded as `{brew, claim}` and match GDD §8.6.
 
-- [ ] **T10.10 — The texts, part 2: the Bell-Watchers and the Quenchers; names** *(content/story, tests)*
+- [x] **T10.10 — The texts, part 2: the Bell-Watchers and the Quenchers; names** *(content/story, tests)*
   - The eight Bell-Watchers and Quenchers chapters, their two opening scenes, E3 (the rule, with a generator and the fallback remarks) and E4. Add the Order names, titles and level names to `tests/content/names.ts` with the OUT-6 date and notes.
   - *Acceptance:* 1. The harness passes on all texts. 2. E3's generated sentences equal the table for the full groups and for fixtures with one, two and all-but-one names found. 3. Every E4 excerpt is a substring of its chapter. 4. The names test is green. 5. **No text says, asks for or begins the names** (the phrase and name checks).
 

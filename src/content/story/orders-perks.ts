@@ -108,3 +108,41 @@ export const greyWivesHints: readonly GreyWivesHint[] = [
     elderNote: '"Leave a cup out."',
   },
 ];
+
+/**
+ * E3: the Bell-Watchers' groups (roll numbers). At level n, with the Order seated, the missing names of
+ * group n get one extra sentence after their old hint, built by a rule from the roll (never typed; see
+ * `core/story/orders-bell.ts`). Groups #8, #13, #18, #23 and #1 to #3 get none.
+ */
+export const bellWatchersGroups: Readonly<Record<1 | 2 | 3 | 4, readonly number[]>> = {
+  1: [21, 22, 24, 25, 26, 27],
+  2: [9, 10, 11, 12, 14],
+  3: [15, 16, 17, 19, 20],
+  4: [4, 5, 6, 7],
+};
+
+/** E3 fallback: the remark shown under the Names heading when no name of the group is missing. */
+export const bellWatchersRemarks: Readonly<Record<1 | 2 | 3 | 4, string>> = {
+  1: 'Halina: "The bell is small. It was never meant to be heard from far."',
+  2: 'Dana Lisová: "We kept the list in case somebody asked for it."',
+  3: 'Halina: "We still send word to the family that stopped. They don\'t answer."',
+  4: 'Dana Lisová: "It is easier to ring when it hangs somewhere."',
+};
+
+/** E4: Kozly Hollow's voice in the one Account "What the hearth leaves" (GDD §5.14.3). */
+export const QUENCHERS_ACCOUNT = 'What the hearth leaves';
+export const QUENCHERS_WITNESS = 'Bohdan Kozel';
+export const quenchersLabel = (level: number): string => `(the Quenchers, level ${level})`;
+
+/** Each excerpt is an exact substring of its chapter, between the quotation marks. */
+export const quenchersAccounts: Readonly<
+  Record<1 | 2 | 3 | 4, { readonly excerpt: string; readonly from: string }>
+> = {
+  1: { excerpt: "We'd like to see the stove. Only see it.", from: 'OR-Q1' },
+  2: { excerpt: "I'm not saying what it got back, because I'd like to be fair.", from: 'OR-Q2' },
+  3: { excerpt: "I won't light you home, that's all.", from: 'OR-Q3' },
+  4: {
+    excerpt: "I'd thought it was a figure of speech. I've stopped being sure it is.",
+    from: 'OR-Q4',
+  },
+};

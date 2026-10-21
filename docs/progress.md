@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.9 the texts, part 1 (done, pushed).
-- **Next:** T10.10, the Bell-Watchers and Quenchers texts.
+- **Last task:** T10.10 the texts, part 2 (done, pushed).
+- **Next:** T10.11, where the perk texts show.
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -303,3 +303,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Not done yet (by plan):** where these texts show (T10.11) and the Bell-Watchers and Quenchers texts, E3 and E4 (T10.10). I did not read the texts for tone; that is your read of lore §33, which they equal exactly.
 - `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
 - **Next:** T10.10.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.10 texts, part 2
+- **Texts in:** the Bell-Watchers' and Quenchers' opening scenes and eight chapters (`orders-scenes-b.ts`, made from lore §33 by the same script, so word for word), plus `orders-scenes-all.ts` listing all twenty scenes. All sixteen chapters and four openings now equal lore §33.
+- **E3 (Q37 (a), built as written):** the Bell-Watchers' extra sentence is generated from the roll by `core/story/orders-bell.ts`, never typed. Tests: the full groups equal the lore table; hand-worked cases for one, two and all-but-one names found; "every village", "every village but X", village order; nothing for the other groups; only while seated; the remark when none is missing.
+- **E4:** the four Kozly Hollow excerpts equal the lore table and are exact substrings of their chapters; the Account name, witness and label are constants.
+- **Checks:** the harness now covers all twenty scenes, E1 to E4 and a cross-check that no roll name or asking phrase appears anywhere. Two harness fixes, not text changes: the pronoun "I" is not a name, and a sentence-opening word before a name ("Then Marta") is not part of it.
+- **Names:** level names and the interface phrases added to `names.ts` (the four Order names and all titles were already in). Names test green.
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.11 (where the perk texts show: heads' lines in notices and the Villages panel, the Book hint, the Names view, the Accounts).

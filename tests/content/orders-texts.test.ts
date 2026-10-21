@@ -5,17 +5,28 @@ import { describe, expect, it } from 'vitest';
 import { CHAPTERS } from '../../src/content/orders-chapters';
 import { ingredientProperties } from '../../src/content/properties';
 import { ingredients, INGREDIENT_IDS, type IngredientId } from '../../src/content/ingredients';
-import { mootGreyWivesScenes, type OrderScene } from '../../src/content/story/orders-scenes';
+import type { OrderScene } from '../../src/content/story/orders-scenes';
+import { orderScenes, sceneOf } from '../../src/content/story/orders-scenes-all';
 import {
+  bellWatchersGroups,
+  bellWatchersRemarks,
   greyWivesHints,
   mootHeadLines,
+  quenchersAccounts,
+  quenchersLabel,
+  QUENCHERS_ACCOUNT,
+  QUENCHERS_WITNESS,
   type HintClaim,
 } from '../../src/content/story/orders-perks';
+import { roll } from '../../src/content/story/roll';
+import { bellExtra, bellSentence } from '../../src/core/story/orders-bell';
+import { createNewGame } from '../../src/core/state/new-game';
+import type { GameState } from '../../src/core/state/game-state';
 import { villages } from '../../src/content/villages';
 import { checkText, sentNames, type TextKind } from './orders-checks';
 import { loreScene, plain, tableRows } from './orders-lore';
 
-const scenes: readonly OrderScene[] = mootGreyWivesScenes;
+const scenes: readonly OrderScene[] = orderScenes;
 const textsOf = (s: OrderScene): string[] => [
   ...s.body,
   ...(s.variantA ?? []),
@@ -26,11 +37,13 @@ const textsOf = (s: OrderScene): string[] => [
 const headingOf = (s: OrderScene): string => `##### ${s.id} ·`;
 
 describe('the scene texts equal lore §33, word for word', () => {
-  it('has the ten Moot and Grey Wives scenes: two openings and eight chapters', () => {
+  it('has twenty scenes: the four openings and the sixteen chapters', () => {
     expect(scenes.map((s) => s.id)).toEqual([
       'OS-M',
       'OS-G',
-      ...['M1', 'M2', 'M3', 'M4', 'G1', 'G2', 'G3', 'G4'].map((x) => `OR-${x}`),
+      'OS-B',
+      'OS-Q',
+      ...['M', 'G', 'B', 'Q'].flatMap((o) => [1, 2, 3, 4].map((n) => `OR-${o}${n}`)),
     ]);
   });
 
@@ -49,8 +62,8 @@ describe('the scene texts equal lore §33, word for word', () => {
       expect(CHAPTERS.find((c) => c.id === s.id)?.title).toBe(s.title);
   });
 
-  it('only chapter 4 of the Moot has two endings', () => {
-    expect(scenes.filter((s) => s.variantA).map((s) => s.id)).toEqual(['OR-M4']);
+  it('only chapter 4 of the Moot and of the Quenchers has two endings', () => {
+    expect(scenes.filter((s) => s.variantA).map((s) => s.id)).toEqual(['OR-M4', 'OR-Q4']);
     expect(scenes.filter((s) => s.variantA).every((s) => s.variantB && s.ending)).toBe(true);
   });
 });
@@ -176,8 +189,149 @@ describe('each check fails on a planted bad text', () => {
   });
   it('a text that equals no lore text is caught by the string comparison', () => {
     const real = loreScene('##### OR-M1 ·');
-    expect(real.body.map((p) => p.replace('Brana', 'Branna'))).not.toEqual(
-      mootGreyWivesScenes[2]?.body,
+    expect(real.body.map((p) => p.replace('Brana', 'Branna'))).not.toEqual(sceneOf('OR-M1')?.body);
+  });
+});
+
+// ---- E3: the Bell-Watchers' generated sentence ----------------------------------------------------
+const rollOf = (n: number) => {
+  const r = roll.find((x) => x.n === n);
+  if (!r) throw new Error(`no roll number ${n}`);
+  return r;
+};
+const sentenceFor = (group: number[], missing: number[]): string | null =>
+  bellSentence(group.filter((n) => missing.includes(n)).map(rollOf));
+
+describe('E3: the Bell-Watchers’ sentence is generated and equals lore §33', () => {
+  const rows = tableRows('#### E3.').filter((r) => /^[1-4]$/.test(r[0] ?? '') && r.length === 4);
+
+  it('the groups are the lore table’s', () => {
+    expect(rows).toHaveLength(4);
+    for (const [level, group] of rows) {
+      const nums = (group?.match(/#(\d+)/g) ?? []).map((x) => Number(x.slice(1)));
+      expect(bellWatchersGroups[Number(level) as 1 | 2 | 3 | 4]).toEqual(nums);
+    }
+  });
+
+  it('the full group gives the sentence in the table', () => {
+    for (const [level, , , today] of rows) {
+      const g = bellWatchersGroups[Number(level) as 1 | 2 | 3 | 4];
+      expect(sentenceFor([...g], [...g])).toBe(plain(today ?? ''));
+    }
+  });
+
+  it('is built from only the names still missing: one, two and all but one found', () => {
+    const g4 = [...bellWatchersGroups[4]]; // #4 206 Ravenfell, #5 208 Mirograd, #6 210 Velkvik, #7 212 Dubno Ford
+    expect(sentenceFor(g4, [5, 6, 7])).toBe(
+      'Three springs, from year 208 to year 212, from Dubno Ford, Mirograd and Velkvik.',
+    );
+    expect(sentenceFor(g4, [6, 7])).toBe(
+      'Two springs, from year 210 to year 212, from Dubno Ford and Velkvik.',
+    );
+    expect(sentenceFor(g4, [7])).toBe('One spring, year 212, from Dubno Ford.');
+    const g1 = [...bellWatchersGroups[1]]; // #21 Mirograd 240 … #27 Mirograd 252
+    expect(sentenceFor(g1, [21])).toBe('One spring, year 240, from Mirograd.');
+    expect(sentenceFor(g1, [21, 22])).toBe(
+      'Two springs, from year 240 to year 242, from Kozly Hollow and Mirograd.',
+    );
+    expect(sentenceFor(g1, [21, 22, 24, 25, 26])).toBe(
+      'Five springs, from year 240 to year 250, from every village but Dubno Ford.',
+    );
+    expect(sentenceFor(g1, [])).toBeNull();
+  });
+
+  it('says every village when all five are named', () => {
+    expect(bellSentence([4, 5, 6, 7, 12].map(rollOf))).toBe(
+      'Five springs, from year 206 to year 222, from every village.',
+    );
+  });
+
+  it('the roll’s facts match the lore note (so the sentences stand on the right data)', () => {
+    expect(rollOf(21)).toMatchObject({ year: 240, village: 'mirograd' });
+    expect(rollOf(22)).toMatchObject({ year: 242, village: 'kozly-hollow' });
+    expect(rollOf(7)).toMatchObject({ year: 212, village: 'dubno-ford' });
+  });
+
+  it('shows nothing for groups #8, #13, #18, #23 and #1 to #3', () => {
+    const grouped = new Set(Object.values(bellWatchersGroups).flat());
+    for (const n of [8, 13, 18, 23, 1, 2, 3]) expect(grouped.has(n)).toBe(false);
+  });
+
+  const seated = (level: number, found: number[] = []): GameState => {
+    const s = createNewGame('bell', 0);
+    s.orders.opened.bellWatchers = { at: 0 };
+    s.orders.levelHigh.bellWatchers = level;
+    s.orders.seats = ['bellWatchers'];
+    s.story.names = found.map((n) => ({ n, cycle: 1, at: 0 }));
+    return s;
+  };
+  it('appears only while seated, for the level’s group, and gives the remark when none is missing', () => {
+    expect(bellExtra(seated(0))).toBeNull();
+    const off = seated(2);
+    off.orders.seats = [];
+    expect(bellExtra(off)).toBeNull();
+    expect(bellExtra(seated(2))?.sentence).toBe(
+      'Five springs, from year 216 to year 226, from every village but Dubno Ford.',
+    );
+    expect(bellExtra(seated(2, [9, 10]))?.missing).toEqual([11, 12, 14]);
+    const done = bellExtra(seated(3, [...bellWatchersGroups[3]]));
+    expect(done?.sentence).toBeNull();
+    expect(done?.remark).toBe(bellWatchersRemarks[3]);
+  });
+});
+
+describe('E3 fallback remarks and E4 equal lore §33 and pass the checks', () => {
+  it('the four remarks', () => {
+    const rows = tableRows('#### E3.').filter((r) => /^[1-4]$/.test(r[0] ?? '') && r.length === 2);
+    expect(rows).toHaveLength(4);
+    for (const [level, line] of rows)
+      expect(bellWatchersRemarks[Number(level) as 1 | 2 | 3 | 4]).toBe(plain(line ?? ''));
+  });
+
+  it('E3 sentences and remarks pass the Part F checks', () => {
+    for (const g of Object.values(bellWatchersGroups))
+      for (let k = 1; k <= g.length; k++)
+        expect(checkText(bellSentence(g.slice(0, k).map(rollOf)) ?? '', 'perk')).toEqual([]);
+    for (const line of Object.values(bellWatchersRemarks))
+      expect(checkText(line, 'perk')).toEqual([]);
+  });
+
+  it('E4: each excerpt equals the lore table and is an exact substring of its chapter', () => {
+    const rows = tableRows('#### E4.');
+    expect(rows).toHaveLength(4);
+    rows.forEach(([level, excerpt, from]) => {
+      const a = quenchersAccounts[Number(level) as 1 | 2 | 3 | 4];
+      expect(`"${a.excerpt}"`).toBe(plain(excerpt ?? ''));
+      expect(from).toBe(a.from);
+      const scene = sceneOf(a.from);
+      const whole = [
+        ...(scene?.body ?? []),
+        ...(scene?.variantA ?? []),
+        ...(scene?.variantB ?? []),
+        ...(scene?.ending ?? []),
+      ].join('\n');
+      expect(whole).toContain(a.excerpt);
+      expect(checkText(a.excerpt, 'perk')).toEqual([]);
+    });
+    expect(QUENCHERS_ACCOUNT).toBe('What the hearth leaves');
+    expect(QUENCHERS_WITNESS).toBe('Bohdan Kozel');
+    expect(quenchersLabel(2)).toBe('(the Quenchers, level 2)');
+  });
+});
+
+describe('no text says, asks for or begins the names', () => {
+  it('holds across every scene, perk text and generated sentence', () => {
+    const all = [
+      ...scenes.flatMap(textsOf),
+      ...mootHeadLines.flatMap((l) => [l.noticeLine, l.panelEntry]),
+      ...greyWivesHints.flatMap((h) => [h.hint, h.elderNote]),
+      ...Object.values(bellWatchersRemarks),
+      ...Object.values(quenchersAccounts).map((a) => a.excerpt),
+    ].join('\n');
+    for (const n of sentNames())
+      expect(new RegExp(`(?<![\\p{L}-])${n}(?![\\p{L}-])`, 'u').test(all)).toBe(false);
+    expect(all.toLowerCase()).not.toMatch(
+      /say the names|speak the names|read the names|their names|the forty|the sent/,
     );
   });
 });
