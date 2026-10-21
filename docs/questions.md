@@ -70,7 +70,7 @@ Answered questions Q1–Q25 are in [`docs/archive/questions-answered.md`](archiv
 - **Recommendation:** (a) for the bosses; for hunts, soften `hunt.trackPoints` to 10/4, 15/6, 22/8 and leave the quarries.
 - **Answer (owner):** agree with the recommendations (bosses: apply the softening table; hunts: soften `hunt.trackPoints`, leave the quarries), 2026-10-21. Logged as D398.
 
-### Q33 — The Eventer cannot meet three of the approved event rows as it plays (blocks T9.17)
+### Q33 — The Eventer cannot meet three of the approved event rows as it plays (blocks T9.17) *(answered)*
 - **What I measured** (5 Monday seeds, Eventer, current policy; report `sim/reports/2026-10-21T09-59-36-262Z-eventer.md`). Medians:
   - First boss attempt: 9 h after the Citadel (needs 24 h or less). **Passes.**
   - First boss defeated: **cycle 6** in every seed (needs cycle 2 or earlier). **Fails.**
@@ -95,12 +95,12 @@ Answered questions Q1–Q25 are in [`docs/archive/questions-answered.md`](archiv
 - **Blocks:** nothing (the names test is green with the dated entries). A rename would be one text change before T10.9.
 - **Answer (owner):** agree with the recommendation (a), 2026-10-21 (D427).
 
-### Q35 — The owner's save may not hold some standing counts *(asked 2026-10-21; open)*
+### Q35 — The owner's save may not hold some standing counts *(asked 2026-10-21; closed)*
 - **Context:** the migration backfills standing once, from the save's history, **capped at level 1** (D410, D421). I could not see which counts the save keeps (for example, whether every brew or property revealed is recorded, or only the current Book; the Alchemy skill's XP may count the same things). T10.1 reports exactly which are recoverable before it writes the migration. Anything not recoverable starts at 0.
 - **Options:** (a) Accept what is recoverable. Because of the level-1 cap, the result is the same start (level 1) whatever the history, so a gap costs nothing. (b) Ask Claude Code to estimate the missing counts. (c) Use the debug commands to set a starting level you think is fair.
 - **Recommendation:** (a). The cap already makes the start level 1; progress from there is live. Use (c) if the start feels off in your playtest.
 - **Blocks:** nothing; T10.1 reports the table.
-- **Answer (owner):** *(open)*
+- **Answer (owner):** closed 2026-10-21 in the v0.11 docs commit: T10.1 reported its table (D467).
 
 ### Q36 — Art for the Orders *(asked 2026-10-21; answered)*
 - **Context:** T10.15 needs four order marks, an Orders icon and placeholders for the four opening scenes.
@@ -115,3 +115,34 @@ Answered questions Q1–Q25 are in [`docs/archive/questions-answered.md`](archiv
 - **Recommendation:** (a). The players who care about the 40 names are the ones this helps, and it points at no document. Choose (b) if you want the hunt left exactly as it is.
 - **Blocks:** T10.10 (the Names sentence). If unanswered, Claude Code builds (a).
 - **Answer (owner):** agree with the recommendation (a), 2026-10-21 (D427).
+
+## v0.11 questions *(from the v0.11 flesh-out, 2026-10-21)*
+
+**Q38 — Is Keep the Vigil offered only when the ending is open?** *(Blocks: T11.5. Opened 2026-10-21.)*
+Lore §6 says Keep the Vigil is available "any time." In D459 (1) I read it as: **only when Remember Them is also open**, because before then it would change nothing (playing on is the same thing).
+Options: (a) only when open (my recommendation); (b) offered from the moment Pechko's near-scene has played, so the choice is always there, even when nothing is missing.
+Status: **Answered (a)**, owner, 2026-10-21 (D460).
+
+**Q39 — Is there a species that appears only in the Last Stand, never in a contract?** *(Closed 2026-10-21 by the red-team review, D461.)*
+GDD §5.9.3 and §8.3.1 say the base Last Stand pool is exactly the contract species, and the Dross-Tide is excluded. There is no stand-only species. T11.2 asserts this in a test instead of stopping to ask.
+Status: **Closed.**
+
+**Q40 — Approve the three ★ lines in OUT-3.** *(Blocks: the docs commit. Opened 2026-10-21.)*
+The Unlit's answer after the fortieth name ("Forty. Known, every one. I can put the count down."), Pechko's line about the stove keeping itself (R-09), and the warm final rime (R-11) are the freshest text in this milestone. They waited for your yes in the first message of the thread (the D460 gate).
+Status: **Answered: yes**, owner, 2026-10-21 (D460).
+
+**Q41 — Name searches I could not fully settle.** *(Informational. Opened 2026-10-21.)*
+My search tool returned nothing that matches "Remember Them" or "Keep the Vigil" as a game ending, and nothing for "The Remembering" next to the games in GDD §2.3. It also returned unrelated games called "Vigil" and "Remember Me." The search tool is weak for exact phrases, so please treat this as "no collision found," not "checked everywhere." Details in OUT-6.
+Status: **Open (informational).**
+
+**Q42 — The Hearth Hall look: who draws it, and which scenes?** *(Blocks: T11.12. Opened 2026-10-21.)*
+D457 says it is drawn in code. If you would rather supply art, say so before T11.12; otherwise Claude Code draws it, shows a screenshot, and you approve (as with the Orders art, D434).
+Options: (a) code-drawn, you approve (my recommendation); (b) you supply art.
+Status: **Open.**
+
+**Q43 — "Gaunt Wolf" or "Gloam Wolf"?** *(Informational. Opened 2026-10-21, from the review.)*
+Lore and GDD §8.5 say "Gaunt Wolf"; GDD §8.3 says "Gloam Wolf". Not blocking v0.11, but the Bestiary and the gate's species list use whichever the content files hold; please pick one for the polish pass.
+Status: **Open (informational).**
+
+**Q44 — Housekeeping in the docs commit (no owner action).** Close Q35 (T10.1 reported its table) and mark Q33 answered. Both are recorded in D467.
+Status: **Done** in the v0.11 docs commit (D467).

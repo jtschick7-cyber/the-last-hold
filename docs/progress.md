@@ -4,10 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** v0.10 closed: playtest passed, `sim:accept` run, merged and tagged `v0.10.0`.
-- **Next:** v0.11 needs its flesh-out session first (plan §0.4).
-- **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
+- **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge); the v0.11 flesh-out is applied. The plan names `milestone/v0.11`; the preview build follows `milestone/*`, so the owner decides when it is created (see the last entry).
+- **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
+- **Last task:** the v0.11 docs commit (flesh-out applied).
+- **Next:** T11.1 save v11 (the `remembering` block and the v10 → v11 migration).
+- **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -393,3 +394,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Plan:** v0.10 `Status: complete`. Merged to `main` and tagged `v0.10.0` (see the pull request).
 - **Known:** the older odds benchmark row fails on this container's CPU (215 ms against 200 ms); it is untouched and outside `npm run check`.
 - **Next:** v0.11 flesh-out (The Remembering).
+
+## 2026-10-21 — v0.11 session 1: the flesh-out is applied (docs only)
+- **Step 0 passed:** `v0.10.0` is tagged and in `main`; `sim/baseline.json` is the accepted one. The owner said yes to OUT-3 (all four ★ lines) and every reading (D459, D461–D467); **D460** logged. Q38 answered (a).
+- **Applied:** files in `docs/flesh-out/v0.11/` and `v0.11-summary.md`; D446–D467 in `decisions.md`; GDD §5.15, §9.19, B1–B11 (all five find texts matched); lore §34 and its five small edits (the closing line no longer appears in lore); the plan section (17 tasks), §0.7 (v0.10 actual: 20 entries over 3 numbered sessions), the "Depth" line and v1.0 scope; OUT-9 into the technical design (§5.2, §6.2, §9.4, §10.0, §11.2, §13.4, §14, §15); Q38–Q44 in `questions.md` (Q33 marked answered, Q35 closed); three standing rules in `CLAUDE.md`; names in `tests/content/names.ts`.
+- **GDD B11:** the §9.18 Quenchers text had no "for v0.11" wording to change; §5.13.6 and §5.13.8 were updated instead.
+- **Sweep (plan step 4):** `Proposed` rows from D357 up that D446 does **not** name: D367–D384, D387–D399, D402, D403. Not edited; asked the owner.
+- **Checks:** `npm run check` green (165 files, 2,710 tests, about 70 s with the simulator set).
+- **Next:** T11.1. No code was written. The preview does not change.
+
