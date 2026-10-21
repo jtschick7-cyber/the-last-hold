@@ -37,6 +37,7 @@ import { alchemyLevel, bookFrom, kettleJob, skillsFrom } from './validate-alchem
 import { delveFrom } from './validate-delve';
 import { longNightFrom } from './validate-long-night';
 import { eventsFrom } from './validate-events';
+import { ordersFrom } from './validate-orders';
 import type {
   ContractInstance,
   ContractResult,
@@ -57,6 +58,9 @@ import { DEFAULT_SETTINGS } from '../state/new-game';
 export interface Validated {
   state: GameState;
   warnings: string[];
+  /** What a migration could not carry over (T10.1: Orders standing it could not recover). Shown
+   *  with the warnings but not damage, so a clean old save still has no warnings. */
+  notes: string[];
 }
 
 const settingsFrom = (v: unknown, warnings: string[]): Settings => {
@@ -270,7 +274,7 @@ const fallen = (v: unknown, where: string): FallenRecord => {
   return r;
 };
 
-const check = (raw: unknown, warnings: string[]): GameState => {
+const check = (raw: unknown, warnings: string[], notes: string[]): GameState => {
   const s = obj(raw, 'The game data');
   const meta = obj(s.meta, 'meta');
   const cycle = obj(s.cycle, 'cycle');
@@ -401,6 +405,7 @@ const check = (raw: unknown, warnings: string[]): GameState => {
     skills: skillsFrom(s.skills, warnings),
     delve: delveFrom(s.delve, warnings),
     events: eventsFrom(s.events, fightRef, warnings),
+    orders: ordersFrom(s.orders, warnings, notes),
     ...itemsFrom(s, owned, warnings),
     settings: settingsFrom(s.settings, warnings),
   };
@@ -409,8 +414,9 @@ const check = (raw: unknown, warnings: string[]): GameState => {
 /** Checks plain JSON against the current GameState; returns a clean copy. */
 export const validateState = (raw: unknown): Result<Validated> => {
   const warnings: string[] = [];
+  const notes: string[] = [];
   try {
-    return success({ state: check(raw, warnings), warnings });
+    return success({ state: check(raw, warnings, notes), warnings, notes });
   } catch (e) {
     if (e instanceof Invalid) return failure(`This save has invalid data: ${e.message}`);
     throw e;

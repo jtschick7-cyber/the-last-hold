@@ -123,9 +123,9 @@ export const SaveDataSheet = () => {
       {pending && (
         <div class={styles.card}>
           <p>Replace your current game with this save? Your current game is overwritten.</p>
-          {pending.warnings.length > 0 && (
+          {pending.warnings.length + pending.notes.length > 0 && (
             <ul class={styles.small}>
-              {pending.warnings.map((w) => (
+              {[...pending.warnings, ...pending.notes].map((w) => (
                 <li key={w}>{w}</li>
               ))}
             </ul>

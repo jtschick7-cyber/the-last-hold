@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied (docs commit).
-- **Last task:** the v0.10 docs commit (D407–D425 added; the owner said yes to OUT-3 and the readings on 2026-10-21).
-- **Next:** T10.1, save v10 and the migration. It needs the owner's choice of save fixture first (see the last entry).
-- **Open questions:** Q34 (two near-match names), Q35 (what the save keeps), Q36 (art), Q37 (Names sentence). None blocks T10.1.
+- **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
+- **Last task:** T10.1 save v10 and the migration (done, pushed).
+- **Next:** T10.2, the constants and the locked row (moves the temporary constants into `balance.ts`).
+- **Open questions:** Q34 (two near-match names), Q35 (what the save keeps; answered by the table below), Q36 (art), Q37 (Names sentence). None blocks T10.2.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -225,3 +225,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **`npm run check` green** (2,403 tests, 64 s).
 - **Save fixture, waiting on the owner:** the export they sent has `schemaVersion` 9 but `meta.debugUsed` is **true**. OUT-8 says to ask which to use (this export, or v8-owner.json carried forward). Not copied yet.
 - **Next:** T10.1.
+
+## 2026-10-21 — v0.10 session 1 (continued): T10.1 save v10
+- **Fixture:** both exports you sent today had `debugUsed` true, so by your rule I used the fallback: your 2026-10-20 save carried through the shipped v8 → v9 migration and the events load path (`v9-owner.json`; made by `scripts/make-v9-owner-fixture.ts`). `v10.json` is that save after this migration, not played.
+- **Backfill table (Q35):** Moot: contracts won, `stats.contractsWon` (kept). Grey Wives: experiments (`book.tried`) and properties (`book.properties`) kept; **brews not recorded**. Bell-Watchers: documents, letters and names all kept. Quenchers: Kozly Hollow contracts from village trust (**partial**: a Sworn village stops counting); **Delve floors not recorded**. Every Order: past Triumphant stands from the cycle bands.
+- **Result on your save:** every Order is far past level 1, so the cap binds: starts 10 (Moot), 30 (Grey Wives), 25 (Bell-Watchers), 20 (Quenchers), all at level 1. Nothing opens, queues or seats on migration.
+- **Built:** `orders` state and guard (`validate-orders.ts`), `migration-v10.ts`, `orders-backfill.ts`, schema 10. Refuses impossible states; drops unknown ids with warnings. Tests: `tests/saves/v10-migration.test.ts` (29 tests); recount, cap, notes, guard, round-trip, golden fights and recorded stands replay unchanged.
+- **Timing:** migration 1.1 ms; full load 2.3 ms (198 KB file). `npm run check` green (2,432 tests, 64 s).
+- **Two readings for you (D426, Proposed):** the unrecovered sources come out as load notes, not warnings, so ten older tests that expect no warnings stay untouched; and the backfill numbers sit in one marked temporary file until T10.2 moves them to `balance.ts`.
+- **Next:** T10.2.

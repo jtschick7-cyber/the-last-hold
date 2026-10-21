@@ -192,7 +192,7 @@ export const startGame = async (): Promise<void> => {
   }
   if (outcome.kind === 'loaded') {
     state = outcome.loaded.state;
-    loadNotes.value = [...outcome.problems, ...outcome.loaded.warnings];
+    loadNotes.value = [...outcome.problems, ...outcome.loaded.warnings, ...outcome.loaded.notes];
     await runCatchUp();
   } else {
     state = createNewGame(randomSeed(), now());

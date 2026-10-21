@@ -327,7 +327,7 @@ Orders rewards from events (v0.10); a boss shop or Boss marks; more bosses or hu
 
 Each task is one Claude Code session; **most milestones finish in fewer sessions than tasks.** Tests come first for formulas, rules and saved data (§0.2). Every task ends with `npm run check` green and a short progress entry. Tick the box when its acceptance criteria all hold.
 
-- [ ] **T10.1 — Save v10: the `orders` state and the migration** *(core/save)*
+- [x] **T10.1 — Save v10: the `orders` state and the migration** *(core/save)*
   - Add `OrdersState` (technical design §5.2 as revised by OUT-9), validation, and the v9 → v10 migration (`save/migration-v10.ts`) with its **one-time backfill capped at `orders.backfillCapLevel`** (it uses the weights and thresholds from `balance.ts`; if T10.2 has not run, read them from GDD §7.12 as constants in the migration test and move them at T10.2).
   - **Before writing the backfill, write a table in the progress entry:** for each standing source (GDD §5.13.2), where the save holds it and whether it is recoverable. Anything not recoverable starts at 0 and the migration lists it by name in its warnings.
   - Fixtures: `tests/saves/fixtures/v9-owner.json` (OUT-8, **copied unchanged**) and `v10.json` (that save migrated, **not played**).
