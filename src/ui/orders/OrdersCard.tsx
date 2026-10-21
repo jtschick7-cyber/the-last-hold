@@ -6,6 +6,7 @@ import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { Sprite } from '../widgets/Sprite';
 import styles from '../styles/ui.module.css';
+import { openNextChapter } from './ChapterScene';
 import { openOpeningScene } from './OpeningScene';
 import { OrderSheet } from './OrderSheet';
 import { SeatChangeView, SeatStepSheet } from './SeatSheets';
@@ -66,6 +67,16 @@ export const OrdersCard = () => {
             onClick={() => openSheet('Seat your Orders', () => <SeatStepSheet />)}
           >
             Seat your Orders ▸
+          </button>
+        )}
+        {v.chaptersReady > 0 && (
+          <button
+            type="button"
+            class={styles.btnPrimary}
+            style={{ width: '100%' }}
+            onClick={() => openNextChapter()}
+          >
+            A chapter can be read ▸
           </button>
         )}
         <button

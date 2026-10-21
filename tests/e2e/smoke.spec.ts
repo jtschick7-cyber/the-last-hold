@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { begin, onwardAll } from './helpers';
+import { begin, closeOrdersScenes, onwardAll } from './helpers';
 
 // Plan T1.38 / technical design §14: the phone-sized smoke test on the real
 // production build. Load → buy a Cottage → reload → the purchase is still
@@ -83,6 +83,7 @@ test('send hunters on a contract, skip time, and collect', async ({ page }) => {
   await debug('+1 h');
   // A won contract may bring Ilse (GDD §5.14.3): her scene waits to be dismissed.
   await onwardAll(page);
+  await closeOrdersScenes(page);
   await tab('Contracts').click();
   await expect(page.getByText(/Ready to collect/)).toBeVisible();
   await page.getByRole('button', { name: 'Collect' }).click();
@@ -106,6 +107,7 @@ test('make the Last Stand at Bastion and start a new cycle', async ({ page }) =>
   await page.getByRole('button', { name: 'Unlock Bastion', exact: true }).click();
   await page.getByRole('button', { name: 'Close' }).first().click();
   await onward();
+  await closeOrdersScenes(page);
 
   await tab('Hold').click();
   await expect(page.getByText(/Stanholm — Bastion/)).toBeVisible();
@@ -227,7 +229,7 @@ test('seat an Order, read a chapter, change a seat, and reload', async ({ page }
   await expect(card.getByText("In seats: Thanes' Moot")).toBeVisible();
   await card.getByRole('button', { name: /Change seats/ }).click();
   const sheet = page.getByRole('dialog', { name: 'Change seats' });
-  await sheet.getByRole('button', { name: 'Seat' }).first().click();
+  await sheet.getByRole('button', { name: 'Seat', exact: true }).first().click();
   await expect(sheet.getByText(/^Can change in /)).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).first().click();
   await expect(card.getByText(/^In seats: Thanes' Moot, /)).toBeVisible();

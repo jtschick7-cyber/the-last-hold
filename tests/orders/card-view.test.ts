@@ -111,8 +111,10 @@ describe('the Hold tab badge', () => {
     apply(s, { type: 'orders.setSeats', orders: ['moot'] }, T0);
     expect(playableChapters(s).map((c) => c.id)).toContain('OR-M1');
     expect(ordersBadge(s)).toBe(true); // playable
+    expect(ordersCardView(s, T0)?.chaptersReady).toBe(1);
     apply(s, { type: 'orders.readChapter', order: 'moot' }, T0);
     expect(ordersBadge(s)).toBe(false); // read; the next one is not due
+    expect(ordersCardView(s, T0)?.chaptersReady).toBe(0);
     apply(s, { type: 'orders.setSeats', orders: [] }, T0);
     expect(ordersBadge(s)).toBe(false); // unseating changes nothing that is due
   });

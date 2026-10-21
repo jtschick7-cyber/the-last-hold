@@ -165,6 +165,8 @@ export const playScenes = (): void => {
 // then the load step. Closing a sheet with its X leaves the scene waiting (the Orders card offers it);
 // each is shown once a session so it can never loop.
 const shownOrders = new Set<string>();
+let chapterArmed = true;
+let lastSeats = '';
 const playOrdersScenes = (): void => {
   const o = game().orders;
   const next = o.openingQueue.find((id) => !shownOrders.has(id));
@@ -176,7 +178,14 @@ const playOrdersScenes = (): void => {
     shownOrders.add('seat-step');
     return openSheet('Seat your Orders', () => <SeatStepSheet />);
   }
-  // Chapters come last, one at a time (D416 (6)); opening one counts it as read, so it cannot loop.
-  if (o.openingQueue.length === 0 && !(o.seatStepPending && !shownOrders.has('seat-step')))
-    openNextChapter();
+  // Chapters come last (D416 (6)). One opens by itself on load and again after a seat change; Close
+  // stops there (Next goes on, and the Orders card offers the rest), so Close is never undone.
+  if (o.openingQueue.length === 0 && !(o.seatStepPending && !shownOrders.has('seat-step'))) {
+    const seats = o.seats.join();
+    if (seats !== lastSeats) {
+      lastSeats = seats;
+      chapterArmed = true;
+    }
+    if (chapterArmed && openNextChapter()) chapterArmed = false;
+  }
 };

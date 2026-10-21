@@ -42,6 +42,8 @@ export interface OrdersCardView {
   /** The one-time "Seat your Orders" step is still pending (D421). */
   readonly seatStepPending: boolean;
   readonly badge: boolean;
+  /** How many chapters can be read now (the card's "Read a chapter" button). */
+  readonly chaptersReady: number;
 }
 
 /**
@@ -95,6 +97,7 @@ export const ordersCardView = (state: GameState, now: number): OrdersCardView | 
     scenesWaiting: [...state.orders.openingQueue],
     seatStepPending: state.orders.seatStepPending,
     badge: ordersBadge(state),
+    chaptersReady: playableChapters(state).length,
   };
 };
 
