@@ -83,6 +83,7 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
           {summary.recovered.map((h) => hunters[h as HunterId].shortName).join(', ')}
         </p>
       )}
+      {summary.eventsLine && <p class={styles.small}>{summary.eventsLine}</p>}
       {(summary.delve ?? []).map((l) => (
         <p key={l} class={styles.small}>
           {l}

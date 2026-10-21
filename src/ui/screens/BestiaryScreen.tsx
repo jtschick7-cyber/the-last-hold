@@ -5,6 +5,7 @@ import { bestiaryFamilies } from '../../core/investigation/view';
 import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { bestiaryLegend, levelName } from '../app/knowledge-text';
+import { GreatBeastsShelf } from '../events/GreatBeastsShelf';
 import { BestiaryEntryView } from '../sheets/BestiaryEntrySheet';
 import styles from '../styles/ui.module.css';
 import { Sprite } from '../widgets/Sprite';
@@ -64,6 +65,7 @@ export const BestiaryScreen = () => {
           </ul>
         </section>
       ))}
+      <GreatBeastsShelf />
       <p class={`${styles.small} ${styles.dim}`}>{bestiaryLegend()}</p>
     </div>
   );

@@ -13,7 +13,8 @@ import { closeSheet, openSheet } from '../app/sheets';
 import { BreakdownView } from '../sheets/BreakdownView';
 import { PreparationPicker } from '../sheets/PreparationPicker';
 import styles from '../styles/ui.module.css';
-import css from './Events.module.css';
+import { PartyList } from './PartyList';
+import { startEventPlayback } from './EventPlayback';
 
 const DEBOUNCE_MS = 150;
 
@@ -88,7 +89,9 @@ export const BossPartyView = () => {
     setBusy(false);
   };
   const send = (): void => {
-    if (dispatch({ type: 'boss.attempt', party: chosen, prep: activePrep }).ok) closeSheet();
+    if (!dispatch({ type: 'boss.attempt', party: chosen, prep: activePrep }).ok) return;
+    closeSheet();
+    startEventPlayback();
   };
   const preview = answer?.preview ?? null;
   const words = preview ? bossPreviewLines(preview) : null;
@@ -108,28 +111,7 @@ export const BossPartyView = () => {
         </button>
       </div>
       {note && <p class={`${styles.small} ${styles.dim}`}>{note}</p>}
-      <ul class={styles.list}>
-        {rows.map((r) => (
-          <li key={r.id} class={`${styles.divider} ${r.reason ? css.rowDisabled : ''}`}>
-            <label class={styles.row}>
-              <input
-                type="checkbox"
-                checked={party.includes(r.id)}
-                disabled={r.reason !== null}
-                onChange={() => toggle(r.id)}
-              />
-              <span class={styles.grow}>
-                <span class={css.rank}>{r.rank}</span>
-                {r.name}{' '}
-                <span class={`${styles.small} ${styles.dim}`}>
-                  {r.role} · {r.damage} · Lv {r.level}
-                </span>
-                {r.reason && <div class={`${styles.small} ${css.reason}`}>{r.reason}</div>}
-              </span>
-            </label>
-          </li>
-        ))}
-      </ul>
+      <PartyList rows={rows} party={party} onToggle={toggle} />
       <p class={`${styles.small} ${styles.dim}`}>
         {boss.name}: weak to {creatureLines(boss).weak}.
       </p>

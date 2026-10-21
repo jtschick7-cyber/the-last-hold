@@ -5,6 +5,8 @@ import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { BossSheet } from './BossSheet';
+import { HuntList } from './HuntList';
+import { openResult } from './ResultSheet';
 import css from './Events.module.css';
 
 // GDD §9.17: the Events card, under the Rift card. No new tab (D366). It exists once events have
@@ -31,14 +33,29 @@ export const EventsCard = () => {
       {v.huntLine && <p class={styles.dim}>{v.huntLine}</p>}
       {v.lastLine && <p class={`${styles.small} ${styles.dim}`}>{v.lastLine}</p>}
       {!v.locked && (
-        <button
-          type="button"
-          class={styles.btnPrimary}
-          style={{ width: '100%' }}
-          onClick={() => openSheet('The Great Beast', () => <BossSheet />)}
-        >
-          The Great Beast ▸
-        </button>
+        <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+          <button
+            type="button"
+            class={styles.btnPrimary}
+            style={{ width: '100%' }}
+            onClick={() => openSheet('The Great Beast', () => <BossSheet />)}
+          >
+            The Great Beast ▸
+          </button>
+          <button
+            type="button"
+            class={styles.btn}
+            style={{ width: '100%' }}
+            onClick={() => openSheet('Legendary Hunts', () => <HuntList />)}
+          >
+            Legendary Hunts ▸
+          </button>
+          {v.lastLine && (
+            <button type="button" class={styles.btn} style={{ width: '100%' }} onClick={openResult}>
+              Last result ▸
+            </button>
+          )}
+        </div>
       )}
     </section>
   );

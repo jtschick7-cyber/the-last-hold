@@ -8,6 +8,7 @@ import { monsters, type MonsterId } from '../../content/monsters';
 import { RIFT_QUIET_LINE } from '../../content/delves/rift-text';
 import { sixthDoorLine } from '../../content/story/act5';
 import { runFight } from '../combat';
+import type { FightResult } from '../combat/types';
 import type { Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
 import { entryProblem, baseTierFor, delvesOpen, runRank, suggestedParty } from './access';
@@ -139,6 +140,45 @@ export interface FloorPlayback {
   readonly log: readonly { readonly tick: number; readonly text: string }[];
 }
 
+/**
+ * The steps and the end bars of a played fight: who acted, who was hit, and every bar's share of its
+ * max Health after each line. Shared by a Delve floor and by event fights (GDD §9.15, §9.17).
+ */
+export const playbackSteps = (
+  r: FightResult,
+  combatants: readonly FloorCombatant[],
+  /** A creature's bar is its Health over this, when it is not its own max (a boss's pool). */
+  barMax: Readonly<Record<string, number>> = {},
+): { steps: PlaybackStep[]; end: Record<string, number> } => {
+  const maxOf = new Map<string, number>([
+    ...r.hunters.map((h) => [h.id, h.maxHealth] as const),
+    ...r.monsters.map((m) => [m.id, barMax[m.id] ?? m.maxHealth] as const),
+  ]);
+  const bars: Record<string, number> = Object.fromEntries(combatants.map((c) => [c.id, c.start]));
+  const steps: PlaybackStep[] = [];
+  for (const e of r.log) {
+    if (e.target !== undefined && e.targetHealth !== undefined) {
+      const max = maxOf.get(e.target);
+      if (max) bars[e.target] = Math.max(0, Math.min(1, e.targetHealth / max));
+    }
+    steps.push({
+      tick: e.tick,
+      text: e.text,
+      kind: e.kind,
+      actor: maxOf.has(e.actor) ? e.actor : null,
+      target: e.target !== undefined && maxOf.has(e.target) ? e.target : null,
+      bars: { ...bars },
+    });
+  }
+  const end: Record<string, number> = {};
+  for (const h of r.hunters) end[h.id] = h.downed ? 0 : h.health / h.maxHealth;
+  for (const m of r.monsters) {
+    const max = barMax[m.id] ?? m.maxHealth;
+    end[m.id] = max > 0 ? Math.max(0, m.health) / max : 0;
+  }
+  return { steps, end };
+};
+
 const speciesOfId = (id: string): MonsterId => id.replace(/-\d+$/, '') as MonsterId;
 
 /**
@@ -182,29 +222,7 @@ export const floorPlayback = (state: GameState): FloorPlayback | null => {
           };
     }),
   ];
-  const maxOf = new Map<string, number>([
-    ...r.hunters.map((h) => [h.id, h.maxHealth] as const),
-    ...r.monsters.map((m) => [m.id, m.maxHealth] as const),
-  ]);
-  const bars: Record<string, number> = Object.fromEntries(combatants.map((c) => [c.id, c.start]));
-  const steps: PlaybackStep[] = [];
-  for (const e of r.log) {
-    if (e.target !== undefined && e.targetHealth !== undefined) {
-      const max = maxOf.get(e.target);
-      if (max) bars[e.target] = Math.max(0, Math.min(1, e.targetHealth / max));
-    }
-    steps.push({
-      tick: e.tick,
-      text: e.text,
-      kind: e.kind,
-      actor: maxOf.has(e.actor) ? e.actor : null,
-      target: e.target !== undefined && maxOf.has(e.target) ? e.target : null,
-      bars: { ...bars },
-    });
-  }
-  const end: Record<string, number> = {};
-  for (const h of r.hunters) end[h.id] = h.downed ? 0 : h.health / h.maxHealth;
-  for (const m of r.monsters) end[m.id] = m.maxHealth > 0 ? Math.max(0, m.health) / m.maxHealth : 0;
+  const { steps, end } = playbackSteps(r, combatants);
   const family: FamilyId = floorFamily(run.seed, rec.floor);
   return {
     floor: rec.floor,

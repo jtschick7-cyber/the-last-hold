@@ -11,6 +11,14 @@ import {
   type BossSuggestInput,
   type BossSuggestion,
 } from '../../core/systems/boss-odds';
+import {
+  computeHuntOdds,
+  suggestHuntParty,
+  type HuntOdds,
+  type HuntOddsInput,
+  type HuntSuggestInput,
+  type HuntSuggestion,
+} from '../../core/systems/hunt-odds';
 import { previewStand, type StandPreview, type StandPreviewInput } from '../../core/stand/preview';
 
 // Technical design §10.1: odds and Suggest go to a worker, debounced, with stale
@@ -176,4 +184,32 @@ export const requestBossSuggest = async (
   const result = suggestBossParty(input);
   lastBossSuggestMs.value = performance.now() - started;
   return result;
+};
+
+export interface HuntOddsAnswer {
+  odds: HuntOdds;
+  /** True when the main thread answered with fewer practice fights. */
+  quick: boolean;
+}
+
+/** GDD §5.12.6, §9.17: a hunt track's odds, in the worker (500 practice fights). */
+export const requestHuntOdds = async (input: HuntOddsInput): Promise<HuntOddsAnswer> => {
+  const reply = send({ kind: 'huntOdds', input });
+  if (reply) {
+    const r = await reply;
+    if (r.kind === 'huntOdds') return { odds: r.result, quick: false };
+  }
+  return { odds: computeHuntOdds({ ...input, samples: QUICK_SAMPLES }), quick: true };
+};
+
+/** Suggest for a hunt, in the worker; the fallback runs the same search on the main thread. */
+export const requestHuntSuggest = async (
+  input: HuntSuggestInput,
+): Promise<HuntSuggestion | null> => {
+  const reply = send({ kind: 'huntSuggest', input });
+  if (reply) {
+    const r = await reply;
+    if (r.kind === 'huntSuggest') return r.result;
+  }
+  return suggestHuntParty(input);
 };

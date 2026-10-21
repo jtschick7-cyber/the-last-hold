@@ -1,4 +1,5 @@
 import { awayDelveLines } from '../delves/away';
+import { awayEventsLine } from '../systems/events-results';
 import { accrueAllowance } from '../delves/riftglass';
 import { skillLevels } from '../skills/skills';
 import type { SkillId } from '../../content/skills';
@@ -41,6 +42,8 @@ export interface AwaySummary {
   skills?: { before: Record<SkillId, number>; after: Record<SkillId, number> };
   /** GDD §9.15: "A Delve is waiting on floor 3." and the Riftglass waiting, as they stood on return. Absent in older reports. */
   delve?: string[];
+  /** GDD §5.12.2: the full attempt bank, while events are open. Absent in older reports. */
+  eventsLine?: string;
 }
 
 export interface CatchUpProgress {
@@ -109,6 +112,7 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
     events,
     skills: { before: skillsBefore, after: skillLevels(state) },
     delve: awayDelveLines(state),
+    ...(awayEventsLine(state, now) ? { eventsLine: awayEventsLine(state, now) as string } : {}),
   };
 }
 

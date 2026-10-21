@@ -123,7 +123,14 @@ export const DelveView = () => {
   void version.value;
   const s = game();
   const [played, setPlayed] = useState<FloorPlayback | null>(null);
-  if (played) return <PlaybackView pb={played} onContinue={() => setPlayed(null)} />;
+  if (played)
+    return (
+      <PlaybackView
+        pb={played}
+        onFinish={() => dispatch({ type: 'delve.fight' })}
+        onContinue={() => setPlayed(null)}
+      />
+    );
   const run = s.delve.run;
   if (!run) return <ResultView />;
   const stage = stageView(s);

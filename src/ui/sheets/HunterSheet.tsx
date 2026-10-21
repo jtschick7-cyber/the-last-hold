@@ -4,6 +4,8 @@ import { formatDuration, formatNumber } from '../../core/format';
 import { slotPicker } from '../../core/systems/slot-picker';
 import type { GearSlot } from '../../content/gear';
 import { legendaries } from '../../content/legendaries';
+import { hunterEventLines } from '../../core/systems/events-results';
+import { now } from '../../platform/clock';
 import { hunterStat, hunterStatus, levelCap, xpToNext } from '../../core/systems/hunters';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
@@ -116,6 +118,11 @@ export const HunterView = ({ id }: { id: HunterId }) => {
                 ? '● Ready'
                 : 'In the reserve'}
       </p>
+      {hunterEventLines(s, id, now()).map((line) => (
+        <p key={line} class={`${styles.small} ${styles.dim}`}>
+          {line}
+        </p>
+      ))}
       <div class={styles.cost}>
         {(['health', 'might', 'armor', 'speed'] as const).map((n) => (
           <span key={n}>
@@ -134,7 +141,7 @@ export const HunterView = ({ id }: { id: HunterId }) => {
       <p class={styles.small}>
         Record: {h.record.won} won · {h.record.lost} lost
       </p>
-      <HunterLetters id={id} />
+      {def.unlock.kind !== 'huntPoints' && <HunterLetters id={id} />}
       <p class={`${styles.small} ${styles.dim}`}>{def.bio}</p>
       <button
         type="button"

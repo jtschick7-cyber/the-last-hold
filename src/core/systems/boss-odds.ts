@@ -178,7 +178,7 @@ export interface BossSuggestion {
 }
 
 /** Every party of exactly `size` hunters in the order given: the strongest hunters come first. */
-function* partiesOf<T>(from: readonly T[], size: number): Generator<T[]> {
+export function* partiesOf<T>(from: readonly T[], size: number): Generator<T[]> {
   const chosen: T[] = [];
   function* walk(start: number): Generator<T[]> {
     if (chosen.length === size) {

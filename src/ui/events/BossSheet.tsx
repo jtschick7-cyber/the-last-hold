@@ -7,6 +7,7 @@ import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { BossPartyView } from './BossPartyView';
 import css from './Events.module.css';
+import { openResult } from './ResultSheet';
 
 // GDD §9.17 boss sheet: the Great Beast, its tier and pool with their breakdowns, the three
 // milestone marks and what each pays, the tokens, and Send a party. The last result is below.
@@ -76,7 +77,14 @@ export const BossSheet = () => {
         Send a party
       </button>
       {v.sendProblem && !v.emptyLine && <p class={styles.small}>{v.sendProblem}</p>}
-      {v.lastLine && <p class={`${styles.small} ${styles.dim}`}>{v.lastLine}</p>}
+      {v.lastLine && (
+        <p class={`${styles.small} ${styles.dim}`}>
+          {v.lastLine}{' '}
+          <button type="button" class={styles.btn} onClick={openResult}>
+            Details ▸
+          </button>
+        </p>
+      )}
     </div>
   );
 };

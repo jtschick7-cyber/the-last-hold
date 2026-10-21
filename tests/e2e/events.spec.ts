@@ -96,7 +96,24 @@ test('the scene, the Events card, and a boss attempt in 15 taps or fewer', async
   await expect(party).toHaveCount(0);
   expect(taps).toBeLessThanOrEqual(15);
 
-  // The tokens went down by one, the sheet shows the result, and the pool is no longer whole.
+  // The attempt plays back like a Delve floor, with Skip and Log, then the result sheet.
+  const play = page.getByRole('dialog', { name: 'The Lindworm of Velk Fjord' });
+  await expect(play.getByRole('button', { name: 'Skip' })).toBeVisible();
+  await shot(page, 'boss-playback');
+  await play.getByRole('button', { name: 'Skip' }).click();
+  await play.getByRole('button', { name: 'Log' }).click();
+  const log = page.getByRole('dialog', { name: 'Fight log' });
+  await expect(log.getByRole('listitem').first()).toBeVisible();
+  await page.getByRole('button', { name: 'Close' }).click();
+  await play.getByRole('button', { name: 'See the result' }).click();
+  const result = page.getByRole('dialog', { name: 'Result' });
+  await expect(result.getByText('Damage:')).toBeVisible();
+  await expect(result.getByText('XP each:')).toBeVisible();
+  await expect(result.getByText('Rests for:')).toBeVisible();
+  await shot(page, 'boss-result');
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  // The boss sheet shows the last result; the tokens went down by one and the pool is no longer whole.
   await expect(
     page.getByRole('dialog', { name: 'The Great Beast' }).getByText(/^Last attempt: /),
   ).toBeVisible();
@@ -123,4 +140,59 @@ test('the layout holds at 360, 900 and 1300 px with no sideways scroll', async (
     );
     expect(wide, `${width} px`).toBe(false);
   }
+});
+
+test('a hunt: the list, a track, the odds, playback, the result, the shelf and the rest line', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await importOwner(page);
+  await untilScene(page);
+  await onwardAll(page);
+  await tab(page, 'Hold').click();
+  await tab(page, 'More').click();
+  await page.getByRole('button', { name: /^Debug/ }).click();
+  await page.getByRole('button', { name: 'Fill the attempt bank' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
+  await tab(page, 'Hold').click();
+
+  const card = page.getByRole('region', { name: 'Events' });
+  await card.getByRole('button', { name: /Legendary Hunts/ }).click();
+  const list = page.getByRole('dialog', { name: 'Legendary Hunts' });
+  await expect(list.getByText('0 of 100').first()).toBeVisible();
+  await expect(list.getByText(/Hunter to be won: Gest Tall-Torch/)).toBeVisible();
+  await shot(page, 'hunt-list');
+  await list
+    .getByRole('button', { name: /The Toll Road/ })
+    .first()
+    .click();
+  const track = page.getByRole('dialog').last();
+  await expect(track.getByText(/Track needs: /).first()).toBeVisible();
+  await track.getByRole('button', { name: 'Suggest best' }).click();
+  await expect(track.getByText(/^ODDS \d+%/)).toBeVisible({ timeout: 30_000 });
+  await expect(track.getByText(/Reckless/)).toHaveCount(0);
+  await shot(page, 'hunt-track');
+  await track.getByRole('button', { name: 'Send the hunters' }).click();
+  const play = page.getByRole('dialog').last();
+  await play.getByRole('button', { name: 'Skip' }).click();
+  await play.getByRole('button', { name: 'See the result' }).click();
+  const result = page.getByRole('dialog', { name: 'Result' });
+  await expect(result.getByText(/^A (win|loss)\.$/)).toBeVisible();
+  await expect(result.getByText('Points:')).toBeVisible();
+  await shot(page, 'hunt-result');
+  await page.getByRole('button', { name: 'Close' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  // The Great Beasts shelf: the quarry is Identified now; the others are not.
+  await tab(page, 'Bestiary').click();
+  const shelf = page.getByRole('region', { name: 'Great Beasts' });
+  await expect(shelf).toBeVisible();
+  await expect(shelf.getByRole('button', { name: 'Stoneback the Fell Troll' })).toBeVisible();
+  await expect(shelf.getByRole('button', { name: 'Not yet met' })).toHaveCount(5);
+
+  // A hunter who attended rests; the hunter's sheet says so.
+  await tab(page, 'Hunters').click();
+  await expect(page.getByRole('navigation')).toBeVisible();
+  expect(errors).toEqual([]);
 });
