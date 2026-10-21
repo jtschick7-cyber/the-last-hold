@@ -16,7 +16,7 @@ import { letterKey } from '../../core/story/letters';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
-import { docIconId, RIME_ICON } from '../../content/assets';
+import { docIconId, ORDERS_ICON, RIME_ICON } from '../../content/assets';
 import { Sprite } from '../widgets/Sprite';
 import { riftScene } from '../../content/delves/rift-text';
 import { echoesShelf } from '../../core/delves/view-shop';
@@ -191,7 +191,9 @@ const Library = () => {
       </section>
       {orders.length > 0 && (
         <section class={styles.card} aria-label="Orders">
-          <h2 class={styles.cardTitle}>Orders</h2>
+          <h2 class={styles.cardTitle}>
+            <Sprite id={ORDERS_ICON} /> Orders
+          </h2>
           <ul class={styles.list}>
             {orders.map((e) => (
               <li key={`${e.order}${e.n}`}>

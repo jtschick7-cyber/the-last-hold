@@ -1,8 +1,10 @@
+import { ORDERS_ICON, orderMarkId } from '../../content/assets';
 import { ORDER_NAMES } from '../../content/orders';
 import { ordersCardView } from '../../core/systems/orders-view';
 import { now } from '../../platform/clock';
 import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
+import { Sprite } from '../widgets/Sprite';
 import styles from '../styles/ui.module.css';
 import { openOpeningScene } from './OpeningScene';
 import { OrderSheet } from './OrderSheet';
@@ -16,7 +18,9 @@ export const OrdersCard = () => {
   if (!v) return null;
   return (
     <section class={styles.card} aria-label="Orders">
-      <h2 class={styles.cardTitle}>Orders</h2>
+      <h2 class={styles.cardTitle}>
+        <Sprite id={ORDERS_ICON} /> Orders
+      </h2>
       <p>{v.seatsLine}</p>
       <p>{v.inSeatsLine}</p>
       {v.cooldownLine && <p class={styles.dim}>{v.cooldownLine}</p>}
@@ -28,6 +32,7 @@ export const OrdersCard = () => {
               class={styles.linkRow}
               onClick={() => openSheet(row.name, () => <OrderSheet id={row.id} />)}
             >
+              <Sprite id={orderMarkId(row.id)} />
               <span class={styles.grow}>
                 <strong>{row.name}</strong>
                 <span class={styles.dim}>

@@ -55,7 +55,10 @@ const isV08 = (a: AssetEntry): boolean =>
   a.id.startsWith('icon.rank.') ||
   a.id === 'icon.star' ||
   OLD_BREW_ICON_IDS.some((b) => a.id === `icon.brew.${b}`);
-const rest = assets.filter((a) => !isSprite(a) && !isCosmetic(a) && !isV08(a));
+// v0.10 (plan T10.15): the Orders' marks, the card icon and the opening-scene placeholders.
+const isV10 = (a: AssetEntry): boolean =>
+  a.id === 'icon.orders' || /^(icon|scene)\.order\./.test(a.id);
+const rest = assets.filter((a) => !isSprite(a) && !isCosmetic(a) && !isV08(a) && !isV10(a));
 
 const fileOf = (id: string): string => {
   const a = assets.find((x) => x.id === id);
@@ -94,6 +97,9 @@ ${AGE_IDS.map(sceneFor).join('\n')}
 <p>Each gear piece on each rarity frame (Common, Fine, Rare, Heroic), then every new asset on its own.</p>
 ${itemRows}
 ${assets.filter(isV08).map(cell).join('\n')}
+<h2>The Orders (v0.10)</h2>
+<p>The card's icon, each Order's mark and each opening scene's placeholder, for the owner to approve.</p>
+${assets.filter(isV10).map(cell).join('\n')}
 <h2>Everything else</h2>
 ${rest.map(cell).join('\n')}
 </body></html>

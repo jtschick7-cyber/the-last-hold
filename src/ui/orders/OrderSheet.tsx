@@ -1,8 +1,10 @@
+import { orderMarkId } from '../../content/assets';
 import type { OrderId } from '../../content/orders';
 import { orderSheetView } from '../../core/systems/orders-sheet-view';
 import { now } from '../../platform/clock';
 import { game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
+import { Sprite } from '../widgets/Sprite';
 import { Num } from '../widgets/Num';
 import { SeatButtons } from './SeatSheets';
 
@@ -15,7 +17,7 @@ export const OrderSheet = ({ id }: { id: OrderId }) => {
   return (
     <div>
       <p>
-        <strong>{v.levelWord}</strong> · Standing{' '}
+        <Sprite id={orderMarkId(id)} scale={2} /> <strong>{v.levelWord}</strong> · Standing{' '}
         <Num text={String(v.standing)} breakdown={() => v.standingBreakdown} marked />
         <span class={styles.dim}> · {v.nextLine}</span>
       </p>

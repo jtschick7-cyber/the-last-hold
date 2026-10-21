@@ -1,8 +1,10 @@
+import { orderSceneId } from '../../content/assets';
 import { sceneOf } from '../../content/story/orders-scenes-all';
 import type { OrderId } from '../../content/orders';
 import { seatCount } from '../../core/systems/orders-seats';
 import { dispatch, game } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
+import { Sprite } from '../widgets/Sprite';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.18 (D422): an Order's opening scene ends with "Seat it" (while a seat is free) and "Not now",
@@ -26,6 +28,7 @@ const OpeningView = ({ id }: { id: OrderId }) => {
   };
   return (
     <div>
+      <Sprite id={orderSceneId(id)} fill />
       {scene.body.map((p) => (
         <p key={p}>{p}</p>
       ))}

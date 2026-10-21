@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.14 screens, part 2 (done, pushed).
-- **Next:** T10.15, art (the four marks, the icon, the opening-scene placeholders; the owner approves).
+- **Last task:** T10.15 art (built and pushed; waiting for the owner's approval before the box is ticked).
+- **Next:** T10.16 (the scripted run, the played fixture, the smoke) once the art is approved or changes are asked for; T10.16 does not depend on the art.
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -345,3 +345,10 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Please look at:** (1) the short "perk in words" lines on the Order sheet are interface text I wrote, not lore (e.g. "A head's word at the end of that village's notices"); (2) the plain wording for waits ("Waits for level 2.", "Waits for Vesna to be on your roster.") and for chapter 4's two endings; (3) my T10.13 browser test gained one step (close the first chapter that now opens after seating the Moot); nothing was removed from it.
 - Tests: `tests/orders/sheet-view.test.ts` (12), `tests/e2e/orders-sheets.spec.ts`. `npm run check` green (2,670). Golden fights and recorded stands unchanged.
 - **Next:** T10.15.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.15 art
+- **Drawn in code (Q36 (a)):** an Orders icon (an empty high-backed chair), a 16 px mark for each Order (a gate arch over a long table; a basket under a cloth; a bell on its post; a cold stove with a drop of water), and a 160 × 64 placeholder scene for each opening. `tools/draw-orders.ts`, written by `tools/gen-sprites.ts`; every one has a manifest row (generated, CC0). The credits file and the contact sheet are regenerated (new "The Orders" section).
+- **Shown:** the icon on the card's and the shelf's titles, each mark on its card row and Order sheet, the scene at the top of its opening scene. Seen in a phone-size browser.
+- **Not ticked:** the acceptance says the owner has seen the placeholders and the art. A picture of all nine is in `docs/orders-art-preview.png`; the full contact sheet is `public/contact-sheet.html`. Tell me what to change, or approve them.
+- Tests: `tests/tools/orders-art.test.ts` (redraws each file and compares, size, palette). The older art test was not touched. `npm run check` green (2,681). Golden fights and recorded stands unchanged.
+- **Next:** T10.16.
