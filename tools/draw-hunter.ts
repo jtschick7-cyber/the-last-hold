@@ -251,9 +251,20 @@ const head = (c: Canvas, s: PortraitSpec): void => {
     }
   }
   if (s.hair === 'braid') {
-    for (let i = 0; i < 9; i++) {
-      c.ellipse(CX + rx + 1 + i * 0.4, CY + 12 + i * 4, 3, 2.6, C.ink);
-      c.ellipse(CX + rx + 1 + i * 0.4, CY + 12 + i * 4, 2.2, 1.9, hair[i % 2 === 0 ? 0 : 1]);
+    // The braid grows out of the hair at the temple and falls past the cheek and shoulder, each
+    // link overlapping the one above so it reads as one rope, thinner toward a leather tie.
+    const links = 10;
+    for (let i = 0; i < links; i++) {
+      const x = CX + rx - 1 + i * 0.5;
+      const y = CY - 5 + i * 4.6;
+      const w = 3.2 - i * 0.1;
+      c.ellipse(x, y, w + 0.8, 3.4, C.ink);
+    }
+    for (let i = 0; i < links; i++) {
+      const x = CX + rx - 1 + i * 0.5;
+      const y = CY - 5 + i * 4.6;
+      const w = 3.2 - i * 0.1;
+      c.ellipse(x, y, w, 2.6, i === links - 1 ? C.brown : hair[i % 2 === 0 ? 0 : 1]);
     }
   }
 
