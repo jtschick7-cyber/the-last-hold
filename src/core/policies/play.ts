@@ -4,6 +4,7 @@ import type { GameState } from '../state/game-state';
 import type { DelveResult } from '../state/delve-state';
 import { decideCheckIn, type CheckInDecision } from './decide';
 import { delveSession } from './delver';
+import { eventerMoves, type EventerCheckIn } from './eventer';
 import { freshMemory, type PolicyMemory } from './long-night';
 import { isDelveSession, nextCheckIn, type PolicyId } from './schedules';
 
@@ -19,6 +20,8 @@ export interface CheckInRecord extends CheckInDecision {
   readonly peasantsBefore: number;
   /** The Delve runs a Delve session finished, in order (the Delver only, D269). */
   readonly delveResults?: readonly DelveResult[];
+  /** What the Eventer did with its tokens (GDD §6.1, D367); absent for every other policy. */
+  readonly events?: EventerCheckIn;
 }
 
 export interface PlayOptions {
@@ -65,13 +68,22 @@ export const play = (state: GameState, opts: PlayOptions): void => {
       while (isDelveSession(opts.policy, n)) n = nextCheckIn(opts.policy, n, opts.startedAt);
       return n;
     };
+    // GDD §6.1 (D367): the Eventer spends its tokens first, then decides everything else as Standard
+    // does. A rest from events never stops a contract, so the order costs the contracts nothing.
+    const events =
+      opts.policy === 'eventer'
+        ? eventerMoves(state, at, (cmd) => apply(state, cmd, at).ok)
+        : undefined;
     const decision = decideCheckIn(state, checkInAfter(checkInAfter(at)) - at, memory);
     for (const cmd of decision.commands) {
       const result = apply(state, cmd, at);
       // The decision was made on a copy of this exact state, so it can't fail.
       if (!result.ok) throw new Error(`Policy command refused: ${result.reason}`);
     }
-    opts.onCheckIn?.({ ...decision, at, away, peasantsBefore }, state);
+    opts.onCheckIn?.(
+      { ...decision, at, away, peasantsBefore, ...(events ? { events } : {}) },
+      state,
+    );
     if (opts.stop?.(state)) return;
     at = next;
   }

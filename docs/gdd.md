@@ -1400,7 +1400,7 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **Yard XP and Delve rewards** need no decisions.
 - **The Delver's Re-roll** *(v0.8, D321)*: used once a run, on the first offer where every card is Faint.
 - **Events** *(Eventer only, v0.9, D367)*: at each check-in, while a token is banked and **four eligible hunters are free** (not on a contract, not resting, not injured), it makes one attempt.
-  - **Boss or hunt:** the boss, unless a legendary hunter is within reach (a win on that hunt's best legal track would take its points to `hunt.unlockPoints` or beyond), in which case that hunt.
+  - **Boss or hunt** *(Q31, D396)*: they alternate. After each boss attempt, the next goes to the hunt not yet unlocked with the most points (ties in list order), on its best legal track; otherwise the boss.
   - **Locked check-ins** (events not open) do not count toward any Eventer row; the Eventer **runs until all content**, like the Monday Standard runs (owner, D386).
   - **Party:** the four fresh hunters with the highest levels, with at least one Vanguard and one Mender (a hunt track's restriction applies; if fewer than four legal hunters are free, it waits). **Preparation:** the usual kit, as for a contract against the same family.
   - **Track:** the highest-paying track it has a legal full party for.

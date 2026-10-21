@@ -1,6 +1,8 @@
 import { HUNTER_IDS } from '../src/content/hunters';
+import { LEGENDARY_HUNTER_IDS } from '../src/content/hunters-v09';
 import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
 import { play, type PolicyId } from '../src/core/policies';
+import type { EventAttemptRecord } from '../src/core/policies/eventer';
 import { OPENING_LENGTH } from '../src/core/policies/schedules';
 import { createNewGame } from '../src/core/state/new-game';
 import type { GameState } from '../src/core/state/game-state';
@@ -228,6 +230,37 @@ export interface DepthRecord {
   readonly delveXp: number;
 }
 
+/** One event attempt the Eventer made (GDD §6.1, plan T9.12), with where in the run it fell. */
+export interface EventAttemptStat extends EventAttemptRecord {
+  readonly hours: number;
+  readonly cycle: number;
+}
+
+/**
+ * What the Eventer did over a run (GDD §6.1–§6.2 v0.9, D367). Check-ins made while events were locked
+ * count toward nothing here (D386). Empty for every other policy, which never touches events.
+ */
+export interface EventsRecord {
+  /** Hours to the first check-in that found events open, and the cycle that was; null if never. */
+  readonly openedHours: number | null;
+  readonly openedCycle: number | null;
+  /** Check-ins with events open; with a full bank on arrival; and with a token left that no party of four could use. */
+  readonly checkIns: number;
+  readonly fullBank: number;
+  readonly blocked: number;
+  readonly attempts: readonly EventAttemptStat[];
+  /** Tokens spent (one per attempt). */
+  readonly tokensSpent: number;
+  /** Hours (and cycle) of the first boss attempt, the first boss defeated and each hunter unlocked. */
+  readonly firstBossAttemptHours: number | null;
+  readonly firstBossKill: { readonly hours: number; readonly cycle: number } | null;
+  readonly unlocks: readonly {
+    readonly hunt: string;
+    readonly hours: number;
+    readonly cycle: number;
+  }[];
+}
+
 export interface RunResult {
   readonly spec: RunSpec;
   /** Hours from the start to each GDD §6.2 moment, or null if never reached. */
@@ -251,6 +284,8 @@ export interface RunResult {
   readonly delve: DelveRecord;
   readonly content: ContentRecord;
   readonly depth: DepthRecord;
+  /** v0.9: only the Eventer's runs hold attempts; absent in older shard files. */
+  readonly events?: EventsRecord;
 }
 
 const largest = (value: unknown): number => {
@@ -307,6 +342,14 @@ export const runOne = (spec: RunSpec): RunResult => {
     itemsBy.set(cycle, row);
   };
   let delveXp = 0;
+  const eventAttempts: EventAttemptStat[] = [];
+  const eventsSeen = {
+    openedHours: null as number | null,
+    openedCycle: null as number | null,
+    checkIns: 0,
+    fullBank: 0,
+    blocked: 0,
+  };
   const depthCycles: {
     cycle: number;
     stars: number;
@@ -368,6 +411,17 @@ export const runOne = (spec: RunSpec): RunResult => {
         if (c.type === 'build.buy' && c.building === 'cottage') mark('first-cottage', rec.at);
         if (c.type === 'build.buy' && c.building === 'mine') mark('first-mine', rec.at);
       }
+      if (rec.events?.unlocked) {
+        eventsSeen.checkIns += 1;
+        if (rec.events.bankFull) eventsSeen.fullBank += 1;
+        if (rec.events.blocked) eventsSeen.blocked += 1;
+        if (eventsSeen.openedHours === null) {
+          eventsSeen.openedHours = (rec.at - start) / HOUR;
+          eventsSeen.openedCycle = s.cycle.number;
+        }
+        for (const a of rec.events.attempts)
+          eventAttempts.push({ ...a, hours: (rec.at - start) / HOUR, cycle: prevCycle });
+      }
       for (const r of rec.delveResults ?? []) {
         delveXp += r.xp ?? 0;
         noteItem(s.cycle.number, r.item);
@@ -390,10 +444,13 @@ export const runOne = (spec: RunSpec): RunResult => {
       // v0.8 (D322): "every hunter at Wright" is part of all content: all of them owned, none an Apprentice.
       if (
         wrightsHours === null &&
-        HUNTER_IDS.every((id) => {
-          const h = s.hunters[id];
-          return h !== undefined && h.rank !== 'apprentice';
-        })
+        // D386 (6): the legendary hunters are left out of "every hunter at Wright".
+        HUNTER_IDS.filter((id) => !(LEGENDARY_HUNTER_IDS as readonly string[]).includes(id)).every(
+          (id) => {
+            const h = s.hunters[id];
+            return h !== undefined && h.rank !== 'apprentice';
+          },
+        )
       )
         wrightsHours = (rec.at - start) / HOUR;
       if (s.buildings.mill >= 3) mark('mill-3', rec.at);
@@ -471,7 +528,10 @@ export const runOne = (spec: RunSpec): RunResult => {
         saving: rec.saving,
         agedUp: rec.agedUp,
         opening:
-          (spec.policy === 'opening' || spec.policy === 'standard' || spec.policy === 'delver') &&
+          (spec.policy === 'opening' ||
+            spec.policy === 'standard' ||
+            spec.policy === 'delver' ||
+            spec.policy === 'eventer') &&
           rec.at <= start + OPENING_LENGTH,
         cycle: prevCycle,
       });
@@ -544,6 +604,19 @@ export const runOne = (spec: RunSpec): RunResult => {
       cycles: depthCycles,
       legendaries: state.legendaries.map((l) => ({ id: l.id, cycle: l.cycle })),
       delveXp,
+    },
+    events: {
+      ...eventsSeen,
+      attempts: eventAttempts,
+      tokensSpent: eventAttempts.length,
+      firstBossAttemptHours: eventAttempts.find((a) => a.kind === 'boss')?.hours ?? null,
+      firstBossKill: (() => {
+        const k = eventAttempts.find((a) => a.kind === 'boss' && a.killed);
+        return k ? { hours: k.hours, cycle: k.cycle } : null;
+      })(),
+      unlocks: eventAttempts
+        .filter((a) => a.unlockedHunt)
+        .map((a) => ({ hunt: a.id.replace(/-\d$/, ''), hours: a.hours, cycle: a.cycle })),
     },
     delve: {
       runs: delveRuns,

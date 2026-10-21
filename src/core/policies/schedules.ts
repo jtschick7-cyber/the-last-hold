@@ -2,7 +2,7 @@
 // midnight. The simulator's clock reads epoch ms as local time with no time
 // zone (UTC), so a day is a plain 24 h and 1970-01-01 is a Thursday.
 
-export const POLICY_IDS = ['opening', 'standard', 'light', 'heavy', 'delver'] as const;
+export const POLICY_IDS = ['opening', 'standard', 'light', 'heavy', 'delver', 'eventer'] as const;
 export type PolicyId = (typeof POLICY_IDS)[number];
 
 const MINUTE = 60_000;
@@ -60,7 +60,10 @@ export const isDelveSession = (policy: PolicyId, time: number): boolean => {
  * started, which the Opening policy counts its 15 minutes from.
  */
 export const nextCheckIn = (policy: PolicyId, after: number, startedAt: number): number => {
-  if ((policy === 'opening' || policy === 'delver') && after < startedAt + OPENING_LENGTH) {
+  if (
+    (policy === 'opening' || policy === 'delver' || policy === 'eventer') &&
+    after < startedAt + OPENING_LENGTH
+  ) {
     const steps = Math.floor((after - startedAt) / OPENING_STEP) + 1;
     return startedAt + steps * OPENING_STEP;
   }

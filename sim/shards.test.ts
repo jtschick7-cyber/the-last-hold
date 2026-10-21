@@ -32,21 +32,24 @@ const whole = runSequential(all);
 describe('the simulator shards (D320)', () => {
   it('give every run of the real suite to exactly one shard, in the list order', () => {
     const full = buildSpecs({
-      policies: ['opening', 'light', 'standard', 'heavy', 'delver'],
+      policies: ['opening', 'light', 'standard', 'heavy', 'delver', 'eventer'],
       days: 14,
       seeds: 5,
       starts: ['mon', 'sat'],
       fast: false,
     });
-    expect(full).toHaveLength(45); // 4 policies × 2 starts × 5 seeds + the Delver's 5 Monday runs
+    expect(full).toHaveLength(50); // 4 policies × 2 starts × 5 seeds + the Delver's and the Eventer's 5 Monday runs each
     const parts = SHARD_IDS.map((s) => specsOfShard(full, s));
     expect(parts.flat()).toHaveLength(full.length);
     expect(new Set(parts.flat().map((s) => JSON.stringify(s))).size).toBe(full.length);
     for (const s of SHARD_IDS)
       expect(specsOfShard(full, s).every((r) => shardOf(r) === s)).toBe(true);
-    // No share is more than a third bigger than a fair one, so no job is far slower than the rest.
-    for (const p of parts)
-      expect(p.length).toBeLessThanOrEqual((full.length / SHARD_IDS.length) * 1.34);
+    // The Eventer is its own shard (plan T9.12): five Monday runs, so no other job grows.
+    expect(specsOfShard(full, 'events')).toHaveLength(5);
+    expect(specsOfShard(full, 'events').every((r) => r.policy === 'eventer')).toBe(true);
+    // No other share is more than a third bigger than a fair one, so no job is far slower than the rest.
+    const others = parts.filter((_, i) => SHARD_IDS[i] !== 'events');
+    for (const p of others) expect(p.length).toBeLessThanOrEqual((45 / others.length) * 1.34);
   });
 
   it('played as shards and combined, equals one machine playing the whole list', () => {

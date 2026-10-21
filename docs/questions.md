@@ -56,3 +56,10 @@ Answered questions Q1–Q25 are in [`docs/archive/questions-answered.md`](archiv
 - **Options:** (a) keep both and match them by position (what T9.4 does; a test pins it); (b) change the locked value to the full ids through a decisions row.
 - **Recommendation:** (a): nothing locked moves.
 - **Answer (owner):**
+
+### Q31 — The Eventer never goes on a hunt as the rules are written (blocks T9.12's hunt rule, T9.13, T9.17) — answered
+- **What I found:** GDD §6.1 (D367) says the Eventer picks the boss "unless a legendary hunter is within reach", meaning one win on the hunt's best track would reach 100 points. The best track pays 32 for a win, and points only come from hunt attempts. From 0 points, no hunt is ever within reach, so the Eventer never starts one. In a 42-day run it made 49 boss attempts and 0 hunt attempts. So "first legendary hunter unlocked by the end of the third cycle" can never pass, and the hunt numbers in T9.13 would go unmeasured by the Eventer.
+- **Options:** (a) **Alternate:** after each boss attempt, the next goes to the hunt with the most points (ties in list order), on its best track with a full legal party; no replays. (b) **Hunt first:** within reach means "could finish with at most 4 more wins", so it hunts from the start until all three are unlocked, then bosses only. (c) **Boss first:** boss only until the first boss is defeated, then hunts (a boss-first row stays safe; the hunter row is judged later).
+- **Recommendation:** (a): both rows (first boss defeated, first hunter unlocked) get tokens, and the choice is easy to explain. Which fits depends on how many tokens the Eventer really gets; tokens look scarce because hunters are mostly out on contracts (see Q28).
+- **Blocks:** the hunt rule in T9.12 (the policy is built to the literal text meanwhile), the Eventer rows in T9.17.
+- **Answer (owner):** (a), 2026-10-21.

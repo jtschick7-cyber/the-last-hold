@@ -7,20 +7,23 @@ import type { RunResult, RunSpec } from './run';
 // share of the very same run list the single-machine suite plays (`buildSpecs`), so the combined
 // results are exactly what one machine would have produced: same runs, seeds and rows.
 
-export const SHARD_IDS = ['long', 'rest', 'heavy'] as const;
+export const SHARD_IDS = ['long', 'rest', 'heavy', 'events'] as const;
 export type ShardId = (typeof SHARD_IDS)[number];
 
 /**
  * Which shard plays a run. `long` holds the runs that go on through the Long Nights (Standard and
  * the Delver), `heavy` the Heavy player, `rest` the Opening and the Light player: three shares of
- * about the same size, so no job is much slower than another.
+ * about the same size, so no job is much slower than another. The Eventer (v0.9, GDD §6.1) is its
+ * own shard, `events`, so no other job grows (plan T9.12).
  */
 export const shardOf = (spec: RunSpec): ShardId =>
-  spec.policy === 'standard' || spec.policy === 'delver'
-    ? 'long'
-    : spec.policy === 'heavy'
-      ? 'heavy'
-      : 'rest';
+  spec.policy === 'eventer'
+    ? 'events'
+    : spec.policy === 'standard' || spec.policy === 'delver'
+      ? 'long'
+      : spec.policy === 'heavy'
+        ? 'heavy'
+        : 'rest';
 
 export const specsOfShard = (all: readonly RunSpec[], shard: ShardId): RunSpec[] =>
   all.filter((s) => shardOf(s) === shard);
