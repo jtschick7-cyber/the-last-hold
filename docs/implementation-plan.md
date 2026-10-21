@@ -120,7 +120,7 @@ Moved to [`docs/archive/implementation-plan-v0.0-v0.8.md`](archive/implementatio
 
 ### v0.9 — Events
 
-**Status:** not started *(fleshed out 2026-10-20, revised after an independent review; decisions D357–D387; files in `docs/flesh-out/v0.9/`)*
+**Status:** complete *(fleshed out 2026-10-20, revised after an independent review; decisions D357–D387; files in `docs/flesh-out/v0.9/`)*
 
 **Scope:** world bosses (banked tokens, 24 h rest, a shared pool, milestone rewards) and three Legendary Hunts (self-started, three tracks each, points that carry over, a legendary hunter at the end of each); reserve hunters take part (D279). **Act VI, The Unlit, is written** (lore §31): ten documents, a new Rime type, the names #1–3, three closing scenes; nobody in it says the names aloud. **The Dross-Tide joins the Last Stand's waves in every stand made once Act VI has begun, with no wave guaranteed** (D363, D386). D315 is answered: attendees earn hunter XP; yard XP stays contracts-only; the boss kill pays one item.
 

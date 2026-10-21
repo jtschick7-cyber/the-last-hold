@@ -1,5 +1,5 @@
 {
-  "milestone": "v0.8",
+  "milestone": "v0.9",
   "rulesVersion": 5,
   "groups": {
     "opening/mon": {
@@ -223,6 +223,13 @@
     "first-guardian": true,
     "idle-only": true,
     "act-5": true,
+    "act-6": true,
+    "dross-tide-stand": true,
+    "first-boss-attempt": true,
+    "first-boss-kill": true,
+    "first-hunter-unlock": true,
+    "tokens-not-wasted": true,
+    "silver-with-boss": true,
     "late-letters": true,
     "first-wright": true
   }

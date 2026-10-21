@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.19 done (T9.18 needed no tuning). All 19 tasks are ticked.
-- **Next:** the owner's playtest of the preview; then, on their yes, `sim:accept`, merge and tag (not done by me).
+- **Last task:** v0.9 closed: playtest passed, `sim:accept` run, merged and tagged `v0.9.0` (D405).
+- **Next:** v0.10 needs a flesh-out session first (plan §0.4).
 - **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -212,3 +212,6 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **T9.19:** `tests/e2e/events.spec.ts` already covers one boss attempt (scene, card, party, send, playback, result) and one hunt attempt (list, track, odds, playback, result, shelf, rest line) on the Pixel 7 phone viewport, with your real save (`v8-owner.json`) loaded into the production build. The smoke file already covers install-style offline reload. No new test needed. Phone e2e (events and smoke, 7 tests) passed here in 23 s; `npm run check` green (2,403 tests, 81 s).
 - **Open:** D402 and D403 are Proposed and need your yes. Hunt odds and hunt Suggest budgets (GDD §6.5) are not measured; you set those rows. Q30 not blocking.
 - **Not done on purpose:** `sim:accept`, merge, tag, pull request.
+
+## 2026-10-21 — v0.9 closed
+- Owner passed the playtest (D405). `sim:accept` run: 50 runs, 318 s, all rows pass, baseline recorded in `sim/baseline.json`. Status set to complete, PR opened, merged, tagged `v0.9.0`.
