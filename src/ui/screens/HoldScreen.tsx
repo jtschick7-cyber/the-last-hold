@@ -1,7 +1,8 @@
 import { ages } from '../../content/ages';
 import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
-import { spoken } from '../app/lines';
+import { useEffect } from 'preact/hooks';
+import { sayAfterEnding, spoken } from '../app/lines';
 import { AgeSheet } from '../sheets/AgeSheet';
 import styles from '../styles/ui.module.css';
 import { BuildList } from './BuildList';
@@ -22,6 +23,7 @@ export const HoldScreen = () => {
   void version.value;
   const s = game();
   const line = spoken.value;
+  useEffect(sayAfterEnding, []);
   return (
     <div>
       <header class={styles.card}>

@@ -105,3 +105,24 @@ export const rollMarkText = 'Read the roll aloud.';
 
 /** The Rime shelf's sub-heading for R-11 (lore §34.7). */
 export const afterTheEnding = 'After the ending';
+
+/** Resident lines after Remember Them (lore §34.7): shown only once the ending is recorded; they replace nothing. */
+export const afterEndingLines: readonly {
+  readonly speaker: 'pechko' | 'brana' | 'ilse';
+  readonly text: string;
+}[] = [
+  {
+    speaker: 'pechko',
+    text: 'I sat up for the crack, out of habit. It had nothing to say. I sat up anyway.',
+  },
+  { speaker: 'pechko', text: "The stove is better company now it isn't working so hard." },
+  { speaker: 'pechko', text: 'Frost on the sill this morning. Plain frost. I was glad of it.' },
+  { speaker: 'brana', text: "Kettle boiled first go this morning. I'll not question it." },
+  { speaker: 'brana', text: 'Hunters still go out and still come back. That part is ours.' },
+  { speaker: 'brana', text: 'I stopped checking the lamps at night. Then I started again. Habit.' },
+  { speaker: 'ilse', text: "I've started a new page in the archive. It has no heading yet." },
+  {
+    speaker: 'ilse',
+    text: "People ask me to read the roll to them. I say it's in the Library. They ask again.",
+  },
+];

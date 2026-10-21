@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.10 R-11 and the Roll mark.
-- **Next:** T11.11 resident lines (stop and ask first if there is no idle rotation).
+- **Last task:** T11.11 resident lines.
+- **Next:** T11.12 the Hearth Hall look (stop and ask first; Q42 is open).
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -480,4 +480,10 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Built:** R-11 on the Archive's Rime shelf under "After the ending" (rime plus Ilse's note), derived from the saved ending, so it is no found document: no standing, no XP, no badge, no act group. The Roll of Wardens marks the warden in office when Remember Them was chosen with a small lamp drawn in code and "Read the roll aloud." (lore §34.7); the mark stays with that warden when later wardens take office.
 - **Tests:** `tests/remembering/ending-effects.test.ts`: Remember Them leaves `orders`, `skills`, documents and all else unchanged (outside `remembering`); the sequence touches no state; R-11 absent before, after Keep the Vigil, present after Remember Them and never in the found documents; the mark is on exactly the right warden.
 - **My wording:** the Rime entry is titled "It is warm where I am" (R-11's own heading), with no witness line. The sub-heading "After the ending" is lore's.
+- **Not seen on a phone** (T11.16). No old test edited. Nothing skipped.
+
+## 2026-10-21 — v0.11 session 12: T11.11 resident lines
+- **Asked first** (there was no idle rotation, and Ilse had no lines). **Owner chose:** a small rotation, one line once per app session.
+- **Built:** the eight lines of lore §34.7 (word for word, `content/text/remembering.ts`); on opening the Hold screen, once an app session, one of them shows in the speech spot under the hold's title, only after Remember Them is recorded. Ilse speaks only here. Nothing is saved, so the pick is random each session (it cannot follow a fixed order without a new saved field); an event's line may replace it. The six triggered lines are unchanged.
+- **Tests:** `tests/remembering/resident-lines.test.ts` (texts equal the lore; none before Remember Them or after the vigil; all eight reachable after; triggered lines unchanged; no names).
 - **Not seen on a phone** (T11.16). No old test edited. Nothing skipped.

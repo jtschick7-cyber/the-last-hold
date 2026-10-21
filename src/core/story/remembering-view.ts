@@ -7,6 +7,7 @@ import {
   type RememberingScene,
 } from '../../content/text/remembering';
 import { endingWarm, type EndingCard } from '../../content/text/remembering-ending';
+import { afterEndingLines } from '../../content/text/remembering';
 import { CONTRACT_SPECIES } from '../../content/remembering';
 import { namesFoundLine, roll } from '../../content/story/roll';
 import { villages } from '../../content/villages';
@@ -106,3 +107,14 @@ export const readingFrames = (): ReadingFrame[] =>
 /** R-11 for the Rime shelf's "After the ending": derived from the saved ending, not a found document (D463). */
 export const rimeAfterEnding = (state: GameState): EndingCard | null =>
   state.remembering.endings.some((e) => e.ending === 'remember') ? endingWarm : null;
+
+/** One resident line after Remember Them; `r` in [0, 1) picks it. Null until the ending is recorded. */
+export const afterEndingLine = (
+  state: GameState,
+  r: number,
+): (typeof afterEndingLines)[number] | null =>
+  state.remembering.endings.some((e) => e.ending === 'remember')
+    ? (afterEndingLines[
+        Math.min(afterEndingLines.length - 1, Math.floor(r * afterEndingLines.length))
+      ] ?? null)
+    : null;

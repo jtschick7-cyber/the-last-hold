@@ -1,6 +1,8 @@
 import { signal } from '@preact/signals';
 import { emberRemembersMore, skills, SKILL_IDS, type SkillId } from '../../content/skills';
 import { residents } from '../../content/residents';
+import { afterEndingLine } from '../../core/story/remembering-view';
+import { game } from './runtime';
 import { lineTriggerRules, residentLines, type LineTrigger } from '../../content/text/lines';
 
 // setting-primer §6.2: Brana and Pechko speak when something happens. The UI
@@ -52,3 +54,21 @@ export const levelUpLines = (
   SKILL_IDS.flatMap((id) =>
     after[id] > before[id] ? [emberRemembersMore(skills[id].name, after[id])] : [],
   );
+
+let afterEndingShown = false;
+
+/**
+ * Once an app session, after Remember Them, one of the eight resident lines (lore §34.7).
+ * Nothing is saved, so the pick is not tied to the state; a line from an event may replace it.
+ */
+export const sayAfterEnding = (): void => {
+  if (afterEndingShown) return;
+  const l = afterEndingLine(game(), Math.random());
+  if (!l) return;
+  afterEndingShown = true;
+  spoken.value = {
+    id: nextId++,
+    speaker: l.speaker === 'ilse' ? 'Ilse' : residents[l.speaker].shortName,
+    text: l.text,
+  };
+};
