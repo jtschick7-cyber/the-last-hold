@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v0.11` (the preview follows it); work is pushed to it and to `claude/stoic-keller-hav7be`. Nothing is merged or tagged.
-- **Milestone:** v0.11 "The Remembering" (D446–D470). All 17 tasks are built; `Status: in progress` until the owner's playtest.
-- **Last task:** T11.17 docs, the pull request and the playtest hand-off.
-- **Next:** the owner's playtest of the preview. Only after the owner says it passed: merge, tag `v0.11.0`, `Status: complete`, `npm run sim:accept`, a decisions row.
-- **Open questions:** Q41 and Q43 informational; everything else answered. Q43 ("Gaunt" or "Gloam" Wolf) is for the polish pass.
+- **Branch:** `main` (v0.11 merged and tagged `v0.11.0`). The next milestone's branch is `milestone/v0.12` or whatever the next plan names, created from `main`.
+- **Milestone:** v0.11 "The Remembering" is complete (D471). The next outline milestone needs a flesh-out session first (plan §0.4).
+- **Last task:** milestone end: baseline recorded, statuses updated, merged, tagged.
+- **Next:** the owner chooses what comes next (v1.0 polish is the only outline left; it needs a flesh-out).
+- **Open questions:** Q41 and Q43 informational (Q43, "Gaunt" or "Gloam" Wolf, is for the polish pass).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -34,3 +34,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Please check CI** on the PR: the sim jobs must each stay under 5 minutes (D320); I could not see them from here.
 - **Deferred, by decision:** the Descent and rising difficulty (D448, D453); the species half of the gate is not judged by the simulator (D469); the Archive's section tabs run past the edge at 360 px (since v0.5); Q43 (Wolf name).
 - **Nothing skipped, no old test weakened.** Older tests edited this milestone: `tests/orders/opening.test.ts` (lists `v11-played.json`, T11.5) and `tests/remembering/vigil.test.ts` (T11.13); the closing-line tests now assert its absence (T11.3, D465).
+
+## 2026-10-21 — v0.11 milestone end
+- **The owner said the playtest passed.** CI on the pull request was green first: every simulator shard under 2 min 10 s (`long` 124 s), the judge 64 s, `check` 85 s, e2e and bench green.
+- **Done:** `npm run sim:accept` (5 min 51 s here): the baseline moves to v0.11 and the only differences are the milestone and the new row `remembering-reachable` (passes); every other number is identical. Plan `Status: complete`, D471, the PR merged, tag `v0.11.0`.
+- **Next:** the owner decides. v1.0 polish needs a flesh-out; Q43 and the Archive tabs at 360 px are candidates for it.

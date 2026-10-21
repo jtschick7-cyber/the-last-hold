@@ -452,7 +452,7 @@ The Remembering and any ending (v0.11, D415); any silver, fight or gate effect f
 
 ### v0.11 — The Remembering
 
-**Status:** in progress *(all tasks built; waiting for the owner's playtest; fleshed out 2026-10-21; decisions D446–D470; files in `docs/flesh-out/v0.11/`)*
+**Status:** complete *(playtest passed 2026-10-21, D471; fleshed out 2026-10-21; decisions D446–D471; files in `docs/flesh-out/v0.11/`)*
 
 **Scope:** the end of the story. The gate (all 40 names found and every contract species Studied, worked out each time, never stored); Pechko's near-scene and the quiet **Remembering card**; the choice **Remember Them** or **Keep the Vigil**; the automatic, skippable **reading of the 40 names**; the Unlit's answer; the Orders' lines in the ending (from what was read, D419); the Quenchers' lit window or Věra's fallback; the after-ending text and the one look change (frost gone, a lamp in the window); the Library shelf "The Remembering"; **the removal of the Act VI closing line**; save schema 11 (one small block). **The Descent and any rising difficulty are out of scope** (D448, D453).
 

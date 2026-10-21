@@ -1,5 +1,5 @@
 {
-  "milestone": "v0.10",
+  "milestone": "v0.11",
   "rulesVersion": 5,
   "groups": {
     "opening/mon": {
@@ -255,6 +255,7 @@
     "orders-all-chapters": true,
     "orders-silver": true,
     "orders-provisions": true,
-    "orders-stand-rows": true
+    "orders-stand-rows": true,
+    "remembering-reachable": true
   }
 }
