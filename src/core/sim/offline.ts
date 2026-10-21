@@ -1,3 +1,4 @@
+import { openOrders } from '../systems/orders-open';
 import { awayDelveLines } from '../delves/away';
 import { awayEventsLine } from '../systems/events-results';
 import { accrueAllowance } from '../delves/riftglass';
@@ -94,6 +95,8 @@ export function* catchUp(state: GameState, now: number): Generator<CatchUpProgre
   state.meta.clockHighWater = Math.max(state.meta.clockHighWater, now);
   // GDD §5.12.1: the load path opens events for a save already at the Citadel (D366, D382).
   openEvents(state, now);
+  // GDD §5.13.1 (D421): after the catch-up, so contracts that finished in it were counted by their events.
+  openOrders(state, now, true);
 
   const resources = Object.fromEntries(
     RESOURCE_IDS.map((r) => [r, state.resources[r] - before[r]]),

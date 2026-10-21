@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.5 seats, the third seat and swaps (done, pushed).
-- **Next:** T10.6, opening the Orders and the load path.
+- **Last task:** T10.6 opening the Orders and the load path (done, pushed).
+- **Next:** T10.7, the number perks.
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -267,3 +267,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Tests:** `tests/orders/seats.test.ts` (17). `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
 - **Not here:** the "Seat it" at an opening that skips the cooldown (T10.6), the screens (T10.13).
 - **Next:** T10.6.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.6 opening the Orders
+- **One function, `openOrders`,** opens each Order once for good and queues its opening scene, in list order. It runs at the live triggers (a Rank-up to the Keep, a building, a document found, Ilse's arrival) and at the end of every catch-up, after the time away is played, so contracts are counted by their own events and never by the opening. Then it runs the third-seat check.
+- **Triggers:** Moot at the first Keep; Grey Wives at the first Hut; Bell-Watchers at Ilse; Quenchers when D5-08 is found. Nothing seats itself; a new command finishes a scene ("Seat it" takes a free seat with no cooldown; "Continue" and "Not now" leave it).
+- **Tests:** `tests/orders/opening.test.ts` (28). A table over all 19 saved fixtures works out what should be open from each save itself. Also: the Quenchers wait for D5-08 (live and in a catch-up), the Hut, Ilse, a new game at the Keep, the scene commands.
+- **Please look at (D428, Proposed):** how "the first Hut" is read from an old save; the "Seat your Orders" sheet is pending only when a load opens the save's first Orders; "Seat it" with no free seat is refused.
+- **Not tested yet:** acceptance 3's "no Sending, Deep or onward word" needs the scene texts, so it is checked in T10.9. The owner's own save opens Moot, Grey Wives and Bell-Watchers on load, and the Quenchers not at all (it has not found D5-08).
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.7.

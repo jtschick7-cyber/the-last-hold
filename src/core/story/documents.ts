@@ -1,4 +1,5 @@
 import { noteDocument } from '../skills/hooks';
+import { openOrders } from '../systems/orders-open';
 import { ordersDocumentFound, ordersNameFound } from '../systems/orders';
 import { knowledgeLevels } from '../../content/knowledge';
 import { monsters } from '../../content/monsters';
@@ -55,6 +56,7 @@ export const findDocument = (state: GameState, doc: DocumentDef, via: FoundVia):
     const k = findName(state, n);
     if (k) keys.push(k);
   }
+  openOrders(state, state.time); // GDD §5.13.1: Ilse's arrival and D5-08 open the Bell-Watchers and Quenchers
   return keys;
 };
 

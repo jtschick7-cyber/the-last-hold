@@ -49,7 +49,8 @@ import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasant
 import { setSettings } from './settings';
 import { makeStand, markStandSeen } from './stand';
 import { buyUpgrade } from './hearth';
-import { seatOrder, setSeats, swapOrders, unseatOrder } from './orders';
+import { finishOpening, seatOrder, setSeats, swapOrders, unseatOrder } from './orders';
+import { openOrders } from '../systems/orders-open';
 import { refuse, type ApplyResult, type Command } from './types';
 
 /**
@@ -58,12 +59,18 @@ import { refuse, type ApplyResult, type Command } from './types';
  * state to `now`; only the debug time skip uses it in v0.1. A clock moved
  * backward is ignored, never refused (D21).
  */
+/** GDD §5.13.1: a building may be the first Alchemist's Hut, which opens the Grey Wives. */
+const opening = (state: GameState, result: ApplyResult): ApplyResult => {
+  if (result.ok) openOrders(state, state.time);
+  return result;
+};
+
 export const apply = (state: GameState, cmd: Command, now: number): ApplyResult => {
   switch (cmd.type) {
     case 'build.buy':
-      return buy(state, cmd.building, cmd.count);
+      return opening(state, buy(state, cmd.building, cmd.count));
     case 'build.upgrade':
-      return upgrade(state, cmd.building);
+      return opening(state, upgrade(state, cmd.building));
     case 'peasants.add':
       return add(state, cmd.job);
     case 'peasants.remove':
@@ -122,6 +129,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return unseatOrder(state, cmd.order, now);
     case 'orders.swap':
       return swapOrders(state, cmd.out, cmd.in, now);
+    case 'orders.finishOpening':
+      return finishOpening(state, cmd.order, cmd.seatIt);
     case 'orders.setSeats':
       return setSeats(state, cmd.orders);
     case 'debug.skip':

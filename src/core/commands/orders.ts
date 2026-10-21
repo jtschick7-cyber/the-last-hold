@@ -60,6 +60,21 @@ export const swapOrders = (
   return changed(state, [...state.orders.seats.filter((s) => s !== out), into], now);
 };
 
+/**
+ * An opening scene is done (technical design §5.2, D422): the Order leaves the queue. It takes a seat
+ * only if the player asked ("Seat it") and one is free; that never starts the cooldown. "Continue" and
+ * "Not now" leave it unseated.
+ */
+export const finishOpening = (state: GameState, id: OrderId, seatIt: boolean): ApplyResult => {
+  if (!known(id) || !state.orders.openingQueue.includes(id))
+    return refuse('That scene is not waiting.');
+  const seats = state.orders.seats;
+  if (seatIt && seats.length >= seatCount(state)) return refuse('Every seat is taken.');
+  state.orders.openingQueue = state.orders.openingQueue.filter((q) => q !== id);
+  if (seatIt) state.orders.seats = inListOrder([...seats, id]);
+  return ok;
+};
+
 /** The new-warden step and the load sheet (D412 (3), (6)): free of cooldown, and it clears one. */
 export const setSeats = (state: GameState, list: OrderId[]): ApplyResult => {
   if (!Array.isArray(list)) return refuse('A list of Orders, please.');
