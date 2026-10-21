@@ -214,7 +214,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - The ten documents D6-01 to D6-10, Ilse's notes, the Accounts excerpts and the names #1–3, **word for word from OUT-3**.
   - *Acceptance:* 1. The Names column is exactly #1–3, each once. 2. None of the avoid-list words appears (*ash, cinder, kindle, hollow* other than Kozly Hollow, *tithe, bonfire, throne, souls*, "fed/feeding" as imagery). 3. No relative counts of years. 4. **No text says, asks for or begins the names.** 5. Every document found from its condition in a scripted run. 6. The Names view shows #1–3 correctly. 7. Content test: the texts match OUT-3 exactly.
 
-- [ ] **T9.12 — The Eventer policy and the events shard** *(sim/)*
+- [x] **T9.12 — The Eventer policy and the events shard** *(sim/)*
   - `sim/policies/eventer.ts` (GDD §6.1): token spending, party choice, boss-or-hunt, track choice, never replays, locked check-ins ignored, runs until all content; `sim/shards.ts` gains the `events` shard; report fields.
   - *Acceptance:* 1. The Eventer plays a 3-cycle run in 60 s or less. 2. Standard, Light, Heavy, Opening and the Delver **issue no event commands**, and their reports **before Act VI equal the v0.8 baseline**. 3. Their baselines from cycle 6 are re-recorded once, and the 41 old rows re-judged on them. 4. The events shard stays within 5 min.
 

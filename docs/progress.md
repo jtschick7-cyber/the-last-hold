@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.12 — Eventer policy and events shard (built; open: baseline re-record, CI timing of the `events` job).
-- **Next:** finish T9.12 (owner's yes to `sim:accept`), then T9.13.
+- **Last task:** T9.12 — Eventer policy and events shard (done).
+- **Next:** T9.13 — calibrate the pool and the hunt tunables.
 - **Open questions:** Q31 answered (a). Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -149,6 +149,6 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Shard and CI:** `events` is its own shard (5 Monday runs); the workflow matrix has it. Run records gain an `events` section and the report an "Events" section (attempts, damage, marks, silver, hunt points per cycle, tokens, full-bank and blocked check-ins, first boss, unlocks).
 - **Found and fixed:** the first full run failed Idle-only because the legendary hunters counted in "every hunter at Wright" (D386 (6) leaves them out). Fixed in `sim/run.ts`; no row or target changed.
 - **Full suite, one machine:** 50 runs in 292 s; every old row passes; every cycle-1 moment equals the v0.8 baseline ("same" for all four old players). The Eventer's runs of 42 days took ~45 s each.
-- **Not done:** `sim:accept` (the baseline re-record) was blocked by the tool guard, since CLAUDE.md says "milestone end only"; it needs your yes. Until then the `events` job's CI time is unmeasured. The T9.12 box stays unticked.
+- **Baseline re-recorded** once with your yes (`sim:accept`): only the Eventer's group was added (18 lines); nothing else moved; 0 rows fail. The `events` shard took 43 s locally (CI time still to be seen on the first CI run).
 - **Seen:** the Eventer is "blocked" at nearly every open check-in (hunters out on contracts, Q28), and made about 1 attempt a day; no hunter unlocked in the first literal run.
 - `npm run check` green (84 s here; near the limit).
