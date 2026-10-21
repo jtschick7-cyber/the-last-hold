@@ -2,7 +2,7 @@ import { rememberingCard } from '../../content/text/remembering';
 import { rememberingCardView } from '../../core/story/remembering-view';
 import { dispatch, game, version } from '../app/runtime';
 import { openArchiveSection } from '../screens/ArchiveScreen';
-import { openRememberScene } from './ReadingScene';
+import { playEnding } from './ReadingScene';
 import { openVigilScene } from './VigilScene';
 import styles from '../styles/ui.module.css';
 
@@ -42,8 +42,7 @@ export const RememberingCard = () => {
               type="button"
               class={styles.btnPrimary}
               onClick={() => {
-                if (dispatch({ type: 'remembering.choose', ending: 'remember' }).ok)
-                  openRememberScene();
+                if (dispatch({ type: 'remembering.choose', ending: 'remember' }).ok) playEnding();
               }}
             >
               {c.open.remember.name}
@@ -69,8 +68,7 @@ export const RememberingCard = () => {
             type="button"
             class={styles.btnPrimary}
             onClick={() => {
-              if (dispatch({ type: 'remembering.choose', ending: 'remember' }).ok)
-                openRememberScene();
+              if (dispatch({ type: 'remembering.choose', ending: 'remember' }).ok) playEnding();
             }}
           >
             {c.afterVigil.remember}

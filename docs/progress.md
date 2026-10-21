@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.8 Orders in the ending.
-- **Next:** T11.9 the ending sequence.
+- **Last task:** T11.9 the ending sequence.
+- **Next:** T11.10 R-11 and the Roll of Wardens mark.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -468,3 +468,10 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Not shown yet:** the cards are data only; T11.9 puts them in the sequence.
 - **Branch:** `milestone/v0.11` created from this commit so the preview exists (the reading can be tried from the debug panel). Later pushes go to both branches.
 - **No old test edited. Nothing skipped.** **Next:** T11.9.
+
+## 2026-10-21 — v0.11 session 10: T11.9 the ending sequence
+- **Built:** `endingSequence(state)` (`core/story/ending-sequence.ts`) is the whole ending as one list: R-03, the reading, R-04, R-04b (only if Sigrun is owned), the Orders' cards, R-09, R-11. Remember Them now plays it as a stack of sheets, each with Continue; Skip is on the reading only. Texts word for word from lore §34.6–34.7 (`content/text/remembering-ending.ts`). The card then shows its "After Remember Them" form.
+- **R-11 is in already,** with Ilse's note, because the acceptance list names it as the last card. T11.10 still owns the Rime shelf entry, the "no side effects" test and the Roll of Wardens mark.
+- **Closing early:** nothing is lost; the list is rebuilt the same each time. The Library button that replays it is T11.13, so until then a closed ending cannot be replayed.
+- **Tests:** `tests/remembering/ending-sequence.test.ts` (order, with and without Sigrun, one reading, same every time, seats ignored, After form, texts equal the lore, no names).
+- **Not seen on a phone** (T11.16). Nothing skipped; no old test edited.

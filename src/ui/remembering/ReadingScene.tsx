@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { readingControls, rememberScene, unlitLine } from '../../content/text/remembering';
+import { readingControls, unlitLine } from '../../content/text/remembering';
+import { endingWarmNote } from '../../content/text/remembering-ending';
+import { endingSequence, type EndingStep } from '../../core/story/ending-sequence';
 import { readingFrames } from '../../core/story/remembering-view';
+import { game } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { createReadingPlayer } from './timing';
@@ -8,7 +11,7 @@ import { createReadingPlayer } from './timing';
 // GDD §5.15.3, §9.19 (D464): R-03, then the reading. The names come by themselves, a tap shows the
 // next at once, Skip jumps to the end. With reduced motion the names change without fading (CSS);
 // the speed is the same.
-const ReadingView = () => {
+const ReadingView = ({ onDone }: { onDone: () => void }) => {
   const frames = useMemo(readingFrames, []);
   const [i, setI] = useState(0);
   const player = useRef<ReturnType<typeof createReadingPlayer> | null>(null);
@@ -53,7 +56,7 @@ const ReadingView = () => {
         )}
         <span class={styles.grow} />
         {finished && (
-          <button type="button" class={styles.btnPrimary} onClick={closeSheet}>
+          <button type="button" class={styles.btnPrimary} onClick={onDone}>
             {readingControls.done}
           </button>
         )}
@@ -62,26 +65,39 @@ const ReadingView = () => {
   );
 };
 
-export const openReading = (): void => openSheet('The reading', () => <ReadingView />);
-
-const RememberView = () => (
+/** One card of the ending: its paragraphs, then Continue to the next step. */
+const CardView = ({ step, onDone }: { step: CardStep; onDone: () => void }) => (
   <div>
-    {rememberScene.paragraphs.map((p) => (
+    {step.card.paragraphs.map((p) => (
       <p key={p}>{p}</p>
     ))}
-    <button
-      type="button"
-      class={styles.btnPrimary}
-      style={{ width: '100%' }}
-      onClick={() => {
-        closeSheet();
-        openReading();
-      }}
-    >
-      Continue
+    {step.card.id === 'R-11' && (
+      <p class={styles.small}>
+        <em>Ilse: “{endingWarmNote}”</em>
+      </p>
+    )}
+    <button type="button" class={styles.btnPrimary} style={{ width: '100%' }} onClick={onDone}>
+      {readingControls.done}
     </button>
   </div>
 );
 
-/** R-03 then the reading. The rest of the ending follows in T11.8 to T11.10. */
-export const openRememberScene = (): void => openSheet(rememberScene.title, () => <RememberView />);
+type CardStep = Extract<EndingStep, { kind: 'card' }>;
+
+const playFrom = (steps: readonly EndingStep[], i: number): void => {
+  const step = steps[i];
+  if (!step) return;
+  const next = (): void => {
+    closeSheet();
+    playFrom(steps, i + 1);
+  };
+  if (step.kind === 'reading') openSheet('The reading', () => <ReadingView onDone={next} />);
+  else openSheet(step.card.title, () => <CardView step={step} onDone={next} />);
+};
+
+/**
+ * The whole ending as one stack (GDD §5.15.3): R-03, the reading, R-04, R-04b, the Orders' cards,
+ * R-09, R-11. Skip works on the reading only; closing a sheet early loses nothing, because the
+ * Library replays it whole (T11.13).
+ */
+export const playEnding = (): void => playFrom(endingSequence(game()), 0);
