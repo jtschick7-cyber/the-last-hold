@@ -235,6 +235,7 @@ export const endingLines = (runs: readonly RunResult[]): string[] => {
     const end = e.atEnd;
     return (
       `- standard ${r.spec.start} ${r.spec.seed}: ` +
+      `names and stand: ${e.namesAndStand ? `cycle ${e.namesAndStand.cycle}, at ${hoursText(e.namesAndStand.hours)}` : 'never'}; ` +
       (e.first
         ? `choosable in cycle ${e.first.cycle}, at ${hoursText(e.first.hours)}`
         : `never within the run (${r.cyclesDone} Long Nights); at the end ${end.names} of 40 names, ${end.species} of ${end.speciesTotal} species Studied (missing: ${end.missing.join(', ') || 'none'}), Act VI's stand ${end.standApplied ? 'applied' : 'not applied'}`)
@@ -245,12 +246,17 @@ export const endingLines = (runs: readonly RunResult[]): string[] => {
     .map((r) => r.ending?.first?.cycle ?? Number.POSITIVE_INFINITY)
     .sort((a, b) => a - b);
   const median = cycles[Math.floor(cycles.length / 2)];
+  const ns = mon
+    .map((r) => r.ending?.namesAndStand?.cycle ?? Number.POSITIVE_INFINITY)
+    .sort((a, b) => a - b);
+  const nsMedian = ns[Math.floor(ns.length / 2)];
   return [
     ...lines,
     ...(mon.length === 0
       ? []
       : [
-          `- Monday median cycle: ${median === Number.POSITIVE_INFINITY ? 'never' : median} (${mon.length} seeds, ${cycles.filter((c) => c === Number.POSITIVE_INFINITY).length} never)`,
+          `- Monday median cycle, names and Act VI's stand: ${nsMedian === Number.POSITIVE_INFINITY ? 'never' : nsMedian} (cycles ${ns.join(', ')})`,
+          `- Monday median cycle, ending choosable: ${median === Number.POSITIVE_INFINITY ? 'never' : median} (${mon.length} seeds, ${cycles.filter((c) => c === Number.POSITIVE_INFINITY).length} never)`,
         ]),
   ];
 };

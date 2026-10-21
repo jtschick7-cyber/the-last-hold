@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.16 layout checks and budgets (owner approval of the §6.5 rows pending).
-- **Next:** T11.15 (a second measurement for the narrower row, then stop for N), then T11.17.
+- **Last task:** T11.15 part (a) measured for the narrower row; waiting for the owner's approval of N (proposed 6) and of the §6.5 rows.
+- **Next:** T11.15 part (b) (the row alone, in its own commit), then T11.17.
 - **Open questions:** Q40, Q38 and Q42 answered; Q41 and Q43 informational; Q45 answered (a).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -522,3 +522,9 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Seen, not mine:** at 360 px the Archive's section tabs ("Bestiary, Library, Accounts, Names") run past the edge, so "Names" is cut off (the row scrolls; the page does not). It has been so since v0.5. I did not change it; it is for the polish pass unless you say otherwise.
 - **Known, unchanged:** the older "odds with 3 candidates" row still fails on this container's CPU (D445); it is not part of `npm run check`.
 - **Not seen on a real phone**, only emulated (Pixel 7 at 360 and 320 px). No old test edited. Nothing skipped.
+
+## 2026-10-21 — v0.11 session 18: T11.15a measured for the narrower row (D469)
+- **Measured** (Standard, 5 Monday seeds, usual run, 52 s): all 40 names found **and** Act VI's stand applied by the end of cycle **6, 6, 6, 6 and 7** (at 446 to 486 hours). Median **6**. The full ending is still never choosable (species, as in Q45).
+- **Proposed N = 6** (the median, so the row passes by construction). Four seeds are at 6 and one at 7; a seed that never got there would count as later than any N. Judged in `sim.yml` only, not in `npm run check`.
+- **Built (report only):** the run record's `ending` field now also holds the moment names and stand were both reached; the report shows it per seed and the median. No policy, constant, target or baseline changed.
+- **Waiting for the owner:** approve N = 6 (or name another). **Then T11.15b:** the row alone in `sim/targets.ts`, with its check, in its own commit. I did not touch `sim/targets.ts`.

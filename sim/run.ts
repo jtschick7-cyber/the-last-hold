@@ -72,6 +72,8 @@ export interface RunSpec {
 /** v0.11: the first moment the ending was choosable, and what the hold had of it when the run stopped. */
 export interface EndingRecord {
   readonly first: { readonly hours: number; readonly cycle: number } | null;
+  /** D469: all 40 names found and Act VI's stand applied, the part the Standard player does reach. */
+  readonly namesAndStand: { readonly hours: number; readonly cycle: number } | null;
   readonly atEnd: {
     readonly names: number;
     readonly species: number;
@@ -458,6 +460,7 @@ export const runOne = (spec: RunSpec): RunResult => {
   };
   const drossStands: DrossStand[] = [];
   let ending: { hours: number; cycle: number } | null = null;
+  let namesAndStand: { hours: number; cycle: number } | null = null;
   const eventsSeen = {
     openedHours: null as number | null,
     openedCycle: null as number | null,
@@ -590,6 +593,8 @@ export const runOne = (spec: RunSpec): RunResult => {
       // The cycle is the one the check-in ended, so a stand that opens the ending counts for its own cycle.
       if (ending === null && endingChoosable(s))
         ending = { hours: (rec.at - start) / HOUR, cycle: prevCycle };
+      if (namesAndStand === null && namesFound(s) >= 40 && actVIStandApplied(s))
+        namesAndStand = { hours: (rec.at - start) / HOUR, cycle: prevCycle };
       if (rec.orders) noteOrders(rec, s);
       if (rec.events?.unlocked) {
         eventsSeen.checkIns += 1;
@@ -780,6 +785,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     drossStands,
     ending: {
       first: ending,
+      namesAndStand,
       atEnd: {
         names: namesFound(state),
         species: speciesStudied(state),
