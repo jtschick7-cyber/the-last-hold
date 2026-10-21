@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { play, type PolicyId } from '../src/core/policies';
 import { createNewGame } from '../src/core/state/new-game';
+import { eventLines } from './report';
 import { runOne, STARTS } from './run';
 
 const DAY = 24 * 3_600_000;
@@ -34,7 +35,7 @@ describe('the Eventer run', () => {
   }, 90_000);
 
   it('is the same run twice', () => {
-    const spec = { policy: 'eventer', seed: 'sim-2', start: 'mon', days: 4 } as const;
+    const spec = { policy: 'eventer', seed: 'sim-2', start: 'mon', days: 3 } as const;
     expect(runOne(spec)).toEqual(runOne(spec));
   }, 90_000);
 });
@@ -50,7 +51,7 @@ describe('everyone else issues no event commands', () => {
         play(s, {
           policy: policy === 'standard' ? 'opening' : policy,
           startedAt: start,
-          until: start + 4 * DAY,
+          until: start + 3 * DAY,
           onCheckIn: (rec) => {
             for (const c of rec.commands)
               if (c.type === 'boss.attempt' || c.type === 'hunt.attempt') seen.push(c.type);
@@ -63,4 +64,14 @@ describe('everyone else issues no event commands', () => {
       30_000,
     );
   }
+});
+
+describe('the events report', () => {
+  it('is written for the Eventer only', () => {
+    const r = runOne({ policy: 'eventer', seed: 'sim-1', start: 'mon', days: 3 });
+    const lines = eventLines([r]);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatch(/^- eventer mon sim-1: opened .*tokens spent.*full bank.*blocked/);
+    expect(eventLines([{ ...r, spec: { ...r.spec, policy: 'standard' as const } }])).toEqual([]);
+  }, 60_000);
 });

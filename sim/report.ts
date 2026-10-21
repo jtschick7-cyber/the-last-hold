@@ -183,6 +183,39 @@ export const delveLines = (runs: readonly RunResult[]): string[] =>
       );
     });
 
+/**
+ * Reported, not judged (GDD §6.2 v0.9, plan T9.12): what each Eventer did with its events. Per cycle:
+ * boss attempts, median damage, milestones paid, boss silver and hunt points; then tokens spent,
+ * check-ins with a full bank and with a token no party of four could use (rest or contracts), and
+ * when the first boss attempt, the first boss defeat and each hunter unlock came. Locked check-ins
+ * count nowhere (D386).
+ */
+export const eventLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.spec.policy === 'eventer' && r.events !== undefined)
+    .map((r) => {
+      const e = r.events as NonNullable<RunResult['events']>;
+      const cycles = [...new Set(e.attempts.map((a) => a.cycle))].map((c) => {
+        const here = e.attempts.filter((a) => a.cycle === c);
+        const boss = here.filter((a) => a.kind === 'boss');
+        const dmg = boss.map((a) => a.damage).sort((a, b) => a - b);
+        const median = dmg.length === 0 ? 0 : (dmg[Math.floor(dmg.length / 2)] ?? 0);
+        const silver = boss.reduce((n, a) => n + a.silver, 0);
+        const marks = boss.reduce((n, a) => n + a.milestones, 0);
+        const points = here.reduce((n, a) => n + a.points, 0);
+        return `cycle ${c}: ${boss.length} boss (median damage ${median}, ${marks} marks, ${silver} silver), hunt points ${points}`;
+      });
+      const opened = e.openedHours === null ? 'never opened' : `opened ${hoursText(e.openedHours)}`;
+      return (
+        `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${opened}; ${e.tokensSpent} tokens spent; ` +
+        `${e.checkIns} open check-ins, ${e.fullBank} full bank, ${e.blocked} blocked; ` +
+        `first boss attempt ${e.firstBossAttemptHours === null ? 'never' : hoursText(e.firstBossAttemptHours)}, ` +
+        `first boss defeated ${e.firstBossKill ? `cycle ${e.firstBossKill.cycle}` : 'never'}, ` +
+        `unlocked ${e.unlocks.map((u) => `${u.hunt} (cycle ${u.cycle})`).join(', ') || 'none'}; ` +
+        cycles.join('; ')
+      );
+    });
+
 export const markdown = (report: Report, previous: Baseline | null): string => {
   const out: string[] = [
     `# Simulator report: ${report.name}`,
@@ -212,6 +245,7 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
     '',
     ...depthLines(report.runs),
   );
+  out.push('', '## Events (reported only; the Eventer)', '', ...eventLines(report.runs));
   out.push(
     '',
     '## All content (reported only; the Idle-only row judges the medians)',
