@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { readingControls, unlitLine } from '../../content/text/remembering';
-import { endingWarmNote } from '../../content/text/remembering-ending';
+import { endingWarm, endingWarmNote } from '../../content/text/remembering-ending';
 import { endingSequence, type EndingStep } from '../../core/story/ending-sequence';
 import { readingFrames } from '../../core/story/remembering-view';
 import { game } from '../app/runtime';
@@ -101,3 +101,18 @@ const playFrom = (steps: readonly EndingStep[], i: number): void => {
  * Library replays it whole (T11.13).
  */
 export const playEnding = (): void => playFrom(endingSequence(game()), 0);
+
+/** R-11 from the Rime shelf (lore §34.7): the rime and Ilse's note, nothing else. */
+export const openWarmRime = (): void =>
+  openSheet(endingWarm.title, () => (
+    <div>
+      <article class={styles.rime}>
+        {endingWarm.paragraphs.map((p) => (
+          <p key={p}>{p}</p>
+        ))}
+      </article>
+      <p class={styles.dim}>
+        <em>{endingWarmNote}</em>
+      </p>
+    </div>
+  ));

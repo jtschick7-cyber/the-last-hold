@@ -6,6 +6,7 @@ import {
   rememberingShelfEntries,
   type RememberingScene,
 } from '../../content/text/remembering';
+import { endingWarm, type EndingCard } from '../../content/text/remembering-ending';
 import { CONTRACT_SPECIES } from '../../content/remembering';
 import { namesFoundLine, roll } from '../../content/story/roll';
 import { villages } from '../../content/villages';
@@ -101,3 +102,7 @@ export const readingFrames = (): ReadingFrame[] =>
       name: r.name,
       line: `${villages[r.village].name} · onward, year ${r.year} of the order.`,
     }));
+
+/** R-11 for the Rime shelf's "After the ending": derived from the saved ending, not a found document (D463). */
+export const rimeAfterEnding = (state: GameState): EndingCard | null =>
+  state.remembering.endings.some((e) => e.ending === 'remember') ? endingWarm : null;

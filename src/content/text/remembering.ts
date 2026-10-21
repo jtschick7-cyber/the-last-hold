@@ -99,3 +99,9 @@ export const rememberingShelfTitle = 'The Remembering';
 export const rememberingShelfEntries = {
   later: { title: 'Later', blurb: 'Pechko, when you were not ready.' },
 } as const;
+
+/** The mark on the Roll of Wardens entry of the warden in office when Remember Them was chosen (lore §34.7). */
+export const rollMarkText = 'Read the roll aloud.';
+
+/** The Rime shelf's sub-heading for R-11 (lore §34.7). */
+export const afterTheEnding = 'After the ending';

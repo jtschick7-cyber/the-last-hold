@@ -10,8 +10,9 @@ import {
   type ShelfLetter,
 } from '../../core/story/archive';
 import { ordersShelf } from '../../core/story/orders-chapter-view';
-import { rememberingShelf } from '../../core/story/remembering-view';
-import { rememberingShelfTitle } from '../../content/text/remembering';
+import { rememberingShelf, rimeAfterEnding } from '../../core/story/remembering-view';
+import { afterTheEnding, rememberingShelfTitle } from '../../content/text/remembering';
+import { openWarmRime } from '../remembering/ReadingScene';
 import { openVigilScene } from '../remembering/VigilScene';
 import { reopenChapter } from '../orders/ChapterScene';
 import { docKey } from '../../core/story/documents';
@@ -140,6 +141,7 @@ const Library = () => {
   const rime = rimeShelf(s);
   const orders = ordersShelf(s);
   const remembering = rememberingShelf(s);
+  const warm = rimeAfterEnding(s);
   const wayDown = s.delve.sceneSeen;
   if (
     groups.length === 0 &&
@@ -147,6 +149,7 @@ const Library = () => {
     echoList.length === 0 &&
     orders.length === 0 &&
     remembering.length === 0 &&
+    !warm &&
     !wayDown
   )
     return <p class={styles.dim}>Nothing in the archive yet.</p>;
@@ -182,7 +185,7 @@ const Library = () => {
         <h2 class={styles.cardTitle}>
           <Sprite id={RIME_ICON} /> Rime
         </h2>
-        {rime.length === 0 ? (
+        {rime.length === 0 && !warm ? (
           <p class={`${styles.small} ${styles.dim}`}>Nothing here yet.</p>
         ) : (
           <ul class={styles.list}>
@@ -198,6 +201,20 @@ const Library = () => {
               </li>
             ))}
           </ul>
+        )}
+        {warm && (
+          <>
+            <h3 class={`${styles.small} ${styles.dim}`}>{afterTheEnding}</h3>
+            <ul class={styles.list}>
+              <li>
+                <button type="button" class={styles.linkRow} onClick={openWarmRime}>
+                  <span class={styles.grow}>
+                    <strong>{warm.title}</strong>
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </>
         )}
       </section>
       {orders.length > 0 && (

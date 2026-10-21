@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
 import { ages } from '../../content/ages';
+import { rollMarkText } from '../../content/text/remembering';
 import { relics } from '../../content/relics';
 import { bandLabels, keepingTheHearth, wornFirstLine } from '../../content/story/scenes';
 import { formatNumber } from '../../core/format';
@@ -31,6 +32,19 @@ const lineText = (l: WardenLine): string => {
     .join(' · ');
 };
 
+// A small lamp, drawn in code (lore §34.7), with the line beside it.
+const ReadAloudMark = () => (
+  <span class={styles.small} title={rollMarkText}>
+    {' '}
+    <svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true">
+      <rect x="3" y="7" width="6" height="6" fill="currentColor" />
+      <rect x="2" y="12" width="8" height="2" fill="currentColor" />
+      <rect x="5" y="2" width="2" height="4" fill="var(--c-ember)" />
+    </svg>{' '}
+    <em>{rollMarkText}</em>
+  </span>
+);
+
 const WardenRow = ({ l }: { l: WardenLine }) => {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(l.named ? l.name : '');
@@ -38,6 +52,7 @@ const WardenRow = ({ l }: { l: WardenLine }) => {
   return (
     <li class={styles.divider}>
       <strong class={l.named ? undefined : styles.dim}>{l.name}</strong>
+      {l.readAloud && <ReadAloudMark />}
       <br />
       <span class={`${styles.small} ${styles.dim}`}>{lineText(l)}</span>
       {editing ? (
