@@ -205,3 +205,4 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Full suite (one machine, 276 s):** every row passes. Eventer medians: first attempt 6 h after events opened, first kill cycle 6, first unlock cycle 5, full bank 28.9%, cycle-1 silver 77% from bounties.
 - **GDD §6.2 and the plan's table** carry the new numbers. No `sim:accept` (milestone end, after your playtest). No locked constant changed.
 
+- **CI after T9.17** (simulator run 39588879184, GitHub runners): events 57 s, long 121 s, rest 52 s, heavy 57 s, judge 91 s; every row passes, all under 5 minutes. The normal CI run (322) is green, e2e included, so the story e2e failure is gone.
