@@ -5,7 +5,17 @@
 
 import type { PolicyId } from '../src/core/policies';
 
-export const MILESTONES = ['v0.1', 'v0.2', 'v0.3', 'v0.4', 'v0.5', 'v0.6', 'v0.7', 'v0.8'] as const;
+export const MILESTONES = [
+  'v0.1',
+  'v0.2',
+  'v0.3',
+  'v0.4',
+  'v0.5',
+  'v0.6',
+  'v0.7',
+  'v0.8',
+  'v0.9',
+] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
 export interface Bound {
@@ -248,6 +258,20 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.8',
   },
+  // v0.9 (GDD §6.2, D383: owner-approved 2026-10-21, their own commit). Judged by their own checks, on
+  // the median of the Monday Standard seeds. The Eventer's event rows are a separate commit (T9.17).
+  {
+    id: 'act-6',
+    text: 'Act VI lands in its cycle: D6-01 to D6-06 by the end of cycle 6, D6-07 with the next warden; D6-08 to D6-10 reported only',
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
+  {
+    id: 'dross-tide-stand',
+    text: "The Dross-Tide stand probe: in Act VI-era cycles Standard's stand reaches the Held band (12 or more waves) and the preview's range still agrees with the real result",
+    bounds: [],
+    enforcedFrom: 'v0.9',
+  },
 ];
 
 /**
@@ -295,6 +319,25 @@ export const STORY = {
     docs: ['D5-01', 'D5-02', 'D5-03', 'D5-04', 'D5-05', 'D5-06', 'D5-08'],
     nextWarden: { doc: 'D5-07', byCycle: 6 },
     reportedOnly: [],
+  },
+  /**
+   * Act VI (v0.9, D383): D6-01 to D6-06 by the end of cycle 6, D6-07 with the next warden. D6-08 to
+   * D6-10 depend on recruits and are reported only.
+   */
+  act6: {
+    byCycle: 6,
+    docs: ['D6-01', 'D6-02', 'D6-03', 'D6-04', 'D6-05', 'D6-06'],
+    nextWarden: { doc: 'D6-07', byCycle: 7 },
+    reportedOnly: ['D6-08', 'D6-09', 'D6-10'],
+  },
+  /**
+   * The Dross-Tide stand probe (v0.9, D383): in the stands made once Act VI has begun (the cycles that
+   * carry the Dross-Tide pool), the median waves held is at least `heldWaves`, and the real result
+   * falls inside the preview's 10th–90th percentile range in at least `previewAgreeShare` of them.
+   */
+  drossProbe: {
+    heldWaves: 12,
+    previewAgreeShare: 0.6,
   },
   /**
    * The five name-bearing letters (v0.8, D322; lore §23): Ostap's two (levels 5 and 8, slots 0 and 1)
