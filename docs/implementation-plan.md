@@ -223,7 +223,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - *Targets are proposals the owner approves with the row, not approved rows:* a first visit of about 9–15 attempts; a hunt unlock in about 6–8; track win rates of about 25–90%.
   - *Acceptance:* 1. A written report of the measured numbers is in the progress entry. 2. The proposed row is in `docs/decisions.md`. 3. The task stays `[?]` until the owner approves the pool row (Q29).
 
-- [ ] **T9.14 — Screens, part 1: the Events card, boss and party** *(ui/)*
+- [x] **T9.14 — Screens, part 1: the Events card, boss and party** *(ui/)*
   - GDD §9.17: the Events card, the badge (only while open), the one-time scene, the boss sheet, the party picker with reasons, preparation, the preview panel, the empty states.
   - *Acceptance:* 1. Every number has a breakdown. 2. A routine boss attempt takes 15 taps or fewer from the Hold screen. 3. The card reads correctly before the Citadel. 4. The layout works at 360 px and at the 900/1300 px breakpoints.
 

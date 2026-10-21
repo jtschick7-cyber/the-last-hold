@@ -114,6 +114,8 @@ export type Command =
   | { type: 'delve.leave' }
   | { type: 'delve.ackResult' }
   | { type: 'delve.seeScene' }
+  /** GDD §5.12.1: the one-time scene of the opening of events has been shown (v0.9). */
+  | { type: 'events.seeScene' }
   | { type: 'riftglass.buy'; item: 'late-hours' | 'chosen-start' | 'reroll' }
   | { type: 'riftglass.buyTrait'; hunter: HunterId }
   | { type: 'riftglass.buyCosmetic'; cosmetic: CosmeticId }

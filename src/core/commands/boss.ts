@@ -15,3 +15,10 @@ export const bossAttempt = (
   makeAttempt(state, party, prep, now);
   return ok;
 };
+
+/** GDD §5.12.1: remembers that the opening scene was shown; it never plays again. */
+export const seeEventsScene = (state: GameState): ApplyResult => {
+  if (!state.events.opened) return refuse('Events have not opened.');
+  state.events.sceneSeen = true;
+  return ok;
+};

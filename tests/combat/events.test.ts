@@ -142,12 +142,12 @@ describe('the Barrow-King: Barrow-Grip and Grave Chill', () => {
     event('barrow-king', { healthOverride: POOL }),
   );
 
-  it('Grave Chill: on each action every standing hunter loses 2% of max Health as Frost, ignoring Armor', () => {
+  it('Grave Chill: on each action every standing hunter loses 1.5% of max Health as Frost, ignoring Armor (D398)', () => {
     const chill = r.log.filter((e) => e.text.includes('grave chill reaches'));
     expect(chill.length).toBeGreaterThanOrEqual(4);
-    // 2% of 100,000, no Armor taken off (Halvar has Armor 8), taken% not applicable.
-    expect(chill[0]?.amount).toBe(2000);
-    expect(chill[0]?.text).toContain('Frost 2000.00 = 2000');
+    // 1.5% of 100,000, no Armor taken off (Halvar has Armor 8), taken% not applicable.
+    expect(chill[0]?.amount).toBe(1500);
+    expect(chill[0]?.text).toContain('Frost 1500.00 = 1500');
   });
 
   it('Barrow-Grip: every 3rd action its hit holds the target', () => {

@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.13 — measured; waiting on the owner (Q29, D397). Box stays `[?]`.
-- **Next:** T9.14 once the pool row is answered (or in parallel; it needs no number).
+- **Last task:** T9.14 — Events card, boss sheet, party picker (done). T9.13 stays `[?]` until Q29 (the pool row, D397).
+- **Next:** T9.15 — playback, results, hunts and shelves.
 - **Open questions:** Q31 answered (a). Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -161,3 +161,10 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Changed:** nothing locked; no constant; no content. I tried content values and reverted them, because the GDD tables and the notebook lines are pinned by content tests and are your design. Only the script and an export of the Eventer's kit were added.
 - **Needs your answer:** (1) the pool row (yes to 21,000, or 18,000, or keep 24,000); (2) whether I may apply the softening table and edit GDD §8.13/§8.14 with it; (3) whether to soften `hunt.trackPoints`.
 - `npm run check` green.
+
+## 2026-10-21 — v0.9 session 5 (continued): Q32 applied, T9.14 screens part 1
+- **Q32 applied (D398):** Barrow-King and Mother softened, `hunt.trackPoints` 10/4, 15/6, 22/8, GDD §8.13/§7.11/§8.14 and their tests updated. **My mistake:** I pushed that commit after running only the content tests; the combat test still pinned Grave Chill at 2%, so that one commit was red. Fixed in the next commit; `npm run check` is now green (85 s).
+- **T9.14 built** (D399 Proposed). Core: `systems/events-view.ts` (card, boss sheet, party rows, preview words; every number carries its breakdown) and the command `events.seeScene`. UI: Events card under the Rift card, one badge on the Hold tab, the opening scene (the GDD's three paragraphs), boss sheet with the pool bar and marks, party picker with reasons, Suggest, preparation beside the Great Beast's weaknesses, and the preview with Why?. Debug panel: +1 token, Fill the bank, End all rests.
+- **Checked on the real build** (phone viewport, your save): scene → card → fill bank (badge, "full") → boss sheet → Suggest → preview → Send, **4 taps** from the Hold screen; no sideways scroll at 360, 900 and 1300 px. The card before the Citadel is covered by a core test, not a screenshot.
+- **Not here (T9.15):** playback with Skip and Log, result sheets, hunt list and sheets, the away-sheet line, shelves. After Send you see a one-line last result.
+- Open: Q29 (pool). Q28 for T9.17.

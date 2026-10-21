@@ -2,7 +2,7 @@ import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
 import { debugGrantLoot, debugReadyRanks } from './debug-depth';
 import { debugAddToken, debugEndRests, debugFillBank } from './debug-events';
-import { bossAttempt } from './boss';
+import { bossAttempt, seeEventsScene } from './boss';
 import { addStar, rankUp } from './hunter-depth';
 import { craftItem, equipFromStores, reworkItem, salvageItem, unequipItem } from './items';
 import { debugUnlit } from './unlit';
@@ -101,6 +101,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setActive(state, cmd.hunter, cmd.active);
     case 'gear.upgrade':
       return upgradeGear(state, cmd.hunter, cmd.slot);
+    case 'events.seeScene':
+      return seeEventsScene(state);
     case 'boss.attempt':
       return bossAttempt(state, cmd.party, cmd.prep, now);
     case 'hunt.attempt':
