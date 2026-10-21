@@ -30,9 +30,9 @@ describe('GDD §7.11 Events constants', () => {
   it('hunt.* and events.recentKeep start at the §7.11 values', () => {
     expect(value('hunt.unlockPoints')).toBe(100);
     expect(value('hunt.trackPoints')).toEqual({
-      I: { win: 12, loss: 4 },
-      II: { win: 20, loss: 6 },
-      III: { win: 32, loss: 10 },
+      I: { win: 10, loss: 4 },
+      II: { win: 15, loss: 6 },
+      III: { win: 22, loss: 8 },
     });
     expect(value('hunt.trackTiers')).toEqual([3, 4, 5]);
     expect(value('hunt.xpPerTier')).toBe(15);

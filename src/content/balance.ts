@@ -174,9 +174,9 @@ export const balance = {
   hunt: {
     unlockPoints: tunable(100),
     trackPoints: tunable({
-      I: { win: 12, loss: 4 },
-      II: { win: 20, loss: 6 },
-      III: { win: 32, loss: 10 },
+      I: { win: 10, loss: 4 },
+      II: { win: 15, loss: 6 },
+      III: { win: 22, loss: 8 },
     }),
     trackTiers: tunable([3, 4, 5]),
     xpPerTier: tunable(15),

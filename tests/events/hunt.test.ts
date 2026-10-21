@@ -75,7 +75,7 @@ describe('hunt.attempt', () => {
     expect(r.ok).toBe(true);
     expect(tokenBank(s, now).value.count).toBe(5);
     const rep = s.events.last?.hunt;
-    expect(rep?.points).toBe(rep?.result === 'win' ? 12 : 4);
+    expect(rep?.points).toBe(rep?.result === 'win' ? 10 : 4);
     expect(s.events.hunts.stoneback.points).toBe(rep?.points);
     for (const id of party) expect(s.events.rest[id]).toBe(s.events.clock.value + 24 * MS_PER_HOUR);
     expect(rep?.tier).toBe(3);

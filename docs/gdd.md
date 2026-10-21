@@ -1697,7 +1697,7 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 | Boss XP | per attendee per attempt, win or lose: `xpPerTier × visit tier` (inside the level cap) | `boss.xpPerTier` = 15 **(locked)** | 5.12.5 |
 | Boss preview | practice fights for the expected-damage preview | `boss.previewSamples` = 100 **(locked)** | 5.12.4 |
 | Hunt unlock | points a hunt needs to unlock its legendary hunter | `hunt.unlockPoints` = 100 | 5.12.6 |
-| Hunt points | per track: points for a win and for a loss | `hunt.trackPoints` = { I: { win: 12, loss: 4 }, II: { win: 20, loss: 6 }, III: { win: 32, loss: 10 } } | 5.12.6 |
+| Hunt points | per track: points for a win and for a loss | `hunt.trackPoints` = { I: { win: 10, loss: 4 }, II: { win: 15, loss: 6 }, III: { win: 22, loss: 8 } } | 5.12.6 |
 | Hunt tiers | the tier of tracks I, II and III | `hunt.trackTiers` = [3, 4, 5] | 5.12.6 |
 | Hunt XP | per attendee: `xpPerTier × track tier` for a win; the loss share of that for a loss | `hunt.xpPerTier` = 15, `hunt.lossXpShare` = 0.5 | 5.12.6 |
 | Hunt replay | reagents of the quarry's kind on a replay win | `hunt.replayReagents` = 1 | 5.12.6 |
@@ -2204,15 +2204,15 @@ Optional entries on the Archive's **Great Beasts** shelf (§5.12.8). Each is a *
 | Great Beast | Family (for oils and traits) | Pool (base tier) | Might | Armor | Speed | Atk |
 |---|---|---|---|---|---|---|
 | **The Lindworm of Velk Fjord** | Beasts & Wilds | `boss.poolBase` | 38 | 10 | 9 | 2 |
-| **The Barrow-King** | Restless Dead | `boss.poolBase` | 80 | 12 | 6 | 1 |
-| **The Mother of the River** | Water Spirits | `boss.poolBase` | 25 | 8 | 11 | 2 |
+| **The Barrow-King** | Restless Dead | `boss.poolBase` | 55 | 12 | 6 | 1 |
+| **The Mother of the River** | Water Spirits | `boss.poolBase` | 45 | 14 | 11 | 2 |
 
 **Resistances** (bold = weakness, ≥ 1.25):
 
 | Great Beast | Steel | Silver | Fire | Frost | Rune | Venom |
 |---|---|---|---|---|---|---|
 | The Lindworm of Velk Fjord | 0.75 | 1.0 | **1.5** | 0.5 | 1.0 | **1.25** |
-| The Barrow-King | 0.5 | **1.5** | **1.25** | 0.25 | **1.25** | 0 |
+| The Barrow-King | 0.75 | **1.5** | **1.25** | 0.5 | **1.25** | 0.25 |
 | The Mother of the River | 1.0 | **1.25** | 0.5 | **1.5** | 1.0 | 0.25 |
 
 **Abilities, drops and what it was:**
@@ -2220,7 +2220,7 @@ Optional entries on the Archive's **Great Beasts** shelf (§5.12.8). Each is a *
 | Great Beast | Ability (exact effect) | Reagent (milestones, kill) | What it was |
 |---|---|---|---|
 | The Lindworm of Velk Fjord | *Coil:* every 3rd action, its attack holds the target (they lose their next action). *Fjord Roar:* on its 1st action and every 5th after, instead of attacking, every hunter's meter is knocked back 20 | wolf fang | A long grey worm that lay in the fjord mouth until the herring ran thin. Velkvik says it was always there; Velkvik's grandmothers say it wasn't. |
-| The Barrow-King | *Barrow-Grip:* every 3rd action, its attack holds the target (they lose their next action). *Grave Chill:* on each of its actions, every standing hunter loses 2% of max Health as Frost damage, ignoring Armor | grave dust | A chieftain buried with his hall around him. The barrow doors were sealed with iron, and the iron didn't hold. |
+| The Barrow-King | *Barrow-Grip:* every 3rd action, its attack holds the target (they lose their next action). *Grave Chill:* on each of its actions, every standing hunter loses 1.5% of max Health as Frost damage, ignoring Armor | grave dust | A chieftain buried with his hall around him. The barrow doors were sealed with iron, and the iron didn't hold. |
 | The Mother of the River | *Drowning Song:* on its 1st, 5th, 9th… action, instead of attacking, it charms the lowest-Armor hunter, who loses their next action. *Weir-Pull:* every 4th action, instead of attacking, every hunter's meter is knocked back 25 | river pearl | The river's eldest drowned, who kept the others in order. The mills below her pools stopped grinding the year she woke. |
 
 **Hunter's notebook** (the Great Beasts shelf, under "What it was"; the voice of the setting primer §6.4):
@@ -2275,7 +2275,7 @@ Each hunt has one **quarry**, three **tracks** and one **legendary hunter**. Qua
 
 With the eleven starting hunters, each track has at least four legal hunters (counting the damage types and traits of §8.5); once the three legendary hunters arrive, more. The content test checks that **every track has at least four legal hunters among the starting eleven** and that no track needs a hunter that only an event gives.
 
-**Points** (`hunt.trackPoints`, §7.11): track I pays 12 for a win and 4 for a loss; II pays 20 and 6; III pays 32 and 10. A hunt unlocks at `hunt.unlockPoints` 100 (about six to eight attempts).
+**Points** (`hunt.trackPoints`, §7.11): track I pays 10 for a win and 4 for a loss; II pays 15 and 6; III pays 22 and 8. A hunt unlocks at `hunt.unlockPoints` 100 (about six to eight attempts).
 
 **Unlock lines** (shown on the unlock sheet):
 - Gest: *"Gest Tall-Torch has come down from the pass with a pine torch over his shoulder. 'The road's clear,' he says. 'I thought I'd see who cleared it.'"*

@@ -112,7 +112,7 @@ describe('Great Beasts (GDD §8.13)', () => {
     ]);
     expect(bosses['barrow-king'].abilities).toEqual([
       { kind: 'barrowGrip', name: 'Barrow-Grip', every: 3 },
-      { kind: 'graveChill', name: 'Grave Chill', maxHealthFraction: 0.02 },
+      { kind: 'graveChill', name: 'Grave Chill', maxHealthFraction: 0.015 },
     ]);
     expect(bosses['mother-of-the-river'].abilities).toEqual([
       { kind: 'drowningSong', name: 'Drowning Song', every: 4 },
