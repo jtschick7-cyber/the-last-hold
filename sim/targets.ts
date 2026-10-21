@@ -16,6 +16,7 @@ export const MILESTONES = [
   'v0.8',
   'v0.9',
   'v0.10',
+  'v0.11',
 ] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
@@ -343,6 +344,14 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.10',
   },
+  // v0.11 (GDD §6.2, D458, D464, D469; N approved by the owner after the T11.15a measurement). Judged on
+  // the median of the 5 Monday Standard seeds, in `sim.yml` only; its number is in REMEMBERING below.
+  {
+    id: 'remembering-reachable',
+    text: "The Remembering is reachable: all 40 names are found and Act VI's stand is applied by the end of cycle 6 (Standard)",
+    bounds: [],
+    enforcedFrom: 'v0.11',
+  },
 ];
 
 /**
@@ -357,6 +366,15 @@ export const ORDERS = {
   allChaptersByCycle: 8,
   /** Bounty share of the cycle-1 silver from the Keep on (GDD §6.3 #6). */
   minBountyShare: 0.7,
+} as const;
+
+/**
+ * The Remembering's reachability row (v0.11, D469). The measured median of the 5 Monday Standard seeds
+ * was cycle 6 (6, 6, 6, 6, 7). The species half of the gate is proved by the content test, not here.
+ */
+export const REMEMBERING = {
+  /** All 40 names found and Act VI's stand applied by the end of this cycle. */
+  byCycle: 6,
 } as const;
 
 /**
