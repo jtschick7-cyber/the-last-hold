@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { ORDER_IDS, ORDER_NAMES, type OrderId } from '../../content/orders';
 import { RESOURCE_IDS } from '../../content/resources';
 import type { Command } from '../../core/commands';
 import { snapshotOf } from '../../core/systems/hunters';
@@ -17,6 +18,8 @@ const HOUR = 60 * MINUTE;
 export const DebugSheet = () => {
   void version.value;
   const [minutes, setMinutes] = useState('90');
+  const [order, setOrder] = useState<OrderId>('moot');
+  const [amount, setAmount] = useState('10');
   const [hours, setHours] = useState('12');
   const [seed, setSeed] = useState(game().meta.gameSeed);
   const [note, setNote] = useState<string | null>(null);
@@ -241,6 +244,76 @@ export const DebugSheet = () => {
           onClick={() => run({ type: 'debug.runV05Arrival' })}
         >
           Meet Ilse again
+        </button>
+      </div>
+      <h3 class={styles.cardTitle} style={{ marginTop: 'var(--space-3)' }}>
+        Orders
+      </h3>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <select
+          value={order}
+          onChange={(e) => setOrder((e.currentTarget as HTMLSelectElement).value as OrderId)}
+        >
+          {ORDER_IDS.map((id) => (
+            <option key={id} value={id}>
+              {ORDER_NAMES[id]}
+            </option>
+          ))}
+        </select>
+        <input
+          type="number"
+          min="0"
+          max="500"
+          value={amount}
+          onInput={(e) => setAmount((e.currentTarget as HTMLInputElement).value)}
+          style={{ width: '5rem' }}
+        />
+      </div>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.ordersOpen', order })}
+        >
+          Open
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.ordersAddStanding', order, amount: Number(amount) })}
+        >
+          Add standing
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.ordersSetLevel', order, level: Number(amount) })}
+        >
+          Set level
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.ordersPlayChapter', order, chapter: Number(amount) })}
+        >
+          Play chapter
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.ordersOpenThird' })}
+        >
+          Open third seat
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.ordersClearCooldown' })}
+        >
+          Clear seat wait
+        </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.ordersReset' })}>
+          Reset Orders
         </button>
       </div>
       {note && <p class={styles.small}>{note}</p>}

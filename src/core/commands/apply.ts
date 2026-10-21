@@ -1,6 +1,15 @@
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
 import { debugGrantLoot, debugReadyRanks } from './debug-depth';
+import {
+  debugOrdersAddStanding,
+  debugOrdersClearCooldown,
+  debugOrdersOpen,
+  debugOrdersOpenThird,
+  debugOrdersPlayChapter,
+  debugOrdersReset,
+  debugOrdersSetLevel,
+} from './debug-orders';
 import { debugAddToken, debugEndRests, debugFillBank } from './debug-events';
 import { bossAttempt, seeEventsScene } from './boss';
 import { addStar, rankUp } from './hunter-depth';
@@ -135,6 +144,20 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return finishOpening(state, cmd.order, cmd.seatIt);
     case 'orders.setSeats':
       return setSeats(state, cmd.orders);
+    case 'debug.ordersOpen':
+      return debugOrdersOpen(state, cmd.order, now);
+    case 'debug.ordersAddStanding':
+      return debugOrdersAddStanding(state, cmd.order, cmd.amount);
+    case 'debug.ordersSetLevel':
+      return debugOrdersSetLevel(state, cmd.order, cmd.level);
+    case 'debug.ordersOpenThird':
+      return debugOrdersOpenThird(state);
+    case 'debug.ordersClearCooldown':
+      return debugOrdersClearCooldown(state);
+    case 'debug.ordersPlayChapter':
+      return debugOrdersPlayChapter(state, cmd.order, cmd.chapter, now);
+    case 'debug.ordersReset':
+      return debugOrdersReset(state);
     case 'debug.skip':
       return skip(state, cmd.ms, now);
     case 'debug.runPolicy':

@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.11 where the perk texts show (done, pushed).
-- **Next:** T10.12, debug commands.
+- **Last task:** T10.12 debug commands (done, pushed).
+- **Next:** T10.13, screens part 1 (the card, the badge, the seat step).
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -321,3 +321,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
 - **Next:** T10.12.
 - **D430 accepted by the owner** (logged as D431 with D428 and D429). Nothing is waiting on the owner; Q35 is informational.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.12 debug commands
+- **Seven debug commands** (`core/commands/debug-orders.ts`), each a `debug.orders*` command through `apply()` and a button in the debug panel's new Orders block: open an Order, add standing, set a level, open the third seat, clear the seat wait, play a chapter, reset the Orders. All set `debugUsed`.
+- **How they read:** standing added goes in as "Brought from before the Orders". Set level only raises (levels never drop; Reset is the way back). Play chapter opens the Order and raises its level if needed, counts the earlier chapters as read, reads that one with the Orders seated as they are, and ignores a chapter's extra condition. **None of them seats an Order.**
+- **Reachable only from the panel:** the panel is already hidden unless the page has `?debug` or is a dev build; a test checks that nothing else in `src/ui` sends these commands.
+- Tests: `tests/orders/debug-commands.test.ts` (9). `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Not seen in a browser** (the panel buttons are plain additions to an existing sheet).
+- **Next:** T10.13.

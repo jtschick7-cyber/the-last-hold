@@ -90,6 +90,14 @@ export type Command =
   | { type: 'orders.finishOpening'; order: OrderId; seatIt: boolean }
   /** The new-warden step and the load sheet: sets all seats, with no cooldown (D412). */
   | { type: 'orders.setSeats'; orders: OrderId[] }
+  // Debug, Orders (plan T10.12): the debug panel only.
+  | { type: 'debug.ordersOpen'; order: OrderId }
+  | { type: 'debug.ordersAddStanding'; order: OrderId; amount: number }
+  | { type: 'debug.ordersSetLevel'; order: OrderId; level: number }
+  | { type: 'debug.ordersOpenThird' }
+  | { type: 'debug.ordersClearCooldown' }
+  | { type: 'debug.ordersPlayChapter'; order: OrderId; chapter: number }
+  | { type: 'debug.ordersReset' }
   // Debug (technical design §15): only offered with ?debug or in dev builds.
   | { type: 'debug.skip'; ms: number }
   /** Plays a simulator policy over the last `ms`, then catches up to now (technical design §15). */

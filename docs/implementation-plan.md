@@ -382,7 +382,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - The heads' lines at the end of notices and the Villages panel's "What the heads say about you" (Moot); the Book hint or elder's note (Grey Wives); the Names view's extra sentence or remark (Bell-Watchers); the Accounts addition (Quenchers). All **seated only.**
   - *Acceptance:* 1. Each shows only while its Order is seated and at or above its level. 2. The Names sentence appears only for names still missing, equals the rule's output, and a remark appears when the group is found. 3. The Accounts addition appears only once "What the hearth leaves" exists in the save. 4. The Book hint appears while its brew is unknown, the elder's note once it is known. 5. An unseated Order shows none.
 
-- [ ] **T10.12 — Debug commands** *(debug panel)*
+- [x] **T10.12 — Debug commands** *(debug panel)*
   - `orders.open <order>`, `orders.addStanding <order> <n>`, `orders.setLevel <order> <n>`, `orders.openThird`, `orders.clearCooldown`, `orders.playChapter <order> <n>`, `orders.reset`. Debug builds and the debug panel only; they set `debugUsed`.
   - *Acceptance:* 1. Each command works from the panel and is covered by a test. 2. None is reachable in a normal build without the debug panel.
 
