@@ -70,7 +70,7 @@ describe('the v9 → v10 migration on the owner’s real save', () => {
   const after = loaded.state;
 
   it('is a real v0.9-era save: schema 9, rules version 5, cycle 19, Bastion, 11 hunters', () => {
-    expect(SCHEMA_VERSION).toBe(10);
+    expect(SCHEMA_VERSION).toBeGreaterThanOrEqual(10);
     expect(old.schemaVersion).toBe(9);
     expect(old.rulesVersion).toBe(5);
     expect(before.cycle).toEqual({ number: 19, age: 'bastion' });
@@ -198,7 +198,7 @@ describe('a save from further back also arrives with Orders', () => {
     '%s migrates to v10 with a level-capped start',
     (f) => {
       const r = loadFull(readFixture(f));
-      expect(r.state.meta.schemaVersion).toBe(10);
+      expect(r.state.meta.schemaVersion).toBe(SCHEMA_VERSION);
       for (const id of ORDER_IDS)
         expect(r.state.orders.start[id]).toBeLessThanOrEqual(THRESHOLD_1[id]);
       expect(r.state.orders.opened).toEqual({});

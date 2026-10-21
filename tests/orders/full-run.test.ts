@@ -8,7 +8,7 @@ import { apply } from '../../src/core/commands/apply';
 import type { Command } from '../../src/core/commands';
 import { encodeSaveFile, loadEnvelope, makeEnvelope } from '../../src/core/save';
 import { catchUpNow } from '../../src/core/sim/offline';
-import type { GameState } from '../../src/core/state/game-state';
+import { SCHEMA_VERSION, type GameState } from '../../src/core/state/game-state';
 import {
   ordersShelf,
   readChapterText,
@@ -118,7 +118,7 @@ describe('the played fixture (v10-played.json: the migrated owner save, played 7
     const s = loadFixture('v10-played.json');
     expect(Object.keys(s.orders.opened).sort()).toEqual([...ORDER_IDS].sort());
     expect(s.orders.seats).toEqual([]); // the Standard player never seats an Order
-    expect(s.meta.schemaVersion).toBe(10);
+    expect(s.meta.schemaVersion).toBe(SCHEMA_VERSION);
     const r = loadEnvelope(JSON.parse(encodeSaveFile(makeEnvelope(s, s.time))));
     if (!r.ok) throw new Error(r.error);
     expect(r.value.state).toEqual(s);

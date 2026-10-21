@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge); the v0.11 flesh-out is applied. The plan names `milestone/v0.11`; the preview build follows `milestone/*`, so the owner decides when it is created (see the last entry).
+- **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** the v0.11 docs commit (flesh-out applied).
-- **Next:** T11.1 save v11 (the `remembering` block and the v10 → v11 migration).
+- **Last task:** T11.1 save v11 (the `remembering` block and the v10 → v11 migration).
+- **Next:** T11.2 the gate and the content tests.
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -402,4 +402,13 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Sweep (plan step 4):** `Proposed` rows from D357 up that D446 does **not** name: D367–D384, D387–D399, D402, D403. Not edited; asked the owner.
 - **Checks:** `npm run check` green (165 files, 2,710 tests, about 70 s with the simulator set).
 - **Next:** T11.1. No code was written. The preview does not change.
+
+## 2026-10-21 — v0.11 session 2: T11.1 save v11
+- **D468 logged:** the owner accepted the remaining `Proposed` rows (D367–D384, D387–D399, D402, D403) and chose to build on the current branch for now.
+- **Built:** schema 11; `remembering` (`nearSeen`, `readyNoted`, `endings`) with `src/core/state/remembering-state.ts`; `migration-v11.ts` (empty block, nothing else touched); the guard in `validate-remembering.ts` (unknown ending ids drop with a warning; a repeat, a `vigil` after `remember`, a cycle that does not exist or a negative time is refused; order is array order, `at` is never compared).
+- **Fixtures:** `v11.json` (v10.json migrated; `scripts/make-v11-fixture.ts`) is needed by the existing "a fixture for every version" test. The owner's new save of today is added as `v9-fresh.json` (a real v9 file: cycle 1, almost nothing built), so the whole chain runs on it. `v11-played.json` is still due at T11.5.
+- **Tests:** `tests/saves/v11-migration.test.ts`: both v10 fixtures migrate, validate, round-trip; empty block; the step leaves `orders` and everything else identical; golden fights and recorded stands replay; schema 12 is refused; guard cases.
+- **Test edits (each a literal "10" that meant "the current schema"):** `tests/saves/v10-migration.test.ts` (two) and `tests/orders/full-run.test.ts` (one) now read `SCHEMA_VERSION`. Nothing loosened.
+- **Deferred to T11.2:** dropping an ending recorded before Act VI's stand, and warning when a stored ending's gate no longer holds; both need the gate and `actVIStandApplied`, which T11.2 builds.
+- **Next:** T11.2.
 

@@ -1,0 +1,335 @@
+{
+  "app": "the-last-hold",
+  "schemaVersion": 9,
+  "rulesVersion": 5,
+  "savedAt": 1792610040555,
+  "state": {
+    "meta": {
+      "schemaVersion": 9,
+      "gameSeed": "0458b0fce5e21a51",
+      "createdAt": 1792028626087,
+      "lastSeen": 1792610040359,
+      "clockHighWater": 1792610040359,
+      "debugUsed": false
+    },
+    "time": 1792610040359,
+    "cycle": {
+      "number": 1,
+      "age": "hamlet"
+    },
+    "resources": {
+      "food": 20004.630599999993,
+      "wood": 26641.174133333334,
+      "iron": 0,
+      "silver": 0
+    },
+    "peasants": {
+      "total": 3,
+      "jobs": {
+        "farmer": 1,
+        "woodcutter": 2,
+        "miner": 0,
+        "silver-digger": 0
+      },
+      "autoSettle": true,
+      "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
+      "lastSettleAt": 0
+    },
+    "buildings": {
+      "hearth-hall": 1,
+      "cottage": 0,
+      "farm": 1,
+      "woodcutters-camp": 1,
+      "mine": 0,
+      "silver-seam": 0,
+      "mill": 0,
+      "sawpit": 0,
+      "smithy": 0,
+      "bell-tower": 0,
+      "barracks": 0,
+      "trophy-hall": 0,
+      "hunters-lodge": 0,
+      "alchemists-hut": 0,
+      "herb-garden": 0,
+      "walls": 0,
+      "watchtower": 0
+    },
+    "hunters": {
+      "halvar": {
+        "level": 1,
+        "xp": 0,
+        "weapon": null,
+        "armor": null,
+        "rank": "apprentice",
+        "stars": 0,
+        "talents": [],
+        "keepsake": null,
+        "recovery": null,
+        "record": {
+          "won": 0,
+          "lost": 0
+        }
+      },
+      "zora": {
+        "level": 1,
+        "xp": 0,
+        "weapon": null,
+        "armor": null,
+        "rank": "apprentice",
+        "stars": 0,
+        "talents": [],
+        "keepsake": null,
+        "recovery": null,
+        "record": {
+          "won": 0,
+          "lost": 0
+        }
+      }
+    },
+    "roster": {
+      "active": ["halvar", "zora"]
+    },
+    "board": {
+      "opened": false,
+      "open": [],
+      "nextArrivalAt": null,
+      "arrivals": 0,
+      "tierWins": [0, 0, 0, 0, 0]
+    },
+    "bestiary": {},
+    "stores": {
+      "grave-oil": 0,
+      "drowned-bane-oil": 0,
+      "thornbane-oil": 0,
+      "mending-draught": 0,
+      "hardwood-tonic": 0,
+      "quickfoot-tincture": 0,
+      "fire-pot": 0,
+      "frost-pot": 0,
+      "saltburst": 0,
+      "hidebane-oil": 0,
+      "wrights-oil": 0,
+      "coldwater-draught": 0,
+      "owl-eye-drops": 0,
+      "steadfast-draught": 0,
+      "poppy-smoke": 0,
+      "yarrow": 0,
+      "mugwort": 0,
+      "juniper": 0,
+      "honeycomb": 0,
+      "hares-foot": 0,
+      "pitch": 0,
+      "rime-salt": 0,
+      "grave-dust": 0,
+      "river-pearl": 0,
+      "thornwood": 0,
+      "wolf-fang": 0,
+      "noon-poppy": 0
+    },
+    "queues": {
+      "brewing": [],
+      "investigation": []
+    },
+    "garden": {
+      "nextAt": null
+    },
+    "running": [],
+    "results": [],
+    "fallen": [],
+    "scenes": ["opening"],
+    "log": {
+      "recentFights": []
+    },
+    "stats": {
+      "buildingsBought": 0,
+      "peasantsSettled": 0,
+      "contractsWon": 0,
+      "contractsLost": 0,
+      "trophies": 0,
+      "trophiesSpent": 0,
+      "bountySilver": 0,
+      "kills": {},
+      "winsByLocation": {}
+    },
+    "threat": 0,
+    "embers": 0,
+    "upgrades": {
+      "kept-coals": 0,
+      "full-larder": 0,
+      "young-families": 0,
+      "old-hands": 0,
+      "drill-yard": 0,
+      "village-goodwill": 0,
+      "swift-roads": 0,
+      "late-lantern": 0
+    },
+    "relics": [],
+    "arrivalDue": false,
+    "cycles": [
+      {
+        "number": 1,
+        "startedAt": 1792028626087,
+        "ranks": {
+          "hamlet": 1792028626087
+        },
+        "contractThreat": {
+          "added": 0,
+          "removed": 0
+        },
+        "stand": null,
+        "act": 1,
+        "warden": "Slavomír",
+        "standPool": null
+      }
+    ],
+    "story": {
+      "arrivalDue": false,
+      "ilseAt": null,
+      "acts": [
+        {
+          "act": 1,
+          "cycle": 1,
+          "startedAt": 1792028626087,
+          "wins": 0,
+          "winsByVillage": {},
+          "ruinWins": 0,
+          "winsByFamily": {}
+        }
+      ],
+      "documents": [],
+      "names": [],
+      "ribbonshades": 0,
+      "peakLevels": {
+        "halvar": 1,
+        "zora": 1
+      },
+      "letters": [],
+      "trust": {
+        "dubno-ford": {
+          "level": "wary",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        },
+        "kozly-hollow": {
+          "level": "cold",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        },
+        "mirograd": {
+          "level": "hopeful",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        },
+        "velkvik": {
+          "level": "wary",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        },
+        "ravenfell": {
+          "level": "cold",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        }
+      },
+      "unread": []
+    },
+    "book": {
+      "properties": {
+        "yarrow": [0, 1],
+        "mugwort": [0, 1],
+        "juniper": [0, 1],
+        "honeycomb": [0],
+        "hares-foot": [0],
+        "pitch": [0],
+        "rime-salt": [0, 1],
+        "grave-dust": [0],
+        "river-pearl": [0],
+        "thornwood": [0, 1],
+        "wolf-fang": [],
+        "noon-poppy": []
+      },
+      "tried": []
+    },
+    "skills": {
+      "alchemy": 0,
+      "smithing": 0,
+      "lore": 0,
+      "command": 0
+    },
+    "delve": {
+      "run": null,
+      "result": null,
+      "runs": 0,
+      "riftglass": 0,
+      "allowance": 0,
+      "allowanceAt": null,
+      "sceneSeen": false,
+      "unlitOpen": false,
+      "shop": {
+        "lateHours": 0,
+        "traitsBought": [],
+        "traitsActive": [],
+        "cosmetics": [],
+        "chosenStart": false,
+        "reroll": false
+      },
+      "deep": {},
+      "relics": [],
+      "echoes": [],
+      "taken": {},
+      "kills": {},
+      "guardiansBeaten": {}
+    },
+    "events": {
+      "opened": false,
+      "sceneSeen": false,
+      "clock": {
+        "value": 11224,
+        "high": 1792610040359
+      },
+      "tokens": {
+        "count": 0,
+        "at": null
+      },
+      "attempts": 0,
+      "rest": {},
+      "boss": {
+        "visit": 0,
+        "tier": null,
+        "pool": null,
+        "paid": 0,
+        "attempts": 0
+      },
+      "hunts": {
+        "stoneback": {
+          "points": 0,
+          "unlocked": false
+        },
+        "mara": {
+          "points": 0,
+          "unlocked": false
+        },
+        "likho": {
+          "points": 0,
+          "unlocked": false
+        }
+      },
+      "last": null,
+      "recent": []
+    },
+    "items": [],
+    "itemSeq": 0,
+    "legendaries": [],
+    "settings": {
+      "theme": "dark",
+      "bestBuyHint": true,
+      "rateUnit": "minute",
+      "reduceMotion": "system"
+    }
+  }
+}
