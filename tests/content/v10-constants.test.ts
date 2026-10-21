@@ -36,10 +36,10 @@ describe('GDD §7.12 Orders constants', () => {
     expect(value('orders.delveWeeklyCap')).toBe(20);
     expect(value('orders.triumphantChunk')).toBe(25);
     expect(value('orders.levelThresholds')).toEqual({
-      moot: [10, 40, 100, 200],
-      greyWives: [30, 100, 250, 500],
-      bellWatchers: [25, 75, 160, 300],
-      quenchers: [20, 60, 140, 260],
+      moot: [5, 40, 100, 200],
+      greyWives: [10, 70, 180, 330],
+      bellWatchers: [5, 50, 120, 250],
+      quenchers: [10, 40, 100, 180],
     });
     expect(value('orders.backfillCapLevel')).toBe(1);
     expect(value('orders.swapCooldown')).toBe(24 * 3600);

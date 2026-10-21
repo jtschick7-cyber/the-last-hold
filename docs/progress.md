@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.17 the Orderer policy and its shard (done, pushed).
-- **Next:** T10.18, the simulator rows (measure first, then ask the owner to approve them; own commit).
+- **Last task:** T10.18 the simulator rows (done, pushed).
+- **Next:** T10.19, tune, smoke and the preview build (tunables only; then the owner's playtest).
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -371,3 +371,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **D438 (Proposed):** the Quenchers' perk acts on Threat over a whole cycle, so a seat flipped at the stand changes nothing; "perk on and off" is read as the cycles where they sat against those where they did not, with Embers and Threat for each. Say if you want a paired run instead.
 - **Not done:** the six rows (T10.18, after you approve them) and `sim:accept` (after your playtest).
 - **Next:** T10.18.
+
+## 2026-10-21 — v0.10 session 3 (continued): T10.18 simulator rows
+- **Six rows in `sim/targets.ts`, own commit, after your approval** (D443); checks in `sim/checks/v010.ts` (+ tests). Milestone is now v0.10. Full suite (55 runs, 388 s on this 4-core machine): all 54 rows pass, every old group unchanged.
+- **Row (a) read differently (D440, your answer):** only Orders the Orderer seats at their opening are judged; the Grey Wives wait 77.5 h for a seat (new warden) and are reported. No tunable could fix it.
+- **Tuning (D441, Proposed, tunables only):** level thresholds lowered (Moot [5,40,100,200], Grey Wives [10,70,180,330], Bell-Watchers [5,50,120,250], Quenchers [10,40,100,180]). Before: Grey Wives level 4 in cycle 8, Quenchers 7 to 8. After: cycles 5, 3, 3, 5; all 16 chapters by cycle 5 (floor: the Quenchers open in cycle 5). Silver 73.1% (thin), provisions 26.3%, stands 372 Embers with the Quenchers seated against 376 without. Weights, chunk, cap, perks untouched.
+- **Old tests edited with your yes (D442):** the §7.12 constants test, two migration tests, and the `start` block of `v10.json`. Nothing loosened.
+- **Seen, for the playtest:** with the lower thresholds the Orders may come fast (all levels by cycle 3 to 5); say if you want it slower and I retune in T10.19.
+- `npm run check` green (2,709 tests). Golden fights and recorded stands unchanged. rulesVersion 5.
+- **Next:** T10.19.

@@ -406,7 +406,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - `sim/policies/orderer.ts` (GDD §6.1), `sim/shards.ts` gains the `orders` shard (Monday seeds only), report fields (first-open times, chapter-1 times, level times, chapter times, the shares, the stand results with the perk on and off, Embers per stand).
   - *Acceptance:* 1. The Orderer plays a 3-cycle run in 60 s or less. 2. Standard, Light, Heavy, Opening, the Delver and the Eventer **never seat an Order** and their reports equal the v0.9 baseline. 3. The orders shard stays within 5 min. 4. The Orderer taps "Seat it" at an opening when a seat is free, takes the third seat the moment it opens, never swaps mid-cycle, and its Delve runs exercise the Delve source and its window.
 
-- [ ] **T10.18 — Simulator rows** *(sim/targets.ts, own commit; sim/checks/v010.ts)*
+- [x] **T10.18 — Simulator rows** *(sim/targets.ts, own commit; sim/checks/v010.ts)*
   - The six owner-approved rows of GDD §6.2 (table below). Measure first with the sketches; if a row fails, tune **only tunables** (the failing Order's thresholds and weights first; the Triumphant chunk last, since it moves every Order) and re-measure.
   - *Acceptance:* 1. All rows pass on the **median of the 5 Monday seeds.** 2. The old rows pass on the old baselines, unchanged. 3. **If no reasonable tunable passes a row, stop and write it to `docs/questions.md`.** 4. The stand-rows row reports Embers per stand with and without the Quenchers' perk.
 
@@ -422,7 +422,7 @@ The Remembering and any ending (v0.11, D415); any silver, fight or gate effect f
 
 | Row | Judged on | Threshold |
 |---|---|---|
-| First chapter in time | median of the 5 Monday seeds, Orderer | chapter 1 of each Order plays within 24 h of its Order opening |
+| First chapter in time | median of the 5 Monday seeds, Orderer | chapter 1 of each Order the Orderer seats at its opening plays within 24 h of its Order opening (D440) |
 | Every Order reaches level 4 | same | by the end of cycle 6 |
 | All 16 chapters have played | same | by the end of cycle 8 |
 | Silver check #6 with Orders | same | at least 70% of silver from bounties |

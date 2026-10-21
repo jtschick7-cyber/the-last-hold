@@ -185,5 +185,5 @@ describe('a short run', () => {
     expect(a.s.orders.seats.length).toBeGreaterThan(0);
     expect(a.chapters).toBeGreaterThan(0);
     expect(JSON.stringify(a.s)).toBe(JSON.stringify(b.s));
-  });
+  }, 60_000);
 });

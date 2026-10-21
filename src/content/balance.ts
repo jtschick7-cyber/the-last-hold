@@ -360,10 +360,10 @@ export const balance = {
     delveWeeklyCap: tunable(20), // sketch
     triumphantChunk: tunable(25), // sketch
     levelThresholds: tunable({
-      moot: [10, 40, 100, 200],
-      greyWives: [30, 100, 250, 500],
-      bellWatchers: [25, 75, 160, 300],
-      quenchers: [20, 60, 140, 260],
+      moot: [5, 40, 100, 200],
+      greyWives: [10, 70, 180, 330],
+      bellWatchers: [5, 50, 120, 250],
+      quenchers: [10, 40, 100, 180],
     }), // sketch
     backfillCapLevel: tunable(1),
     swapCooldown: tunable(24 * HOUR, 'seconds'), // 24 h

@@ -474,7 +474,7 @@ export const runOne = (spec: RunSpec): RunResult => {
         // legendary hunter unlocked (D404), up to the 42-day cap.
         eventAttempts.some((a) => a.kind === 'boss' && a.killed) &&
         eventAttempts.some((a) => a.unlockedHunt)
-      : spec.policy !== 'standard' ||
+      : (spec.policy !== 'standard' && spec.policy !== 'orderer') ||
         ([...STORY.act6.docs, STORY.act6.nextWarden.doc].every((id) =>
           s.story.documents.some((d) => d.id === id),
         ) &&
@@ -539,7 +539,9 @@ export const runOne = (spec: RunSpec): RunResult => {
         st.cycle.number > spec.minCycles &&
         (!spec.untilContent ||
           // The Orderer plays on until every chapter has played (GDD §6.1, D417), up to the cap.
-          (spec.policy === 'orderer' ? allChaptersRead(st) : contentDone(st) && actSixSeen(st)))),
+          (spec.policy === 'orderer'
+            ? allChaptersRead(st) && actSixSeen(st)
+            : contentDone(st) && actSixSeen(st)))),
     onCheckIn: (rec, s) => {
       // Income: the net change while away, plus the food that settling spent.
       const settles = rec.away.events.filter((e) => e.type === 'settle');

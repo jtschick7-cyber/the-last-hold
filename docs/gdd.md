@@ -1536,7 +1536,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Tokens not wasted *(D367, D404)* | A full bank at no more than **35%** of the Eventer's **unlocked** check-ins (median of the Monday seeds). *(D404, owner: was 15%; measured median about 29%)* | v0.9 |
 | Act VI lands in its cycle *(D383, proposed)* | D6-01 to D6-06 found by the end of cycle 6; D6-07 with the next warden (Standard); D6-08 to D6-10 reported only | v0.9 |
 | Dross-Tide stand probe *(D383, proposed)* | In Act VI-era cycles, Standard's stand reaches the Held band (12 or more waves) at the median of the Monday seeds, and the preview's range still agrees with the real result | v0.9 |
-| *Proposed:* First chapter in time *(D417)* | Chapter 1 of each Order plays within 24 h of its Order opening (Orderer, median of the 5 Monday seeds) | v0.10 |
+| *Proposed:* First chapter in time *(D417, D440)* | Chapter 1 of each Order **the Orderer seats at its opening** plays within 24 h of that Order opening (Orderer, median of the 5 Monday seeds); an Order left without a seat waits for the next new warden by design and is reported, not judged | v0.10 |
 | *Proposed:* Every Order reaches level 4 *(D417)* | By the end of cycle 6 (Orderer, median of the 5 Monday seeds) | v0.10 |
 | *Proposed:* All 16 chapters have played *(D417)* | By the end of cycle 8 (Orderer, median of the 5 Monday seeds) | v0.10 |
 | *Proposed:* Silver check #6 with Orders *(D417)* | At least 70% of silver from bounties (Orderer, median of the 5 Monday seeds) | v0.10 |
@@ -1831,7 +1831,7 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 | Delve window | a window starts at the first counted floor and lasts this long on the event clock | `orders.delveWindow` = 7 days | 5.13.2 |
 | Delve weekly cap | the most standing Delve floors add in one window | `orders.delveWeeklyCap` = 20 *(sketch)* | 5.13.2 |
 | Triumphant stand | standing added to **every Order** (open or not) by each Triumphant stand | `orders.triumphantChunk` = 25 *(sketch)* | 5.13.2 |
-| Level thresholds | standing needed for levels 1 to 4 | `orders.levelThresholds` = { moot: [10, 40, 100, 200], greyWives: [30, 100, 250, 500], bellWatchers: [25, 75, 160, 300], quenchers: [20, 60, 140, 260] } *(sketch)* | 5.13.2 |
+| Level thresholds | standing needed for levels 1 to 4 | `orders.levelThresholds` = { moot: [5, 40, 100, 200], greyWives: [10, 70, 180, 330], bellWatchers: [5, 50, 120, 250], quenchers: [10, 40, 100, 180] } *(measured at T10.18, D441)* | 5.13.2 |
 | Migration cap | a save migrated from v9 starts each Order **no higher than** this level (its backfilled standing is capped at that level's threshold) | `orders.backfillCapLevel` = 1 | 5.13.2 |
 | Swap cooldown | after a seat change mid-cycle, the next change waits this long on the event clock (`eventNow`); a new warden's arrival clears it | `orders.swapCooldown` = 24 h | 5.13.4 |
 | Moot perk | contract provisions food × (1 − step × level) | `orders.perk.moot.foodStep` = 0.03 (level 4: −12%) | 5.13.5 |

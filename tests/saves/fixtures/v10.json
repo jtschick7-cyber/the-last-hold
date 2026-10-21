@@ -7334,10 +7334,10 @@
         }
       },
       "start": {
-        "moot": 10,
-        "greyWives": 30,
-        "bellWatchers": 25,
-        "quenchers": 20
+        "moot": 5,
+        "greyWives": 10,
+        "bellWatchers": 5,
+        "quenchers": 10
       },
       "triumphant": 0,
       "delveWindow": null,

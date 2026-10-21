@@ -158,10 +158,10 @@ describe('the v9 → v10 migration on the owner’s real save', () => {
       if (c.stand) c.stand.band = i === 0 ? 'triumphant' : 'broken';
     });
     expect(loadFull(env).state.orders.start).toEqual({
-      moot: 10,
-      greyWives: 25,
-      bellWatchers: 25,
-      quenchers: 20,
+      moot: 5,
+      greyWives: 10,
+      bellWatchers: 5,
+      quenchers: 10,
     });
   });
 
