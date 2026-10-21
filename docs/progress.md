@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.15 art (built and pushed; waiting for the owner's approval before the box is ticked).
-- **Next:** T10.16 (the scripted run, the played fixture, the smoke) once the art is approved or changes are asked for; T10.16 does not depend on the art.
+- **Last task:** T10.16 scripted run, played fixture and smoke (done, pushed).
+- **Next:** T10.17, the Orderer policy and its shard (sim/).
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -352,3 +352,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Not ticked:** the acceptance says the owner has seen the placeholders and the art. A picture of all nine is in `docs/orders-art-preview.png`; the full contact sheet is `public/contact-sheet.html`. Tell me what to change, or approve them.
 - Tests: `tests/tools/orders-art.test.ts` (redraws each file and compares, size, palette). The older art test was not touched. `npm run check` green (2,681). Golden fights and recorded stands unchanged.
 - **Next:** T10.16.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.15 approved, T10.16 done
+- **Art approved by the owner** (D434); T10.15 ticked.
+- **T10.16:** `tests/orders/full-run.test.ts`: from the migrated fixture (`v10.json`) the Orders are opened by the load path (the Quenchers by the debug command if the save is not past them), levelled with the debug commands, and every one of the 16 chapters is read in order with the player's own seat and read commands. Both endings of the Moot's and the Quenchers' chapter 4 (A with both seated, B without), the shelf, the badge clearing, a round-trip and "same fixture and commands, same state" are checked. New fixture `v10-played.json` (the migrated owner save, load path and 72 h of the Standard player; no Order seated), made by `scripts/make-v10-played-fixture.ts`, with its own load, round-trip and play-through tests.
+- **Browser smoke:** a new phone test (seat the Moot in the step, its first chapter opens and is read, a seat change from the card, reload keeps it). **Whole phone browser suite: 24 of 24 pass.** WebKit's determinism run could not start here (the browser is not installed in this container); it does not touch the Orders.
+- **Fixed in my own code:** Close on a chapter was undone (the next chapter opened at once). A chapter now opens by itself once on load and again after a seat change; Close stops there, Next goes on, and the card shows "A chapter can be read" for the rest.
+- **Owner-approved test edits (D435, D436):** the older opening test skips played saves (and a new check names them); a close-scene helper in 10 older browser tests; the Events test checks the Events card's own dot. **My mistake:** I had not run the whole browser suite since T10.13, so eight older tests were broken for two tasks and I found them only now.
+- `npm run check` green (2,692). Golden fights and recorded stands unchanged.
+- **Next:** T10.17.

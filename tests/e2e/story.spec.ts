@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { begin, onwardAll, tab } from './helpers';
+import { begin, closeOrdersScenes, onwardAll, tab } from './helpers';
 
 // Plan T5.11b3: the story across the game, on the real production build.
 
@@ -24,6 +24,7 @@ test('a won contract brings Ilse, and the Archive opens her first document', asy
   await expect(page.getByRole('dialog', { name: 'Ilse Marrow' })).toBeVisible({ timeout: 45_000 });
   await expect(page.getByText(/Where do you want the archive/)).toBeVisible();
   await onwardAll(page);
+  await closeOrdersScenes(page);
 
   await tab(page, 'Archive').click();
   await page.getByRole('button', { name: 'Library' }).click();
@@ -47,6 +48,7 @@ test('the stand’s band, the testament, naming the new warden, and the Roll', a
   await page.getByRole('button', { name: 'Unlock Bastion', exact: true }).click();
   await page.getByRole('button', { name: 'Close' }).first().click();
   await onwardAll(page);
+  await closeOrdersScenes(page);
 
   await tab(page, 'Hold').click();
   await page.getByRole('button', { name: 'Rank ▸' }).click();

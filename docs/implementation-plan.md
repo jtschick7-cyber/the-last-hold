@@ -398,7 +398,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - Four order marks and an Orders icon, and placeholders for the four opening scenes; the manifest fallback stays for anything missing. Owner supplies or approves.
   - *Acceptance:* every new entry has art or a manifest fallback; the owner has seen the placeholders and the real art.
 
-- [ ] **T10.16 — A scripted full run, the played fixture and the smoke** *(tests)*
+- [x] **T10.16 — A scripted full run, the played fixture and the smoke** *(tests)*
   - A deterministic test from the migrated fixture to every chapter read (using the debug commands), writing `tests/saves/fixtures/v10-played.json` (that save played 72 h under a fixed seed); the Playwright smoke steps for one seat change and one chapter on the phone viewport.
   - *Acceptance:* 1. The scripted run reads all sixteen chapters in order with the right variants. 2. The smoke passes on the phone viewport. 3. The run is repeatable (same seed, same state).
 
