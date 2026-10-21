@@ -5,6 +5,7 @@ import type { DelveResult } from '../state/delve-state';
 import { decideCheckIn, type CheckInDecision } from './decide';
 import { delveSession } from './delver';
 import { eventerMoves, type EventerCheckIn } from './eventer';
+import { ordererMoves, type OrdererCheckIn } from './orderer';
 import { freshMemory, type PolicyMemory } from './long-night';
 import { isDelveSession, nextCheckIn, type PolicyId } from './schedules';
 
@@ -22,6 +23,8 @@ export interface CheckInRecord extends CheckInDecision {
   readonly delveResults?: readonly DelveResult[];
   /** What the Eventer did with its tokens (GDD §6.1, D367); absent for every other policy. */
   readonly events?: EventerCheckIn;
+  /** What the Orderer did with the Orders (GDD §6.1, D417); absent for every other policy. */
+  readonly orders?: OrdererCheckIn;
   /** The preview a stand made at this check-in was made on (waves, median and 10th–90th range). */
   readonly standPreview?: { readonly median: number; readonly p10: number; readonly p90: number };
 }
@@ -76,12 +79,40 @@ export const play = (state: GameState, opts: PlayOptions): void => {
       opts.policy === 'eventer'
         ? eventerMoves(state, at, (cmd) => apply(state, cmd, at).ok)
         : undefined;
+    // GDD §6.1 (D417): the Orderer takes its seats and reads its chapters first; every other policy
+    // never touches the Orders, so their runs are exactly as before.
+    const orders =
+      opts.policy === 'orderer'
+        ? ordererMoves(state, (cmd) => apply(state, cmd, at).ok, false)
+        : undefined;
+    const cycleBefore = state.cycle.number;
     const decision = decideCheckIn(state, checkInAfter(checkInAfter(at)) - at, memory);
+    let standSeats: OrdererCheckIn['seats'] | undefined;
     for (const cmd of decision.commands) {
+      if (opts.policy === 'orderer' && cmd.type === 'stand.make') {
+        standSeats = [...state.orders.seats];
+      }
       const result = apply(state, cmd, at);
       // The decision was made on a copy of this exact state, so it can't fail.
       if (!result.ok) throw new Error(`Policy command refused: ${result.reason}`);
     }
+    // A stand in this check-in began a new warden's cycle: the free "Seat your Orders" step (D412).
+    const afterWarden =
+      opts.policy === 'orderer' && state.cycle.number !== cycleBefore
+        ? ordererMoves(state, (cmd) => apply(state, cmd, at).ok, true)
+        : undefined;
+    const ordersRecord: OrdererCheckIn | undefined = orders
+      ? {
+          ...(afterWarden
+            ? {
+                ...afterWarden,
+                openings: [...orders.openings, ...afterWarden.openings],
+                chapters: [...orders.chapters, ...afterWarden.chapters],
+              }
+            : orders),
+          ...(standSeats ? { standSeats } : {}),
+        }
+      : undefined;
     const standPreview = memory.standPreview;
     memory.standPreview = undefined;
     opts.onCheckIn?.(
@@ -91,6 +122,7 @@ export const play = (state: GameState, opts: PlayOptions): void => {
         away,
         peasantsBefore,
         ...(events ? { events } : {}),
+        ...(ordersRecord ? { orders: ordersRecord } : {}),
         ...(standPreview ? { standPreview } : {}),
       },
       state,

@@ -18,9 +18,12 @@ export interface SpecOptions {
 
 export const buildSpecs = (o: SpecOptions): RunSpec[] =>
   o.policies.flatMap((policy) =>
-    // D272: the Delver runs the Monday seeds only; so does the Eventer (GDD §6.1, D367).
+    // D272: the Delver runs the Monday seeds only; so do the Eventer (GDD §6.1, D367) and the Orderer (D417).
     o.starts
-      .filter((start) => (policy !== 'delver' && policy !== 'eventer') || start === 'mon')
+      .filter(
+        (start) =>
+          (policy !== 'delver' && policy !== 'eventer' && policy !== 'orderer') || start === 'mon',
+      )
       .flatMap((start) =>
         Array.from({ length: o.seeds }, (_, i) => ({
           policy,
@@ -29,7 +32,11 @@ export const buildSpecs = (o: SpecOptions): RunSpec[] =>
           days: o.days,
           ...(o.fast ? { stopAt: FAST_UNTIL_TARGETS } : {}),
           // GDD §6.3 #7 (D114): the Standard runs go on through 3 Long Nights, up to 6 weeks.
-          ...(!o.fast && (policy === 'standard' || policy === 'delver' || policy === 'eventer')
+          ...(!o.fast &&
+          (policy === 'standard' ||
+            policy === 'delver' ||
+            policy === 'eventer' ||
+            policy === 'orderer')
             ? {
                 minCycles: OVERFLOW_CYCLES,
                 maxDays: 42,

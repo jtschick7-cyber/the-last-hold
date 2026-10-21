@@ -402,7 +402,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - A deterministic test from the migrated fixture to every chapter read (using the debug commands), writing `tests/saves/fixtures/v10-played.json` (that save played 72 h under a fixed seed); the Playwright smoke steps for one seat change and one chapter on the phone viewport.
   - *Acceptance:* 1. The scripted run reads all sixteen chapters in order with the right variants. 2. The smoke passes on the phone viewport. 3. The run is repeatable (same seed, same state).
 
-- [ ] **T10.17 — The Orderer policy and its shard** *(sim/)*
+- [x] **T10.17 — The Orderer policy and its shard** *(sim/)*
   - `sim/policies/orderer.ts` (GDD §6.1), `sim/shards.ts` gains the `orders` shard (Monday seeds only), report fields (first-open times, chapter-1 times, level times, chapter times, the shares, the stand results with the perk on and off, Embers per stand).
   - *Acceptance:* 1. The Orderer plays a 3-cycle run in 60 s or less. 2. Standard, Light, Heavy, Opening, the Delver and the Eventer **never seat an Order** and their reports equal the v0.9 baseline. 3. The orders shard stays within 5 min. 4. The Orderer taps "Seat it" at an opening when a seat is free, takes the third seat the moment it opens, never swaps mid-cycle, and its Delve runs exercise the Delve source and its window.
 

@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.16 scripted run, played fixture and smoke (done, pushed).
-- **Next:** T10.17, the Orderer policy and its shard (sim/).
+- **Last task:** T10.17 the Orderer policy and its shard (done, pushed).
+- **Next:** T10.18, the simulator rows (measure first, then ask the owner to approve them; own commit).
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -361,3 +361,13 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Owner-approved test edits (D435, D436):** the older opening test skips played saves (and a new check names them); a close-scene helper in 10 older browser tests; the Events test checks the Events card's own dot. **My mistake:** I had not run the whole browser suite since T10.13, so eight older tests were broken for two tasks and I found them only now.
 - `npm run check` green (2,692). Golden fights and recorded stands unchanged.
 - **Next:** T10.17.
+
+## 2026-10-21 — v0.10 session 3: T10.17 the Orderer
+- **The Orderer is built** (GDD §6.1, D417): Standard's check-ins plus the Delver's Delve sessions, Monday seeds only, in its own `orders` shard (also added to the CI workflow). It finishes opening scenes ("Seat it" with a free seat, else "Continue"), takes the third seat at once, reads every chapter that can be read, and at each new warden seats the top-ranked Orders (due chapters, then most unread, then list order). Never swaps mid-cycle. Code in `src/core/policies/orderer.ts`; its run record and report section ("Orders") are in `sim/`.
+- **Nothing else changed:** the full suite (55 runs, 376 s on this 4-core machine) shows every old group `same` against the baseline and all 48 rows passing. `tests/policies/orderer.test.ts` checks that no other policy issues an Orders command or seats anything.
+- **Timings:** a 3-cycle Orderer run is about 15 s (limit 60); the whole `orders` shard is 59 s (limit 5 min). `npm run check` is green (2,705 tests, about 87 s: tight against 90).
+- **First look (5 seeds, sketch values, not judged yet):** all 16 chapters are read by cycle 7–8 (the row says 8); the Quenchers open only in cycle 5 and reach level 4 in cycles 7–8; the third seat opens in cycle 5–6; Grey Wives reach level 4 last (cycle 8–9); silver from bounties 83–84%; provisions share 16–20% (the row says 20–40%, so this one will likely need a tunable or a question in T10.18); chapter 1 after an Order opens takes 19–77 h for the Moot and Grey Wives (the row says 24 h).
+- **Owner-approved test edit (D437):** `sim/shards.test.ts` knows the Orderer and its shard (55 runs); the balance rule is as strict as before.
+- **D438 (Proposed):** the Quenchers' perk acts on Threat over a whole cycle, so a seat flipped at the stand changes nothing; "perk on and off" is read as the cycles where they sat against those where they did not, with Embers and Threat for each. Say if you want a paired run instead.
+- **Not done:** the six rows (T10.18, after you approve them) and `sim:accept` (after your playtest).
+- **Next:** T10.18.
