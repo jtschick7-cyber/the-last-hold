@@ -141,8 +141,7 @@ type Bench = {
     ordersSheet: best(() => orderSheetView(orders, 'moot', orders.time)),
     ordersStanding: best(() => ORDER_IDS.forEach((id) => orderStanding(orders, id))),
     ordersMigration: best(() => loadEnvelope(structuredClone(v9Owner))),
-    // Plan T11.16 (D464 (5)): the v10 → v11 migration of a played v10 save, on the load path. Measured
-    // for a proposed §6.5 row; not yet judged.
+    // Plan T11.16 (D464 (5)): the v10 → v11 migration of a played v10 save, on the load path. GDD §6.5 row (D469).
     rememberingMigration: best(() => loadEnvelope(structuredClone(v10Played))),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),
     bossSuggest: best(() =>

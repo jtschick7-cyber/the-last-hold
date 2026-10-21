@@ -145,6 +145,13 @@ test('the card, the near-scene, the reading and every ending card fit', async ({
     const w = window as unknown as { __t0: number; __t1: number };
     return w.__t1 - w.__t0;
   });
+  // GDD §6.5 (D469): warns at the 50 ms budget, fails at 2×, like the benchmark rows.
+  if (startMs > 50)
+    test.info().annotations.push({
+      type: 'warning',
+      description: `reading start took ${startMs.toFixed(0)} ms (budget 50 ms)`,
+    });
+  expect(startMs, 'reading start must stay under 2× its 50 ms budget').toBeLessThan(100);
   console.log(`reading start (tap to first name painted, 4× slowdown): ${startMs.toFixed(1)} ms`);
 
   // All 40 names with their village lines, at every size: tap through them in order.

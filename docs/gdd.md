@@ -1596,7 +1596,7 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | *Proposed:* Silver check #6 with Orders *(D417)* | At least 70% of silver from bounties (Orderer, median of the 5 Monday seeds) | v0.10 |
 | *Proposed:* Provisions share with the Moot perk *(D417)* | Stays in 20–40% (Orderer, median of the 5 Monday seeds) | v0.10 |
 | *Proposed:* Stand rows with the Quenchers perk *(D417)* | 'Best Last Stand timing' (days 4–5), 'First Long Night' (days 3–5), 'Act VI lands in its cycle' and the Dross-Tide stand probe still pass; Embers per stand with and without the perk are reported (Orderer, median of the 5 Monday seeds) | v0.10 |
-| *Proposed:* The Remembering is reachable *(D458, D464)* | The ending is choosable (gate open and Act VI's stand applied, §5.15.3) by the end of cycle **N** (Standard, median of the 5 Monday seeds). **N is the measured median** (T11.15), so the row passes by construction; the owner approves N before it is enforced. A seed that never gets there counts as later than any N. Judged only in `sim.yml`, not in the fast set. | v0.11 |
+| The Remembering is reachable *(D458, D464, D469)* | All 40 names are found and Act VI's stand is applied by the end of cycle **6** (Standard, median of the 5 Monday seeds; measured 6, 6, 6, 6, 7, approved by the owner). A seed that never gets there counts as later than any N. The species half of the gate (every contract species Studied) is proved by the content test, not by this row, because the Standard player does not look for species it lacks (Q45). Judged only in `sim.yml`, not in the fast set. | v0.11 |
 
 Reported only: the stand band per cycle (with waves), skill levels per cycle, properties found per cycle (v0.6); Riftglass per week, floors reached per run, Delve relics found (v0.7, Delver); stars per cycle, items by rarity per cycle, Legendaries found, Delve XP (v0.8).
 
@@ -1656,6 +1656,9 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Orders standing recompute** *(v0.10, D445)* | ≤ 5 ms | All four Orders, after a command |
 | **v9 → v10 migration** *(v0.10, D445)* | ≤ 100 ms | The owner's save, on the load path |
 | **Orders save growth** *(v0.10, D445)* | ≤ 2 KB | The whole Orders block, all four opened, every chapter read (checked by a unit test, not the throttled benchmark) |
+| **Reading start** *(v0.11, D469)* | ≤ 50 ms | Tap on R-03's Continue to the first name painted, on the throttled profile (`tests/e2e/remembering-layout.spec.ts`) |
+| **v10 → v11 migration** *(v0.11, D469)* | ≤ 100 ms | A played v10 save, on the load path (the throttled benchmark) |
+| **Remembering save growth** *(v0.11, D469)* | ≤ 0.5 KB | The whole `remembering` block, everything recorded (checked by a unit test, not the throttled benchmark) |
 | **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | **≤ 5 min per CI job** *(D320)* | All policies and checks; the runs play in parallel, one per core (D169), split across parallel CI jobs whose results a final job combines and judges. Never trimmed: same runs, seeds and rows |
