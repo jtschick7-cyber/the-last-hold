@@ -4,7 +4,6 @@ import { AGE_IDS, type AgeId } from './ages';
 import { BUILDING_IDS, type BuildingId } from './buildings';
 import { bosses, type BossId } from './great-beasts';
 import { HUNTER_IDS, hunters, type HunterId } from './hunters';
-import { LEGENDARY_HUNTER_IDS } from './hunters-v09';
 import { EVENT_CREATURE_IDS, quarries, type EventCreatureId, type QuarryId } from './hunts';
 import { MONSTER_IDS, monsters, type MonsterId } from './monsters';
 import { RELIC_IDS, relics, type RelicId } from './relics';
@@ -30,9 +29,6 @@ export const SPRITE_FRAME_NAMES = ['idle', 'idle2', 'lunge', 'hit', 'downed'] as
 export type SpriteFrameName = (typeof SPRITE_FRAME_NAMES)[number];
 const eventCreatureName = (c: EventCreatureId): string =>
   c in bosses ? bosses[c as BossId].name : quarries[c as QuarryId].name;
-const isLegendary = (h: HunterId): boolean =>
-  (LEGENDARY_HUNTER_IDS as readonly string[]).includes(h);
-
 export const SPRITE_PX = 32;
 
 interface AssetBase {
@@ -100,6 +96,8 @@ export const monsterPortraitId = (m: MonsterId): string => `portrait.monster.${m
 // rarity frames and the hold cosmetics, all code-drawn.
 export { EVENT_CREATURE_IDS };
 export const eventCreaturePortraitId = (c: EventCreatureId): string => `portrait.creature.${c}`;
+export const RIME_ICON = 'icon.rime';
+export const TOKEN_ICON = 'icon.token';
 export const eventCreatureSpriteId = (c: EventCreatureId): string => `sprite.creature.${c}`;
 export const hunterSpriteId = (h: HunterId): string => `sprite.hunter.${h}`;
 export const monsterSpriteId = (m: MonsterId): string => `sprite.monster.${m}`;
@@ -211,20 +209,23 @@ export const assets: readonly AssetEntry[] = [
         ),
   ),
   ...HUNTER_IDS.map((h) =>
-    // v0.9 (T9.4): the legendary hunters' art is the owner's to supply or approve (T9.16); until
-    // then they have a placeholder row and no committed file.
-    isLegendary(h)
-      ? placeholder(hunterPortraitId(h), 'portrait', [64, 64], hunters[h].name)
-      : generated(
-          hunterPortraitId(h),
-          [64, 64],
-          hunters[h].name,
-          `portraits/${h}.png`,
-          'tools/gen-portraits.ts',
-        ),
+    generated(
+      hunterPortraitId(h),
+      [64, 64],
+      hunters[h].name,
+      `portraits/${h}.png`,
+      'tools/gen-portraits.ts',
+    ),
   ),
+  // v0.9 (T9.16): drawn in code like the monsters (tools/draw-creatures.ts).
   ...EVENT_CREATURE_IDS.map((c) =>
-    placeholder(eventCreaturePortraitId(c), 'portrait', [64, 64], eventCreatureName(c)),
+    generated(
+      eventCreaturePortraitId(c),
+      [64, 64],
+      eventCreatureName(c),
+      `portraits/creature-${c}.png`,
+      'tools/gen-sprites.ts',
+    ),
   ),
   // The Cursed (v0.5) are drawn too (plan T5.13, tools/draw-cursed.ts).
   ...MONSTER_IDS.map((m) =>
@@ -323,28 +324,23 @@ export const assets: readonly AssetEntry[] = [
   ),
   // v0.7 (plan T7.12): drawn by tools/gen-sprites.ts.
   ...HUNTER_IDS.map((h) =>
-    isLegendary(h)
-      ? placeholder(
-          hunterSpriteId(h),
-          'sprite',
-          [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
-          `${hunters[h].name}, battle sprite`,
-        )
-      : generated(
-          hunterSpriteId(h),
-          [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
-          `${hunters[h].name}, battle sprite`,
-          `sprites/hunter-${h}.png`,
-          'tools/gen-sprites.ts',
-          'sprite',
-        ),
+    generated(
+      hunterSpriteId(h),
+      [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+      `${hunters[h].name}, battle sprite`,
+      `sprites/hunter-${h}.png`,
+      'tools/gen-sprites.ts',
+      'sprite',
+    ),
   ),
   ...EVENT_CREATURE_IDS.map((c) =>
-    placeholder(
+    generated(
       eventCreatureSpriteId(c),
-      'sprite',
       [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
       `${eventCreatureName(c)}, battle sprite`,
+      `sprites/creature-${c}.png`,
+      'tools/gen-sprites.ts',
+      'sprite',
     ),
   ),
   ...MONSTER_IDS.map((m) =>
@@ -376,6 +372,15 @@ export const assets: readonly AssetEntry[] = [
       'tools/gen-sprites.ts',
       'icon',
     ),
+  ),
+  generated(RIME_ICON, [16, 16], 'Rime', 'icons/rime.png', 'tools/gen-sprites.ts', 'icon'),
+  generated(
+    TOKEN_ICON,
+    [16, 16],
+    'Attempt token',
+    'icons/token.png',
+    'tools/gen-sprites.ts',
+    'icon',
   ),
   generated(
     RIFTGLASS_ICON,

@@ -14,7 +14,7 @@ import { letterKey } from '../../core/story/letters';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
-import { docIconId } from '../../content/assets';
+import { docIconId, RIME_ICON } from '../../content/assets';
 import { Sprite } from '../widgets/Sprite';
 import { riftScene } from '../../content/delves/rift-text';
 import { echoesShelf } from '../../core/delves/view-shop';
@@ -159,7 +159,9 @@ const Library = () => {
         </section>
       ))}
       <section class={styles.card} aria-label="Rime">
-        <h2 class={styles.cardTitle}>Rime</h2>
+        <h2 class={styles.cardTitle}>
+          <Sprite id={RIME_ICON} /> Rime
+        </h2>
         {rime.length === 0 ? (
           <p class={`${styles.small} ${styles.dim}`}>Nothing here yet.</p>
         ) : (

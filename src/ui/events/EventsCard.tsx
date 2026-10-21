@@ -3,7 +3,9 @@ import { now } from '../../platform/clock';
 import { game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
+import { TOKEN_ICON } from '../../content/assets';
 import { Num } from '../widgets/Num';
+import { Sprite } from '../widgets/Sprite';
 import { BossSheet } from './BossSheet';
 import { HuntList } from './HuntList';
 import { openResult } from './ResultSheet';
@@ -26,7 +28,7 @@ export const EventsCard = () => {
         )}
       </h2>
       <p>
-        <Num text={v.tokensLine} breakdown={() => v.tokens.breakdown} />
+        <Sprite id={TOKEN_ICON} /> <Num text={v.tokensLine} breakdown={() => v.tokens.breakdown} />
       </p>
       {v.lockedLine && <p class={styles.dim}>{v.lockedLine}</p>}
       {v.bossLine && <p>{v.bossLine}</p>}

@@ -259,9 +259,9 @@ describe('Events content is never required elsewhere (plan T9.4 #3, #4)', () => 
       expect(names.has(c.name), c.name).toBe(false);
   });
 
-  it('has a manifest row (a placeholder) for each of the six creatures', () => {
+  it('has a generated manifest row for each of the six creatures (plan T9.16)', () => {
     expect(EVENT_CREATURE_IDS).toHaveLength(6);
     for (const c of EVENT_CREATURE_IDS)
-      expect(assetById.get(eventCreaturePortraitId(c))?.source, c).toBe('placeholder');
+      expect(assetById.get(eventCreaturePortraitId(c))?.source, c).toBe('generated');
   });
 });

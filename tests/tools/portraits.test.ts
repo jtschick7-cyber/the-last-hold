@@ -4,14 +4,15 @@
 import { readFileSync } from 'node:fs';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
-import { assetById, hunterPortraitId, monsterPortraitId } from '../../src/content/assets';
+import {
+  assetById,
+  eventCreaturePortraitId,
+  hunterPortraitId,
+  monsterPortraitId,
+} from '../../src/content/assets';
 import { HUNTER_IDS, hunters } from '../../src/content/hunters';
-import { LEGENDARY_HUNTER_IDS } from '../../src/content/hunters-v09';
-
-// The three legendary hunters (v0.9) have placeholder rows until the owner supplies their art (plan T9.16).
-const DRAWN_HUNTER_IDS = HUNTER_IDS.filter(
-  (h) => !(LEGENDARY_HUNTER_IDS as readonly string[]).includes(h),
-);
+import { EVENT_CREATURE_IDS } from '../../src/content/hunts';
+import { drawCreaturePortrait } from '../../tools/draw-creatures';
 import { MONSTER_IDS } from '../../src/content/monsters';
 import { drawHunter } from '../../tools/draw-hunter';
 import { drawMonster, hasDrawing } from '../../tools/draw-monster';
@@ -21,7 +22,12 @@ const file = (name: string): Buffer =>
   readFileSync(new URL(`../../public/assets/portraits/${name}`, import.meta.url));
 
 const cases = [
-  ...DRAWN_HUNTER_IDS.map((id) => ({
+  ...EVENT_CREATURE_IDS.map((id) => ({
+    row: eventCreaturePortraitId(id),
+    name: `creature-${id}.png`,
+    drawn: () => drawCreaturePortrait(id).toPng(),
+  })),
+  ...HUNTER_IDS.map((id) => ({
     row: hunterPortraitId(id),
     name: `${id}.png`,
     drawn: () => drawHunter(hunters[id].portrait).toPng(),
@@ -68,13 +74,8 @@ describe('generated portraits', () => {
       expect(assetById.get(monsterPortraitId(id))?.source).toBe('generated');
   });
 
-  it('gives the three legendary hunters a placeholder row, with no committed file', () => {
-    for (const h of LEGENDARY_HUNTER_IDS)
-      expect(assetById.get(`portrait.hunter.${h}`)?.source, h).toBe('placeholder');
-  });
-
   it('has a manifest row for each hunter and species, pointing at its file', () => {
-    expect(cases).toHaveLength(DRAWN_HUNTER_IDS.length + MONSTER_IDS.length);
+    expect(cases).toHaveLength(EVENT_CREATURE_IDS.length + HUNTER_IDS.length + MONSTER_IDS.length);
     for (const c of cases) {
       const row = assetById.get(c.row);
       expect(row?.source, c.row).toBe('generated');
