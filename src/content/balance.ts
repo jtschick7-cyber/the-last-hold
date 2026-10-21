@@ -160,7 +160,7 @@ export const balance = {
     hunterRest: locked(24 * HOUR, 'seconds'), // 24 h
     openAge: locked('citadel'),
     order: locked(['lindworm', 'barrow-king', 'mother-of-the-river']),
-    poolBase: locked(24000), // a sketch (D372); T9.13 returns the measured figure as a decisions row
+    poolBase: locked(21000), // measured in T9.13 and approved by the owner (D400); was a 24,000 sketch (D372)
     baseTier: locked({ citadel: 4, bastion: 5 }),
     passTierStep: locked(1),
     milestones: locked([0.25, 0.5, 0.75, 1.0]),

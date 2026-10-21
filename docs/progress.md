@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.14 — Events card, boss sheet, party picker (done). T9.13 stays `[?]` until Q29 (the pool row, D397).
+- **Last task:** T9.14 (done). T9.13 closed: pool 21,000 approved (D400).
 - **Next:** T9.15 — playback, results, hunts and shelves.
-- **Open questions:** Q31 answered (a). Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
+- **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -168,3 +168,4 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Checked on the real build** (phone viewport, your save): scene → card → fill bank (badge, "full") → boss sheet → Suggest → preview → Send, **4 taps** from the Hold screen; no sideways scroll at 360, 900 and 1300 px. The card before the Citadel is covered by a core test, not a screenshot.
 - **Not here (T9.15):** playback with Skip and Log, result sheets, hunt list and sheets, the away-sheet line, shelves. After Send you see a one-line last result.
 - Open: Q29 (pool). Q28 for T9.17.
+- **Owner's answers applied:** Q29 (a) → `boss.poolBase` 21,000 (D400); Q28 (b) then (a) and D399 yes (D401). T9.13's box is ticked.

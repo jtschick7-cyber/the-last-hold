@@ -15,7 +15,7 @@ describe('GDD §7.11 Events constants', () => {
     expect(value('boss.hunterRest')).toBe(24 * 3600);
     expect(value('boss.openAge')).toBe('citadel');
     expect(value('boss.order')).toEqual(['lindworm', 'barrow-king', 'mother-of-the-river']);
-    expect(value('boss.poolBase')).toBe(24000);
+    expect(value('boss.poolBase')).toBe(21000);
     expect(value('boss.baseTier')).toEqual({ citadel: 4, bastion: 5 });
     expect(value('boss.passTierStep')).toBe(1);
     expect(value('boss.milestones')).toEqual([0.25, 0.5, 0.75, 1.0]);
@@ -51,8 +51,8 @@ describe('GDD §7.11 Events constants', () => {
       expect(all.get(k)?.locked, k).toBe(false);
   });
 
-  it('keeps the visit at about 12 attempts on paper: the sketch pool at tier 4 is 32,400 (D360)', () => {
+  it('keeps the visit at about 12 attempts: the measured pool at tier 4 is 28,350 (D360, D400)', () => {
     const tier4 = (value('boss.poolBase') as number) * 1.35;
-    expect(Math.round(tier4)).toBe(32400);
+    expect(Math.round(tier4)).toBe(28350);
   });
 });

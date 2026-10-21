@@ -218,7 +218,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - `sim/policies/eventer.ts` (GDD §6.1): token spending, party choice, boss-or-hunt, track choice, never replays, locked check-ins ignored, runs until all content; `sim/shards.ts` gains the `events` shard; report fields.
   - *Acceptance:* 1. The Eventer plays a 3-cycle run in 60 s or less. 2. Standard, Light, Heavy, Opening and the Delver **issue no event commands**, and their reports **before Act VI equal the v0.8 baseline**. 3. Their baselines from cycle 6 are re-recorded once, and the 41 old rows re-judged on them. 4. The events shard stays within 5 min.
 
-- [ ] **T9.13 — Calibrate the pool and the hunt tunables** `[?]` *(owner decision at the end)*
+- [x] **T9.13 — Calibrate the pool and the hunt tunables** *(owner decision at the end)*
   - With the Eventer, and a **one-off measurement script that plays all nine tracks** with the best legal party (the Eventer plays only its preferred track), measure the median damage per attempt at tiers 4 and 5 and the nine win rates. Tune `hunt.*` and the Great Beast and quarry content values. **Propose `boss.poolBase` so a visit takes about 12 attempts, as a new decisions row.**
   - *Targets are proposals the owner approves with the row, not approved rows:* a first visit of about 9–15 attempts; a hunt unlock in about 6–8; track win rates of about 25–90%.
   - *Acceptance:* 1. A written report of the measured numbers is in the progress entry. 2. The proposed row is in `docs/decisions.md`. 3. The task stays `[?]` until the owner approves the pool row (Q29).

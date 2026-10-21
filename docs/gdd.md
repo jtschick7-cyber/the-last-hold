@@ -1688,7 +1688,7 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 | Rest | per hunter after a boss or hunt attempt; blocks only other event attempts | `boss.hunterRest` = 24 h **(locked)** | 5.12.2 |
 | Opening | the age at which events open (for good, once) | `boss.openAge` = citadel **(locked)** | 5.12.1 |
 | Order | the fixed order of bosses; the order repeats a tier higher | `boss.order` = [lindworm, barrow-king, mother-of-the-river] **(locked)** | 5.12.4 |
-| Pool | `poolBase × 1.35^(tier − 3)` (the §7.4 Health growth per tier above the stat tier 3) | `boss.poolBase` = 24,000 **(locked, sketch)** | 5.12.4 |
+| Pool | `poolBase × 1.35^(tier − 3)` (the §7.4 Health growth per tier above the stat tier 3) | `boss.poolBase` = 21,000 **(locked; measured in T9.13, D400)** | 5.12.4 |
 | Visit tier | the Rank's base tier when the visit's first attempt is made, plus the pass step per completed pass | `boss.baseTier` = { citadel 4, bastion 5 } **(locked)**, `boss.passTierStep` = 1 **(locked)** | 5.12.4 |
 | Milestones | shares of the pool, each paid once per visit | `boss.milestones` = [0.25, 0.5, 0.75, 1.0] **(locked)** | 5.12.5 |
 | Milestone silver | multiples of one bounty at the visit's tier and the current age (§7.4); **not bounty silver** for the §6.3 #6 share (it counts in the total only) | `boss.silverBounties` = { milestone: 1, kill: 3 } **(locked)** | 5.12.5 |
