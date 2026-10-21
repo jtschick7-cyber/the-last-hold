@@ -35,7 +35,14 @@ import {
 } from './v06';
 import { firstGuardianCheck, idleOnlyCheck } from './v07';
 import { firstWrightCheck, lateLettersCheck } from './v08';
-import { drossProbeCheck } from './v09';
+import {
+  drossProbeCheck,
+  firstBossAttemptCheck,
+  firstBossKillCheck,
+  firstHunterUnlockCheck,
+  silverWithBossCheck,
+  tokensNotWastedCheck,
+} from './v09';
 import type { Check } from './types';
 
 export type { Check, CheckResult } from './types';
@@ -90,6 +97,11 @@ export const CHECKS: readonly Check[] = [
   act5Check,
   act6Check,
   drossProbeCheck,
+  firstBossAttemptCheck,
+  firstBossKillCheck,
+  firstHunterUnlockCheck,
+  tokensNotWastedCheck,
+  silverWithBossCheck,
   lateLettersCheck,
   firstWrightCheck,
 ];

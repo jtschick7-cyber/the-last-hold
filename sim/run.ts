@@ -390,11 +390,16 @@ export const runOne = (spec: RunSpec): RunResult => {
    * itself (the Idle-only row) is unchanged and is timed where each part is found, not where the run stops.
    */
   const actSixSeen = (s: GameState): boolean =>
-    spec.policy !== 'standard' ||
-    ([...STORY.act6.docs, STORY.act6.nextWarden.doc].every((id) =>
-      s.story.documents.some((d) => d.id === id),
-    ) &&
-      drossStands.length >= 3);
+    spec.policy === 'eventer'
+      ? // The Eventer plays on until its event rows have something to judge: a boss defeated and a
+        // legendary hunter unlocked (D404), up to the 42-day cap.
+        eventAttempts.some((a) => a.kind === 'boss' && a.killed) &&
+        eventAttempts.some((a) => a.unlockedHunt)
+      : spec.policy !== 'standard' ||
+        ([...STORY.act6.docs, STORY.act6.nextWarden.doc].every((id) =>
+          s.story.documents.some((d) => d.id === id),
+        ) &&
+          drossStands.length >= 3);
   let book36Hours: number | null = null;
   let skills4Hours: number | null = null;
   let wrightsHours: number | null = null;

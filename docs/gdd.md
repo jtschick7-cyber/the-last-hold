@@ -1447,9 +1447,9 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | First Wright *(D322)* | By the end of cycle 1 (Standard) | v0.8 |
 | Idle-only vs Delver *(D20, D271, D322)* | Standard reaches the last of "all content" no more than 1.3× later than the Delver (median of the Monday seeds). "All content" for v0.8: every judged document of Acts I–V, the recipe book at 36 of 36, all six Ribbonshade names, every warden skill at level 4, the five letter names, and every hunter at Wright | v0.7 / v0.8 |
 | First boss attempt *(D367)* | ≤ 24 h after the Citadel opens events (Eventer, **median of the Monday seeds**) | v0.9 |
-| First boss defeated *(D367)* | By the end of the second cycle after events open (Eventer, median of the Monday seeds; the cycle in which events open is cycle 1) | v0.9 |
-| First legendary hunter unlocked *(D367)* | By the end of the third cycle after events open (Eventer, median of the Monday seeds; the opening cycle is cycle 1) | v0.9 |
-| Tokens not wasted *(D367)* | A full bank at no more than 15% of the Eventer's **unlocked** check-ins (median of the Monday seeds). If it still fails, Q28's path applies | v0.9 |
+| First boss defeated *(D367, D404)* | By the end of the **7th** cycle from the one events open in (Eventer, median of the Monday seeds; the opening cycle is cycle 1). *(D404, owner: was the second cycle; measured median 6)* | v0.9 |
+| First legendary hunter unlocked *(D367, D404)* | By the end of the **6th** cycle from the one events open in (Eventer, median of the Monday seeds; the opening cycle is cycle 1). *(D404, owner: was the third cycle; measured median 5)* | v0.9 |
+| Tokens not wasted *(D367, D404)* | A full bank at no more than **35%** of the Eventer's **unlocked** check-ins (median of the Monday seeds). *(D404, owner: was 15%; measured median about 29%)* | v0.9 |
 | Act VI lands in its cycle *(D383, proposed)* | D6-01 to D6-06 found by the end of cycle 6; D6-07 with the next warden (Standard); D6-08 to D6-10 reported only | v0.9 |
 | Dross-Tide stand probe *(D383, proposed)* | In Act VI-era cycles, Standard's stand reaches the Held band (12 or more waves) at the median of the Monday seeds, and the preview's range still agrees with the real result | v0.9 |
 

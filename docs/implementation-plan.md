@@ -235,7 +235,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - Battle sprites and portraits for the three hunters and six creatures, icons for the Rime shelf and tokens; the manifest fallback stays for anything missing. Owner supplies or approves the art.
   - *Acceptance:* every new entry has art or a manifest fallback; the owner has seen the placeholders and the real art.
 
-- [ ] **T9.17 — Simulator rows** `[?]` *(sim/targets.ts, own commit; sim/checks/v09.ts)*
+- [x] **T9.17 — Simulator rows** *(sim/targets.ts, own commit; sim/checks/v09.ts)*
   - The owner-approved rows of GDD §6.2 (table below) and the two proposed (D383), **Act VI lands in its cycle** and **the Dross-Tide stand probe**. No existing stand row reaches Act VI cycles, so the probe is the check on those stands.
   - *Acceptance:* 1. All rows pass on the **median of the 5 Monday seeds**. 2. The old rows pass on the re-recorded baselines. 3. **If no reasonable tunable passes a row, stop and write it to `docs/questions.md`** (Q28).
 
@@ -256,9 +256,9 @@ Orders rewards from events (v0.10); a boss shop or Boss marks; more bosses or hu
 | Row | Judged on | Threshold |
 |---|---|---|
 | First boss attempt | median of the 5 Monday seeds, Eventer | within 24 h of the Citadel |
-| First boss defeated | same | by the end of the second cycle after events open (the opening cycle is cycle 1) |
-| First legendary hunter unlocked | same | by the end of the third cycle after events open (the opening cycle is cycle 1) |
-| Tokens not wasted | median of the 5 Monday seeds, Eventer | a full bank at no more than 15% of **unlocked** check-ins (Q28 if it fails) |
+| First boss defeated | same | by the end of the 7th cycle from the one events open in (D404; was the second) |
+| First legendary hunter unlocked | same | by the end of the 6th cycle from the one events open in (D404; was the third) |
+| Tokens not wasted | median of the 5 Monday seeds, Eventer | a full bank at no more than 35% of **unlocked** check-ins (D404; was 15%) |
 | Silver check #6 with boss silver | median of the 5 Monday seeds | at least 70% of silver from bounties (boss silver counts in the total only) |
 | *Proposed:* Act VI lands in its cycle | median, Standard | D6-01 to D6-06 by the end of cycle 6; D6-07 with the next warden; D6-08 to D6-10 reported only |
 | *Proposed:* Dross-Tide stand probe | median, Standard | the Act VI-era stand reaches Held (12+ waves) and the preview range agrees |

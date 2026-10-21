@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.16 done (art approved). T9.17: Act VI and Dross-Tide rows built and passing; Eventer rows still wait on Q33.
-- **Next:** the owner answers Q33 (and the two D383 rows), then T9.17 (simulator rows, `[?]`), then T9.18, T9.19.
+- **Last task:** T9.17 done (all rows built and passing). T9.16 done (art approved).
+- **Next:** T9.18 (tune and baseline: nothing to tune if the suite stays green) and T9.19 (smoke and the preview build). (simulator rows, `[?]`), then T9.18, T9.19.
 - **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -199,4 +199,9 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **CI timings** for the simulator workflow on GitHub (run 39586017390, this branch): events 30 s, long 121 s, rest 56 s, heavy 80 s, judge 71 s; all under 5 minutes, all rows pass. The first CI run of the new events shard is now seen.
 - **CI fixes:** `npm run check` had been over its 90 s budget on CI (102 s once); the test files now share their module cache (`isolate: false`), 84 s to 62 s locally, all 2,398 tests pass twice. The story e2e's scene waits are 45 s (it failed on CI only; it passes locally; not yet seen green on CI).
 - **Waiting on you:** Q33 (hold-back did not help; my proposed rows and the alternative are in `docs/questions.md`) and the 60% in D403.
+
+## 2026-10-21 — v0.9 session 5 (continued): T9.17 done
+- **Owner chose (c) for Q33 and said 60% is fine** (D404, Decided). The Eventer's three rows moved: first kill by the 7th cycle, first unlock by the 6th, full bank at most 35%. First attempt (24 h) and silver (70%) unchanged. The rows are in `sim/targets.ts` in their own commit (db7d64c), checks in `sim/checks/v09.ts`, the Eventer now plays on until a kill and an unlock (42-day cap).
+- **Full suite (one machine, 276 s):** every row passes. Eventer medians: first attempt 6 h after events opened, first kill cycle 6, first unlock cycle 5, full bank 28.9%, cycle-1 silver 77% from bounties.
+- **GDD §6.2 and the plan's table** carry the new numbers. No `sim:accept` (milestone end, after your playtest). No locked constant changed.
 
