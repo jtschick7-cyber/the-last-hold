@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.8 chapters (done, pushed).
-- **Next:** T10.9, the texts, part 1.
+- **Last task:** T10.9 the texts, part 1 (done, pushed).
+- **Next:** T10.10, the Bell-Watchers and Quenchers texts.
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -294,3 +294,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Names:** the sixteen chapter titles and the four Order names are now in `tests/content/names.ts` (dated 2026-10-21, with the OUT-6 notes; the two near-matches say the owner kept them, Q34). This was needed now because the names test reads content, and it is the T10.10 names item done early.
 - `npm run check` green (2,560 tests). Golden fights and recorded stands unchanged; no existing test edited.
 - **Next:** T10.9 (the first scene texts, word for word from lore §33; the test harness first).
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.9 texts, part 1
+- **Texts in:** the Moot's and Grey Wives' opening scenes and all eight chapters (`content/story/orders-scenes.ts`), E1 (the heads' notice lines and panel entries) and E2 (the Grey Wives' hints and elder's notes, `content/story/orders-perks.ts`). The scene file was produced from lore §33 by a script so no word is retyped; author notes (Wrongness, Threshold) are not shipped. Ilse's note under the Grey Wives' chapter 2 is kept as a Library note.
+- **Test harness** (`tests/content/orders-texts.test.ts`, `orders-checks.ts`, `orders-lore.ts`): every string is compared to lore §33, read separately from the generator. The Part F checks run on every text: forbidden words, "hollow" only as Kozly Hollow or the Hollow, relative years, names from the roll, phrases that ask for the names, unknown people, and the opening-scene words. Each check is also run on a planted bad text and must fail.
+- **E2 hints are data** (`{brew, claim}`) and each claim is checked against the GDD §8.6 ingredient table (garden herb, two village gifts, exactly two unlike carriers, pitch and grave dust).
+- **Names:** the two opening titles added to `names.ts` (the other six were in T10.8).
+- **Not done yet (by plan):** where these texts show (T10.11) and the Bell-Watchers and Quenchers texts, E3 and E4 (T10.10). I did not read the texts for tone; that is your read of lore §33, which they equal exactly.
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.10.

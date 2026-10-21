@@ -1252,6 +1252,8 @@ export const checkedNames: readonly CheckedName[] = [
   { name: 'The Quenchers', checked: '2026-10-21', result: 'clear', note: 'No match.' },
   { name: 'Quenchers', checked: '2026-10-21', result: 'clear', note: 'No match.' },
   ...[
+    'A seat at the table',
+    'A basket on the step',
     'A table at the gate',
     'Salt and a ledger',
     'The one who leaves',
@@ -1272,6 +1274,6 @@ export const checkedNames: readonly CheckedName[] = [
     name,
     checked: '2026-10-21',
     result: 'generic',
-    note: 'Order chapter title (D414): a plain phrase, checked as a group: none is a product or game name I know of (OUT-6).',
+    note: 'Order chapter or opening-scene title (D414, OUT-3 Part C): a plain phrase, checked as a group: none is a product or game name I know of (OUT-6).',
   })),
 ];
