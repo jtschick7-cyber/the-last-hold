@@ -79,7 +79,11 @@ export const pickParty = (s: GameState, pool: readonly HunterId[], size: number)
  * The usual kit against a creature's family (GDD §6.1): the matching oil on as many as the stores
  * cover, the bombs it is weak to, else a Saltburst, and a Mending Draught on a Mender.
  */
-const eventPrep = (s: GameState, party: readonly HunterId[], c: EventCreature): Preparation => {
+export const eventPrep = (
+  s: GameState,
+  party: readonly HunterId[],
+  c: EventCreature,
+): Preparation => {
   const prep: Preparation = { oils: {}, potions: {}, bombs: [] };
   const left = (id: ConsumableId, used = 0): boolean => s.stores[id] - used > 0;
   const ids = Object.keys(consumables) as ConsumableId[];

@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.12 — Eventer policy and events shard (done).
-- **Next:** T9.13 — calibrate the pool and the hunt tunables.
+- **Last task:** T9.13 — measured; waiting on the owner (Q29, D397). Box stays `[?]`.
+- **Next:** T9.14 once the pool row is answered (or in parallel; it needs no number).
 - **Open questions:** Q31 answered (a). Q30 (not blocking), Q28 (tokens-not-wasted row, may block T9.17), Q29 (pool size, ends T9.13).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -152,3 +152,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Baseline re-recorded** once with your yes (`sim:accept`): only the Eventer's group was added (18 lines); nothing else moved; 0 rows fail. The `events` shard took 43 s locally (CI time still to be seen on the first CI run).
 - **Seen:** the Eventer is "blocked" at nearly every open check-in (hunters out on contracts, Q28), and made about 1 attempt a day; no hunter unlocked in the first literal run.
 - `npm run check` green (84 s here; near the limit).
+
+## 2026-10-21 — v0.9 session 5: T9.13 calibration
+- **Measured** with a one-off script (`sim/calibrate-events.ts`), 5 seeds × 4 moments; full tables in `docs/flesh-out/v0.9-calibration.md`.
+- **Pool (D397 Proposed, Q29):** `boss.poolBase` 24,000 → **21,000** gives a median 12.0 attempts to kill (24,000 gives 13.7). The Lindworm alone would want 18,000.
+- **Problem for you:** hunter strength swings about 2× between moments, and the Barrow-King is much harder than the other two in weak states (up to 112 attempts at tier 5 in cycle 3). A softening table is in the calibration file; it changes GDD §8.13, so I did **not** apply it.
+- **Hunts:** tracks are all-or-nothing (a best party wins 0% or 100%). Tracks I are 100% everywhere; Likho's all 100%; Stoneback II/III 0% in weak states. No quarry strength (up to 4× Health) gave 25–90% across states. With track III an unlock takes about 4 attempts (target 6–8); softer `hunt.trackPoints` (10/4, 15/6, 22/8) gives 5 to 8.
+- **Changed:** nothing locked; no constant; no content. I tried content values and reverted them, because the GDD tables and the notebook lines are pinned by content tests and are your design. Only the script and an export of the Eventer's kit were added.
+- **Needs your answer:** (1) the pool row (yes to 21,000, or 18,000, or keep 24,000); (2) whether I may apply the softening table and edit GDD §8.13/§8.14 with it; (3) whether to soften `hunt.trackPoints`.
+- `npm run check` green.

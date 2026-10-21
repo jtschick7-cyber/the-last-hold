@@ -63,3 +63,9 @@ Answered questions Q1–Q25 are in [`docs/archive/questions-answered.md`](archiv
 - **Recommendation:** (a): both rows (first boss defeated, first hunter unlocked) get tokens, and the choice is easy to explain. Which fits depends on how many tokens the Eventer really gets; tokens look scarce because hunters are mostly out on contracts (see Q28).
 - **Blocks:** the hunt rule in T9.12 (the policy is built to the literal text meanwhile), the Eventer rows in T9.17.
 - **Answer (owner):** (a), 2026-10-21.
+
+### Q32 — Boss and quarry numbers after the T9.13 measurement (blocks the end of T9.13) — open
+- **What I found:** see D397 and `docs/flesh-out/v0.9-calibration.md`. The Barrow-King is far harder than the other two in weak states; tracks are all-or-nothing and no quarry strength tried gives 25–90% across states; an unlock takes about 4 attempts.
+- **Options:** (a) Apply the softening table (changes GDD §8.13 and the content tests); (b) leave the numbers as written and accept uneven bosses; (c) a different change you name.
+- **Recommendation:** (a) for the bosses; for hunts, soften `hunt.trackPoints` to 10/4, 15/6, 22/8 and leave the quarries.
+- **Answer (owner):**
