@@ -84,6 +84,8 @@ export type Command =
   | { type: 'orders.unseat'; order: OrderId }
   /** One seated Order out, one open Order in. */
   | { type: 'orders.swap'; out: OrderId; in: OrderId }
+  /** Reads an Order's next playable chapter; the seats at that moment are saved (D419). */
+  | { type: 'orders.readChapter'; order: OrderId }
   /** An opening scene is done; `seatIt` takes a free seat with no cooldown (D422). */
   | { type: 'orders.finishOpening'; order: OrderId; seatIt: boolean }
   /** The new-warden step and the load sheet: sets all seats, with no cooldown (D412). */

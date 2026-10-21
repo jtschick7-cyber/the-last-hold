@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.7 the number perks (done, pushed).
-- **Next:** T10.8, chapters.
+- **Last task:** T10.8 chapters (done, pushed).
+- **Next:** T10.9, the texts, part 1.
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -284,3 +284,13 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Tests:** `tests/orders/perks.test.ts` (37): factors by level, all 19 saved fixtures unchanged when unseated, queue and seat-change cases, the Threat equivalence (one long advance equals hourly steps, with a seat change inside), the stand preview's Threat per day follows the seat.
 - `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited. The simulator rows are not re-run here (nothing seats an Order until T10.17).
 - **Next:** T10.8.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.8 chapters
+- **D429 accepted by the owner.**
+- **The sixteen chapters as rules, no prose yet:** ids, numbers, the D414 titles and the extra condition of each (Vesna on the roster, Ilse arrived, Ostap and Vesna, the Quenchers opened for the Moot's last, the Moot opened for the Quenchers') are in `content/orders-chapters.ts`; the texts come in T10.9 and T10.10.
+- **Playable is worked out from the state each time** (no stored queue): open, seated, level at least the number, the one before read, condition holds; at most one per Order, in list order. A chapter due only for want of a seat is reported separately, for the card and the Hold badge.
+- **Reading** (`orders.readChapter`) counts it read and saves the seats in the fixed order; nothing else changes (tested: no name, document, entry, standing). The ending (A or B) for chapter 4 of the Moot and the Quenchers comes from the saved seats. The Library shelf entries are a read-only selector.
+- **Tests:** `tests/orders/chapters.test.ts` (14), including a seat-blocked chapter that does not block another, all five extra conditions, a chapter found after a tuning change and a load, and the owner's migrated save (each seated Order plays chapter 1 and not chapter 2).
+- **Names:** the sixteen chapter titles and the four Order names are now in `tests/content/names.ts` (dated 2026-10-21, with the OUT-6 notes; the two near-matches say the owner kept them, Q34). This was needed now because the names test reads content, and it is the T10.10 names item done early.
+- `npm run check` green (2,560 tests). Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.9 (the first scene texts, word for word from lore §33; the test harness first).

@@ -1,4 +1,5 @@
 import { ORDER_IDS, type OrderId } from '../../content/orders';
+import { nextChapter } from '../story/orders-chapters';
 import { eventNow } from '../systems/events';
 import { cooldownLeft, cooldownText, inListOrder, seatCount } from '../systems/orders-seats';
 import type { GameState } from '../state/game-state';
@@ -72,6 +73,20 @@ export const finishOpening = (state: GameState, id: OrderId, seatIt: boolean): A
   if (seatIt && seats.length >= seatCount(state)) return refuse('Every seat is taken.');
   state.orders.openingQueue = state.orders.openingQueue.filter((q) => q !== id);
   if (seatIt) state.orders.seats = inListOrder([...seats, id]);
+  return ok;
+};
+
+/**
+ * Reads that Order's next playable chapter (technical design §5.2, D414, D419): it counts as read and
+ * the Orders seated at that moment are saved, in list order, so the ending it played is known. It
+ * changes nothing else: no name, document, entry or standing comes from a chapter.
+ */
+export const readChapter = (state: GameState, id: OrderId): ApplyResult => {
+  if (!known(id)) return refuse('No such Order.');
+  const chapter = nextChapter(state, id);
+  if (!chapter) return refuse('No chapter of that Order can be read now.');
+  state.orders.readWith[id].push(inListOrder(state.orders.seats));
+  state.orders.chaptersRead[id] = chapter.n;
   return ok;
 };
 
