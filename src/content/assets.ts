@@ -111,6 +111,10 @@ export const sigilIconId = (p: PatronId): string => `icon.sigil.${p}`;
 export const RIFTGLASS_ICON = 'icon.riftglass';
 export const delveRelicIconId = (r: DelveRelicId): string => `icon.delve-relic.${r}`;
 export const rarityFrameId = (r: RarityId): string => `icon.rarity.${r}`;
+export const HOLD_LOOKS = ['frost', 'lamp'] as const;
+export type HoldLook = (typeof HOLD_LOOKS)[number];
+/** The ending's two looks of the hold scene (v0.11, D457): the frost, then the lamp. */
+export const holdLookId = (l: HoldLook, age: AgeId): string => `scene.look.${l}.${age}`;
 export const cosmeticId = (c: CosmeticId, age: AgeId): string => `scene.cosmetic.${c}.${age}`;
 
 // Plan T1.31a: the v0.1 images, built from the owner's CC0 Kenney packs by
@@ -441,6 +445,18 @@ export const assets: readonly AssetEntry[] = [
         [160, 64],
         `${titled(c)}, the hold at ${titled(a)}`,
         `scenes/cosmetics/${a}-${c}.png`,
+        'tools/gen-sprites.ts',
+        'scene',
+      ),
+    ),
+  ),
+  ...HOLD_LOOKS.flatMap((l) =>
+    AGE_IDS.map((a) =>
+      generated(
+        holdLookId(l, a),
+        [160, 64],
+        `${titled(l)} on the hold at ${titled(a)}`,
+        `scenes/look/${a}-${l}.png`,
         'tools/gen-sprites.ts',
         'scene',
       ),

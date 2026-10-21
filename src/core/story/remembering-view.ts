@@ -118,3 +118,17 @@ export const afterEndingLine = (
         Math.min(afterEndingLines.length - 1, Math.floor(r * afterEndingLines.length))
       ] ?? null)
     : null;
+
+export type HoldLookState = 'plain' | 'frost' | 'lamp';
+
+/**
+ * Which look the hold scene has (GDD §5.15.6, D457): the frost from Act VI's start, until Remember
+ * Them is chosen; then the lamp. Keep the Vigil changes nothing, so the frost stays. Only a picture:
+ * no number reads it.
+ */
+export const holdLook = (state: GameState): HoldLookState =>
+  state.remembering.endings.some((e) => e.ending === 'remember')
+    ? 'lamp'
+    : state.cycles.some((c) => c.act === 6)
+      ? 'frost'
+      : 'plain';

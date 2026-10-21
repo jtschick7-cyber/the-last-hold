@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/stoic-keller-hav7be` (from `main`, the v0.10.0 merge). `milestone/v0.11` is created from it when the first preview is wanted (D468).
 - **Milestone:** v0.11 "The Remembering" (D446–D467; D460 accepted by the owner).
-- **Last task:** T11.11 resident lines.
-- **Next:** T11.12 the Hearth Hall look (stop and ask first; Q42 is open).
+- **Last task:** T11.12 the Hearth Hall look (owner approval of the look pending).
+- **Next:** T11.13 the Library shelf "The Remembering".
 - **Open questions:** Q40 and Q38 answered; Q41–Q43 informational; Q42 (Hearth Hall art) blocks T11.12.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -486,4 +486,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Asked first** (there was no idle rotation, and Ilse had no lines). **Owner chose:** a small rotation, one line once per app session.
 - **Built:** the eight lines of lore §34.7 (word for word, `content/text/remembering.ts`); on opening the Hold screen, once an app session, one of them shows in the speech spot under the hold's title, only after Remember Them is recorded. Ilse speaks only here. Nothing is saved, so the pick is random each session (it cannot follow a fixed order without a new saved field); an event's line may replace it. The six triggered lines are unchanged.
 - **Tests:** `tests/remembering/resident-lines.test.ts` (texts equal the lore; none before Remember Them or after the vigil; all eight reachable after; triggered lines unchanged; no names).
+- **Not seen on a phone** (T11.16). No old test edited. Nothing skipped.
+
+## 2026-10-21 — v0.11 session 13: T11.12 the Hearth Hall look
+- **Asked first** (the scene is the hold's outside picture on the Hold screen, one per Rank, and it had no frost). **Owner chose:** Q42 (a) code-drawn; draw the frost and then remove it; the lamp on all four Ranks.
+- **Built:** two code-drawn layers per Rank (`tools/draw-hold-look.ts`, written by `tools/gen-sprites.ts`, 8 manifest rows, credits regenerated, contact sheet regenerated). **Frost** (rime along the foot of the walls and on the ground) shows from the start of Act VI until Remember Them is chosen; **lamp** (a lit window: gold panes, orange bar) after it. Keep the Vigil keeps the frost. The layers sit on top of the cosmetics so the lamp is never hidden. Which look applies is `holdLook(state)`, a picture only; no number reads it.
+- **Tests:** `tests/remembering/hold-look.test.ts` (plain, frost, lamp, vigil keeps the frost; the eight images equal what the generator draws, 160 × 64, in the palette).
+- **Owner: please look** at the Hold screen in the preview (debug: Finish Act VI shows the frost; Open the gate, Remember Them shows the lamp) and approve or ask for changes. The frost is a speckled band; I can thin or thicken it.
 - **Not seen on a phone** (T11.16). No old test edited. Nothing skipped.
