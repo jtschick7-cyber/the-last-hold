@@ -17,18 +17,22 @@ export interface Notice {
   readonly text: string;
   /** "— Marta Dubska, Dubno Ford" */
   readonly signature: string;
+  /** A head's line from the Thanes' Moot, after everything else (lore §33 E1), only while seated. */
+  readonly headLine?: string;
 }
 
 /**
  * `act` is the current cycle's act: in Act II, a fell village's ruin notice names the
  * ruin (lore-secrets §22.1). `trust` is the village's trust now: once it's above where
  * the village started, the notice closes with that level's line (GDD §5.14.6, D180).
+ * `headLine` is the Moot's line for this village, or null; it is added last.
  */
 export const noticeFor = (
   c: ContractInstance,
   gameSeed: string,
   act: number | null = null,
   trust: TrustLevel | null = null,
+  headLine: string | null = null,
 ): Notice => {
   const options = notices[c.village][c.location] ?? [];
   const head = villages[c.village];
@@ -44,5 +48,6 @@ export const noticeFor = (
   return {
     text: warmer ? `${placed} ${warmer}` : placed,
     signature: `— ${head.head.name}, ${head.name}`,
+    ...(headLine ? { headLine } : {}),
   };
 };

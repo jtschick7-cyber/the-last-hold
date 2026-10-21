@@ -4,6 +4,7 @@ import type { GearSlot } from '../../content/gear';
 import type { PatronId } from '../../content/delves/patrons';
 import type { CosmeticId } from '../../content/delves/shop';
 import type { SceneId } from '../../content/text/scenes';
+import type { OrderId } from '../../content/orders';
 import type { HunterId } from '../../content/hunters';
 import type { TrackId } from '../../content/hunts';
 import type { JobId } from '../../content/jobs';
@@ -78,6 +79,27 @@ export type Command =
   | { type: 'stand.seen' }
   /** GDD §5.9.5: one more level of a warden upgrade, for Embers. */
   | { type: 'upgrade.buy'; upgrade: UpgradeId }
+  /** GDD §5.13.4: seats an open Order in a free seat; starts the 24 h cooldown (v0.10). */
+  | { type: 'orders.seat'; order: OrderId }
+  | { type: 'orders.unseat'; order: OrderId }
+  /** One seated Order out, one open Order in. */
+  | { type: 'orders.swap'; out: OrderId; in: OrderId }
+  /** Reads an Order's next playable chapter; the seats at that moment are saved (D419). */
+  | { type: 'orders.readChapter'; order: OrderId }
+  /** An opening scene is done; `seatIt` takes a free seat with no cooldown (D422). */
+  | { type: 'orders.finishOpening'; order: OrderId; seatIt: boolean }
+  /** The new-warden step and the load sheet: sets all seats, with no cooldown (D412). */
+  | { type: 'orders.setSeats'; orders: OrderId[] }
+  /** Skip or finish the load step without changing a seat or the cooldown. */
+  | { type: 'orders.skipSeatStep' }
+  // Debug, Orders (plan T10.12): the debug panel only.
+  | { type: 'debug.ordersOpen'; order: OrderId }
+  | { type: 'debug.ordersAddStanding'; order: OrderId; amount: number }
+  | { type: 'debug.ordersSetLevel'; order: OrderId; level: number }
+  | { type: 'debug.ordersOpenThird' }
+  | { type: 'debug.ordersClearCooldown' }
+  | { type: 'debug.ordersPlayChapter'; order: OrderId; chapter: number }
+  | { type: 'debug.ordersReset' }
   // Debug (technical design §15): only offered with ?debug or in dev builds.
   | { type: 'debug.skip'; ms: number }
   /** Plays a simulator policy over the last `ms`, then catches up to now (technical design §15). */

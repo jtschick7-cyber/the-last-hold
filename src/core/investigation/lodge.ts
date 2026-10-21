@@ -1,3 +1,4 @@
+import { perkFactor, perkLines } from '../systems/orders-perks';
 import { noteClue } from '../skills/hooks';
 import { skillBonus } from '../skills/skills';
 import { BUILDING_IDS, buildings } from '../../content/buildings';
@@ -58,7 +59,8 @@ export const clueDuration = (
   // Lore (GDD §5.8.6): after Studied, Tracker and the Bone Whistle.
   const lore = skillBonus(state, 'lore');
   const loreMult = 1 - lore.value;
-  const value = Math.round(base * studiedMult * trackerMult * relicMult * loreMult);
+  const orderMult = perkFactor(state, 'bellWatchers'); // GDD §5.13.5, seated only; fixed as the clue starts
+  const value = Math.round(base * studiedMult * trackerMult * relicMult * loreMult * orderMult);
   return {
     value,
     breakdown: {
@@ -75,6 +77,7 @@ export const clueDuration = (
         { label: 'Tracker idle at the hold', value: trackerMult },
         whistle.breakdown,
         lore.breakdown,
+        ...perkLines(state, 'bellWatchers'),
       ],
     },
   };

@@ -22,6 +22,8 @@ import {
   drawSigil,
   drawTokenIcon,
 } from './draw-icons16';
+import { drawOrderMark, drawOrderScene, drawOrdersIcon, ORDER_SCENE_H } from './draw-orders';
+import { ORDER_IDS } from '../src/content/orders';
 import { framesOf, stripPng } from './sprite-frames';
 import { drawHunterSprite } from './sprite-hunters';
 import { drawMonsterSprite } from './sprite-monsters';
@@ -53,3 +55,9 @@ for (const r of RARITIES) write(`icons/rarity-${r}.png`, drawRarityFrame(r).toPn
 for (const c of COSMETIC_IDS)
   for (const a of AGE_IDS)
     write(`scenes/cosmetics/${a}-${c}.png`, drawCosmetic(c, a).toPng(SCENE_H));
+// v0.10 (plan T10.15, Q36 (a)): the Orders' marks, the card's icon and the opening-scene placeholders.
+write('icons/orders.png', drawOrdersIcon().toPng());
+for (const id of ORDER_IDS) {
+  write(`icons/order-${id}.png`, drawOrderMark(id).toPng());
+  write(`scenes/orders/${id}.png`, drawOrderScene(id).toPng(ORDER_SCENE_H));
+}

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { begin, onwardAll, tab } from './helpers';
+import { begin, closeOrdersScenes, onwardAll, tab } from './helpers';
 
 // Plan T6.9b: the v0.6 screens on the real production build: an experiment shows a
 // property in the Book; "Start Act III" brings Arvid and D3-01; the Rank screen shows
@@ -33,12 +33,14 @@ test('an experiment shows a property in the Book', async ({ page }) => {
   );
   await onwardAll(page);
   await tab(page, 'Hold').click();
-  const buy = async (name: string) =>
-    page
+  const buy = async (name: string) => {
+    await closeOrdersScenes(page);
+    await page
       .getByRole('listitem')
       .filter({ has: page.locator('strong', { hasText: new RegExp(`^${name}$`) }) })
       .getByRole('button', { name: /^(Buy|Upgrade)/ })
       .click();
+  };
   await buy("Alchemist's Hut");
   await buy('Herb Garden');
   await debug(page, '+12 h');
@@ -86,6 +88,7 @@ test('Start Act III brings Arvid and D3-01; the Rank screen shows the ember', as
   await begin(page, 'Mira');
   await debug(page, 'Unlock Keep');
   await onwardAll(page);
+  await closeOrdersScenes(page);
   await tab(page, 'More').click();
   await page.getByRole('button', { name: /^Debug/ }).click();
   await page.getByRole('button', { name: 'Start Act III', exact: true }).click();
@@ -96,6 +99,7 @@ test('Start Act III brings Arvid and D3-01; the Rank screen shows the ember', as
   await scene.getByRole('button', { name: 'Close' }).click();
   await page.getByRole('button', { name: 'Close' }).click();
   await onwardAll(page);
+  await closeOrdersScenes(page);
 
   await tab(page, 'Archive').click();
   await page.getByRole('button', { name: 'Library' }).click();
@@ -129,6 +133,7 @@ test('the new-warden sheet brings Arvid when Act III begins', async ({ page }) =
     await page.getByRole('button', { name: 'Unlock Bastion', exact: true }).click();
     await page.getByRole('button', { name: 'Close' }).first().click();
     await onwardAll(page);
+    await closeOrdersScenes(page);
     await tab(page, 'Hold').click();
     await page.getByRole('button', { name: 'Rank ▸' }).click();
     await page.getByRole('button', { name: 'Make the Last Stand' }).click();

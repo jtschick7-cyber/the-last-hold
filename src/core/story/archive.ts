@@ -13,6 +13,15 @@ import { villages } from '../../content/villages';
 import { constantAt } from '../balance-access';
 import type { GameState } from '../state/game-state';
 import type { FoundDocument } from '../state/story-state';
+import { balance } from '../../content/balance';
+import {
+  QUENCHERS_ACCOUNT,
+  QUENCHERS_WITNESS,
+  quenchersAccounts,
+  quenchersLabel,
+} from '../../content/story/orders-perks';
+import { orderLevel } from '../systems/orders';
+import { bellExtra, bellSentenceFor } from './orders-bell';
 import { docKey } from './documents';
 import { letterKey } from './letters';
 
@@ -183,7 +192,10 @@ export const hunterLetters = (
 export interface AccountCard {
   readonly heading: string;
   readonly accounts: readonly {
-    readonly document: string;
+    /** The document it comes from; null for the Quenchers' voice, which has no document (E4). */
+    readonly document: string | null;
+    /** "(the Quenchers, level 2)" on the Quenchers' voice. */
+    readonly label?: string;
     readonly witness: string;
     readonly excerpt: string;
   }[];
@@ -202,7 +214,31 @@ export const accounts = (state: GameState): AccountCard[] =>
           excerpt: a.excerpt,
         })),
     }))
-    .filter((e) => e.accounts.length > 0);
+    .filter((e) => e.accounts.length > 0)
+    .map((e) => withQuenchers(state, e));
+
+/**
+ * The Quenchers' voice (lore §33 E4): while they are seated at level n, account n is added to "What the
+ * hearth leaves", but only once that Account exists in the save (it was filtered above if it had none).
+ */
+const withQuenchers = (state: GameState, card: AccountCard): AccountCard => {
+  if (card.heading !== QUENCHERS_ACCOUNT || !state.orders.seats.includes('quenchers')) return card;
+  const level = Math.min(orderLevel(state, 'quenchers'), balance.orders.levels.value);
+  const voice = level >= 1 ? quenchersAccounts[level as 1 | 2 | 3 | 4] : undefined;
+  if (!voice) return card;
+  return {
+    ...card,
+    accounts: [
+      ...card.accounts,
+      {
+        document: null,
+        label: quenchersLabel(level),
+        witness: QUENCHERS_WITNESS,
+        excerpt: voice.excerpt,
+      },
+    ],
+  };
+};
 
 export interface NameRow {
   readonly n: number;
@@ -210,15 +246,24 @@ export interface NameRow {
   /** "Eirik Varn — Velkvik — onward, year 272 of the order." or the missing line. */
   readonly text: string;
   readonly hint: string | null;
+  /** The Bell-Watchers' generated sentence after the hint, only while they are seated (lore §33 E3). */
+  readonly extra?: string;
 }
+
+/** The Bell-Watchers' sentence as an optional row field, so rows without one keep their old shape. */
+const extraFor = (state: GameState, n: number): { extra?: string } => {
+  const extra = bellSentenceFor(state, n);
+  return extra === null ? {} : { extra };
+};
 
 /** The Names view (GDD §5.14.3): the count, then all 40 in order. */
 export const namesView = (
   state: GameState,
-): { readonly title: string; readonly rows: NameRow[] } => {
+): { readonly title: string; readonly rows: NameRow[]; readonly remark: string | null } => {
   const found = new Set(state.story.names.map((x) => x.n));
   return {
     title: namesFoundLine(found.size),
+    remark: bellExtra(state)?.remark ?? null,
     rows: roll.map((r) =>
       found.has(r.n)
         ? {
@@ -227,7 +272,13 @@ export const namesView = (
             text: foundNameLine(r.name, villages[r.village].name, r.year),
             hint: null,
           }
-        : { n: r.n, found: false, text: MISSING_NAME, hint: r.hint },
+        : {
+            n: r.n,
+            found: false,
+            text: MISSING_NAME,
+            hint: r.hint,
+            ...extraFor(state, r.n),
+          },
     ),
   };
 };

@@ -1,6 +1,15 @@
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
 import { debugGrantLoot, debugReadyRanks } from './debug-depth';
+import {
+  debugOrdersAddStanding,
+  debugOrdersClearCooldown,
+  debugOrdersOpen,
+  debugOrdersOpenThird,
+  debugOrdersPlayChapter,
+  debugOrdersReset,
+  debugOrdersSetLevel,
+} from './debug-orders';
 import { debugAddToken, debugEndRests, debugFillBank } from './debug-events';
 import { bossAttempt, seeEventsScene } from './boss';
 import { addStar, rankUp } from './hunter-depth';
@@ -49,6 +58,16 @@ import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasant
 import { setSettings } from './settings';
 import { makeStand, markStandSeen } from './stand';
 import { buyUpgrade } from './hearth';
+import {
+  finishOpening,
+  readChapter,
+  seatOrder,
+  setSeats,
+  skipSeatStep,
+  swapOrders,
+  unseatOrder,
+} from './orders';
+import { openOrders } from '../systems/orders-open';
 import { refuse, type ApplyResult, type Command } from './types';
 
 /**
@@ -57,12 +76,18 @@ import { refuse, type ApplyResult, type Command } from './types';
  * state to `now`; only the debug time skip uses it in v0.1. A clock moved
  * backward is ignored, never refused (D21).
  */
+/** GDD §5.13.1: a building may be the first Alchemist's Hut, which opens the Grey Wives. */
+const opening = (state: GameState, result: ApplyResult): ApplyResult => {
+  if (result.ok) openOrders(state, state.time);
+  return result;
+};
+
 export const apply = (state: GameState, cmd: Command, now: number): ApplyResult => {
   switch (cmd.type) {
     case 'build.buy':
-      return buy(state, cmd.building, cmd.count);
+      return opening(state, buy(state, cmd.building, cmd.count));
     case 'build.upgrade':
-      return upgrade(state, cmd.building);
+      return opening(state, upgrade(state, cmd.building));
     case 'peasants.add':
       return add(state, cmd.job);
     case 'peasants.remove':
@@ -115,6 +140,34 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return markStandSeen(state);
     case 'upgrade.buy':
       return buyUpgrade(state, cmd.upgrade);
+    case 'orders.seat':
+      return seatOrder(state, cmd.order, now);
+    case 'orders.unseat':
+      return unseatOrder(state, cmd.order, now);
+    case 'orders.swap':
+      return swapOrders(state, cmd.out, cmd.in, now);
+    case 'orders.readChapter':
+      return readChapter(state, cmd.order);
+    case 'orders.finishOpening':
+      return finishOpening(state, cmd.order, cmd.seatIt);
+    case 'orders.skipSeatStep':
+      return skipSeatStep(state);
+    case 'orders.setSeats':
+      return setSeats(state, cmd.orders);
+    case 'debug.ordersOpen':
+      return debugOrdersOpen(state, cmd.order, now);
+    case 'debug.ordersAddStanding':
+      return debugOrdersAddStanding(state, cmd.order, cmd.amount);
+    case 'debug.ordersSetLevel':
+      return debugOrdersSetLevel(state, cmd.order, cmd.level);
+    case 'debug.ordersOpenThird':
+      return debugOrdersOpenThird(state);
+    case 'debug.ordersClearCooldown':
+      return debugOrdersClearCooldown(state);
+    case 'debug.ordersPlayChapter':
+      return debugOrdersPlayChapter(state, cmd.order, cmd.chapter, now);
+    case 'debug.ordersReset':
+      return debugOrdersReset(state);
     case 'debug.skip':
       return skip(state, cmd.ms, now);
     case 'debug.runPolicy':

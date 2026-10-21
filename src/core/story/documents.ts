@@ -1,4 +1,6 @@
 import { noteDocument } from '../skills/hooks';
+import { openOrders } from '../systems/orders-open';
+import { ordersDocumentFound, ordersNameFound } from '../systems/orders';
 import { knowledgeLevels } from '../../content/knowledge';
 import { monsters } from '../../content/monsters';
 import { allDocuments, LAST_WRITTEN_ACT, UNWRITTEN_ACT_LINE } from '../../content/story/acts';
@@ -34,6 +36,7 @@ export const findName = (state: GameState, n: number): string | null => {
   if (state.story.names.some((x) => x.n === n)) return null;
   state.story.names.push({ n, cycle: state.cycle.number, at: state.time });
   state.story.unread.push(nameKey(n));
+  ordersNameFound(state); // GDD §5.13.2: Bell-Watchers, 10 a name
   return nameKey(n);
 };
 
@@ -47,11 +50,13 @@ export const findDocument = (state: GameState, doc: DocumentDef, via: FoundVia):
   state.story.unread.push(docKey(doc.id));
   if (state.story.ilseAt === null) state.story.ilseAt = state.time;
   noteDocument(state); // Lore (GDD §5.8.6)
+  ordersDocumentFound(state, 'document'); // GDD §5.13.2: Bell-Watchers, 5 a document
   const keys = [docKey(doc.id)];
   for (const n of doc.names) {
     const k = findName(state, n);
     if (k) keys.push(k);
   }
+  openOrders(state, state.time); // GDD §5.13.1: Ilse's arrival and D5-08 open the Bell-Watchers and Quenchers
   return keys;
 };
 

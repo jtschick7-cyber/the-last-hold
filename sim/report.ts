@@ -1,3 +1,4 @@
+import { ORDER_IDS, ORDER_NAMES } from '../src/content/orders';
 import { RESOURCE_IDS } from '../src/content/resources';
 import { RULES_VERSION } from '../src/core/rules-version';
 import type { CheckResult } from './checks';
@@ -216,6 +217,52 @@ export const eventLines = (runs: readonly RunResult[]): string[] =>
       );
     });
 
+/**
+ * Reported, not judged (GDD §6.1–§6.2 v0.10, plan T10.17): what each Orderer did with the Orders. Per
+ * Order: when it opened, chapter 1's wait, each level's time and the last chapter's time; then the
+ * seats at each new warden, when the third seat opened, the silver and provisions shares, and each
+ * stand with the Threat it met and whether the Quenchers sat (the perk acts over a whole cycle, so
+ * "on" and "off" are the cycles where they sat and did not; Embers per stand are averaged for each).
+ */
+export const orderLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.spec.policy === 'orderer' && r.orders !== undefined)
+    .map((r) => {
+      const o = r.orders as NonNullable<RunResult['orders']>;
+      const per = ORDER_IDS.map((id) => {
+        const opened = o.opened.find((x) => x.order === id);
+        const first = o.chapters.find((x) => x.order === id && x.n === 1);
+        const last = o.chapters.find((x) => x.order === id && x.n === 4);
+        const lv = (n: number) => o.levels.find((x) => x.order === id && x.level === n);
+        const levels = [1, 2, 3, 4]
+          .map((n) => (lv(n) ? `L${n} c${lv(n)?.cycle}` : `L${n} never`))
+          .join(' ');
+        const wait =
+          opened && first
+            ? `, chapter 1 ${hoursText(first.hours - opened.hours)} after opening`
+            : ', chapter 1 never';
+        return `${ORDER_NAMES[id]}: ${opened ? `opened c${opened.cycle}` : 'never opened'}${wait}; ${levels}; last chapter ${last ? `c${last.cycle}` : 'never'}`;
+      });
+      const mean = (xs: readonly number[]) =>
+        xs.length === 0 ? '–' : String(Math.round(xs.reduce((a, b) => a + b, 0) / xs.length));
+      const on = o.stands.filter((s) => s.quenchersSeated);
+      const off = o.stands.filter((s) => !s.quenchersSeated);
+      const k = r.keepPhase;
+      const share = (a: number, b: number) =>
+        a + b === 0 ? '–' : `${Math.round((100 * a) / (a + b))}%`;
+      return (
+        `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${r.cyclesDone} Long Nights, ` +
+        `${o.chapters.length} of 16 chapters${o.chapters.length === 16 ? ` (all by c${o.chapters[o.chapters.length - 1]?.cycle})` : ''}; ` +
+        `third seat ${o.thirdSeat ? `c${o.thirdSeat.cycle}` : 'never'}; ` +
+        `silver from bounties ${share(k.bountySilver, k.jobSilver)}, provisions ${share(k.provisionsFood, k.jobFood)}; ` +
+        `Delve floors counted for the Quenchers ${o.final.counts.quenchers?.delveFloor ?? 0}; ` +
+        `stands with the Quenchers ${on.length}: mean Embers ${mean(on.map((s) => s.embers))}, mean Threat ${mean(on.map((s) => s.threat))}; ` +
+        `without ${off.length}: mean Embers ${mean(off.map((s) => s.embers))}, mean Threat ${mean(off.map((s) => s.threat))}; ` +
+        `seats by cycle ${o.seatsByCycle.map((x) => `c${x.cycle} ${x.seats.map((id) => ORDER_NAMES[id]).join('+') || 'none'}`).join(', ')}. ` +
+        per.join('. ')
+      );
+    });
+
 export const markdown = (report: Report, previous: Baseline | null): string => {
   const out: string[] = [
     `# Simulator report: ${report.name}`,
@@ -246,6 +293,7 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
     ...depthLines(report.runs),
   );
   out.push('', '## Events (reported only; the Eventer)', '', ...eventLines(report.runs));
+  out.push('', '## Orders (reported only; the Orderer)', '', ...orderLines(report.runs));
   out.push(
     '',
     '## All content (reported only; the Idle-only row judges the medians)',

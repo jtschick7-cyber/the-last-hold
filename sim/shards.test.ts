@@ -32,13 +32,13 @@ const whole = runSequential(all);
 describe('the simulator shards (D320)', () => {
   it('give every run of the real suite to exactly one shard, in the list order', () => {
     const full = buildSpecs({
-      policies: ['opening', 'light', 'standard', 'heavy', 'delver', 'eventer'],
+      policies: ['opening', 'light', 'standard', 'heavy', 'delver', 'eventer', 'orderer'],
       days: 14,
       seeds: 5,
       starts: ['mon', 'sat'],
       fast: false,
     });
-    expect(full).toHaveLength(50); // 4 policies × 2 starts × 5 seeds + the Delver's and the Eventer's 5 Monday runs each
+    expect(full).toHaveLength(55); // 4 policies × 2 starts × 5 seeds + the Delver's, the Eventer's and the Orderer's 5 Monday runs each
     const parts = SHARD_IDS.map((s) => specsOfShard(full, s));
     expect(parts.flat()).toHaveLength(full.length);
     expect(new Set(parts.flat().map((s) => JSON.stringify(s))).size).toBe(full.length);
@@ -48,7 +48,10 @@ describe('the simulator shards (D320)', () => {
     expect(specsOfShard(full, 'events')).toHaveLength(5);
     expect(specsOfShard(full, 'events').every((r) => r.policy === 'eventer')).toBe(true);
     // No other share is more than a third bigger than a fair one, so no job is far slower than the rest.
-    const others = parts.filter((_, i) => SHARD_IDS[i] !== 'events');
+    // The Orderer is its own shard too (v0.10, D417): five Monday runs.
+    expect(specsOfShard(full, 'orders')).toHaveLength(5);
+    expect(specsOfShard(full, 'orders').every((r) => r.policy === 'orderer')).toBe(true);
+    const others = parts.filter((_, i) => SHARD_IDS[i] !== 'events' && SHARD_IDS[i] !== 'orders');
     for (const p of others) expect(p.length).toBeLessThanOrEqual((45 / others.length) * 1.34);
   });
 

@@ -3,6 +3,7 @@ import { hunters } from '../../content/hunters';
 import { monsters } from '../../content/monsters';
 import { num } from '../../core/balance-access';
 import { formatDuration } from '../../core/format';
+import { mootNoticeLine } from '../../core/story/orders-views';
 import { noticeFor } from '../../core/contracts/notice';
 import { contractDuration, holdBounty, trophies } from '../../core/contracts/rewards';
 import type { ContractInstance } from '../../core/state/game-state';
@@ -24,7 +25,13 @@ const durationOf = (c: ContractInstance): number => contractDuration(game(), c.t
 
 const Open = ({ c }: { c: ContractInstance }) => {
   const s = game();
-  const notice = noticeFor(c, s.meta.gameSeed, currentAct(s), s.story.trust[c.village].level);
+  const notice = noticeFor(
+    c,
+    s.meta.gameSeed,
+    currentAct(s),
+    s.story.trust[c.village].level,
+    mootNoticeLine(s, c.village),
+  );
   const pay = holdBounty(s, c.tier, []).value;
   return (
     <li class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>
@@ -33,6 +40,7 @@ const Open = ({ c }: { c: ContractInstance }) => {
       </strong>
       <div class={`${styles.small} ${styles.dim}`}>
         <em>“{notice.text}”</em> {notice.signature}
+        {notice.headLine && <div>{notice.headLine}</div>}
       </div>
       <div class={styles.small}>
         {identityText(contractIdentity(s, c))}

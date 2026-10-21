@@ -9,12 +9,14 @@ import {
   namesView,
   type ShelfLetter,
 } from '../../core/story/archive';
+import { ordersShelf } from '../../core/story/orders-chapter-view';
+import { reopenChapter } from '../orders/ChapterScene';
 import { docKey } from '../../core/story/documents';
 import { letterKey } from '../../core/story/letters';
 import { dispatch, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
-import { docIconId, RIME_ICON } from '../../content/assets';
+import { docIconId, ORDERS_ICON, RIME_ICON } from '../../content/assets';
 import { Sprite } from '../widgets/Sprite';
 import { riftScene } from '../../content/delves/rift-text';
 import { echoesShelf } from '../../core/delves/view-shop';
@@ -127,8 +129,15 @@ const Library = () => {
   const shelf = lettersShelf(s);
   const echoList = echoesShelf(s);
   const rime = rimeShelf(s);
+  const orders = ordersShelf(s);
   const wayDown = s.delve.sceneSeen;
-  if (groups.length === 0 && shelf.length === 0 && echoList.length === 0 && !wayDown)
+  if (
+    groups.length === 0 &&
+    shelf.length === 0 &&
+    echoList.length === 0 &&
+    orders.length === 0 &&
+    !wayDown
+  )
     return <p class={styles.dim}>Nothing in the archive yet.</p>;
   return (
     <>
@@ -180,6 +189,29 @@ const Library = () => {
           </ul>
         )}
       </section>
+      {orders.length > 0 && (
+        <section class={styles.card} aria-label="Orders">
+          <h2 class={styles.cardTitle}>
+            <Sprite id={ORDERS_ICON} /> Orders
+          </h2>
+          <ul class={styles.list}>
+            {orders.map((e) => (
+              <li key={`${e.order}${e.n}`}>
+                <button
+                  type="button"
+                  class={styles.linkRow}
+                  onClick={() => reopenChapter(e.order, e.n)}
+                >
+                  <span class={styles.grow}>
+                    <strong>{e.title}</strong>
+                    <span class={`${styles.small} ${styles.dim}`}> · {e.readWithLine}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {echoList.length > 0 && (
         <section class={styles.card} aria-label="Echoes">
           <h2 class={styles.cardTitle}>Echoes</h2>
@@ -257,19 +289,30 @@ const Accounts = () => {
       {cards.map((c) => (
         <section key={c.heading} class={styles.card} aria-label={c.heading}>
           <h2 class={styles.cardTitle}>{c.heading}</h2>
-          {c.accounts.map((a) => (
-            <button
-              type="button"
-              key={a.document}
-              class={styles.linkRow}
-              onClick={() => openDocument(a.document)}
-            >
-              <span class={styles.grow}>
-                <span class={`${styles.small} ${styles.dim}`}>{a.witness}</span>
-                <br />“{a.excerpt}”
-              </span>
-            </button>
-          ))}
+          {c.accounts.map((a) =>
+            a.document === null ? (
+              <div key={a.label} class={styles.linkRow}>
+                <span class={styles.grow}>
+                  <span class={`${styles.small} ${styles.dim}`}>
+                    {a.witness} {a.label}
+                  </span>
+                  <br />“{a.excerpt}”
+                </span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                key={a.document}
+                class={styles.linkRow}
+                onClick={() => openDocument(a.document ?? '')}
+              >
+                <span class={styles.grow}>
+                  <span class={`${styles.small} ${styles.dim}`}>{a.witness}</span>
+                  <br />“{a.excerpt}”
+                </span>
+              </button>
+            ),
+          )}
         </section>
       ))}
     </>
@@ -281,11 +324,13 @@ const Names = () => {
   return (
     <section class={styles.card} aria-label="Names">
       <h2 class={styles.cardTitle}>{view.title}</h2>
+      {view.remark && <p class={styles.small}>{view.remark}</p>}
       <ol class={styles.list}>
         {view.rows.map((r) => (
           <li key={r.n} class={r.found ? undefined : styles.dim}>
             {r.text}
             {r.hint && <div class={styles.small}>{r.hint}</div>}
+            {r.extra && <div class={`${styles.small} ${styles.dim}`}>{r.extra}</div>}
           </li>
         ))}
       </ol>

@@ -115,6 +115,7 @@ export const resetForNewCycle = (state: GameState): void => {
   state.threat = 0;
   state.arrivalDue = false;
   state.stats = { ...state.stats, trophies: 0, trophiesSpent: 0 };
+  state.orders.lastChange = null; // GDD §5.13.4: a new warden's arrival clears the seat cooldown
   // GDD §5.14.1: one act per cycle. A cycle with no act (before v0.5, or the v0.4
   // arrival's) is followed by Act I (D149).
   const act = (state.cycles[state.cycles.length - 1]?.act ?? 0) + 1;

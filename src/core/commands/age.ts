@@ -3,6 +3,7 @@ import { RESOURCE_IDS } from '../../content/resources';
 import type { GameState } from '../state/game-state';
 import { ageUpStatus } from '../systems/ages';
 import { startAllowanceClock } from '../delves/riftglass';
+import { openOrders } from '../systems/orders-open';
 import { openEvents } from '../systems/events';
 import { sweepDocuments } from '../story/documents';
 import { fixStandPool } from '../stand/pool';
@@ -29,5 +30,6 @@ export const ageUp = (state: GameState): ApplyResult => {
   startAllowanceClock(state); // GDD §5.10.8: the Riftglass allowance begins when Delves open
   sweepDocuments(state); // GDD §5.14.2: a Rank document arrives on the Rank-up sheet
   openEvents(state, state.time); // GDD §5.12.1: events open for good at the first Citadel
+  openOrders(state, state.time); // GDD §5.13.1: the Moot opens at the first Keep
   return ok;
 };

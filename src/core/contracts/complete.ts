@@ -21,6 +21,7 @@ import { winForVillage } from '../story/trust';
 import { applyYard } from './yard';
 import { notePeak } from '../story/letters';
 import { deathSeed, fightSeed } from './seeds';
+import { ordersContractWon } from '../systems/orders';
 
 // GDD §5.4.3 (B9): rewards, injuries and XP apply the moment a contract's timer
 // ends, even offline. Collect only acknowledges the results.
@@ -125,6 +126,7 @@ export const applyCompletion = (state: GameState): ContractResult | null => {
   state.resources.silver += pay;
   if (success) {
     state.stats.contractsWon += 1;
+    ordersContractWon(state, contract.village); // GDD §5.13.2: Moot, and Quenchers for Kozly Hollow
     noteContractWon(state, contract.tier); // Command (GDD §5.8.6)
     state.stats.trophies += earned;
     state.stats.bountySilver += pay;

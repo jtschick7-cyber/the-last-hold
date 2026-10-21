@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
 import { INGREDIENT_IDS, ingredients, type IngredientId } from '../../content/ingredients';
+import { greyWivesBookLine } from '../../core/story/orders-views';
 import { experimentProblem, knownRecipes } from '../../core/alchemy/book';
 import { brewSummary } from '../../core/alchemy/brew-text';
 import { skillLevel } from '../../core/skills/skills';
@@ -204,6 +205,7 @@ const ExperimentSection = ({ s }: { s: GameState }) => {
 const BookSection = ({ s }: { s: GameState }) => {
   const { found, total } = bookCount(s);
   const pairs = triedPairs(s);
+  const book = greyWivesBookLine(s);
   return (
     <div>
       <p>
@@ -231,6 +233,11 @@ const BookSection = ({ s }: { s: GameState }) => {
           ))}
         </tbody>
       </table>
+      {book && (
+        <p class={styles.small}>
+          <strong>The eldest Grey Wife says:</strong> <em>{book.text}</em>
+        </p>
+      )}
       <h3 class={styles.cardTitle}>Brews</h3>
       <ul class={styles.list}>
         {CONSUMABLE_IDS.map((id) => {

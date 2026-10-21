@@ -79,3 +79,28 @@ export const meetOnLoadCard = async (
   await expect(page.getByRole('heading', { name: card.title })).toHaveCount(0);
   await expect(tab(page, 'Hold')).toBeVisible();
 };
+
+/**
+ * Closes the Orders' opening scenes and the "Seat your Orders" step if any is showing (v0.10): a scene
+ * ends with "Seat it" and "Not now", or "Continue" when no seat is free, and the step has "Skip".
+ * Nothing seats itself, so these leave the seats as they were. It waits briefly, as scenes appear a
+ * moment after the state that triggers them.
+ */
+export const closeOrdersScenes = async (page: Page): Promise<void> => {
+  for (let i = 0; i < 8; i++) {
+    await page.waitForTimeout(400);
+    const scene = page.getByRole('button', { name: /^(Not now|Continue)$/ });
+    const step = page.getByRole('dialog', { name: 'Seat your Orders' }).getByText('Skip', {
+      exact: true,
+    });
+    if (
+      await scene
+        .first()
+        .isVisible()
+        .catch(() => false)
+    )
+      await scene.first().click();
+    else if (await step.isVisible().catch(() => false)) await step.click();
+    else return;
+  }
+};

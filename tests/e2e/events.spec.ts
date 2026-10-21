@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { begin, onwardAll, tab } from './helpers';
+import { begin, closeOrdersScenes, onwardAll, tab } from './helpers';
 
 // Plan T9.14: the Events card, the opening scene, the boss sheet and the party picker on the real
 // production build, with the owner's save (events open at the Bastion). Screenshots (SHOTS=dir) are
@@ -55,6 +55,7 @@ test('the scene, the Events card, and a boss attempt in 15 taps or fewer', async
   await expect(scene.getByText('Take four. Rest them a day.')).toBeVisible();
   await shot(page, 'events-scene');
   await onwardAll(page);
+  await closeOrdersScenes(page);
   await expect(scene).toHaveCount(0);
   await tab(page, 'Hold').click();
 
@@ -64,7 +65,8 @@ test('the scene, the Events card, and a boss attempt in 15 taps or fewer', async
   await expect(card.getByText(/^Tokens 0 of 6 · next in/)).toBeVisible();
   await expect(card.getByText(/The Lindworm of Velk Fjord · tier \d · 100% left/)).toBeVisible();
   await expect(card.getByText('Legendary Hunts: 3 of 3 to unlock')).toBeVisible();
-  await expect(tab(page, 'Hold')).not.toContainText('●');
+  // The tab's dot is shared with the Orders (v0.10), so the Events card's own dot is checked.
+  await expect(card.getByLabel('The attempt bank is full')).toHaveCount(0);
   await shot(page, 'events-card');
 
   // Fill the bank from the debug panel: the badge shows and the card says "full".
@@ -129,6 +131,7 @@ test('the layout holds at 360, 900 and 1300 px with no sideways scroll', async (
   await importOwner(page);
   await untilScene(page);
   await onwardAll(page);
+  await closeOrdersScenes(page);
   await tab(page, 'Hold').click();
   await page
     .getByRole('region', { name: 'Events' })
@@ -151,6 +154,7 @@ test('a hunt: the list, a track, the odds, playback, the result, the shelf and t
   await importOwner(page);
   await untilScene(page);
   await onwardAll(page);
+  await closeOrdersScenes(page);
   await tab(page, 'Hold').click();
   await tab(page, 'More').click();
   await page.getByRole('button', { name: /^Debug/ }).click();

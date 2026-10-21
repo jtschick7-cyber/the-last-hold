@@ -43,6 +43,14 @@ import {
   silverWithBossCheck,
   tokensNotWastedCheck,
 } from './v09';
+import {
+  ordersAllChaptersCheck,
+  ordersFirstChapterCheck,
+  ordersLevelFourCheck,
+  ordersProvisionsCheck,
+  ordersSilverCheck,
+  ordersStandRowsCheck,
+} from './v010';
 import type { Check } from './types';
 
 export type { Check, CheckResult } from './types';
@@ -104,4 +112,11 @@ export const CHECKS: readonly Check[] = [
   silverWithBossCheck,
   lateLettersCheck,
   firstWrightCheck,
+  // v0.10 (D417, D440)
+  ordersFirstChapterCheck,
+  ordersLevelFourCheck,
+  ordersAllChaptersCheck,
+  ordersSilverCheck,
+  ordersProvisionsCheck,
+  ordersStandRowsCheck,
 ];

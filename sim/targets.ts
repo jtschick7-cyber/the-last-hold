@@ -15,6 +15,7 @@ export const MILESTONES = [
   'v0.7',
   'v0.8',
   'v0.9',
+  'v0.10',
 ] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
@@ -304,7 +305,59 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.9',
   },
+  // v0.10 (GDD §6.2, D417; row (a) read as in D440). The Orderer's Orders rows, judged by their own
+  // checks on the median of the 5 Monday seeds; their numbers are in ORDERS below.
+  {
+    id: 'orders-first-chapter',
+    text: 'First chapter in time: chapter 1 of each Order the Orderer seats at its opening plays within 24 h of that Order opening (Orderer)',
+    bounds: [],
+    enforcedFrom: 'v0.10',
+  },
+  {
+    id: 'orders-level-4',
+    text: 'Every Order reaches level 4 by the end of cycle 6 (Orderer)',
+    bounds: [],
+    enforcedFrom: 'v0.10',
+  },
+  {
+    id: 'orders-all-chapters',
+    text: 'All 16 chapters have played by the end of cycle 8 (Orderer)',
+    bounds: [],
+    enforcedFrom: 'v0.10',
+  },
+  {
+    id: 'orders-silver',
+    text: 'Silver check #6 with Orders: at least 70% of silver from bounties (Orderer)',
+    bounds: [],
+    enforcedFrom: 'v0.10',
+  },
+  {
+    id: 'orders-provisions',
+    text: 'Provisions share with the Moot perk counted: 20–40% (Orderer)',
+    bounds: [],
+    enforcedFrom: 'v0.10',
+  },
+  {
+    id: 'orders-stand-rows',
+    text: "Stand rows with the Quenchers' perk: Best Last Stand timing (days 4–5), First Long Night (days 3–5), Act VI lands in its cycle and the Dross-Tide stand probe still pass; Embers per stand with and without the Quenchers are reported (Orderer)",
+    bounds: [],
+    enforcedFrom: 'v0.10',
+  },
 ];
+
+/**
+ * The Orderer's Orders rows (v0.10, D417, D440). Cycles count from the start of the run.
+ */
+export const ORDERS = {
+  /** Chapter 1 of an Order the Orderer seated at its opening, in hours after that opening. */
+  firstChapterWithinHours: 24,
+  /** Every Order at its top level by the end of this cycle. */
+  levelFourByCycle: 6,
+  /** All sixteen chapters read by the end of this cycle. */
+  allChaptersByCycle: 8,
+  /** Bounty share of the cycle-1 silver from the Keep on (GDD §6.3 #6). */
+  minBountyShare: 0.7,
+} as const;
 
 /**
  * The Eventer's event rows (v0.9, D367; the three cycle and share numbers were moved by the owner,

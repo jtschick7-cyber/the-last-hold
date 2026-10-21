@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** v0.9 closed: playtest passed, `sim:accept` run, merged and tagged `v0.9.0` (D405).
-- **Next:** v0.10 needs a flesh-out session first (plan §0.4).
-- **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
+- **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
+- **Last task:** v0.10 closed: playtest passed, `sim:accept` run, merged and tagged `v0.10.0`.
+- **Next:** v0.11 needs its flesh-out session first (plan §0.4).
+- **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -215,3 +215,181 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 
 ## 2026-10-21 — v0.9 closed
 - Owner passed the playtest (D405). `sim:accept` run: 50 runs, 318 s, all rows pass, baseline recorded in `sim/baseline.json`. Status set to complete, PR opened, merged, tagged `v0.9.0`.
+
+## 2026-10-21 — v0.10 session 1: the flesh-out is applied (docs only)
+- **Checked first:** `v0.9.0` is tagged and inside `main`; the v0.9 merge is in `main`; `sim/baseline.json` is the accepted one. Branched `milestone/v0.10` from `main` and pushed it.
+- **Owner said yes** to OUT-3 and the eighteen readings, no exceptions: **D425** added (Decided). **D407** (sweep, Decided) and **D408–D424** (Proposed) added; no old row edited.
+- **Applied:** flesh-out files to `docs/flesh-out/v0.10/` and the summary to `docs/flesh-out/v0.10-summary.md`; GDD §5.13 replaced and the other GDD edits made (OUT-2b, §7.12, waits for T10.2); lore §33 and its three edits; the plan's v0.10 section, the v0.11 outline, the v1.0 line and the §0.7 row (OUT-4b waits for T10.2); Q34–Q37; the technical-design changes; two standing rules in `CLAUDE.md`.
+- **Sweep:** every `Proposed` row from D358 to D406 is named in D407; D408–D424 are the new ones; nothing else turned up.
+- **v0.9 actual count** (§0.7): 21 entries over 6 numbered build sessions.
+- **`npm run check` green** (2,403 tests, 64 s).
+- **Save fixture, waiting on the owner:** the export they sent has `schemaVersion` 9 but `meta.debugUsed` is **true**. OUT-8 says to ask which to use (this export, or v8-owner.json carried forward). Not copied yet.
+- **Next:** T10.1.
+
+## 2026-10-21 — v0.10 session 1 (continued): T10.1 save v10
+- **Fixture:** both exports you sent today had `debugUsed` true, so by your rule I used the fallback: your 2026-10-20 save carried through the shipped v8 → v9 migration and the events load path (`v9-owner.json`; made by `scripts/make-v9-owner-fixture.ts`). `v10.json` is that save after this migration, not played.
+- **Backfill table (Q35):** Moot: contracts won, `stats.contractsWon` (kept). Grey Wives: experiments (`book.tried`) and properties (`book.properties`) kept; **brews not recorded**. Bell-Watchers: documents, letters and names all kept. Quenchers: Kozly Hollow contracts from village trust (**partial**: a Sworn village stops counting); **Delve floors not recorded**. Every Order: past Triumphant stands from the cycle bands.
+- **Result on your save:** every Order is far past level 1, so the cap binds: starts 10 (Moot), 30 (Grey Wives), 25 (Bell-Watchers), 20 (Quenchers), all at level 1. Nothing opens, queues or seats on migration.
+- **Built:** `orders` state and guard (`validate-orders.ts`), `migration-v10.ts`, `orders-backfill.ts`, schema 10. Refuses impossible states; drops unknown ids with warnings. Tests: `tests/saves/v10-migration.test.ts` (23 tests): recount, cap, notes, guard, round-trip, golden fights and recorded stands replay unchanged.
+- **Timing:** migration 1.1 ms; full load 2.3 ms (198 KB file). `npm run check` green (2,432 tests, 64 s).
+- **Two readings for you (D426, Proposed):** the unrecovered sources come out as load notes, not warnings, so ten older tests that expect no warnings stay untouched; and the backfill numbers sit in one marked temporary file until T10.2 moves them to `balance.ts`.
+- **Next:** T10.2.
+
+## 2026-10-21 — v0.10 session 1 (continued): T10.2 constants
+- **GDD §7.12** (OUT-2b) added after §7.11; the §7.4 pointer was already in. **Plan §0.6** has the Orders row (six locked keys) and the note that the rest are tunable.
+- **`balance.ts`** now holds every `orders.*` key at the §7.12 value; six are locked (seats, third-seat rule, levels, the opposed pair, the perk ceiling). The temporary file from T10.1 is deleted; the migration and the guard read `balance.ts`, and the migration test takes its weights from it.
+- **Test:** `tests/content/v10-constants.test.ts` fails if a locked value changes, checks each perk step × 4 ≤ the 20% ceiling, one weight per source, rising thresholds. Existing balance tests (both directions with the GDD, locked = plan §0.6) pass.
+- `npm run check` green (2,438 tests, 60 s). No locked value changed, no old row edited.
+- **Next:** T10.3.
+
+## 2026-10-21 — v0.10 session 1 (continued): T10.3 standing hooks, part 1
+- **New `core/systems/orders.ts`:** standing is derived (start + counts × weights + Triumphant stands × chunk) with its breakdown built by the same function; level is the higher of the derived one and the saved highest level, raised in the same call that adds standing.
+- **Three hooks:** a contract won (Moot for any village, Quenchers for Kozly Hollow), a Triumphant stand (the chunk to all four Orders, opened or not), a Delve floor whose result paid at least 1 Riftglass (7-day window on the event clock, capped). A lost contract, a Broken stand, a Cold Comfort run and a run past its allowance add nothing.
+- **Delve-optional test (D20, D271):** Delve standing is listed as a reward with an idle source (Kozly Hollow contracts).
+- **Tests:** `tests/orders/standing-hooks.test.ts` (16): each source adds its weight once, a 30 h catch-up equals 30 one-hour steps, the cap and a new window, a real Delve run, level never drops.
+- `npm run check` green (2,454 tests, 66 s). Golden fights and recorded stands unchanged; no existing test edited.
+- **Left for later:** the third-seat check after a level change (T10.5) will read the list `raiseLevels` returns; the full simulator is not re-run here (nothing reads standing yet; T10.17 checks the old players still equal the baseline).
+- **Next:** T10.4.
+
+## 2026-10-21 — v0.10 session 2: T10.4 standing hooks, part 2
+- **Six hooks added** in `core/systems/orders.ts`, called where the game already notes the same event: a brew finished and an experiment finished (with one per property it revealed) for the Grey Wives; a document found, a hunter letter found and a name found for the Bell-Watchers. A name counts once, whatever found it.
+- **Long Night:** the reset never touches Orders, and a test now pins that counts, start, flags, Triumphant stands and the highest level all survive it. **Events add nothing:** a test runs a real boss attempt and a hunt on the owner's save and the Orders state is unchanged.
+- **Tests:** `tests/orders/standing-hooks-2.test.ts` (10), including a 30 h catch-up equal to 30 one-hour steps.
+- `npm run check` green (2,464 tests, 83 s). Golden fights and recorded stands unchanged; no existing test edited.
+- **Note:** this container had no installed packages at the start, so I ran `npm ci` from the lockfile first (nothing added). The "green" I saw before that was not a real run; this one is.
+- **Next:** T10.5.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.5 seats
+- **Owner answers logged (D427, Decided):** D426 accepted; Q34, Q36, Q37 all (a).
+- **Seats:** two at the start, three once the third opens. Four commands: seat, unseat, swap, and set-all (the new-warden and load step). Seats stay in the fixed list order; nothing seats an Order by itself.
+- **Cooldown:** 24 h on the event clock, refused with "Can change in 9h 20m"; a rewound device clock gives nothing back; a refused change starts none. Set-all is free and clears it; a new warden clears it too (in the Long Night reset), and seats carry over.
+- **Third seat:** one check (idempotent), run after every level change; the Quenchers' opening and the load will call it in T10.6. Tests cover all three orders of events, "once", and the Long Night.
+- **Tests:** `tests/orders/seats.test.ts` (17). `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Not here:** the "Seat it" at an opening that skips the cooldown (T10.6), the screens (T10.13).
+- **Next:** T10.6.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.6 opening the Orders
+- **One function, `openOrders`,** opens each Order once for good and queues its opening scene, in list order. It runs at the live triggers (a Rank-up to the Keep, a building, a document found, Ilse's arrival) and at the end of every catch-up, after the time away is played, so contracts are counted by their own events and never by the opening. Then it runs the third-seat check.
+- **Triggers:** Moot at the first Keep; Grey Wives at the first Hut; Bell-Watchers at Ilse; Quenchers when D5-08 is found. Nothing seats itself; a new command finishes a scene ("Seat it" takes a free seat with no cooldown; "Continue" and "Not now" leave it).
+- **Tests:** `tests/orders/opening.test.ts` (28). A table over all 19 saved fixtures works out what should be open from each save itself. Also: the Quenchers wait for D5-08 (live and in a catch-up), the Hut, Ilse, a new game at the Keep, the scene commands.
+- **Please look at (D428, Proposed):** how "the first Hut" is read from an old save; the "Seat your Orders" sheet is pending only when a load opens the save's first Orders; "Seat it" with no free seat is refused.
+- **Not tested yet:** acceptance 3's "no Sending, Deep or onward word" needs the scene texts, so it is checked in T10.9. The owner's own save opens Moot, Grey Wives and Bell-Watchers on load, and the Quenchers not at all (it has not found D5-08).
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.7.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.7 number perks
+- **D428 accepted by the owner.**
+- **Four factors, each `1 − step × level`, seated only,** each its own breakdown line (for example "Thanes' Moot, Friend: −6% food for provisions"): contract provisions (Moot), brew and experiment time (Grey Wives), clue time (Bell-Watchers), the hourly Threat rate (Quenchers; failed and completed contracts are untouched). Unseated or level 0 is exactly 1, so a game with nothing seated equals v0.9. New file `core/systems/orders-perks.ts`; the Order names and the level words (Neighbour, Friend, Ally, Kin) are now in `content/orders.ts`.
+- **Fixed at the right moment:** provisions at launch; a clue as it starts; a brew or experiment as it is **queued** (a waiting job keeps its cut). That last one needed one optional saved number on a queued job (D429, Proposed; no migration, round-trip tested).
+- **Tests:** `tests/orders/perks.test.ts` (37): factors by level, all 19 saved fixtures unchanged when unseated, queue and seat-change cases, the Threat equivalence (one long advance equals hourly steps, with a seat change inside), the stand preview's Threat per day follows the seat.
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited. The simulator rows are not re-run here (nothing seats an Order until T10.17).
+- **Next:** T10.8.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.8 chapters
+- **D429 accepted by the owner.**
+- **The sixteen chapters as rules, no prose yet:** ids, numbers, the D414 titles and the extra condition of each (Vesna on the roster, Ilse arrived, Ostap and Vesna, the Quenchers opened for the Moot's last, the Moot opened for the Quenchers') are in `content/orders-chapters.ts`; the texts come in T10.9 and T10.10.
+- **Playable is worked out from the state each time** (no stored queue): open, seated, level at least the number, the one before read, condition holds; at most one per Order, in list order. A chapter due only for want of a seat is reported separately, for the card and the Hold badge.
+- **Reading** (`orders.readChapter`) counts it read and saves the seats in the fixed order; nothing else changes (tested: no name, document, entry, standing). The ending (A or B) for chapter 4 of the Moot and the Quenchers comes from the saved seats. The Library shelf entries are a read-only selector.
+- **Tests:** `tests/orders/chapters.test.ts` (14), including a seat-blocked chapter that does not block another, all five extra conditions, a chapter found after a tuning change and a load, and the owner's migrated save (each seated Order plays chapter 1 and not chapter 2).
+- **Names:** the sixteen chapter titles and the four Order names are now in `tests/content/names.ts` (dated 2026-10-21, with the OUT-6 notes; the two near-matches say the owner kept them, Q34). This was needed now because the names test reads content, and it is the T10.10 names item done early.
+- `npm run check` green (2,560 tests). Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.9 (the first scene texts, word for word from lore §33; the test harness first).
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.9 texts, part 1
+- **Texts in:** the Moot's and Grey Wives' opening scenes and all eight chapters (`content/story/orders-scenes.ts`), E1 (the heads' notice lines and panel entries) and E2 (the Grey Wives' hints and elder's notes, `content/story/orders-perks.ts`). The scene file was produced from lore §33 by a script so no word is retyped; author notes (Wrongness, Threshold) are not shipped. Ilse's note under the Grey Wives' chapter 2 is kept as a Library note.
+- **Test harness** (`tests/content/orders-texts.test.ts`, `orders-checks.ts`, `orders-lore.ts`): every string is compared to lore §33, read separately from the generator. The Part F checks run on every text: forbidden words, "hollow" only as Kozly Hollow or the Hollow, relative years, names from the roll, phrases that ask for the names, unknown people, and the opening-scene words. Each check is also run on a planted bad text and must fail.
+- **E2 hints are data** (`{brew, claim}`) and each claim is checked against the GDD §8.6 ingredient table (garden herb, two village gifts, exactly two unlike carriers, pitch and grave dust).
+- **Names:** the two opening titles added to `names.ts` (the other six were in T10.8).
+- **Not done yet (by plan):** where these texts show (T10.11) and the Bell-Watchers and Quenchers texts, E3 and E4 (T10.10). I did not read the texts for tone; that is your read of lore §33, which they equal exactly.
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.10.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.10 texts, part 2
+- **Texts in:** the Bell-Watchers' and Quenchers' opening scenes and eight chapters (`orders-scenes-b.ts`, made from lore §33 by the same script, so word for word), plus `orders-scenes-all.ts` listing all twenty scenes. All sixteen chapters and four openings now equal lore §33.
+- **E3 (Q37 (a), built as written):** the Bell-Watchers' extra sentence is generated from the roll by `core/story/orders-bell.ts`, never typed. Tests: the full groups equal the lore table; hand-worked cases for one, two and all-but-one names found; "every village", "every village but X", village order; nothing for the other groups; only while seated; the remark when none is missing.
+- **E4:** the four Kozly Hollow excerpts equal the lore table and are exact substrings of their chapters; the Account name, witness and label are constants.
+- **Checks:** the harness now covers all twenty scenes, E1 to E4 and a cross-check that no roll name or asking phrase appears anywhere. Two harness fixes, not text changes: the pronoun "I" is not a name, and a sentence-opening word before a name ("Then Marta") is not part of it.
+- **Names:** level names and the interface phrases added to `names.ts` (the four Order names and all titles were already in). Names test green.
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.11 (where the perk texts show: heads' lines in notices and the Villages panel, the Book hint, the Names view, the Accounts).
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.11 where the perk texts show
+- **Four places, all from the core** (`core/story/orders-views.ts`, `orders-bell.ts`, `archive.ts`), the UI only draws them: a head's line at the end of that village's contract notice and the "What the heads say about you" list on the Villages panel (Moot); "The eldest Grey Wife says:" under the Book's grid (Grey Wives); the extra sentence after a missing name's hint and the remark under the Names heading (Bell-Watchers); the Quenchers' voice in "What the hearth leaves" (Quenchers).
+- **Rules:** each shows only while its Order is seated and at or above the line's level; unseated shows none; the Names sentence is only for names still missing in the level's group; the remark replaces it once the group is found; the Quenchers' voice appears only once that Account exists in the save, and only account n (not 1 to n).
+- **Please look at (D430, Proposed):** which Book hint shows when an earlier brew is still unknown but the level's own brew is known; the Quenchers' voice is a row with no document to open.
+- **Tests:** `tests/orders/perk-texts.test.ts` (10). The notice text itself is unchanged (the head's line is a separate field). I did not run the app in a browser here; the screens are small additions to existing ones, so please glance at them in the T10.13 playtest.
+- `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.12.
+- **D430 accepted by the owner** (logged as D431 with D428 and D429). Nothing is waiting on the owner; Q35 is informational.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.12 debug commands
+- **Seven debug commands** (`core/commands/debug-orders.ts`), each a `debug.orders*` command through `apply()` and a button in the debug panel's new Orders block: open an Order, add standing, set a level, open the third seat, clear the seat wait, play a chapter, reset the Orders. All set `debugUsed`.
+- **How they read:** standing added goes in as "Brought from before the Orders". Set level only raises (levels never drop; Reset is the way back). Play chapter opens the Order and raises its level if needed, counts the earlier chapters as read, reads that one with the Orders seated as they are, and ignores a chapter's extra condition. **None of them seats an Order.**
+- **Reachable only from the panel:** the panel is already hidden unless the page has `?debug` or is a dev build; a test checks that nothing else in `src/ui` sends these commands.
+- Tests: `tests/orders/debug-commands.test.ts` (9). `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Not seen in a browser** (the panel buttons are plain additions to an existing sheet).
+- **Next:** T10.13.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.13 screens, part 1
+- **Built:** the Orders card on the Hold screen (after the Events card when shown, else after the last card), the one Hold-tab badge, the opening scenes (Seat it / Not now, or Continue when no seat is free), the "Seat your Orders" step (a sheet on load, from the card until used, and inside the new-warden step), and a "Change seats" sheet (Seat, Unseat, Swap in). What the screens say is worked out in `core/systems/orders-view.ts`; the UI is in `src/ui/orders/`.
+- **Seen in a browser (phone size):** the card, the step, an opening scene and the change sheet, on the owner's save; no sideways scroll at 360, 900 and 1300 px. A swap is 3 taps. T10.11's perk texts are still not seen in a browser (they sit in other screens).
+- **Please look at (D432, Proposed):** (1) the cooldown reads "Can change in 9h 20m" (the game's duration format and what the command already says); the GDD and plan write "9 h 20 m". A one-word change if you want the spaces. (2) the "Change seats" button, which T10.14's Order sheets will reuse. (3) "Skip"/"Done" use a new command that never clears a cooldown. (4) A scene closed with ✕ stays waiting and the card offers it.
+- **Not checked by a test:** the card's exact position among the cards (by code only).
+- Tests: `tests/orders/card-view.test.ts` (8), `tests/e2e/orders-card.spec.ts` (phone). `npm run check` green (2,658). Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.14. (D433: the owner accepted D432 as built, no spaces in the cooldown.)
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.14 screens, part 2
+- **Built:** the Order sheet (tap a card row: standing with its breakdown, next threshold, the four levels with the real number, chapters read, waiting or readable and why, Seat / Unseat / Swap, the cooldown line, "You keep your standing and chapters."); chapter scenes (text from lore §33, the variant by the seats at that moment, Close and Next); the Library's Orders shelf (not shown until a chapter is read, "read with …", Ilse's note); the Villages panel entry already existed from T10.11. Views are in `core/systems/orders-sheet-view.ts` and `core/story/orders-chapter-view.ts`; each level's number is the perk's own breakdown line.
+- **Chapters open by themselves** after the opening scenes and the load step (one at a time, D416 (6)); opening one counts it as read and saves the seats. The Quenchers' line says "easier waves, smaller Embers".
+- **Seen in a browser (phone size):** the Order sheet, a chapter, the shelf and unseating; no sideways scroll at 360, 900 and 1300 px.
+- **Please look at:** (1) the short "perk in words" lines on the Order sheet are interface text I wrote, not lore (e.g. "A head's word at the end of that village's notices"); (2) the plain wording for waits ("Waits for level 2.", "Waits for Vesna to be on your roster.") and for chapter 4's two endings; (3) my T10.13 browser test gained one step (close the first chapter that now opens after seating the Moot); nothing was removed from it.
+- Tests: `tests/orders/sheet-view.test.ts` (12), `tests/e2e/orders-sheets.spec.ts`. `npm run check` green (2,670). Golden fights and recorded stands unchanged.
+- **Next:** T10.15.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.15 art
+- **Drawn in code (Q36 (a)):** an Orders icon (an empty high-backed chair), a 16 px mark for each Order (a gate arch over a long table; a basket under a cloth; a bell on its post; a cold stove with a drop of water), and a 160 × 64 placeholder scene for each opening. `tools/draw-orders.ts`, written by `tools/gen-sprites.ts`; every one has a manifest row (generated, CC0). The credits file and the contact sheet are regenerated (new "The Orders" section).
+- **Shown:** the icon on the card's and the shelf's titles, each mark on its card row and Order sheet, the scene at the top of its opening scene. Seen in a phone-size browser.
+- **Not ticked:** the acceptance says the owner has seen the placeholders and the art. A picture of all nine is in `docs/orders-art-preview.png`; the full contact sheet is `public/contact-sheet.html`. Tell me what to change, or approve them.
+- Tests: `tests/tools/orders-art.test.ts` (redraws each file and compares, size, palette). The older art test was not touched. `npm run check` green (2,681). Golden fights and recorded stands unchanged.
+- **Next:** T10.16.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.15 approved, T10.16 done
+- **Art approved by the owner** (D434); T10.15 ticked.
+- **T10.16:** `tests/orders/full-run.test.ts`: from the migrated fixture (`v10.json`) the Orders are opened by the load path (the Quenchers by the debug command if the save is not past them), levelled with the debug commands, and every one of the 16 chapters is read in order with the player's own seat and read commands. Both endings of the Moot's and the Quenchers' chapter 4 (A with both seated, B without), the shelf, the badge clearing, a round-trip and "same fixture and commands, same state" are checked. New fixture `v10-played.json` (the migrated owner save, load path and 72 h of the Standard player; no Order seated), made by `scripts/make-v10-played-fixture.ts`, with its own load, round-trip and play-through tests.
+- **Browser smoke:** a new phone test (seat the Moot in the step, its first chapter opens and is read, a seat change from the card, reload keeps it). **Whole phone browser suite: 24 of 24 pass.** WebKit's determinism run could not start here (the browser is not installed in this container); it does not touch the Orders.
+- **Fixed in my own code:** Close on a chapter was undone (the next chapter opened at once). A chapter now opens by itself once on load and again after a seat change; Close stops there, Next goes on, and the card shows "A chapter can be read" for the rest.
+- **Owner-approved test edits (D435, D436):** the older opening test skips played saves (and a new check names them); a close-scene helper in 10 older browser tests; the Events test checks the Events card's own dot. **My mistake:** I had not run the whole browser suite since T10.13, so eight older tests were broken for two tasks and I found them only now.
+- `npm run check` green (2,692). Golden fights and recorded stands unchanged.
+- **Next:** T10.17.
+
+## 2026-10-21 — v0.10 session 3: T10.17 the Orderer
+- **The Orderer is built** (GDD §6.1, D417): Standard's check-ins plus the Delver's Delve sessions, Monday seeds only, in its own `orders` shard (also added to the CI workflow). It finishes opening scenes ("Seat it" with a free seat, else "Continue"), takes the third seat at once, reads every chapter that can be read, and at each new warden seats the top-ranked Orders (due chapters, then most unread, then list order). Never swaps mid-cycle. Code in `src/core/policies/orderer.ts`; its run record and report section ("Orders") are in `sim/`.
+- **Nothing else changed:** the full suite (55 runs, 376 s on this 4-core machine) shows every old group `same` against the baseline and all 48 rows passing. `tests/policies/orderer.test.ts` checks that no other policy issues an Orders command or seats anything.
+- **Timings:** a 3-cycle Orderer run is about 15 s (limit 60); the whole `orders` shard is 59 s (limit 5 min). `npm run check` is green (2,705 tests, about 87 s: tight against 90).
+- **First look (5 seeds, sketch values, not judged yet):** all 16 chapters are read by cycle 7–8 (the row says 8); the Quenchers open only in cycle 5 and reach level 4 in cycles 7–8; the third seat opens in cycle 5–6; Grey Wives reach level 4 last (cycle 8–9); silver from bounties 83–84%; provisions share 16–20% (the row says 20–40%, so this one will likely need a tunable or a question in T10.18); chapter 1 after an Order opens takes 19–77 h for the Moot and Grey Wives (the row says 24 h).
+- **Owner-approved test edit (D437):** `sim/shards.test.ts` knows the Orderer and its shard (55 runs); the balance rule is as strict as before.
+- **D438 (Proposed):** the Quenchers' perk acts on Threat over a whole cycle, so a seat flipped at the stand changes nothing; "perk on and off" is read as the cycles where they sat against those where they did not, with Embers and Threat for each. Say if you want a paired run instead.
+- **Not done:** the six rows (T10.18, after you approve them) and `sim:accept` (after your playtest).
+- **Next:** T10.18.
+
+## 2026-10-21 — v0.10 session 3 (continued): T10.18 simulator rows
+- **Six rows in `sim/targets.ts`, own commit, after your approval** (D443); checks in `sim/checks/v010.ts` (+ tests). Milestone is now v0.10. Full suite (55 runs, 388 s on this 4-core machine): all 54 rows pass, every old group unchanged.
+- **Row (a) read differently (D440, your answer):** only Orders the Orderer seats at their opening are judged; the Grey Wives wait 77.5 h for a seat (new warden) and are reported. No tunable could fix it.
+- **Tuning (D441, Proposed, tunables only):** level thresholds lowered (Moot [5,40,100,200], Grey Wives [10,70,180,330], Bell-Watchers [5,50,120,250], Quenchers [10,40,100,180]). Before: Grey Wives level 4 in cycle 8, Quenchers 7 to 8. After: cycles 5, 3, 3, 5; all 16 chapters by cycle 5 (floor: the Quenchers open in cycle 5). Silver 73.1% (thin), provisions 26.3%, stands 372 Embers with the Quenchers seated against 376 without. Weights, chunk, cap, perks untouched.
+- **Old tests edited with your yes (D442):** the §7.12 constants test, two migration tests, and the `start` block of `v10.json`. Nothing loosened.
+- **Seen, for the playtest:** with the lower thresholds the Orders may come fast (all levels by cycle 3 to 5); say if you want it slower and I retune in T10.19.
+- `npm run check` green (2,709 tests). Golden fights and recorded stands unchanged. rulesVersion 5.
+- **Next:** T10.19.
+
+## 2026-10-21 — v0.10 session 3 (continued): T10.19 wrap-up
+- **No further tuning needed:** the T10.18 thresholds are the final ones; nothing else moved. No locked constant changed (the constants test passes; the only balance change this milestone's last two tasks is the four level thresholds, D441).
+- **Checks:** all 54 simulator rows pass on 5 Monday seeds (T10.18 full run, same constants); `npm run check` green (2,709); whole phone browser suite 24 of 24 (WebKit is not installed here); `npm run build` works (5 s). A fresh `v10.json` meets the Orders through the load path (tests/orders/opening, full-run and the phone smoke); your own save is not assumed to still hold its scenes.
+- **Measured timings (this 4-core machine, not a phone):** v9 → v10 migration of your save 5.0 ms; Orders card view 0.04 ms; Order sheet 0.02 ms; standing recompute (all four) 0.005 ms; save growth about 350 bytes (217,273 → 217,620). Simulator: 3-cycle Orderer run about 15 s; `orders` shard 59–64 s; full suite 388 s on one machine (CI splits it into shards).
+- **Waiting on you:** (1) the playtest; (2) the Orders rows for GDD §6.5 (the proposed numbers are below in the pull request text, not yet written into the GDD); (3) D438–D443 are decided; D441 stays Proposed until you accept it.
+
+## 2026-10-21 — v0.10 closed
+- **The owner said the playtest passed;** D441 approved (D444) and the Orders budgets approved (D445). The budgets are in GDD §6.5, and the four timing rows are in the throttled benchmark (card 0.10 ms, migration 18.7 ms at 4× slowdown); the save-growth row is a unit test (`tests/orders/save-size.test.ts`).
+- **`sim:accept` run** on the full suite (55 runs, 367 s): all 54 rows pass; baseline recorded with the new `orderer/mon` group.
+- **Plan:** v0.10 `Status: complete`. Merged to `main` and tagged `v0.10.0` (see the pull request).
+- **Known:** the older odds benchmark row fails on this container's CPU (215 ms against 200 ms); it is untouched and outside `npm run check`.
+- **Next:** v0.11 flesh-out (The Remembering).

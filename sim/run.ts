@@ -1,7 +1,10 @@
 import { HUNTER_IDS } from '../src/content/hunters';
 import { LEGENDARY_HUNTER_IDS } from '../src/content/hunters-v09';
 import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
-import { play, type PolicyId } from '../src/core/policies';
+import { play, type CheckInRecord, type PolicyId } from '../src/core/policies';
+import { allChaptersRead } from '../src/core/policies/orderer';
+import { ORDER_IDS, type OrderId } from '../src/content/orders';
+import { orderLevel, orderStanding } from '../src/core/systems/orders';
 import type { EventAttemptRecord } from '../src/core/policies/eventer';
 import { OPENING_LENGTH } from '../src/core/policies/schedules';
 import { createNewGame } from '../src/core/state/new-game';
@@ -270,6 +273,65 @@ export interface EventsRecord {
   }[];
 }
 
+/**
+ * One stand the Orderer made (GDD §6.2 stand rows, D417). The Quenchers' perk slows the hourly Threat
+ * rate over a whole cycle, so a seat flipped at the stand changes nothing: the on-and-off comparison is
+ * between cycles where they sat and cycles where they did not, with the Threat each stand met.
+ */
+export interface OrdersStand {
+  readonly cycle: number;
+  readonly waves: number;
+  readonly embers: number;
+  readonly threat: number;
+  /** The Quenchers sat in a seat when the stand was made. */
+  readonly quenchersSeated: boolean;
+}
+
+/**
+ * What the Orderer did over a run (GDD §6.1–§6.2 v0.10, D417; plan T10.17): when each Order opened,
+ * when each level and each chapter came, who sat when, each stand with and without the Quenchers'
+ * perk, and the standing at the end. Empty for every other policy, which never seats an Order.
+ */
+export interface OrdersRecord {
+  readonly opened: readonly {
+    readonly order: OrderId;
+    readonly hours: number;
+    readonly cycle: number;
+  }[];
+  /** The first check-in at which an Order was at each level (1 to 4). */
+  readonly levels: readonly {
+    readonly order: OrderId;
+    readonly level: number;
+    readonly hours: number;
+    readonly cycle: number;
+  }[];
+  readonly chapters: readonly {
+    readonly order: OrderId;
+    readonly n: number;
+    readonly variant: 'A' | 'B' | null;
+    readonly hours: number;
+    readonly cycle: number;
+  }[];
+  /** Opening scenes the Orderer finished and whether each took a seat. */
+  readonly openings: readonly {
+    readonly order: OrderId;
+    readonly seated: boolean;
+    readonly hours: number;
+  }[];
+  /** The seats the Orderer chose at each new warden's step, and when the third seat opened. */
+  readonly seatsByCycle: readonly { readonly cycle: number; readonly seats: readonly OrderId[] }[];
+  readonly thirdSeat: { readonly hours: number; readonly cycle: number } | null;
+  readonly stands: readonly OrdersStand[];
+  /** Standing, level, counts and the Delve window at the end of the run. */
+  readonly final: {
+    readonly standing: Readonly<Record<OrderId, number>>;
+    readonly level: Readonly<Record<OrderId, number>>;
+    readonly counts: Readonly<Record<OrderId, Readonly<Record<string, number>>>>;
+    readonly triumphant: number;
+    readonly chaptersRead: Readonly<Record<OrderId, number>>;
+  };
+}
+
 export interface RunResult {
   readonly spec: RunSpec;
   /** Hours from the start to each GDD §6.2 moment, or null if never reached. */
@@ -295,6 +357,8 @@ export interface RunResult {
   readonly depth: DepthRecord;
   /** v0.9: only the Eventer's runs hold attempts; absent in older shard files. */
   readonly events?: EventsRecord;
+  /** v0.10: only the Orderer's runs hold this; absent in older shard files. */
+  readonly orders?: OrdersRecord;
   /** v0.9 (D383): the stands made once Act VI had begun, with the preview they were made on; absent in older shard files. */
   readonly drossStands?: readonly DrossStand[];
 }
@@ -354,6 +418,21 @@ export const runOne = (spec: RunSpec): RunResult => {
   };
   let delveXp = 0;
   const eventAttempts: EventAttemptStat[] = [];
+  const ordersSeen = {
+    opened: [] as { order: OrderId; hours: number; cycle: number }[],
+    levels: [] as { order: OrderId; level: number; hours: number; cycle: number }[],
+    chapters: [] as {
+      order: OrderId;
+      n: number;
+      variant: 'A' | 'B' | null;
+      hours: number;
+      cycle: number;
+    }[],
+    openings: [] as { order: OrderId; seated: boolean; hours: number }[],
+    seatsByCycle: [] as { cycle: number; seats: readonly OrderId[] }[],
+    thirdSeat: null as { hours: number; cycle: number } | null,
+    stands: [] as OrdersStand[],
+  };
   const drossStands: DrossStand[] = [];
   const eventsSeen = {
     openedHours: null as number | null,
@@ -395,7 +474,7 @@ export const runOne = (spec: RunSpec): RunResult => {
         // legendary hunter unlocked (D404), up to the 42-day cap.
         eventAttempts.some((a) => a.kind === 'boss' && a.killed) &&
         eventAttempts.some((a) => a.unlockedHunt)
-      : spec.policy !== 'standard' ||
+      : (spec.policy !== 'standard' && spec.policy !== 'orderer') ||
         ([...STORY.act6.docs, STORY.act6.nextWarden.doc].every((id) =>
           s.story.documents.some((d) => d.id === id),
         ) &&
@@ -415,6 +494,38 @@ export const runOne = (spec: RunSpec): RunResult => {
   const levelsNow = (s: GameState): Record<string, string> =>
     Object.fromEntries(VILLAGE_IDS.map((v) => [v, s.story.trust[v].level]));
 
+  /** What the Orderer's check-in did and where the Orders stand now (GDD §6.1, D417). */
+  const noteOrders = (rec: CheckInRecord, s: GameState): void => {
+    const hours = (rec.at - start) / HOUR;
+    const o = rec.orders as NonNullable<CheckInRecord['orders']>;
+    for (const id of ORDER_IDS) {
+      const opened = s.orders.opened[id];
+      if (opened && !ordersSeen.opened.some((x) => x.order === id))
+        ordersSeen.opened.push({ order: id, hours: (opened.at - start) / HOUR, cycle: prevCycle });
+      const level = orderLevel(s, id);
+      for (let l = 1; l <= level; l++)
+        if (!ordersSeen.levels.some((x) => x.order === id && x.level === l))
+          ordersSeen.levels.push({ order: id, level: l, hours, cycle: s.cycle.number });
+    }
+    for (const c of o.chapters)
+      ordersSeen.chapters.push({ ...c, order: c.order, hours, cycle: prevCycle });
+    for (const x of o.openings) ordersSeen.openings.push({ ...x, hours });
+    if (o.newWarden) ordersSeen.seatsByCycle.push({ cycle: s.cycle.number, seats: o.seats });
+    if (s.orders.thirdSeat && ordersSeen.thirdSeat === null)
+      ordersSeen.thirdSeat = { hours, cycle: s.cycle.number };
+    if (o.standSeats) {
+      const made = s.cycles.find((c) => c.stand?.at === rec.at);
+      if (made?.stand)
+        ordersSeen.stands.push({
+          cycle: made.number,
+          waves: made.stand.wavesHeld,
+          embers: made.stand.embers.total,
+          quenchersSeated: o.standSeats.includes('quenchers'),
+          threat: made.stand.threat,
+        });
+    }
+  };
+
   play(state, {
     // D62 (Q4a): a fresh start under Standard begins with the Opening's 15
     // active minutes, which then switches to Standard (GDD §6.1).
@@ -426,7 +537,11 @@ export const runOne = (spec: RunSpec): RunResult => {
       (spec.minCycles !== undefined &&
         st.time >= start + spec.days * DAY &&
         st.cycle.number > spec.minCycles &&
-        (!spec.untilContent || (contentDone(st) && actSixSeen(st)))),
+        (!spec.untilContent ||
+          // The Orderer plays on until every chapter has played (GDD §6.1, D417), up to the cap.
+          (spec.policy === 'orderer'
+            ? allChaptersRead(st) && actSixSeen(st)
+            : contentDone(st) && actSixSeen(st)))),
     onCheckIn: (rec, s) => {
       // Income: the net change while away, plus the food that settling spent.
       const settles = rec.away.events.filter((e) => e.type === 'settle');
@@ -448,6 +563,7 @@ export const runOne = (spec: RunSpec): RunResult => {
             ...rec.standPreview,
           });
       }
+      if (rec.orders) noteOrders(rec, s);
       if (rec.events?.unlocked) {
         eventsSeen.checkIns += 1;
         if (rec.events.bankFull) eventsSeen.fullBank += 1;
@@ -568,7 +684,8 @@ export const runOne = (spec: RunSpec): RunResult => {
           (spec.policy === 'opening' ||
             spec.policy === 'standard' ||
             spec.policy === 'delver' ||
-            spec.policy === 'eventer') &&
+            spec.policy === 'eventer' ||
+            spec.policy === 'orderer') &&
           rec.at <= start + OPENING_LENGTH,
         cycle: prevCycle,
       });
@@ -655,6 +772,21 @@ export const runOne = (spec: RunSpec): RunResult => {
       unlocks: eventAttempts
         .filter((a) => a.unlockedHunt)
         .map((a) => ({ hunt: a.id.replace(/-\d$/, ''), hours: a.hours, cycle: a.cycle })),
+    },
+    orders: {
+      ...ordersSeen,
+      final: {
+        standing: Object.fromEntries(
+          ORDER_IDS.map((id) => [id, orderStanding(state, id)]),
+        ) as Record<OrderId, number>,
+        level: Object.fromEntries(ORDER_IDS.map((id) => [id, orderLevel(state, id)])) as Record<
+          OrderId,
+          number
+        >,
+        counts: structuredClone(state.orders.counts),
+        triumphant: state.orders.triumphant,
+        chaptersRead: { ...state.orders.chaptersRead },
+      },
     },
     delve: {
       runs: delveRuns,

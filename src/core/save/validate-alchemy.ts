@@ -79,14 +79,24 @@ export const band = (v: unknown, where: string): Band => oneOf<Band>(v, BANDS, w
 const ingredientId = (v: unknown, where: string): IngredientId =>
   oneOf<IngredientId>(v, INGREDIENT_IDS, where);
 
+/** The Grey Wives' share fixed at queue time (v10): absent, or above 0 and within the perk ceiling. */
+const orderCut = (v: unknown, where: string): { orderCut?: number } => {
+  if (v === undefined) return {};
+  const x = finite(v, `${where}.orderCut`);
+  if (x <= 0 || x > balance.orders.perkCeiling.value)
+    throw new Invalid(`${where}.orderCut is outside what an Order can give.`);
+  return { orderCut: x };
+};
+
 export const kettleJob = (v: unknown, where: string): KettleJob => {
   const r = obj(v, where);
   const doneAt = orNull(r.doneAt, (x) => finite(x, `${where}.doneAt`));
+  const cut = orderCut(r.orderCut, where);
   if (r.kind === 'experiment') {
     const a = ingredientId(r.a, `${where}.a`);
     const b = ingredientId(r.b, `${where}.b`);
     if (a === b) throw new Invalid(`${where} uses one ingredient twice.`);
-    return { kind: 'experiment', a, b, units: count(r.units, `${where}.units`), doneAt };
+    return { kind: 'experiment', a, b, units: count(r.units, `${where}.units`), doneAt, ...cut };
   }
   const paid = obj(r.paid, `${where}.paid`);
   const ingredients = obj(paid.ingredients, `${where}.paid.ingredients`);
@@ -95,6 +105,7 @@ export const kettleJob = (v: unknown, where: string): KettleJob => {
     kind: oneOf(r.kind, ['brew'] as const, `${where}.kind`),
     item: consumableId(r.item, `${where}.item`),
     doneAt,
+    ...cut,
     paid: {
       ingredients: Object.fromEntries(
         Object.entries(ingredients).map(([k, n]) => [

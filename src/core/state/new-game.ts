@@ -9,6 +9,7 @@ import { freshHunter, startingHunters } from './hunters-state';
 import { startingBook, startingSkills } from './book-state';
 import { startingDelve } from './delve-state';
 import { newEventsState } from './events-state';
+import { newOrdersState } from './orders-state';
 import { freshAct, startingVillageTrust } from './story-state';
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -98,6 +99,7 @@ export const createNewGame = (seed: string, now: number): GameState => {
     itemSeq: 0,
     legendaries: [],
     events: newEventsState(now),
+    orders: newOrdersState(),
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,

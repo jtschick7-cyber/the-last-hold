@@ -2,7 +2,15 @@
 // midnight. The simulator's clock reads epoch ms as local time with no time
 // zone (UTC), so a day is a plain 24 h and 1970-01-01 is a Thursday.
 
-export const POLICY_IDS = ['opening', 'standard', 'light', 'heavy', 'delver', 'eventer'] as const;
+export const POLICY_IDS = [
+  'opening',
+  'standard',
+  'light',
+  'heavy',
+  'delver',
+  'eventer',
+  'orderer',
+] as const;
 export type PolicyId = (typeof POLICY_IDS)[number];
 
 const MINUTE = 60_000;
@@ -44,13 +52,16 @@ const dayTimes = (policy: PolicyId, dayStart: number): readonly number[] => {
   if (policy === 'light') return LIGHT;
   if (policy === 'heavy') return HEAVY;
   const standard = isWeekend(dayStart) ? STANDARD_WEEKEND : STANDARD_WEEKDAY;
-  const session = policy === 'delver' ? sessionTime(dayStart) : null;
+  const session = policy === 'delver' || policy === 'orderer' ? sessionTime(dayStart) : null;
   return session === null ? standard : [...standard, session].sort((a, b) => a - b);
 };
 
-/** True when `time` is one of the Delver's Delve sessions rather than a Standard check-in (D269). */
+/**
+ * True when `time` is one of the Delver's Delve sessions rather than a Standard check-in (D269); the
+ * Orderer keeps the same sessions (v0.10, D417).
+ */
 export const isDelveSession = (policy: PolicyId, time: number): boolean => {
-  if (policy !== 'delver') return false;
+  if (policy !== 'delver' && policy !== 'orderer') return false;
   const dayStart = time - (time % DAY);
   return sessionTime(dayStart) === time - dayStart;
 };
@@ -61,7 +72,7 @@ export const isDelveSession = (policy: PolicyId, time: number): boolean => {
  */
 export const nextCheckIn = (policy: PolicyId, after: number, startedAt: number): number => {
   if (
-    (policy === 'opening' || policy === 'delver' || policy === 'eventer') &&
+    (policy === 'opening' || policy === 'delver' || policy === 'eventer' || policy === 'orderer') &&
     after < startedAt + OPENING_LENGTH
   ) {
     const steps = Math.floor((after - startedAt) / OPENING_STEP) + 1;

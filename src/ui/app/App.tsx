@@ -4,6 +4,7 @@ import { buildInfo } from '../../platform/build-info';
 import type { UpdateHandle } from '../../platform/service-worker';
 import { archiveTab } from '../../core/story/archive';
 import { riftCardView } from '../../core/delves/view';
+import { ordersBadge } from '../../core/systems/orders-view';
 import { eventsCardView } from '../../core/systems/events-view';
 import { now } from '../../platform/clock';
 import { ArchiveScreen } from '../screens/ArchiveScreen';
@@ -210,7 +211,10 @@ export const App = () => {
             {t === 'bestiary' && archive.open ? 'Archive' : TAB_LABEL[t]}
             {t === 'contracts' && unread > 0 ? ` (${unread})` : ''}
             {/* One badge on the tab however many cards want it (GDD §9.17). */}
-            {t === 'hold' && (riftCardView(game())?.badge || eventsCardView(game(), now())?.badge)
+            {t === 'hold' &&
+            (riftCardView(game())?.badge ||
+              eventsCardView(game(), now())?.badge ||
+              ordersBadge(game()))
               ? ' ●'
               : ''}
             {t === 'bestiary' && archive.open && archive.unread > 0 ? ` (${archive.unread})` : ''}

@@ -16,6 +16,7 @@ import { RARITIES, rarityNames, type RarityId } from './delves/blessing-types';
 import { GEAR_IDS, gear, type GearId } from './gear';
 import { ITEM_RARITY_IDS, itemRarities, type ItemRarity } from './items';
 import { LEGENDARY_IDS, legendaries, type LegendaryId } from './legendaries';
+import { ORDER_IDS, ORDER_NAMES, type OrderId } from './orders';
 import { HUNTER_RANK_IDS, hunterRanks, type HunterRank } from './ranks';
 
 // Technical design §12.1: every image the game shows has a manifest row.
@@ -98,6 +99,10 @@ export { EVENT_CREATURE_IDS };
 export const eventCreaturePortraitId = (c: EventCreatureId): string => `portrait.creature.${c}`;
 export const RIME_ICON = 'icon.rime';
 export const TOKEN_ICON = 'icon.token';
+// v0.10 (plan T10.15, Q36 (a)): the Orders' marks, the card's icon and the opening-scene placeholders.
+export const ORDERS_ICON = 'icon.orders';
+export const orderMarkId = (o: OrderId): string => `icon.order.${o}`;
+export const orderSceneId = (o: OrderId): string => `scene.order.${o}`;
 export const eventCreatureSpriteId = (c: EventCreatureId): string => `sprite.creature.${c}`;
 export const hunterSpriteId = (h: HunterId): string => `sprite.hunter.${h}`;
 export const monsterSpriteId = (m: MonsterId): string => `sprite.monster.${m}`;
@@ -390,6 +395,25 @@ export const assets: readonly AssetEntry[] = [
     'tools/gen-sprites.ts',
     'icon',
   ),
+  generated(ORDERS_ICON, [16, 16], 'Orders', 'icons/orders.png', 'tools/gen-sprites.ts', 'icon'),
+  ...ORDER_IDS.flatMap((o) => [
+    generated(
+      orderMarkId(o),
+      [16, 16],
+      `${ORDER_NAMES[o]}, mark`,
+      `icons/order-${o}.png`,
+      'tools/gen-sprites.ts',
+      'icon',
+    ),
+    generated(
+      orderSceneId(o),
+      [160, 64],
+      `${ORDER_NAMES[o]}, opening scene`,
+      `scenes/orders/${o}.png`,
+      'tools/gen-sprites.ts',
+      'scene',
+    ),
+  ]),
   ...DELVE_RELIC_IDS.map((r) =>
     generated(
       delveRelicIconId(r),

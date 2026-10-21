@@ -1,5 +1,6 @@
 import { allDocuments } from '../../content/story/acts';
 import type { GameState } from '../state/game-state';
+import { openOrders } from '../systems/orders-open';
 import { findDocument, sweepDocuments } from './documents';
 import { noteAllPeaks } from './letters';
 import { cleanWardenName } from './wardens';
@@ -36,6 +37,7 @@ export const completeV05Arrival = (
     c.warden = clean === 'too-long' ? null : clean;
   }
   state.story.ilseAt ??= state.time;
+  openOrders(state, state.time); // GDD §5.13.1: Ilse's arrival opens the Bell-Watchers
   state.story.arrivalDue = false;
   return keys;
 };

@@ -184,13 +184,13 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | **Oils / Potions / Bombs** | Consumables | Alchemist's hut, from reagents | Contract preparation | No | v0.3 |
 | **Knowledge** | Unlocks | Investigating and killing monsters; alchemy experiments **(the recipe book, v0.6, §5.8)** | Never spent; reduces investigation time and raises odds | **Yes** | v0.3 |
 | **Warden skills** | Progress | Doing their activity: brewing and experiments, gear work, investigation and reading, winning contracts and holding waves (§5.8.6) | Never spent; small permanent bonuses | **Yes** ("carried in the ember") | v0.6 |
-| **Threat** | Pressure meter | Rises with the Rank's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.4 |
+| **Threat** | Pressure meter | Rises with the Rank's base rate and with failed contracts. A full board, old contracts and declined contracts add nothing *(⚑ revision G2)* | Lowered by completed contracts and defenses; sets Last Stand difficulty | Resets to 0 | v0.4 | In v0.10 the hourly Rank rate is × (1 − the Quenchers' step × level) while that Order is seated.
 | **Embers** | Prestige currency | The Last Stand (payout curve) plus trophy conversion | Permanent warden upgrades; **hunter stars** (v0.8, D310) | **Yes** | v0.4 |
 | **Relics** | Persistent items | Last Stand wave milestones (§5.9.6); Delves (v0.7: six Delve relics, each also with an idle source; their effects work only in Delves, D261) | The hold (v0.4: every relic owned works); hunters (v0.8: as **Legendaries** in a keepsake slot, §5.11.6) | **Yes** | v0.4 / v0.8 *(⚑ v0.4 flesh-out, D111)* |
 | **Riftglass** | Delve currency with a **banked allowance**: 1/7 of the weekly cap accrues per day, banking up to 2 weeks *(⚑ revision G7)* | Delve floors | The Riftglass shop: Late hours (offline cap), alternate traits, hold cosmetics, Delve upgrades (§5.10.8) | **Yes** | v0.7 |
 | **Lore documents** | Collectibles | Contracts, Delves, Long Night | Mystery progression; some give small hints or bonuses | **Yes** | v0.5 |
 | **Hunt points** | Event progress | Legendary Hunts | Unlocking a legendary hunter (counts per hunt, kept through the Long Night) | **Yes** | v0.9 |
-| **Reputation** | Per Order | Order questlines and aligned contracts | Order rewards and unlocks | **Yes** | v0.10 |
+| **Standing** | Per Order | Play already done: contracts won, brews, experiments, properties, documents, letters, names, Kozly Hollow contracts, Triumphant stands (no new chores) | Never spent: levels unlock chapters and small perks while the Order is seated | **Yes** | v0.10 |
 
 ### 4.2 Flow diagram
 
@@ -241,7 +241,21 @@ flowchart LR
 
   EV["Events · v0.9: world bosses, Legendary Hunts"] --> H
   H --> EV
+
+  subgraph ORD["Orders · v0.10"]
+    STD[Standing]
+  end
+  FIGHT -- contracts won --> STD
+  AL -- brews, experiments, properties --> STD
+  LORE -- documents, letters, names --> STD
+  LS -- Triumphant band --> STD
+  STD -. seated: small factors .-> B
+  STD -. seated: brew and clue time .-> AL
+  STD -. seated: clue time .-> INV
+  STD -. seated: hourly rate .-> THR
 ```
+
+*Orders (v0.10) turn play already done into standing; they add no resource, income or bucket. Their perks are named factors on a time, a cost or Threat's hourly rate (§5.13.5).*
 
 ### 4.3 Interlock check
 
@@ -288,7 +302,7 @@ These apply to every system.
 final = base × (1 + Σ building) × (1 + Σ age) × (1 + Σ trophy) × (1 + Σ knowledge) × (1 + Σ ember) × (1 + Σ relic) × (1 + Σ event)
 ```
 
-Buckets that don't exist yet in a milestone count as 0. The in-game breakdown shows each bucket and every contributor in it.
+Buckets that don't exist yet in a milestone count as 0. The in-game breakdown shows each bucket and every contributor in it. Order perks are not a bonus bucket: each is a separate named factor applied after the buckets and shown as its own line.
 
 **Combat modifiers** *(⚑ revision B1 [JC])*. Combat uses its own buckets, applied in this fixed order:
 
@@ -587,7 +601,7 @@ Each contract has:
 
 | Field | Notes |
 |---|---|
-| Village | The giver. Flavor in v0.2; ties into Reputation in v0.10. |
+| Village | The giver. Flavor in v0.2; the Thanes' Moot counts a contract won for any village toward its standing (v0.10). |
 | Monster | In v0.2, always a known species (identified for free). Unknown monsters arrive in v0.3. |
 | Tier | 1–5 from the Keep on; Citadel and Bastion add no tiers (D106). Each tier above the monster's base tier multiplies Health and Might by 1.35 and Armor by 1.15 (§7). |
 | Location tag | Forest, river, field or barrow; **ruin from v0.5** *(⚑ revision D-2; D157)*: old Emberwright sites, posted by Kozly Hollow, Velkvik and Ravenfell from the Keep. **Barrow and ruin contracts start at tier 2** *(⚑ revision A3 [JC])*. Interacts with traits. |
@@ -609,7 +623,7 @@ Each contract has:
    - **Death chance** per hunter (Reckless contracts only).
    - **Expected rewards.**
    - **"Why?"** opens the summary math: party damage per 100 ticks vs monster Health, and monster damage per 100 ticks vs the party's effective Health.
-4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1 in the Keep (D85), **4.4** in the Citadel (D189) and 2.5 in Bastion (D106, D138; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative.
+4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1 in the Keep (D85), **4.4** in the Citadel (D189) and 2.5 in Bastion (D106, D138; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative. While the Thanes' Moot is seated, the food paid is multiplied by (1 − step × level) (§5.13.5).
 5. Launch. The hunters are busy for the contract's duration.
 
 The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 500 preview simulations use different derived seeds, so the preview never reveals the real roll.
@@ -737,7 +751,7 @@ From v0.3, a contract can post an **unknown monster**. The player sees:
 - **Candidate list:** every species from the region pool that fits the location tag, each marked with its knowledge level.
 - **3 clue slots**, hidden at first.
 
-**Investigating.** The **Hunter's Lodge** (Keep, level building, max 3) gives one investigation slot per level. Assigning a contract to a slot reveals its clues one at a time, taking **30 min each** (halved if the true species is Studied).
+**Investigating.** The **Hunter's Lodge** (Keep, level building, max 3) gives one investigation slot per level. Assigning a contract to a slot reveals its clues one at a time, taking **30 min each** (halved if the true species is Studied). While the Bell-Watchers are seated, clue time is multiplied by (1 − step × level) (§5.13.5).
 
 **What a clue does.** Each clue carries tags such as *drowned*, *night*, or *grave*. Each species has tags too. A revealed clue rules out every candidate that lacks its tags.
 
@@ -756,7 +770,7 @@ From v0.3, a contract can post an **unknown monster**. The player sees:
 
 ### 5.7 Preparation (v0.3)
 
-The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from reagents.
+The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from reagents. While the Grey Wives are seated, brew time is multiplied by (1 − step × level), fixed when the brew is queued (§5.13.5).
 - The nine v0.3 recipes are known from the start; from v0.6 they are the recipe book's starting recipes, and discovery adds the rest (§5.8).
 - Each brew takes 10 min, one at a time per Hut level. Several can be queued.
 - Finished consumables go into the hold's stores.
@@ -815,7 +829,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 - Brewing is unchanged from v0.3 (§5.7, D91): one brew per kettle (kettles = Hut level), `brew.time` each, paid when queued, cancel refunds in full, queue unlimited.
 
 #### 5.8.3 Experiments *(D199)*
-- An **experiment** puts **1 unit each of two different ingredients** in a kettle for `experiment.time` (10 min), queued like a brew (paid when queued, cancel refunds). The Copper Still shortens it like a brew.
+- An **experiment** puts **1 unit each of two different ingredients** in a kettle for `experiment.time` (10 min), queued like a brew (paid when queued, cancel refunds). The Copper Still shortens it like a brew. While the Grey Wives are seated, the time is also multiplied by (1 − step × level), after the Copper Still, fixed when queued (§5.13.5).
 - **Result, when it finishes:**
   - If the two share any properties, **every shared property** is revealed on both.
   - If they share none, **the first hidden property of each** (in the §8.6 order) is revealed. An ingredient with nothing hidden reveals nothing.
@@ -876,7 +890,7 @@ Hunters grow by level now and by ranks, stars and talents in v0.8 (§5.11). Per-
 
 #### 5.9.1 Threat *(D108)*
 
-- Threat starts each cycle at **0** and rises every hour by the rate for the hold's Rank: **Hamlet 0, Keep 0.5, Citadel 1, Bastion 1** *(D138)*. Time away counts exactly as it does for production, so the offline cap applies to Threat too.
+- Threat starts each cycle at **0** and rises every hour by the rate for the hold's Rank: **Hamlet 0, Keep 0.5, Citadel 1, Bastion 1** *(D138)*. Time away counts exactly as it does for production, so the offline cap applies to Threat too. While the Quenchers are seated, the hourly Rank rate is multiplied by (1 − step × level) (§5.13.5); Threat from failed contracts is unchanged.
 - **Each failed contract adds 3 × its tier. Each completed contract takes off 0.76 × its tier** *(D138)*. A full board, old contracts and declined contracts add nothing *(G2)*.
 - **Defenses slow the hourly rate:** each level of Walls or Watchtower takes off 2%, so at most 60% at the Bastion caps.
 - Threat never goes below 0, and it resets to 0 at the Long Night.
@@ -894,7 +908,7 @@ From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat
 
 #### 5.9.3 The Last Stand *(D107)*
 
-- **When:** available from Bastion, once per cycle, always voluntary. Starting it is final: the confirmation says the Long Night follows.
+- **When:** available from Bastion, once per cycle, always voluntary. Starting it is final: the confirmation says the Long Night follows. The preview uses the Threat factor of the Orders seated now and is worked out again when a seat changes (§5.13.5).
 - **The waves are monsters you know.** When the hold reaches Bastion, the stand's seed (`${gameSeed}:stand:${cycle}`) fixes the cycle's wave list, and the stand screen shows it. A species not yet Identified shows as "?".
   - Wave 1 is tier 2, and every 2 waves add a tier. Past tier 5, the contract tier scaling keeps going (Health and Might ×1.35, Armor ×1.15 per step).
   - Each wave's species is picked from those whose tier range includes the wave's tier (above tier 5: those that reach tier 5).
@@ -950,6 +964,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 | Items, except Legendaries (A4, D306), injuries, Threat, trophies this cycle (after conversion) | Candidates you haven't hired yet (unlocks are lifetime) |
 | | The Hall of the Fallen, Reports and fight replays, scenes already seen, settings, lifetime stats, the cycle number (+1), the cycle history |
 | | Hunter ranks, stars and talents; Legendaries (v0.8) |
+| | Orders: standing, which Orders have opened, the third seat, chapters read and the seats they were read with (v0.10) |
 
 - **Hunter levels:** each hunter keeps half the levels above 1, rounded down (6 → 3, 5 → 3, 4 → 2); Old Hands raises the share. XP toward the next level goes to 0. A kept level above the current Rank's cap stays; the cap only stops new levels. Ranks, stars and talents are kept (v0.8).
 - **Contracts still running** when the stand starts finish on the spot with their real result (the dice were fixed at launch); their rewards apply and their trophies count.
@@ -962,7 +977,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
   1. The stand's result: waves held, the Embers breakdown, any relic. Pechko: *"The walls fell. The hearth didn't. Someone will come."*
   2. *"The story continues in a later version."* (P4) From v0.5: the act's testament instead, while its act is written (§5.14.9).
   3. The Hearth: spend now or later.
-  4. The new-warden sheet: *"Seasons pass. Someone new walks up the road, hands warm in the cold."* You choose your 3 active hunters.
+  4. The new-warden sheet: *"Seasons pass. Someone new walks up the road, hands warm in the cold."* You choose your 3 active hunters, and, once an Order is open, whether to seat your Orders (§5.13.4).
 
 #### 5.9.8 Arriving at v0.4 *(⚑ revision G8; details D112)*
 
@@ -1166,6 +1181,7 @@ Two kinds of event, both spent from **one bank of attempt tokens**: a **world bo
   - **The bank starts empty** at the moment events first open, then banks by **real time**, locked or not.
   - It is a **hard cap**: at 6 the bank is full and extra time is lost. The Events card says *"Tokens: 6 of 6, full"*, and **while events are open** a **badge on the Hold tab** shows until a token is spent. **While events are locked there is no badge** (there is nothing to act on).
   - Spending from a full bank restarts the clock from that moment; spending from a part-full bank keeps the progress toward the next token.
+- The event clock is also used for the Orders seat cooldown (§5.13.4).
 - **Rest:** every hunter who takes part in a boss or hunt attempt **rests `boss.hunterRest` 24 h** before taking part in another. Rest is per hunter, not per player.
   - It blocks **only other event attempts.** A resting hunter can still take contracts and Delves, and a hunter on a contract does not rest from it.
   - The hunter sheet and the party picker show *"Rests for 9 h 20 m"*.
@@ -1238,22 +1254,85 @@ See §5.9.3. In short: in every stand whose wave list is fixed once Act VI has b
 Boss and hunt wins are **not contract wins.** They do not change threat, act counters ("the nth contract won in Act VI"), contracts-won statistics, tier or hunter unlock conditions, Command XP or Lore XP. A Great Beast is Identified on its first attempt and grants no Lore XP. Event fights appear in the "recent" list (the last `events.recentKeep` 10).
 
 #### 5.12.12 What's still for later
-- Orders (v0.10) may reward event standing; v0.9 pays nothing from events to Orders.
+- Events add nothing to Orders in v0.10 (§5.13.2); that may change later.
 - No Delve trophies, bestiary kills or Legendaries come from events; no event is the only source of anything required (lore §8).
 - More hunts, more bosses, a boss shop and Boss marks are not planned.
 - Event-only cosmetics, art for the Great Beasts' full portraits and the legendary hunters' animation are polish (v1.0).
 
-### 5.13 Orders *(v0.10, outline)*
+### 5.13 Orders *(v0.10; ⚑ v0.10 flesh-out, D407–D425)*
 
-*⚑ Revised to match the lore (lore C6, L2).*
+**What Orders are.** Four groups who stand beside the hold, each with a short questline of four chapters and four levels of **standing** (D408). They are **story first, with a choice that costs something:** the player has a limited number of **seats**, and only seated Orders give their perks and advance their story. They give **no silver, no fight number and no gate** (D418). Your hunters are the refounded Emberwrights (lore L2); surviving Wrights join you rather than forming an Order.
 
-- Four factions with reputation tiers and questlines, merging the Skyrim guild and WoW faction influences:
-  - **Thanes' Moot:** the village heads. Trust and safety.
-  - **Grey Wives:** herbwives and midwives. Alchemy and old recipes.
-  - **Bell-Watchers:** families who ring bells for the ones who went away. Their role in the story is in `lore-secrets.md` (v0.5).
-  - **The Quenchers:** a present-day faction that **wants the hold's fire put out**. Their story role is in `lore-secrets.md` (v0.5).
-- **Your hunters are the refounded Emberwrights** (L2). Surviving Wrights from the old outposts join you rather than forming a separate Order.
-- **Open questions:** whether Orders are mutually exclusive; whether reputation persists through the Long Night (leaning yes, per §4).
+| Order | Who | Opens when | Voice | Number perk (per level) |
+|---|---|---|---|---|
+| **Thanes' Moot** | The five village heads | The first Keep | Marta Dubska, usually | Contract provisions food −3% |
+| **Grey Wives** | Herbwives and midwives | The first Alchemist's Hut | Vesna, Ostap, an unnamed eldest Grey Wife | Brew and experiment time −4% |
+| **Bell-Watchers** | Families who ring bells for the ones gone onward | Ilse's arrival | Halina, Dana Lisová, Ilse | Clue time −4% |
+| **The Quenchers** | Kozly Hollow's young; they want the stove put out | D5-08 is found | Bohdan Kozel (Věra sympathises, does not join) | The hourly Threat rate −3% |
+
+#### 5.13.1 Opening *(D413, D421, D422)*
+- Each Order **opens once, for good,** at its trigger, with a short **opening scene** (OUT-3 Part C). The scene ends with **"Seat it"** if a seat is free (otherwise **"Continue"**) and **"Not now."** No Order ever seats itself.
+- **Order of a load:** migrate, catch up the time away, open any Order whose trigger has been passed (including D5-08 found during the catch-up), check the third seat, then show scenes. **Scene order:** act scenes, the events scene, the Orders opening scenes (Moot, Grey Wives, Bell-Watchers, Quenchers), the "Seat your Orders" sheet, then chapters.
+- The Moot's opening uses no Sending, Deep or "onward" knowledge, so it is safe at the first Keep of a new game.
+
+#### 5.13.2 Standing and levels *(D410)*
+- **Standing** is one number per Order. It **only grows,** is **never lost,** and **is kept forever through the Long Night.** It grows whether or not the Order is seated, **and from the moment v10 exists, even before the Order has opened** (so nothing has to be reconstructed at an opening).
+- Sources (counted by the command or event that does the thing, including events inside `advance`, never on a timer):
+
+| Order | What adds standing | Weight (`orders.standing.*`) |
+|---|---|---|
+| Moot | Each contract won, any village | 1 |
+| Grey Wives | Each brew finished · each experiment finished · each property revealed | 1 · 3 · 10 |
+| Bell-Watchers | Each document found · each hunter letter found · each name found | 5 · 5 · 10 |
+| Quenchers | Each Kozly Hollow contract won · each Delve floor **whose result paid at least 1 Riftglass** (window cap) | 2 · 1 (cap `orders.delveWeeklyCap` per window) |
+| Every Order | Each **Triumphant** stand | `orders.triumphantChunk` each |
+
+- **Events add nothing in v0.10.** A **window** starts at the first counted Delve floor and lasts `orders.delveWindow` (7 days) on the event clock; floors after the cap add nothing until a new window starts. A run with Cold Comfort pays no Riftglass and so adds nothing. Delve standing is a Delve reward with an idle source (Kozly Hollow contracts), so the Delve-optional rule (D20, D271) holds.
+- **Four levels** per Order at the thresholds in §7.12 (sketches). Level is derived from standing and is never lower than the highest level reached. The level names are **Neighbour, Friend, Ally, Kin** for every Order (different from village trust's Cold, Wary, Hopeful, Trusting, Sworn).
+- **A save migrated from v9** gets **one** backfill at the migration: the sources the save holds, capped at `orders.backfillCapLevel` (level 1), shown on the Order sheet as *"Brought from before the Orders: n"*. What the save cannot recover starts at 0 and the load names it. A new game has nothing to backfill.
+- **Breakdown.** Every number has a breakdown (§5.0): the Order sheet lists each source with its count, weight and share, then the next threshold.
+
+#### 5.13.3 Seats *(D412)*
+- **Two seats at the start.** A **third opens once, for good,** when **two Orders are at level 4 and the Quenchers have opened.** It is checked after every level change, at the Quenchers' opening and on load, so it opens whichever of the two conditions comes last; it is kept forever through the Long Night.
+- **The card's seat lines:** third seat closed: *"Seats: 2 of 3 (the third opens when two Orders reach their top level and the Quenchers have come)."* Third seat open: *"Seats: 3 of 3."* Then always a line *"In seats: Thanes' Moot, Grey Wives"* or *"In seats: none."*
+- An Order takes **one seat**; there is no partial seating. An open Order that is not seated shows "Not seated" and a line about what seating it would give.
+- **Only seated Orders** give perks (§5.13.5) and advance their questline (§5.13.6).
+
+#### 5.13.4 Changing seats *(D412)*
+- **At every new warden's arrival** the new-warden sheet has a skippable **"Seat your Orders"** step. The previous seats carry over by default; changes there are free and clear the cooldown. **On load,** the same step appears once as a sheet on the Hold screen, after any opening scenes, and stays reachable from the Orders card until it is used.
+- **Mid-cycle**, from an Order sheet: **Seat** (into a free seat), **Unseat**, or **Swap** (one Order for another). Any change starts a **24 h cooldown on the monotone event clock** (`eventNow`, §5.12.2; `orders.swapCooldown`), shown as "Can change in 9 h 20 m". Seating an Order into a free seat when it first opens does not start the cooldown.
+- Changing seats loses nothing. Perks apply to what starts afterwards: **a brew or experiment queued after the change** gets the new time (one already queued keeps the time it was queued with), a clue started after it, a contract launched after it, and the Threat factor from the change onward.
+
+#### 5.13.5 Perks *(D411)*
+Each level of a **seated** Order gives **one small number and one story or knowledge perk.** The level-4 totals are the ceilings in §7.12. There is **no new bonus bucket:** each number is its own factor, shown as its own line in the breakdown ("Thanes' Moot, Friend: −6%").
+
+| Order | Number | Story or knowledge perk (texts: OUT-3 Part E) |
+|---|---|---|
+| Moot | Contract provisions food × (1 − 0.03 × level) (§5.4 step 4) | A head's line at the end of that village's notices; a "What the heads say about you" entry on the Villages panel |
+| Grey Wives | Brew and experiment time × (1 − 0.04 × level) (§5.7, §5.8.3) | A hint toward a brew in the Book, from "the eldest Grey Wife"; **an elder's note instead once the Book holds that brew** |
+| Bell-Watchers | Clue time × (1 − 0.04 × level) (§5.6.3) | A sharper where-to-look sentence for still-missing names in the Names view (a rule, OUT-3 E3), **a remark by Halina or Dana once the group is found;** no new name, source or document |
+| Quenchers | The hourly Rank Threat rate × (1 − 0.03 × level) (§5.9.1; Threat from failed contracts is unchanged) | A Kozly Hollow voice (witness Bohdan Kozel) added to the Accounts event "What the hearth leaves" |
+
+- No fight formula changes; `rulesVersion` stays 5. **The Quenchers' perk is a trade:** a lower Threat makes each wave weaker (§5.9.1: −0.61% Health and Might a point) **and lowers the Embers a stand pays** (+0.7% a point, §5.9.4). The Order sheet says so. The stand preview (§5.9.3) uses the seated factor and recomputes at a seat change, so its "tomorrow" estimate never goes stale.
+
+#### 5.13.6 Questlines *(D414, D419)*
+- **Four chapters per Order,** each a short scene sheet. A chapter is **playable** when its Order is open and seated, the Order's level is at least the chapter's number, the previous chapter is read, and its condition holds (OUT-3 Part B). Otherwise it **waits.** What is playable is worked out from the state; an unseated Order's waiting chapter never blocks another's. The card and the Order sheet show **"A chapter waits for a seat."**
+- Scenes open **one at a time** on the Hold screen; closing a chapter counts as read. Each ends with Close and, if another waits, Next. Chapters are kept on the Library's **Orders** shelf and can be read again.
+- **The opposed pair.** The Moot's and the Quenchers' **chapter 4 each have two endings** (OUT-3 D): variant A when the other Order is also seated when the chapter is read, otherwise variant B. **Each chapter 4 waits until the other Order has opened,** and the Order sheet says which way it will read.
+- **The seated Orders at each reading are saved** (D419) for v0.11.
+- **No chapter carries a required name, document, bestiary entry or Legendary** (lore §8), and **nobody says, asks for or begins the Sent's names** (D386). Chapter 4 of every Order ends on a threshold.
+- The sixteen titles are in D414 and the full texts in OUT-3.
+
+#### 5.13.7 How Orders touch other systems *(D418)*
+- **Contracts:** each win adds standing (Moot, and Quenchers for Kozly Hollow). No contract changes.
+- **Delves:** floors that paid Riftglass add Quenchers standing within the window cap. No Delve content changes.
+- **Events:** nothing adds standing; the seat cooldown reuses the event clock.
+- **The Hold:** the Orders card sits after the Events card, or after the last card shown if there is no Events card.
+- **The Last Stand:** a Triumphant stand adds standing; the Quenchers' perk slows Threat.
+- **The Long Night:** keeps standing, the opened flags, the third seat, the chapters read and the seats. A new warden may change seats freely.
+
+#### 5.13.8 What's still for later
+v0.11 "The Remembering" and the ending (D415); anything that gives Orders a silver or fight effect; more Orders; events adding standing.
 
 ### 5.14 The story *(v0.5: Act I and the story systems; ⚑ v0.5 flesh-out, D144–D166)*
 
@@ -1268,7 +1347,7 @@ Boss and hunt wins are **not contract wins.** They do not change threat, act cou
 - **Act III (v0.6, D214):** a save already in Act I or II reaches Act III normally, the cycle after Act II's stand. A save whose current cycle has no act starts Act III **on load**: Arvid arrives (*"Ilse comes up the road early, with an old man carrying a net-needle and an axe."*), D3-01 plays, and Act III's Rank documents already behind the save this cycle (D3-04, D3-05) are found then.
 - **From Act IV on (D246):** an act that ships while a save is in a story-less cycle starts **on load in the current cycle**, with fresh counters: "the 1st Field & Forest Spirits contract won in Act IV" counts from that moment. A Rank document is found on load only if that Rank is already behind the save in this cycle. Counts recorded during story-less cycles are ignored. The on-load line is *"Pechko comes out from behind the stove before you've got your coat off, with something wrapped in oilcloth."* and D4-01 plays. A new game reaches Act IV the cycle after Act III's stand.
 - **Act V (v0.8, D301):** a save in a story-less cycle starts Act V on load with fresh counters (D246); the on-load line is *"Pechko calls you over to the crack behind the stove before you've got your coat off."* and D5-01 plays. A save in Act IV's cycle reaches Act V with the next warden. **After Act V's Last Stand the Unlit's door opens** (D257), with one line on the Rift card the first time: *"There's a sixth door in the rift now. It's colder than the others."*
-- **Act VI (v0.9, D364):** the cycle after Act V's stand. A save in a story-less cycle starts Act VI **on load** with fresh counters (D246); the on-load line is *"Pechko is sitting by the crack when you come in. The frost on the floor has shapes in it."* and D6-01 plays. A save in Act V's cycle reaches it with the next warden. **After Act VI's Last Stand, the cycles that follow carry no act**, and their Long Night shows *"The story continues in a later version."* until The Remembering ships (D24.10). Act VI carries exactly the three names #1–3, on the Keep, the Citadel and Bastion (`lore-secrets.md` §31).
+- **Act VI (v0.9, D364):** the cycle after Act V's stand. A save in a story-less cycle starts Act VI **on load** with fresh counters (D246); the on-load line is *"Pechko is sitting by the crack when you come in. The frost on the floor has shapes in it."* and D6-01 plays. A save in Act V's cycle reaches it with the next warden. **After Act VI's Last Stand, the cycles that follow carry no act**, and Act VI closes with *"The story continues in a later version."* That line stays through v0.10 and is removed when v0.11 ships (D415). Act VI carries exactly the three names #1–3, on the Keep, the Citadel and Bastion (`lore-secrets.md` §31).
 - **Act counters** start fresh with each act: "the 2nd Mirograd contract won after Act I begins" counts from that act's start, and counts in any later cycle until it's met.
 
 #### 5.14.2 Documents
@@ -1293,13 +1372,14 @@ Boss and hunt wins are **not contract wins.** They do not change threat, act cou
 - **Later cycles:** she's back with the new warden. The new-warden sheet says *"Ilse is back from Velkvik with the archive."* When Act III begins, the line reads *"Ilse is back from Velkvik with the archive, and an old man with a net-needle and an axe."* (Arvid, §8.5, D211). When Act IV begins, the line reads *"Ilse is back from Velkvik with the archive. Pechko is waiting at the stove with something wrapped in oilcloth."* When Act V begins, the line reads *"Ilse is back from Velkvik with the archive. Pechko is kneeling at the crack behind the stove, and he isn't sweeping."* When Act VI begins, the line reads *"Ilse is back from Velkvik with the archive. Pechko is sitting by the crack behind the stove, and the frost on the floor has shapes in it."*
 - **The Archive tab** has four sections:
   - **Bestiary:** the v0.3 screen, unchanged.
-  - **Library:** every document found, grouped by act, then by type, newest first. Each opens in a reader, with any note of Ilse's under it. Letters from hunters (§5.14.7) have their own shelf. From v0.7 the Library has an **Echoes** shelf (Ember-echoes from Delves). From v0.9 it has a **Rime** shelf (the Unlit's writing, D364).
+  - **Library:** every document found, grouped by act, then by type, newest first. Each opens in a reader, with any note of Ilse's under it. Letters from hunters (§5.14.7) have their own shelf. From v0.7 the Library has an **Echoes** shelf (Ember-echoes from Delves). From v0.9 it has a **Rime** shelf (the Unlit's writing, D364). From v0.10 it has an **Orders** shelf: one entry per chapter read, with a 'read with …' line (§5.13.6).
   - **Accounts:** for each key event (Act I: the Night of the Fall, the apprentices; Act II adds the bell; Act III adds **Yrsa's choice**; Act IV adds **The light in the window**; Act V adds **What the hearth leaves**; Act VI adds **What the cold wants**), every account found, side by side, each labeled with its witness. Nothing is marked true.
   - **Names:** *"Names found: 12 of 40."* A row for each of the 40, in order. A found name shows its village and year (*"Eirik Varn — Velkvik — onward, year 272 of the order."*); a missing one shows *"— a name not yet found —"* and its hint (`lore-secrets.md` §20).
 
 #### 5.14.4 Names
 
 - **40 names, each from exactly one source** (`lore-secrets.md` §8, §20): act documents 28, Ribbonshades 6, hunter letters 5, Sigrun's confession 1.
+- While the Bell-Watchers are seated, a still-missing name's hint gets one more sentence from the rule in §5.13.5. It adds no name and no source.
 - **A name is found** when the document, defeat or letter that carries it is found. Found names are kept forever.
 - **Ribbonshades** (§8.3): each Ribbonshade defeated carries the next of the six Ribbonshade names in a fixed order, the first being Jaro's (roll #39), until all six are found. After that, a Ribbonshade carries a ribbon with no name. The scene line comes with the contract result. **Until all six names are found, three in four of the ruin contracts that can hold a Ribbonshade (tiers 2–4) are one** (`ruin.ribbonshadeShare`, Q17, D190; 0.5 until the v0.8 tuning, D354); the other ruin creatures still appear, and once the six are found the ordinary mix returns.
 
@@ -1313,7 +1393,7 @@ Boss and hunt wins are **not contract wins.** They do not change threat, act cou
 
 - **Levels:** Cold → Wary → Hopeful → Trusting → Sworn. Each village keeps its v0.2 starting level (`setting-primer.md` §3).
 - **Rising** (D146): each contract won for a village counts toward its next step: 8 to leave Cold, then 15, 20 and 25 (`trust.stepContracts`; the first was 10 until D237). **Each Triumphant stand counts as `trust.triumphantContracts` (10) contracts toward every village's next step** (D195; was a whole step, D146). Progress carries over; a Sworn village stops counting. Trust **never drops**, and a Long Night keeps it.
-- **What it does** (D147): words only. It sets the tone of that village's notices (from v0.2; from v0.5, once a village trusts the hold more than it did at the start, its notices close with that level's line, D180) and of resident lines, and some documents wait for a village's trust (Act I: D1-02, Kozly Hollow at Wary). Trust changes no number in v0.5; rewards wait for the Thanes' Moot (v0.10).
+- **What it does** (D147): words only. It sets the tone of that village's notices (from v0.2; from v0.5, once a village trusts the hold more than it did at the start, its notices close with that level's line, D180) and of resident lines, and some documents wait for a village's trust (Act I: D1-02, Kozly Hollow at Wary). Trust changes no number; the Thanes' Moot (v0.10) adds the heads' lines, not rewards (§5.13.5).
 - **Shown** on the Contracts board's **Villages** panel (§9.14): each village's level, its one-line description, and its progress, with a breakdown on long-press (contracts won toward each step, Triumphant stands). A step up gets one line on the away sheet or the result sheet: *"Mirograd trusts the hold a little more: Hopeful."*
 
 #### 5.14.7 Hunter letters
@@ -1335,6 +1415,7 @@ Boss and hunt wins are **not contract wins.** They do not change threat, act cou
 2. The act's testament (Act I: D1-06; Act II: D2-09; Act III: D3-06; Act IV: D4-06; Act V: D5-06, followed by Yrsa's Thole's line; **Act VI: D6-06, a Rime**), or *"The story continues in a later version."* if the act isn't written.
 3. The Hearth.
 4. The new-warden sheet: the warden's name, any resident scene of the act's close (Act I: D1-07 *"Welcome back"*; Act II: D2-10; Act III: D3-07; Act IV: D4-07; Act V: D5-07), Ilse's return (with Arvid when Act III begins, then D3-01), and the choice of 3 active hunters.
+5. The new-warden sheet's 'Seat your Orders' step appears once an Order is open (§5.13.4).
 
 ---
 
@@ -1368,6 +1449,7 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 | **Standard** (`standard`, D16) | Weekdays: 07:00, 10:00, 12:30, 16:00, 21:00. Weekends: 09:00, 13:00, 17:00, 21:00 | **None: never Delves** (D269) | All main targets; the Idle-only row's baseline |
 | **Delver** (`delver`, *from v0.7*, D269) | Same as Standard | One 20-min session at 15:00 on weekends, plus Wednesday at 19:00: Delves | The v0.7 Delve rows only; the Idle-only row's comparison |
 | **Eventer** (`eventer`, *from v0.9*, D367) | Same as Standard | None. At each check-in, it spends banked tokens (below) | The v0.9 event rows only. **Monday seeds only.** |
+| **Orderer** (`orderer`, *from v0.10*, D417) | Same as Standard | One 20-min Delve session at 15:00 on weekends, plus Wednesday at 19:00, once Delves are open | The v0.10 Orders rows only. **Monday seeds only.** |
 | **Light** | 07:00, 12:30, 21:00 every day | None | "Still works for a busy week" checks |
 | **Heavy** | Every 2 h from 07:00 to 23:00 | One per day *(no Delves)* | "Can't be rushed too fast" checks |
 | **Opening** *(⚑ revision A10)* | Acts every 10 s for the first 15 min of a fresh game, using the default job priority and greedy best-payback buys; then switches to Standard | — | Opening targets (first Cottage, first Mine) |
@@ -1406,6 +1488,8 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
   - **Track:** the highest-paying track it has a legal full party for.
   - It never replays an unlocked hunt, never spends a token it cannot use, and never leaves an attempt half made.
   - **Standard, Light, Heavy, Opening and the Delver never touch events.** The Eventer's contract decisions are Standard's, so it leaves hunters on contracts when Standard would.
+
+- **Orders** *(Orderer only, v0.10, D417)*: plays like Standard on the Monday seeds only, **and runs Delves as the Delver does once they are open,** and is the only player that seats an Order. It taps 'Seat it' at an opening when a seat is free. At each new warden it seats the Orders ranked by chapters playable now, then chapters unread, then list order (Moot, Grey Wives, Bell-Watchers, Quenchers). It takes the third seat the moment it opens, never uses the mid-cycle swap, reads every chapter when it is playable, and plays until every chapter has played, up to the 42-day cap. Every other player never seats an Order, so their baselines do not change (D417).
 
 ### 6.2 Targets
 
@@ -1452,12 +1536,20 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Tokens not wasted *(D367, D404)* | A full bank at no more than **35%** of the Eventer's **unlocked** check-ins (median of the Monday seeds). *(D404, owner: was 15%; measured median about 29%)* | v0.9 |
 | Act VI lands in its cycle *(D383, proposed)* | D6-01 to D6-06 found by the end of cycle 6; D6-07 with the next warden (Standard); D6-08 to D6-10 reported only | v0.9 |
 | Dross-Tide stand probe *(D383, proposed)* | In Act VI-era cycles, Standard's stand reaches the Held band (12 or more waves) at the median of the Monday seeds, and the preview's range still agrees with the real result | v0.9 |
+| *Proposed:* First chapter in time *(D417, D440)* | Chapter 1 of each Order **the Orderer seats at its opening** plays within 24 h of that Order opening (Orderer, median of the 5 Monday seeds); an Order left without a seat waits for the next new warden by design and is reported, not judged | v0.10 |
+| *Proposed:* Every Order reaches level 4 *(D417)* | By the end of cycle 6 (Orderer, median of the 5 Monday seeds) | v0.10 |
+| *Proposed:* All 16 chapters have played *(D417)* | By the end of cycle 8 (Orderer, median of the 5 Monday seeds) | v0.10 |
+| *Proposed:* Silver check #6 with Orders *(D417)* | At least 70% of silver from bounties (Orderer, median of the 5 Monday seeds) | v0.10 |
+| *Proposed:* Provisions share with the Moot perk *(D417)* | Stays in 20–40% (Orderer, median of the 5 Monday seeds) | v0.10 |
+| *Proposed:* Stand rows with the Quenchers perk *(D417)* | 'Best Last Stand timing' (days 4–5), 'First Long Night' (days 3–5), 'Act VI lands in its cycle' and the Dross-Tide stand probe still pass; Embers per stand with and without the perk are reported (Orderer, median of the 5 Monday seeds) | v0.10 |
 
 Reported only: the stand band per cycle (with waves), skill levels per cycle, properties found per cycle (v0.6); Riftglass per week, floors reached per run, Delve relics found (v0.7, Delver); stars per cycle, items by rarity per cycle, Legendaries found, Delve XP (v0.8).
 
 *Judging (v0.9):* every v0.9 row is judged on the **median of the Monday seeds** (Saturday reported only). Standard, Light, Heavy, Opening and the Delver issue no event commands, so their reports before Act VI's content equal the v0.8 baseline; from cycle 6, Act VI's documents and the Dross-Tide stands change what they see, so their baselines are re-recorded once (T9.12).
 
 *Reported only (v0.9):* boss attempts per cycle, damage per attempt, milestones paid, silver from bosses, hunt points per cycle, tokens spent and wasted, and rest-blocked check-ins (Eventer).
+
+**Content test (v0.10, D417):** no required content is Order-only (lore §8), and the Orders texts equal `lore-secrets.md` §33. The six *Proposed* rows above are held in their own commit until the owner approves them.
 
 **Content test (v0.9, D367):** no required name, document or bestiary entry has an event as its only source (lore §8); the Great Beasts, the quarries and the Dross-Tide in a stand are optional and counted nowhere.
 
@@ -1477,6 +1569,7 @@ These catch dead zones and walls that pure time targets miss.
 6. **Contracts own silver** *(v0.2)*: **cumulatively over the Keep phase** of each simulated run (at least 14 days; from v0.4, cycle 1's stretches from the Keep onward, D114, D135; later cycles restart at tier 1 and are reported only), at least 70% of silver earned comes from bounties. *⚑ Revision (G1): measured cumulatively, not per day. Early Keep is seam-heavy by design (about 40% from seams on day 2), and a per-day check would fail without making the game better.* *(v0.9: the Eventer's silver from bosses counts in the total, not as bounty silver; the check still has to pass.)*
 7. **No overflow:** every number stays below 1e300 through 3 simulated cycles *(from v0.4)*. Through v0.3, the same check runs over 14 simulated days.
 8. **Provisions matter** *(v0.2; ⚑ revisions G3, Q9)*: cumulatively over the Keep phase of each simulated Standard run (at least 14 days; from v0.4, cycle 1's stretches from the Keep onward, D114, D135; later cycles are reported only), contract provisions take 20–40% of food income. Because provisions scale with food capacity from the Keep on (§5.4.2), the share is set mainly by `provisions.incomeMinutes`; the check keeps it honest as later milestones add contracts and costs.
+9. **Orders** *(v0.10)*: #6 (silver share ≥ 70%) and #8 (provisions share 20–40%) are also run on the Orderer's report, with the Moot perk counted.
 
 **Which check-ins checks 1–3 watch** *(v0.4, D114)*: every check-in of cycle 1 up to the Last Stand (through v0.3: up to the Keep). Rank-ups, Citadel and Bastion included, may take up to 5 check-ins of saving.
 
@@ -1501,6 +1594,12 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Suggested party for a boss** *(v0.9, D406)* | ≤ 800 ms on a mid-range phone | Tries at most `events.suggestTries` parties, up to 14 hunters, in the worker |
 | **Hunt odds panel** *(v0.9, D406)* | ≤ 1.5 s on a mid-range phone | The prepared and the unprepared fights (the "unprepared would be X%" line), in the worker; the screen shows a working state |
 | **Suggested party for a hunt** *(v0.9, D406)* | ≤ 2.5 s on a mid-range phone | Tries at most `events.suggestTries` parties, up to 14 hunters, in the worker; the screen shows a working state |
+| **Orders card render** *(v0.10, D445)* | ≤ 16 ms (one frame) | The Hold tab's card, from the view built in `core` |
+| **Order sheet open** *(v0.10, D445)* | ≤ 50 ms | Any of the four sheets, with its breakdown |
+| **Orders standing recompute** *(v0.10, D445)* | ≤ 5 ms | All four Orders, after a command |
+| **v9 → v10 migration** *(v0.10, D445)* | ≤ 100 ms | The owner's save, on the load path |
+| **Orders save growth** *(v0.10, D445)* | ≤ 2 KB | The whole Orders block, all four opened, every chapter read (checked by a unit test, not the throttled benchmark) |
+| **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | **≤ 5 min per CI job** *(D320)* | All policies and checks; the runs play in parallel, one per core (D169), split across parallel CI jobs whose results a final job combines and judges. Never trimmed: same runs, seeds and rows |
 
@@ -1553,6 +1652,8 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Dead hunter returns | Before v0.4: after N days; from v0.4: at the next Long Night, at their usual price, levels halved (D110) | `death.returnDaysBeforeLongNight` = 3 | 5.3.7 |
 
 ### 7.4 Contracts & combat
+
+*Order perks and standing: §7.12.*
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
@@ -1714,6 +1815,48 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 - **Not constants but saved state:** the token count and its timestamp, each hunter's rest-until time, the boss visit, the hunt points and `standPool` (technical design §5.2).
 - **Tunable content values** (not in §7.11): every Great Beast and quarry stat (§8.13, §8.14), the legendary hunters' stats and traits (§8.5), their use-skills (§8.5b).
 - **Calibration (T9.13):** `boss.poolBase` is the only locked number that is a sketch. T9.13 measures the median damage of the Eventer's party at tiers 4 and 5, proposes the pool that makes a visit about 12 attempts, and returns it as a new decisions row. If the other locked numbers fail a check, the build stops and asks (plan §0.6).
+
+### 7.12 Orders *(v0.10, D407–D425)*
+
+**`locked`** keys change only through a decisions row the owner approves (plan §0.6). Everything else here is **tunable**, and every number marked *sketch* is a first estimate that the Orderer (GDD §6.1) measures in T10.17 and T10.18. A tunable moved by more than 2× gets a Proposed row (§0.6). **There is no new bonus bucket (§5.0):** every perk below is its **own named factor** on one time, cost or rate, applied after the existing buckets and shown as its own line in the breakdown.
+
+| Formula | Expression | Constants (key = starting value) | § |
+|---|---|---|---|
+| Seats at the start | seats a save has until the third opens | `orders.seatsStart` = 2 **(locked)** | 5.13.3 |
+| Seats, most | the most seats there ever are | `orders.seatsMax` = 3 **(locked)** | 5.13.3 |
+| Third seat | opens once, kept for good, when this many Orders are at level 4 **and** the Quenchers have opened (checked after every level change, at the Quenchers' opening, and on load) | `orders.thirdSeatTopOrders` = 2 **(locked)** | 5.13.3 |
+| Levels | levels per Order; one chapter per level | `orders.levels` = 4 **(locked)** | 5.13.2 |
+| The opposed pair | the two Orders whose last chapters differ by whether the other is seated, and each waits until the other has opened | `orders.opposed` = [moot, quenchers] **(locked)** | 5.13.6 |
+| Perk ceiling | no Order's number perk may exceed this at level 4; a test checks `step × 4 ≤ ceiling` | `orders.perkCeiling` = 0.20 **(locked)** | 5.13.5 |
+| Moot standing | per contract won, any village | `orders.standing.moot` = { contract: 1 } | 5.13.2 |
+| Grey Wives standing | per brew finished, per experiment finished, per property revealed | `orders.standing.greyWives` = { brew: 1, experiment: 3, property: 10 } | 5.13.2 |
+| Bell-Watchers standing | per document found, per hunter letter found, per name found | `orders.standing.bellWatchers` = { document: 5, letter: 5, name: 10 } | 5.13.2 |
+| Quenchers standing | per Kozly Hollow contract won; per Delve floor whose result paid Riftglass | `orders.standing.quenchers` = { kozlyContract: 2, delveFloor: 1 } | 5.13.2 |
+| Delve window | a window starts at the first counted floor and lasts this long on the event clock | `orders.delveWindow` = 7 days | 5.13.2 |
+| Delve weekly cap | the most standing Delve floors add in one window | `orders.delveWeeklyCap` = 20 *(sketch)* | 5.13.2 |
+| Triumphant stand | standing added to **every Order** (open or not) by each Triumphant stand | `orders.triumphantChunk` = 25 *(sketch)* | 5.13.2 |
+| Level thresholds | standing needed for levels 1 to 4 | `orders.levelThresholds` = { moot: [5, 40, 100, 200], greyWives: [10, 70, 180, 330], bellWatchers: [5, 50, 120, 250], quenchers: [10, 40, 100, 180] } *(measured at T10.18, D441)* | 5.13.2 |
+| Migration cap | a save migrated from v9 starts each Order **no higher than** this level (its backfilled standing is capped at that level's threshold) | `orders.backfillCapLevel` = 1 | 5.13.2 |
+| Swap cooldown | after a seat change mid-cycle, the next change waits this long on the event clock (`eventNow`); a new warden's arrival clears it | `orders.swapCooldown` = 24 h | 5.13.4 |
+| Moot perk | contract provisions food × (1 − step × level) | `orders.perk.moot.foodStep` = 0.03 (level 4: −12%) | 5.13.5 |
+| Grey Wives perk | brew and experiment time × (1 − step × level), fixed when queued | `orders.perk.greyWives.timeStep` = 0.04 (level 4: −16%) | 5.13.5 |
+| Bell-Watchers perk | clue time × (1 − step × level), fixed when the clue starts | `orders.perk.bellWatchers.clueStep` = 0.04 (level 4: −16%) | 5.13.5 |
+| Quenchers perk | the hourly Rank Threat rate × (1 − step × level) | `orders.perk.quenchers.threatStep` = 0.03 (level 4: −12%) | 5.13.5 |
+
+**Level names (text, not constants):** Neighbour, Friend, Ally, Kin (levels 1 to 4), the same for every Order. They are different words from village trust (Cold, Wary, Hopeful, Trusting, Sworn) so the Villages panel never shows one word for two things.
+
+**Notes**
+- **Not constants but saved state:** each Order's `opened` flag, the per-source counts, `start` (the migration's capped backfill), the high-water level, the seats, whether the third seat has opened, the time of the last seat change (event clock), chapters read, and for each chapter the Orders that were seated when it was read (D419). Standing and level are **derived**.
+- **Counting starts at v10 for all four Orders, opened or not** (D410). A save migrated from v9 gets one backfill at the migration, capped at `orders.backfillCapLevel`; nothing is ever backfilled again.
+- **Where each perk bites:**
+  - *Moot:* the food paid as **contract provisions** at launch (§5.4 step 4; the per-hunter food, after the existing rules such as Toma's Thrifty). A contract already launched keeps what it paid.
+  - *Grey Wives:* brew time (§5.7) and experiment time (§5.8.3, after the Copper Still), **fixed at the moment the brew or experiment is queued;** one already in the kettle queue keeps the time it was queued with.
+  - *Bell-Watchers:* the clue timer on an investigation (§5.6.3), fixed when the clue starts.
+  - *Quenchers:* the **hourly Rank rate** of Threat (§5.9.1: Keep 0.5, Citadel 1, Bastion 1 per hour). Threat from failed contracts and every other source is unchanged. No fight number changes; `rulesVersion` stays 5. **A lower Threat also lowers the Embers a stand pays** (Threat adds 0.7% per point to the payout, §5.9.4): easier waves, a smaller payout. This is the Quenchers' cost and the Order sheet says so.
+- **A Delve floor counts when that floor's result paid at least 1 Riftglass.** It is decided floor by floor from the result, so a run that runs out of allowance mid-run counts only the floors that paid. Delve standing is a Delve reward with an idle source (Kozly Hollow contracts), so the D20 / D271 "Delve-optional" content test passes.
+- **Standing per command, not per tick:** each source adds standing in the command or event that does the thing (including events inside `advance` such as a contract resolving), so nothing is added on a timer.
+- **No randomness:** Orders use no random streams (technical design §7.2).
+- **Tunable content values (not constants):** the chapter, opening-scene and perk texts (OUT-3), which are word for word and change only through the owner.
 
 ---
 
@@ -2390,6 +2533,7 @@ With the eleven starting hunters, each track has at least four legal hunters (co
 ```
 
 - Lines marked ▸ open the full log.
+- Once an Order is open, the sheet adds Orders lines: *"The Thanes' Moot: Friend."* (a level up), *"A chapter waits for a seat."*, *"A third seat has opened."* (§5.13)
 - Contract, injury, and bestiary lines appear only once those systems exist.
 
 ### 9.4 Contracts board (v0.2)
@@ -2578,7 +2722,8 @@ The Hut opens from its building row on the Hold screen.
 | v0.6 | + the Hut's Experiment and Book sections; "What the ember remembers" (warden skills) on the Rank screen; skill lines on the away sheet and new-warden sheet; Arvid's arrival; Act III's documents and scenes |
 | v0.7 | + the Rift card on the Hold screen; the Delve sheets (entry, floor playback and log, doors, blessings, Your blessings, guardian, result); the Riftglass shop on the Rank screen; alternate traits on the hunter sheet; battle sprites; the Echoes shelf; Act IV's documents and scenes (§9.15) |
 | v0.8 | + rank, stars, talents, use-skill and three slots on the hunter sheet; the slot picker; Stores with Salvage; Rank up and Add a star; loot, Legendary, rank-up and yard lines on the away sheet and results; Act V's documents and scenes; the Rift card's sixth-door line (§9.16) |
-| v0.9 | Events: the Events card, world bosses (three Great Beasts), Legendary Hunts (three hunters, nine tracks), the Great Beasts shelf, the Rime shelf, Act VI and the Dross-Tide in the Last Stand | §5.12, §8.13, §8.14, §9.17, §7.11 |
+| v0.9 | Events: the Events card, world bosses (three Great Beasts), Legendary Hunts (three hunters, nine tracks), the Great Beasts shelf, the Rime shelf, Act VI and the Dross-Tide in the Last Stand (§5.12, §8.13, §8.14, §9.17, §7.11) |
+| v0.10 | Orders: the Orders card, the Order sheets, the "Seat your Orders" step, chapter and opening scenes, the Library's Orders shelf, the Villages panel's "What the heads say about you" entry (§5.13, §7.12, §9.18) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -2680,6 +2825,16 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 - **Away sheet:** only the full-bank line, while events are open (§5.12.2). Nothing about events happens while away.
 - **Events scene:** the one-time scene of §5.12.1 as a scene sheet, like the Rank-up scenes.
 
+### 9.18 Orders screens *(v0.10, D416)*
+- **The Orders card** (Hold screen, after the Events card when it is shown, otherwise after the last card shown). Title "Orders". The two seat lines (§5.13.3). One row per open Order: name, level word and count ("Friend · 62"), "Seated" or "Not seated", and "A chapter waits for a seat." when a chapter waits. A closed Order is not listed. Before any Order has opened the card is hidden. A **"Seat your Orders"** button shows while the load step is pending.
+- **The Hold tab badge:** one badge, shown while a chapter can be read now or an Order with a due chapter is not seated. It is worked out from the state and clears when neither is true.
+- **An Order sheet** (tap a row). Top: name, level word, standing and the next threshold. Then: **Breakdown** (each source with count × weight, the "Brought from before the Orders" line; long-press for the formula), the four levels with their perks (the current level's number shown as the real number, e.g. "−8% provisions food"; the Quenchers' line says "easier waves, smaller Embers"), chapters (read, playable, waiting and why), and **Seat / Unseat / Swap** with the cooldown line. Unseating shows "You keep your standing and chapters."
+- **"Seat your Orders"** (new-warden sheet, after the existing lines; and as a sheet on load): a short list of open Orders with a toggle each, limited by the seats. "Skip" keeps the previous seats.
+- **Chapter and opening scenes** use the existing scene sheet; an opening ends with **Seat it / Continue and Not now**.
+- **The Library's Orders shelf** (the Rime pattern): one entry per chapter read, titled and re-readable, with a "read with …" line from D419. Not shown until the first chapter is read.
+- **The Villages panel** gains **What the heads say about you** (Moot perk, seated only).
+- **Layout checks (Playwright, phone and the 900/1300 px breakpoints):** no sideways scroll (`scrollWidth ≤ innerWidth`) with every Orders surface open; every button reachable without overlap.
+
 ---
 
 ## 10. Out of Scope
@@ -2705,7 +2860,8 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 | Mod support or a content editor | Content files are already plain TypeScript data | Edit content files directly |
 | Achievements | Not in the brief | **[JC: candidate for v1.0 polish]** |
 | Records screen; CSV/JSON export of history and logs | Declined in the GDD review (G9) | Reports keeps recent logs; the Roll of Wardens (v0.5) keeps per-cycle history in-world |
-| The mystery's final act | Timing open (D24.10) | Decided when v0.10 starts |
+| The mystery's final act | v0.11 "The Remembering" (D415) | Its own flesh-out before v0.11 |
+| Orders giving silver or fight bonuses; events adding standing; a seat cost; a fifth Order | Not planned (D418) | — |
 
 **Deferred, not cut.** Anything listed at outline level in §5.8–5.13 is in scope for its milestone and gets full detail just before that milestone starts.
 
@@ -2808,3 +2964,13 @@ Each one is also marked **[JC]** where it appears.
 6. **Delve XP and loot only while a run pays Riftglass,** so nothing can be farmed (D316).
 7. **Act V's letters come up through the crack,** on ordinary conditions; Delves still carry no plot (D302).
 8. **The simulator splits into parallel CI jobs,** each under 5 minutes (D320).
+
+## Judgment calls added in the v0.10 flesh-out (D407–D425)
+
+1. **Orders are story first, with a choice that costs something:** limited seats, small perks, no silver, fight number or gate. **[JC]** (D408, D418)
+2. **Orders are not exclusive in what you earn, only in what is active.** **[JC]** (D409)
+3. **Standing comes from play already done, is counted for all four Orders from v10, never drops and is kept through the Long Night;** a migrated save gets one backfill capped at level 1. **[JC]** (D410)
+4. **Weights, thresholds, the Triumphant chunk, the Delve window and cap, the perk steps and the backfill cap are sketches** the Orderer measures. **[JC]** (D411, D417)
+5. **Two seats, a third once two Orders are at level 4 and the Quenchers have come; a 24 h event-clock cooldown mid-cycle.** **[JC]** (D412)
+6. **The readings in D420** (the unnamed eldest Grey Wife, the level-1 backfill cap, the Quenchers' trade, the four level names and the rest). **[JC]**
+7. **The final act moves to v0.11 "The Remembering".** **[JC]** (D415)

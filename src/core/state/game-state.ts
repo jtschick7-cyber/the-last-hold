@@ -18,6 +18,7 @@ import type { Band } from '../../content/story/scenes';
 import type { RecipeBook, SkillXp } from './book-state';
 import type { DelveState } from './delve-state';
 import type { EventsState } from './events-state';
+import type { OrdersState } from './orders-state';
 import type { ItemState } from './item-state';
 import type { StoryState } from './story-state';
 import type { InjuryKind } from '../contracts/injury';
@@ -33,7 +34,7 @@ import type { InjuryKind } from '../contracts/injury';
 // Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317); v9 adds events (tokens,
 // rests, the boss visit, hunt points) and each cycle's stand pool (plan T9.1, D382). Times are epoch
 // milliseconds.
-export const SCHEMA_VERSION = 9;
+export const SCHEMA_VERSION = 10;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -175,6 +176,8 @@ export interface BrewJob {
   item: ConsumableId;
   doneAt: number | null;
   paid: Recipe;
+  /** The Grey Wives' share off the time, fixed when queued; absent when none (v10, GDD §5.13.5). */
+  orderCut?: number;
 }
 
 /** An experiment in a kettle (GDD §5.8.3): `units` of each ingredient were paid. */
@@ -184,6 +187,8 @@ export interface ExperimentJob {
   b: IngredientId;
   units: number;
   doneAt: number | null;
+  /** As on a brew: fixed when queued. */
+  orderCut?: number;
 }
 
 /** Brews and experiments share the kettles, in one queue. */
@@ -354,6 +359,8 @@ export interface GameState {
   legendaries: { id: LegendaryId; cycle: number }[];
   /** Events: tokens, rests, the boss visit, hunt points (v9, GDD §5.12). Kept forever. */
   events: EventsState;
+  /** Orders: standing, seats and chapters (v10, GDD §5.13). Kept whole through the Long Night. */
+  orders: OrdersState;
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;
