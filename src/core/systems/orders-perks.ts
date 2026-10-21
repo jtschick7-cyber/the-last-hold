@@ -57,3 +57,13 @@ export const perkLines = (state: GameState, id: OrderId): Breakdown[] => {
     },
   ];
 };
+
+/** What seating an Order would give, for the card's "Not seated" row (GDD §5.13.3). */
+export const seatingGives = (state: GameState, id: OrderId): string => {
+  const level = orderLevel(state, id);
+  const step = STEP[id].step();
+  const cut = Math.round(step * Math.max(level, 1) * 100);
+  return level === 0
+    ? `Seated, it gives −${cut}% ${STEP[id].text} at each level.`
+    : `Seated, it gives −${cut}% ${STEP[id].text}.`;
+};

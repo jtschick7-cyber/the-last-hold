@@ -13,6 +13,8 @@ import type { GameState, StandRecord } from '../../core/state/game-state';
 import { rosterCap } from '../../core/systems/hunters';
 import { WardenNameField } from '../widgets/WardenNameField';
 import { BandLine, ResidentsAndTrust, Testament, WardenScenes } from './LongNightStory';
+import { seatStepOrders } from '../../core/systems/orders-view';
+import { SeatStep } from '../orders/SeatSheets';
 import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
 import { actClosing, actClosingNote } from '../../core/story/documents';
@@ -144,6 +146,12 @@ const NewWarden = ({ s, stand }: { s: GameState; stand: StandRecord }) => {
         }}
       />
       <WardenScenes stand={stand} />
+      {seatStepOrders(s).length > 0 && (
+        <div>
+          <h3 class={styles.cardTitle}>Seat your Orders</h3>
+          <SeatStep />
+        </div>
+      )}
       <p class={styles.small}>
         Choose your {cap} active hunters ({s.roster.active.length}/{cap}); everyone else waits in
         the reserve.

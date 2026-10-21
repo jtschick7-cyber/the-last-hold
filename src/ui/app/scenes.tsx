@@ -6,6 +6,8 @@ import { eventsScene } from '../../content/events-text';
 import { eventsUnlocked } from '../../core/systems/events';
 import { delvesOpen } from '../../core/delves/access';
 import { isFound } from '../../core/story/documents';
+import { openOpeningScene } from '../orders/OpeningScene';
+import { SeatStepSheet } from '../orders/SeatSheets';
 import styles from '../styles/ui.module.css';
 import { WardenNameField } from '../widgets/WardenNameField';
 import { dispatch, game } from './runtime';
@@ -154,5 +156,23 @@ export const playScenes = (): void => {
   }
   if (delvesOpen(s) && !s.delve.sceneSeen) return showRift();
   if (eventsUnlocked(s) && !s.events.sceneSeen)
-    openSheet(eventsScene.heading, () => <EventsSceneView />);
+    return openSheet(eventsScene.heading, () => <EventsSceneView />);
+  playOrdersScenes();
+};
+
+// GDD §5.13.1 (D416 (6)): after the act and events scenes, the Orders' opening scenes one at a time,
+// then the load step. Closing a sheet with its X leaves the scene waiting (the Orders card offers it);
+// each is shown once a session so it can never loop.
+const shownOrders = new Set<string>();
+const playOrdersScenes = (): void => {
+  const o = game().orders;
+  const next = o.openingQueue.find((id) => !shownOrders.has(id));
+  if (next) {
+    shownOrders.add(next);
+    return openOpeningScene(next);
+  }
+  if (o.openingQueue.length === 0 && o.seatStepPending && !shownOrders.has('seat-step')) {
+    shownOrders.add('seat-step');
+    openSheet('Seat your Orders', () => <SeatStepSheet />);
+  }
 };

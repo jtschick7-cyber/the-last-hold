@@ -386,7 +386,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - `orders.open <order>`, `orders.addStanding <order> <n>`, `orders.setLevel <order> <n>`, `orders.openThird`, `orders.clearCooldown`, `orders.playChapter <order> <n>`, `orders.reset`. Debug builds and the debug panel only; they set `debugUsed`.
   - *Acceptance:* 1. Each command works from the panel and is covered by a test. 2. None is reachable in a normal build without the debug panel.
 
-- [ ] **T10.13 — Screens, part 1: the card, the badge and the seat step** *(ui/)*
+- [x] **T10.13 — Screens, part 1: the card, the badge and the seat step** *(ui/)*
   - GDD §9.18: the Orders card and its position, the combined Hold-tab badge, the "Seat your Orders" step (new-warden sheet and the load sheet), the seat and cooldown lines, the opening scene's buttons.
   - *Acceptance:* 1. The card is hidden before any Order opens, and sits after the Events card, or after the last card when there is none. 2. The seat lines read exactly as in GDD §5.13.3 in all four states (third closed or open; with or without an Order in a seat). 3. The cooldown reads "Can change in 9 h 20 m" and counts down. 4. A routine seat change takes 6 taps or fewer from the Hold screen. 5. A Playwright check at 360, 900 and 1300 px finds no sideways scroll (`scrollWidth ≤ innerWidth`) with the card and the step open. 6. The badge is shown exactly while a chapter is playable or an Order with a due chapter is unseated (a state test), and not otherwise.
 

@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.12 debug commands (done, pushed).
-- **Next:** T10.13, screens part 1 (the card, the badge, the seat step).
+- **Last task:** T10.13 screens, part 1 (done, pushed).
+- **Next:** T10.14, screens part 2 (Order sheets, chapters, the shelf).
 - **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -329,3 +329,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - Tests: `tests/orders/debug-commands.test.ts` (9). `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
 - **Not seen in a browser** (the panel buttons are plain additions to an existing sheet).
 - **Next:** T10.13.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.13 screens, part 1
+- **Built:** the Orders card on the Hold screen (after the Events card when shown, else after the last card), the one Hold-tab badge, the opening scenes (Seat it / Not now, or Continue when no seat is free), the "Seat your Orders" step (a sheet on load, from the card until used, and inside the new-warden step), and a "Change seats" sheet (Seat, Unseat, Swap in). What the screens say is worked out in `core/systems/orders-view.ts`; the UI is in `src/ui/orders/`.
+- **Seen in a browser (phone size):** the card, the step, an opening scene and the change sheet, on the owner's save; no sideways scroll at 360, 900 and 1300 px. A swap is 3 taps. T10.11's perk texts are still not seen in a browser (they sit in other screens).
+- **Please look at (D432, Proposed):** (1) the cooldown reads "Can change in 9h 20m" (the game's duration format and what the command already says); the GDD and plan write "9 h 20 m". A one-word change if you want the spaces. (2) the "Change seats" button, which T10.14's Order sheets will reuse. (3) "Skip"/"Done" use a new command that never clears a cooldown. (4) A scene closed with ✕ stays waiting and the card offers it.
+- **Not checked by a test:** the card's exact position among the cards (by code only).
+- Tests: `tests/orders/card-view.test.ts` (8), `tests/e2e/orders-card.spec.ts` (phone). `npm run check` green (2,658). Golden fights and recorded stands unchanged; no existing test edited.
+- **Next:** T10.14.

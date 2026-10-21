@@ -90,6 +90,8 @@ export type Command =
   | { type: 'orders.finishOpening'; order: OrderId; seatIt: boolean }
   /** The new-warden step and the load sheet: sets all seats, with no cooldown (D412). */
   | { type: 'orders.setSeats'; orders: OrderId[] }
+  /** Skip or finish the load step without changing a seat or the cooldown. */
+  | { type: 'orders.skipSeatStep' }
   // Debug, Orders (plan T10.12): the debug panel only.
   | { type: 'debug.ordersOpen'; order: OrderId }
   | { type: 'debug.ordersAddStanding'; order: OrderId; amount: number }

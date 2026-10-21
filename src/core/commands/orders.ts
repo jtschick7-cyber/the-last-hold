@@ -104,3 +104,9 @@ export const setSeats = (state: GameState, list: OrderId[]): ApplyResult => {
   state.orders.seatStepPending = false;
   return ok;
 };
+
+/** "Skip" on the "Seat your Orders" step (D421): the seats stay as they are and the step is used. */
+export const skipSeatStep = (state: GameState): ApplyResult => {
+  state.orders.seatStepPending = false;
+  return ok;
+};
