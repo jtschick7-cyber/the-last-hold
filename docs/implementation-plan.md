@@ -410,7 +410,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - The six owner-approved rows of GDD §6.2 (table below). Measure first with the sketches; if a row fails, tune **only tunables** (the failing Order's thresholds and weights first; the Triumphant chunk last, since it moves every Order) and re-measure.
   - *Acceptance:* 1. All rows pass on the **median of the 5 Monday seeds.** 2. The old rows pass on the old baselines, unchanged. 3. **If no reasonable tunable passes a row, stop and write it to `docs/questions.md`.** 4. The stand-rows row reports Embers per stand with and without the Quenchers' perk.
 
-- [ ] **T10.19 — Tune, smoke and the preview build** *(tunables only, wrap-up)*
+- [x] **T10.19 — Tune, smoke and the preview build** *(tunables only, wrap-up)*
   - Tuning commits start with `balance:` and include the report diff. A tunable moved by more than 2× gets a Proposed row. Do not run `sim:accept` until the owner passes the playtest (§0.3). The preview build holds the finished milestone; `docs/progress.md` and `flesh-out/v0.10-summary.md` are current. Measure the proposed performance budgets and ask the owner to set them as §6.5 rows.
   - *Acceptance:* 1. All simulator checks pass on 5 seeds. 2. No locked constant changed except by an approved row. 3. The preview build installs and opens a fresh copy of `v10.json` with the Orders opened by the load path; **the owner's own save is not assumed to still hold its scenes (they may have been seen on an earlier preview).** 4. The measured timings are in the progress entry.
 
