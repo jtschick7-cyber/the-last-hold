@@ -494,3 +494,4 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Tests:** `tests/remembering/hold-look.test.ts` (plain, frost, lamp, vigil keeps the frost; the eight images equal what the generator draws, 160 × 64, in the palette).
 - **Owner: please look** at the Hold screen in the preview (debug: Finish Act VI shows the frost; Open the gate, Remember Them shows the lamp) and approve or ask for changes. The frost is a speckled band; I can thin or thicken it.
 - **Not seen on a phone** (T11.16). No old test edited. Nothing skipped.
+- **Owner's change (same session):** thicker frost, and rime on the roofs. The ground and wall-foot frost is denser, and a ragged cap of rime now sits under the top outline of roofs, towers and trees (found by reading the scene picture, so it follows each Rank). The lamp is unchanged. The look still awaits your approval.
