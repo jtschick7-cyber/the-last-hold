@@ -5,7 +5,7 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.16 done (art approved). T9.17 measured; stopped on Q33.
+- **Last task:** T9.16 done (art approved). T9.17: Act VI and Dross-Tide rows built and passing; Eventer rows still wait on Q33.
 - **Next:** the owner answers Q33 (and the two D383 rows), then T9.17 (simulator rows, `[?]`), then T9.18, T9.19.
 - **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
 
@@ -190,3 +190,9 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Measured** the five approved rows on 5 Monday Eventer seeds. First boss attempt passes (9 h after the Citadel). First kill is cycle 6 (needs 2), first unlock cycle 5 (needs 3), full bank about 29% (needs 15%). Cause: the Eventer's contract decisions are Standard's, so fewer than four hunters are free at about 90% of open check-ins.
 - **Tried Q28 (b)** (three hunters when four are not free): little change; reverted, nothing committed.
 - **Stopped and asked:** Q33 in `docs/questions.md` has the options and my recommendation. No row is written to `sim/targets.ts`; no `sim:accept`. The two D383 rows still need their own yes.
+
+## 2026-10-21 — v0.9 session 5 (continued): T9.17, the two D383 rows
+- **Owner answered Q33 with (c) and said yes to the two D383 rows.** Rows `act-6` and `dross-tide-stand` are in `sim/targets.ts` in their own commit (64bed31); the milestone is now v0.9.
+- **Checks built:** `act6Check` (with the other acts) and `drossProbeCheck` (`sim/checks/v09.ts`); the run record gains `drossStands` (waves held and the preview's range at the stand). The Monday Standard runs now also play on until Act VI's documents and three Dross-Tide stands exist (D403).
+- **Full suite (one machine, 287 s):** every row passes, old and new. Act VI: D6-01 to D6-06 cycle 6, D6-07 cycle 7. Dross-Tide: 15 stands, median 18 waves, 100% inside the preview range. The 60% agreement figure is my reading (D403): please confirm.
+- **Eventer rows (Q33 (c)):** I tried the hold-back (four hunters kept off contracts while a token is banked). It did not help: first kill cycles 4 to 7, full bank about 32%, unlocks cycle 4 to 13. Reverted. See the message to the owner for why (rest and token rate), and the options.

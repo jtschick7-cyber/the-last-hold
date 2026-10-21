@@ -22,6 +22,8 @@ export interface CheckInRecord extends CheckInDecision {
   readonly delveResults?: readonly DelveResult[];
   /** What the Eventer did with its tokens (GDD §6.1, D367); absent for every other policy. */
   readonly events?: EventerCheckIn;
+  /** The preview a stand made at this check-in was made on (waves, median and 10th–90th range). */
+  readonly standPreview?: { readonly median: number; readonly p10: number; readonly p90: number };
 }
 
 export interface PlayOptions {
@@ -80,8 +82,17 @@ export const play = (state: GameState, opts: PlayOptions): void => {
       // The decision was made on a copy of this exact state, so it can't fail.
       if (!result.ok) throw new Error(`Policy command refused: ${result.reason}`);
     }
+    const standPreview = memory.standPreview;
+    memory.standPreview = undefined;
     opts.onCheckIn?.(
-      { ...decision, at, away, peasantsBefore, ...(events ? { events } : {}) },
+      {
+        ...decision,
+        at,
+        away,
+        peasantsBefore,
+        ...(events ? { events } : {}),
+        ...(standPreview ? { standPreview } : {}),
+      },
       state,
     );
     if (opts.stop?.(state)) return;

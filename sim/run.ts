@@ -117,6 +117,15 @@ export interface KeepPhase {
   readonly byCycle: readonly (Omit<KeepPhase, 'byCycle'> & { readonly cycle: number })[];
 }
 
+/** A stand made with the Dross-Tide in its pool: the waves it held and the preview's 10th–90th range (D383). */
+export interface DrossStand {
+  readonly cycle: number;
+  readonly waves: number;
+  readonly median: number;
+  readonly p10: number;
+  readonly p90: number;
+}
+
 /** GDD §5.9.4 (D109): a practice stand on a throwaway copy, from Bastion to day 7 of cycle 1. */
 export interface StandSample {
   readonly hours: number;
@@ -286,6 +295,8 @@ export interface RunResult {
   readonly depth: DepthRecord;
   /** v0.9: only the Eventer's runs hold attempts; absent in older shard files. */
   readonly events?: EventsRecord;
+  /** v0.9 (D383): the stands made once Act VI had begun, with the preview they were made on; absent in older shard files. */
+  readonly drossStands?: readonly DrossStand[];
 }
 
 const largest = (value: unknown): number => {
@@ -343,6 +354,7 @@ export const runOne = (spec: RunSpec): RunResult => {
   };
   let delveXp = 0;
   const eventAttempts: EventAttemptStat[] = [];
+  const drossStands: DrossStand[] = [];
   const eventsSeen = {
     openedHours: null as number | null,
     openedCycle: null as number | null,
@@ -372,6 +384,17 @@ export const runOne = (spec: RunSpec): RunResult => {
     ) &&
     ALL_CONTENT.documents.every((id) => s.story.documents.some((d) => d.id === id)) &&
     STORY.ribbonNames.every((n) => s.story.names.some((x) => x.n === n));
+  /**
+   * v0.9 (D383): the Monday Standard run also plays on until Act VI's judged documents are found and
+   * three Dross-Tide stands have been made, so the Act VI rows have something to judge. "All content"
+   * itself (the Idle-only row) is unchanged and is timed where each part is found, not where the run stops.
+   */
+  const actSixSeen = (s: GameState): boolean =>
+    spec.policy !== 'standard' ||
+    ([...STORY.act6.docs, STORY.act6.nextWarden.doc].every((id) =>
+      s.story.documents.some((d) => d.id === id),
+    ) &&
+      drossStands.length >= 3);
   let book36Hours: number | null = null;
   let skills4Hours: number | null = null;
   let wrightsHours: number | null = null;
@@ -398,7 +421,7 @@ export const runOne = (spec: RunSpec): RunResult => {
       (spec.minCycles !== undefined &&
         st.time >= start + spec.days * DAY &&
         st.cycle.number > spec.minCycles &&
-        (!spec.untilContent || contentDone(st))),
+        (!spec.untilContent || (contentDone(st) && actSixSeen(st)))),
     onCheckIn: (rec, s) => {
       // Income: the net change while away, plus the food that settling spent.
       const settles = rec.away.events.filter((e) => e.type === 'settle');
@@ -410,6 +433,15 @@ export const runOne = (spec: RunSpec): RunResult => {
       for (const c of rec.commands) {
         if (c.type === 'build.buy' && c.building === 'cottage') mark('first-cottage', rec.at);
         if (c.type === 'build.buy' && c.building === 'mine') mark('first-mine', rec.at);
+      }
+      if (rec.standPreview) {
+        const made = s.cycles.find((c) => c.stand?.at === rec.at);
+        if (made?.stand && made.standPool === 'dross')
+          drossStands.push({
+            cycle: made.number,
+            waves: made.stand.wavesHeld,
+            ...rec.standPreview,
+          });
       }
       if (rec.events?.unlocked) {
         eventsSeen.checkIns += 1;
@@ -596,6 +628,7 @@ export const runOne = (spec: RunSpec): RunResult => {
     cyclesDone: state.cycle.number - 1,
     cycleHours: state.cycles.flatMap((c) => (c.stand ? [(c.stand.at - c.startedAt) / HOUR] : [])),
     standSamples,
+    drossStands,
     contracts,
     story,
     discovery: { hutHours, firstNewBrewHours, cycles: discoveryCycles },

@@ -24,6 +24,8 @@ type Act = (cmd: Command) => boolean;
 export interface PolicyMemory {
   cycle: number;
   lastPerDay: number | null;
+  /** The preview the stand was made on (GDD §6.2 Dross-Tide probe); set when it stood, read and cleared by `play`. */
+  standPreview?: { readonly median: number; readonly p10: number; readonly p90: number };
 }
 
 export const freshMemory = (): PolicyMemory => ({ cycle: 0, lastPerDay: null });
@@ -114,11 +116,12 @@ export const standMove = (s: GameState, act: Act, memory: PolicyMemory): boolean
   const party = suggestSix(s);
   if (party.length === 0) return false;
   const kit = standKit(s, party);
-  const perDay = previewStand(
-    previewInputFor(s, party, kit, num('laststand.policySamples')),
-  ).embersPerDay;
+  const preview = previewStand(previewInputFor(s, party, kit, num('laststand.policySamples')));
+  const perDay = preview.embersPerDay;
   const last = memory.lastPerDay;
   memory.lastPerDay = perDay;
   if (last === null || perDay >= last) return false;
-  return act({ type: 'stand.make', party, prep: kit });
+  if (!act({ type: 'stand.make', party, prep: kit })) return false;
+  memory.standPreview = { median: preview.median, p10: preview.p10, p90: preview.p90 };
+  return true;
 };
