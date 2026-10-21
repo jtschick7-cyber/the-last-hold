@@ -250,24 +250,6 @@ const head = (c: Canvas, s: PortraitSpec): void => {
       }
     }
   }
-  if (s.hair === 'braid') {
-    // The braid grows out of the hair at the temple and falls past the cheek and shoulder, each
-    // link overlapping the one above so it reads as one rope, thinner toward a leather tie.
-    const links = 10;
-    for (let i = 0; i < links; i++) {
-      const x = CX + rx - 1 + i * 0.5;
-      const y = CY - 5 + i * 4.6;
-      const w = 3.2 - i * 0.1;
-      c.ellipse(x, y, w + 0.8, 3.4, C.ink);
-    }
-    for (let i = 0; i < links; i++) {
-      const x = CX + rx - 1 + i * 0.5;
-      const y = CY - 5 + i * 4.6;
-      const w = 3.2 - i * 0.1;
-      c.ellipse(x, y, w, 2.6, i === links - 1 ? C.brown : hair[i % 2 === 0 ? 0 : 1]);
-    }
-  }
-
   // Features: brows, eyes, nose, mouth.
   const brow = s.hair === 'none' ? C.brownDark : hair[2];
   for (const side of [-1, 1]) {
@@ -364,12 +346,38 @@ const head = (c: Canvas, s: PortraitSpec): void => {
     for (let i = 0; i < 20; i++) c.set(CX + (r() * 2 - 1) * (rx + 2), CY - 12 + r() * 28, C.ice);
 };
 
+/**
+ * The braid grows out of the hair at the temple and falls behind the shoulder: drawn before the
+ * torso and the head, so both cover its top and the shoulder covers its lower part. Each link
+ * overlaps the one above so it reads as one rope, thinner toward a leather tie.
+ */
+const braid = (c: Canvas, s: PortraitSpec): void => {
+  if (s.hair !== 'braid') return;
+  const { rx } = FACE[s.face];
+  const hair = HAIR[s.hairColor];
+  const links = 10;
+  const at = (i: number): [number, number, number] => [
+    CX + rx - 1 + i * 0.5,
+    CY - 5 + i * 4.6,
+    (3.2 - i * 0.1) * 0.9,
+  ];
+  for (let i = 0; i < links; i++) {
+    const [x, y, w] = at(i);
+    c.ellipse(x, y, w + 0.8, 3.4, C.ink);
+  }
+  for (let i = 0; i < links; i++) {
+    const [x, y, w] = at(i);
+    c.ellipse(x, y, w, 2.6, i === links - 1 ? C.brown : hair[i % 2 === 0 ? 0 : 1]);
+  }
+};
+
 export const drawHunter = (s: PortraitSpec): Canvas => {
   const c = new Canvas();
   c.fill(C.plum);
   c.ellipse(CX, 30, 27, 29, C.violet);
   c.ellipse(CX, 30, 21, 23, C.slate);
   if (s.weapon !== 'satchel' && s.weapon !== 'knife') weapon(c, s.weapon, s.mark);
+  braid(c, s);
   torso(c, s);
   head(c, s);
   // Over the hair and collar: the strap crosses the shoulder in front.
