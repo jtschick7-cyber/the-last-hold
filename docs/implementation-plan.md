@@ -227,7 +227,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - GDD §9.17: the Events card, the badge (only while open), the one-time scene, the boss sheet, the party picker with reasons, preparation, the preview panel, the empty states.
   - *Acceptance:* 1. Every number has a breakdown. 2. A routine boss attempt takes 15 taps or fewer from the Hold screen. 3. The card reads correctly before the Citadel. 4. The layout works at 360 px and at the 900/1300 px breakpoints.
 
-- [ ] **T9.15 — Screens, part 2: playback, results, hunts and shelves** *(ui/)*
+- [x] **T9.15 — Screens, part 2: playback, results, hunts and shelves** *(ui/)*
   - Playback with Skip and Log, the result sheets, the away-sheet full-bank line, the hunt list and track sheets with odds, the unlock sheet, the hunter sheet's rest line, the Great Beasts shelf, the Rime shelf and reader, the last result.
   - *Acceptance:* 1. A locked track shows its restriction and reason. 2. The unlock sheet says active or reserve correctly. 3. The Rime reader is pale text on a dark card. 4. A Great Beast is Identified on first fight and shows no levels. 5. An unlocked legendary hunter appears in the Hunters tab; a locked one does not.
 

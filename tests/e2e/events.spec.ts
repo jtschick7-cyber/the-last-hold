@@ -100,11 +100,12 @@ test('the scene, the Events card, and a boss attempt in 15 taps or fewer', async
   const play = page.getByRole('dialog', { name: 'The Lindworm of Velk Fjord' });
   await expect(play.getByRole('button', { name: 'Skip' })).toBeVisible();
   await shot(page, 'boss-playback');
-  await play.getByRole('button', { name: 'Skip' }).click();
+  // Only the top sheet shows, so the playback starts again after the Log closes.
   await play.getByRole('button', { name: 'Log' }).click();
   const log = page.getByRole('dialog', { name: 'Fight log' });
   await expect(log.getByRole('listitem').first()).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).click();
+  await play.getByRole('button', { name: 'Skip' }).click();
   await play.getByRole('button', { name: 'See the result' }).click();
   const result = page.getByRole('dialog', { name: 'Result' });
   await expect(result.getByText('Damage:')).toBeVisible();
@@ -185,7 +186,8 @@ test('a hunt: the list, a track, the odds, playback, the result, the shelf and t
   await page.getByRole('button', { name: 'Close' }).click();
 
   // The Great Beasts shelf: the quarry is Identified now; the others are not.
-  await tab(page, 'Bestiary').click();
+  await tab(page, 'Archive').click();
+  await page.getByRole('button', { name: 'Bestiary', exact: true }).click();
   const shelf = page.getByRole('region', { name: 'Great Beasts' });
   await expect(shelf).toBeVisible();
   await expect(shelf.getByRole('button', { name: 'Stoneback the Fell Troll' })).toBeVisible();

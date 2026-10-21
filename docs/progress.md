@@ -5,8 +5,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.9` (from `main`, the v0.8.0 merge); the v0.9 flesh-out is applied (docs commit).
-- **Last task:** T9.14 (done). T9.13 closed: pool 21,000 approved (D400).
-- **Next:** T9.15 — playback, results, hunts and shelves.
+- **Last task:** T9.15 (done).
+- **Next:** T9.16 (art, `[?]`: owner supplies), T9.17 (simulator rows, `[?]`), then T9.18, T9.19.
 - **Open questions:** Q28 answered (D401): the Eventer's three-hunter fallback waits for T9.17, which measures first. Q29 answered (D400). Q30 (not blocking).
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
@@ -169,3 +169,11 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - **Not here (T9.15):** playback with Skip and Log, result sheets, hunt list and sheets, the away-sheet line, shelves. After Send you see a one-line last result.
 - Open: Q29 (pool). Q28 for T9.17.
 - **Owner's answers applied:** Q29 (a) → `boss.poolBase` 21,000 (D400); Q28 (b) then (a) and D399 yes (D401). T9.13's box is ticked.
+
+## 2026-10-21 — v0.9 session 5 (continued): T9.15 screens part 2
+- **Built** (D402 Proposed): after Send, the attempt plays back like a Delve floor with Skip and Log (the log is regenerated from the seed), then a result sheet (boss: damage, pool left, milestones, silver, reagents, item, XP, rests; hunt: win or loss, points, XP, reagent) with a breakdown on each number. A hunt that unlocks a hunter opens the unlock sheet (active or reserve).
+- **Hunts:** a Legendary Hunts list on the Events card (quarry, greyed hunter, points with breakdown, three tracks with restriction and a reason when nobody free fits) and a track sheet with the odds panel (no Reckless line), "unprepared would be X%", Suggest, preparation and Send. Hunt odds and Suggest run in the worker.
+- **Other screens:** Great Beasts shelf in the Bestiary (Identified on first fight, no levels; empty line as the GDD words it); the hunter sheet's rest line and "No letters." for the legendary hunters; the away sheet's full-bank line. The Rime shelf and reader were already in (T9.10).
+- **Tests:** `tests/events/screens2.test.ts` (25) and three Playwright runs on the real build (boss with playback and result, a hunt end to end with the shelf, widths 360/900/1300). `npm run check` green.
+- **Note:** only the top sheet shows, so a playback restarts after its Log is closed (same as Delves).
+- **Not done / next:** T9.16 art and T9.17 rows are `[?]` (owner). Section 6.5 budgets for hunt odds not measured.
