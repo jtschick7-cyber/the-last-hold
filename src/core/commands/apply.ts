@@ -49,6 +49,7 @@ import { add, fill, remove, setAutoSettle, setPriority, settle } from './peasant
 import { setSettings } from './settings';
 import { makeStand, markStandSeen } from './stand';
 import { buyUpgrade } from './hearth';
+import { seatOrder, setSeats, swapOrders, unseatOrder } from './orders';
 import { refuse, type ApplyResult, type Command } from './types';
 
 /**
@@ -115,6 +116,14 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return markStandSeen(state);
     case 'upgrade.buy':
       return buyUpgrade(state, cmd.upgrade);
+    case 'orders.seat':
+      return seatOrder(state, cmd.order, now);
+    case 'orders.unseat':
+      return unseatOrder(state, cmd.order, now);
+    case 'orders.swap':
+      return swapOrders(state, cmd.out, cmd.in, now);
+    case 'orders.setSeats':
+      return setSeats(state, cmd.orders);
     case 'debug.skip':
       return skip(state, cmd.ms, now);
     case 'debug.runPolicy':

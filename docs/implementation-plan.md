@@ -354,7 +354,7 @@ Each task is one Claude Code session; **most milestones finish in fewer sessions
   - Hooks: a brew finished, an experiment finished, a property revealed (Grey Wives); a document, a hunter letter and a name found (Bell-Watchers). The Long Night keeps counts, `start`, flags and the high-water level. A boss attempt and a hunt add nothing.
   - *Acceptance:* 1. Each source adds exactly its weight once. 2. The Long Night keeps everything. 3. Events add nothing (a test over a boss attempt and a hunt). 4. **No existing result changes.**
 
-- [ ] **T10.5 — Seats, the third seat and swaps** *(core/systems/orders.ts, commands)*
+- [x] **T10.5 — Seats, the third seat and swaps** *(core/systems/orders.ts, commands)*
   - Commands `orders.seat`, `orders.unseat`, `orders.swap`, `orders.setSeats` (the new-warden step), per OUT-9; two seats at the start, the third seat per D412; the 24 h cooldown on `eventNow`; the cooldown clears at a new warden; seating into a free seat at an Order's opening does not start the cooldown.
   - *Acceptance:* 1. Seats never exceed two before the third opens, three after. 2. **The third seat opens exactly once whichever condition comes last, and a test covers every order of events:** level 4 reached, then the Quenchers open; the Quenchers open, then level 4; two Orders already at level 4 when a save loads and the Quenchers open in the catch-up. 3. A change inside the cooldown is refused with the time left. 4. A rewound device clock gives no free change. 5. The new-warden step changes seats with no cooldown and carries previous seats over by default. 6. Unseating loses no standing, level or chapter.
 

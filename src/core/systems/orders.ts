@@ -66,12 +66,27 @@ export const orderLevel = (state: GameState, id: OrderId): number =>
   Math.max(levelOfStanding(id, orderStanding(state, id)), state.orders.levelHigh[id]);
 
 /**
+ * GDD §5.13.3 (D412): the third seat opens once, for good, when two Orders have reached their top
+ * level and the Quenchers have opened. Called after every level change, at the Quenchers' opening and
+ * on load, so it opens whichever condition comes last; idempotent. Returns true if it opened now.
+ */
+export const checkThirdSeat = (state: GameState): boolean => {
+  const o = state.orders;
+  if (o.thirdSeat || !o.opened.quenchers) return false;
+  const top = ORDER_IDS.filter((id) => o.levelHigh[id] >= balance.orders.levels.value).length;
+  if (top < balance.orders.thirdSeatTopOrders.value) return false;
+  o.thirdSeat = true;
+  return true;
+};
+
+/**
  * Raises each Order's saved high-water level to the derived one. Called by every hook after it
  * adds standing, so a tuning that lowers a weight later can never lower a level. Returns the Orders
  * whose level rose (the away sheet and the third-seat check read this, T10.5).
  */
 export const raiseLevels = (state: GameState): OrderId[] => {
   const rose: OrderId[] = [];
+  checkThirdSeat(state); // a level reached earlier may already have been waiting on the Quenchers
   for (const id of ORDER_IDS) {
     const level = levelOfStanding(id, orderStanding(state, id));
     if (level > state.orders.levelHigh[id]) {
@@ -79,6 +94,7 @@ export const raiseLevels = (state: GameState): OrderId[] => {
       rose.push(id);
     }
   }
+  if (rose.length > 0) checkThirdSeat(state);
   return rose;
 };
 

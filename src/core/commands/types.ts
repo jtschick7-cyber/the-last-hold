@@ -4,6 +4,7 @@ import type { GearSlot } from '../../content/gear';
 import type { PatronId } from '../../content/delves/patrons';
 import type { CosmeticId } from '../../content/delves/shop';
 import type { SceneId } from '../../content/text/scenes';
+import type { OrderId } from '../../content/orders';
 import type { HunterId } from '../../content/hunters';
 import type { TrackId } from '../../content/hunts';
 import type { JobId } from '../../content/jobs';
@@ -78,6 +79,13 @@ export type Command =
   | { type: 'stand.seen' }
   /** GDD §5.9.5: one more level of a warden upgrade, for Embers. */
   | { type: 'upgrade.buy'; upgrade: UpgradeId }
+  /** GDD §5.13.4: seats an open Order in a free seat; starts the 24 h cooldown (v0.10). */
+  | { type: 'orders.seat'; order: OrderId }
+  | { type: 'orders.unseat'; order: OrderId }
+  /** One seated Order out, one open Order in. */
+  | { type: 'orders.swap'; out: OrderId; in: OrderId }
+  /** The new-warden step and the load sheet: sets all seats, with no cooldown (D412). */
+  | { type: 'orders.setSeats'; orders: OrderId[] }
   // Debug (technical design §15): only offered with ?debug or in dev builds.
   | { type: 'debug.skip'; ms: number }
   /** Plays a simulator policy over the last `ms`, then catches up to now (technical design §15). */

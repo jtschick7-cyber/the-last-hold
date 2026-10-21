@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v0.10` (from `main`, the v0.9.0 merge); the v0.10 flesh-out is applied.
-- **Last task:** T10.4 standing hooks, part 2 (done, pushed).
-- **Next:** T10.5, seats, the third seat and swaps.
-- **Open questions:** Q34 (two near-match names), Q36 (art), Q37 (Names sentence). None blocks T10.4.
+- **Last task:** T10.5 seats, the third seat and swaps (done, pushed).
+- **Next:** T10.6, opening the Orders and the load path.
+- **Open questions:** none for the owner (D427 answered D426, Q34, Q36, Q37); Q35 is informational.
 
 Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md). Read only the last entry at session start.
 
@@ -258,3 +258,12 @@ Earlier entries (v0.0 to v0.8 up to T8.15) are in [`docs/archive/progress-2026-1
 - `npm run check` green (2,464 tests, 83 s). Golden fights and recorded stands unchanged; no existing test edited.
 - **Note:** this container had no installed packages at the start, so I ran `npm ci` from the lockfile first (nothing added). The "green" I saw before that was not a real run; this one is.
 - **Next:** T10.5.
+
+## 2026-10-21 — v0.10 session 2 (continued): T10.5 seats
+- **Owner answers logged (D427, Decided):** D426 accepted; Q34, Q36, Q37 all (a).
+- **Seats:** two at the start, three once the third opens. Four commands: seat, unseat, swap, and set-all (the new-warden and load step). Seats stay in the fixed list order; nothing seats an Order by itself.
+- **Cooldown:** 24 h on the event clock, refused with "Can change in 9h 20m"; a rewound device clock gives nothing back; a refused change starts none. Set-all is free and clears it; a new warden clears it too (in the Long Night reset), and seats carry over.
+- **Third seat:** one check (idempotent), run after every level change; the Quenchers' opening and the load will call it in T10.6. Tests cover all three orders of events, "once", and the Long Night.
+- **Tests:** `tests/orders/seats.test.ts` (17). `npm run check` green. Golden fights and recorded stands unchanged; no existing test edited.
+- **Not here:** the "Seat it" at an opening that skips the cooldown (T10.6), the screens (T10.13).
+- **Next:** T10.6.
