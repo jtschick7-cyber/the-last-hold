@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 import { scanTappables, MIN_TAP_PX, type SmallTarget } from './polish-tap';
-import { FLOWS, home, loadFixture, type Flow, type Visit } from './polish-screens';
+import { FLOWS, home, loadFixture, tolerantClicks, type Flow, type Visit } from './polish-screens';
 
 // Plan TV.3a/TV.3b (GDD §9.20): every screen on the list at 320 and 360 px (and, from TV.4a, at each
 // Text size): nothing tappable under 44 × 44 px. In TV.3a the sweep only reports (set TAP_STRICT=1 to
@@ -58,10 +58,14 @@ const visitor =
     });
   };
 
-const newPage = async (browser: Browser, width = 360): Promise<{ page: Page; close: () => Promise<void> }> => {
+const newPage = async (
+  browser: Browser,
+  width = 360,
+): Promise<{ page: Page; close: () => Promise<void> }> => {
   const ctx = await browser.newContext({ viewport: { width, height: 740 }, baseURL: BASE });
   const page = await ctx.newPage();
   page.setDefaultTimeout(6000);
+  tolerantClicks(page);
   return { page, close: () => ctx.close() };
 };
 
@@ -69,7 +73,16 @@ const attempt = async (id: string, body: () => Promise<void>): Promise<void> => 
   try {
     await body();
   } catch (e) {
-    failures.push(`${id}: ${String(e).split('\n').filter((l) => /waiting for|intercepts|not visible|resolved to/.test(l)).slice(0, 3).join(' / ').slice(0, 300) || String(e).slice(0, 160)}`);
+    failures.push(
+      `${id}: ${
+        String(e)
+          .split('\n')
+          .filter((l) => /waiting for|intercepts|not visible|resolved to/.test(l))
+          .slice(0, 3)
+          .join(' / ')
+          .slice(0, 300) || String(e).slice(0, 160)
+      }`,
+    );
   }
 };
 
@@ -98,7 +111,8 @@ const own = (flow: Flow): void => {
       const visit = visitor(page, width);
       await attempt(`${flow.id}@${width}`, async () => {
         await loadFixture(page, flow.fixture, async (label) => {
-          if (page.viewportSize()?.width !== width) await page.setViewportSize({ width, height: 740 });
+          if (page.viewportSize()?.width !== width)
+            await page.setViewportSize({ width, height: 740 });
           const hit = flow.onLoad?.[label];
           if (hit) await visit(hit.id, hit.group);
         });
@@ -116,14 +130,23 @@ test.afterAll(() => {
   let count = 0;
   for (const r of rows) {
     const tag = `${r.id} @${r.width}`;
-    for (const f of r.small) lines.push(`${tag}: ${f.tag} "${f.name}" ${f.width}×${f.height}${f.disabled ? ' (disabled)' : ''}`);
+    for (const f of r.small)
+      lines.push(
+        `${tag}: ${f.tag} "${f.name}" ${f.width}×${f.height}${f.disabled ? ' (disabled)' : ''}`,
+      );
     for (const c of r.covered) lines.push(`${tag}: COVERED ${c}`);
     for (const o of r.outside) lines.push(`${tag}: OUTSIDE ${o}`);
     count += r.small.length + r.covered.length + r.outside.length;
   }
-  const notReached = rows.filter((r) => r.missing.length).map((r) => `${r.id} @${r.width}: expected ${r.missing.join(' ')}`);
+  const notReached = rows
+    .filter((r) => r.missing.length)
+    .map((r) => `${r.id} @${r.width}: expected ${r.missing.join(' ')}`);
   const screens = [...new Map(rows.map((r) => [r.id, r])).values()].map(
-    (r) => `${r.id} | ${r.group} | ${rows.filter((x) => x.id === r.id).map((x) => `${x.width}:${x.scanned}`).join(' ')}`,
+    (r) =>
+      `${r.id} | ${r.group} | ${rows
+        .filter((x) => x.id === r.id)
+        .map((x) => `${x.width}:${x.scanned} in ${x.where}`)
+        .join(' ; ')}`,
   );
   const report = [
     `TAP SWEEP: ${count} findings over ${screens.length} screens`,

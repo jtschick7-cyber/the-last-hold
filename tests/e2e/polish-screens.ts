@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { begin, tab } from './helpers';
 
 // Plan TV.3a (GDD §9.20): the screen list that the tap sweep, and later the Text size, contrast and
@@ -10,9 +10,15 @@ export const loadFixture = async (
   name: string,
   onSheet?: (label: string) => Promise<void>,
 ): Promise<void> => {
+  const [base, variant] = name.split(':');
   const save = JSON.parse(
-    readFileSync(new URL(`../saves/fixtures/${name}.json`, import.meta.url), 'utf8'),
+    readFileSync(new URL(`../saves/fixtures/${base}.json`, import.meta.url), 'utf8'),
   );
+  // A variant is a test-only edit of a real fixture: v11:candidate sends Herdis back to the candidates.
+  if (variant === 'candidate') {
+    delete save.state.hunters.herdis;
+    save.state.roster.active = save.state.roster.active.filter((h: string) => h !== 'herdis');
+  }
   await page.goto('./?debug');
   await begin(page, 'Mira');
   await tab(page, 'More').click();
@@ -25,6 +31,9 @@ export const loadFixture = async (
   await page.getByRole('button', { name: 'Yes, load it' }).click();
   await page.waitForTimeout(1000);
   await dismiss(page, onSheet);
+  await tab(page, 'Hold')
+    .click()
+    .catch(() => {});
 };
 
 const CLOSERS = /^(Got it|Close|Onward|Not now|Continue|Skip|Done|Back)$/;
@@ -124,37 +133,159 @@ const READ = 'v11';
 export const FLOWS: readonly Flow[] = [
   plain('hold-hamlet', 'Hold (Hamlet)', 'fixture v1, nothing', [/Stanholm/], async () => {}, 'v1'),
   plain('hold-keep', 'Hold (Keep)', 'fixture v2, nothing', [/Stanholm/], async () => {}, 'v2'),
-  plain('hold-citadel', 'Hold (Citadel)', 'fixture v4, nothing', [/Stanholm/], async () => {}, 'v4'),
+  plain(
+    'hold-citadel',
+    'Hold (Citadel)',
+    'fixture v4, nothing',
+    [/Stanholm/],
+    async () => {},
+    'v4',
+  ),
   plain('hold-bastion', 'Hold (Bastion)', 'fixture v11, nothing', [/Stanholm/], async () => {}),
-  plain('rates', 'rates sheet', 'the resource bar', [/per minute/i], (p) => btn(p, /Food.*Wood/).click()),
-  plain('breakdown', 'breakdown sheet', 'first "Show breakdown" on the Hold', [/./], (p) => btn(p, 'Show breakdown').click()),
-  plain('rank', 'Rank screen (Hearth, Roll of Wardens, Riftglass shop, the ember)', 'Hold, Rank ▸', [/Embers/, /Roll of Wardens/i, /Riftglass shop/i], (p) => btn(p, /^Rank/).click()),
-  plain('hunters-roster', 'Hunters (roster)', 'Hunters tab', [/By slot/], (p) => tabTo(p, 'Hunters')),
-  plain('hunters-candidates', 'Hunters (candidates)', 'fixture v6, Hunters tab', [/Candidates/], (p) => tabTo(p, 'Hunters'), 'v6'),
-  plain('hunter-sheet', 'hunter sheet (talents, slots, alternate traits, letters)', 'Hunters tab, Halvar', [/Halvar/], async (p) => { await tabTo(p, 'Hunters'); await btn(p, /^Halvar/).click(); }),
-  plain('slot-picker', 'slot picker', 'Hunters tab, Halvar, first Change', [/./], async (p) => { await tabTo(p, 'Hunters'); await btn(p, /^Halvar/).click(); await top(p).getByRole('button', { name: 'Change' }).first().click(); }),
-  plain('stores', 'Stores and Salvage', 'Hunters tab, By slot', [/./], async (p) => { await tabTo(p, 'Hunters'); await btn(p, 'By slot').click(); }),
-  plain('contracts-board', 'Contracts (board)', 'Contracts tab', [/Prepare/], (p) => tabTo(p, 'Contracts')),
-  plain('villages', 'Contracts (Villages panel)', 'Contracts tab, open Villages', [/./], async (p) => { await tabTo(p, 'Contracts'); await p.locator('summary', { hasText: 'Villages' }).click(); }),
-  plain('launch-sheet', 'Contracts (launch sheet)', 'Contracts tab, first Prepare', [/Send hunters|Suggest best/], async (p) => { await tabTo(p, 'Contracts'); await btn(p, 'Prepare').click(); }),
-  plain('bestiary', 'Bestiary (with the Great Beasts shelf)', 'Archive tab, Bestiary', [/Upyr/], (p) => archive(p, 'Bestiary')),
-  plain('bestiary-entry', 'Bestiary entry', 'Archive, Bestiary, Upyr', [/Upyr/], async (p) => { await archive(p, 'Bestiary'); await btn(p, /^Upyr/).click(); }),
-  plain('archive-library', 'Archive (Library, with the Rime shelf)', 'Archive, Library', [/The Fall/], (p) => archive(p, 'Library')),
-  plain('archive-accounts', 'Archive (Accounts)', 'Archive, Accounts', [/./], (p) => archive(p, 'Accounts')),
+  plain('rates', 'rates sheet', 'the resource bar', [/per minute/i], (p) =>
+    btn(p, /Food.*Wood/).click(),
+  ),
+  plain('breakdown', 'breakdown sheet', 'first "Show breakdown" on the Hold', [/./], (p) =>
+    btn(p, 'Show breakdown').click(),
+  ),
+  plain(
+    'rank',
+    'Rank screen (Hearth, Roll of Wardens, Riftglass shop, the ember)',
+    'Hold, Rank ▸',
+    [/Embers/, /Roll of Wardens/i, /Riftglass shop/i],
+    (p) => btn(p, /^Rank/).click(),
+  ),
+  plain('hunters-roster', 'Hunters (roster)', 'Hunters tab', [/By slot/], (p) =>
+    tabTo(p, 'Hunters'),
+  ),
+  plain(
+    'hunters-candidates',
+    'Hunters (candidates)',
+    'fixture v11 with Herdis sent back to the candidates (a test-only edit), Hunters tab',
+    [/Candidates/],
+    (p) => tabTo(p, 'Hunters'),
+    'v11:candidate',
+  ),
+  plain(
+    'hunter-sheet',
+    'hunter sheet (talents, slots, alternate traits, letters)',
+    'Hunters tab, Halvar',
+    [/Halvar/],
+    async (p) => {
+      await tabTo(p, 'Hunters');
+      await btn(p, /^Halvar/).click();
+    },
+  ),
+  plain('slot-picker', 'slot picker', 'Hunters tab, Halvar, first Change', [/./], async (p) => {
+    await tabTo(p, 'Hunters');
+    await btn(p, /^Halvar/).click();
+    await top(p).getByRole('button', { name: 'Change' }).first().click();
+  }),
+  plain('stores', 'Stores and Salvage', 'Hunters tab, By slot', [/./], async (p) => {
+    await tabTo(p, 'Hunters');
+    await btn(p, 'By slot').click();
+  }),
+  plain('contracts-board', 'Contracts (board)', 'Contracts tab', [/Prepare/], (p) =>
+    tabTo(p, 'Contracts'),
+  ),
+  plain(
+    'villages',
+    'Contracts (Villages panel)',
+    'Contracts tab, open Villages',
+    [/./],
+    async (p) => {
+      await tabTo(p, 'Contracts');
+      await p.locator('summary', { hasText: 'Villages' }).click();
+    },
+  ),
+  plain(
+    'launch-sheet',
+    'Contracts (launch sheet)',
+    'Contracts tab, first Prepare',
+    [/Send hunters|Suggest best/],
+    async (p) => {
+      await tabTo(p, 'Contracts');
+      await btn(p, 'Prepare').click();
+    },
+  ),
+  plain(
+    'bestiary',
+    'Bestiary (with the Great Beasts shelf)',
+    'Archive tab, Bestiary',
+    [/Upyr/],
+    (p) => archive(p, 'Bestiary'),
+  ),
+  plain('bestiary-entry', 'Bestiary entry', 'Archive, Bestiary, Upyr', [/Upyr/], async (p) => {
+    await archive(p, 'Bestiary');
+    await btn(p, /^Upyr/).click();
+  }),
+  plain(
+    'archive-library',
+    'Archive (Library, with the Rime shelf)',
+    'Archive, Library',
+    [/The Fall/],
+    (p) => archive(p, 'Library'),
+  ),
+  plain('archive-accounts', 'Archive (Accounts)', 'Archive, Accounts', [/./], (p) =>
+    archive(p, 'Accounts'),
+  ),
   plain('archive-names', 'Archive (Names)', 'Archive, Names', [/./], (p) => archive(p, 'Names')),
-  plain('document-reader', 'Archive (document reader)', 'Archive, Library, a letter', [/./], async (p) => { await archive(p, 'Library'); await btn(p, /My boy writes/).click(); }),
-  plain('chapter-scene', 'Orders (chapter scene)', 'Archive, Library, the first entry of the Orders shelf', [/./], async (p) => { await archive(p, 'Library'); await p.getByRole('region', { name: 'Orders' }).getByRole('button').first().click(); }),
-  plain('orders-seats', 'Orders (card, seats)', 'Hold, Change seats ▸', [/Seat/], (p) => btn(p, /^Change seats/).click()),
-  plain('order-sheet', 'Orders (sheets)', "Hold, Thanes' Moot", [/Seat/], (p) => btn(p, /^Thanes' Moot/).click()),
-  plain('last-stand', 'Last Stand screen', 'Hold, Rank ▸, Make the Last Stand', [/Start/], async (p) => { await btn(p, /^Rank/).click(); await btn(p, 'Make the Last Stand').click(); }),
+  plain(
+    'document-reader',
+    'Archive (document reader)',
+    'Archive, Library, a letter',
+    [/./],
+    async (p) => {
+      await archive(p, 'Library');
+      await btn(p, /My boy writes/).click();
+    },
+  ),
+  plain('orders-seats', 'Orders (card, seats)', 'Hold, Change seats ▸', [/Seat/], (p) =>
+    btn(p, /^Change seats/).click(),
+  ),
+  plain('order-sheet', 'Orders (sheets)', "Hold, Thanes' Moot", [/Seat/], (p) =>
+    btn(p, /^Thanes' Moot/).click(),
+  ),
+  plain(
+    'last-stand',
+    'Last Stand screen',
+    'Hold, Rank ▸, Make the Last Stand',
+    [/Start/],
+    async (p) => {
+      await btn(p, /^Rank/).click();
+      await btn(p, 'Make the Last Stand').click();
+    },
+  ),
   plain('delve-entry', 'a Delve (entry)', 'Hold, Delve', [/Start/], (p) => btn(p, 'Delve').click()),
   plain('more-menu', 'More', 'More tab', [/Reports/], (p) => tabTo(p, 'More')),
   plain('more-reports', 'More (Reports)', 'More, Reports', [/./], (p) => more(p, 'Reports')),
-  plain('more-fallen', 'More (Hall of the Fallen)', 'More, Hall of the Fallen', [/./], (p) => more(p, 'Hall of the Fallen')),
-  plain('more-save', 'More (Save & Data)', 'More, Save & Data', [/Backup/i], (p) => more(p, 'Save')),
-  plain('more-settings', 'More (Settings)', 'More, Settings', [/Theme|Reduce/i], (p) => more(p, 'Settings')),
-  plain('more-about', 'More (About & Credits)', 'More, About & Credits', [/./], (p) => more(p, 'About')),
-  plain('more-diagnostics', 'More (Diagnostics)', 'More, Diagnostics', [/./], (p) => more(p, 'Diagnostics')),
+  plain('more-fallen', 'More (Hall of the Fallen)', 'More, Hall of the Fallen', [/./], (p) =>
+    more(p, 'Hall of the Fallen'),
+  ),
+  plain('more-save', 'More (Save & Data)', 'More, Save & Data', [/Backup/i], (p) =>
+    more(p, 'Save'),
+  ),
+  plain('more-settings', 'More (Settings)', 'More, Settings', [/Theme|Reduce/i], (p) =>
+    more(p, 'Settings'),
+  ),
+  plain('more-about', 'More (About & Credits)', 'More, About & Credits', [/./], (p) =>
+    more(p, 'About'),
+  ),
+  plain('more-diagnostics', 'More (Diagnostics)', 'More, Diagnostics', [/./], (p) =>
+    more(p, 'Diagnostics'),
+  ),
+  {
+    id: 'chapter-scene',
+    fixture: READ,
+    mutates: true,
+    how: 'More, Debug, Play chapter (an Orders chapter scene)',
+    run: async (page, visit) => {
+      await debug(page, 'Play chapter');
+      await tabTo(page, 'Hold');
+      await page.waitForTimeout(600);
+      await visit('chapter-scene', 'Orders (chapter scene)');
+    },
+  },
   {
     id: 'onload-v11',
     fixture: READ,
@@ -173,7 +304,9 @@ export const FLOWS: readonly Flow[] = [
     id: 'onload-v10-played',
     fixture: 'v10-played',
     how: 'loading fixture v10-played',
-    onLoad: { 'Named for the metal': { id: 'orders-opening-quenchers', group: 'Orders (opening scene)' } },
+    onLoad: {
+      'Named for the metal': { id: 'orders-opening-quenchers', group: 'Orders (opening scene)' },
+    },
     run: async () => {},
   },
   {
@@ -211,11 +344,21 @@ export const FLOWS: readonly Flow[] = [
           await once('delve-doors', 'a Delve (doors)');
           await sheet.getByRole('button').filter({ hasText: 'Ahead:' }).first().click();
         } else if (await sheet.getByRole('button', { name: 'Fight', exact: true }).isVisible()) {
-          const guardian = await sheet.getByText(/guardian/i).first().isVisible().catch(() => false);
-          await once(guardian ? 'delve-guardian' : 'delve-floor-ready', guardian ? 'a Delve (guardian)' : 'a Delve (floor)');
+          const guardian = await sheet
+            .getByText(/guardian/i)
+            .first()
+            .isVisible()
+            .catch(() => false);
+          await once(
+            guardian ? 'delve-guardian' : 'delve-floor-ready',
+            guardian ? 'a Delve (guardian)' : 'a Delve (floor)',
+          );
           await sheet.getByRole('button', { name: 'Fight', exact: true }).click();
           await page.waitForTimeout(500);
-          await once(guardian ? 'delve-guardian-playback' : 'delve-floor-playback', 'a Delve (floor playback)');
+          await once(
+            guardian ? 'delve-guardian-playback' : 'delve-floor-playback',
+            'a Delve (floor playback)',
+          );
           await sheet.getByRole('button', { name: 'Skip' }).click();
           await sheet.getByRole('button', { name: 'Continue' }).click();
         } else await page.waitForTimeout(150);
@@ -258,7 +401,10 @@ export const FLOWS: readonly Flow[] = [
       await tabTo(page, 'Hold');
       await btn(page, /^Legendary Hunts/).click();
       await visit('events-hunt-list', 'Events (hunt sheet)');
-      await top(page).getByRole('button', { name: /The Toll Road/ }).first().click();
+      await top(page)
+        .getByRole('button', { name: /The Toll Road/ })
+        .first()
+        .click();
       await visit('events-hunt-track', 'Events (hunt sheet)');
       await top(page).getByRole('button', { name: 'Suggest best' }).click();
       await page.waitForTimeout(1500);
@@ -273,11 +419,13 @@ export const FLOWS: readonly Flow[] = [
   {
     id: 'hut',
     fixture: READ,
-    how: 'Hold, the Alchemist\'s Hut row, Open',
+    how: "Hold, the Alchemist's Hut row, Open",
     run: async (page, visit) => {
       await page.getByRole('button', { name: 'Open' }).first().click();
       await visit('hut-book', "Alchemist's Hut (the 12 × 3 Book grid)", [/./]);
-      const exp = top(page).getByRole('button', { name: /Experiment/ }).first();
+      const exp = top(page)
+        .getByRole('button', { name: /Experiment/ })
+        .first();
       if (await exp.isVisible().catch(() => false)) {
         await exp.click();
         await visit('hut-experiment', "Alchemist's Hut (Experiment)");
@@ -313,8 +461,15 @@ export const FLOWS: readonly Flow[] = [
       await reading.waitFor();
       await page.waitForTimeout(600);
       await visit('remembering-reading', 'Remembering (the reading)');
-      for (let i = 0; i < 41; i++) await reading.getByText('Tap for the next name.').click({ timeout: 3000 }).catch(() => {});
-      await reading.getByRole('button', { name: 'Continue' }).click({ timeout: 8000 }).catch(() => {});
+      for (let i = 0; i < 41; i++)
+        await reading
+          .getByText('Tap for the next name.')
+          .click({ timeout: 3000 })
+          .catch(() => {});
+      await reading
+        .getByRole('button', { name: 'Continue' })
+        .click({ timeout: 8000 })
+        .catch(() => {});
       for (let i = 0; i < 12; i++) {
         const dlg = page.getByRole('dialog').first();
         if (!(await dlg.isVisible().catch(() => false))) break;
@@ -356,7 +511,7 @@ export const FLOWS: readonly Flow[] = [
     id: 'long-night',
     fixture: READ,
     mutates: true,
-    how: 'More, Debug, Finish Act VI (plays the Last Stand and the Long Night); the sheets that follow, then the new warden\'s arrival',
+    how: "More, Debug, Finish Act VI (plays the Last Stand and the Long Night); the sheets that follow, then the new warden's arrival",
     run: async (page, visit) => {
       await debug(page, 'Finish Act VI');
       await tabTo(page, 'Hold');
@@ -366,7 +521,9 @@ export const FLOWS: readonly Flow[] = [
         if (!(await dlg.isVisible().catch(() => false))) break;
         const label = (await dlg.getAttribute('aria-label')) ?? `sheet ${i}`;
         await visit(`long-night-${i}`, `Long Night sheets (${label})`);
-        const next = dlg.getByRole('button', { name: /^(Continue|Onward|Close|Got it|Not now)$/ }).last();
+        const next = dlg
+          .getByRole('button', { name: /^(Continue|Onward|Close|Got it|Not now)$/ })
+          .last();
         if (!(await next.isVisible().catch(() => false))) break;
         await next.click();
         await page.waitForTimeout(300);
@@ -379,3 +536,26 @@ export const FLOWS: readonly Flow[] = [
     },
   },
 ];
+
+/**
+ * At the narrowest widths a button can sit past the edge of the window or under something; that is a
+ * finding of the sweep (reported by polish-tap.ts), not a reason to stop walking. So a click that
+ * cannot be made the usual way is sent straight to the element.
+ */
+export const tolerantClicks = (page: Page): void => {
+  const proto = Object.getPrototypeOf(page.locator('body')) as {
+    click: (this: Locator, o?: object) => Promise<void>;
+    dispatchEvent: (this: Locator, t: string) => Promise<void>;
+  };
+  const original = proto.click;
+  if ((original as { tolerant?: boolean }).tolerant) return;
+  const tolerant = async function (this: Locator, o?: object): Promise<void> {
+    try {
+      await original.call(this, { timeout: 2500, ...o });
+    } catch {
+      await proto.dispatchEvent.call(this, 'click');
+    }
+  };
+  (tolerant as { tolerant?: boolean }).tolerant = true;
+  proto.click = tolerant;
+};

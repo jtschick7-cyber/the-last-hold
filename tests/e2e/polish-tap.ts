@@ -34,10 +34,20 @@ export const scanTappables = (page: Page, min = MIN_TAP_PX): Promise<TapScan> =>
       'button, a[href], [role="button"], [role="tab"], [role="switch"], [role="checkbox"], summary, select, textarea, input:not([type="hidden"])';
     const out: SmallTarget[] = [];
     let scanned = 0;
+    const fixedOrSticky = (el: Element): boolean => {
+      for (let e: Element | null = el; e; e = e.parentElement) {
+        const pos = getComputedStyle(e).position;
+        if (pos === 'fixed' || pos === 'sticky') return true;
+      }
+      return false;
+    };
     const covered: string[] = [];
     const outside: string[] = [];
     const label = (el: Element): string =>
-      (el.getAttribute('aria-label') || el.textContent || el.tagName).trim().replace(/\s+/g, ' ').slice(0, 40);
+      (el.getAttribute('aria-label') || el.textContent || el.tagName)
+        .trim()
+        .replace(/\s+/g, ' ')
+        .slice(0, 40);
     for (const el of scope.querySelectorAll(SELECTOR)) {
       // A checkbox or radio is tapped through its label, so the label's box is what counts.
       const input = el as HTMLInputElement;
@@ -47,18 +57,24 @@ export const scanTappables = (page: Page, min = MIN_TAP_PX): Promise<TapScan> =>
           : el;
       const r = box.getBoundingClientRect();
       if (r.width === 0 || r.height === 0) continue;
+      // A visually hidden control (the file picker behind a button) is not something a thumb taps.
+      if (r.width <= 1 && r.height <= 1) continue;
       const style = getComputedStyle(el);
       if (style.visibility === 'hidden' || el.closest('[aria-hidden="true"]')) continue;
       const cls = String(el.getAttribute('class') ?? '');
       // A number that only responds to a long press (Num.tsx); its ⓘ sibling is not exempt.
       scanned++;
-      if (r.left < -0.5 || r.right > innerWidth + 0.5) outside.push(`${label(el)} (${Math.round(r.left)} to ${Math.round(r.right)} of ${innerWidth})`);
+      if (r.left < -0.5 || r.right > innerWidth + 0.5)
+        outside.push(
+          `${label(el)} (${Math.round(r.left)} to ${Math.round(r.right)} of ${innerWidth})`,
+        );
       const cx = r.left + r.width / 2;
       const cy = r.top + r.height / 2;
       if (cx >= 0 && cy >= 0 && cx < innerWidth && cy < innerHeight) {
         const hit = document.elementFromPoint(cx, cy);
-        // Content scrolling under the fixed tab bar is normal; only cover by something else counts.
-        if (hit && hit !== box && !box.contains(hit) && !hit.contains(box) && !hit.closest('nav')) covered.push(`${label(el)} (under ${hit.tagName.toLowerCase()} "${label(hit)}")`);
+        // Content scrolling under the fixed tab bar or the resource bar is normal; only cover by something else counts.
+        if (hit && hit !== box && !box.contains(hit) && !hit.contains(box) && !fixedOrSticky(hit))
+          covered.push(`${label(el)} (under ${hit.tagName.toLowerCase()} "${label(hit)}")`);
       }
       if (el.tagName === 'BUTTON' && /_num_/.test(cls) && !/_info_/.test(cls)) continue;
       // An inline text link inside a sentence.
@@ -70,7 +86,12 @@ export const scanTappables = (page: Page, min = MIN_TAP_PX): Promise<TapScan> =>
       )
         continue;
       if (r.width >= limit - 0.05 && r.height >= limit - 0.05) continue;
-      const name = (el.getAttribute('aria-label') || el.textContent || el.getAttribute('placeholder') || el.tagName)
+      const name = (
+        el.getAttribute('aria-label') ||
+        el.textContent ||
+        el.getAttribute('placeholder') ||
+        el.tagName
+      )
         .trim()
         .replace(/\s+/g, ' ')
         .slice(0, 40);
