@@ -78,26 +78,53 @@ export const overflow = (page: Page): Promise<Overflow> =>
     const scope: ParentNode = top ?? document;
     const clipped: string[] = [];
     for (const el of scope.querySelectorAll('*')) {
-      const own = [...el.childNodes].some(
+      if (el.closest('[aria-hidden="true"]')) continue;
+      const nodes = [...el.childNodes].filter(
         (n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? '').trim() !== '',
       );
-      if (!own || el.closest('[aria-hidden="true"]')) continue;
+      if (nodes.length === 0) continue;
+      const box = el.getBoundingClientRect();
+      // The visually hidden labels (1 × 1 px, clipped) are for nothing to read.
+      if (box.width <= 1 && box.height <= 1) continue;
       const s = getComputedStyle(el);
-      if (s.display === 'inline' || s.display === 'contents') continue;
-      // An element that is meant to scroll (a table in a scroller, a <pre>) is not a finding.
-      if (/(auto|scroll)/.test(s.overflowX + s.overflowY)) continue;
-      const r = el.getBoundingClientRect();
-      if (r.width === 0) continue;
-      const bad =
-        el.scrollWidth > el.clientWidth + 1 ||
-        el.scrollHeight > el.clientHeight + 1 ||
-        r.left < -0.5 ||
-        r.right > innerWidth + 0.5;
-      if (bad)
+      if (s.display === 'contents') continue;
+      // Where the element's own text is drawn.
+      let left = Infinity;
+      let right = -Infinity;
+      let topY = Infinity;
+      let bottom = -Infinity;
+      for (const n of nodes) {
+        const range = document.createRange();
+        range.selectNodeContents(n);
+        for (const r of range.getClientRects()) {
+          if (r.width === 0) continue;
+          left = Math.min(left, r.left);
+          right = Math.max(right, r.right);
+          topY = Math.min(topY, r.top);
+          bottom = Math.max(bottom, r.bottom);
+        }
+      }
+      if (left === Infinity) continue;
+      const scrolls = /(auto|scroll)/.test(s.overflowX + s.overflowY);
+      // Text drawn outside its own box (an inline element's box is its text, so it is never outside),
+      // or outside the window, or cut off by a box that clips.
+      const outOfBox =
+        s.display !== 'inline' &&
+        !scrolls &&
+        (left < box.left - 1 ||
+          right > box.right + 1 ||
+          topY < box.top - 1 ||
+          bottom > box.bottom + 1);
+      const outOfWindow = left < -0.5 || right > innerWidth + 0.5;
+      const cut =
+        !scrolls &&
+        /(hidden|clip)/.test(s.overflowX + s.overflowY) &&
+        (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1);
+      if (outOfBox || outOfWindow || cut)
         clipped.push(
           `${el.tagName.toLowerCase()} "${(el.textContent ?? '').trim().replace(/\s+/g, ' ').slice(0, 40)}" ` +
-            `scroll ${el.scrollWidth}×${el.scrollHeight} box ${el.clientWidth}×${el.clientHeight} ` +
-            `x ${Math.round(r.left)}..${Math.round(r.right)}`,
+            `box ${Math.round(box.width)}×${Math.round(box.height)} ` +
+            `text x ${Math.round(left)}..${Math.round(right)}${cut ? ' (cut off)' : ''}${outOfWindow ? ' (outside window)' : ''}`,
         );
     }
     return { page: pageOver, clipped };

@@ -65,6 +65,12 @@ const newPage = async (
   const ctx = await browser.newContext({ viewport: { width, height: 740 }, baseURL: BASE });
   const page = await ctx.newPage();
   page.setDefaultTimeout(6000);
+  // TAP_TEXT=large|largest runs the whole sweep at that Text size (GDD §9.20: every step).
+  if (process.env.TAP_TEXT)
+    await page.addInitScript((size) => {
+      for (const prefix of ['lasthold:', 'lasthold-preview:'])
+        localStorage.setItem(`${prefix}settings`, JSON.stringify({ textSize: size }));
+    }, process.env.TAP_TEXT);
   tolerantClicks(page);
   return { page, close: () => ctx.close() };
 };

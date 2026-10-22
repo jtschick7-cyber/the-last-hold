@@ -32,6 +32,20 @@
   min-width: 0;
 }
 
+/* GDD §9.20: at Large and Largest a row that no longer fits wraps instead of squeezing its label
+   to nothing; the label keeps room for about a line of text. At Match phone nothing changes. */
+:root[data-text-size='large'] .row,
+:root[data-text-size='largest'] .row,
+:root[data-text-size='large'] .cardTitle,
+:root[data-text-size='largest'] .cardTitle {
+  flex-wrap: wrap;
+}
+
+:root[data-text-size='large'] .row > .grow,
+:root[data-text-size='largest'] .row > .grow {
+  flex: 1 1 7rem;
+}
+
 .dim {
   color: var(--c-text-dim);
 }

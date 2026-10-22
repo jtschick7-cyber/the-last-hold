@@ -25,6 +25,18 @@
   min-width: 0;
 }
 
+/* GDD §9.20: at Large and Largest, when the label and its value no longer fit side by side the
+   value drops to the next line instead of squeezing the label. At Match phone nothing changes. */
+:root[data-text-size='large'] .line,
+:root[data-text-size='largest'] .line {
+  flex-wrap: wrap;
+}
+
+:root[data-text-size='large'] .label,
+:root[data-text-size='largest'] .label {
+  overflow-wrap: anywhere;
+}
+
 .value {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
@@ -39,6 +51,7 @@
 }
 
 .key {
+  overflow-wrap: anywhere;
   font-size: 0.75rem;
   color: var(--c-ember);
 }

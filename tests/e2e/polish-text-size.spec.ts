@@ -8,7 +8,7 @@ import { measure, overflow, type Measured, type Overflow } from './polish-text';
 // (2) At Match phone, named screens measure the same as the build before Text size existed.
 // (3) At Large and Largest body text grows by 115% / 130%; the pixel font, pictures and the two
 // bars do not. (4) At 320 px at Largest every screen on the list is scanned and the overflow is
-// REPORTED (TV.4b fixes it): TEXT_REPORT=<file> writes the report; TEXT_STRICT=1 makes it fail.
+// strict since TV.4b: TEXT_REPORT=<file> writes the report; TEXT_STRICT=0 only reports.
 
 const BASE = 'http://localhost:4173/the-last-hold/';
 const BASELINE = new URL('./baselines/text-size-match.json', import.meta.url);
@@ -163,7 +163,7 @@ test('Match phone is unchanged; Large and Largest scale body text only', async (
   }
 });
 
-// 320 px at Largest over the whole screen list: report only until TV.4b.
+// 320 px at Largest over the whole screen list (strict since TV.4b).
 interface Row {
   id: string;
   over: Overflow;
@@ -253,5 +253,5 @@ test.afterAll(() => {
   console.log(report);
   if (process.env.TEXT_REPORT) writeFileSync(process.env.TEXT_REPORT, `${report}\n`);
   expect(scaled, 'pixel-font text, pictures and bars that scaled with Text size').toEqual([]);
-  if (process.env.TEXT_STRICT === '1') expect(count).toBe(0);
+  if (process.env.TEXT_STRICT !== '0') expect(count, 'text that does not fit').toBe(0);
 });
