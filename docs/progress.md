@@ -152,3 +152,4 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Check green; no old test edited. Skipped:** nothing. TV.9 stays open until 9b is approved and 9c is done.
 - **Owner review of 9b:** all pass except Radek's spade and Radmila's braid. Second pass: the spade is bigger (rounded shoulders, pointed tip, silver edge, ridge, socket); the braid is about 30% thinner (plait 4 to 5 px wide instead of 7 to 8). Sheet: `tv9b-pass2.png`. Check green.
 - **Radmila's braid, third pass:** the lock overlaps the hair and the plait leans toward the neck, so it touches the head all the way (no gap). Radek's spade approved. Sheet: `tv9b-pass3.png`.
+- **Radmila's braid, fourth pass:** the lock now runs up into the hair above the headband, closing the gap the owner circled. Sheet: `tv9b-pass4.png`.
