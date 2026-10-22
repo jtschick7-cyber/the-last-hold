@@ -18,6 +18,8 @@ export const loadFixture = async (
   if (variant === 'candidate') {
     delete save.state.hunters.herdis;
     save.state.roster.active = save.state.roster.active.filter((h: string) => h !== 'herdis');
+    delete save.state.story.peakLevels.herdis;
+    for (const it of save.state.items) if (it.where?.hunter === 'herdis') it.where = null;
   }
   await page.goto('./?debug');
   await begin(page, 'Mira');
