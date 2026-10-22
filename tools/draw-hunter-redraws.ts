@@ -400,7 +400,7 @@ const plait = (
 const radmilaFinish = (c: Canvas): void => {
   // A lock grows out of the hair at the temple and runs into a plait over the left shoulder.
   c.rect(CX - 20, CY - 3, 5, 8, C.ink);
-  c.rect(CX - 19, CY - 3, 4, 7, C.brown);
+  c.rect(CX - 19, CY - 3, 7, 7, C.brown);
   c.rect(CX - 19, CY - 3, 1, 7, C.rust);
   // A marsh-wife's shawl: wide, heavy shoulders, a green dress showing in the V, a pewter pin.
   solid(
@@ -430,7 +430,7 @@ const radmilaFinish = (c: Canvas): void => {
   for (let x = 5; x < 62; x += 3) c.set(x, 62 + (x % 2), C.dusk);
   c.rect(CX - 1, 47, 3, 3, C.ink);
   c.set(CX, 48, C.bone);
-  plait(c, CX - 18, CY + 4, 58, BROWN, C.moss, -0.02);
+  plait(c, CX - 16, CY + 3, 58, BROWN, C.moss, 0.2);
   // An apron over the dress, with a pocket and a silver spoon in it.
   solid(
     c,
