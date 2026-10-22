@@ -360,20 +360,20 @@ const REDRAWS: readonly [PortraitSpec, HunterRedraw][] = [
         const end = 57;
         for (let y = top; y <= end; y++) {
           const w = y > end - 8 ? 2 : 3;
-          for (let x = Math.round(bx(y)) - w - 1; x <= Math.round(bx(y)) + w + 1; x++)
+          for (let x = Math.round(bx(y)) - w; x <= Math.round(bx(y)) + w + 1; x++)
             c.set(x, y, C.ink);
         }
         for (let y = top; y <= end; y++) {
           const w = y > end - 8 ? 2 : 3;
           const phase = (y - top) % 4;
-          for (let x = Math.round(bx(y)) - w; x <= Math.round(bx(y)) + w; x++) {
-            const k = x - Math.round(bx(y)) + w;
+          for (let x = Math.round(bx(y)) - w + 1; x <= Math.round(bx(y)) + w; x++) {
+            const k = x - Math.round(bx(y)) + w - 1;
             const diag = (k + phase) % 4;
             c.set(x, y, diag === 0 ? C.clay : diag < 3 ? C.gold : C.sand);
           }
         }
-        c.rect(Math.round(bx(end)) - 2, end - 6, 5, 2, C.blue);
-        c.rect(Math.round(bx(end)) - 2, end + 1, 5, 3, C.gold);
+        c.rect(Math.round(bx(end)) - 1, end - 6, 4, 2, C.blue);
+        c.rect(Math.round(bx(end)) - 1, end + 1, 4, 3, C.gold);
         c.set(Math.round(bx(end)), end + 4, C.sand);
       },
     },

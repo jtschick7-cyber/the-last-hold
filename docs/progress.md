@@ -6,7 +6,7 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.8 approved. TV.9a drawn (4 Great Beast/quarry portraits, 6 hunter portraits, 2 creature sprites); waiting for the owner's approval.
+- **Last task:** TV.8 approved. TV.9a approved (4 Great Beast/quarry portraits, 6 hunter portraits, 2 creature sprites).
 - **Next:** TV.9b (hunter portraits Radek, Radmila, Ragnhild, Sigrun, Toma + 7 hunter sprites), TV.9c (7 hunter sprites, the downed-pose fix).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
@@ -141,3 +141,5 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Found:** the shared drawing hides the eyes under caps (Arvid, Gest, Halvar, Ostap); the redraws draw them back. Not changed for hunters not marked.
 - **Check green; no old test edited. Skipped:** nothing. TV.9a stays open until approval.
 - **Owner review of 9a:** all pass except Likho, Bjarna, Halvar's and Arvid's axes and Herdis's crook. Second pass: Likho redrawn (gaunt angular face, ragged strands, crooked mouth of jagged fangs); Bjarna's braid is now a three-strand plait with a blue tie, joined to a lock under the hood; both axes have sharp edges, points and toes; Herdis's crook is a big open hook. Check green.
+- **TV.9a approved** by the owner after one last tweak: Bjarna's braid about 20% thinner (7 to 6 px, tail 5 to 4).
+
