@@ -210,3 +210,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Please check CI** on the PR (each simulator job under 5 min, D320; WebKit determinism; e2e). I could not see them from here.
 - **Deferred, by decision:** audio, the Descent, rising difficulty (D476, D477); event cosmetics and legendary hunters' animation (D490); screen-reader labels (D489); Q41 and Q48 name searches; the four rare species' slow arrival (Q46).
 - **Skipped:** nothing. No old test edited.
+
+## 2026-10-22 — v1.0 TV.13 (2): CI found two font-dependent checks (D496)
+- **Playtest passed** (owner). `sim:accept` ran: the baseline is byte-identical to v0.11 (no new rows), so nothing to commit.
+- **CI e2e failed on 2 of 81 tests** (first run was an apt 403 on the runner). Cause: the body text uses the system font; CI's font is wider than this machine's. (1) "Match phone is unchanged" compared widths recorded here. (2) At Largest, the tab "Contracts (1)" spilled out of its 64 px tab on 13 screens, and the credits text by about 3 px.
+- **Reproduced** locally with DejaVu Sans as the system font (same numbers as CI).
+- **Fix (owner chose a):** tab labels wrap (`overflow-wrap`), credits `break-spaces`; the Match baseline file holds a font fingerprint (`_font`) and the width comparison runs only on that font (the scaling checks always run). Weaker on CI by design, with the owner's yes.
+- **Checked:** all 80 browser tests pass with the wider font; same suite with this machine's font run before the push. `npm run check` green.
+- **Skipped:** nothing. No old test edited besides `polish-text-size.spec.ts` (mine, TV.4a) and its baseline file (one key added).
+
