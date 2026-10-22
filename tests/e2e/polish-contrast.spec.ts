@@ -4,7 +4,7 @@ import { FLOWS, home, loadFixture, tolerantClicks, type Flow, type Visit } from 
 import { scanContrast, type ContrastScan } from './polish-contrast';
 
 // Plan TV.6 (GDD §9.20): every screen on the list, in both themes, at 360 px. CONTRAST_REPORT=<file>
-// writes the report; CONTRAST_STRICT=1 makes it fail (it becomes the default once the owner has approved the fixes).
+// writes the report; CONTRAST_STRICT=0 only reports (strict since the owner approved the fixes).
 
 const BASE = 'http://localhost:4173/the-last-hold/';
 const THEMES = ['dark', 'light'] as const;
@@ -16,7 +16,8 @@ test('the contrast scan finds a planted low-contrast pair and spares good ones',
     <div style="background:#ffffff"><p style="color:#bbbbbb;margin:0">pale grey on white</p></div>
     <div style="background:#000000"><p style="color:#ffffff;margin:0">white on black</p></div>
     <div style="background:#ffffff"><p style="color:#888888;font-size:30px;margin:0">large</p></div>
-    <div style="background:#ffffff"><span style="color:#cccccc">ⓘ</span></div>`);
+    <div style="background:#ffffff"><span style="color:#cccccc">ⓘ</span></div>
+    <label style="background:#ffffff;opacity:.5;display:block"><input type="checkbox" disabled><span style="color:#000">dimmed and disabled</span></label>`);
   const scan = await scanContrast(page);
   expect(scan.failing.map((f) => f.text).sort()).toEqual(['pale grey on white', 'ⓘ']);
   expect(scan.failing.find((f) => f.text === 'ⓘ')?.kind).toBe('glyph');
@@ -122,5 +123,5 @@ test.afterAll(() => {
   ].join('\n');
   console.log(report);
   if (process.env.CONTRAST_REPORT) writeFileSync(process.env.CONTRAST_REPORT, `${report}\n`);
-  if (process.env.CONTRAST_STRICT === '1') expect(count, 'failing contrast pairs').toBe(0);
+  if (process.env.CONTRAST_STRICT !== '0') expect(count, 'failing contrast pairs').toBe(0);
 });

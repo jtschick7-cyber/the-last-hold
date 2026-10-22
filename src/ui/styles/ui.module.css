@@ -122,7 +122,8 @@
 .segmentOn {
   composes: segment;
   background: var(--c-surface-raised);
-  color: var(--c-ember);
+  /* TV.6: the warn colour, not ember, on the raised surface (ember was 3.39:1 on it in the dark theme). */
+  color: var(--c-warn);
   font-weight: 700;
 }
 

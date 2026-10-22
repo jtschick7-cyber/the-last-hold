@@ -4,7 +4,7 @@ import type { Page } from '@playwright/test';
 // screen, in the page or the topmost open sheet plus the two bars, and returns those that miss the
 // ratio: 4.5:1 for normal text, 3:1 for large text (18 pt, or 14 pt bold, at its rendered size) and
 // for UI glyph icons (a symbol with no letters or digits: ⓘ ✕ ▸ − +). Multi-colour art, emoji and
-// text over a picture are not measured (the playtest looks at them); disabled controls are exempt.
+// text over a picture are not measured (the playtest looks at them); disabled controls, and the text of a dimmed row whose control is disabled, are exempt.
 
 export interface Pair {
   readonly text: string;
@@ -91,6 +91,20 @@ export const scanContrast = (page: Page): Promise<ContrastScan> =>
       return o;
     };
 
+    /** Text in a dimmed row whose control is disabled is part of an inactive control (WCAG 1.4.3). */
+    const inactive = (el: Element): boolean => {
+      for (let e: Element | null = el; e && e !== document.body; e = e.parentElement) {
+        if (
+          parseFloat(getComputedStyle(e).opacity) < 1 &&
+          e.querySelector(
+            'input:disabled, button:disabled, select:disabled, [aria-disabled="true"]',
+          )
+        )
+          return true;
+      }
+      return false;
+    };
+
     const failing: Pair[] = [];
     const seen = new Set<string>();
     let measured = 0;
@@ -110,6 +124,10 @@ export const scanContrast = (page: Page): Promise<ContrastScan> =>
         const s = getComputedStyle(el);
         if (s.visibility === 'hidden' || s.display === 'none') continue;
         if (/\p{Extended_Pictographic}/u.test(own) && !/[\p{L}\p{N}]/u.test(own)) {
+          skipped++;
+          continue;
+        }
+        if (inactive(el)) {
           skipped++;
           continue;
         }
