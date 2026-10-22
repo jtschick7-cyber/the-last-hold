@@ -128,16 +128,17 @@
 .info {
   color: var(--c-text-dim);
   font-size: 0.75em;
-  margin-left: 0.15em;
-  /* D472: a 44 px hit area that grows to the right and up/down only, with the negative
-     margins taking back the room, so the glyph and the line keep their old size. */
+  /* D472: a 44 px hit area that grows to the left and up/down only (the glyph often sits at a
+     sheet's right edge), with the negative margins taking back the room, so the glyph and the
+     line keep their old size. */
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   min-width: 44px;
   min-height: 44px;
   margin-block: -14px;
-  margin-right: -32px;
+  margin-left: -32px;
+  margin-right: 0;
   vertical-align: middle;
   touch-action: manipulation;
 }

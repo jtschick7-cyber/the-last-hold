@@ -1,152 +1,20 @@
-TAP SWEEP: 148 findings over 72 screens
-hold-bastion @320: button "Show breakdown" 9.8×14.6
-hold-bastion @320: button "Show breakdown" 15.6×17.1
-hold-bastion @320: button "Show breakdown" 9.8×14.6
-hold-bastion @360: button "Show breakdown" 9.8×14.6
-hold-bastion @360: button "Show breakdown" 15.6×17.1
-hold-bastion @360: button "Show breakdown" 9.8×14.6
-rates @320: button "Show breakdown" 12×18
-rates @320: button "Show breakdown" 12×18
-rates @320: button "Show breakdown" 12×18
-rates @320: button "Show breakdown" 12×18
-rates @360: button "Show breakdown" 12×18
-rates @360: button "Show breakdown" 12×18
-rates @360: button "Show breakdown" 12×18
-rates @360: button "Show breakdown" 12×18
-rank @320: button "Show breakdown" 12×18
-rank @320: button "Show breakdown" 12×18
-rank @320: button "Show breakdown" 12×18
-rank @320: button "Show breakdown" 12×18
-rank @360: button "Show breakdown" 12×18
-rank @360: button "Show breakdown" 12×18
-rank @360: button "Show breakdown" 12×18
-rank @360: button "Show breakdown" 12×18
-hunters-roster @320: OUTSIDE More (281 to 333 of 320)
-hunter-sheet @320: button "Show breakdown" 12×18
-hunter-sheet @320: button "Show breakdown" 12×18
-hunter-sheet @320: button "Show breakdown" 12×18
-hunter-sheet @320: button "Show breakdown" 12×18
-hunter-sheet @320: button "Show breakdown" 9.8×14.6
-hunter-sheet @320: button "Show breakdown" 9.8×14.6
-hunter-sheet @320: button "Show breakdown" 9.8×14.6
-hunter-sheet @360: button "Show breakdown" 12×18
-hunter-sheet @360: button "Show breakdown" 12×18
-hunter-sheet @360: button "Show breakdown" 12×18
-hunter-sheet @360: button "Show breakdown" 12×18
-hunter-sheet @360: button "Show breakdown" 9.8×14.6
-hunter-sheet @360: button "Show breakdown" 9.8×14.6
-hunter-sheet @360: button "Show breakdown" 9.8×14.6
-stores @320: OUTSIDE More (281 to 333 of 320)
-contracts-board @320: summary "Villages" 254×22.9
-contracts-board @320: OUTSIDE More (281 to 333 of 320)
-contracts-board @360: summary "Villages" 294×22.9
-villages @320: summary "Villages" 254×22.9
-villages @320: OUTSIDE More (281 to 333 of 320)
-villages @360: summary "Villages" 294×22.9
-order-sheet @320: button "Show breakdown" 12×18
-order-sheet @360: button "Show breakdown" 12×18
-last-stand @320: select "Halvar's oil" 173×19
-last-stand @320: select "Zora's oil" 173×19
-last-stand @320: select "Ostap's oil" 173×19
-last-stand @320: select "Vesna's oil" 173×19
-last-stand @320: select "Herdis's oil" 173×19
-last-stand @320: select "Bjarna's oil" 173×19
-last-stand @360: select "Halvar's oil" 173×19
-last-stand @360: select "Zora's oil" 173×19
-last-stand @360: select "Ostap's oil" 173×19
-last-stand @360: select "Vesna's oil" 173×19
-last-stand @360: select "Herdis's oil" 173×19
-last-stand @360: select "Bjarna's oil" 173×19
-more-menu @320: OUTSIDE More (281 to 333 of 320)
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @320: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hut-book @360: button "Show breakdown" 9.8×14.6
-hunters-candidates @320: OUTSIDE More (281 to 333 of 320)
-hold-hamlet @320: button "Show breakdown" 15.6×17.1
-hold-hamlet @320: button "Show breakdown" 9.8×14.6
-hold-keep @320: button "Show breakdown" 9.8×14.6
-hold-keep @320: button "Show breakdown" 15.6×17.1
-hold-keep @320: button "Show breakdown" 9.8×14.6
-hold-citadel @320: button "Show breakdown" 9.8×14.6
-hold-citadel @320: button "Show breakdown" 15.6×17.1
-hold-citadel @320: button "Show breakdown" 9.8×14.6
-hold-hamlet @360: button "Show breakdown" 15.6×17.1
-hold-hamlet @360: button "Show breakdown" 9.8×14.6
-hold-keep @360: button "Show breakdown" 9.8×14.6
-hold-keep @360: button "Show breakdown" 15.6×17.1
-hold-keep @360: button "Show breakdown" 9.8×14.6
-hold-citadel @360: button "Show breakdown" 9.8×14.6
-hold-citadel @360: button "Show breakdown" 15.6×17.1
-hold-citadel @360: button "Show breakdown" 9.8×14.6
-chapter-scene @320: button "Show breakdown" 9.8×14.6
-chapter-scene @320: button "Show breakdown" 15.6×17.1
-chapter-scene @320: button "Show breakdown" 9.8×14.6
-chapter-scene @360: button "Show breakdown" 9.8×14.6
-chapter-scene @360: button "Show breakdown" 15.6×17.1
-chapter-scene @360: button "Show breakdown" 9.8×14.6
-events-boss-sheet @320: button "Show breakdown" 12×18
-events-boss-sheet @320: button "Show breakdown" 12×18
-events-boss-result @320: button "Show breakdown" 12×18
-events-boss-result @320: button "Show breakdown" 12×18
-events-boss-result @320: button "Show breakdown" 12×18
-events-boss-result @320: button "Show breakdown" 12×18
-events-boss-sheet @360: button "Show breakdown" 12×18
-events-boss-sheet @360: button "Show breakdown" 12×18
-events-boss-result @360: button "Show breakdown" 12×18
-events-boss-result @360: button "Show breakdown" 12×18
-events-boss-result @360: button "Show breakdown" 12×18
-events-boss-result @360: button "Show breakdown" 12×18
-events-hunt-list @320: button "Show breakdown" 12×18
-events-hunt-list @320: button "Show breakdown" 12×18
-events-hunt-list @320: button "Show breakdown" 12×18
-events-hunt-result @320: button "Show breakdown" 12×18
-events-hunt-result @320: button "Show breakdown" 12×18
-events-hunt-result @320: button "Show breakdown" 12×18
-events-hunt-list @360: button "Show breakdown" 12×18
-events-hunt-list @360: button "Show breakdown" 12×18
-events-hunt-list @360: button "Show breakdown" 12×18
-events-hunt-result @360: button "Show breakdown" 12×18
-events-hunt-result @360: button "Show breakdown" 12×18
-events-hunt-result @360: button "Show breakdown" 12×18
-remembering-card-not-ready @320: button "Show breakdown" 15.6×17.1
-remembering-card-not-ready @320: button "Show breakdown" 9.8×14.6
-remembering-card-open @320: button "Show breakdown" 15.6×17.1
-remembering-card-open @320: button "Show breakdown" 9.8×14.6
-remembering-card-after @320: button "Show breakdown" 15.6×17.1
-remembering-card-after @320: button "Show breakdown" 9.8×14.6
-remembering-card-not-ready @360: button "Show breakdown" 15.6×17.1
-remembering-card-not-ready @360: button "Show breakdown" 9.8×14.6
-remembering-card-open @360: button "Show breakdown" 15.6×17.1
-remembering-card-open @360: button "Show breakdown" 9.8×14.6
-remembering-card-after @360: button "Show breakdown" 15.6×17.1
-remembering-card-after @360: button "Show breakdown" 9.8×14.6
-remembering-card-after-vigil @320: button "Show breakdown" 15.6×17.1
-remembering-card-after-vigil @320: button "Show breakdown" 9.8×14.6
-remembering-card-after-vigil @360: button "Show breakdown" 15.6×17.1
-remembering-card-after-vigil @360: button "Show breakdown" 9.8×14.6
-long-night-view @320: button "Show breakdown" 12×18
-long-night-view @360: button "Show breakdown" 12×18
+TAP SWEEP: 16 findings over 72 screens
+rates @320: OUTSIDE Show breakdown (291 to 335 of 320)
+rates @320: OUTSIDE Show breakdown (291 to 335 of 320)
+rates @320: OUTSIDE Show breakdown (291 to 335 of 320)
+rates @320: OUTSIDE Show breakdown (291 to 335 of 320)
+rates @360: OUTSIDE Show breakdown (331 to 375 of 360)
+rates @360: OUTSIDE Show breakdown (331 to 375 of 360)
+rates @360: OUTSIDE Show breakdown (331 to 375 of 360)
+rates @360: OUTSIDE Show breakdown (331 to 375 of 360)
+rank @320: OUTSIDE Show breakdown (291 to 335 of 320)
+rank @320: OUTSIDE Show breakdown (291 to 335 of 320)
+rank @320: OUTSIDE Show breakdown (291 to 335 of 320)
+rank @320: OUTSIDE Show breakdown (291 to 335 of 320)
+rank @360: OUTSIDE Show breakdown (331 to 375 of 360)
+rank @360: OUTSIDE Show breakdown (331 to 375 of 360)
+rank @360: OUTSIDE Show breakdown (331 to 375 of 360)
+rank @360: OUTSIDE Show breakdown (331 to 375 of 360)
 NOT REACHED / MISSING TEXT: 0
 FLOW FAILURES: 0
 SCREENS (id | list line | tappables scanned per width)
@@ -169,7 +37,7 @@ archive-names | Archive (Names) | 320:12 in page ; 360:12 in page
 document-reader | Archive (document reader) | 320:1 in sheet "My boy writes no letters" ; 360:1 in sheet "My boy writes no letters"
 orders-seats | Orders (card, seats) | 320:4 in sheet "Change seats" ; 360:4 in sheet "Change seats"
 order-sheet | Orders (sheets) | 320:8 in sheet "Thanes' Moot" ; 360:8 in sheet "Thanes' Moot"
-last-stand | Last Stand screen | 320:19 in sheet "The Last Stand" ; 360:19 in sheet "The Last Stand"
+last-stand | Last Stand screen | 320:22 in sheet "The Last Stand" ; 360:22 in sheet "The Last Stand"
 delve-entry | a Delve (entry) | 320:15 in sheet "Delve" ; 360:15 in sheet "Delve"
 more-menu | More | 320:16 in page ; 360:16 in page
 more-reports | More (Reports) | 320:1 in sheet "Reports" ; 360:1 in sheet "Reports"
