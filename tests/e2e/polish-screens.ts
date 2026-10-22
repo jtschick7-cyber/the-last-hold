@@ -10,6 +10,19 @@ export const loadFixture = async (
   name: string,
   onSheet?: (label: string) => Promise<void>,
 ): Promise<void> => {
+  // GDD §9.20: the away sheet carries the backup reminder, so every load pretends the game was
+  // first seen 20 days ago (keeps any other value already in the settings key, such as Text size).
+  await page.addInitScript(() => {
+    for (const prefix of ['lasthold:', 'lasthold-preview:']) {
+      const key = `${prefix}settings`;
+      const old = JSON.parse(localStorage.getItem(key) ?? '{}');
+      if (typeof old.firstSeenAt !== 'number')
+        localStorage.setItem(
+          key,
+          JSON.stringify({ ...old, firstSeenAt: Date.now() - 20 * 86_400_000 }),
+        );
+    }
+  });
   if (name === 'new') {
     await page.goto('./?debug');
     await begin(page, 'Mira');

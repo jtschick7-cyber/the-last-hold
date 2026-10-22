@@ -11,11 +11,14 @@ import type { Result } from '../../core/result';
 import { formatDuration } from '../../core/format';
 import { now } from '../../platform/clock';
 import { browserCodec } from '../../platform/compression';
+import { lastExportedText } from '../../platform/backup-reminder';
 import { downloadText, saveFileName } from '../../platform/download';
 import {
   adoptGame,
+  appSettings,
   game,
   lastSavedAt,
+  recordExport,
   resetGame,
   saveNow,
   saveStore,
@@ -53,6 +56,7 @@ export const SaveDataSheet = () => {
     setCode(text);
     try {
       await navigator.clipboard.writeText(text);
+      recordExport();
       setMessage('Save code copied. Keep it somewhere safe.');
     } catch {
       setMessage("Couldn't reach the clipboard. Select the code below and copy it.");
@@ -70,15 +74,16 @@ export const SaveDataSheet = () => {
         >
           Save now
         </button>
-        <button type="button" class={styles.btn} onClick={() => void copyCode()}>
+        <button type="button" id="export-copy" class={styles.btn} onClick={() => void copyCode()}>
           Copy save code
         </button>
         <button
           type="button"
           class={styles.btn}
-          onClick={() =>
-            downloadText(saveFileName(new Date()), encodeSaveFile(makeEnvelope(game(), now())))
-          }
+          onClick={() => {
+            downloadText(saveFileName(new Date()), encodeSaveFile(makeEnvelope(game(), now())));
+            recordExport();
+          }}
         >
           Download save file
         </button>
@@ -160,6 +165,21 @@ export const SaveDataSheet = () => {
           onClick={() => backup && setPending(backup.loaded)}
         >
           Restore
+        </button>
+      </div>
+
+      <div class={styles.row} style={{ marginTop: 'var(--space-2)' }}>
+        <span class={styles.grow}>
+          Last exported: {lastExportedText(now(), appSettings.value.lastExportAt, formatDuration)}
+        </span>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() =>
+            document.getElementById('export-copy')?.scrollIntoView({ block: 'center' })
+          }
+        >
+          Export…
         </button>
       </div>
 

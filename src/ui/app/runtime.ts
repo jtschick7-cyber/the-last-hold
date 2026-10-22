@@ -31,6 +31,7 @@ import {
   type AppSettings,
   type TextSize,
 } from '../../platform/app-settings';
+import { afterExport, snoozedFor, withExportAge } from '../../platform/backup-reminder';
 import { levelUpLines, noticeChanges, type Watched } from './lines';
 import { skillLevels } from '../../core/skills/skills';
 
@@ -103,6 +104,16 @@ const changeAppSettings = (next: AppSettings): void => {
 };
 export const setTextSize = (textSize: TextSize): void =>
   changeAppSettings({ ...appSettings.value, textSize });
+export const setBackupReminder = (backupReminder: boolean): void =>
+  changeAppSettings({ ...appSettings.value, backupReminder });
+/** "Not now" and "Back up now" (GDD §9.20). */
+export const snoozeBackupReminder = (days: number): void =>
+  changeAppSettings(snoozedFor(appSettings.value, now(), days));
+/** Only Copy save code (copied) and Download save file (started) call this. */
+export const recordExport = (): void => changeAppSettings(afterExport(appSettings.value, now()));
+/** Debug panel only: writes the settings key, never the save (technical design §18.6). */
+export const setLastExportAge = (days: number): void =>
+  changeAppSettings(withExportAge(appSettings.value, now(), days));
 
 /** Technical design §9.1: the install tip shows once, outside the installed app. */
 export const installTipDue = signal(false);
@@ -261,7 +272,8 @@ export const adoptGame = async (next: GameState): Promise<void> => {
 
 /** GDD §9.10 "Reset everything": a fresh game. The backup slot still holds the old one. */
 export const resetGame = (): void => {
-  changeAppSettings(afterReset(appSettings.value));
+  // A new game starts its own 14 days now, so the reminder is not silent until the next start.
+  changeAppSettings(withFirstSeen(afterReset(appSettings.value), now()));
   state = createNewGame(randomSeed(), now());
   watched = null;
   watchedSkills = null;

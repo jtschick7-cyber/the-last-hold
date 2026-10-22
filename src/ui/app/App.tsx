@@ -129,7 +129,7 @@ export const App = () => {
     const summary = awaySummary.value;
     if (!summary) return;
     awaySummary.value = null;
-    openSheet('While you were away', () => <AwayView summary={summary} />);
+    openSheet('While you were away', () => <AwayView summary={summary} reminder />);
   }, [awaySummary.value]);
 
   useEffect(() => {

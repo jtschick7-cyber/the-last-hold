@@ -1,6 +1,13 @@
 import type { Settings } from '../../core/state/game-state';
 import { TEXT_SIZES, type TextSize } from '../../platform/app-settings';
-import { appSettings, dispatch, game, setTextSize, version } from '../app/runtime';
+import {
+  appSettings,
+  dispatch,
+  game,
+  setBackupReminder,
+  setTextSize,
+  version,
+} from '../app/runtime';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.10: theme, best-buy hint, rates per minute or hour, reduce motion.
@@ -68,6 +75,35 @@ const TextSizeChoice = () => {
   );
 };
 
+const BackupReminderChoice = () => {
+  const on = appSettings.value.backupReminder;
+  return (
+    <div class={`${styles.row} ${styles.divider}`} style={{ flexWrap: 'wrap' }}>
+      <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+        Backup reminder
+      </span>
+      <div class={styles.segmented} role="group" aria-label="Backup reminder">
+        {(
+          [
+            [true, 'On'],
+            [false, 'Off'],
+          ] as const
+        ).map(([value, text]) => (
+          <button
+            type="button"
+            key={text}
+            class={on === value ? styles.segmentOn : styles.segment}
+            aria-pressed={on === value}
+            onClick={() => setBackupReminder(value)}
+          >
+            {text}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const SettingsSheet = () => {
   void version.value;
   return (
@@ -106,6 +142,7 @@ export const SettingsSheet = () => {
         ]}
       />
       <TextSizeChoice />
+      <BackupReminderChoice />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { RESOURCE_IDS } from '../../content/resources';
 import type { Command } from '../../core/commands';
 import { snapshotOf } from '../../core/systems/hunters';
 import { lastOddsMs, lastSuggestMs, requestOdds, requestSuggest } from '../app/odds-client';
-import { dispatch, game, lastCatchUpMs, version } from '../app/runtime';
+import { dispatch, game, lastCatchUpMs, setLastExportAge, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { DocumentReader } from '../screens/ArchiveScreen';
 import styles from '../styles/ui.module.css';
@@ -21,6 +21,7 @@ export const DebugSheet = () => {
   const [order, setOrder] = useState<OrderId>('moot');
   const [amount, setAmount] = useState('10');
   const [hours, setHours] = useState('12');
+  const [exportAge, setExportAge] = useState('20');
   const [seed, setSeed] = useState(game().meta.gameSeed);
   const [note, setNote] = useState<string | null>(null);
   const [measured, setMeasured] = useState<string | null>(null);
@@ -355,6 +356,31 @@ export const DebugSheet = () => {
         Measure odds and Suggest here
       </button>
       {measured && <p class={styles.small}>{measured}</p>}
+      <h3 class={styles.cardTitle} style={{ marginTop: 'var(--space-3)' }}>
+        Set last export age
+      </h3>
+      <p class={styles.small}>
+        Settings key only: the save is untouched and this is not marked as debug use.
+      </p>
+      <div class={styles.row}>
+        <input
+          aria-label="Days since the last export"
+          inputMode="numeric"
+          size={4}
+          value={exportAge}
+          onInput={(e) => setExportAge(e.currentTarget.value)}
+        />
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
+            const days = Number(exportAge);
+            if (Number.isFinite(days) && days >= 0) setLastExportAge(Math.floor(days));
+          }}
+        >
+          Set
+        </button>
+      </div>
       <details>
         <summary>Raw state</summary>
         <pre style={{ fontSize: '0.7rem', overflowX: 'auto' }}>
