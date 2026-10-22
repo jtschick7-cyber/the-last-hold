@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.3a the tap-target sweep (report only).
-- **Next:** TV.3b fix the findings and the Archive tabs (the owner says go).
+- **Last task:** TV.3b findings fixed, Archive tabs wrap, sweep strict and clean.
+- **Next:** TV.4a Text size (then stop for the owner's phone check).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -70,3 +70,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Seen while building, not yet fixed:** at 320 px a brand-new game's page is 353 px wide, so it scrolls sideways. The older layout specs use phone emulation, which widens the window to fit, so they could not see this. The sweep uses a plain window of the exact width.
 - **Not covered:** the reminder line on the away sheet (TV.7 builds it); Text size steps (TV.4a).
 - **Next:** TV.3b. **Skipped:** nothing.
+
+## 2026-10-22 — v1.0 TV.3b: tap-target findings and the Archive tabs
+- **Sweep now strict by default and clean:** 0 findings over 72 screens at 320 and 360 px (was 148). `TAP_STRICT=0` only reports.
+- **ⓘ buttons:** a 44 px hit area, glyph and line unchanged (negative margins). It grows to the right so it never covers the number beside it; at a sheet's right edge (Rates, and the skills list on Rank) it grows left (`edge`). The first try (always left) covered short numbers like "74", which the sweep caught.
+- **Also fixed:** oil pickers on the Last Stand sheet, the Villages fold-out (44 px high), the bottom bar at 320 px (five tabs fit; smaller type under 400 px wide), the Archive tabs (wrap to two rows).
+- **The 353 px page at 320 px:** the hold scene (320 px at 2x) was wider than the page. It now shrinks with its card (full size where there is room; at 320 px it is no longer a whole-number scale). New spec `tests/e2e/polish-widths.spec.ts` (plain windows at 320, 360, 900, 1300 px): no sideways scroll, bar inside the window, four Archive tabs inside the window.
+- **Old-test edits (D487):** `polish-screens.ts` no longer clicks past the cut-off Names tab. Nothing loosened.
+- `npm run check` green. No rule, number, text, save or golden change.
+- **Next:** TV.4a. **Skipped:** nothing.
