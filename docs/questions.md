@@ -167,7 +167,7 @@ Status: **Answered (a)** by the owner, 2026-10-21 (D469). T11.15b proposes N for
 - **Blocks:** nothing in v1.0.
 - **Result of TV.11 (2026-10-22):** none of the 15 runs (plain Standard, A, B; 5 seeds; 25 cycles) gets all 16 Studied, and the rule does not help. A one-seed look: 10 of 16 by day 20, then stuck at 10 to 12; Draugr, Leshy, Strzyga and Rimewrought stay Identified. See `docs/flesh-out/v1.0/species-estimate.md`.
 - **The short look (2026-10-22):** the four missing species are rare on the board (0 to 8 contracts in 12 cycles, against about 90 for the Wolf): each Long Night resets to tier 1 and they only come at tier 3 or 4 up, in one place each. About 25 cycles or more for Standard, which fits the owner's about 20. A new option (d): change how often high tiers or those species come up (board generation or tier ranges); a design change.
-- **Answer (owner):** *(open)*
+- **Answer (owner):** (c), 2026-10-22 (D493). The wording and where it shows are waiting for the owner's approval before building.
 
 ### Q47 — Where do the settings live? *(opened 2026-10-21; answered by the review)*
 - **Answer from the review:** the existing settings (theme, best-buy hint, rate unit, reduce motion) are **inside the save** (technical design §5.2). Ruling D486 (Proposed): they stay as they are, with no schema change; Text size and the Backup reminder go in a new settings key outside the save; Reduce motion stays a boolean read as "phone or switch".
