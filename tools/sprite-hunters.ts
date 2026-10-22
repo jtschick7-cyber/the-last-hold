@@ -82,9 +82,16 @@ const weapon = (c: Canvas, w: PortraitSpec['weapon'], hx: number, hy: number): v
 
 /**
  * v1.0 (TV.9b, D492): hunters whose downed pose is redrawn (a near-black body no longer vanishes into
- * the ground). Each later part adds its own hunters; every other sprite stays byte-identical.
+ * the ground). With TV.9c all fourteen hunters are in the set.
  */
 const REDRAWN_DOWNED: ReadonlySet<HunterId> = new Set([
+  'arvid',
+  'bjarna',
+  'gest-tall-torch',
+  'halvar',
+  'herdis',
+  'ostap',
+  'zora',
   'radek',
   'radmila-of-the-reeds',
   'ragnhild-eye-taker',
