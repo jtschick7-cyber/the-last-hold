@@ -144,6 +144,16 @@ test('Match phone is unchanged; Large and Largest scale body text only', async (
       await setSize('match');
     };
   await loadFixture(page, 'v11');
+  // A fingerprint of the system font: the width of a fixed line in the body font at 16 px.
+  const fontPrint = await page.evaluate(() => {
+    const el = document.createElement('span');
+    el.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:16px system-ui';
+    el.textContent = 'The quick brown fox jumps over 0123456789 Rates per minute';
+    document.body.append(el);
+    const w = el.getBoundingClientRect().width;
+    el.remove();
+    return Math.round(w * 10) / 10;
+  });
   for (const flow of named) {
     await flow.run(page, visit(flow.id));
     await home(page);
@@ -152,13 +162,22 @@ test('Match phone is unchanged; Large and Largest scale body text only', async (
 
   if (writing) {
     mkdirSync(new URL('./baselines/', import.meta.url), { recursive: true });
-    writeFileSync(BASELINE, `${JSON.stringify(seen, null, 1)}\n`);
+    writeFileSync(BASELINE, `${JSON.stringify({ _font: fontPrint, ...seen }, null, 1)}\n`);
   } else {
     expect(existsSync(BASELINE), 'baseline file').toBe(true);
-    const was = JSON.parse(readFileSync(BASELINE, 'utf8')) as Record<string, Measured[]>;
-    for (const id of NAMED) {
-      expect(seen[id]?.length, `${id} measured`).toBeGreaterThan(5);
-      expect(seen[id], `${id} at Match phone`).toEqual(was[id]);
+    const was = JSON.parse(readFileSync(BASELINE, 'utf8')) as Record<string, Measured[]> & {
+      _font?: number;
+    };
+    for (const id of NAMED) expect(seen[id]?.length, `${id} measured`).toBeGreaterThan(5);
+    // The widths below belong to one system font. On a machine whose font differs (CI), the
+    // Match-phone comparison is skipped and the scaling checks above still ran (TV.13, D496).
+    if (was._font === fontPrint) {
+      for (const id of NAMED) expect(seen[id], `${id} at Match phone`).toEqual(was[id]);
+    } else {
+      test.info().annotations.push({
+        type: 'skipped',
+        description: `Match-phone widths not compared: system font differs (${fontPrint} vs ${was._font})`,
+      });
     }
   }
 });

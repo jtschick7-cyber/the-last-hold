@@ -60,7 +60,7 @@ export const AboutSheet = () => {
         <pre
           class={styles.small}
           style={{
-            whiteSpace: 'pre-wrap',
+            whiteSpace: 'break-spaces',
             overflowWrap: 'anywhere',
             fontFamily: 'inherit',
             margin: 0,

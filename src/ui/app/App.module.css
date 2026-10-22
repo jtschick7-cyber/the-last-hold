@@ -36,6 +36,9 @@
   /* GDD §9.20: the bottom tab bar is exempt from Text size (short labels, one row). */
   font-size: calc(1rem * var(--text-undo));
   font-weight: 600;
+  /* A wider system font than the phone's own must wrap inside its tab, never spill (TV.13). */
+  overflow-wrap: anywhere;
+  line-height: 1.15;
 }
 
 .tabOn {
