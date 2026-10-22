@@ -3,21 +3,21 @@
 Number → id, in id order. The owner marks each row **Keep** or **Redraw**; an empty mark means Keep.
 At most about 40 Redraw in total, at most 12 per session (D475). A test checks that every Keep picture is byte-identical to its v0.11 PNG (`art-src/v0.11-hashes.json`).
 
-**Marked 2026-10-22:** 40 numbers by the owner; 23 sibling pictures (the other frost looks, the other hunter sprites, the other rarity frames, the other brew icons) are listed as pending until the owner decides the cap.
+**Marked 2026-10-22:** 40 numbers by the owner; 23 sibling pictures (the other frost looks, the other hunter sprites, the other rarity frames, the other brew icons) are marked Redraw too (owner chose (a): all 63, D492).
 
 **App icon:** **keep the current tower** (owner, 2026-10-22). Candidates A, B and C are not used.
 
 | n | id | mark | what to change |
 |---|---|---|---|
-| 1 | `icon.brew.drowned-bane-oil` | | pending: same change as 2 (siblings, see the open scope question) |
+| 1 | `icon.brew.drowned-bane-oil` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
 | 2 | `icon.brew.fire-pot` | Redraw | Bombs (Fire Pot, also 3 and 8): a wider clay pot or grenade with a bright fuse spark; narrow the Oils (1, 4, 9) into vials, so potions, oils and bombs differ in silhouette. |
-| 3 | `icon.brew.frost-pot` | | pending: same change as 2 (siblings, see the open scope question) |
-| 4 | `icon.brew.grave-oil` | | pending: same change as 2 (siblings, see the open scope question) |
+| 3 | `icon.brew.frost-pot` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
+| 4 | `icon.brew.grave-oil` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
 | 5 | `icon.brew.hardwood-tonic` | |
 | 6 | `icon.brew.mending-draught` | |
 | 7 | `icon.brew.quickfoot-tincture` | |
-| 8 | `icon.brew.saltburst` | | pending: same change as 2 (siblings, see the open scope question) |
-| 9 | `icon.brew.thornbane-oil` | | pending: same change as 2 (siblings, see the open scope question) |
+| 8 | `icon.brew.saltburst` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
+| 9 | `icon.brew.thornbane-oil` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
 | 10 | `icon.delve-relic.bell-clapper` | |
 | 11 | `icon.delve-relic.cold-iron-nail` | |
 | 12 | `icon.delve-relic.horn-spoon` | |
@@ -49,9 +49,9 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 | 38 | `icon.rank.apprentice` | |
 | 39 | `icon.rank.masterWright` | |
 | 40 | `icon.rank.wright` | |
-| 41 | `icon.rarity.bright` | | pending: same change as 42 (siblings, see the open scope question) |
+| 41 | `icon.rarity.bright` | | Redraw | same change as 42 (sibling; owner chose option (a), 2026-10-22) |
 | 42 | `icon.rarity.faint` | Redraw | Faint rarity frame: notched corners or small corner diamonds so it differs from the Common frame (#16), as GDD §9.12 requires (also 41 and 43). |
-| 43 | `icon.rarity.warm` | | pending: same change as 42 (siblings, see the open scope question) |
+| 43 | `icon.rarity.warm` | | Redraw | same change as 42 (sibling; owner chose option (a), 2026-10-22) |
 | 44 | `icon.riftglass` | |
 | 45 | `icon.rime` | |
 | 46 | `icon.sigil.drowned-bell` | |
@@ -68,7 +68,7 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 | 57 | `portrait.creature.mara-of-kettle-barrow` | Redraw | Mara portrait: a wider shroud; the vertical fork on the right becomes gnarled reaching fingers. |
 | 58 | `portrait.creature.mother-of-the-river` | |
 | 59 | `portrait.creature.stoneback-fell-troll` | Redraw | Stoneback: a heavy brow ridge, craggy rock silhouette, moss patches on the shoulders. |
-| 60 | `portrait.hunter.arvid` | Redraw | Arvid: beard down over the chin, split into two grey braids (GDD §8.5); replace the round-topped staff with his runed axe. (The owner's text said Ostap's axe; read as Arvid's, to confirm.) |
+| 60 | `portrait.hunter.arvid` | Redraw | Arvid: beard down over the chin, split into two grey braids (GDD §8.5); replace the round-topped staff with his runed axe. (The owner's text said Ostap's axe; confirmed 2026-10-22: it is Arvid's own axe.) |
 | 61 | `portrait.hunter.bjarna` | Redraw | Bjarna: the yellow side-braid 2 px left, connected under the hood; the icicle becomes a barbed rime-spear. |
 | 62 | `portrait.hunter.gest-tall-torch` | Redraw | Gest: brown beard down over the chin; the staff becomes a pine torch with a larger flickering flame. |
 | 63 | `portrait.hunter.halvar` | Redraw | Halvar: grey beard down over the chin; replace the staff with a heavy charcoal-burner's axe. |
@@ -114,10 +114,10 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 | 103 | `scene.cosmetic.watchtower-bell.citadel` | |
 | 104 | `scene.cosmetic.watchtower-bell.hamlet` | Redraw | Hamlet: add a wooden bell-post or frame for the bell to hang from (it floats in the sky now). |
 | 105 | `scene.cosmetic.watchtower-bell.keep` | |
-| 106 | `scene.look.frost.bastion` | | pending: same change as 108 (siblings, see the open scope question) |
-| 107 | `scene.look.frost.citadel` | | pending: same change as 108 (siblings, see the open scope question) |
+| 106 | `scene.look.frost.bastion` | | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
+| 107 | `scene.look.frost.citadel` | | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
 | 108 | `scene.look.frost.hamlet` | Redraw | Frost looks: replace the white/cyan static band with clean rime frost on eaves, sills and path edges (Hamlet; the same layer in 106, 107, 109). |
-| 109 | `scene.look.frost.keep` | | pending: same change as 108 (siblings, see the open scope question) |
+| 109 | `scene.look.frost.keep` | | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
 | 110 | `scene.look.lamp.bastion` | |
 | 111 | `scene.look.lamp.citadel` | |
 | 112 | `scene.look.lamp.hamlet` | |
@@ -136,19 +136,19 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 | 125 | `sprite.guardian.the-forgotten` | |
 | 126 | `sprite.guardian.unlits-breath` | |
 | 127 | `sprite.hunter.arvid` | Redraw | Hunter sprites (all 127–140): the downed pose generator, so the weapon rotates with the body and the 2–3 px head/torso gap closes. |
-| 128 | `sprite.hunter.bjarna` | | pending: same change as 127 (siblings, see the open scope question) |
-| 129 | `sprite.hunter.gest-tall-torch` | | pending: same change as 127 (siblings, see the open scope question) |
-| 130 | `sprite.hunter.halvar` | | pending: same change as 127 (siblings, see the open scope question) |
-| 131 | `sprite.hunter.herdis` | | pending: same change as 127 (siblings, see the open scope question) |
-| 132 | `sprite.hunter.ostap` | | pending: same change as 127 (siblings, see the open scope question) |
-| 133 | `sprite.hunter.radek` | | pending: same change as 127 (siblings, see the open scope question) |
-| 134 | `sprite.hunter.radmila-of-the-reeds` | | pending: same change as 127 (siblings, see the open scope question) |
-| 135 | `sprite.hunter.ragnhild-eye-taker` | | pending: same change as 127 (siblings, see the open scope question) |
-| 136 | `sprite.hunter.sigrun` | | pending: same change as 127 (siblings, see the open scope question) |
-| 137 | `sprite.hunter.stanko` | | pending: same change as 127 (siblings, see the open scope question) |
-| 138 | `sprite.hunter.toma` | | pending: same change as 127 (siblings, see the open scope question) |
-| 139 | `sprite.hunter.vesna` | | pending: same change as 127 (siblings, see the open scope question) |
-| 140 | `sprite.hunter.zora` | | pending: same change as 127 (siblings, see the open scope question) |
+| 128 | `sprite.hunter.bjarna` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 129 | `sprite.hunter.gest-tall-torch` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 130 | `sprite.hunter.halvar` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 131 | `sprite.hunter.herdis` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 132 | `sprite.hunter.ostap` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 133 | `sprite.hunter.radek` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 134 | `sprite.hunter.radmila-of-the-reeds` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 135 | `sprite.hunter.ragnhild-eye-taker` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 136 | `sprite.hunter.sigrun` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 137 | `sprite.hunter.stanko` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 138 | `sprite.hunter.toma` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 139 | `sprite.hunter.vesna` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 140 | `sprite.hunter.zora` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
 | 141 | `sprite.monster.anvil-wight` | Redraw | Anvil-wight sprite: a hunched smith's head and shoulders hammering an anvil in front of it; fix the disintegrated downed frame. |
 | 142 | `sprite.monster.bies` | |
 | 143 | `sprite.monster.draugr` | |

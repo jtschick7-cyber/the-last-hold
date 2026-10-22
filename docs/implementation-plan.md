@@ -96,7 +96,7 @@ Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage r
 | v0.9 | 19 (T9.1–T9.19) | 10–15 |
 | v0.10 | 19 (T10.1–T10.19) | 10–14 |
 | v0.11 | 17 (T11.1–T11.17; T11.15 in two parts) | 9–12 |
-| v1.0 | 15 (TV.1–TV.13; TV.3 and TV.4 in two parts; art batches split) | 14–18 |
+| v1.0 | 15 (TV.1–TV.13; TV.3 and TV.4 in two parts; art batches split) | 14–18 (17–21 after D492: 63 pictures to redraw) |
 
 *Actual (v0.11):* 19 progress entries, one task per session (the plan's 9–12 assumed two small tasks a session).
 
