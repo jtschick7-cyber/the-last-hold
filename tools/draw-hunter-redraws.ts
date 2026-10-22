@@ -110,14 +110,15 @@ const arvidAxe = (c: Canvas): void => {
     C.brown,
     2,
   );
-  // A bearded axe head, a darker poll behind, the edge bright; runes cut into the blade and the haft.
+  // A sharp bearded axe: a short back spike, a long straight edge with pointed top and toe, and a
+  // hooked beard; the edge is bright, runes are cut into the blade and the haft.
   solid(
     c,
     [
-      [45, 9],
-      [49, 9],
-      [49, 15],
-      [45, 14],
+      [49, 10],
+      [43, 11],
+      [43, 14],
+      [49, 16],
     ],
     C.coal,
   );
@@ -125,18 +126,20 @@ const arvidAxe = (c: Canvas): void => {
     c,
     [
       [49, 5],
-      [56, 3],
-      [61, 6],
-      [62, 14],
-      [60, 20],
-      [56, 25],
-      [52, 22],
+      [57, 3],
+      [63, 1],
+      [62, 12],
+      [63, 23],
+      [58, 31],
+      [56, 24],
+      [52, 19],
       [49, 18],
     ],
-    (x) => (x > 58 ? C.frost : x > 53 ? C.ash : C.stone),
+    (x, y) => (x > 59 ? C.frost : y > 22 ? C.stone : x > 54 ? C.ash : C.bone),
   );
-  c.line(61, 7, 62, 14, C.frost, 1);
-  c.line(62, 14, 60, 20, C.frost, 1);
+  c.line(63, 1, 62, 12, C.frost, 1);
+  c.line(62, 12, 63, 23, C.frost, 1);
+  c.line(63, 23, 58, 31, C.ice, 1);
   for (const [x, y] of [
     [53, 9],
     [55, 11],
@@ -144,7 +147,7 @@ const arvidAxe = (c: Canvas): void => {
     [55, 15],
     [54, 12],
   ] as const)
-    c.set(x, y, C.dusk);
+    c.set(x, y, C.slate);
   for (let y = 33; y <= 40; y++) c.set(48.2 - (y - 33) * 0.07, y, C.dusk);
   c.set(47, 35, C.dusk);
   c.set(49, 37, C.dusk);
@@ -161,35 +164,39 @@ const halvarAxe = (c: Canvas): void => {
     C.brownDark,
     3,
   );
-  // A heavy, square charcoal-burner's axe: a broad sooty head, a short poll, a worn bright edge.
+  // A heavy charcoal-burner's axe: a thick poll, and a broad flared blade with a sharp top corner,
+  // a sharp toe and a bright, worn edge; the iron is black with soot.
   solid(
     c,
     [
       [41, 9],
       [48, 9],
-      [48, 17],
-      [41, 17],
+      [48, 19],
+      [41, 19],
     ],
     C.coal,
   );
   solid(
     c,
     [
-      [47, 4],
-      [60, 4],
-      [63, 8],
-      [63, 22],
-      [60, 26],
-      [47, 26],
+      [47, 8],
+      [55, 5],
+      [63, 1],
+      [61, 14],
+      [63, 27],
+      [55, 24],
+      [47, 21],
     ],
-    (x, y) => (x > 61 ? C.ash : y < 8 ? C.stone : (x * 7 + y * 3) % 11 === 0 ? C.ink : C.coal),
+    (x, y) => (x > 60 ? C.frost : y < 9 ? C.stone : (x * 7 + y * 3) % 11 === 0 ? C.ink : C.coal),
   );
-  c.line(63, 8, 63, 22, C.frost, 1);
+  c.line(63, 1, 61, 14, C.frost, 1);
+  c.line(61, 14, 63, 27, C.frost, 1);
+  c.line(56, 6, 62, 3, C.ash, 1);
   for (const [x, y] of [
-    [52, 12],
+    [52, 13],
     [56, 18],
-    [50, 21],
-    [58, 10],
+    [50, 17],
+    [57, 10],
   ] as const)
     c.set(x, y, C.ink);
 };
@@ -295,21 +302,33 @@ const gestTorch = (c: Canvas): void => {
 };
 
 const herdisCrook = (c: Canvas): void => {
-  pole(
-    c,
-    [
-      [51, 14],
-      [51, 7],
-      [49, 3],
-      [45, 3],
-      [42, 6],
-      [42, 11],
-    ],
-    C.rust,
-    2,
-  );
-  c.line(51, 14, 47, 62, C.ink, 4);
-  c.line(52, 14, 48, 62, C.rust, 2);
+  // A shepherd's crook: a stout shaft ending in a big open hook, curling right and back.
+  const hook: readonly Pt[] = [
+    [52, 18],
+    [52, 9],
+    [54, 4],
+    [58, 2],
+    [62, 4],
+    [62, 9],
+    [59, 12],
+  ];
+  hook.forEach(([x0, y0], i) => {
+    const n = hook[i + 1];
+    if (n) c.line(x0, y0, n[0], n[1], C.ink, 5);
+  });
+  c.line(52, 18, 48, 62, C.ink, 5);
+  hook.forEach(([x0, y0], i) => {
+    const n = hook[i + 1];
+    if (n) c.line(x0, y0, n[0], n[1], C.clay, 3);
+  });
+  c.line(52, 18, 48, 62, C.clay, 3);
+  hook.forEach(([x0, y0], i) => {
+    const n = hook[i + 1];
+    if (n) c.line(x0 - 1, y0, n[0] - 1, n[1], C.sand, 1);
+  });
+  c.line(51, 18, 47, 62, C.sand, 1);
+  c.line(53, 18, 49, 62, C.rust, 1);
+  c.set(59, 12, C.brown);
 };
 
 const REDRAWS: readonly [PortraitSpec, HunterRedraw][] = [
@@ -332,18 +351,30 @@ const REDRAWS: readonly [PortraitSpec, HunterRedraw][] = [
       spec: { hair: 'short' },
       weapon: bjarnaSpear,
       after: (c) => {
-        c.rect(CX + 11, CY - 4, 4, 9, C.sand);
-        c.rect(CX + 11, CY - 4, 1, 9, C.gold);
-        for (let i = 0; i < 10; i++) {
-          const x = CX + 13 + i * 0.35;
-          const y = CY + 4 + i * 3.6;
-          c.ellipse(x, y, 3.2, 3, C.ink);
+        // A lock comes out from under the hood at the temple, then a real three-strand plait
+        // (chevrons) hangs in front of the shoulder, tied with a blue thread.
+        c.rect(CX + 12, CY - 2, 4, 7, C.sand);
+        c.rect(CX + 12, CY - 2, 1, 7, C.gold);
+        const bx = (y: number): number => CX + 14 + (y - CY) * 0.06;
+        const top = CY + 4;
+        const end = 57;
+        for (let y = top; y <= end; y++) {
+          const w = y > end - 8 ? 2 : 3;
+          for (let x = Math.round(bx(y)) - w - 1; x <= Math.round(bx(y)) + w + 1; x++)
+            c.set(x, y, C.ink);
         }
-        for (let i = 0; i < 10; i++) {
-          const x = CX + 13 + i * 0.35;
-          const y = CY + 4 + i * 3.6;
-          c.ellipse(x, y, 2.4, 2.2, i === 9 ? C.brown : i % 2 === 0 ? C.gold : C.sand);
+        for (let y = top; y <= end; y++) {
+          const w = y > end - 8 ? 2 : 3;
+          const phase = (y - top) % 4;
+          for (let x = Math.round(bx(y)) - w; x <= Math.round(bx(y)) + w; x++) {
+            const k = x - Math.round(bx(y)) + w;
+            const diag = (k + phase) % 4;
+            c.set(x, y, diag === 0 ? C.clay : diag < 3 ? C.gold : C.sand);
+          }
         }
+        c.rect(Math.round(bx(end)) - 2, end - 6, 5, 2, C.blue);
+        c.rect(Math.round(bx(end)) - 2, end + 1, 5, 3, C.gold);
+        c.set(Math.round(bx(end)), end + 4, C.sand);
       },
     },
   ],

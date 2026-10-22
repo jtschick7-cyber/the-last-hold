@@ -215,76 +215,112 @@ const mara = (c: Canvas): void => {
 
 const likho = (c: Canvas): void => {
   const r = seedRolls('likho');
-  // v1.0 (TV.9a): a gaunt, lopsided face of tallow, ragged uneven hair, one big eye in the forehead
-  // and a mouth of jagged teeth.
-  c.ellipse(CX, 37, 21, 25, (x, y) =>
-    y < 20 ? C.clay : y > 47 ? C.rust : x < 26 ? C.clay : C.sand,
+  // v1.0 (TV.9a): a gaunt, lopsided face of tallow with a long chin, hollow cheeks, ragged hair
+  // that hangs in uneven strands, one big eye in the forehead and a crooked mouth of jagged teeth.
+  const skin = (x: number, y: number): string =>
+    x < 24 ? C.clay : x > 42 ? C.sand : y < 22 ? C.sand : C.sand;
+  c.polygon(
+    [
+      [17, 13],
+      [30, 10],
+      [46, 14],
+      [50, 27],
+      [47, 41],
+      [40, 55],
+      [32, 61],
+      [25, 54],
+      [16, 41],
+      [14, 27],
+    ],
+    (x, y) => (y > 52 ? C.rust : skin(x, y)),
   );
-  c.ellipse(CX - 4, 36, 17, 25, (x, y) => (y > 47 ? C.rust : x < 26 ? C.clay : C.sand));
-  // Sunken cheeks, the left deeper than the right.
-  c.ellipse(CX - 14, 42, 5, 8, C.rust);
-  c.ellipse(CX + 13, 41, 4, 6, C.clay);
-  c.rect(CX - 20, 33, 6, 3, C.coal);
-  c.rect(CX + 12, 35, 5, 2, C.coal);
-  // Ragged hair: strands of every length, longer on the right.
-  for (let x = 8; x < 57; x += 2) {
-    const len = 8 + r() * 22 + (x > 40 ? 12 : 0);
+  // Hollow cheeks, deeper on the left, and the brow's shadow.
+  c.polygon(
+    [
+      [17, 36],
+      [27, 38],
+      [27, 47],
+      [21, 47],
+    ],
+    C.rust,
+  );
+  c.polygon(
+    [
+      [41, 37],
+      [46, 36],
+      [44, 46],
+      [40, 46],
+    ],
+    C.clay,
+  );
+  c.line(18, 33, 25, 36, C.coal, 1);
+  c.line(41, 35, 47, 33, C.coal, 1);
+  c.rect(CX - 11, 20, 22, 2, C.clay);
+  // Ragged hair: thin uneven strands from a rough scalp, longer on the right, gaps between them.
+  for (let x = 12; x < 53; x += 2) {
+    const top = 4 + Math.floor(r() * 7) + Math.abs(x - 32) * 0.15;
+    const len = (x < 22 || x > 42 ? 26 + r() * 22 : 6 + r() * 10) + (x > 42 ? 8 : 0);
     c.line(
       x,
-      4 + r() * 4,
-      x + (r() - 0.5) * 6,
-      4 + len,
-      r() < 0.5 ? C.ink : C.brownDark,
-      1 + (r() < 0.3 ? 1 : 0),
+      top,
+      x + (r() - 0.5) * 5,
+      top + len,
+      r() < 0.5 ? C.ink : r() < 0.5 ? C.brownDark : C.wine,
+      1,
     );
   }
-  c.rect(CX - 14, 12, 28, 4, C.brownDark);
-  // The one eye, red as a coal, and a thin hooked nose.
-  c.ellipse(CX, 28, 7, 6, C.frost);
-  c.ellipse(CX, 28, 4, 4, C.red);
-  c.rect(CX - 1, 27, 3, 3, C.ink);
-  c.rect(CX, 27, 1, 1, C.frost);
-  c.rect(CX - 1, 35, 2, 8, C.rust);
-  c.set(CX + 1, 43, C.brown);
-  // Jagged teeth in a wide dark mouth: some long, some broken, some gone.
-  c.rect(CX - 13, 47, 26, 5, C.ink);
-  for (const [x, h] of [
-    [-12, 3],
-    [-9, 5],
-    [-6, 2],
-    [-3, 6],
-    [1, 0],
-    [3, 4],
-    [6, 5],
-    [9, 2],
-    [11, 3],
-  ] as const) {
-    if (h)
-      c.polygon(
-        [
-          [CX + x, 47],
-          [CX + x + 3, 47],
-          [CX + x + 1, 47 + h],
-        ],
-        C.bone,
-      );
-  }
-  for (const [x, h] of [
-    [-11, 2],
-    [-7, 3],
-    [-2, 1],
-    [4, 3],
-    [8, 2],
+  for (let i = 0; i < 40; i++) c.set(14 + r() * 36, 7 + r() * 8, C.ink);
+  // The one eye, red as a coal, in the forehead; a long crooked nose.
+  c.ellipse(CX, 27, 7, 6, C.frost);
+  c.ellipse(CX, 27, 4, 4, C.red);
+  c.rect(CX - 1, 26, 3, 3, C.ink);
+  c.rect(CX, 26, 1, 1, C.frost);
+  c.line(CX, 33, CX + 1, 42, C.rust, 2);
+  c.set(CX + 2, 43, C.brown);
+  c.set(CX - 1, 43, C.ink);
+  // A crooked mouth, lower on the left, with fangs of every size and gaps between them.
+  c.polygon(
+    [
+      [20, 49],
+      [32, 47],
+      [45, 45],
+      [46, 49],
+      [40, 56],
+      [24, 57],
+    ],
+    C.ink,
+  );
+  const upper = (x: number): number => 48 - (x - 20) * 0.12;
+  for (const [x, h, w] of [
+    [22, 4, 3],
+    [26, 7, 3],
+    [30, 3, 3],
+    [34, 8, 4],
+    [39, 4, 3],
+    [42, 6, 3],
   ] as const)
     c.polygon(
       [
-        [CX + x, 51],
-        [CX + x + 2, 51],
-        [CX + x + 1, 51 - h],
+        [x, upper(x)],
+        [x + w, upper(x + w)],
+        [x + w / 2, upper(x) + h],
+      ],
+      C.bone,
+    );
+  for (const [x, h] of [
+    [26, 4],
+    [31, 6],
+    [37, 3],
+  ] as const)
+    c.polygon(
+      [
+        [x, 56],
+        [x + 3, 56],
+        [x + 1.5, 56 - h],
       ],
       C.ash,
     );
-  c.rect(CX - 12, 52, 24, 2, C.rust);
+  c.rect(24, 57, 17, 1, C.brown);
 };
 
 const PORTRAIT: Record<EventCreatureId, (c: Canvas) => void> = {
