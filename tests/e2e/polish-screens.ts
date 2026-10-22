@@ -10,6 +10,12 @@ export const loadFixture = async (
   name: string,
   onSheet?: (label: string) => Promise<void>,
 ): Promise<void> => {
+  if (name === 'new') {
+    await page.goto('./?debug');
+    await begin(page, 'Mira');
+    await dismiss(page, onSheet);
+    return;
+  }
   const [base, variant] = name.split(':');
   const save = JSON.parse(
     readFileSync(new URL(`../saves/fixtures/${base}.json`, import.meta.url), 'utf8'),
@@ -133,16 +139,6 @@ const plain = (
 
 const READ = 'v11';
 export const FLOWS: readonly Flow[] = [
-  plain('hold-hamlet', 'Hold (Hamlet)', 'fixture v1, nothing', [/Stanholm/], async () => {}, 'v1'),
-  plain('hold-keep', 'Hold (Keep)', 'fixture v2, nothing', [/Stanholm/], async () => {}, 'v2'),
-  plain(
-    'hold-citadel',
-    'Hold (Citadel)',
-    'fixture v4, nothing',
-    [/Stanholm/],
-    async () => {},
-    'v4',
-  ),
   plain('hold-bastion', 'Hold (Bastion)', 'fixture v11, nothing', [/Stanholm/], async () => {}),
   plain('rates', 'rates sheet', 'the resource bar', [/per minute/i], (p) =>
     btn(p, /Food.*Wood/).click(),
@@ -164,7 +160,7 @@ export const FLOWS: readonly Flow[] = [
     'hunters-candidates',
     'Hunters (candidates)',
     'fixture v11 with Herdis sent back to the candidates (a test-only edit), Hunters tab',
-    [/Candidates/],
+    [/candidates/i],
     (p) => tabTo(p, 'Hunters'),
     'v11:candidate',
   ),
@@ -225,7 +221,7 @@ export const FLOWS: readonly Flow[] = [
     'archive-library',
     'Archive (Library, with the Rime shelf)',
     'Archive, Library',
-    [/The Fall/],
+    [/the fall/i],
     (p) => archive(p, 'Library'),
   ),
   plain('archive-accounts', 'Archive (Accounts)', 'Archive, Accounts', [/./], (p) =>
@@ -276,6 +272,25 @@ export const FLOWS: readonly Flow[] = [
   plain('more-diagnostics', 'More (Diagnostics)', 'More, Diagnostics', [/./], (p) =>
     more(p, 'Diagnostics'),
   ),
+  {
+    id: 'hold-ages',
+    fixture: 'new',
+    mutates: true,
+    how: 'a new game (Hamlet); More, Debug, Unlock Keep, then Unlock Citadel, then Unlock Bastion',
+    run: async (page, visit) => {
+      await tabTo(page, 'Hold');
+      await visit('hold-hamlet', 'Hold (Hamlet)', [/Stanholm — Hamlet/]);
+      for (const [age, name] of [
+        ['Keep', 'hold-keep'],
+        ['Citadel', 'hold-citadel'],
+      ] as const) {
+        await debug(page, `Unlock ${age}`);
+        await dismiss(page);
+        await tabTo(page, 'Hold');
+        await visit(name, `Hold (${age})`, [new RegExp(`Stanholm — ${age}`)]);
+      }
+    },
+  },
   {
     id: 'chapter-scene',
     fixture: READ,
