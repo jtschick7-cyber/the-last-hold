@@ -22,6 +22,15 @@ import {
 } from '../../platform/storage';
 import { captureErrors, DIAGNOSTICS_KEEP, type CapturedError } from '../../platform/diagnostics';
 import { sideList, type SideList } from '../../platform/side-store';
+import {
+  afterReset,
+  readAppSettings,
+  withFirstSeen,
+  writeAppSettings,
+  DEFAULT_APP_SETTINGS,
+  type AppSettings,
+  type TextSize,
+} from '../../platform/app-settings';
 import { levelUpLines, noticeChanges, type Watched } from './lines';
 import { skillLevels } from '../../core/skills/skills';
 
@@ -85,6 +94,15 @@ export const reports = (): SideList<Report> | null =>
 export const diagnostics = (): SideList<CapturedError> | null =>
   channelStorage ? sideList<CapturedError>(channelStorage, 'diagnostics', DIAGNOSTICS_KEEP) : null;
 export const saveStore = (): SaveStore | null => store;
+
+/** GDD §9.20: the settings outside the save (Text size, the backup reminder and its times). */
+export const appSettings = signal<AppSettings>({ ...DEFAULT_APP_SETTINGS });
+const changeAppSettings = (next: AppSettings): void => {
+  appSettings.value = next;
+  if (channelStorage) writeAppSettings(channelStorage, next);
+};
+export const setTextSize = (textSize: TextSize): void =>
+  changeAppSettings({ ...appSettings.value, textSize });
 
 /** Technical design §9.1: the install tip shows once, outside the installed app. */
 export const installTipDue = signal(false);
@@ -185,6 +203,8 @@ export const startGame = async (): Promise<void> => {
   if (!backend) savingUnavailable.value = true;
   channelStorage = createChannelStorage(buildInfo.channel, backend ?? memoryFallback());
   store = createSaveStore(channelStorage, now);
+  const seen = withFirstSeen(readAppSettings(channelStorage), now());
+  changeAppSettings(seen);
   installTipDue.value = !isInstalledApp() && channelStorage.get('installTipSeen') === null;
   const errors = diagnostics();
   if (errors) captureErrors(errors, () => currentScreen.value);
@@ -240,6 +260,7 @@ export const adoptGame = async (next: GameState): Promise<void> => {
 
 /** GDD §9.10 "Reset everything": a fresh game. The backup slot still holds the old one. */
 export const resetGame = (): void => {
+  changeAppSettings(afterReset(appSettings.value));
   state = createNewGame(randomSeed(), now());
   watched = null;
   watchedSkills = null;

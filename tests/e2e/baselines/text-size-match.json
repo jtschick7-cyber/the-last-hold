@@ -1,0 +1,3372 @@
+{
+  "rates": [
+    {
+      "key": "0|h2|Rates",
+      "kind": "pixel",
+      "fontSize": 24,
+      "width": 282,
+      "height": 26.4
+    },
+    {
+      "key": "1|button|✕",
+      "kind": "text",
+      "fontSize": 17.6,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "2|span|Rates",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 103.1,
+      "height": 24
+    },
+    {
+      "key": "3|button|per minute",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 116,
+      "height": 44
+    },
+    {
+      "key": "4|button|per hour",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 96.9,
+      "height": 44
+    },
+    {
+      "key": "5|img|Food",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "6|span|Food",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 203.5,
+      "height": 24
+    },
+    {
+      "key": "7|button|4.49K/min",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 78.5,
+      "height": 24
+    },
+    {
+      "key": "8|button|ⓘ",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "9|img|Wood",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "10|span|Wood",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 207.5,
+      "height": 24
+    },
+    {
+      "key": "11|button|2.21K/min",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 74.5,
+      "height": 24
+    },
+    {
+      "key": "12|button|ⓘ",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "13|img|Iron",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "14|span|Iron",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 222.5,
+      "height": 24
+    },
+    {
+      "key": "15|button|919/min",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 59.5,
+      "height": 24
+    },
+    {
+      "key": "16|button|ⓘ",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "17|img|Silver",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "18|span|Silver",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 224.3,
+      "height": 24
+    },
+    {
+      "key": "19|button|0.4/min",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 57.8,
+      "height": 24
+    },
+    {
+      "key": "20|button|ⓘ",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "21|p|Long-press any number, o",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 326,
+      "height": 39
+    },
+    {
+      "key": "22|button|Hold ●",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "23|button|Contracts (1)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "24|button|Hunters",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "25|button|Archive (71)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "26|button|More",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    }
+  ],
+  "hunters-roster": [
+    {
+      "key": "0|p|Tip: install the game be",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 294,
+      "height": 84
+    },
+    {
+      "key": "1|strong|Tip:",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 26.6,
+      "height": 17
+    },
+    {
+      "key": "2|button|How?",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 72.1,
+      "height": 44
+    },
+    {
+      "key": "3|button|Got it",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 70.1,
+      "height": 44
+    },
+    {
+      "key": "4|h2|Active 11/12 · Reserve 0",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "5|img|Halvar Two-Smokes",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "6|strong|Halvar Two-Smokes",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 161.7,
+      "height": 20
+    },
+    {
+      "key": "7|div|Vanguard · steel · Lv 9 ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 39
+    },
+    {
+      "key": "8|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 73.5,
+      "height": 15
+    },
+    {
+      "key": "9|img|Zora Sedlak",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "10|strong|Zora Sedlak",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 95,
+      "height": 20
+    },
+    {
+      "key": "11|div|Striker · steel · Lv 9 ·",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 39
+    },
+    {
+      "key": "12|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 73.5,
+      "height": 15
+    },
+    {
+      "key": "13|img|Old Ostap",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "14|strong|Old Ostap",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 78.8,
+      "height": 20
+    },
+    {
+      "key": "15|div|Mender · steel · Lv 9 · ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 39
+    },
+    {
+      "key": "16|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 73.5,
+      "height": 15
+    },
+    {
+      "key": "17|img|Vesna of the Weir",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "18|strong|Vesna of the Weir",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 141.4,
+      "height": 20
+    },
+    {
+      "key": "19|div|Mender · venom · Lv 7 · ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 39
+    },
+    {
+      "key": "20|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 73.5,
+      "height": 15
+    },
+    {
+      "key": "21|img|Herdis Strayfinder",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "22|strong|Herdis Strayfinder",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 148.1,
+      "height": 20
+    },
+    {
+      "key": "23|div|Mender · frost · Lv 5 · ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 39
+    },
+    {
+      "key": "24|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 73.5,
+      "height": 15
+    },
+    {
+      "key": "25|img|Bjarna Ice-Hand",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "26|strong|Bjarna Ice-Hand",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 128.9,
+      "height": 20
+    },
+    {
+      "key": "27|div|Striker · frost · Lv 5 ·",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 39
+    },
+    {
+      "key": "28|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 73.5,
+      "height": 15
+    },
+    {
+      "key": "29|img|Radek the Gravedigger",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "30|strong|Radek the Gravedigger",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 182.6,
+      "height": 20
+    },
+    {
+      "key": "31|div|Vanguard · silver · Lv 5",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 39
+    },
+    {
+      "key": "32|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 73.5,
+      "height": 15
+    },
+    {
+      "key": "33|img|Toma Kettle",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "34|strong|Toma Kettle",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 95.4,
+      "height": 20
+    },
+    {
+      "key": "35|div|Vanguard · steel · Lv 3 ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 58.5
+    },
+    {
+      "key": "36|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 175.1,
+      "height": 34.5
+    },
+    {
+      "key": "37|img|Stanko Sleepless",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "38|strong|Stanko Sleepless",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 138,
+      "height": 20
+    },
+    {
+      "key": "39|div|Striker · venom · Lv 3 ·",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 58.5
+    },
+    {
+      "key": "40|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 175.1,
+      "height": 34.5
+    },
+    {
+      "key": "41|img|Sigrun Halfhand",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "42|strong|Sigrun Halfhand",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 130.3,
+      "height": 20
+    },
+    {
+      "key": "43|div|Striker · fire · Lv 2 · ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 39
+    },
+    {
+      "key": "44|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 73.5,
+      "height": 15
+    },
+    {
+      "key": "45|img|Arvid Netmender",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "46|strong|Arvid Netmender",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 138.8,
+      "height": 20
+    },
+    {
+      "key": "47|div|Vanguard · rune · Lv 1 ·",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 190,
+      "height": 58.5
+    },
+    {
+      "key": "48|span|talent point",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 175.1,
+      "height": 34.5
+    },
+    {
+      "key": "49|h2|Stores 0 of 40",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "50|button|By slot",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 85,
+      "height": 44
+    },
+    {
+      "key": "51|button|By rarity",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 96.6,
+      "height": 44
+    },
+    {
+      "key": "52|p|Nothing in Stores. Loot ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 39
+    },
+    {
+      "key": "53|h3|Legendaries",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "54|img|Wolf-Tooth String",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "key": "55|strong|Wolf-Tooth String",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 138.3,
+      "height": 20
+    },
+    {
+      "key": "56|span|· in Stores",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 75.4,
+      "height": 20
+    },
+    {
+      "key": "57|div|+3% Might (status%, stac",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 254,
+      "height": 39
+    },
+    {
+      "key": "58|button|Hold ●",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "59|button|Contracts (1)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "60|button|Hunters",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "61|button|Archive (71)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "62|button|More",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    }
+  ],
+  "hunter-sheet": [
+    {
+      "key": "0|h2|Halvar Two-Smokes",
+      "kind": "pixel",
+      "fontSize": 24,
+      "width": 282,
+      "height": 26.4
+    },
+    {
+      "key": "1|button|✕",
+      "kind": "text",
+      "fontSize": 17.6,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "2|img|Halvar Two-Smokes",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 128,
+      "height": 128
+    },
+    {
+      "key": "3|p|Vanguard · steel damage ",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 190,
+      "height": 72
+    },
+    {
+      "key": "4|p|● Ready",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 326,
+      "height": 19.5
+    },
+    {
+      "key": "5|span|H 306ⓘ",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 61.1,
+      "height": 24
+    },
+    {
+      "key": "6|button|306",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 31.1,
+      "height": 24
+    },
+    {
+      "key": "7|button|ⓘ",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "8|span|M 33ⓘ",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 53.3,
+      "height": 24
+    },
+    {
+      "key": "9|button|33",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 20.8,
+      "height": 24
+    },
+    {
+      "key": "10|button|ⓘ",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "11|span|A 16ⓘ",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 49.9,
+      "height": 24
+    },
+    {
+      "key": "12|button|16",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 20.8,
+      "height": 24
+    },
+    {
+      "key": "13|button|ⓘ",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "14|span|S 7ⓘ",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 38.7,
+      "height": 24
+    },
+    {
+      "key": "15|button|7",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 10.4,
+      "height": 24
+    },
+    {
+      "key": "16|button|ⓘ",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "17|span|Wright",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 64.8,
+      "height": 15
+    },
+    {
+      "key": "18|img|Wright badge",
+      "kind": "picture",
+      "fontSize": 12,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "19|span|☆☆☆☆☆",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 67.9,
+      "height": 16
+    },
+    {
+      "key": "20|span|Trophies on hand: 17",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 126.8,
+      "height": 16
+    },
+    {
+      "key": "21|button|Rank up to Master-Wright",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 159,
+      "height": 50
+    },
+    {
+      "key": "22|div|Cost: 60 trophiesⓘ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 159,
+      "height": 19.5
+    },
+    {
+      "key": "23|button|60 trophies",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 69.9,
+      "height": 19.5
+    },
+    {
+      "key": "24|button|ⓘ",
+      "kind": "text",
+      "fontSize": 9.8,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "25|div|needs highest level 10",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 159,
+      "height": 19.5
+    },
+    {
+      "key": "26|button|Add a star",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 112.7,
+      "height": 44
+    },
+    {
+      "key": "27|div|Cost: 10 trophiesⓘ + 20 ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 159,
+      "height": 39
+    },
+    {
+      "key": "28|button|10 trophies",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 67.1,
+      "height": 19.5
+    },
+    {
+      "key": "29|button|ⓘ",
+      "kind": "text",
+      "fontSize": 9.8,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "30|button|20 Embers",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 66.3,
+      "height": 19.5
+    },
+    {
+      "key": "31|button|ⓘ",
+      "kind": "text",
+      "fontSize": 9.8,
+      "width": 44,
+      "height": 44
+    },
+    {
+      "key": "32|p|Banked Smoke · Every 3rd",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 326,
+      "height": 39
+    },
+    {
+      "key": "33|strong|Banked Smoke",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 93.9,
+      "height": 16
+    },
+    {
+      "key": "34|p|Until his next action, e",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 326,
+      "height": 39
+    },
+    {
+      "key": "35|li|Shieldwall: While this V",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 326,
+      "height": 48
+    },
+    {
+      "key": "36|strong|Shieldwall:",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 85.6,
+      "height": 20
+    },
+    {
+      "key": "37|li|Steady: Damage variance ",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 326,
+      "height": 48
+    },
+    {
+      "key": "38|strong|Steady:",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 60.4,
+      "height": 20
+    },
+    {
+      "key": "39|img|Common item frame",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 40,
+      "height": 40
+    },
+    {
+      "key": "40|img|Wright's Blade",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "key": "41|span|Weapon: Wright's Blade+1",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 176,
+      "height": 87
+    },
+    {
+      "key": "42|strong|Wright's Blade",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 138.6,
+      "height": 44
+    },
+    {
+      "key": "43|div|+12 Might · Silver sub-h",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 176,
+      "height": 39
+    },
+    {
+      "key": "44|button|Change",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 94,
+      "height": 44
+    },
+    {
+      "key": "45|img|Common item frame",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 40,
+      "height": 40
+    },
+    {
+      "key": "46|img|Emberwright Plate",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 32,
+      "height": 32
+    },
+    {
+      "key": "47|span|Armor: Emberwright Plate",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 176,
+      "height": 67.5
+    },
+    {
+      "key": "48|strong|Emberwright Plate",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 157.2,
+      "height": 44
+    },
+    {
+      "key": "49|div|+8 Armor · −10% Fire tak",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 176,
+      "height": 19.5
+    },
+    {
+      "key": "50|button|Change",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 94,
+      "height": 44
+    },
+    {
+      "key": "51|span|Keepsake: —",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 184,
+      "height": 24
+    },
+    {
+      "key": "52|strong|—",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 16,
+      "height": 20
+    },
+    {
+      "key": "53|button|Change",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 94,
+      "height": 44
+    },
+    {
+      "key": "54|h3|Talents 3 points to spen",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 326,
+      "height": 22.9
+    },
+    {
+      "key": "55|span|3 points to spend",
+      "kind": "pixel",
+      "fontSize": 12,
+      "width": 88.2,
+      "height": 13.2
+    },
+    {
+      "key": "56|strong|Wall",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 33.6,
+      "height": 20
+    },
+    {
+      "key": "57|div|Tier 1: +1 Armor",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "58|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "59|div|Tier 2: +8% max Health",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "60|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "61|div|needs 2 stars (has 0)",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "62|div|Tier 3: −8% damage taken",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 58.5
+    },
+    {
+      "key": "63|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "64|div|needs 4 stars (has 0)",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "65|strong|Retort",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 48,
+      "height": 20
+    },
+    {
+      "key": "66|div|Tier 1: +5% Might",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "67|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "68|div|Tier 2: +3 points crit c",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 58.5
+    },
+    {
+      "key": "69|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "70|div|needs 2 stars (has 0)",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "71|div|Tier 3: +10% damage deal",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "72|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "73|div|needs 4 stars (has 0)",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "74|strong|Warden",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 60.7,
+      "height": 20
+    },
+    {
+      "key": "75|div|Tier 1: While he stands,",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 97.5
+    },
+    {
+      "key": "76|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "77|div|Tier 2: Monsters target ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 97.5
+    },
+    {
+      "key": "78|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "79|div|needs 2 stars (has 0)",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "80|div|Tier 3: While he stands,",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 156
+    },
+    {
+      "key": "81|button|Pick",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 60.8,
+      "height": 44
+    },
+    {
+      "key": "82|div|needs 4 stars (has 0)",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.3,
+      "height": 39
+    },
+    {
+      "key": "83|p|Record: 226 won · 0 lost",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 326,
+      "height": 19.5
+    },
+    {
+      "key": "84|h3|Letters",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 326,
+      "height": 22.9
+    },
+    {
+      "key": "85|span|A letter to the warden",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 286.3,
+      "height": 24
+    },
+    {
+      "key": "86|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "87|span|A letter to the warden",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 286.3,
+      "height": 24
+    },
+    {
+      "key": "88|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "89|p|Former charcoal-burner. ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 326,
+      "height": 39
+    },
+    {
+      "key": "90|button|Move to the reserve",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 187.9,
+      "height": 44
+    },
+    {
+      "key": "91|button|Hold ●",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "92|button|Contracts (1)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "93|button|Hunters",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "94|button|Archive (71)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "95|button|More",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    }
+  ],
+  "bestiary": [
+    {
+      "key": "0|p|Tip: install the game be",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 294,
+      "height": 84
+    },
+    {
+      "key": "1|strong|Tip:",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 26.6,
+      "height": 17
+    },
+    {
+      "key": "2|button|How?",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 72.1,
+      "height": 44
+    },
+    {
+      "key": "3|button|Got it",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 70.1,
+      "height": 44
+    },
+    {
+      "key": "4|button|Bestiary",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 109.9,
+      "height": 44
+    },
+    {
+      "key": "5|button|Library",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 98.7,
+      "height": 44
+    },
+    {
+      "key": "6|button|Accounts",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 117.4,
+      "height": 44
+    },
+    {
+      "key": "7|button|Names",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 326,
+      "height": 44
+    },
+    {
+      "key": "8|span|Restless Dead",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 260.1,
+      "height": 22.9
+    },
+    {
+      "key": "9|span|3/3",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 25.9,
+      "height": 22.9
+    },
+    {
+      "key": "10|img|Upyr",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "11|span|Upyr",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 29.6,
+      "height": 19.5
+    },
+    {
+      "key": "12|span|Mastered",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.8,
+      "height": 19.5
+    },
+    {
+      "key": "13|img|Draugr",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "14|span|Draugr",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 42.1,
+      "height": 19.5
+    },
+    {
+      "key": "15|span|Studied",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 46.9,
+      "height": 19.5
+    },
+    {
+      "key": "16|img|Strzyga",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "17|span|Strzyga",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 47,
+      "height": 19.5
+    },
+    {
+      "key": "18|span|Identified",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.6,
+      "height": 19.5
+    },
+    {
+      "key": "19|span|Water Spirits",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 260.1,
+      "height": 22.9
+    },
+    {
+      "key": "20|span|3/3",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 25.9,
+      "height": 22.9
+    },
+    {
+      "key": "21|img|Rusalka",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "22|span|Rusalka",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 47.8,
+      "height": 19.5
+    },
+    {
+      "key": "23|span|Mastered",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.8,
+      "height": 19.5
+    },
+    {
+      "key": "24|img|Vodyanoy",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "25|span|Vodyanoy",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 61.2,
+      "height": 19.5
+    },
+    {
+      "key": "26|span|Studied",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 46.9,
+      "height": 19.5
+    },
+    {
+      "key": "27|img|Nix",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "28|span|Nix",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 20,
+      "height": 19.5
+    },
+    {
+      "key": "29|span|Studied",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 46.9,
+      "height": 19.5
+    },
+    {
+      "key": "30|span|Field & Forest Spirits",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 260.1,
+      "height": 22.9
+    },
+    {
+      "key": "31|span|4/4",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 25.9,
+      "height": 22.9
+    },
+    {
+      "key": "32|img|Kikimora",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "33|span|Kikimora",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 53.8,
+      "height": 19.5
+    },
+    {
+      "key": "34|span|Mastered",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.8,
+      "height": 19.5
+    },
+    {
+      "key": "35|img|Poludnitsa",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "36|span|Poludnitsa",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 64,
+      "height": 19.5
+    },
+    {
+      "key": "37|span|Mastered",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.8,
+      "height": 19.5
+    },
+    {
+      "key": "38|img|Leshy",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "39|span|Leshy",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 36.6,
+      "height": 19.5
+    },
+    {
+      "key": "40|span|Identified",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.6,
+      "height": 19.5
+    },
+    {
+      "key": "41|img|Huldra",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "42|span|Huldra",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 40.7,
+      "height": 19.5
+    },
+    {
+      "key": "43|span|Mastered",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.8,
+      "height": 19.5
+    },
+    {
+      "key": "44|span|Beasts & Wilds",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 260.1,
+      "height": 22.9
+    },
+    {
+      "key": "45|span|2/2",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 25.9,
+      "height": 22.9
+    },
+    {
+      "key": "46|img|Gaunt Wolf",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "47|span|Gaunt Wolf",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 68.2,
+      "height": 19.5
+    },
+    {
+      "key": "48|span|Mastered",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.8,
+      "height": 19.5
+    },
+    {
+      "key": "49|img|Bies",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "50|span|Bies",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 26.1,
+      "height": 19.5
+    },
+    {
+      "key": "51|span|Mastered",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.8,
+      "height": 19.5
+    },
+    {
+      "key": "52|span|Cursed",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 260.1,
+      "height": 22.9
+    },
+    {
+      "key": "53|span|3/4",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 25.9,
+      "height": 22.9
+    },
+    {
+      "key": "54|img|Gloam-moths",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "55|span|Gloam-moths",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 74.7,
+      "height": 39
+    },
+    {
+      "key": "56|span|Studied",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 46.9,
+      "height": 19.5
+    },
+    {
+      "key": "57|img|Ribbonshade",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "58|span|Ribbonshade",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 80.3,
+      "height": 19.5
+    },
+    {
+      "key": "59|span|Mastered",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.8,
+      "height": 19.5
+    },
+    {
+      "key": "60|img|Anvil-wight",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "61|span|Anvil-wight",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 69.8,
+      "height": 19.5
+    },
+    {
+      "key": "62|span|Identified",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 57.6,
+      "height": 19.5
+    },
+    {
+      "key": "63|span|?",
+      "kind": "pixel",
+      "fontSize": 32,
+      "width": 64,
+      "height": 64
+    },
+    {
+      "key": "64|span|?",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 6.7,
+      "height": 19.5
+    },
+    {
+      "key": "65|h2|Great Beasts",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "66|p|Nothing met yet. The Gre",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 39
+    },
+    {
+      "key": "67|span|·",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 4.6,
+      "height": 24
+    },
+    {
+      "key": "68|span|·",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 4.6,
+      "height": 24
+    },
+    {
+      "key": "69|span|·",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 4.6,
+      "height": 24
+    },
+    {
+      "key": "70|span|·",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 4.6,
+      "height": 24
+    },
+    {
+      "key": "71|span|·",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 4.6,
+      "height": 24
+    },
+    {
+      "key": "72|span|·",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 4.6,
+      "height": 24
+    },
+    {
+      "key": "73|p|[?] seen on a contract, ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 328,
+      "height": 58.5
+    },
+    {
+      "key": "74|button|Hold ●",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "75|button|Contracts (1)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "76|button|Hunters",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "77|button|Archive (71)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "78|button|More",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    }
+  ],
+  "archive-library": [
+    {
+      "key": "0|p|Tip: install the game be",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 294,
+      "height": 84
+    },
+    {
+      "key": "1|strong|Tip:",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 26.6,
+      "height": 17
+    },
+    {
+      "key": "2|button|How?",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 72.1,
+      "height": 44
+    },
+    {
+      "key": "3|button|Got it",
+      "kind": "text",
+      "fontSize": 14,
+      "width": 70.1,
+      "height": 44
+    },
+    {
+      "key": "4|button|Bestiary",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 107.8,
+      "height": 44
+    },
+    {
+      "key": "5|button|Library",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 100.5,
+      "height": 44
+    },
+    {
+      "key": "6|button|Accounts",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 117.6,
+      "height": 44
+    },
+    {
+      "key": "7|button|Names",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 326,
+      "height": 44
+    },
+    {
+      "key": "8|h2|I. The Fall",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "9|h3|Letter",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "10|img|Letter",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "11|strong|My boy writes no letters",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 187.5,
+      "height": 20
+    },
+    {
+      "key": "12|span|· Halina of Mirograd",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 194.9,
+      "height": 40.5
+    },
+    {
+      "key": "13|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "14|img|Letter",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "15|strong|On the cursing of a name",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 194.7,
+      "height": 20
+    },
+    {
+      "key": "16|span|· Věra, eldest of Kozly ",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 202.1,
+      "height": 40.5
+    },
+    {
+      "key": "17|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "18|img|Letter",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "19|strong|Ravenfell's answer",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 148.2,
+      "height": 20
+    },
+    {
+      "key": "20|span|· Thane Sólveig Arnadótt",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 197.9,
+      "height": 40.5
+    },
+    {
+      "key": "21|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "22|img|Letter",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "23|strong|To the warden, from Dubn",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 250.2,
+      "height": 20
+    },
+    {
+      "key": "24|span|· Marta Dubska",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 257.6,
+      "height": 40.5
+    },
+    {
+      "key": "25|img|Letter",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "26|strong|Velkvik remembers her",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 180.5,
+      "height": 20
+    },
+    {
+      "key": "27|span|· Thane Gunnar Ravnsson",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 230.2,
+      "height": 40.5
+    },
+    {
+      "key": "28|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "29|h3|Ledger page",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "30|img|Ledger",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "31|strong|Apprentice roll, Mirogra",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 194.9,
+      "height": 20
+    },
+    {
+      "key": "32|span|· The order's clerk",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 229.6,
+      "height": 40.5
+    },
+    {
+      "key": "33|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "34|h3|Field note",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "35|strong|Field note: Upyr",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 123.3,
+      "height": 20
+    },
+    {
+      "key": "36|span|· An unsigned Wright",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 211.2,
+      "height": 40.5
+    },
+    {
+      "key": "37|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "38|h3|Testament",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "39|img|Testament",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "40|strong|The night the sky went o",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 207.1,
+      "height": 20
+    },
+    {
+      "key": "41|span|· Marta Dubska",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 214.5,
+      "height": 40.5
+    },
+    {
+      "key": "42|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "43|h3|Resident scene",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "44|strong|Welcome back",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 115,
+      "height": 20
+    },
+    {
+      "key": "45|span|· Pechko",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 56.6,
+      "height": 16
+    },
+    {
+      "key": "46|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "47|h2|II. The Sent",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "48|h3|Letter",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "49|img|Letter",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "50|strong|Not on the Roll",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 113.2,
+      "height": 20
+    },
+    {
+      "key": "51|span|· Dana Lisová, Tomek's s",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 202.8,
+      "height": 40.5
+    },
+    {
+      "key": "52|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "53|h3|Journal page",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "54|img|Journal",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "55|strong|Tomek's journal, page 5:",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 221.4,
+      "height": 44
+    },
+    {
+      "key": "56|span|· Tomek",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 52.3,
+      "height": 16
+    },
+    {
+      "key": "57|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "58|img|Journal",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "59|strong|Tomek's journal, page 4:",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 192.8,
+      "height": 44
+    },
+    {
+      "key": "60|span|· Tomek",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 52.3,
+      "height": 16
+    },
+    {
+      "key": "61|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "62|img|Journal",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "63|strong|Tomek's journal, page 3:",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 221.5,
+      "height": 44
+    },
+    {
+      "key": "64|span|· Tomek",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 52.3,
+      "height": 16
+    },
+    {
+      "key": "65|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "66|img|Journal",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "67|strong|Tomek's journal, page 2:",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 221.2,
+      "height": 44
+    },
+    {
+      "key": "68|span|· Tomek",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 52.3,
+      "height": 16
+    },
+    {
+      "key": "69|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "70|img|Journal",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "71|strong|Tomek's journal, page 1:",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 188.9,
+      "height": 44
+    },
+    {
+      "key": "72|span|· Tomek",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 52.3,
+      "height": 16
+    },
+    {
+      "key": "73|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "74|h3|Ledger page",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "75|img|Ledger",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "76|strong|The Kamenfell bell-book",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 191.6,
+      "height": 20
+    },
+    {
+      "key": "77|span|· Hallvard, the bell-rin",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 199,
+      "height": 40.5
+    },
+    {
+      "key": "78|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "79|h3|Resident scene",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "80|strong|The stove rail",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 105,
+      "height": 20
+    },
+    {
+      "key": "81|span|· Pechko",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 56.6,
+      "height": 16
+    },
+    {
+      "key": "82|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "83|strong|What waits below",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 138.3,
+      "height": 20
+    },
+    {
+      "key": "84|span|· Sigrun",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 50.8,
+      "height": 16
+    },
+    {
+      "key": "85|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "86|h3|Testament",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "87|img|Testament",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "88|strong|Thirty-nine times",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 135.4,
+      "height": 20
+    },
+    {
+      "key": "89|span|· Old Hallvard",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 86.3,
+      "height": 16
+    },
+    {
+      "key": "90|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "91|h2|III. The Night",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "92|h3|Resident scene",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "93|strong|Two bowls",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 83.3,
+      "height": 20
+    },
+    {
+      "key": "94|span|· Pechko",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 56.6,
+      "height": 16
+    },
+    {
+      "key": "95|strong|The net-mender",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 126.8,
+      "height": 20
+    },
+    {
+      "key": "96|span|· Pechko, Arvid",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 96.5,
+      "height": 16
+    },
+    {
+      "key": "97|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "98|strong|One line",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 63.8,
+      "height": 20
+    },
+    {
+      "key": "99|span|· Arvid; the order's cle",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 152,
+      "height": 16
+    },
+    {
+      "key": "100|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "101|strong|The gate",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 68.6,
+      "height": 20
+    },
+    {
+      "key": "102|span|· Arvid, Sigrun",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 90.7,
+      "height": 16
+    },
+    {
+      "key": "103|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "104|h3|Letter",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "105|img|Letter",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "106|strong|He's gone up to you",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 154.7,
+      "height": 20
+    },
+    {
+      "key": "107|span|· Thane Gunnar Ravnsson",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 204.4,
+      "height": 40.5
+    },
+    {
+      "key": "108|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "109|h3|Testament",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "110|img|Testament",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "111|strong|The Night from below",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 168.1,
+      "height": 20
+    },
+    {
+      "key": "112|span|· Arvid",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 43.5,
+      "height": 16
+    },
+    {
+      "key": "113|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "114|img|Testament",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "115|strong|Arvid's account, I: the ",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 221.8,
+      "height": 20
+    },
+    {
+      "key": "116|span|· Arvid",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 229.2,
+      "height": 40.5
+    },
+    {
+      "key": "117|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "118|img|Testament",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "119|strong|Arvid's account, II: the",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 219.6,
+      "height": 20
+    },
+    {
+      "key": "120|span|· Arvid",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 227,
+      "height": 40.5
+    },
+    {
+      "key": "121|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "122|h2|IV. The Keeper",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "123|h3|Resident scene",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "124|strong|The binding",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 92.8,
+      "height": 20
+    },
+    {
+      "key": "125|span|· Pechko",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 56.6,
+      "height": 16
+    },
+    {
+      "key": "126|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "127|strong|The bundle",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 87.9,
+      "height": 20
+    },
+    {
+      "key": "128|span|· Pechko, Ilse",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 85.1,
+      "height": 16
+    },
+    {
+      "key": "129|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "130|h3|Ledger page",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "131|img|Ledger",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "132|strong|Margins, II: beasts",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 143.2,
+      "height": 20
+    },
+    {
+      "key": "133|span|· Dobrava (in the margin",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 225.2,
+      "height": 40.5
+    },
+    {
+      "key": "134|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "135|img|Ledger",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "136|strong|Margins, I: field and fo",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 204,
+      "height": 20
+    },
+    {
+      "key": "137|span|· Dobrava (in the margin",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 211.4,
+      "height": 40.5
+    },
+    {
+      "key": "138|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "139|h3|Journal page",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "140|img|Journal",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "141|strong|The Keeper's notes",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 152,
+      "height": 20
+    },
+    {
+      "key": "142|span|· Dobrava",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 62.8,
+      "height": 16
+    },
+    {
+      "key": "143|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "144|h3|Letter",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "145|img|Letter",
+      "kind": "picture",
+      "fontSize": 16,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "146|strong|Bread at the gate",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 132.3,
+      "height": 20
+    },
+    {
+      "key": "147|span|· Halina of Mirograd",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 197.9,
+      "height": 40.5
+    },
+    {
+      "key": "148|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "149|h2|Rime",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "150|img|Rime",
+      "kind": "picture",
+      "fontSize": 20.8,
+      "width": 16,
+      "height": 16
+    },
+    {
+      "key": "151|p|Nothing here yet.",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 19.5
+    },
+    {
+      "key": "152|h2|Echoes",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "153|p|Things the patrons said,",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 294,
+      "height": 39
+    },
+    {
+      "key": "154|strong|The Wolf Beneath the Hil",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 196.9,
+      "height": 20
+    },
+    {
+      "key": "155|span|· Faint",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 40.8,
+      "height": 16
+    },
+    {
+      "key": "156|strong|The Hearth-Crone",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 142.3,
+      "height": 20
+    },
+    {
+      "key": "157|span|· Warm",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 47,
+      "height": 16
+    },
+    {
+      "key": "158|strong|The Drowned Bell",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 137,
+      "height": 20
+    },
+    {
+      "key": "159|span|· Faint",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 40.8,
+      "height": 16
+    },
+    {
+      "key": "160|strong|The Pale Smith",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 116.3,
+      "height": 20
+    },
+    {
+      "key": "161|span|· Faint",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 40.8,
+      "height": 16
+    },
+    {
+      "key": "162|strong|The Weaver",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 93.8,
+      "height": 20
+    },
+    {
+      "key": "163|span|· Warm",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 47,
+      "height": 16
+    },
+    {
+      "key": "164|strong|The Pale Smith",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 116.3,
+      "height": 20
+    },
+    {
+      "key": "165|span|· Warm",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 47,
+      "height": 16
+    },
+    {
+      "key": "166|strong|The Wolf Beneath the Hil",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 196.9,
+      "height": 20
+    },
+    {
+      "key": "167|span|· Warm",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 47,
+      "height": 16
+    },
+    {
+      "key": "168|strong|The Unlit",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 70.2,
+      "height": 20
+    },
+    {
+      "key": "169|span|· Bright",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 47.7,
+      "height": 16
+    },
+    {
+      "key": "170|strong|The Weaver",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 93.8,
+      "height": 20
+    },
+    {
+      "key": "171|span|· Faint",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 40.8,
+      "height": 16
+    },
+    {
+      "key": "172|strong|The Unlit",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 70.2,
+      "height": 20
+    },
+    {
+      "key": "173|span|· Faint",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 40.8,
+      "height": 16
+    },
+    {
+      "key": "174|strong|The Hearth-Crone",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 142.3,
+      "height": 20
+    },
+    {
+      "key": "175|span|· Faint",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 40.8,
+      "height": 16
+    },
+    {
+      "key": "176|h2|Scenes",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "177|strong|The way down",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 113.2,
+      "height": 20
+    },
+    {
+      "key": "178|span|· Pechko",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 56.6,
+      "height": 16
+    },
+    {
+      "key": "179|h2|Letters",
+      "kind": "pixel",
+      "fontSize": 20.8,
+      "width": 294,
+      "height": 22.9
+    },
+    {
+      "key": "180|strong|Halvar Two-Smokes",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 157.4,
+      "height": 20
+    },
+    {
+      "key": "181|span|· level 5",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 50.9,
+      "height": 16
+    },
+    {
+      "key": "182|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "183|strong|Zora Sedlak",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 92.8,
+      "height": 20
+    },
+    {
+      "key": "184|span|· level 5",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 50.9,
+      "height": 16
+    },
+    {
+      "key": "185|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "186|strong|Old Ostap",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 77.1,
+      "height": 20
+    },
+    {
+      "key": "187|span|· level 5",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 50.9,
+      "height": 16
+    },
+    {
+      "key": "188|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "189|strong|Vesna of the Weir",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 137.8,
+      "height": 20
+    },
+    {
+      "key": "190|span|· level 5",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 50.9,
+      "height": 16
+    },
+    {
+      "key": "191|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "192|strong|Halvar Two-Smokes",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 157.4,
+      "height": 20
+    },
+    {
+      "key": "193|span|· level 8",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 51,
+      "height": 16
+    },
+    {
+      "key": "194|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "195|strong|Zora Sedlak",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 92.8,
+      "height": 20
+    },
+    {
+      "key": "196|span|· level 8",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 51,
+      "height": 16
+    },
+    {
+      "key": "197|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "198|strong|Herdis Strayfinder",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 143.2,
+      "height": 20
+    },
+    {
+      "key": "199|span|· level 5",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 50.9,
+      "height": 16
+    },
+    {
+      "key": "200|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "201|strong|Bjarna Ice-Hand",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 126.1,
+      "height": 20
+    },
+    {
+      "key": "202|span|· level 5",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 50.9,
+      "height": 16
+    },
+    {
+      "key": "203|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "204|strong|Old Ostap",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 77.1,
+      "height": 20
+    },
+    {
+      "key": "205|span|· level 8",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 51,
+      "height": 16
+    },
+    {
+      "key": "206|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "207|strong|Radek the Gravedigger",
+      "kind": "text",
+      "fontSize": 16,
+      "width": 178.4,
+      "height": 20
+    },
+    {
+      "key": "208|span|· level 5",
+      "kind": "text",
+      "fontSize": 13,
+      "width": 50.9,
+      "height": 16
+    },
+    {
+      "key": "209|span|new",
+      "kind": "text",
+      "fontSize": 12,
+      "width": 31.7,
+      "height": 18
+    },
+    {
+      "key": "210|button|Hold ●",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "211|button|Contracts (1)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "212|button|Hunters",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "213|button|Archive (71)",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    },
+    {
+      "key": "214|button|More",
+      "kind": "bar",
+      "fontSize": 13,
+      "width": 72,
+      "height": 52
+    }
+  ]
+}

@@ -58,8 +58,26 @@
   box-sizing: border-box;
 }
 
+/* GDD §9.20: Text size. One variable scales the root font size, so every rem-sized body-font
+   text grows with it; the pixel font, sprites and the two bars undo it with --text-undo. */
+:root {
+  --text-scale: 1;
+  --text-undo: 1;
+}
+
+:root[data-text-size='large'] {
+  --text-scale: 1.15;
+  --text-undo: 0.8695652174;
+}
+
+:root[data-text-size='largest'] {
+  --text-scale: 1.3;
+  --text-undo: 0.7692307692;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
+  font-size: calc(100% * var(--text-scale));
 }
 
 body {

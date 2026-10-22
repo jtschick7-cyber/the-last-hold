@@ -1,5 +1,6 @@
 import type { Settings } from '../../core/state/game-state';
-import { dispatch, game, version } from '../app/runtime';
+import { TEXT_SIZES, type TextSize } from '../../platform/app-settings';
+import { appSettings, dispatch, game, setTextSize, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.10: theme, best-buy hint, rates per minute or hour, reduce motion.
@@ -27,6 +28,35 @@ const Choice = <K extends keyof Settings>({
             }
           >
             {text}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const TEXT_SIZE_LABEL: Record<TextSize, string> = {
+  match: 'Match phone',
+  large: 'Large',
+  largest: 'Largest',
+};
+
+// GDD §9.20: lives in the settings key outside the save, so it is set directly, not by a command.
+const TextSizeChoice = () => {
+  const current = appSettings.value.textSize;
+  return (
+    <div class={`${styles.row} ${styles.divider}`}>
+      <span class={styles.grow}>Text size</span>
+      <div class={styles.segmentedWrap} role="group" aria-label="Text size">
+        {TEXT_SIZES.map((size) => (
+          <button
+            type="button"
+            key={size}
+            class={current === size ? styles.segmentOn : styles.segment}
+            aria-pressed={current === size}
+            onClick={() => setTextSize(size)}
+          >
+            {TEXT_SIZE_LABEL[size]}
           </button>
         ))}
       </div>
@@ -71,6 +101,7 @@ export const SettingsSheet = () => {
           ['off', 'Off'],
         ]}
       />
+      <TextSizeChoice />
     </div>
   );
 };

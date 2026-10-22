@@ -33,7 +33,11 @@ export const HoldScreen = () => {
         <div class={styles.row}>
           <h1
             class={`${styles.grow} ${styles.cardTitle}`}
-            style={{ fontSize: '1.6rem', color: 'var(--c-ember)', textTransform: 'none' }}
+            style={{
+              fontSize: 'calc(1.6rem * var(--text-undo))',
+              color: 'var(--c-ember)',
+              textTransform: 'none',
+            }}
           >
             Stanholm — {ages[s.cycle.age].name}
           </h1>
