@@ -64,7 +64,7 @@ h1{font-size:16px;margin:0 0 10px;font-weight:600}
 figure{margin:0;padding:6px;background:#39314b;border-radius:6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
 figure.wide{width:372px}figure.scene{width:332px}
 img{image-rendering:pixelated;display:block}.bg{display:inline-flex;padding:4px;border-radius:3px}
-.frames{gap:2px}.frames span{display:block;image-rendering:pixelated}
+.frames{gap:2px}.frames span{display:block;flex:none;image-rendering:pixelated}
 .n{font-size:22px;font-weight:700;color:#f4b41b;line-height:1}.id{font-size:10px;color:#a0938e;max-width:150px;word-break:break-all}
 .stack{position:relative;display:block;width:320px;height:128px;background:${DARK}}.stack img{position:absolute;left:0;top:0}`;
 

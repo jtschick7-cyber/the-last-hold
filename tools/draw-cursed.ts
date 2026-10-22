@@ -52,41 +52,97 @@ export const gloamMoths = (c: Canvas): void => {
 
 /** Ribbonshade: a thin pale shape standing in a forge doorway, a blue ribbon at its wrist. */
 export const ribbonshade = (c: Canvas): void => {
-  // The doorway: dark stone with a lintel, and the forge's cold glow low behind it.
-  c.rect(14, 6, 36, 58, C.coal);
-  c.rect(18, 10, 28, 54, C.ink);
-  c.rect(14, 6, 36, 4, C.stone);
-  c.rect(12, 4, 40, 3, C.ash);
-  c.ellipse(CX, 62, 14, 6, C.wine);
-  c.ellipse(CX, 63, 9, 3, C.rust);
-  // A thin body, arms hanging at the sides, the way a child stands to be looked over.
-  c.rect(26, 38, 12, 26, C.ash);
-  c.rect(26, 38, 3, 26, C.bone);
-  c.rect(35, 38, 3, 26, C.stone);
-  c.rect(22, 40, 4, 18, C.ash);
-  c.rect(38, 40, 4, 18, C.stone);
-  // A narrow, bowed head with hollow eyes and no mouth.
+  // v1.0 (TV.8a): a hunched, sorrowful wraith in ash-dark cloth, the hooded shade of its sprite.
+  c.polygon(
+    [
+      [32, 6],
+      [41, 9],
+      [45, 19],
+      [53, 32],
+      [57, 48],
+      [60, 63],
+      [4, 63],
+      [7, 48],
+      [11, 32],
+      [19, 19],
+      [23, 9],
+    ],
+    (x, y) => (x < 18 || y < 14 ? C.violet : x > 46 ? C.ink : C.plum),
+  );
+  c.polygon(
+    [
+      [32, 12],
+      [38, 15],
+      [42, 24],
+      [48, 36],
+      [52, 52],
+      [12, 52],
+      [16, 36],
+      [22, 24],
+      [26, 15],
+    ],
+    (x) => (x > 40 ? C.ink : C.plum),
+  );
+  // The bowed head: a pale, blank, narrow mask, tipped forward, with sad hollow eyes.
   c.ellipse(CX, 26, 8, 11, (x) => (x > 35 ? C.ash : C.bone));
-  c.rect(27, 24, 3, 4, C.ink);
-  c.rect(34, 24, 3, 4, C.ink);
-  c.set(28, 25, C.orange);
-  c.set(35, 25, C.orange);
-  // Singed edges: a faint ember glow on one shoulder and the brow.
+  c.rect(26, 24, 4, 4, C.ink);
+  c.rect(34, 24, 4, 4, C.ink);
+  c.set(26, 28, C.ink);
+  c.set(37, 28, C.ink);
+  c.set(28, 26, C.orange);
+  c.set(35, 26, C.orange);
+  c.rect(28, 34, 1, 5, C.ash);
+  c.rect(35, 34, 1, 4, C.ash);
+  // Heavy sloped shoulders and two long arms ending in singed hands at the middle.
+  c.polygon(
+    [
+      [19, 38],
+      [26, 36],
+      [26, 56],
+      [22, 58],
+    ],
+    C.stone,
+  );
+  c.polygon(
+    [
+      [45, 38],
+      [38, 36],
+      [38, 56],
+      [42, 58],
+    ],
+    C.coal,
+  );
+  c.rect(22, 56, 6, 6, C.ash);
+  c.rect(36, 56, 6, 6, C.stone);
   for (const [x, y] of [
-    [38, 38],
-    [39, 40],
-    [26, 38],
-    [30, 16],
-    [34, 16],
+    [22, 62],
+    [24, 63],
+    [27, 62],
+    [37, 63],
+    [39, 62],
+    [41, 63],
   ] as const)
     c.set(x, y, C.orange);
-  // The ribbon at its right wrist: blue, a lighter stitch at the hem.
-  c.rect(39, 52, 3, 3, C.ink);
-  c.rect(40, 54, 4, 10, C.blue);
-  c.rect(40, 54, 1, 10, C.cyan);
-  c.rect(40, 62, 4, 1, C.ice);
-  c.set(41, 62, C.frost);
-  c.set(43, 62, C.frost);
+  for (const [x, y] of [
+    [24, 62],
+    [40, 62],
+  ] as const)
+    c.set(x, y, C.gold);
+  // Embers along the hood's edge.
+  for (const [x, y] of [
+    [23, 12],
+    [41, 12],
+    [10, 36],
+    [54, 36],
+  ] as const)
+    c.set(x, y, C.orange);
+  // The blue ribbon at its right wrist, stitched in pale thread, its end hanging.
+  c.rect(35, 52, 7, 4, C.blue);
+  c.rect(35, 52, 7, 1, C.cyan);
+  for (let x = 36; x < 42; x += 2) c.set(x, 54, C.frost);
+  c.rect(40, 56, 3, 8, C.blue);
+  c.rect(40, 56, 1, 8, C.cyan);
+  for (let y = 57; y < 63; y += 2) c.set(41, y, C.frost);
 };
 
 /** Anvil-wight: a dead smith's face under a leather cap, over a cold anvil, hammer raised. */

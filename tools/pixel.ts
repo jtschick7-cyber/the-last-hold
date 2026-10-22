@@ -49,6 +49,8 @@ const PORTRAIT_SIZE = 64;
 /** A square canvas: 64 px for portraits, 32 px for battle sprites (GDD §9.12), 16 px for icons. */
 export class Canvas {
   readonly px: (string | null)[];
+  /** A battle sprite's drawing sets this when its cloth is near ink, so its downed pose keeps a rim (v1.0, TV.8a). */
+  rimmedDowned = false;
 
   constructor(readonly size: number = PORTRAIT_SIZE) {
     this.px = Array.from({ length: size * size }, () => null);
@@ -90,6 +92,30 @@ export class Canvas {
         const dy = (y - cy) / ry;
         if (dx * dx + dy * dy <= 1) this.set(x, y, typeof c === 'string' ? c : c(x, y));
       }
+    }
+  }
+
+  /** A filled polygon (even-odd scanline); `c` may pick a color per pixel. */
+  polygon(
+    pts: readonly (readonly [number, number])[],
+    c: string | ((x: number, y: number) => string | null),
+  ): void {
+    const ys = pts.map((p) => p[1]);
+    for (let y = Math.floor(Math.min(...ys)); y <= Math.ceil(Math.max(...ys)); y++) {
+      const xs: number[] = [];
+      pts.forEach(([x0, y0], i) => {
+        const [x1, y1] = pts[(i + 1) % pts.length] as readonly [number, number];
+        if ((y0 <= y && y1 > y) || (y1 <= y && y0 > y))
+          xs.push(x0 + ((y - y0) / (y1 - y0)) * (x1 - x0));
+      });
+      xs.sort((a, b) => a - b);
+      for (let k = 0; k + 1 < xs.length; k += 2)
+        for (
+          let x = Math.round(xs[k] as number);
+          x <= Math.round((xs[k + 1] as number) - 0.01);
+          x++
+        )
+          this.set(x, y, typeof c === 'string' ? c : c(x, y));
     }
   }
 
