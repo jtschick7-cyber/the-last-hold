@@ -547,7 +547,7 @@ Content tests: lore §34.10, and "every name and every contract species has a so
 
 ### v1.0 — Polish
 
-**Status:** in progress *(playtest pending; fleshed out 2026-10-21; decisions D472–D495; files in `docs/flesh-out/v1.0/`)*
+**Status:** complete *(playtest passed 2026-10-22, D497; fleshed out 2026-10-21; decisions D472–D497; files in `docs/flesh-out/v1.0/`)*
 
 **Scope:** the 1.0 release. **No game rule, number, formula, story text or save field changes.** An art pass (a Keep/Redraw contact sheet, then redraws of what the owner marks, about 40 at most, and an app icon the owner picks); a UX and accessibility pass (the Archive tabs at 320 px, a Text size setting, reduced motion everywhere, contrast in both themes, 44 px tap targets); a backup reminder; the Wolf's name (Gaunt Wolf, applying D71); a balance **audit** (no retune) with a report-only estimate of how long it takes to Study all 16 species; release checks. Decided **out**: achievements (D474), audio (D476), the Descent and rising difficulty (D477), any Orders change (D479).
 

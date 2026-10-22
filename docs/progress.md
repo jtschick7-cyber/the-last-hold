@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
-- **Milestone:** v1.0 "Polish" (D472–D495), in progress.
-- **Last task:** TV.13 hand-off: PR opened, playtest pending.
-- **Next:** the owner's playtest on the preview; then (owner says passed) `sim:accept`, merge, tag `v1.0.0`.
+- **Milestone:** v1.0 "Polish" (D472–D497), complete.
+- **Last task:** v1.0 complete: playtest passed, merged (D497).
+- **Next:** the owner tags `v1.0.0` by hand; then the next milestone's flesh-out (audio, the Descent, rising difficulty).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -218,4 +218,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Fix (owner chose a):** tab labels wrap (`overflow-wrap`), credits `break-spaces`; the Match baseline file holds a font fingerprint (`_font`) and the width comparison runs only on that font (the scaling checks always run). Weaker on CI by design, with the owner's yes.
 - **Checked:** all 80 browser tests pass with the wider font; same suite with this machine's font run before the push. `npm run check` green.
 - **Skipped:** nothing. No old test edited besides `polish-text-size.spec.ts` (mine, TV.4a) and its baseline file (one key added).
+
+## 2026-10-22 — v1.0 milestone end
+- **The owner said the playtest passed.** `sim:accept`: baseline identical to v0.11 (nothing to commit).
+- **CI on the final code:** `check`, `e2e` (80 browser tests), simulator shards, judge, deploy all green. `bench` red on the known row "odds with 3 candidates" (207, then 225 ms against 200; D445). The owner agreed to merge anyway (D497). No limit changed.
+- **Merged** PR 17 from `milestone/v1.0`. **The owner tags `v1.0.0` by hand.**
+- **Deferred, by decision:** audio, the Descent, rising difficulty, event cosmetics and legendary hunters' animation, screen-reader labels, Q41 and Q48, the rare species' slow arrival (Q46).
 
