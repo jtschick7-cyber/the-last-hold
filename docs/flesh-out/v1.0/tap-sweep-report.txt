@@ -1,20 +1,32 @@
-TAP SWEEP: 16 findings over 72 screens
-rates @320: OUTSIDE Show breakdown (291 to 335 of 320)
-rates @320: OUTSIDE Show breakdown (291 to 335 of 320)
-rates @320: OUTSIDE Show breakdown (291 to 335 of 320)
-rates @320: OUTSIDE Show breakdown (291 to 335 of 320)
-rates @360: OUTSIDE Show breakdown (331 to 375 of 360)
-rates @360: OUTSIDE Show breakdown (331 to 375 of 360)
-rates @360: OUTSIDE Show breakdown (331 to 375 of 360)
-rates @360: OUTSIDE Show breakdown (331 to 375 of 360)
-rank @320: OUTSIDE Show breakdown (291 to 335 of 320)
-rank @320: OUTSIDE Show breakdown (291 to 335 of 320)
-rank @320: OUTSIDE Show breakdown (291 to 335 of 320)
-rank @320: OUTSIDE Show breakdown (291 to 335 of 320)
-rank @360: OUTSIDE Show breakdown (331 to 375 of 360)
-rank @360: OUTSIDE Show breakdown (331 to 375 of 360)
-rank @360: OUTSIDE Show breakdown (331 to 375 of 360)
-rank @360: OUTSIDE Show breakdown (331 to 375 of 360)
+TAP SWEEP: 28 findings over 72 screens
+hold-bastion @320: COVERED 74 (under button "Show breakdown")
+hold-bastion @360: COVERED 74 (under button "Show breakdown")
+hold-hamlet @320: COVERED · 3 beds (under button "Show breakdown")
+hold-hamlet @320: COVERED 30 (under button "Show breakdown")
+hold-keep @320: COVERED 0.0 (under button "Show breakdown")
+hold-citadel @320: COVERED 0.0 (under button "Show breakdown")
+hold-hamlet @360: COVERED · 3 beds (under button "Show breakdown")
+hold-hamlet @360: COVERED 30 (under button "Show breakdown")
+hold-keep @360: COVERED 0.0 (under button "Show breakdown")
+hold-citadel @360: COVERED 0.0 (under button "Show breakdown")
+chapter-scene @320: COVERED 74 (under button "Show breakdown")
+chapter-scene @360: COVERED 74 (under button "Show breakdown")
+remembering-card-not-ready @320: COVERED · 13 beds (under button "Show breakdown")
+remembering-card-not-ready @320: COVERED 123 (under button "Show breakdown")
+remembering-card-open @320: COVERED · 13 beds (under button "Show breakdown")
+remembering-card-open @320: COVERED 123 (under button "Show breakdown")
+remembering-card-after @320: COVERED · 13 beds (under button "Show breakdown")
+remembering-card-after @320: COVERED 123 (under button "Show breakdown")
+remembering-card-not-ready @360: COVERED · 13 beds (under button "Show breakdown")
+remembering-card-not-ready @360: COVERED 123 (under button "Show breakdown")
+remembering-card-open @360: COVERED · 13 beds (under button "Show breakdown")
+remembering-card-open @360: COVERED 123 (under button "Show breakdown")
+remembering-card-after @360: COVERED · 13 beds (under button "Show breakdown")
+remembering-card-after @360: COVERED 123 (under button "Show breakdown")
+remembering-card-after-vigil @320: COVERED · 13 beds (under button "Show breakdown")
+remembering-card-after-vigil @320: COVERED 123 (under button "Show breakdown")
+remembering-card-after-vigil @360: COVERED · 13 beds (under button "Show breakdown")
+remembering-card-after-vigil @360: COVERED 123 (under button "Show breakdown")
 NOT REACHED / MISSING TEXT: 0
 FLOW FAILURES: 0
 SCREENS (id | list line | tappables scanned per width)
@@ -37,7 +49,7 @@ archive-names | Archive (Names) | 320:12 in page ; 360:12 in page
 document-reader | Archive (document reader) | 320:1 in sheet "My boy writes no letters" ; 360:1 in sheet "My boy writes no letters"
 orders-seats | Orders (card, seats) | 320:4 in sheet "Change seats" ; 360:4 in sheet "Change seats"
 order-sheet | Orders (sheets) | 320:8 in sheet "Thanes' Moot" ; 360:8 in sheet "Thanes' Moot"
-last-stand | Last Stand screen | 320:22 in sheet "The Last Stand" ; 360:22 in sheet "The Last Stand"
+last-stand | Last Stand screen | 320:19 in sheet "The Last Stand" ; 360:22 in sheet "The Last Stand"
 delve-entry | a Delve (entry) | 320:15 in sheet "Delve" ; 360:15 in sheet "Delve"
 more-menu | More | 320:16 in page ; 360:16 in page
 more-reports | More (Reports) | 320:1 in sheet "Reports" ; 360:1 in sheet "Reports"

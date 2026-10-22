@@ -11,6 +11,8 @@ export interface NumProps {
   breakdown: () => Breakdown;
   /** Show the ⓘ marker (GDD §9.1) for key numbers. */
   marked?: boolean;
+  /** The ⓘ sits at a sheet's right edge: its hit area grows leftwards. */
+  edge?: boolean;
 }
 
 const HOVER_DELAY_MS = 350;
@@ -19,7 +21,7 @@ const HOVER_DELAY_MS = 350;
  * GDD §9.1 / §5.0: a number whose breakdown opens on long-press, an ⓘ tap, or
  * Enter; on desktop, hovering shows it in a popover.
  */
-export const Num = ({ text, breakdown, marked }: NumProps) => {
+export const Num = ({ text, breakdown, marked, edge }: NumProps) => {
   const [hover, setHover] = useState<Breakdown | null>(null);
   const timer = useRef<number | null>(null);
   const open = (): void => {
@@ -53,7 +55,7 @@ export const Num = ({ text, breakdown, marked }: NumProps) => {
       {marked && (
         <button
           type="button"
-          class={`${styles.num} ${styles.info}`}
+          class={`${styles.num} ${styles.info} ${edge ? styles.infoEdge : ''}`}
           onClick={open}
           aria-label="Show breakdown"
         >
