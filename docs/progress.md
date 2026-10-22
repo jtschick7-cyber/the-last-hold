@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.9 approved. TV.10a drawn (12 icons), waiting for the owner's approval.
-- **Next:** TV.10b (8 scenes), then the app-icon outputs with the preview corner mark (D489 (5)).
+- **Last task:** TV.10a approved. TV.10b drawn (8 scenes), waiting for the owner's approval.
+- **Next:** TV.10c (app-icon files with the preview corner mark, D489 (5)); then TV.10 box, TV.11.
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -165,3 +165,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Per-id:** each change is inside that icon's own function, or a new vial helper used by the three oils only; the potions and other flasks are unchanged (hash test passes).
 - **Docs typo fixed again:** ten more rows of `art-marks.md` (the sibling rows) had a stray empty cell, so the hash test did not read them as Redraw. Removed it; no mark changed.
 - **Check green; no old test edited. Skipped:** nothing. TV.10 stays open.
+
+## 2026-10-22 — v1.0 TV.10b: art batch 3, part b: scenes (drawn, not yet approved)
+- **TV.10a approved.** **8 scenes:** Hamlet bell (own wooden post and crossbeam); the four frost looks (clean rime: caps on roofs and trees with a few icicles, broken lines on ledges and sills, the foot of the walls, the grass edge and the path edges; no random speckle); Bell-Watchers (stone gatehouse arch, bronze bell on an iron hook, no white line); Moot (five chairs behind the table, bread on it, the empty sixth chair at the head); Quenchers (glowing coals, flagstone seams and the crack, Bohdan's cold grey stone on the hearthstone; the brown box is gone). Sheet: `docs/flesh-out/v1.0/before-after/tv10b-scenes.png`.
+- **Per-id:** the Hamlet bell only changes for the hamlet; the other ages' bells are byte-identical. The frost code is shared by all four ages (all four are marked). Order scenes edited in place.
+- **Tool:** `tools/before-after.ts` now shows look and cosmetic overlays on top of their hold scene, and scenes at their real height.
+- **Seen, not changed:** the Quenchers' stone is small (5 px); the Moot's sixth chair stands at the right end (the table is seen from the front, so "the head" is a side).
+- **Check green; no old test edited. Skipped:** nothing. TV.10 stays open (10c: app-icon files).

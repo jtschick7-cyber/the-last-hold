@@ -104,6 +104,20 @@ const bell = (c: Canvas, x: number, y: number): void => {
   c.set(x + 1, y + 7, C.clay);
 };
 
+/** v1.0 (TV.10b): the Hamlet's bell hangs from its own wooden post and crossbeam, not from the sky. */
+const bellPost = (c: Canvas, x: number, y: number): void => {
+  for (const px of [x - 6, x + 7]) {
+    c.rect(px, y - 4, 2, 19, C.brown);
+    c.rect(px, y - 4, 1, 19, C.clay);
+  }
+  c.rect(x - 7, y - 5, 17, 2, C.brownDark);
+  c.rect(x - 7, y - 5, 17, 1, C.brown);
+  c.line(x - 6, y + 3, x - 3, y - 3, C.brown, 1);
+  c.line(x + 8, y + 3, x + 5, y - 3, C.brown, 1);
+  c.rect(x + 1, y - 3, 1, 3, C.coal);
+  bell(c, x, y);
+};
+
 export const drawCosmetic = (id: CosmeticId, age: AgeId): Canvas => {
   const a = ANCHORS[age];
   const c = new Canvas(SCENE_W);
@@ -122,7 +136,8 @@ export const drawCosmetic = (id: CosmeticId, age: AgeId): Canvas => {
       carvedDoor(c, a.door);
       break;
     case 'watchtower-bell':
-      bell(c, ...a.bell);
+      if (age === 'hamlet') bellPost(c, a.bell[0], a.bell[1] + 1);
+      else bell(c, ...a.bell);
       c.outline(C.ink);
       break;
   }

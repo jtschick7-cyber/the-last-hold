@@ -3,6 +3,7 @@
 //   npx vite-node tools/before-after.ts <sheet-name> <n,n,...>   (numbers from art-marks.md)
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { chromium } from '@playwright/test';
+import { PNG } from 'pngjs';
 import { SPRITE_FRAME_NAMES, SPRITE_PX } from '../src/content/assets';
 import { numberedAssets } from './contact-sheet-data';
 
@@ -16,9 +17,23 @@ const read = (dir: string, file: string): string | null => {
   const url = new URL(`../${dir}/${file}`, import.meta.url);
   return existsSync(url) ? `data:image/png;base64,${readFileSync(url).toString('base64')}` : null;
 };
+/** A scene overlay (a look or a cosmetic) shown over its base hold scene, as the game stacks them. */
+const overOver = (dir: string, file: string, id: string): string | null => {
+  const age = id.split('.').pop() ?? '';
+  const over = new URL(`../${dir}/${file}`, import.meta.url);
+  const base = new URL(`../public/assets/scenes/hold-${age}.png`, import.meta.url);
+  if (!existsSync(over) || !existsSync(base)) return null;
+  const b = PNG.sync.read(readFileSync(base));
+  const o = PNG.sync.read(readFileSync(over));
+  for (let i = 0; i < o.data.length; i += 4) {
+    if ((o.data[i + 3] ?? 0) === 0) continue;
+    for (let k = 0; k < 4; k++) b.data[i + k] = o.data[i + k] ?? 0;
+  }
+  return `data:image/png;base64,${PNG.sync.write(b).toString('base64')}`;
+};
 const K = Number(process.env.K ?? 3);
-const still = (src: string | null, px: number, k: number): string =>
-  src ? `<img src="${src}" width="${px * k}" height="${px * k}" alt="">` : '<i>missing</i>';
+const still = (src: string | null, px: number, k: number, py = px): string =>
+  src ? `<img src="${src}" width="${px * k}" height="${py * k}" alt="">` : '<i>missing</i>';
 const strip = (src: string | null, k: number): string =>
   src
     ? `<span class="frames">${SPRITE_FRAME_NAMES.map(
@@ -31,14 +46,18 @@ const cells = wanted.map((n) => {
   const x = numberedAssets.find((a) => a.n === n);
   if (!x) throw new Error(`No picture numbered ${n}`);
   const f = x.asset.file;
-  const before = read('art-src/previous', f);
-  const after = read('public/assets', f);
+  const stacked = /^scene\.(look|cosmetic)\./.test(x.asset.id);
+  const before = stacked
+    ? overOver('art-src/previous', f, x.asset.id)
+    : read('art-src/previous', f);
+  const after = stacked ? overOver('public/assets', f, x.asset.id) : read('public/assets', f);
   const isSprite = x.asset.kind === 'sprite';
   const px = x.asset.size[0];
+  const py = x.asset.size[1];
   const view = (src: string | null): string =>
     isSprite
       ? strip(src, K)
-      : `<span class="bg">${still(src, px, K)}</span><span class="bg light">${still(src, px, 1)}</span>`;
+      : `<span class="bg">${still(src, px, K, py)}</span><span class="bg light">${still(src, px, 1, py)}</span>`;
   return `<figure class="${isSprite ? 'wide' : ''}"><div class="t"><b>${n}</b> ${x.asset.id.replace(/^(portrait|sprite|icon|scene)\./, '')}</div>
 <div class="row">${process.env.ONLY === 'after' ? '' : `<div><small>before</small>${view(before)}</div>`}<div><small>after</small>${view(after)}</div></div></figure>`;
 });
