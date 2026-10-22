@@ -150,6 +150,8 @@ export const contractMoves = (
   reserve: Bundle,
   /** Silver hires, gear and the Lodge, Hut and Garden leave alone while the policy saves for the Rank-up (goals.recruitHold, D132). */
   silverHold = 0,
+  /** v1.0 (report-only): puts the open contracts in another order than Standard's; absent for every player. */
+  order?: (s: GameState, inStandardOrder: ContractInstance[]) => ContractInstance[],
 ): number => {
   if (!s.board.opened) return 0;
   if (s.results.length > 0) act({ type: 'results.collect' });
@@ -164,7 +166,8 @@ export const contractMoves = (
   refillRoster(s, act);
   actions += brewMoves(s, act);
   actions += experimentMoves(s, act);
-  for (const c of [...s.board.open].sort(byValue)) {
+  const sorted = [...s.board.open].sort(byValue);
+  for (const c of order ? order(s, sorted) : sorted) {
     const free = availableHunters(s);
     if (free.length === 0) break;
     // The strongest party the roster can field; dropping weak members never helps odds.

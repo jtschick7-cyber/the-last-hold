@@ -10,7 +10,7 @@ import { previewStand } from '../stand/preview';
 import { suggestSix } from '../stand/suggest';
 import { standPoolOf } from '../stand/pool';
 import { creatureOf, standSeed, waveList } from '../stand/waves';
-import type { GameState, Preparation } from '../state/game-state';
+import type { ContractInstance, GameState, Preparation } from '../state/game-state';
 import { affordable, type Bundle } from './goals';
 
 // GDD §6.1 (D114): the simulated player's v0.4 rules. Defenses from the Citadel; the
@@ -26,6 +26,11 @@ export interface PolicyMemory {
   lastPerDay: number | null;
   /** The preview the stand was made on (GDD §6.2 Dross-Tide probe); set when it stood, read and cleared by `play`. */
   standPreview?: { readonly median: number; readonly p10: number; readonly p90: number };
+  /**
+   * v1.0 (D485 (4), report-only): reorders the open contracts before the launches. Absent for every
+   * simulator player, so their runs are exactly as before; only the species-estimate script sets it.
+   */
+  contractOrder?: (s: GameState, inStandardOrder: ContractInstance[]) => ContractInstance[];
 }
 
 export const freshMemory = (): PolicyMemory => ({ cycle: 0, lastPerDay: null });
