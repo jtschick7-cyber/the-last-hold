@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.10b approved. TV.10c done (app-icon files, preview corner mark), waiting for the owner's approval.
-- **Next:** after approval, tick TV.10; then TV.11 (balance audit and species estimate; stop and ask).
+- **Last task:** TV.10 approved. TV.11 run; stopped for the owner (variant over 10 min, species result).
+- **Next:** owner reads the audit and species estimate and answers Q46; then TV.12 (release checks).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -179,3 +179,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Page:** the favicon link now points to `favicon-32.png`; the apple-touch-icon link was already there; the built manifest lists 192, 512 and the maskable 512. New test `tests/tools/app-icons.test.ts` (sizes, no mark in live, mark inside the safe zone, links, manifest). Sheet: `tv10c-icons.png`.
 - **Note for the playtest:** iOS does not refresh a home-screen icon, so the preview install must be removed and re-added to show the mark (after exporting the save code, D489 (4)). Could not check on a real phone.
 - **Check green (3,066 tests); no old test edited. Skipped:** nothing.
+
+## 2026-10-22 — v1.0 TV.11: the balance audit and the species estimate (stopped for the owner)
+- **TV.10 approved** (box ticked). **Audit:** full suite, 55 runs, 330 s: **all 55 rows pass**, every player equals the v0.11 baseline (176 of 176 "same"). Nothing retuned. Bastion with the stand available is at 96 h (day 4.0), the late edge of days 3 to 4; reported only. Report: `docs/flesh-out/v1.0/balance-audit.md`.
+- **Species variant (report-only):** `sim/species-variant.ts` and `sim/species-order.ts`, with tests (`sim/species-order.test.ts`: nothing judged names it; the rule). Core change: an optional contract-order hook in the policy memory, unused by every player (reports unchanged). Control, A and B, 5 seeds, 25 cycles: **none reaches all 16 Studied**, so the ending never becomes choosable; names and stand at cycle 6 to 7 as in D470. Report: `docs/flesh-out/v1.0/species-estimate.md`.
+- **One-seed look:** Standard has 10 of 16 Studied by day 20, then stalls at 10 to 12; Draugr, Leshy, Strzyga and Rimewrought stay at Identified. The variant's rule does not help. Cause not measured.
+- **Stop:** the 15 runs took 17.3 min (limit 10, D485 (4)). Q46 stays open with this result.
+- **Check:** the full check was green before the variant was added; run again at the end of TV.12. **Skipped:** TV.11 box not ticked (waiting for the owner).

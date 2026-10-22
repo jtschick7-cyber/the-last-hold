@@ -165,6 +165,7 @@ Status: **Answered (a)** by the owner, 2026-10-21 (D469). T11.15b proposes N for
 - **Options (after the estimate):** (a) **Leave it.** The ending is a long-term goal, and the card shows what is missing. (b) **Ease it with a change to the Studied rule.** This is bigger than it sounds: `knowledge.studiedKills` is locked and also drives the Studied damage bonus, half clue time, the six Delve relics' idle sources ("every X species Studied", GDD §8.10a), the Forgotten's Nameless count and every row that depends on them, so it needs a decisions row and a re-run of the whole simulator. (c) **A small UI help** (the Remembering card or the Bestiary names the species still missing). This needs new player-facing text and a GDD edit, which v1.0's rule against new strings forbids without a decisions row, so it would be a new row and, at most, a small extra task. (d) Something you name.
 - **Recommendation:** decide after the estimate. If both variants also take far longer than cycle 6, (c) is the lightest fix; if the realistic case is close to your 20, (a).
 - **Blocks:** nothing in v1.0.
+- **Result of TV.11 (2026-10-22):** none of the 15 runs (plain Standard, A, B; 5 seeds; 25 cycles) gets all 16 Studied, and the rule does not help. A one-seed look: 10 of 16 by day 20, then stuck at 10 to 12; Draugr, Leshy, Strzyga and Rimewrought stay Identified. See `docs/flesh-out/v1.0/species-estimate.md`.
 - **Answer (owner):** *(open)*
 
 ### Q47 — Where do the settings live? *(opened 2026-10-21; answered by the review)*
