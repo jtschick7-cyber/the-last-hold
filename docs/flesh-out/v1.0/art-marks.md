@@ -3,7 +3,7 @@
 Number → id, in id order. The owner marks each row **Keep** or **Redraw**; an empty mark means Keep.
 At most about 40 Redraw in total, at most 12 per session (D475). A test checks that every Keep picture is byte-identical to its v0.11 PNG (`art-src/v0.11-hashes.json`).
 
-**App icon:** *(not chosen yet: current / A / B / C)*
+**App icon:** **keep the current tower** (owner, 2026-10-22). Candidates A, B and C are not used.
 
 | n | id | mark |
 |---|---|---|
