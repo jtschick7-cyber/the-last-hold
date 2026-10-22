@@ -27,7 +27,7 @@ export const SkillsView = () => {
               <strong class={styles.grow}>
                 {v.name} {v.level}
               </strong>
-              <Num text={v.bonusText} breakdown={() => v.bonus.breakdown} marked />
+              <Num text={v.bonusText} breakdown={() => v.bonus.breakdown} marked edge />
             </div>
             <div class={`${styles.small} ${styles.dim}`}>{v.gives}</div>
             <div
