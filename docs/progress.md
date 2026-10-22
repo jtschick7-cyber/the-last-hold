@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.11 done: audit, species estimate, Q46 answered (c) and built (D493).
-- **Next:** TV.12 (release checks, performance and size; stop and ask).
+- **Last task:** TV.12 release checks done (size row proposed, D494).
+- **Next:** TV.13 docs, the pull request and the playtest hand-off (after the owner approves or changes the size row).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -192,3 +192,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Owner chose (c) and approved the wording** "Not yet known well: Draugr, Leshy." The Remembering card (not-open form only) now names the contract species met (Identified or better) but not yet Studied, in the Bestiary's order; absent when there is none. Worked out from the state each time (new field `missing` on the card view, so the existing `counts` and their test are unchanged); no save change, no rule or number changed. GDD §5.15.2 line updated; D493 stays Proposed.
 - **Tests:** new `tests/remembering/missing-line.test.ts` (wording, absent, only Identified-and-not-Studied, open form clears it, after-choice forms). Browser: remembering-layout, widths, contrast and tap-target specs all pass (32).
 - **TV.11 box ticked.** Audit and species files are in `docs/flesh-out/v1.0/`. **No old test edited. Skipped:** nothing. The rest of Q46 (the four rare species) is left as is.
+
+## 2026-10-22 — v1.0 TV.12: release checks
+- **(a) Offline smoke, extended** (`smoke.spec.ts`): after the offline reload, still offline, it opens the debug page, gives +1K wood and +1K food, buys two more Cottages and reloads offline: ×3 is still there. Passes with the other four smoke tests.
+- **(b) Credits:** new test in `credits.test.ts`: the pack list in `docs/credits.md` and the manifest's `pack` rows agree in both directions (names and image counts), and every pack row has a credit. Passes.
+- **(c) Old saves:** `saves.test.ts` now also checks that its name filter leaves no `.json` fixture out and that `v11-played.json` is in. All 25 fixtures load, migrate, validate and round-trip.
+- **(d) Benchmark** (4× slowdown, this container; three runs): every row inside 2× except "odds with 3 candidates" (229 to 245 ms against 200), which fails as expected (D445). That failure stops the test before the later rows, so I read them from the first run, where nothing failed early: Orders card 0.1 ms, sheet 0.1, standing 0.0, v9→v10 18 ms, v10→v11 17 ms, boss preview 63, boss Suggest 495, hunt odds 756, hunt Suggest 1416, Last Stand preview 566; reading start 16 ms. Plain odds read 210 ms once (over 2×) and 178 and 186 ms twice: CPU noise.
+- **Size, proposed (D494):** gzip of every file ≤ **600 KB**. v0.11 500 KB, v1.0 506 KB (+1.3%). Not enforced; **yours to approve.**
+- **(e) Version:** About this build already shows Version (technical design 11.2). Nothing added.
+- **Old tests:** only extended, none weakened. **Skipped:** nothing.

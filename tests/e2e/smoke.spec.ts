@@ -9,6 +9,9 @@ import { begin, closeOrdersScenes, onwardAll } from './helpers';
 const cottageRow = (page: Page) =>
   page.getByRole('listitem').filter({ has: page.locator('strong', { hasText: /^Cottage$/ }) });
 
+const tab = (page: Page, name: string) =>
+  page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}`) });
+
 test('buy a Cottage, reload, and reload again offline', async ({ page, context }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -34,6 +37,25 @@ test('buy a Cottage, reload, and reload again offline', async ({ page, context }
   await context.setOffline(true);
   await page.reload();
   await expect(cottageRow(page)).toContainText('×1');
+
+  // Plan TV.12 (a): still offline, the game takes commands and keeps their result across a reload.
+  // Named commands: Buy Cottage, Buy Cottage, then (debug panel) +1K wood and Buy Cottage again.
+  await page.goto('./?debug');
+  const offlineRow = cottageRow(page);
+  await expect(offlineRow).toContainText('×1');
+  await tab(page, 'More').click();
+  await page.getByRole('button', { name: /^Debug/ }).click();
+  await page.getByRole('button', { name: '+1K wood', exact: true }).click();
+  await page.getByRole('button', { name: '+1K food', exact: true }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
+  await tab(page, 'Hold').click();
+  for (const n of [2, 3]) {
+    await offlineRow.getByRole('button', { name: 'Buy' }).click();
+    await expect(offlineRow).toContainText(`×${n}`);
+  }
+  await page.waitForTimeout(1500); // the save is written on a timer
+  await page.reload();
+  await expect(cottageRow(page)).toContainText('×3');
   await context.setOffline(false);
 
   expect(errors).toEqual([]);

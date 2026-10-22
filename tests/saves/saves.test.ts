@@ -38,6 +38,13 @@ describe('fixtures and migrations (CLAUDE.md "Saves")', () => {
       expect(migrations[v], `migration ${v}`).toBeTypeOf('function');
   });
 
+  // Plan TV.12 (c): the name filter above must not leave a fixture out (v11-played.json included).
+  it('checks every .json file in the fixtures folder', () => {
+    const all = readdirSync(FIXTURES).filter((f) => f.endsWith('.json'));
+    expect(fixtures.sort()).toEqual(all.sort());
+    expect(fixtures).toContain('v11-played.json');
+  });
+
   it.each(fixtures)('%s loads, migrates, validates and round-trips equal', (f) => {
     const first = loadEnvelope(readFixture(f));
     if (!first.ok) throw new Error(first.error);
