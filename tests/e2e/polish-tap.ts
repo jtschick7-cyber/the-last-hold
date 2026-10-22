@@ -73,7 +73,20 @@ export const scanTappables = (page: Page, min = MIN_TAP_PX): Promise<TapScan> =>
       if (cx >= 0 && cy >= 0 && cx < innerWidth && cy < innerHeight) {
         const hit = document.elementFromPoint(cx, cy);
         // Content scrolling under the fixed tab bar or the resource bar is normal; only cover by something else counts.
-        if (hit && hit !== box && !box.contains(hit) && !hit.contains(box) && !fixedOrSticky(hit))
+        // A number's own ⓘ may overlap the number's edge: both open the same breakdown.
+        const own = /_num_/.test(cls) && !/_info_/.test(cls);
+        const itsInfo =
+          own &&
+          /_info_/.test(String(hit?.getAttribute('class') ?? '')) &&
+          hit?.parentElement === el.parentElement;
+        if (
+          hit &&
+          hit !== box &&
+          !box.contains(hit) &&
+          !hit.contains(box) &&
+          !fixedOrSticky(hit) &&
+          !itsInfo
+        )
           covered.push(`${label(el)} (under ${hit.tagName.toLowerCase()} "${label(hit)}")`);
       }
       if (el.tagName === 'BUTTON' && /_num_/.test(cls) && !/_info_/.test(cls)) continue;

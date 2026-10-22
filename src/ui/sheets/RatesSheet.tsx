@@ -40,7 +40,6 @@ export const RatesSheet = () => {
                 text={`${formatRate(rate.value * scale)}/${perHour ? 'h' : 'min'}`}
                 breakdown={() => rate.breakdown}
                 marked
-                edge
               />
             </li>
           );

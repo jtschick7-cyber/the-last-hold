@@ -142,27 +142,19 @@
 .info {
   color: var(--c-text-dim);
   font-size: 0.75em;
-  margin-left: 0.15em;
-  /* D472: a 44 px hit area that grows to the right and up/down only, with the negative
-     margins taking back the room, so the glyph and the line keep their old size and the
-     number beside it is never covered. */
+  /* D472: a 44 px hit area centred on the glyph, with negative margins taking the room back, so
+     the glyph and the line keep their old size. It reaches about 16 px each side, never past the
+     content margin. A short number it overlaps opens the same breakdown. */
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   min-width: 44px;
   min-height: 44px;
   margin-block: -14px;
-  margin-right: -32px;
+  margin-left: calc(0.15em - 16px);
+  margin-right: -16px;
   vertical-align: middle;
   touch-action: manipulation;
-}
-
-/* For an ⓘ at the right edge of a sheet: the hit area grows to the left instead, so it stays
-   inside the window (the number it covers there is long). */
-.infoEdge {
-  justify-content: flex-end;
-  margin-left: -32px;
-  margin-right: 0;
 }
 
 .cost {
