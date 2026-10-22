@@ -331,6 +331,226 @@ const herdisCrook = (c: Canvas): void => {
   c.set(59, 12, C.brown);
 };
 
+const radekShovel = (c: Canvas): void => {
+  // A gravedigger's spade, blade up: it tapers to a point, shod with silver along its edge.
+  pole(
+    c,
+    [
+      [52, 18],
+      [47, 62],
+    ],
+    C.brown,
+    2,
+  );
+  solid(
+    c,
+    [
+      [53, 0],
+      [58, 4],
+      [61, 12],
+      [58, 19],
+      [48, 19],
+      [45, 12],
+      [48, 4],
+    ],
+    (x) => (x < 50 ? C.ash : x > 57 ? C.coal : C.stone),
+  );
+  c.line(48, 5, 53, 1, C.frost, 1);
+  c.line(53, 1, 58, 5, C.frost, 1);
+  c.line(46, 12, 48, 6, C.bone, 1);
+  c.line(60, 12, 58, 6, C.bone, 1);
+  c.line(53, 5, 53, 17, C.coal, 1);
+  c.rect(50, 18, 6, 2, C.brownDark);
+  c.set(52, 19, C.gold);
+};
+
+/** A three-strand plait that hangs from the hair at the temple, tied off with a thread. */
+const plait = (
+  c: Canvas,
+  x0: number,
+  top: number,
+  end: number,
+  hair: Ramp,
+  tie: string,
+  drift: number,
+): void => {
+  const bx = (y: number): number => x0 + (y - top) * drift;
+  for (let y = top; y <= end; y++) {
+    const w = y > end - 8 ? 2 : 3;
+    for (let x = Math.round(bx(y)) - w; x <= Math.round(bx(y)) + w + 1; x++) c.set(x, y, C.ink);
+  }
+  for (let y = top; y <= end; y++) {
+    const w = y > end - 8 ? 2 : 3;
+    const phase = (y - top) % 4;
+    for (let x = Math.round(bx(y)) - w + 1; x <= Math.round(bx(y)) + w; x++) {
+      const diag = (x - Math.round(bx(y)) + w - 1 + phase) % 4;
+      c.set(x, y, diag === 0 ? hair[2] : diag < 3 ? hair[1] : hair[0]);
+    }
+  }
+  c.rect(Math.round(bx(end)) - 1, end - 6, 4, 2, tie);
+  c.rect(Math.round(bx(end)) - 1, end + 1, 4, 3, hair[1]);
+};
+
+const radmilaFinish = (c: Canvas): void => {
+  // A lock grows out of the hair at the temple and runs into a plait over the left shoulder.
+  c.rect(CX - 20, CY - 3, 5, 8, C.ink);
+  c.rect(CX - 19, CY - 3, 4, 7, C.brown);
+  c.rect(CX - 19, CY - 3, 1, 7, C.rust);
+  // A marsh-wife's shawl: wide, heavy shoulders, a green dress showing in the V, a pewter pin.
+  solid(
+    c,
+    [
+      [23, 45],
+      [41, 45],
+      [57, 51],
+      [63, 62],
+      [63, 66],
+      [1, 66],
+      [1, 62],
+      [7, 51],
+    ],
+    (x, y) => (y > 60 ? C.night : x > 44 ? C.night : x < 18 ? C.dusk : C.slate),
+  );
+  c.polygon(
+    [
+      [27, 46],
+      [37, 46],
+      [32, 58],
+    ],
+    C.moss,
+  );
+  c.line(27, 46, 32, 58, C.ink, 1);
+  c.line(37, 46, 32, 58, C.ink, 1);
+  for (let x = 5; x < 62; x += 3) c.set(x, 62 + (x % 2), C.dusk);
+  c.rect(CX - 1, 47, 3, 3, C.ink);
+  c.set(CX, 48, C.bone);
+  plait(c, CX - 19, CY + 4, 58, BROWN, C.moss, -0.02);
+  // An apron over the dress, with a pocket and a silver spoon in it.
+  solid(
+    c,
+    [
+      [18, 55],
+      [46, 55],
+      [48, 66],
+      [16, 66],
+    ],
+    C.bone,
+  );
+  c.rect(34, 59, 9, 6, C.ink);
+  c.rect(35, 60, 7, 5, C.ash);
+  c.line(38, 47, 38, 60, C.ink, 4);
+  c.line(38, 50, 38, 60, C.frost, 2);
+  c.ellipse(38, 46, 4, 5, C.ink);
+  c.ellipse(38, 46, 3, 4, C.frost);
+  c.ellipse(38, 47, 2, 2.5, C.bone);
+};
+
+const ragnhildFinish = (c: Canvas): void => {
+  // The cap's brim hides her eyes in the shared drawing: they are drawn back, a little lower.
+  for (const side of [-1, 1]) {
+    const ex = CX + side * 5.5;
+    c.rect(ex - 2, CY - 2, 5, 1, C.ash);
+    c.rect(ex - 1, CY, 3, 2, C.ink);
+    c.set(ex - 1, CY, C.frost);
+  }
+  // Her bone needle, pushed through the crown of her cap: both ends stick out, one with an eye.
+  c.line(CX - 16, CY - 16, CX + 16, CY - 13, C.ink, 3);
+  c.line(CX - 16, CY - 15, CX + 16, CY - 12, C.bone, 1);
+  c.set(CX - 15, CY - 15, C.ink);
+};
+
+const sigrunFinish = (c: Canvas): void => {
+  // Her hair frames the face under the band: locks down both cheeks to the jaw.
+  const hair: Ramp = [C.blood, C.blood, C.brownDark];
+  for (const side of [-1, 1]) {
+    const x = CX + side * 13;
+    c.rect(x - 1, CY - 5, 4, 17, C.ink);
+    c.rect(x, CY - 5, 2, 16, hair[1]);
+    c.rect(x + (side > 0 ? 1 : 0), CY - 5, 1, 16, hair[2]);
+  }
+  // A dark leather forge-apron: a high collar, straps over the shoulders, scorched and riveted.
+  solid(
+    c,
+    [
+      [22, 44],
+      [42, 44],
+      [49, 66],
+      [15, 66],
+    ],
+    (x) => (x > 38 ? C.brownDark : C.coal),
+  );
+  c.line(22, 44, 14, 58, C.ink, 4);
+  c.line(22, 44, 14, 58, C.brown, 2);
+  c.line(42, 44, 50, 58, C.ink, 4);
+  c.line(42, 44, 50, 58, C.brownDark, 2);
+  c.rect(26, 52, 12, 3, C.ink);
+  c.rect(27, 52, 10, 2, C.brownDark);
+  for (const [x, y] of [
+    [25, 46],
+    [39, 46],
+    [20, 60],
+    [44, 60],
+  ] as const)
+    c.set(x, y, C.gold);
+  for (const [x, y] of [
+    [30, 60],
+    [34, 62],
+    [28, 64],
+  ] as const)
+    c.set(x, y, C.ink);
+  // The bandaged half-hand held near her chest: a thumb, and a wrapped stump where fingers were.
+  c.ellipse(41, 58, 6, 5, C.ink);
+  c.ellipse(41, 58, 5, 4, C.bone);
+  c.rect(38, 55, 8, 1, C.ash);
+  c.rect(38, 58, 8, 1, C.ash);
+  c.rect(38, 61, 8, 1, C.ash);
+  c.rect(39, 56, 5, 1, C.frost);
+  c.rect(35, 58, 3, 3, C.ink);
+  c.rect(35, 58, 2, 2, C.sand);
+};
+
+const tomaBeard = (c: Canvas): void => {
+  // A half-beard: sideburns run down both cheeks and join under the mouth in one dark band round the chin.
+  const pts: readonly Pt[] = [
+    [CX - 13, CY + 1],
+    [CX - 9, CY + 1],
+    [CX - 8, CY + 7],
+    [CX + 8, CY + 7],
+    [CX + 9, CY + 1],
+    [CX + 13, CY + 1],
+    [CX + 11, CY + 14],
+    [CX + 8, CY + 18],
+    [CX + 3, CY + 21],
+    [CX - 3, CY + 21],
+    [CX - 8, CY + 18],
+    [CX - 11, CY + 14],
+  ];
+  solid(c, pts, (x) => (x > CX + 6 ? C.ink : C.coal));
+  // Strands: dark lines of different lengths running down the chin, a few lighter ones on the left.
+  for (let x = CX - 8; x <= CX + 8; x += 3)
+    c.line(x, CY + 10, x + (x < CX ? 1 : -1), CY + 14 + ((x + 8) % 6), C.ink, 1);
+  for (const x of [CX - 9, CX - 6]) c.line(x, CY + 8, x, CY + 12, C.stone, 1);
+  c.rect(CX - 3, CY + 9, 7, 1, C.brown);
+};
+
+const tomaKettle = (c: Canvas): void => {
+  // A copper kettle hung behind the shoulder: a bail, a lid, a spout and a rolled rim.
+  c.line(41, 11, 49, 3, C.ink, 3);
+  c.line(49, 3, 57, 11, C.ink, 3);
+  c.line(41, 11, 49, 3, C.coal, 1);
+  c.line(49, 3, 57, 11, C.coal, 1);
+  c.line(56, 14, 62, 8, C.ink, 5);
+  c.line(56, 14, 62, 8, C.clay, 3);
+  c.ellipse(49, 16, 9, 8, C.ink);
+  c.ellipse(49, 16, 7.5, 6.5, (x, y) => (y > 19 ? C.rust : x < 47 ? C.sand : C.clay));
+  c.ellipse(49, 10, 5, 2.5, C.ink);
+  c.ellipse(49, 10, 4, 1.7, C.rust);
+  c.set(49, 8, C.sand);
+  c.line(43, 20, 55, 20, C.brown, 1);
+  c.set(46, 13, C.cream);
+  c.set(47, 12, C.cream);
+};
+
 const REDRAWS: readonly [PortraitSpec, HunterRedraw][] = [
   [
     hunters.arvid.portrait,
@@ -424,6 +644,44 @@ const REDRAWS: readonly [PortraitSpec, HunterRedraw][] = [
         eyes(c, 11, C.ash);
         beard(c, 11, 17, WHITE, 8);
       },
+    },
+  ],
+  [
+    hunters.radek.portrait,
+    {
+      weapon: radekShovel,
+    },
+  ],
+  [
+    hunters['radmila-of-the-reeds'].portrait,
+    {
+      // No shared braid (drawn by the redraw, on the left, joined to the hair), no satchel (an apron
+      // pocket with a spoon instead).
+      spec: { hair: 'short', weapon: 'staff' },
+      weapon: () => undefined,
+      after: radmilaFinish,
+    },
+  ],
+  [
+    hunters['ragnhild-eye-taker'].portrait,
+    {
+      // The braid floated beside the head; her white hair is under the cap.
+      spec: { hair: 'short' },
+      after: ragnhildFinish,
+    },
+  ],
+  [
+    hunters.sigrun.portrait,
+    {
+      after: sigrunFinish,
+    },
+  ],
+  [
+    hunters.toma.portrait,
+    {
+      spec: { beard: 'none' },
+      weapon: tomaKettle,
+      after: tomaBeard,
     },
   ],
 ];

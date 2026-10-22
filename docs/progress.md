@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.8 approved. TV.9a approved (4 Great Beast/quarry portraits, 6 hunter portraits, 2 creature sprites).
-- **Next:** TV.9b (hunter portraits Radek, Radmila, Ragnhild, Sigrun, Toma + 7 hunter sprites), TV.9c (7 hunter sprites, the downed-pose fix).
+- **Last task:** TV.8 approved. TV.9a approved. TV.9b drawn (5 hunter portraits + 7 hunter sprites), waiting for the owner's approval.
+- **Next:** after approval, TV.9c (the other 7 hunter sprites: Arvid, Bjarna, Gest, Halvar, Herdis, Ostap, Zora; downed pose).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -143,3 +143,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Owner review of 9a:** all pass except Likho, Bjarna, Halvar's and Arvid's axes and Herdis's crook. Second pass: Likho redrawn (gaunt angular face, ragged strands, crooked mouth of jagged fangs); Bjarna's braid is now a three-strand plait with a blue tie, joined to a lock under the hood; both axes have sharp edges, points and toes; Herdis's crook is a big open hook. Check green.
 - **TV.9a approved** by the owner after one last tweak: Bjarna's braid about 20% thinner (7 to 6 px, tail 5 to 4).
 
+
+## 2026-10-22 — v1.0 TV.9b: art batch 2, part b (drawn, not yet approved)
+- **12 pictures:** portraits Radek (blade-up spade, tapered, silver-shod edge), Radmila (braid joined to the hair on the left, marsh-wife shawl and broad shoulders, apron with a silver spoon; no satchel), Ragnhild (eyes back, floating braid gone, bone needle through the cap), Sigrun (hair framing the face, dark leather forge-apron, bandaged half-hand), Toma (half-beard joined across the chin, copper kettle with spout); sprites (downed frame only) of Radek, Radmila, Ragnhild, Sigrun, Stanko, Toma, Vesna. Sheets: `docs/flesh-out/v1.0/before-after/tv9b-*.png`.
+- **Downed pose:** the body was dimmed to ink and vanished, leaving head and weapon apart (the "gap"). These seven now use the TV.8a rim (set per hunter id in `tools/sprite-hunters.ts`, `REDRAWN_DOWNED`); the weapon already turned with the body. 9c adds its seven ids. All other frames and sprites are byte-identical.
+- **Per-id:** portraits in `tools/draw-hunter-redraws.ts` (keyed by the hunter's own portrait object).
+- **Docs typo fixed:** rows 128 to 140 of `art-marks.md` had an extra empty cell, so the Keep hash test did not read them as Redraw. Removed the cell; no mark changed.
+- **Check green; no old test edited. Skipped:** nothing. TV.9 stays open until 9b is approved and 9c is done.

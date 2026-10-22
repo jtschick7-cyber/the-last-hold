@@ -136,19 +136,19 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 | 125 | `sprite.guardian.the-forgotten` | |
 | 126 | `sprite.guardian.unlits-breath` | |
 | 127 | `sprite.hunter.arvid` | Redraw | Hunter sprites (all 127–140): the downed pose generator, so the weapon rotates with the body and the 2–3 px head/torso gap closes. |
-| 128 | `sprite.hunter.bjarna` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 129 | `sprite.hunter.gest-tall-torch` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 130 | `sprite.hunter.halvar` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 131 | `sprite.hunter.herdis` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 132 | `sprite.hunter.ostap` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 133 | `sprite.hunter.radek` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 134 | `sprite.hunter.radmila-of-the-reeds` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 135 | `sprite.hunter.ragnhild-eye-taker` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 136 | `sprite.hunter.sigrun` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 137 | `sprite.hunter.stanko` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 138 | `sprite.hunter.toma` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 139 | `sprite.hunter.vesna` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
-| 140 | `sprite.hunter.zora` | | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 128 | `sprite.hunter.bjarna` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 129 | `sprite.hunter.gest-tall-torch` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 130 | `sprite.hunter.halvar` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 131 | `sprite.hunter.herdis` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 132 | `sprite.hunter.ostap` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 133 | `sprite.hunter.radek` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 134 | `sprite.hunter.radmila-of-the-reeds` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 135 | `sprite.hunter.ragnhild-eye-taker` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 136 | `sprite.hunter.sigrun` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 137 | `sprite.hunter.stanko` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 138 | `sprite.hunter.toma` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 139 | `sprite.hunter.vesna` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
+| 140 | `sprite.hunter.zora` | Redraw | same change as 127 (sibling; owner chose option (a), 2026-10-22) |
 | 141 | `sprite.monster.anvil-wight` | Redraw | Anvil-wight sprite: a hunched smith's head and shoulders hammering an anvil in front of it; fix the disintegrated downed frame. |
 | 142 | `sprite.monster.bies` | |
 | 143 | `sprite.monster.draugr` | |
