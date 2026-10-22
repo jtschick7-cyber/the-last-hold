@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { copyFileSync, readFileSync, readdirSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -33,6 +33,20 @@ const build = {
   builtAt: new Date().toISOString(),
 };
 
+// D489 (5): the preview build's icons carry a visible corner mark. They are copied over the live
+// icons after the bundle is written and before the service worker is built, so the precache and the
+// manifest see the marked files and the live bundle never contains them.
+const previewIcons = {
+  name: 'preview-icons',
+  apply: 'build' as const,
+  writeBundle(options: { dir?: string }): void {
+    if (channel !== 'preview' || !options.dir) return;
+    const from = new URL('./art-src/icons-preview/', import.meta.url);
+    for (const f of readdirSync(from))
+      copyFileSync(new URL(f, from), new URL(`icons/${f}`, new URL(`file://${options.dir}/`)));
+  },
+};
+
 const appName = channel === 'preview' ? 'The Last Hold (Preview)' : 'The Last Hold';
 
 export default defineConfig({
@@ -42,6 +56,7 @@ export default defineConfig({
   },
   plugins: [
     preact(),
+    previewIcons,
     {
       // iPhone uses the page title for the Home Screen name, so each channel
       // needs its own (plan v0.0 acceptance 3).

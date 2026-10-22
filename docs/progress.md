@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.10a approved. TV.10b drawn (8 scenes), waiting for the owner's approval.
-- **Next:** TV.10c (app-icon files with the preview corner mark, D489 (5)); then TV.10 box, TV.11.
+- **Last task:** TV.10b approved. TV.10c done (app-icon files, preview corner mark), waiting for the owner's approval.
+- **Next:** after approval, tick TV.10; then TV.11 (balance audit and species estimate; stop and ask).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -172,3 +172,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Tool:** `tools/before-after.ts` now shows look and cosmetic overlays on top of their hold scene, and scenes at their real height.
 - **Seen, not changed:** the Quenchers' stone is small (5 px); the Moot's sixth chair stands at the right end (the table is seen from the front, so "the head" is a side).
 - **Check green; no old test edited. Skipped:** nothing. TV.10 stays open (10c: app-icon files).
+
+## 2026-10-22 — v1.0 TV.10c: app icon files and the preview corner mark (not yet approved)
+- **TV.10b approved.** The app icon stays the tower; no candidate used (D492). `tools/make-icons.ts` now writes the live set (192, 512, maskable 512, apple-touch 180, and a new favicon 32) to `public/icons/` and the marked set to `art-src/icons-preview/`. The four existing live files are byte-identical.
+- **Corner mark:** a cyan triangle with a pale edge in the top-right corner (inside a maskable icon's safe zone). The preview build copies the marked set over the icons after the bundle is written and before the service worker is built (`previewIcons` in `vite.config.ts`), so the live bundle never holds it. Checked by building both channels: preview `dist` icons equal the marked files; live equal `public/icons`.
+- **Page:** the favicon link now points to `favicon-32.png`; the apple-touch-icon link was already there; the built manifest lists 192, 512 and the maskable 512. New test `tests/tools/app-icons.test.ts` (sizes, no mark in live, mark inside the safe zone, links, manifest). Sheet: `tv10c-icons.png`.
+- **Note for the playtest:** iOS does not refresh a home-screen icon, so the preview install must be removed and re-added to show the mark (after exporting the save code, D489 (4)). Could not check on a real phone.
+- **Check green (3,066 tests); no old test edited. Skipped:** nothing.
