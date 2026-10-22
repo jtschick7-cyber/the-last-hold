@@ -156,9 +156,9 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 | 145 | `sprite.monster.huldra` | |
 | 146 | `sprite.monster.kikimora` | |
 | 147 | `sprite.monster.leshy` | |
-| 148 | `sprite.monster.nix` | |
+| 148 | `sprite.monster.nix` | Redraw | match the redrawn portrait 81: a dark river horse (owner, 2026-10-22, TV.8a review) |
 | 149 | `sprite.monster.poludnitsa` | |
-| 150 | `sprite.monster.ribbonshade` | |
+| 150 | `sprite.monster.ribbonshade` | Redraw | match the redrawn portrait 83: a blue stitched ribbon, singed edges (owner, 2026-10-22, TV.8a review) |
 | 151 | `sprite.monster.rimewrought` | |
 | 152 | `sprite.monster.rusalka` | |
 | 153 | `sprite.monster.strzyga` | |

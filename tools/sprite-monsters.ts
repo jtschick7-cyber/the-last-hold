@@ -28,7 +28,14 @@ const bies = (c: Canvas): void => {
 };
 
 const nix = (c: Canvas): void => {
-  quadruped(c, { fur: FUR.pale, eye: C.cyan, head: 'horse', mane: FUR.water });
+  // v1.0 (TV.8c): a dark river horse like its portrait, with a bright water mane.
+  quadruped(c, {
+    fur: [C.dusk, C.slate, C.plum],
+    eye: C.cyan,
+    head: 'horse',
+    mane: [C.ice, C.cyan, C.blue],
+    belly: C.violet,
+  });
   // Water running off the belly.
   for (const [x, y] of [
     [12, 26],
@@ -242,10 +249,10 @@ const ribbonshade = (c: Canvas): void => {
   c.rect(14, 8, 2, 1, C.ink);
   c.rect(17, 8, 2, 1, C.ink);
   c.set(16, 12, C.ash);
-  // The ribbon winds twice around it and streams away in a long wave, bright against the dark.
+  // The ribbon winds twice around it and streams away in a long wave: blue, stitched pale (v1.0).
   for (const y of [14, 18, 22]) {
-    c.line(11, y, 21, y + 3, C.red, 2);
-    c.line(11, y + 1, 21, y + 4, C.blood, 1);
+    c.line(11, y, 21, y + 3, C.blue, 2);
+    c.line(11, y + 1, 21, y + 4, C.night, 1);
   }
   const pts: readonly (readonly [number, number])[] = [
     [11, 14],
@@ -257,11 +264,24 @@ const ribbonshade = (c: Canvas): void => {
   pts.forEach(([x, y], i) => {
     const next = pts[i + 1];
     if (!next) return;
-    c.line(x, y, next[0], next[1], C.red, 2);
-    c.line(x, y + 2, next[0], next[1] + 2, C.blood, 1);
+    c.line(x, y, next[0], next[1], C.blue, 2);
+    c.line(x, y + 2, next[0], next[1] + 2, C.night, 1);
   });
-  c.set(1, 9, C.pink);
-  c.set(3, 8, C.pink);
+  c.set(1, 9, C.ice);
+  c.set(3, 8, C.ice);
+  for (const [x, y] of [
+    [13, 15],
+    [17, 19],
+    [19, 23],
+  ] as const)
+    c.set(x, y, C.frost);
+  // Singed edges: embers on the hood.
+  for (const [x, y] of [
+    [12, 6],
+    [20, 7],
+    [9, 20],
+  ] as const)
+    c.set(x, y, C.orange);
 };
 
 const anvilWight = (c: Canvas): void => {

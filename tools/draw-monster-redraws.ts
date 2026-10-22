@@ -232,7 +232,10 @@ export const nix = (c: Canvas): void => {
   for (let i = 0; i < 90; i++) {
     const x = 38 + r() * 20;
     const y = 8 + r() * 54;
-    if (c.get(x, y) === C.night) c.set(x, y, r() < 0.5 ? C.blue : r() < 0.5 ? C.cyan : C.plum);
+    if (c.get(x, y) === C.night) {
+      const q = r();
+      c.set(x, y, q < 0.35 ? C.cyan : q < 0.65 ? C.blue : q < 0.75 ? C.ice : C.night);
+    }
   }
   // Drips off the end of the mane.
   for (const x of [46, 50, 54, 57]) c.rect(x, 58 + Math.floor(r() * 3), 1, 4, C.ice);
