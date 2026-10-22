@@ -1659,11 +1659,12 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Reading start** *(v0.11, D469)* | ≤ 50 ms | Tap on R-03's Continue to the first name painted, on the throttled profile (`tests/e2e/remembering-layout.spec.ts`) |
 | **v10 → v11 migration** *(v0.11, D469)* | ≤ 100 ms | A played v10 save, on the load path (the throttled benchmark) |
 | **Remembering save growth** *(v0.11, D469)* | ≤ 0.5 KB | The whole `remembering` block, everything recorded (checked by a unit test, not the throttled benchmark) |
+| **Download size** *(v1.0, D494)* | ≤ 600 KB | The production build, every file compressed with gzip (v0.11: 500 KB; v1.0: 506 KB). Measured at the milestone end; not a test in `npm run check` |
 | **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | **≤ 5 min per CI job** *(D320)* | All policies and checks; the runs play in parallel, one per core (D169), split across parallel CI jobs whose results a final job combines and judges. Never trimmed: same runs, seeds and rows |
 
-A benchmark test checks every row above except the simulator rows on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone: it warns at the budget and fails only at 2× (plan review A10, technical design §11.2).
+A benchmark test checks every row above except the simulator rows and the download size on a CPU-throttled profile (4× slowdown), as a stand-in for a mid-range phone: it warns at the budget and fails only at 2× (plan review A10, technical design §11.2).
 
 ---
 

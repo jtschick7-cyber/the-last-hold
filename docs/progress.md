@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
-- **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.12 release checks done (size row proposed, D494).
-- **Next:** TV.13 docs, the pull request and the playtest hand-off (after the owner approves or changes the size row).
+- **Milestone:** v1.0 "Polish" (D472–D495), in progress.
+- **Last task:** TV.13 hand-off: PR opened, playtest pending.
+- **Next:** the owner's playtest on the preview; then (owner says passed) `sim:accept`, merge, tag `v1.0.0`.
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -201,3 +201,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Size, proposed (D494):** gzip of every file ≤ **600 KB**. v0.11 500 KB, v1.0 506 KB (+1.3%). Not enforced; **yours to approve.**
 - **(e) Version:** About this build already shows Version (technical design 11.2). Nothing added.
 - **Old tests:** only extended, none weakened. **Skipped:** nothing.
+
+## 2026-10-22 — v1.0 TV.13: docs and the playtest hand-off
+- **Owner approved the 600 KB row** (D495, Decided; GDD §6.5 has it as a measured row, not a check in `npm run check`).
+- **Plan:** TV.12 and TV.13 ticked; v1.0 `Status: in progress` (playtest pending). Playtest checklist is in the plan and copied into the PR.
+- **Pull request** opened from `milestone/v1.0` to `main` with the template. Not merged, not tagged.
+- **Not done on purpose:** `sim:accept`, merge and tag wait for the owner's "playtest passed" (the audit in TV.11 already showed every report equal to the v0.11 baseline, so the baseline should only move its milestone label).
+- **Please check CI** on the PR (each simulator job under 5 min, D320; WebKit determinism; e2e). I could not see them from here.
+- **Deferred, by decision:** audio, the Descent, rising difficulty (D476, D477); event cosmetics and legendary hunters' animation (D490); screen-reader labels (D489); Q41 and Q48 name searches; the four rare species' slow arrival (Q46).
+- **Skipped:** nothing. No old test edited.
