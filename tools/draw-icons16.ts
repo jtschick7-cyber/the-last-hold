@@ -144,7 +144,11 @@ export const drawRelicIcon = (id: DelveRelicId): Canvas => icon(RELICS[id]);
 
 export const RARITY_FRAME_SIZE = 20;
 
-/** Faint: a plain thin edge. Warm: gold, with notched corners. Bright: gold and ice, with stars at the corners. */
+/**
+ * Faint: a thin ash edge with notched corners (v1.0, TV.10a: it must differ from the plain Common
+ * frame). Warm: gold, with a small frost diamond at each corner. Bright: gold and ice, with a larger
+ * diamond that reaches the outer edge.
+ */
 export const drawRarityFrame = (rarity: 'faint' | 'warm' | 'bright'): Canvas => {
   const n = RARITY_FRAME_SIZE;
   const c = new Canvas(n);
@@ -154,19 +158,39 @@ export const drawRarityFrame = (rarity: 'faint' | 'warm' | 'bright'): Canvas => 
   c.rect(1, 1, n - 2, n - 2, edge);
   c.rect(2, 2, n - 4, n - 4, inner);
   c.rect(3, 3, n - 6, n - 6, null);
-  if (rarity !== 'faint')
-    for (const [x, y] of [
-      [1, 1],
-      [n - 2, 1],
-      [1, n - 2],
-      [n - 2, n - 2],
-    ] as const) {
-      c.set(x, y, C.frost);
-      if (rarity === 'bright') {
-        c.set(x + (x === 1 ? 1 : -1), y, C.frost);
-        c.set(x, y + (y === 1 ? 1 : -1), C.frost);
-      }
+  for (const [sx, sy] of [
+    [1, 1],
+    [-1, 1],
+    [1, -1],
+    [-1, -1],
+  ] as const) {
+    const at = (dx: number, dy: number): [number, number] => [
+      sx > 0 ? 2 + dx : n - 3 - dx,
+      sy > 0 ? 2 + dy : n - 3 - dy,
+    ];
+    if (rarity === 'faint') {
+      // The corner is cut away: two outer pixels go, the one inside becomes the new edge.
+      c.set(...at(-2, -2), null);
+      c.set(...at(-1, -2), null);
+      c.set(...at(-2, -1), null);
+      c.set(...at(-1, -1), C.ink);
+      continue;
     }
+    // A plus-shaped diamond, its centre frost.
+    for (const [dx, dy] of [
+      [0, -1],
+      [-1, 0],
+      [1, 0],
+      [0, 1],
+    ] as const)
+      c.set(...at(dx, dy), rarity === 'warm' ? C.cream : C.frost);
+    c.set(...at(0, 0), C.frost);
+    if (rarity === 'bright') {
+      c.set(...at(0, -2), C.gold);
+      c.set(...at(-2, 0), C.gold);
+      c.set(...at(-1, -1), C.ice);
+    }
+  }
   return c;
 };
 

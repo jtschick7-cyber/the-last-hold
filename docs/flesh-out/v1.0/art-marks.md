@@ -9,15 +9,15 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 
 | n | id | mark | what to change |
 |---|---|---|---|
-| 1 | `icon.brew.drowned-bane-oil` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
+| 1 | `icon.brew.drowned-bane-oil` | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
 | 2 | `icon.brew.fire-pot` | Redraw | Bombs (Fire Pot, also 3 and 8): a wider clay pot or grenade with a bright fuse spark; narrow the Oils (1, 4, 9) into vials, so potions, oils and bombs differ in silhouette. |
-| 3 | `icon.brew.frost-pot` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
-| 4 | `icon.brew.grave-oil` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
+| 3 | `icon.brew.frost-pot` | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
+| 4 | `icon.brew.grave-oil` | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
 | 5 | `icon.brew.hardwood-tonic` | |
 | 6 | `icon.brew.mending-draught` | |
 | 7 | `icon.brew.quickfoot-tincture` | |
-| 8 | `icon.brew.saltburst` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
-| 9 | `icon.brew.thornbane-oil` | | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
+| 8 | `icon.brew.saltburst` | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
+| 9 | `icon.brew.thornbane-oil` | Redraw | same change as 2 (sibling; owner chose option (a), 2026-10-22) |
 | 10 | `icon.delve-relic.bell-clapper` | |
 | 11 | `icon.delve-relic.cold-iron-nail` | |
 | 12 | `icon.delve-relic.horn-spoon` | |
@@ -49,9 +49,9 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 | 38 | `icon.rank.apprentice` | |
 | 39 | `icon.rank.masterWright` | |
 | 40 | `icon.rank.wright` | |
-| 41 | `icon.rarity.bright` | | Redraw | same change as 42 (sibling; owner chose option (a), 2026-10-22) |
+| 41 | `icon.rarity.bright` | Redraw | same change as 42 (sibling; owner chose option (a), 2026-10-22) |
 | 42 | `icon.rarity.faint` | Redraw | Faint rarity frame: notched corners or small corner diamonds so it differs from the Common frame (#16), as GDD §9.12 requires (also 41 and 43). |
-| 43 | `icon.rarity.warm` | | Redraw | same change as 42 (sibling; owner chose option (a), 2026-10-22) |
+| 43 | `icon.rarity.warm` | Redraw | same change as 42 (sibling; owner chose option (a), 2026-10-22) |
 | 44 | `icon.riftglass` | |
 | 45 | `icon.rime` | |
 | 46 | `icon.sigil.drowned-bell` | |
@@ -114,10 +114,10 @@ At most about 40 Redraw in total, at most 12 per session (D475). A test checks t
 | 103 | `scene.cosmetic.watchtower-bell.citadel` | |
 | 104 | `scene.cosmetic.watchtower-bell.hamlet` | Redraw | Hamlet: add a wooden bell-post or frame for the bell to hang from (it floats in the sky now). |
 | 105 | `scene.cosmetic.watchtower-bell.keep` | |
-| 106 | `scene.look.frost.bastion` | | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
-| 107 | `scene.look.frost.citadel` | | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
+| 106 | `scene.look.frost.bastion` | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
+| 107 | `scene.look.frost.citadel` | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
 | 108 | `scene.look.frost.hamlet` | Redraw | Frost looks: replace the white/cyan static band with clean rime frost on eaves, sills and path edges (Hamlet; the same layer in 106, 107, 109). |
-| 109 | `scene.look.frost.keep` | | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
+| 109 | `scene.look.frost.keep` | Redraw | same change as 108 (sibling; owner chose option (a), 2026-10-22) |
 | 110 | `scene.look.lamp.bastion` | |
 | 111 | `scene.look.lamp.citadel` | |
 | 112 | `scene.look.lamp.hamlet` | |

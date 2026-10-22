@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.8, TV.9a and TV.9b approved. TV.9c drawn (7 hunter sprites, downed frame), waiting for the owner's approval.
-- **Next:** after approval, tick TV.9; then TV.10 (icons, frames, scenes; the app icon stays the tower, preview build gets the corner mark).
+- **Last task:** TV.9 approved. TV.10a drawn (12 icons), waiting for the owner's approval.
+- **Next:** TV.10b (8 scenes), then the app-icon outputs with the preview corner mark (D489 (5)).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -158,3 +158,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **TV.9b approved** (after passes on Radek's spade and Radmila's braid, joined to the hair).
 - **7 pictures:** sprites (downed frame only) of Arvid, Bjarna, Gest, Halvar, Herdis, Ostap, Zora, with the same rim as 9b; `REDRAWN_DOWNED` in `tools/sprite-hunters.ts` now holds all 14 hunters. Idle, lunge and hit frames are byte-identical. Sheet: `docs/flesh-out/v1.0/before-after/tv9c-sprites.png`.
 - **Check green; no old test edited. Skipped:** nothing. No guardian is marked. TV.9 box ticks on approval; TV.8's is ticked now.
+
+## 2026-10-22 — v1.0 TV.10a: art batch 3, part a: icons (drawn, not yet approved)
+- **TV.9 approved** (plan box ticked). **TV.10 plan:** 10a = 12 icons (this); 10b = 8 scenes (104, 106 to 109, 114, 116, 117); 10c = the app-icon files (192, 512, maskable, 180, favicon) with the preview corner mark; the app icon stays the tower.
+- **12 icons:** the three Bombs (wide clay body, band, bright fuse spark) and three Oils (slim vials), Coffin Silver (metal rim, skull stamp), Yrsa's Thole (one black-oak peg, rope loop), the three Delve frames (Faint notched corners; Warm and Bright corner diamonds, so Faint now differs from Common), the Star (legs taper). Sheet: `docs/flesh-out/v1.0/before-after/tv10a-icons.png`.
+- **Per-id:** each change is inside that icon's own function, or a new vial helper used by the three oils only; the potions and other flasks are unchanged (hash test passes).
+- **Docs typo fixed again:** ten more rows of `art-marks.md` (the sibling rows) had a stray empty cell, so the hash test did not read them as Redraw. Removed it; no mark changed.
+- **Check green; no old test edited. Skipped:** nothing. TV.10 stays open.
