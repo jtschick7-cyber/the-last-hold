@@ -226,6 +226,7 @@ export const startGame = async (): Promise<void> => {
   }
   bump();
 
+  // not motion: the game clock's tick
   setInterval(() => {
     if (document.visibilityState !== 'visible' || catchUpProgress.value) return;
     advanceLive(game(), now());

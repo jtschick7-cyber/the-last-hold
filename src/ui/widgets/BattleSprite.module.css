@@ -23,9 +23,12 @@
   image-rendering: pixelated;
 }
 
-/* The two idle frames take turns; reduced motion (tokens.css) stops the animation on the first. */
-.idle {
-  animation: breathe 1.2s steps(1) infinite;
+/* The two idle frames take turns, behind the reduced-motion gate (GDD §9.20): the phone does not
+   ask to reduce and the switch is not on. Otherwise the sprite stays on its first frame. */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='on']) .idle {
+    animation: breathe 1.2s steps(1) infinite;
+  }
 }
 
 @keyframes breathe {

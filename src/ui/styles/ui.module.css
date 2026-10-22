@@ -380,7 +380,13 @@
   line-height: 1.2;
   overflow-wrap: anywhere;
   margin: 0;
-  animation: readingIn 0.6s ease-out;
+}
+
+/* The reduced-motion gate (GDD §9.20): the phone does not ask to reduce and the switch is not on. */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='on']) .readingName {
+    animation: readingIn 0.6s ease-out;
+  }
 }
 
 .readingLine {

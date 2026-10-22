@@ -102,14 +102,6 @@ body {
   white-space: nowrap;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-:root[data-motion='on'] * {
-  animation: none !important;
-  transition: none !important;
-}
+/* Reduced motion (GDD §9.20): every animation and transition sits behind one gate, in the rule that
+   uses it: @media (prefers-reduced-motion: no-preference) with :root:not([data-motion='on']). A test
+   fails on any that does not. */
