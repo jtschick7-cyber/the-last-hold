@@ -1,3 +1,5 @@
+import { motionInterval } from '../motion/registry';
+
 // GDD §9.19 (D464 (4)): the reading's pace is a presentation timing, so it lives here and not in
 // balance.ts. Lore §34.5: about 2 seconds a name. Reduced motion changes the fade, never the speed.
 export const READING_INTERVAL_MS = 2000;
@@ -21,10 +23,10 @@ export const createReadingPlayer = (
   intervalMs: number = READING_INTERVAL_MS,
 ): ReadingPlayer => {
   let i = 0;
-  let timer: ReturnType<typeof setInterval> | null = null;
+  let stopTimer: (() => void) | null = null;
   const stop = (): void => {
-    if (timer !== null) clearInterval(timer);
-    timer = null;
+    stopTimer?.();
+    stopTimer = null;
   };
   const go = (to: number): void => {
     const next = Math.min(count, to);
@@ -35,7 +37,7 @@ export const createReadingPlayer = (
   };
   const start = (): void => {
     stop();
-    if (i < count) timer = setInterval(() => go(i + 1), intervalMs);
+    if (i < count) stopTimer = motionInterval(() => go(i + 1), intervalMs);
   };
   return {
     index: () => i,

@@ -28,7 +28,14 @@ const bies = (c: Canvas): void => {
 };
 
 const nix = (c: Canvas): void => {
-  quadruped(c, { fur: FUR.pale, eye: C.cyan, head: 'horse', mane: FUR.water });
+  // v1.0 (TV.8c): a dark river horse like its portrait, with a bright water mane.
+  quadruped(c, {
+    fur: [C.dusk, C.slate, C.plum],
+    eye: C.cyan,
+    head: 'horse',
+    mane: [C.ice, C.cyan, C.blue],
+    belly: C.violet,
+  });
   // Water running off the belly.
   for (const [x, y] of [
     [12, 26],
@@ -102,6 +109,7 @@ const huldra = (c: Canvas): void => {
 };
 
 const upyr = (c: Canvas): void => {
+  c.rimmedDowned = true; // v1.0 (TV.8a): the dark cloak keeps a rim when downed
   biped(c, {
     cloth: [C.plum, C.night, C.ink],
     skin: [C.frost, C.bone, C.ash],
@@ -114,6 +122,16 @@ const upyr = (c: Canvas): void => {
   c.rect(14, 10, 1, 2, C.frost);
   c.rect(16, 10, 1, 2, C.frost);
   c.rect(8, 14, 2, 1, C.blood);
+  // v1.0 (TV.8a): a lighter rim on the cloak's top and left edge, so it reads on a dark ground.
+  const cloak = new Set<string>([C.plum, C.night, C.ink]);
+  const edges: [number, number][] = [];
+  for (let y = 10; y < 18; y++)
+    for (let x = 0; x < 32; x++) {
+      const v = c.get(x, y);
+      if (v === null || !cloak.has(v)) continue;
+      if (c.get(x, y - 1) === null || c.get(x - 1, y) === null) edges.push([x, y]);
+    }
+  for (const [x, y] of edges) c.set(x, y, C.dusk);
 };
 
 const draugr = (c: Canvas): void => {
@@ -231,10 +249,10 @@ const ribbonshade = (c: Canvas): void => {
   c.rect(14, 8, 2, 1, C.ink);
   c.rect(17, 8, 2, 1, C.ink);
   c.set(16, 12, C.ash);
-  // The ribbon winds twice around it and streams away in a long wave, bright against the dark.
+  // The ribbon winds twice around it and streams away in a long wave: blue, stitched pale (v1.0).
   for (const y of [14, 18, 22]) {
-    c.line(11, y, 21, y + 3, C.red, 2);
-    c.line(11, y + 1, 21, y + 4, C.blood, 1);
+    c.line(11, y, 21, y + 3, C.blue, 2);
+    c.line(11, y + 1, 21, y + 4, C.night, 1);
   }
   const pts: readonly (readonly [number, number])[] = [
     [11, 14],
@@ -246,30 +264,61 @@ const ribbonshade = (c: Canvas): void => {
   pts.forEach(([x, y], i) => {
     const next = pts[i + 1];
     if (!next) return;
-    c.line(x, y, next[0], next[1], C.red, 2);
-    c.line(x, y + 2, next[0], next[1] + 2, C.blood, 1);
+    c.line(x, y, next[0], next[1], C.blue, 2);
+    c.line(x, y + 2, next[0], next[1] + 2, C.night, 1);
   });
-  c.set(1, 9, C.pink);
-  c.set(3, 8, C.pink);
+  c.set(1, 9, C.ice);
+  c.set(3, 8, C.ice);
+  for (const [x, y] of [
+    [13, 15],
+    [17, 19],
+    [19, 23],
+  ] as const)
+    c.set(x, y, C.frost);
+  // Singed edges: embers on the hood.
+  for (const [x, y] of [
+    [12, 6],
+    [20, 7],
+    [9, 20],
+  ] as const)
+    c.set(x, y, C.orange);
 };
 
 const anvilWight = (c: Canvas): void => {
-  biped(c, {
-    cloth: [C.coal, C.ink, C.wine],
-    skin: [C.stone, C.coal, C.ink],
-    eye: C.orange,
-    width: 14,
-    height: 13,
-    hair: 'none',
-  });
-  // The head is an anvil: a wide flat face, a horn, a waist.
-  c.rect(8, 1, 16, 4, C.stone);
-  c.rect(8, 1, 16, 1, C.ash);
-  c.rect(3, 2, 5, 2, C.coal);
-  c.rect(13, 5, 6, 3, C.coal);
-  // The forge still lit in its chest.
-  c.rect(13, 14, 5, 4, C.orange);
-  c.rect(14, 15, 3, 2, C.gold);
+  // v1.0 (TV.8a): a hunched smith's wight at its anvil, hammer raised. Facing left.
+  c.rimmedDowned = true;
+  const skin = [C.ash, C.stone, C.coal] as const;
+  // The anvil: face, horn, waist and foot.
+  c.rect(4, 19, 10, 3, C.stone);
+  c.rect(4, 19, 10, 1, C.bone);
+  c.rect(3, 20, 2, 2, C.stone);
+  c.rect(6, 22, 5, 3, C.coal);
+  c.rect(5, 25, 8, 3, C.coal);
+  c.rect(5, 25, 8, 1, C.stone);
+  // Legs and feet, then the hunched back and chest.
+  c.rect(17, 24, 4, 5, C.wine);
+  c.rect(22, 24, 4, 5, C.wine);
+  c.rect(16, 28, 5, 1, C.coal);
+  c.rect(21, 28, 5, 1, C.coal);
+  c.ellipse(21, 19, 6, 6, C.coal);
+  c.ellipse(23, 14, 5, 5, C.wine);
+  c.ellipse(22, 15, 4, 3, C.coal);
+  // The bowed head, a heavy brow and ember eyes.
+  c.ellipse(16, 13, 4, 4, (_x, y) => (y < 12 ? skin[0] : y > 14 ? skin[2] : skin[1]));
+  c.rect(12, 12, 5, 1, C.coal);
+  c.set(14, 13, C.orange);
+  c.set(17, 13, C.orange);
+  // The arm and the hammer coming down on the anvil.
+  c.line(19, 15, 15, 16, C.stone, 2);
+  c.line(15, 16, 11, 9, C.brown, 1);
+  c.rect(7, 5, 7, 4, C.ash);
+  c.rect(7, 5, 7, 1, C.frost);
+  c.rect(7, 8, 7, 1, C.stone);
+  // The forge still lit in its chest, and a spark off the anvil.
+  c.rect(18, 18, 3, 3, C.orange);
+  c.set(19, 19, C.gold);
+  c.set(6, 16, C.gold);
+  c.set(10, 17, C.orange);
 };
 
 const rimewrought = (c: Canvas): void => {

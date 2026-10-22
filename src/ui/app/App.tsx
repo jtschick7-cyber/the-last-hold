@@ -26,6 +26,7 @@ import { ResourceBar } from '../widgets/ResourceBar';
 import { SheetHost } from '../widgets/SheetHost';
 import css from './App.module.css';
 import {
+  appSettings,
   awaySummary,
   blocked,
   catchUpProgress,
@@ -128,7 +129,7 @@ export const App = () => {
     const summary = awaySummary.value;
     if (!summary) return;
     awaySummary.value = null;
-    openSheet('While you were away', () => <AwayView summary={summary} />);
+    openSheet('While you were away', () => <AwayView summary={summary} reminder />);
   }, [awaySummary.value]);
 
   useEffect(() => {
@@ -137,6 +138,11 @@ export const App = () => {
     document.documentElement.dataset.theme = theme;
     document.documentElement.dataset.motion = reduceMotion;
   }, [version.value]);
+
+  // GDD §9.20: Text size is applied once, at the root; the CSS does the rest.
+  useEffect(() => {
+    document.documentElement.dataset.textSize = appSettings.value.textSize;
+  }, [appSettings.value.textSize]);
 
   // Scenes play once, when their moment comes (setting-primer §6.6); not during the arrival.
   useEffect(() => {

@@ -1,0 +1,76 @@
+TAP SWEEP: 0 findings over 72 screens
+NOT REACHED / MISSING TEXT: 0
+FLOW FAILURES: 0
+SCREENS (id | list line | tappables scanned per width)
+hold-bastion | Hold (Bastion) | 320:93 in page ; 360:93 in page
+rates | rates sheet | 320:11 in sheet "Rates" ; 360:11 in sheet "Rates"
+breakdown | breakdown sheet | 320:1 in sheet "Threat" ; 360:1 in sheet "Threat"
+rank | Rank screen (Hearth, Roll of Wardens, Riftglass shop, the ember) | 320:68 in sheet "Rank" ; 360:68 in sheet "Rank"
+hunters-roster | Hunters (roster) | 320:21 in page ; 360:21 in page
+hunter-sheet | hunter sheet (talents, slots, alternate traits, letters) | 320:32 in sheet "Halvar Two-Smokes" ; 360:32 in sheet "Halvar Two-Smokes"
+slot-picker | slot picker | 320:4 in sheet "Halvar: weapon" ; 360:4 in sheet "Halvar: weapon"
+stores | Stores and Salvage | 320:21 in page ; 360:21 in page
+contracts-board | Contracts (board) | 320:24 in page ; 360:24 in page
+villages | Contracts (Villages panel) | 320:24 in page ; 360:24 in page
+launch-sheet | Contracts (launch sheet) | 320:26 in sheet "Send hunters" ; 360:26 in sheet "Send hunters"
+bestiary | Bestiary (with the Great Beasts shelf) | 320:34 in page ; 360:34 in page
+bestiary-entry | Bestiary entry | 320:4 in sheet "Upyr" ; 360:4 in sheet "Upyr"
+archive-library | Archive (Library, with the Rime shelf) | 320:67 in page ; 360:67 in page
+archive-accounts | Archive (Accounts) | 320:40 in page ; 360:40 in page
+archive-names | Archive (Names) | 320:12 in page ; 360:12 in page
+document-reader | Archive (document reader) | 320:1 in sheet "My boy writes no letters" ; 360:1 in sheet "My boy writes no letters"
+orders-seats | Orders (card, seats) | 320:4 in sheet "Change seats" ; 360:4 in sheet "Change seats"
+order-sheet | Orders (sheets) | 320:8 in sheet "Thanes' Moot" ; 360:8 in sheet "Thanes' Moot"
+last-stand | Last Stand screen | 320:19 in sheet "The Last Stand" ; 360:22 in sheet "The Last Stand"
+delve-entry | a Delve (entry) | 320:15 in sheet "Delve" ; 360:15 in sheet "Delve"
+more-menu | More | 320:16 in page ; 360:16 in page
+more-reports | More (Reports) | 320:1 in sheet "Reports" ; 360:1 in sheet "Reports"
+more-fallen | More (Hall of the Fallen) | 320:1 in sheet "Hall of the Fallen" ; 360:1 in sheet "Hall of the Fallen"
+more-save | More (Save & Data) | 320:8 in sheet "Save & Data" ; 360:8 in sheet "Save & Data"
+more-settings | More (Settings) | 320:10 in sheet "Settings" ; 360:10 in sheet "Settings"
+more-about | More (About & Credits) | 320:1 in sheet "About & Credits" ; 360:1 in sheet "About & Credits"
+more-diagnostics | More (Diagnostics) | 320:3 in sheet "Diagnostics" ; 360:3 in sheet "Diagnostics"
+hut-book | Alchemist's Hut (the 12 × 3 Book grid) | 320:58 in sheet "Alchemist's Hut" ; 360:58 in sheet "Alchemist's Hut"
+hut-experiment | Alchemist's Hut (Experiment) | 320:7 in sheet "Alchemist's Hut" ; 360:7 in sheet "Alchemist's Hut"
+hunters-candidates | Hunters (candidates) | 320:23 in page ; 360:23 in page
+hold-hamlet | Hold (Hamlet) | 320:47 in page ; 360:47 in page
+hold-keep | Hold (Keep) | 320:73 in page ; 360:73 in page
+hold-citadel | Hold (Citadel) | 320:84 in page ; 360:84 in page
+chapter-scene | Orders (chapter scene) | 320:93 in page ; 360:93 in page
+away-sheet | away sheet (with the reminder) | 320:1 in sheet "While you were away" ; 360:1 in sheet "While you were away"
+events-scene | Events (introduction scene) | 320:2 in sheet "Three notes from the gate" ; 360:2 in sheet "Three notes from the gate"
+orders-opening-moot | Orders (opening scene) | 320:3 in sheet "A seat at the table" ; 360:3 in sheet "A seat at the table"
+orders-opening-wives | Orders (opening scene) | 320:3 in sheet "A basket on the step" ; 360:3 in sheet "A basket on the step"
+orders-opening-bells | Orders (opening scene) | 320:3 in sheet "Who keeps the bells" ; 360:3 in sheet "Who keeps the bells"
+orders-seat-step | Orders (seat step) | 320:6 in sheet "Seat your Orders" ; 360:6 in sheet "Seat your Orders"
+orders-opening-quenchers | Orders (opening scene) | 320:3 in sheet "Named for the metal" ; 360:3 in sheet "Named for the metal"
+delve-scene | a Delve (the way-down scene) | 320:2 in sheet "The way down" ; 360:2 in sheet "The way down"
+delve-doors | a Delve (doors) | 320:5 in sheet "Delve" ; 360:5 in sheet "Delve"
+delve-blessing | a Delve (blessing) | 320:8 in sheet "Delve" ; 360:8 in sheet "Delve"
+delve-floor-ready | a Delve (floor) | 320:4 in sheet "Delve" ; 360:4 in sheet "Delve"
+delve-floor-playback | a Delve (floor playback) | 320:3 in sheet "Delve" ; 360:3 in sheet "Delve"
+delve-result | a Delve (result) | 320:2 in sheet "Delve" ; 360:2 in sheet "Delve"
+events-boss-sheet | Events (boss sheet) | 320:7 in sheet "The Great Beast" ; 360:7 in sheet "The Great Beast"
+events-boss-party | Events (boss sheet) | 320:25 in sheet "Send a party" ; 360:25 in sheet "Send a party"
+events-boss-playback | Events (boss playback) | 320:3 in sheet "The Lindworm of Velk Fjord" ; 360:3 in sheet "The Lindworm of Velk Fjord"
+events-fight-log | Contracts (fight log) | 320:1 in sheet "Fight log" ; 360:1 in sheet "Fight log"
+events-boss-result | Events (boss playback) | 320:10 in sheet "Result" ; 360:10 in sheet "Result"
+events-hunt-list | Events (hunt sheet) | 320:16 in sheet "Legendary Hunts" ; 360:16 in sheet "Legendary Hunts"
+events-hunt-track | Events (hunt sheet) | 320:16 in sheet "Stoneback the Fell Troll · The Toll Road" ; 360:16 in sheet "Stoneback the Fell Troll · The Toll Road"
+events-hunt-playback | Events (hunt playback) | 320:3 in sheet "Stoneback the Fell Troll" ; 360:3 in sheet "Stoneback the Fell Troll"
+events-hunt-result | Events (hunt playback) | 320:8 in sheet "Result" ; 360:8 in sheet "Result"
+remembering-near-scene | Remembering (near scene) | 320:2 in sheet "The line along the wall" ; 360:2 in sheet "The line along the wall"
+remembering-card-not-ready | Remembering (card, not ready) | 320:58 in page ; 360:58 in page
+remembering-card-open | Remembering (card, open) | 320:58 in page ; 360:58 in page
+remembering-roller | Remembering (scenes) | 320:2 in sheet "The roll" ; 360:2 in sheet "The roll"
+remembering-reading | Remembering (the reading) | 320:2 in sheet "The reading" ; 360:2 in sheet "The reading"
+remembering-ending-0 | Remembering (ending cards: The count) | 320:2 in sheet "The count" ; 360:2 in sheet "The count"
+remembering-ending-1 | Remembering (ending cards: The fortieth) | 320:2 in sheet "The fortieth" ; 360:2 in sheet "The fortieth"
+remembering-ending-2 | Remembering (ending cards: The hearth keeps itself) | 320:2 in sheet "The hearth keeps itself" ; 360:2 in sheet "The hearth keeps itself"
+remembering-ending-3 | Remembering (ending cards: It is warm where I am) | 320:2 in sheet "It is warm where I am" ; 360:2 in sheet "It is warm where I am"
+remembering-card-after | Remembering (card, after Remember Them) | 320:57 in page ; 360:57 in page
+remembering-library | Remembering (Library shelf) | 320:75 in page ; 360:75 in page
+remembering-vigil-scene | Remembering (Pechko's scene) | 320:2 in sheet "Later" ; 360:2 in sheet "Later"
+remembering-card-after-vigil | Remembering (card, after Keep the Vigil) | 320:57 in page ; 360:57 in page
+long-night-0 | Long Night sheets (The line along the wall) | 320:2 in sheet "The line along the wall" ; 360:2 in sheet "The line along the wall"
+long-night-view | Long Night sheets (what happened) | 320:21 in sheet "The Long Night" ; 360:21 in sheet "The Long Night"

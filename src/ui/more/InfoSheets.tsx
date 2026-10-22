@@ -59,7 +59,12 @@ export const AboutSheet = () => {
         <h3 class={styles.cardTitle}>Credits</h3>
         <pre
           class={styles.small}
-          style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 }}
+          style={{
+            whiteSpace: 'break-spaces',
+            overflowWrap: 'anywhere',
+            fontFamily: 'inherit',
+            margin: 0,
+          }}
         >
           {buildCredits()
             .split('\n')

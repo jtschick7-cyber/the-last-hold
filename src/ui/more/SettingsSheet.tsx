@@ -1,5 +1,13 @@
 import type { Settings } from '../../core/state/game-state';
-import { dispatch, game, version } from '../app/runtime';
+import { TEXT_SIZES, type TextSize } from '../../platform/app-settings';
+import {
+  appSettings,
+  dispatch,
+  game,
+  setBackupReminder,
+  setTextSize,
+  version,
+} from '../app/runtime';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.10: theme, best-buy hint, rates per minute or hour, reduce motion.
@@ -14,8 +22,10 @@ const Choice = <K extends keyof Settings>({
 }) => {
   const current = game().settings[k];
   return (
-    <div class={`${styles.row} ${styles.divider}`}>
-      <span class={styles.grow}>{label}</span>
+    <div class={`${styles.row} ${styles.divider}`} style={{ flexWrap: 'wrap' }}>
+      <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+        {label}
+      </span>
       <div class={styles.segmented} role="group" aria-label={label}>
         {options.map(([value, text]) => (
           <button
@@ -25,6 +35,66 @@ const Choice = <K extends keyof Settings>({
             onClick={() =>
               dispatch({ type: 'settings.set', patch: { [k]: value } as Partial<Settings> })
             }
+          >
+            {text}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const TEXT_SIZE_LABEL: Record<TextSize, string> = {
+  match: 'Match phone',
+  large: 'Large',
+  largest: 'Largest',
+};
+
+// GDD §9.20: lives in the settings key outside the save, so it is set directly, not by a command.
+const TextSizeChoice = () => {
+  const current = appSettings.value.textSize;
+  return (
+    <div class={`${styles.row} ${styles.divider}`} style={{ flexWrap: 'wrap' }}>
+      <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+        Text size
+      </span>
+      <div class={styles.segmentedWrap} role="group" aria-label="Text size">
+        {TEXT_SIZES.map((size) => (
+          <button
+            type="button"
+            key={size}
+            class={current === size ? styles.segmentOn : styles.segment}
+            aria-pressed={current === size}
+            onClick={() => setTextSize(size)}
+          >
+            {TEXT_SIZE_LABEL[size]}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const BackupReminderChoice = () => {
+  const on = appSettings.value.backupReminder;
+  return (
+    <div class={`${styles.row} ${styles.divider}`} style={{ flexWrap: 'wrap' }}>
+      <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+        Backup reminder
+      </span>
+      <div class={styles.segmented} role="group" aria-label="Backup reminder">
+        {(
+          [
+            [true, 'On'],
+            [false, 'Off'],
+          ] as const
+        ).map(([value, text]) => (
+          <button
+            type="button"
+            key={text}
+            class={on === value ? styles.segmentOn : styles.segment}
+            aria-pressed={on === value}
+            onClick={() => setBackupReminder(value)}
           >
             {text}
           </button>
@@ -71,6 +141,8 @@ export const SettingsSheet = () => {
           ['off', 'Off'],
         ]}
       />
+      <TextSizeChoice />
+      <BackupReminderChoice />
     </div>
   );
 };

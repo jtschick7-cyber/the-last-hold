@@ -182,7 +182,13 @@ export const decideCheckIn = (
   // v0.8 (GDD §6.1, D321, D352): ranks, stars from the Embers The Hearth left, talents, Legendaries, items.
   depthMoves(s, act);
   // v0.2 (D75): contracts and hunters, before the building rules, so launches start their timers.
-  purchases += contractMoves(s, act, reserveFor(s), recruitHold(s, horizonMs));
+  purchases += contractMoves(
+    s,
+    act,
+    reserveFor(s),
+    recruitHold(s, horizonMs),
+    memory.contractOrder,
+  );
   // The first contract's provisions are held back from everything else, and settling
   // pauses so it doesn't spend that food (D75).
   const hold = firstContractFood(s);

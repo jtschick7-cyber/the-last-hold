@@ -54,6 +54,10 @@ export const rememberingCard = {
 export const creaturesKnownLine = (known: number, total: number): string =>
   `Creatures known well: ${known} of ${total}.`;
 
+/** v1.0 (D493): the species met but not yet Studied, named on the card while the ending is not open. */
+export const creaturesMissingLine = (names: readonly string[]): string =>
+  `Not yet known well: ${names.join(', ')}.`;
+
 /** The ready line (D466 (1)): once, on the first away or result sheet after the gate opens. */
 export const rememberingReadyLine = 'The Remembering is ready. Pechko is waiting by the stove.';
 

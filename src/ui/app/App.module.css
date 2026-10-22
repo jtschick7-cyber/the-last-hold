@@ -26,12 +26,19 @@
 
 .tab {
   flex: 1;
+  min-width: 0;
+  padding: 0 2px;
   min-height: 52px;
   background: none;
   border: none;
   color: var(--c-text-dim);
   font: inherit;
+  /* GDD §9.20: the bottom tab bar is exempt from Text size (short labels, one row). */
+  font-size: calc(1rem * var(--text-undo));
   font-weight: 600;
+  /* A wider system font than the phone's own must wrap inside its tab, never spill (TV.13). */
+  overflow-wrap: anywhere;
+  line-height: 1.15;
 }
 
 .tabOn {
@@ -89,6 +96,14 @@
   border-radius: 0.5rem;
   padding: var(--space-2) var(--space-3);
   z-index: 30;
+}
+
+/* Five tabs must fit a 320 px bar (TV.3b). */
+@media (max-width: 400px) {
+  .tab,
+  .tabOn {
+    font-size: calc(0.8125rem * var(--text-undo));
+  }
 }
 
 /* GDD §9.1: at 900 px and wider, navigation becomes a left sidebar and details

@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { SpriteFrameName } from '../../content/assets';
 import type { FloorPlayback } from '../../core/delves/view';
-import { reducedMotion } from '../app/motion';
 import { openSheet } from '../app/sheets';
+import { motionInterval } from '../motion/registry';
 import styles from '../styles/ui.module.css';
 import { Arena } from './Arena';
 import css from './Delve.module.css';
@@ -10,7 +10,7 @@ import css from './Delve.module.css';
 // GDD §9.15 Floor: the fight plays back in about 10–20 s with Skip and Log. The result is already
 // decided by the seed (the core worked the same fight out); this only shows it, then asks the
 // core to move the run on. Closing the sheet before the end leaves the floor unfought, to be
-// played again. Reduced motion shows the end at once, in still frames (GDD §9.1).
+// played again. Reduced motion keeps the same timeline and pace; the sprites show still frames (GDD §9.20).
 const TOTAL_MS = 14_000;
 const STEP_MIN_MS = 250;
 const STEP_MAX_MS = 900;
@@ -51,9 +51,8 @@ export const PlaybackView = ({
   onFinish?: () => void;
   continueLabel?: string;
 }) => {
-  const still = useMemo(reducedMotion, []);
   const last = pb.steps.length - 1;
-  const [i, setI] = useState(still ? last : -1);
+  const [i, setI] = useState(-1);
   const finished = i >= last;
   const moved = useRef(false);
 
@@ -63,8 +62,7 @@ export const PlaybackView = ({
       STEP_MIN_MS,
       Math.min(STEP_MAX_MS, TOTAL_MS / Math.max(1, pb.steps.length)),
     );
-    const timer = setInterval(() => setI((x) => Math.min(last, x + 1)), ms);
-    return () => clearInterval(timer);
+    return motionInterval(() => setI((x) => Math.min(last, x + 1)), ms);
   }, [finished, last, pb.steps.length]);
 
   // The caller's `onFinish` runs once the playback has reached its end (or was skipped to it).

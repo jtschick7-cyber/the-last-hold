@@ -1,0 +1,2 @@
+CONTRAST: 0 failing pairs; 9472 text elements measured over 74 screens in both themes
+FLOW FAILURES: 0

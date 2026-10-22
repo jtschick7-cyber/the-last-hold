@@ -44,7 +44,13 @@
 .fill {
   height: 100%;
   background: var(--c-good);
-  transition: width 0.25s linear;
+}
+
+/* The reduced-motion gate (GDD §9.20): the phone does not ask to reduce and the switch is not on. */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='on']) .fill {
+    transition: width 0.25s linear;
+  }
 }
 
 .fillLow {

@@ -80,6 +80,27 @@ const weapon = (c: Canvas, w: PortraitSpec['weapon'], hx: number, hy: number): v
   }
 };
 
+/**
+ * v1.0 (TV.9b, D492): hunters whose downed pose is redrawn (a near-black body no longer vanishes into
+ * the ground). With TV.9c all fourteen hunters are in the set.
+ */
+const REDRAWN_DOWNED: ReadonlySet<HunterId> = new Set([
+  'arvid',
+  'bjarna',
+  'gest-tall-torch',
+  'halvar',
+  'herdis',
+  'ostap',
+  'zora',
+  'radek',
+  'radmila-of-the-reeds',
+  'ragnhild-eye-taker',
+  'sigrun',
+  'stanko',
+  'toma',
+  'vesna',
+]);
+
 /** A hunter facing right, outlined. */
 export const drawHunterSprite = (id: HunterId): Canvas => {
   const s = hunters[id].portrait;
@@ -157,7 +178,9 @@ export const drawHunterSprite = (id: HunterId): Canvas => {
     for (const x of [left + 1, left + 4, left + width - 3]) c.set(x, 12, C.frost);
   if (s.mark === 'rune') for (const y of [12, 14, 16]) c.set(left - 3, y, C.dusk);
   c.outline(C.ink);
-  return mirror(c);
+  const out = mirror(c);
+  out.rimmedDowned = REDRAWN_DOWNED.has(id);
+  return out;
 };
 
 export { HUNTER_IDS };

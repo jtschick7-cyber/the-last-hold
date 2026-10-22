@@ -11,11 +11,61 @@ import { levelUpLines } from '../app/lines';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { ResultsView } from './ResultsSheet';
 import { ReadyLine } from '../remembering/ReadyLine';
+import {
+  backupReminder,
+  BACK_UP_NOW_SNOOZE_DAYS,
+  NOT_NOW_SNOOZE_DAYS,
+} from '../../platform/backup-reminder';
+import { now } from '../../platform/clock';
+import { appSettings, snoozeBackupReminder } from '../app/runtime';
+import { openSheet } from '../app/sheets';
+import { SaveDataSheet } from '../more/SaveDataSheet';
 
 const MS = 1000;
 
+// GDD §9.20: one line below the summary, never blocking [Onward] or Collect.
+const BackupLine = () => {
+  const days = backupReminder(now(), appSettings.value);
+  if (days === null) return null;
+  return (
+    <div class={styles.card}>
+      <p>
+        You haven't saved a copy of your game outside this browser in the last {days} days. A copy
+        keeps your hold safe if the browser clears its storage.
+      </p>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
+            snoozeBackupReminder(BACK_UP_NOW_SNOOZE_DAYS);
+            openSheet('Save & Data', () => <SaveDataSheet />);
+          }}
+        >
+          Back up now
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => snoozeBackupReminder(NOT_NOW_SNOOZE_DAYS)}
+        >
+          Not now
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // GDD §9.3 / §5.2: time counted, time past the cap, resources, peasants settled.
-export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: () => void }) => {
+export const AwayView = ({
+  summary,
+  onDone,
+  reminder = false,
+}: {
+  summary: AwaySummary;
+  onDone?: () => void;
+  reminder?: boolean;
+}) => {
   const long = summary.away / MS >= lineTriggerRules.longAbsenceSeconds;
   const pechko = residentLines['long-absence'];
   const line = pechko.variants[Math.floor(summary.away / MS) % pechko.variants.length];
@@ -96,6 +146,7 @@ export const AwayView = ({ summary, onDone }: { summary: AwaySummary; onDone?: (
           <strong>{residents[pechko.speaker].shortName}:</strong> “{line}”
         </p>
       )}
+      {reminder && <BackupLine />}
       {onDone && (
         <button type="button" class={styles.btnPrimary} style={{ width: '100%' }} onClick={onDone}>
           Onward

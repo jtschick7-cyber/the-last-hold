@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { roll } from '../../src/content/story/roll';
 import { begin, closeOrdersScenes, debugPress, onwardAll, tab } from './helpers';
+import { overflow } from './polish-text';
 
 // Plan T11.16 (GDD §9.19, §6.5): the Remembering on the real production build, at the narrowest
 // phone, a normal phone and the 900 and 1300 px breakpoints: no sideways scroll with the card, the
@@ -173,6 +174,21 @@ test('the card, the near-scene, the reading and every ending card fit', async ({
         expect(box.x + box.width, `${r.name} at ${width}`).toBeLessThanOrEqual(dlg.x + dlg.width);
       }
     }
+    // TV.4b (GDD §9.20): every name fits at 320 px at Largest too, with no clipped text.
+    await page.setViewportSize({ width: 320, height: 740 });
+    await page.evaluate(() => (document.documentElement.dataset.textSize = 'largest'));
+    const big = await reading.getByRole('heading', { name: r.name }).boundingBox();
+    const bigDlg = await reading.boundingBox();
+    expect(big, `${r.name} at Largest`).not.toBeNull();
+    if (big && bigDlg) {
+      expect(big.x, `${r.name} at Largest`).toBeGreaterThanOrEqual(bigDlg.x);
+      expect(big.x + big.width, `${r.name} at Largest`).toBeLessThanOrEqual(
+        bigDlg.x + bigDlg.width,
+      );
+    }
+    const spill = await overflow(page);
+    expect(spill, `${r.name} at 320 px, Largest`).toEqual({ page: null, clipped: [] });
+    await page.evaluate(() => (document.documentElement.dataset.textSize = 'match'));
     await page.setViewportSize({ width: 360, height: 740 });
     if (i === 20) await shot(page, 'remembering-reading');
     if (i < ordered.length - 1) await reading.getByText('Tap for the next name.').click();

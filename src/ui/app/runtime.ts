@@ -22,6 +22,16 @@ import {
 } from '../../platform/storage';
 import { captureErrors, DIAGNOSTICS_KEEP, type CapturedError } from '../../platform/diagnostics';
 import { sideList, type SideList } from '../../platform/side-store';
+import {
+  afterReset,
+  readAppSettings,
+  withFirstSeen,
+  writeAppSettings,
+  DEFAULT_APP_SETTINGS,
+  type AppSettings,
+  type TextSize,
+} from '../../platform/app-settings';
+import { afterExport, snoozedFor, withExportAge } from '../../platform/backup-reminder';
 import { levelUpLines, noticeChanges, type Watched } from './lines';
 import { skillLevels } from '../../core/skills/skills';
 
@@ -85,6 +95,25 @@ export const reports = (): SideList<Report> | null =>
 export const diagnostics = (): SideList<CapturedError> | null =>
   channelStorage ? sideList<CapturedError>(channelStorage, 'diagnostics', DIAGNOSTICS_KEEP) : null;
 export const saveStore = (): SaveStore | null => store;
+
+/** GDD §9.20: the settings outside the save (Text size, the backup reminder and its times). */
+export const appSettings = signal<AppSettings>({ ...DEFAULT_APP_SETTINGS });
+const changeAppSettings = (next: AppSettings): void => {
+  appSettings.value = next;
+  if (channelStorage) writeAppSettings(channelStorage, next);
+};
+export const setTextSize = (textSize: TextSize): void =>
+  changeAppSettings({ ...appSettings.value, textSize });
+export const setBackupReminder = (backupReminder: boolean): void =>
+  changeAppSettings({ ...appSettings.value, backupReminder });
+/** "Not now" and "Back up now" (GDD §9.20). */
+export const snoozeBackupReminder = (days: number): void =>
+  changeAppSettings(snoozedFor(appSettings.value, now(), days));
+/** Only Copy save code (copied) and Download save file (started) call this. */
+export const recordExport = (): void => changeAppSettings(afterExport(appSettings.value, now()));
+/** Debug panel only: writes the settings key, never the save (technical design §18.6). */
+export const setLastExportAge = (days: number): void =>
+  changeAppSettings(withExportAge(appSettings.value, now(), days));
 
 /** Technical design §9.1: the install tip shows once, outside the installed app. */
 export const installTipDue = signal(false);
@@ -185,6 +214,8 @@ export const startGame = async (): Promise<void> => {
   if (!backend) savingUnavailable.value = true;
   channelStorage = createChannelStorage(buildInfo.channel, backend ?? memoryFallback());
   store = createSaveStore(channelStorage, now);
+  const seen = withFirstSeen(readAppSettings(channelStorage), now());
+  changeAppSettings(seen);
   installTipDue.value = !isInstalledApp() && channelStorage.get('installTipSeen') === null;
   const errors = diagnostics();
   if (errors) captureErrors(errors, () => currentScreen.value);
@@ -206,6 +237,7 @@ export const startGame = async (): Promise<void> => {
   }
   bump();
 
+  // not motion: the game clock's tick
   setInterval(() => {
     if (document.visibilityState !== 'visible' || catchUpProgress.value) return;
     advanceLive(game(), now());
@@ -240,6 +272,8 @@ export const adoptGame = async (next: GameState): Promise<void> => {
 
 /** GDD §9.10 "Reset everything": a fresh game. The backup slot still holds the old one. */
 export const resetGame = (): void => {
+  // Nothing is stamped until the next start, so the reminder stays silent till then (GDD §9.20).
+  changeAppSettings(afterReset(appSettings.value));
   state = createNewGame(randomSeed(), now());
   watched = null;
   watchedSkills = null;

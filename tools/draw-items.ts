@@ -145,13 +145,31 @@ const KEEPSAKES: Record<LegendaryId, (c: Canvas) => void> = {
     fang(8, 6, 9, 0);
     fang(12, 5, 7, -1);
   },
-  // A grave-coin of silver, cut with a cross.
+  // An old grave-coin of silver: a worn metal rim and a skull stamped in the middle (v1.0, TV.10a).
   'coffin-silver': (c) => {
-    c.ellipse(8, 8, 6, 6, C.ash);
-    c.ellipse(8, 8, 5, 5, C.bone);
-    c.rect(7, 4, 2, 8, C.stone);
-    c.rect(5, 6, 6, 2, C.stone);
-    c.set(5, 5, C.frost);
+    c.ellipse(8, 8, 6.5, 6.5, C.ash);
+    c.ellipse(8, 8, 5.5, 5.5, C.stone);
+    c.ellipse(8, 8, 4.5, 4.5, C.bone);
+    // The skull: cranium, cheekbones, jaw; the eyes, nose and teeth are cut through to the coin.
+    c.rect(5, 5, 6, 3, C.coal);
+    c.rect(6, 4, 4, 1, C.coal);
+    c.rect(6, 8, 4, 2, C.coal);
+    c.set(6, 6, C.bone);
+    c.set(9, 6, C.bone);
+    c.set(7, 6, C.bone);
+    c.set(10, 6, C.bone);
+    c.set(8, 7, C.bone);
+    c.set(7, 9, C.bone);
+    c.set(9, 9, C.bone);
+    // The rim catches the light at the upper left, and is nicked at the lower right.
+    for (const [x, y] of [
+      [3, 5],
+      [4, 3],
+      [6, 2],
+      [3, 7],
+    ] as const)
+      c.set(x, y, C.frost);
+    c.set(12, 12, C.coal);
   },
   // A coin with a hole, ripples under it.
   'ferrymans-coin': (c) => {
@@ -171,31 +189,29 @@ const KEEPSAKES: Record<LegendaryId, (c: Canvas) => void> = {
     c.rect(7, 9, 2, 1, C.orchid);
     c.set(8, 7, C.rose);
   },
-  // An oar resting between two oak thole pins in a boat's gunwale, rime on the pins: where the oar sits.
+  // A single carved black-oak thole peg with a rope loop hung on its neck, set in a bit of gunwale (v1.0, TV.10a).
   'yrsas-thole': (c) => {
-    // The gunwale plank.
-    c.rect(0, 11, 16, 3, C.brown);
-    c.rect(0, 11, 16, 1, C.clay);
-    c.rect(0, 13, 16, 1, C.brownDark);
-    c.rect(6, 12, 3, 1, C.rust);
-    // The oar's loom runs across, behind the pins.
-    c.rect(0, 5, 16, 3, C.sand);
-    c.rect(0, 5, 16, 1, C.cream);
-    c.rect(0, 7, 16, 1, C.clay);
-    // The pins, in front: tapered, lit on the left, with a dab of rime at each tip.
-    for (const x of [3, 11]) {
-      c.rect(x, 2, 2, 9, C.brown);
-      c.rect(x, 2, 1, 9, C.clay);
-      c.rect(x + 1, 2, 1, 9, C.brownDark);
-      c.set(x, 1, C.frost);
-      c.set(x + 1, 1, C.ice);
-      c.set(x - 1, 4, C.ice);
-      c.set(x + 2, 9, C.frost);
-    }
-    // Rime on the oar between the pins.
-    c.set(6, 5, C.frost);
-    c.set(7, 5, C.ice);
-    c.set(9, 5, C.frost);
+    // The rope loop, behind the peg: a ring of twisted rope, hanging to the right.
+    c.ellipse(11, 8, 4, 4.5, C.sand);
+    c.ellipse(11, 8, 2.4, 3, () => null);
+    c.set(13, 6, C.cream);
+    c.set(14, 8, C.clay);
+    c.set(12, 11, C.clay);
+    // The gunwale stub.
+    c.rect(2, 13, 12, 2, C.brown);
+    c.rect(2, 13, 12, 1, C.clay);
+    // The peg: a carved knob, a waist with two cut rings, and a straight shaft; black oak, lit on the left.
+    c.rect(6, 1, 5, 3, C.coal);
+    c.rect(6, 1, 1, 3, C.stone);
+    c.rect(7, 4, 3, 9, C.coal);
+    c.rect(7, 4, 1, 9, C.stone);
+    c.rect(7, 5, 3, 1, C.ink);
+    c.rect(7, 9, 3, 1, C.ink);
+    c.set(7, 1, C.ash);
+    c.set(10, 12, C.ink);
+    // A dab of rime on the knob.
+    c.set(8, 1, C.frost);
+    c.set(9, 1, C.ice);
   },
 };
 
@@ -207,8 +223,13 @@ export const drawStarIcon = (): Canvas =>
     c.rect(7, 1, 2, 4, C.gold);
     c.rect(2, 5, 12, 3, C.gold);
     c.rect(4, 8, 8, 3, C.gold);
-    c.rect(3, 11, 3, 3, C.gold);
-    c.rect(10, 11, 3, 3, C.gold);
+    // The two lower legs taper to points (v1.0, TV.10a).
+    c.rect(3, 11, 3, 1, C.gold);
+    c.rect(3, 12, 2, 1, C.gold);
+    c.set(3, 13, C.gold);
+    c.rect(10, 11, 3, 1, C.gold);
+    c.rect(11, 12, 2, 1, C.gold);
+    c.set(12, 13, C.gold);
     c.rect(5, 5, 6, 3, C.sand);
     c.rect(7, 2, 1, 3, C.cream);
     c.set(6, 6, C.cream);
@@ -293,20 +314,39 @@ const flask = (c: Canvas, glass: string, liquid: string, shine: string, tall = f
   c.set(6, 10, shine);
 };
 
+/** A narrow vial for an oil: much slimmer than a flask, so oils, potions and bombs differ (v1.0, TV.10a). */
+const vial = (c: Canvas, glass: string, liquid: string, shine: string): void => {
+  c.rect(7, 1, 2, 2, C.brown);
+  c.rect(6, 3, 4, 1, glass);
+  c.rect(6, 4, 4, 9, glass);
+  c.rect(6, 7, 4, 6, liquid);
+  c.rect(7, 13, 2, 1, liquid);
+  c.set(6, 5, shine);
+  c.set(6, 6, shine);
+  c.set(6, 8, shine);
+  c.set(9, 12, C.ink);
+};
+
 /** A round pot with a fuse. */
 const pot = (c: Canvas, body: string, shade: string, flame: string): void => {
-  c.ellipse(8, 10, 5, 5, body);
-  c.ellipse(9, 11, 3, 3, shade);
-  c.rect(7, 4, 2, 2, C.coal);
+  // A wide clay bomb: a squat round body, a darker band round it, a short neck, a fuse with a bright spark.
+  c.ellipse(8, 10, 6.5, 5, body);
+  c.ellipse(9, 11, 4, 3, shade);
+  c.rect(2, 9, 13, 1, shade);
+  c.rect(6, 5, 4, 2, C.coal);
+  c.rect(6, 5, 4, 1, C.stone);
   c.line(8, 4, 10, 2, C.brown, 1);
   c.set(11, 1, flame);
-  c.set(10, 2, C.gold);
+  c.set(10, 1, C.gold);
+  c.set(12, 2, C.frost);
+  c.set(12, 0, C.gold);
+  c.set(5, 8, C.frost);
 };
 
 const BREWS: Record<OldBrewId, (c: Canvas) => void> = {
-  'grave-oil': (c) => flask(c, C.bone, C.coal, C.frost),
-  'drowned-bane-oil': (c) => flask(c, C.ice, C.blue, C.frost),
-  'thornbane-oil': (c) => flask(c, C.bone, C.moss, C.lime),
+  'grave-oil': (c) => vial(c, C.bone, C.coal, C.frost),
+  'drowned-bane-oil': (c) => vial(c, C.ice, C.blue, C.frost),
+  'thornbane-oil': (c) => vial(c, C.bone, C.moss, C.lime),
   'mending-draught': (c) => flask(c, C.frost, C.red, C.pink),
   'hardwood-tonic': (c) => flask(c, C.cream, C.brown, C.sand, true),
   'quickfoot-tincture': (c) => flask(c, C.frost, C.gold, C.cream),

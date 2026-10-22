@@ -2,7 +2,7 @@
 // drawn in code like the monsters: a 64 px portrait and a 32 px battle sprite each, in palette
 // colors. A sprite faces left. Each has its one telling feature, as the GDD's "What it was" lines say.
 import type { EventCreatureId } from '../src/content/hunts';
-import { C, Canvas } from './pixel';
+import { C, Canvas, seedRolls } from './pixel';
 import { SPRITE_SIZE } from './sprite-frames';
 import { biped, shaded, wisp, type Ramp } from './sprite-parts';
 
@@ -40,8 +40,14 @@ const lindworm = (c: Canvas): void => {
 };
 
 const barrowKing = (c: Canvas): void => {
-  // Grave-cloth shoulders, a pale skull, a crown of old gold with a point broken off.
-  c.ellipse(CX, 62, 26, 14, (_x, y) => (y < 54 ? C.slate : C.plum));
+  const r = seedRolls('barrow-king');
+  // v1.0 (TV.9a): chainmail under dark barrow-fur, a pale skull, a tarnished bronze crown with
+  // uneven spikes, rime on its edges.
+  c.ellipse(CX, 64, 28, 15, C.coal);
+  for (let y = 50; y < 64; y += 2)
+    for (let x = 6; x < 58; x += 2) c.set(x + (y % 4 === 0 ? 1 : 0), y, C.stone);
+  c.ellipse(CX, 52, 24, 5, C.brownDark);
+  for (let i = 0; i < 70; i++) c.set(8 + r() * 48, 47 + r() * 9, r() < 0.5 ? C.ink : C.brown);
   c.rect(CX - 14, 50, 28, 3, C.dusk);
   c.ellipse(CX, 32, 14, 17, (x, y) => (y < 22 ? C.frost : x < 26 || x > 38 ? C.ash : C.bone));
   c.rect(CX - 8, 44, 16, 8, C.bone);
@@ -52,9 +58,38 @@ const barrowKing = (c: Canvas): void => {
     set(CX - 8, 28, C.ice);
   });
   c.rect(CX - 1, 36, 2, 4, C.ink);
-  c.rect(CX - 15, 13, 30, 6, C.gold);
-  c.rect(CX - 15, 13, 30, 1, C.sand);
-  for (const x of [-15, -7, 1, 9]) c.rect(CX + x, 7, 5, 6, C.gold);
+  c.line(CX + 8, 22, CX + 11, 30, C.stone, 1);
+  // The crown: a worn band and spikes of unequal height, one snapped off.
+  c.rect(CX - 15, 13, 30, 6, C.rust);
+  c.rect(CX - 15, 13, 30, 1, C.clay);
+  c.rect(CX - 15, 18, 30, 1, C.brown);
+  for (const [x, h] of [
+    [-15, 6],
+    [-8, 3],
+    [-2, 9],
+    [5, 4],
+    [11, 7],
+  ] as const) {
+    c.polygon(
+      [
+        [CX + x, 13],
+        [CX + x + 5, 13],
+        [CX + x + (h === 3 ? 4 : 2), 13 - h],
+      ],
+      C.rust,
+    );
+    c.line(CX + x, 13, CX + x + 2, 13 - h, C.clay, 1);
+  }
+  for (let i = 0; i < 14; i++)
+    c.set(CX - 14 + r() * 28, 13 + r() * 6, r() < 0.5 ? C.moss : C.brownDark);
+  for (const [x, y] of [
+    [-13, 7],
+    [-2, 4],
+    [12, 6],
+    [-6, 12],
+    [8, 12],
+  ] as const)
+    c.set(CX + x, y, C.ice);
   c.set(CX + 5, 15, C.red);
 };
 
@@ -83,28 +118,52 @@ const mother = (c: Canvas): void => {
 
 const stoneback = (c: Canvas): void => {
   const rock: Ramp = [C.ash, C.stone, C.coal];
-  // A wide, low head of grey stone, moss in its seams, a heavy brow, two short tusks.
-  c.ellipse(CX, 34, 25, 24, (x, y) =>
-    y < 22 ? rock[0] : (x * 3 + y) % 11 === 0 ? C.ink : y > 44 ? rock[2] : rock[1],
+  const r = seedRolls('stoneback');
+  // v1.0 (TV.9a): a craggy head of grey stone, a heavy overhanging brow ridge, mossy shoulders.
+  c.ellipse(CX, 66, 30, 14, (x, y) =>
+    (x * 5 + y * 3) % 13 === 0 ? C.ink : y < 56 ? rock[0] : rock[1],
   );
-  c.rect(CX - 22, 24, 44, 5, rock[2]);
   for (const [x, y, w] of [
-    [14, 14, 8],
-    [40, 12, 10],
-    [26, 48, 7],
-    [46, 42, 6],
+    [8, 56, 8],
+    [20, 54, 6],
+    [38, 55, 9],
+    [50, 57, 6],
+    [28, 60, 5],
+  ] as const) {
+    c.rect(x, y, w, 3, C.moss);
+    c.rect(x + 1, y, Math.max(2, w - 3), 1, C.grass);
+  }
+  const pts: [number, number][] = [];
+  for (let a = 0; a < 24; a++) {
+    const t = (a / 24) * Math.PI * 2;
+    const k = 1 + (r() - 0.5) * 0.4;
+    pts.push([CX + Math.cos(t) * 24 * k, 31 + Math.sin(t) * 24 * k]);
+  }
+  c.polygon(pts, (x, y) =>
+    y < 20 ? rock[0] : (x * 3 + y) % 11 === 0 ? C.ink : y > 44 ? rock[2] : rock[1],
+  );
+  for (const [x, y, w] of [
+    [14, 12, 8],
+    [40, 10, 9],
+    [46, 44, 6],
   ] as const)
     c.rect(x, y, w, 3, C.moss);
   for (const [x, y] of [
-    [16, 15],
-    [44, 13],
-    [28, 49],
+    [16, 13],
+    [44, 11],
+    [48, 45],
   ] as const)
     c.set(x, y, C.lime);
+  c.line(18, 18, 24, 30, C.ink, 1);
+  c.line(46, 20, 42, 28, C.ink, 1);
+  // The brow: a thick ridge jutting out over deep sockets.
+  c.rect(CX - 23, 23, 46, 3, rock[0]);
+  c.rect(CX - 23, 26, 46, 6, rock[2]);
+  c.rect(CX - 21, 32, 42, 1, C.ink);
   c.mirrored((set) => {
-    for (let j = 0; j < 4; j++) for (let i = 0; i < 5; i++) set(CX - 14 + i, 31 + j, C.ink);
-    set(CX - 13, 32, C.orange);
-    set(CX - 12, 32, C.gold);
+    for (let j = 0; j < 4; j++) for (let i = 0; i < 5; i++) set(CX - 15 + i, 33 + j, C.ink);
+    set(CX - 14, 34, C.orange);
+    set(CX - 13, 34, C.gold);
   });
   c.rect(CX - 3, 36, 6, 8, rock[2]);
   c.rect(CX - 14, 50, 28, 6, C.ink);
@@ -115,35 +174,153 @@ const stoneback = (c: Canvas): void => {
 };
 
 const mara = (c: Canvas): void => {
-  // A hood of near-black violet, a white face with nothing in it but two red points, long hair
-  // spilling out of the hood, and a bony hand held to the chin.
-  c.ellipse(CX, 34, 26, 30, (_x, y) => (y < 20 ? C.violet : y > 46 ? C.ink : C.plum));
-  for (let x = 12; x < 53; x += 5) c.line(x, 40, x + ((x % 10) - 5), 63, C.ink, 2);
+  // v1.0 (TV.9a): a wide hood and shroud of near-black violet, a white face with two red points,
+  // long hair spilling out, and one bony, gnarled hand reaching out.
+  c.ellipse(CX, 34, 29, 30, (_x, y) => (y < 20 ? C.violet : y > 46 ? C.ink : C.plum));
+  c.polygon(
+    [
+      [3, 40],
+      [14, 30],
+      [50, 30],
+      [61, 40],
+      [63, 63],
+      [1, 63],
+    ],
+    (_x, y) => (y > 46 ? C.ink : C.plum),
+  );
+  for (let x = 6; x < 60; x += 5) c.line(x, 40, x + ((x % 10) - 5), 63, C.ink, 2);
   c.ellipse(CX, 32, 11, 14, (_x, y) => (y < 26 ? C.frost : C.bone));
   c.mirrored((set) => {
     set(CX - 6, 29, C.red);
     set(CX - 5, 29, C.blood);
   });
   c.rect(CX - 3, 40, 6, 1, C.coal);
-  c.rect(CX + 10, 46, 3, 14, C.bone);
-  for (let i = 0; i < 4; i++) c.rect(CX + 8 + i * 2, 42 + (i % 2), 1, 5, C.ash);
+  // The reaching hand: a thin forearm from the shroud, a knuckled palm, five long bent fingers.
+  c.line(60, 62, 52, 46, C.ink, 4);
+  c.line(60, 62, 52, 46, C.ash, 2);
+  c.ellipse(50, 42, 4, 3, C.bone);
+  for (const [tx, ty, bx, by] of [
+    [41, 31, 44, 36],
+    [44, 26, 47, 33],
+    [49, 24, 50, 32],
+    [55, 27, 53, 34],
+    [58, 34, 55, 39],
+  ] as const) {
+    c.line(50, 42, bx, by, C.bone, 1);
+    c.line(bx, by, tx, ty, C.bone, 1);
+    c.set(bx, by, C.ash);
+    c.set(tx, ty, C.stone);
+  }
 };
 
 const likho = (c: Canvas): void => {
-  // A gaunt face of rags and tallow, one big eye in the middle of the forehead, a loose grin.
-  c.ellipse(CX, 36, 22, 26, (_x, y) => (y < 20 ? C.clay : y > 46 ? C.rust : C.sand));
-  c.ellipse(CX, 12, 24, 12, C.brownDark);
-  for (let x = 10; x < 54; x += 4) c.line(x, 8, x - 3 + (x % 7), 26, C.ink, 1);
-  c.mirrored((set) => {
-    for (let j = 0; j < 4; j++) for (let i = 0; i < 6; i++) set(CX - 18 + i, 36 + j, C.coal);
-  });
-  c.ellipse(CX, 28, 7, 6, C.frost);
-  c.ellipse(CX, 28, 4, 4, C.red);
-  c.rect(CX - 1, 27, 3, 3, C.ink);
-  c.rect(CX, 27, 1, 1, C.frost);
-  c.rect(CX - 1, 36, 2, 7, C.rust);
-  c.rect(CX - 12, 48, 24, 3, C.ink);
-  for (let x = CX - 10; x < CX + 11; x += 4) c.rect(x, 47, 2, 3, C.bone);
+  const r = seedRolls('likho');
+  // v1.0 (TV.9a): a gaunt, lopsided face of tallow with a long chin, hollow cheeks, ragged hair
+  // that hangs in uneven strands, one big eye in the forehead and a crooked mouth of jagged teeth.
+  const skin = (x: number, y: number): string =>
+    x < 24 ? C.clay : x > 42 ? C.sand : y < 22 ? C.sand : C.sand;
+  c.polygon(
+    [
+      [17, 13],
+      [30, 10],
+      [46, 14],
+      [50, 27],
+      [47, 41],
+      [40, 55],
+      [32, 61],
+      [25, 54],
+      [16, 41],
+      [14, 27],
+    ],
+    (x, y) => (y > 52 ? C.rust : skin(x, y)),
+  );
+  // Hollow cheeks, deeper on the left, and the brow's shadow.
+  c.polygon(
+    [
+      [17, 36],
+      [27, 38],
+      [27, 47],
+      [21, 47],
+    ],
+    C.rust,
+  );
+  c.polygon(
+    [
+      [41, 37],
+      [46, 36],
+      [44, 46],
+      [40, 46],
+    ],
+    C.clay,
+  );
+  c.line(18, 33, 25, 36, C.coal, 1);
+  c.line(41, 35, 47, 33, C.coal, 1);
+  c.rect(CX - 11, 20, 22, 2, C.clay);
+  // Ragged hair: thin uneven strands from a rough scalp, longer on the right, gaps between them.
+  for (let x = 12; x < 53; x += 2) {
+    const top = 4 + Math.floor(r() * 7) + Math.abs(x - 32) * 0.15;
+    const len = (x < 22 || x > 42 ? 26 + r() * 22 : 6 + r() * 10) + (x > 42 ? 8 : 0);
+    c.line(
+      x,
+      top,
+      x + (r() - 0.5) * 5,
+      top + len,
+      r() < 0.5 ? C.ink : r() < 0.5 ? C.brownDark : C.wine,
+      1,
+    );
+  }
+  for (let i = 0; i < 40; i++) c.set(14 + r() * 36, 7 + r() * 8, C.ink);
+  // The one eye, red as a coal, in the forehead; a long crooked nose.
+  c.ellipse(CX, 27, 7, 6, C.frost);
+  c.ellipse(CX, 27, 4, 4, C.red);
+  c.rect(CX - 1, 26, 3, 3, C.ink);
+  c.rect(CX, 26, 1, 1, C.frost);
+  c.line(CX, 33, CX + 1, 42, C.rust, 2);
+  c.set(CX + 2, 43, C.brown);
+  c.set(CX - 1, 43, C.ink);
+  // A crooked mouth, lower on the left, with fangs of every size and gaps between them.
+  c.polygon(
+    [
+      [20, 49],
+      [32, 47],
+      [45, 45],
+      [46, 49],
+      [40, 56],
+      [24, 57],
+    ],
+    C.ink,
+  );
+  const upper = (x: number): number => 48 - (x - 20) * 0.12;
+  for (const [x, h, w] of [
+    [22, 4, 3],
+    [26, 7, 3],
+    [30, 3, 3],
+    [34, 8, 4],
+    [39, 4, 3],
+    [42, 6, 3],
+  ] as const)
+    c.polygon(
+      [
+        [x, upper(x)],
+        [x + w, upper(x + w)],
+        [x + w / 2, upper(x) + h],
+      ],
+      C.bone,
+    );
+  for (const [x, h] of [
+    [26, 4],
+    [31, 6],
+    [37, 3],
+  ] as const)
+    c.polygon(
+      [
+        [x, 56],
+        [x + 3, 56],
+        [x + 1.5, 56 - h],
+      ],
+      C.ash,
+    );
+  c.rect(24, 57, 17, 1, C.brown);
 };
 
 const PORTRAIT: Record<EventCreatureId, (c: Canvas) => void> = {
@@ -205,10 +382,41 @@ const barrowKingSprite = (c: Canvas): void => {
 };
 
 const motherSprite = (c: Canvas): void => {
-  wisp(c, 5, 14, [C.ice, C.cyan, C.blue], C.night);
-  // Hair running down both sides like weed in a current.
-  for (const x of [9, 22]) c.line(x, 8, x + (x < 16 ? -1 : 1), 28, C.blue, 2);
-  c.rect(14, 5, 5, 4, C.frost);
+  // v1.0 (TV.9a): a river-queen: a pale face under a crown of reeds, hair like weed down both
+  // sides, and a gown that flares and ripples at the hem (not two legs).
+  for (const [x, h, top] of [
+    [11, 7, C.brown],
+    [13, 9, C.sand],
+    [16, 10, C.brown],
+    [19, 9, C.sand],
+    [21, 7, C.brown],
+  ] as const) {
+    c.line(x, 6, x + (x < 16 ? -1 : x > 16 ? 1 : 0), 6 - h + 3, C.moss, 1);
+    c.rect(x + (x < 16 ? -1 : x > 16 ? 1 : 0), 6 - h + 1, 1, 2, top);
+  }
+  c.rect(10, 5, 12, 2, C.moss);
+  c.ellipse(16, 10, 4, 4, (_x, y) => (y < 9 ? C.frost : C.cream));
+  c.set(14, 10, C.night);
+  c.set(18, 10, C.night);
+  c.set(14, 11, C.cyan);
+  c.set(18, 11, C.cyan);
+  for (const x of [9, 10, 22, 23])
+    c.line(x, 8, x + (x < 16 ? -1 : 1), 26, x % 2 ? C.blue : C.cyan, 1);
+  c.polygon(
+    [
+      [13, 14],
+      [19, 14],
+      [25, 29],
+      [7, 29],
+    ],
+    (x, y) => (y > 24 && (x + y) % 3 === 0 ? C.ice : y > 20 ? C.blue : x < 15 ? C.ice : C.cyan),
+  );
+  c.rect(7, 28, 18, 1, C.night);
+  for (const x of [8, 12, 16, 20, 24]) c.set(x, 27, C.ice);
+  c.line(12, 17, 10, 23, C.cyan, 2);
+  c.line(20, 17, 22, 23, C.blue, 2);
+  c.set(10, 24, C.frost);
+  c.set(22, 24, C.frost);
 };
 
 const stonebackSprite = (c: Canvas): void => {
@@ -232,12 +440,23 @@ const stonebackSprite = (c: Canvas): void => {
 };
 
 const maraSprite = (c: Canvas): void => {
+  c.rimmedDowned = true; // v1.0 (TV.9a): a near-black cloak keeps a rim when downed
   wisp(c, 4, 15, [C.violet, C.plum, C.ink], C.red);
   c.ellipse(16, 8, 5, 5, C.plum);
   c.ellipse(15, 9, 3, 3, C.frost);
   c.set(14, 9, C.red);
   c.set(16, 9, C.red);
   for (const x of [8, 11, 21, 24]) c.line(x, 14, x - 1, 29, C.ink, 1);
+  // A pale rim on the cloak's top and left edge, so it reads on a dark ground.
+  const dark = new Set<string>([C.violet, C.plum, C.ink]);
+  const edges: [number, number][] = [];
+  for (let y = 2; y < 29; y++)
+    for (let x = 0; x < 32; x++) {
+      const v = c.get(x, y);
+      if (v === null || !dark.has(v)) continue;
+      if (c.get(x, y - 1) === null || c.get(x - 1, y) === null) edges.push([x, y]);
+    }
+  for (const [x, y] of edges) c.set(x, y, C.dusk);
 };
 
 const likhoSprite = (c: Canvas): void => {

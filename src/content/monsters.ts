@@ -119,9 +119,9 @@ const resist = (
 ): Readonly<Record<DamageType, number>> => ({ steel, silver, fire, frost, rune, venom });
 
 export const monsters: Readonly<Record<MonsterId, MonsterDef>> = {
-  // GDD calls this "Gloam Wolf", which is an Elder Scrolls Online creature
-  // (GDD §2.3 process rule). "Gaunt Wolf" is Claude's proposal, pending Q6/D69;
-  // the id stays neutral so a rename never touches saves.
+  // "Gaunt Wolf" is the settled display name (D71, D483); the GDD's first draft
+  // used another name that collided with an influence (GDD §2.3). The id stays
+  // neutral so a rename never touches saves.
   wolf: {
     id: 'wolf',
     name: 'Gaunt Wolf',

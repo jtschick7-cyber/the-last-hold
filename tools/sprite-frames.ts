@@ -18,6 +18,8 @@ export type Facing = 'left' | 'right';
 const BOB_ABOVE = 22;
 const LUNGE = 4;
 const DARKER = 0.55;
+/** The rimmed downed pose (v1.0, TV.8a) dims less, so near-ink cloth keeps its colour. */
+const DARKER_RIMMED = 0.85;
 
 if (!palette) throw new Error('Choose a palette first (src/content/palette.ts).');
 const nearest = nearestIn(palette.colors);
@@ -30,10 +32,10 @@ const rgb = (hex: string): [number, number, number] => [
 const hexOf = ([r, g, b]: readonly [number, number, number]): string =>
   [r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('');
 
-const darker = (hex: string): string => {
+const darker = (hex: string, factor = DARKER): string => {
   if (hex === C.ink) return hex;
   const [r, g, b] = rgb(hex);
-  return hexOf(nearest([r * DARKER, g * DARKER, b * DARKER]));
+  return hexOf(nearest([r * factor, g * factor, b * factor]));
 };
 
 const copy = (c: Canvas, f: (x: number, y: number, v: string | null) => string | null): Canvas => {
@@ -68,8 +70,13 @@ export const mirror = (base: Canvas): Canvas =>
 const hit = (base: Canvas): Canvas =>
   copy(base, (_x, _y, v) => (v === null || v === C.ink ? v : C.frost));
 
+/**
+ * v1.0 (TV.8a): dimming turns a very dark body to ink, which vanishes against a dark ground and
+ * leaves only its pale parts. A sprite that sets `rimmedDowned` (its drawing knows its cloth is
+ * that dark) dims less and takes a slate rim on its edge. Every other sprite is unchanged.
+ */
 /** On its side on the ground, head away from the foe, dimmed. */
-const downed = (base: Canvas, facing: Facing): Canvas => {
+const downed = (base: Canvas, facing: Facing, rim: boolean): Canvas => {
   const n = base.size;
   let minX = n;
   let maxX = -1;
@@ -95,8 +102,25 @@ const downed = (base: Canvas, facing: Facing): Canvas => {
       if (v === null) continue;
       // Clockwise (head to the right) for sprites that face left, counter-clockwise otherwise.
       const [nx, ny] = facing === 'left' ? [h - 1 - y, x] : [y, w - 1 - x];
-      out.set(left + nx, top + ny, darker(v));
+      out.set(left + nx, top + ny, darker(v, rim ? DARKER_RIMMED : DARKER));
     }
+  if (rim) {
+    const body = copy(out, (x, y, v) => v);
+    for (let y = 0; y < n; y++)
+      for (let x = 0; x < n; x++) {
+        const v = body.get(x, y);
+        if (v === null || v !== C.ink) continue;
+        // An ink pixel with ink or empty space on every side is outline: keep it. One that touches
+        // a lighter body pixel and open space above or beside it is the cloth's edge: lift it.
+        const open = [body.get(x, y - 1), body.get(x - 1, y), body.get(x + 1, y)].some(
+          (q) => q === null,
+        );
+        const lit = [body.get(x, y + 1), body.get(x - 1, y), body.get(x + 1, y)].some(
+          (q) => q !== null && q !== C.ink,
+        );
+        if (open && lit) out.set(x, y, C.slate);
+      }
+  }
   return out;
 };
 
@@ -129,7 +153,7 @@ export const framesOf = (drawn: Canvas, facing: Facing): Record<SpriteFrame, Can
     idle2: idle2(base),
     lunge: lunge(base, facing),
     hit: hit(base),
-    downed: downed(base, facing),
+    downed: downed(base, facing, drawn.rimmedDowned),
   };
 };
 

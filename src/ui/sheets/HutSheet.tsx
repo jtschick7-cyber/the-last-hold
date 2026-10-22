@@ -321,7 +321,7 @@ export const HutView = () => {
           ))}
         </div>
       )}
-      <div class={styles.segmented} role="group" aria-label="Hut section">
+      <div class={styles.segmentedWrap} role="group" aria-label="Hut section">
         {SECTIONS.map((x) => (
           <button
             key={x.id}

@@ -12,11 +12,13 @@
   --c-surface-raised: #564064;
   --c-border: #5a5353;
   --c-text: #f4cca1;
-  --c-text-dim: #a0938e;
+  /* TV.6 (D488): #cfc6b8 reaches 4.5:1 on the cards (#a0938e was 4.12:1). */
+  --c-text-dim: #cfc6b8;
   --c-ember: #f47e1b;
   --c-on-ember: #302c2e;
   --c-warn: #f4b41b;
-  --c-good: #71aa34;
+  /* TV.6: #b6d53c reaches 4.5:1 on the cards (#71aa34 was 4.37:1). */
+  --c-good: #b6d53c;
   /* v0.7: a drawback (the Unlit's "but…" line, GDD §9.15): Zughy 32's bright red. */
   --c-bad: #e6482e;
   --c-preview: #f4b41b;
@@ -41,8 +43,9 @@
   --c-surface-raised: #f4cca1;
   --c-border: #a0938e;
   --c-text: #302c2e;
-  --c-text-dim: #5a5353;
-  --c-ember: #a93b3b;
+  /* TV.6: both reach 4.5:1 on the light backgrounds (#5a5353 was 4.44:1, #a93b3b 3.68:1). */
+  --c-text-dim: #5e3643;
+  --c-ember: #7a444a;
   --c-on-ember: #dff6f5;
   --c-warn: #7a444a;
   --c-good: #397b44;
@@ -58,8 +61,26 @@
   box-sizing: border-box;
 }
 
+/* GDD §9.20: Text size. One variable scales the root font size, so every rem-sized body-font
+   text grows with it; the pixel font, sprites and the two bars undo it with --text-undo. */
+:root {
+  --text-scale: 1;
+  --text-undo: 1;
+}
+
+:root[data-text-size='large'] {
+  --text-scale: 1.15;
+  --text-undo: 0.8695652174;
+}
+
+:root[data-text-size='largest'] {
+  --text-scale: 1.3;
+  --text-undo: 0.7692307692;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
+  font-size: calc(100% * var(--text-scale));
 }
 
 body {
@@ -84,14 +105,6 @@ body {
   white-space: nowrap;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-:root[data-motion='on'] * {
-  animation: none !important;
-  transition: none !important;
-}
+/* Reduced motion (GDD §9.20): every animation and transition sits behind one gate, in the rule that
+   uses it: @media (prefers-reduced-motion: no-preference) with :root:not([data-motion='on']). A test
+   fails on any that does not. */
