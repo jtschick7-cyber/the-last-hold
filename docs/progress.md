@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.10 approved. TV.11 run; stopped for the owner (variant over 10 min, species result).
-- **Next:** owner reads the audit and species estimate and answers Q46; then TV.12 (release checks).
+- **Last task:** TV.11 done: audit, species estimate, Q46 answered (c) and built (D493).
+- **Next:** TV.12 (release checks, performance and size; stop and ask).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -187,3 +187,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Stop:** the 15 runs took 17.3 min (limit 10, D485 (4)). Q46 stays open with this result.
 - **Check:** the full check was green before the variant was added; run again at the end of TV.12. **Skipped:** TV.11 box not ticked (waiting for the owner).
 - **The short look (owner's go):** the four missing species (Draugr, Leshy, Strzyga, Rimewrought) are rare on the board: 0 to 8 contracts in 12 cycles against about 90 for the Wolf, because each Long Night resets the hold to tier 1 and these only come at tier 3 or 4 up, in one place each; nearly all that arrive are launched and won. Rough estimate: about 25 cycles or more for Standard to Study all 16 (fits the owner's about 20). The rule could not help. Details in `species-estimate.md`.
+
+## 2026-10-22 — v1.0 TV.11 finished: Q46 answered (c), the card line built (D493)
+- **Owner chose (c) and approved the wording** "Not yet known well: Draugr, Leshy." The Remembering card (not-open form only) now names the contract species met (Identified or better) but not yet Studied, in the Bestiary's order; absent when there is none. Worked out from the state each time (new field `missing` on the card view, so the existing `counts` and their test are unchanged); no save change, no rule or number changed. GDD §5.15.2 line updated; D493 stays Proposed.
+- **Tests:** new `tests/remembering/missing-line.test.ts` (wording, absent, only Identified-and-not-Studied, open form clears it, after-choice forms). Browser: remembering-layout, widths, contrast and tap-target specs all pass (32).
+- **TV.11 box ticked.** Audit and species files are in `docs/flesh-out/v1.0/`. **No old test edited. Skipped:** nothing. The rest of Q46 (the four rare species) is left as is.
