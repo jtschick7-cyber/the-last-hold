@@ -1431,7 +1431,7 @@ The gate is **worked out from the state each time and never stored.** Names foun
 **5.15.2 When it appears (D450).**
 - **Pechko's scene.** Once, on the first visit to the Hold screen after Act VI's Last Stand result has been applied: R-01 if the gate is not open, R-02 if it is (lore §34.1). Sets `remembering.nearSeen`.
 - **The card** (Hold screen, after the Orders card; title "The Remembering"). Not shown before `nearSeen`. Three forms (lore §34.2):
-  - *Gate not open:* "Names found: n of 40." and "Creatures known well: s of t.", plus **Names** and **Bestiary** buttons. **No bar, no countdown, no percentage.**
+  - *Gate not open:* "Names found: n of 40." and "Creatures known well: s of t.", then (v1.0, D493) one line "Not yet known well: …" naming the contract species the warden has met (Identified or better) but not yet Studied, in the Bestiary's order, absent when there is none to name, plus **Names** and **Bestiary** buttons. **No bar, no countdown, no percentage.**
   - *Gate open, nothing chosen:* two buttons, **Remember Them** and **Keep the Vigil**.
   - *After a choice:* the forms of lore §34.2.
 - **No Hold tab badge** for the card. The first time the gate opens after Pechko's scene, the next away sheet or result sheet carries one line (lore §34.2, D466), once; this needs the flag `readyNoted`.

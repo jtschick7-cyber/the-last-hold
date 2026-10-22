@@ -1,5 +1,6 @@
 import {
   creaturesKnownLine,
+  creaturesMissingLine,
   nearSceneClosed,
   nearSceneOpen,
   rememberingReadyLine,
@@ -10,7 +11,9 @@ import { endingWarm, type EndingCard } from '../../content/text/remembering-endi
 import { afterEndingLines } from '../../content/text/remembering';
 import { CONTRACT_SPECIES } from '../../content/remembering';
 import { namesFoundLine, roll } from '../../content/story/roll';
+import { monsters } from '../../content/monsters';
 import { villages } from '../../content/villages';
+import { levelOf } from '../investigation/knowledge';
 import type { GameState } from '../state/game-state';
 import { actVIStandApplied, namesFound, rememberingGate, speciesStudied } from './remembering';
 
@@ -39,6 +42,8 @@ export interface RememberingCardView {
   readonly form: RememberingForm;
   /** "Names found: n of 40." and "Creatures known well: s of t." (the not-open form only). */
   readonly counts: readonly string[];
+  /** v1.0 (D493): "Not yet known well: …" naming the contract species met (Identified or better) but not yet Studied; null when there is none to name or the form is not `notOpen`. */
+  readonly missing: string | null;
   readonly namesFound: number;
   readonly speciesKnown: number;
   readonly speciesTotal: number;
@@ -62,8 +67,13 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
       : rememberingGate(state)
         ? 'open'
         : 'notOpen';
+  const met = CONTRACT_SPECIES.filter((m) => levelOf(state, m) >= 2 && levelOf(state, m) < 3);
   return {
     form,
+    missing:
+      form === 'notOpen' && met.length > 0
+        ? creaturesMissingLine(met.map((m) => monsters[m].name))
+        : null,
     counts:
       form === 'notOpen' ? [`${namesFoundLine(names)}.`, creaturesKnownLine(known, total)] : [],
     namesFound: names,

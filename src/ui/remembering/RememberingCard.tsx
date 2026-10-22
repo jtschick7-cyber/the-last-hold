@@ -21,6 +21,7 @@ export const RememberingCard = () => {
           {v.counts.map((line) => (
             <p key={line}>{line}</p>
           ))}
+          {v.missing && <p>{v.missing}</p>}
           <p>
             <em>{c.notOpen.near}</em>
           </p>
