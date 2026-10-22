@@ -2,6 +2,7 @@
 // (GDD §9.11). Writes public/contact-sheet.html. v0.7 (plan T7.12, D265): the battle sprites are
 // shown frame by frame, and the hold cosmetics are shown on their scenes, in their own sections.
 // Run: npx vite-node tools/contact-sheet.ts
+// v1.0 (plan TV.2): add --sheets to also write the numbered Keep/Redraw sheets (tools/contact-sheet-numbered.ts).
 import { writeFileSync } from 'node:fs';
 import { AGE_IDS } from '../src/content/ages';
 import {
@@ -107,3 +108,5 @@ ${rest.map(cell).join('\n')}
 
 writeFileSync(new URL('../public/contact-sheet.html', import.meta.url), html);
 console.log('wrote public/contact-sheet.html');
+
+if (process.argv.includes('--sheets')) await import('./contact-sheet-numbered');
