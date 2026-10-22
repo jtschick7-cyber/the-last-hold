@@ -26,6 +26,8 @@
 
 .tab {
   flex: 1;
+  min-width: 0;
+  padding: 0 2px;
   min-height: 52px;
   background: none;
   border: none;
@@ -89,6 +91,14 @@
   border-radius: 0.5rem;
   padding: var(--space-2) var(--space-3);
   z-index: 30;
+}
+
+/* Five tabs must fit a 320 px bar (TV.3b). */
+@media (max-width: 400px) {
+  .tab,
+  .tabOn {
+    font-size: 0.8125rem;
+  }
 }
 
 /* GDD §9.1: at 900 px and wider, navigation becomes a left sidebar and details

@@ -4,11 +4,11 @@ import { scanTappables, MIN_TAP_PX, type SmallTarget } from './polish-tap';
 import { FLOWS, home, loadFixture, tolerantClicks, type Flow, type Visit } from './polish-screens';
 
 // Plan TV.3a/TV.3b (GDD §9.20): every screen on the list at 320 and 360 px (and, from TV.4a, at each
-// Text size): nothing tappable under 44 × 44 px. In TV.3a the sweep only reports (set TAP_STRICT=1 to
-// make it fail); TV.3b fixes the findings and makes it strict. TAP_REPORT=<file> writes the findings.
+// Text size): nothing tappable under 44 × 44 px. The sweep is strict since TV.3b (set TAP_STRICT=0 to
+// only report). TAP_REPORT=<file> writes the findings.
 
 const WIDTHS = [320, 360];
-const STRICT = process.env.TAP_STRICT === '1';
+const STRICT = process.env.TAP_STRICT !== '0';
 const BASE = 'http://localhost:4173/the-last-hold/';
 
 test('the sweep finds a planted 30 px button and spares the allowed ones', async ({ page }) => {

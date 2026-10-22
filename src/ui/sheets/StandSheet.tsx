@@ -69,6 +69,7 @@ const KitPicker = ({
   if (options.length === 0) return null;
   return (
     <select
+      class={styles.oilPicker}
       aria-label={`${hunters[hunter].shortName}'s ${kind}`}
       value={mine}
       onChange={(e) => {

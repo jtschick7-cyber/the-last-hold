@@ -95,9 +95,7 @@ const more = async (page: Page, row: string): Promise<void> => {
 };
 const archive = async (page: Page, section: string): Promise<void> => {
   await tabTo(page, 'Archive');
-  // At 320 px the last tab (Names) is cut off; that is a finding of the sweep, so click it past the cut-off.
-  const t = page.getByRole('button', { name: section, exact: true });
-  await t.click({ timeout: 2000 }).catch(() => t.dispatchEvent('click'));
+  await page.getByRole('button', { name: section, exact: true }).click();
 };
 const debug = async (page: Page, ...buttons: string[]): Promise<void> => {
   await tabTo(page, 'More');

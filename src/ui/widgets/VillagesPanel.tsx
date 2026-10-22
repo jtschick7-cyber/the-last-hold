@@ -15,7 +15,7 @@ export const VillagesPanel = () => {
   const heads = mootPanelEntries(s);
   return (
     <details class={styles.card} style={{ marginBottom: 'var(--space-3)' }}>
-      <summary class={styles.cardTitle}>Villages</summary>
+      <summary class={`${styles.cardTitle} ${styles.disclosure}`}>Villages</summary>
       <ul class={styles.list}>
         {VILLAGE_IDS.map((id) => {
           const t = s.story.trust[id];

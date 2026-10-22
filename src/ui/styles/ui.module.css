@@ -86,6 +86,17 @@
   overflow: hidden;
 }
 
+.segmentedWrap {
+  composes: segmented;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.segmentedWrap > button {
+  flex: 1 1 auto;
+}
+
 .segment {
   composes: btn;
   border: none;
@@ -118,6 +129,17 @@
   color: var(--c-text-dim);
   font-size: 0.75em;
   margin-left: 0.15em;
+  /* D472: a 44 px hit area that grows to the right and up/down only, with the negative
+     margins taking back the room, so the glyph and the line keep their old size. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 44px;
+  min-height: 44px;
+  margin-block: -14px;
+  margin-right: -32px;
+  vertical-align: middle;
+  touch-action: manipulation;
 }
 
 .cost {
@@ -355,4 +377,13 @@
   to {
     opacity: 1;
   }
+}
+
+.disclosure {
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.oilPicker {
+  min-height: 44px;
 }

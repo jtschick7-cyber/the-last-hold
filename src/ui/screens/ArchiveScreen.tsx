@@ -391,7 +391,7 @@ export const ArchiveScreen = () => {
   void version.value;
   return (
     <div>
-      <div class={styles.segmented} role="group" aria-label="Archive section">
+      <div class={styles.segmentedWrap} role="group" aria-label="Archive section">
         {SECTIONS.map((x) => (
           <button
             type="button"
