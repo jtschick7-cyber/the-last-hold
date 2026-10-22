@@ -336,7 +336,7 @@ const radekShovel = (c: Canvas): void => {
   pole(
     c,
     [
-      [52, 18],
+      [52, 26],
       [47, 62],
     ],
     C.brown,
@@ -346,22 +346,28 @@ const radekShovel = (c: Canvas): void => {
     c,
     [
       [53, 0],
-      [58, 4],
+      [57, 4],
       [61, 12],
-      [58, 19],
-      [48, 19],
+      [62, 20],
+      [58, 25],
+      [48, 25],
+      [44, 20],
       [45, 12],
-      [48, 4],
+      [49, 4],
     ],
-    (x) => (x < 50 ? C.ash : x > 57 ? C.coal : C.stone),
+    (x) => (x < 50 ? C.ash : x > 58 ? C.coal : C.stone),
   );
-  c.line(48, 5, 53, 1, C.frost, 1);
-  c.line(53, 1, 58, 5, C.frost, 1);
-  c.line(46, 12, 48, 6, C.bone, 1);
-  c.line(60, 12, 58, 6, C.bone, 1);
-  c.line(53, 5, 53, 17, C.coal, 1);
-  c.rect(50, 18, 6, 2, C.brownDark);
-  c.set(52, 19, C.gold);
+  // The silver shoe along both edges of the tip, and a ridge down the blade.
+  c.line(49, 5, 53, 1, C.frost, 1);
+  c.line(53, 1, 57, 5, C.frost, 1);
+  c.line(46, 12, 49, 6, C.bone, 1);
+  c.line(60, 12, 57, 6, C.bone, 1);
+  c.line(53, 5, 53, 22, C.coal, 1);
+  c.set(48, 21, C.bone);
+  c.set(58, 21, C.coal);
+  // The socket where the shaft enters.
+  c.rect(49, 24, 7, 3, C.brownDark);
+  c.rect(49, 24, 7, 1, C.gold);
 };
 
 /** A three-strand plait that hangs from the hair at the temple, tied off with a thread. */
@@ -376,11 +382,11 @@ const plait = (
 ): void => {
   const bx = (y: number): number => x0 + (y - top) * drift;
   for (let y = top; y <= end; y++) {
-    const w = y > end - 8 ? 2 : 3;
+    const w = y > end - 8 ? 1 : 2;
     for (let x = Math.round(bx(y)) - w; x <= Math.round(bx(y)) + w + 1; x++) c.set(x, y, C.ink);
   }
   for (let y = top; y <= end; y++) {
-    const w = y > end - 8 ? 2 : 3;
+    const w = y > end - 8 ? 1 : 2;
     const phase = (y - top) % 4;
     for (let x = Math.round(bx(y)) - w + 1; x <= Math.round(bx(y)) + w; x++) {
       const diag = (x - Math.round(bx(y)) + w - 1 + phase) % 4;
@@ -424,7 +430,7 @@ const radmilaFinish = (c: Canvas): void => {
   for (let x = 5; x < 62; x += 3) c.set(x, 62 + (x % 2), C.dusk);
   c.rect(CX - 1, 47, 3, 3, C.ink);
   c.set(CX, 48, C.bone);
-  plait(c, CX - 19, CY + 4, 58, BROWN, C.moss, -0.02);
+  plait(c, CX - 18, CY + 4, 58, BROWN, C.moss, -0.02);
   // An apron over the dress, with a pocket and a silver spoon in it.
   solid(
     c,
