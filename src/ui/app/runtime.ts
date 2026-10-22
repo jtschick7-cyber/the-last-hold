@@ -272,8 +272,8 @@ export const adoptGame = async (next: GameState): Promise<void> => {
 
 /** GDD §9.10 "Reset everything": a fresh game. The backup slot still holds the old one. */
 export const resetGame = (): void => {
-  // A new game starts its own 14 days now, so the reminder is not silent until the next start.
-  changeAppSettings(withFirstSeen(afterReset(appSettings.value), now()));
+  // Nothing is stamped until the next start, so the reminder stays silent till then (GDD §9.20).
+  changeAppSettings(afterReset(appSettings.value));
   state = createNewGame(randomSeed(), now());
   watched = null;
   watchedSkills = null;
