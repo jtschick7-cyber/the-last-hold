@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
 - **Milestone:** v1.0 "Polish" (D472–D491), in progress.
-- **Last task:** TV.8a approved by the owner (Nix fixed; Nix and Ribbonshade sprites redrawn to match their portraits).
-- **Next:** TV.8b (the rest of the marked monster-species art, if any), then TV.9a (Great Beasts, guardians, hunters).
+- **Last task:** TV.8 approved. TV.9a drawn (4 Great Beast/quarry portraits, 6 hunter portraits, 2 creature sprites); waiting for the owner's approval.
+- **Next:** TV.9b (hunter portraits Radek, Radmila, Ragnhild, Sigrun, Toma + 7 hunter sprites), TV.9c (7 hunter sprites, the downed-pose fix).
 - **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -133,3 +133,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Notes for the owner:** Nix's portrait is a dark horse in profile as marked, but its sprite is pale; Ribbonshade's ribbon is blue as marked, its sprite's is red. Nix is the weakest picture.
 - **Tools:** `tools/before-after.ts` makes the sheets; the numbered-sheet frame strips no longer shrink (flex fix). `Canvas.polygon` added. **Skipped:** nothing. TV.8 stays open until approval.
 - **Owner review:** all passed except Nix. Nix's portrait now has a shimmering water mane; the owner also asked for the Nix and Ribbonshade sprites to match, so rows 148 and 150 in `art-marks.md` are now Redraw (14 pictures in TV.8a, 2 over the 12 cap, at the owner's direction). Nix sprite: dark river horse; Ribbonshade sprite: blue stitched ribbon, singed hood. Sheet: `tv8a-nix-ribbon.png`. Check green; no old test edited.
+
+## 2026-10-22 — v1.0 TV.9a: art batch 2, part a (drawn, not yet approved)
+- **Plan for TV.9 (31 pictures marked):** 9a = 4 creature portraits, 6 hunter portraits, 2 creature sprites (12). 9b = 5 hunter portraits + 7 hunter sprites. 9c = the other 7 hunter sprites. No guardian is marked.
+- **Drawn:** Barrow-King (bronze crown, mail and fur), Likho, Mara (wider shroud, reaching hand), Stoneback (brow, mossy shoulders); Arvid (beard over the chin into braids, runed axe), Bjarna (barbed rime-spear, connected braid), Gest (pine torch), Halvar (charcoal-burner's axe), Herdis (crook, headband, fewer frost flecks), Ostap (beard); sprites Mara (downed frame rimmed) and Mother of the River (reed crown, gown). Sheets in `docs/flesh-out/v1.0/before-after/tv9a-*.png`.
+- **Per-id:** creature art edited in place (each function is one creature's); hunters through `tools/draw-hunter-redraws.ts`, keyed by the hunter's own portrait object, so the shared drawing and unmarked hunters are unchanged (Keep hash test passes).
+- **Found:** the shared drawing hides the eyes under caps (Arvid, Gest, Halvar, Ostap); the redraws draw them back. Not changed for hunters not marked.
+- **Check green; no old test edited. Skipped:** nothing. TV.9a stays open until approval.

@@ -5,6 +5,7 @@
 // plain images that can be hand-edited or swapped later.
 
 import type { PortraitSpec } from '../src/content/hunters';
+import { HUNTER_REDRAWS } from './draw-hunter-redraws';
 import { C, Canvas, seedRolls } from './pixel';
 
 export type Ramp = readonly [light: string, mid: string, dark: string];
@@ -371,16 +372,21 @@ const braid = (c: Canvas, s: PortraitSpec): void => {
   }
 };
 
-export const drawHunter = (s: PortraitSpec): Canvas => {
+export const drawHunter = (given: PortraitSpec): Canvas => {
+  // v1.0 (TV.9a): a hunter marked Redraw has its own overrides; every other hunter is unchanged.
+  const redraw = HUNTER_REDRAWS.get(given);
+  const s = redraw?.spec ? { ...given, ...redraw.spec } : given;
   const c = new Canvas();
   c.fill(C.plum);
   c.ellipse(CX, 30, 27, 29, C.violet);
   c.ellipse(CX, 30, 21, 23, C.slate);
-  if (s.weapon !== 'satchel' && s.weapon !== 'knife') weapon(c, s.weapon, s.mark);
+  if (redraw?.weapon) redraw.weapon(c);
+  else if (s.weapon !== 'satchel' && s.weapon !== 'knife') weapon(c, s.weapon, s.mark);
   braid(c, s);
   torso(c, s);
   head(c, s);
   // Over the hair and collar: the strap crosses the shoulder in front.
   if (s.weapon === 'knife') knifeStrap(c);
+  redraw?.after?.(c);
   return c;
 };
