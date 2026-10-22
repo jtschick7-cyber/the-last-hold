@@ -101,6 +101,10 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 - **The ending reads `orders.readWith` and `chaptersRead` only, never current seats or levels.**
 - All content is original. Every new proper noun is searched against the influences (GDD §2.3) and added to `tests/content/names.ts`. If you can't search, list the names in `questions.md`; never skip the check.
 - **CC0 assets only,** each with a manifest entry. `docs/credits.md` is generated.
+- **Redrawn art ships only after the owner has approved its contact sheet or batch.**
+
+**Phone and accessibility (v1.0)**
+- **A tappable thing is at least 44 × 44 px** (exceptions: inline text links in prose, the debug panel, and numbers that only respond to a long press; their ⓘ is not exempt).
 
 **Honesty in the game**
 - Every visible number with a formula has a breakdown built by the same function that builds the number.

@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `main` (v0.11 merged and tagged `v0.11.0`). The next milestone's branch is `milestone/v0.12` or whatever the next plan names, created from `main`.
-- **Milestone:** v0.11 "The Remembering" is complete (D471). The next outline milestone needs a flesh-out session first (plan §0.4).
-- **Last task:** milestone end: baseline recorded, statuses updated, merged, tagged.
-- **Next:** the owner chooses what comes next (v1.0 polish is the only outline left; it needs a flesh-out).
-- **Open questions:** Q41 and Q43 informational (Q43, "Gaunt" or "Gloam" Wolf, is for the polish pass).
+- **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
+- **Milestone:** v1.0 "Polish" (D472–D491), in progress.
+- **Last task:** the docs commit (flesh-out files applied, D491).
+- **Next:** TV.1 housekeeping and the Wolf's name.
+- **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -39,3 +39,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **The owner said the playtest passed.** CI on the pull request was green first: every simulator shard under 2 min 10 s (`long` 124 s), the judge 64 s, `check` 85 s, e2e and bench green.
 - **Done:** `npm run sim:accept` (5 min 51 s here): the baseline moves to v0.11 and the only differences are the milestone and the new row `remembering-reachable` (passes); every other number is identical. Plan `Status: complete`, D471, the PR merged, tag `v0.11.0`.
 - **Next:** the owner decides. v1.0 polish needs a flesh-out; Q43 and the Archive tabs at 360 px are candidates for it.
+
+## 2026-10-22 — v1.0 docs commit
+- **Step 0 passed:** tag `v0.11.0` exists and is in `main`; `sim/baseline.json` is the v0.11 one. Branch `milestone/v1.0` made from `main`.
+- **The owner said yes** to GDD §9.20, D485–D490 and this commit; D491 added (status Accepted; D472–D490 keep their status cells, no old row edited).
+- **Applied:** all 17 GDD find texts (each occurred once) plus the six wolf-name places (E11); OUT-1 rows D472–D490; OUT-5 questions Q46–Q50; OUT-9 as technical design §18; the v1.0 plan section and its small edits; two rules in `CLAUDE.md`. Files are in `docs/flesh-out/v1.0/`.
+- **Housekeeping:** Q42 and Q43 closed; v0.11 summary question 10 (Q35) marked closed; plan §0.7 already had the v0.11 actual, so nothing added; `tests/content/names.ts` already lists "Gaunt Wolf", so nothing added.
+- **Sweep:** 190 earlier rows still read `Proposed` (D39 to D467 in many ranges, plus D446–D467 which D472 names). All are accepted as built by D472's blanket rule; none was edited.
+- **Next:** TV.1. **Skipped:** nothing.

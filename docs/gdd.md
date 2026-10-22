@@ -1,6 +1,6 @@
 # The Last Hold — Game Design Document
 
-**Status (v0.11 flesh-out 2026-10-21):** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑.
+**Status (v1.0 flesh-out 2026-10-21):** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑.
 **Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something. The judgment-call lists at the end of each section are a historical record of when each call was added; where a list and a section body disagree, the body (with its revision trail and `decisions.md`) is authoritative.
 **Related docs:** `setting-primer.md` (spoiler-free; readable from v0.1), `lore-secrets.md` (the full truth; **kept outside the repo until v0.5**, D36), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
@@ -1258,7 +1258,7 @@ Boss and hunt wins are **not contract wins.** They do not change threat, act cou
 - Events add nothing to Orders in v0.10 (§5.13.2); that may change later.
 - No Delve trophies, bestiary kills or Legendaries come from events; no event is the only source of anything required (lore §8).
 - More hunts, more bosses, a boss shop and Boss marks are not planned.
-- Event-only cosmetics, art for the Great Beasts' full portraits and the legendary hunters' animation are polish (v1.0).
+- Event-only cosmetics and the legendary hunters' animation are deferred past v1.0 (D490). The Great Beasts' portraits are part of the v1.0 art pass if the owner marks them (D475).
 
 ### 5.13 Orders *(v0.10; ⚑ v0.10 flesh-out, D407–D425)*
 
@@ -1962,7 +1962,7 @@ A contract's location tag comes from its village. **Each success also gives one 
 
 | Monster | Family | Locations | Tiers | Health | Might | Armor | Speed | Atk |
 |---|---|---|---|---|---|---|---|---|
-| Gloam Wolf | Beasts & Wilds | forest, field, river, barrow | 1–2 | 120 | 10 | 2 | 14 | 2 |
+| Gaunt Wolf | Beasts & Wilds | forest, field, river, barrow | 1–2 | 120 | 10 | 2 | 14 | 2 |
 | Kikimora | Field & Forest Spirits | forest, field, river | 1–2 | 110 | 12 | 3 | 13 | 1 |
 | Upyr | Restless Dead | field, barrow | 2–3 | 170 | 16 | 4 | 10 | 1 |
 | Rusalka | Water Spirits | river | 2–3 | 150 | 14 | 2 | 12 | 1 |
@@ -1988,7 +1988,7 @@ A contract's location tag comes from its village. **Each success also gives one 
 
 | Monster | Steel | Silver | Fire | Frost | Rune | Venom |
 |---|---|---|---|---|---|---|
-| Gloam Wolf | 1.0 | 1.0 | **1.25** | 1.0 | 1.0 | **1.25** |
+| Gaunt Wolf | 1.0 | 1.0 | **1.25** | 1.0 | 1.0 | **1.25** |
 | Kikimora | 1.0 | **1.25** | **1.5** | 0.75 | 1.0 | 0.5 |
 | Upyr | 0.75 | **1.5** | **1.25** | 0.75 | **1.25** | 0 |
 | Rusalka | 1.0 | **1.5** | 0.75 | **1.25** | 1.0 | 0.5 |
@@ -2012,7 +2012,7 @@ A contract's location tag comes from its village. **Each success also gives one 
 
 | Monster | Ability (exact effect) | Clue tags | Drop (v0.3) | Folklore basis |
 |---|---|---|---|---|
-| Gloam Wolf | *Hamstring:* each hit has a 25% chance to cut the target's Speed by 30% for the target's next 3 actions | tracks, livestock, night | wolf fang | Wolves grown wrong in the Gloam: grey, gaunt, too quiet |
+| Gaunt Wolf | *Hamstring:* each hit has a 25% chance to cut the target's Speed by 30% for the target's next 3 actions | tracks, livestock, night | wolf fang | Wolves grown wrong in the Gloam: grey, gaunt, too quiet |
 | Kikimora | *Spoil:* its first hit on each hunter ruins that hunter's unused potion | house, livestock, swamp | thornwood | Household/swamp spirit whose mischief turns to malice |
 | Upyr | *Bloodfeast:* heals 50% of the damage it deals | grave, bloodless, night | grave dust | Restless dead risen from an improper burial |
 | Rusalka | *Drowning Song:* on its 1st, 5th, 9th… action, instead of attacking, it charms the lowest-Armor hunter, who loses their next action | drowned, song, night | river pearl | Drowned maiden of rivers and fields |
@@ -2514,7 +2514,7 @@ With the eleven starting hunters, each track has at least four legal hunters (co
 
 **All mocks in §9 are illustrative.** Their numbers follow the formulas, but they aren't test cases; the only exact example is §5.5.1 *(⚑ revision A14)*.
 
-**Target size.** The layout is designed for a 360–430 px wide portrait phone and scales up (D02).
+**Target size.** The layout is designed for a 360–430 px wide portrait phone and scales up (D02). **From v1.0 every screen must also work at 320 px wide** (D480, §9.20).
 - **≥ 900 px wide:** two columns. Navigation becomes a left sidebar, the main screen sits in the middle, and the detail panel (breakdowns, logs, hunter details) opens on the right instead of as a sheet.
 - **≥ 1300 px wide:** the right column stays open.
 
@@ -2540,7 +2540,8 @@ With the eleven starting hunters, each track has at least four legal hunters (co
 - **Number formatting:** 3 significant digits plus a suffix (K, M, B, T, Qa, Qi), then scientific notation above 1e21. Exact values appear in breakdowns.
 - **Theme** **[JC]**: dark by default, a warm candlelit palette in keeping with "heroic with dark edges". A light theme is in Settings.
   - Pixel font for headings and numbers in the resource bar only. Body text uses a readable system font, because pixel fonts are hard to read at body size on phones.
-  - Respects the system "reduce motion" and text-size settings.
+  - Respects the system "reduce motion" setting; the existing Settings switch adds to it (motion is reduced if either says so). Settings adds a three-step in-app **Text size**; whether the phone's own text-size setting reaches the page depends on the browser (§9.20).
+  - **Contrast** (v1.0, D480, D488): normal text reaches 4.5:1 and large text and UI glyph icons 3:1 against their background, in both themes (§9.20).
 - **Art placement:** sprites appear in building rows, hunter cards, monster entries, and the hold header. Every image comes from the asset manifest with a placeholder fallback, so a missing sprite never breaks a screen.
 
 ### 9.2 Hold (v0.1)
@@ -2595,6 +2596,7 @@ With the eleven starting hunters, each track has at least four legal hunters (co
 - Lines marked ▸ open the full log.
 - Once an Order is open, the sheet adds Orders lines: *"The Thanes' Moot: Friend."* (a level up), *"A chapter waits for a seat."*, *"A third seat has opened."* (§5.13)
 - Contract, injury, and bestiary lines appear only once those systems exist.
+- **Backup reminder** *(v1.0, D481, D486)*: when due, one line with **[Back up now]** and **[Not now]** sits below the summary lines and above **[Onward]** (§9.20). It never blocks [Onward].
 
 ### 9.4 Contracts board (v0.2)
 
@@ -2603,7 +2605,7 @@ With the eleven starting hunters, each track has at least four legal hunters (co
 │ BOARD 4/6     next in 1h 12m     │
 ├──────────────────────────────────┤
 │ ⏱ Running                         │
-│  Gloam Wolf · T1 · 12m left      │
+│  Gaunt Wolf · T1 · 12m left      │
 ├──────────────────────────────────┤
 │ ✔ Ready to collect (1)  [Collect]│
 ├──────────────────────────────────┤
@@ -2707,7 +2709,7 @@ Grid (by family)                 Entry (sheet)
 │ FIELD & FOREST         2/4   │ │  heavy, who guard what was    │
 │ [Kikimora][Poludn.][·][·]    │ │  buried with them…"           │
 │ BEASTS & WILDS         1/2   │ │ Resistances  Steel ×0.75 …    │
-│ [Gloam Wolf] [·]             │ │ Barrow-Grip · Swell ⓘ         │
+│ [Gaunt Wolf] [·]             │ │ Barrow-Grip · Swell ⓘ         │
 └──────────────────────────────┘ │ +5% damage (Studied)          │
   [?] = Sighted · [·] = Unknown  │ Encounters ▸ (last 5 logs)   │
                                  └──────────────────────────────┘
@@ -2744,6 +2746,7 @@ The Hut opens from its building row on the Hold screen.
 | Hall of the Fallen | Memorials to dead hunters (§5.3.7) | v0.2 |
 | Save & Data | See below | v0.1 |
 | Settings | Theme, best-buy hint on/off, rates per min/hour, reduce motion | v0.1 |
+| Settings *(v1.0, D480, D481)* | + Text size (Match phone, Large, Largest); Backup reminder (On, Off). These two live in a settings key outside the save (§9.20) | v1.0 |
 | Debug | Only in dev builds or with `?debug` (see below) | v0.1 |
 | About & Credits | Version, `credits.md` contents (CC0 sources) | v0.1 |
 
@@ -2756,6 +2759,7 @@ The Hut opens from its building row on the Hold screen.
 │ [Copy save code]  [Paste code]   │
 │ [Download save file] [Load file] │
 │ Backup slot: 6m ago  [Restore]   │
+│ Last exported: 9d ago  [Export…] │
 │ ─────────────────────────────    │
 │ [Reset everything…] (2 confirms) │
 └──────────────────────────────────┘
@@ -2770,6 +2774,7 @@ The Hut opens from its building row on the Hold screen.
 - Run the simulator's Standard policy for N hours.
 - Force a contract outcome *(v0.2)*.
 - `debug.remembering.openGate()` and `debug.remembering.finishActVI()` *(v0.11, D462)*: open the ending's gate, and apply Act VI's stand result.
+- **Set last export age** *(v1.0, D486)*: pretend the last export was n days ago, so the backup reminder can be tested. It is a **UI-only action in the debug panel, not a core command:** it writes only the settings key, does not touch the save and does not set `debugUsed` (the one recorded exception to technical design §15).
 
 ### 9.11 What exists when
 
@@ -2786,10 +2791,11 @@ The Hut opens from its building row on the Hold screen.
 | v0.9 | Events: the Events card, world bosses (three Great Beasts), Legendary Hunts (three hunters, nine tracks), the Great Beasts shelf, the Rime shelf, Act VI and the Dross-Tide in the Last Stand (§5.12, §8.13, §8.14, §9.17, §7.11) |
 | v0.10 | Orders: the Orders card, the Order sheets, the "Seat your Orders" step, chapter and opening scenes, the Library's Orders shelf, the Villages panel's "What the heads say about you" entry (§5.13, §7.12, §9.18) |
 | v0.11 | The Remembering: the card (from the first Hold-screen visit after Act VI's Last Stand result), Pechko's near-scene, the reading, the ending cards, the Library shelf "The Remembering" (from the first ending reached), the Hearth Hall look after Remember Them (§9.19) |
+| v1.0 | Polish: no new game screen. The Archive tabs fit (two rows when needed); Text size and Backup reminder in Settings; the backup line on the away sheet; reduced motion, contrast and tap-size fixes everywhere; redrawn art and the app icon (§9.12, §9.20) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
-- A real art and UX pass is scheduled for v1.0.
+- The art and UX pass is v1.0 (§9.12, §9.20).
 
 
 ### 9.12 Art direction *(⚑ revision C7 [JC])*
@@ -2811,6 +2817,8 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 - **Battle sprites (v0.7, D265):** 32 px, code-generated from part templates per family, for the 16 contract species, the 3 Deep guardians and the 11 hunters (from their portrait parts). Animation: a 2-frame idle, a lunge when attacking, a white flash when hit, a downed pose; reduce-motion shows still frames. A contact sheet goes to the owner one session before the Delve screens; a rejected sprite falls back to the 64 px portrait shrunk to 32 px.
 - Also v0.7: patron sigils (6, 16 px), rarity frames (Faint, Warm, Bright), icons for Riftglass and the six Delve relics, and the four hold cosmetics in the hold scene.
 - **v0.8 (D324):** 16 px icons for the 7 base pieces; 4 item rarity frames (Common, Fine, Rare, Heroic), distinct from the Delve frames; 6 keepsake icons; a star icon; 3 rank badges; icons for the nine older brews. A contact sheet for the owner's review in the playtest.
+
+- **v1.0 (D475, D482, D489):** a **contact sheet** of every picture drawn in code (the manifest rows whose source is `generated`; 156 at v0.11) is made first, by extending the existing `tools/contact-sheet.ts`: a few composite images per kind (portraits, monster and hunter sprites, icons, frames, scenes), the number printed under each picture, 16 px icons at 4×, on both theme backgrounds, scene overlays shown over their base hold scene. Two or three **app-icon candidates** are on it. The owner marks each picture **Keep** or **Redraw**; the marks are recorded in `docs/flesh-out/v1.0/art-marks.md`. At most about 40 pictures are redrawn, at most 12 per session; the rest go on the deferred list. A redraw uses a **per-id override**, so a picture marked Keep is byte-identical to its v0.11 PNG (a test checks it). Redraws keep the id, the size (16, 32 or 64 px) and the 32-colour palette and go in through the manifest. The old picture is kept in git and `art-src/previous/` for a one-step revert. Each batch is shown before and after and the owner approves it. Free-pack art (`pack` rows, 49) is not redrawn. The app icon is drawn in code or CC0 in the home-screen sizes (192, 512, maskable 512, apple-touch-icon 180, favicon) and recorded in the manifest (and `credits.md` if CC0).
 
 **Honest note:** the generated monsters (especially the poludnitsa, vodyanoy, huldra and nix) will be the weakest art in the game. CC0 packs almost never include folklore creatures like these. The asset manifest lets you swap in better art later without touching code.
 
@@ -2906,6 +2914,28 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 - **The Hearth Hall look** after Remember Them (frost gone, lamp in the window), drawn in code.
 - **Layout checks (Playwright, phone and 900/1300 px):** no sideways scroll with the card, the reading screen and every ending card open; **all 40 names with their village lines** fit without clipping at the narrowest width.
 
+### 9.20 Polish: accessibility, backup reminder and art *(v1.0, D473–D490)*
+
+v1.0 changes **no game number, formula or save field.** Everything below is presentation and settings.
+
+**Where settings live.** The existing settings (theme, best-buy hint, rates per min/hour, reduce motion) are part of the save and **stay there, unchanged.** v1.0 adds one **settings key outside the save**, namespaced by channel, holding only: `textSize`, `backupReminder`, `lastExportAt`, `snoozeUntil`, `firstSeenAt` (set once, on the first run of v1.0). **Reset everything…** clears the three timestamps and keeps `textSize` and `backupReminder`. **Paste code, Load file and Restore do not touch it.** No schema change (D486).
+
+- **Archive section tabs.** The four tabs (Bestiary, Library, Accounts, Names) are always fully visible from 320 px up, with no sideways scroll. When they do not fit on one row at the current Text size they **wrap to two rows**. The bottom tab bar and the resource bar are **exempt from Text size** (short labels, always one row). If a screen cannot fit at Largest after this, stop and ask.
+- **Text size** (Settings): **Match phone** (default), **Large** (115% of the base body size), **Largest** (130%), applied once at the root. It scales **body-font text only.** The pixel font (headings and resource-bar numbers) and every sprite and icon never scale (integer scaling only, §9.12). "Match phone" means the app adds no scaling of its own; whether the phone's own text-size setting reaches the page depends on the browser (Android Chrome follows it; iPhone home-screen apps generally do not), and the tests cover only the three in-app steps. Every screen on the screen list fits at **320 px at Largest** with no clipped text and no sideways scroll; **all 40 names of the reading fit at Largest.** Buttons stay at least 44 × 44 px **at every Text size.**
+- **Reduced motion.** Motion is reduced if the phone says so **or** the existing Settings switch is on (the switch stays a plain on/off). Then nothing fades, slides, bobs or flashes: battle sprites show still frames, sheets appear at once, and **fight playback, Delve playback and the reading keep the same timeline and pace with still frames** (as the reading already does, D456). The Hold scene is still. A script over the CSS allows `animation` and `transition` only under the reduced-motion gate, JS-driven motion goes through one registry, and a Playwright check reads `document.getAnimations()`.
+- **Contrast.** In both themes, normal text reaches **4.5:1** and large text (18 pt, or 14 pt bold, at its rendered size) and UI glyph icons **3:1**, measured by Playwright from the computed colours on the screen list. The styled cards (the Rime reader's pale-on-dark card, the document reader's parchment card and Ilse's italic note, the reading screen's dark card, the scene sheets) meet the same ratios in both themes; a fix may brighten them, and **if a fix would visibly change an approved look, show before and after and ask.** Fixes use the existing theme tokens; **if no token pair passes, stop and ask.** Multi-colour pixel art and text drawn over the pixel hold scene are not measured; they are looked at in the playtest.
+- **Tap targets.** Everything tappable on the screen list is at least 44 × 44 px at 320 and 360 px and at every Text size. Exceptions (as WCAG 2.5.5): inline text links in prose, the debug panel, and numbers that only respond to a long press. The ⓘ icons are not exempt: they keep their look and get a 44 px hit area.
+- **Backup reminder** (D481, D486). One line on the away sheet, **below the summary lines and above [Onward]**, never blocking [Onward] or the Contracts "Collect".
+  - Shown when the **Backup reminder** setting is On, **14 or more whole days** have passed since the later of `lastExportAt` and `firstSeenAt`, and it is not snoozed. If the clock was set backward (now earlier than that time) nothing shows.
+  - Text (word for word; `{n}` is the number of whole days):
+    - *You haven't saved a copy of your game outside this browser in the last {n} days. A copy keeps your hold safe if the browser clears its storage.*
+  - Buttons: **Back up now** (opens Save & Data and snoozes for 1 day) and **Not now** (snoozes for 7 days).
+  - Only **Copy save code** (when the copy succeeds) and **Download save file** (when the download starts) count as an export and set `lastExportAt`. Copy diagnostics, Paste code, Load file, Restore and a cancelled download do not.
+  - Settings: **Backup reminder** On / Off. Save & Data shows **Last exported: 9d ago** or **Last exported: not recorded** (E3).
+- **Art.** See §9.12 (v1.0). Redrawn pictures change no layout; every size stays.
+- **The screen list** (used by the tap sweep, the Text size, contrast and layout checks): Hold (at Hamlet, Keep, Citadel and Bastion); the away sheet (with the reminder); the rates and breakdown sheets; the Rank screen (the Hearth, the Roll of Wardens, the Riftglass shop, "What the ember remembers"); Hunters (roster, candidates); the hunter sheet (talents, slots, alternate traits, letters), the slot picker, Stores and Salvage; Contracts (board, launch sheet, fight log); Bestiary and an entry; the Alchemist's Hut (the 12 × 3 Book grid, Experiment); the Archive (all four tabs, the document reader, the Names view, the Villages panel); the Last Stand screen, the Long Night sheets and the arrival sheet; a Delve (entry, floor playback, doors, blessing, guardian, result); Events (boss sheet and playback, hunt sheet and playback, the Great Beasts shelf, the Rime shelf); the Orders (card, sheets, the seat step, chapter and opening scenes); the Remembering (card in its four forms, Pechko's scene, the reading, the ending cards, the Library shelf); More (Reports, Hall of the Fallen, Save & Data, Settings, About & Credits, Diagnostics). The debug panel is excluded. Claude Code records in the progress entry which fixture or debug command reaches each screen.
+- **Layout checks (Playwright, 320, 360, 900, 1300 px):** each of the above, at Match phone and at Largest, in both themes.
+
 ---
 
 ## 10. Out of Scope
@@ -2915,7 +2945,7 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 - Leaderboards.
 - Monetization and its patterns: ads, shops, premium currency, energy systems.
 - Gacha or randomized hunter pulls.
-- Audio: music and sound effects. **[JC: revisit after v1.0. The asset manifest reserves an `audio` section so sound can be added without restructuring.]**
+- Audio: music and sound effects. **[Decided D476: after v1.0, as its own small milestone: CC0 sounds only, muted by default with a toggle, no new runtime dependency. The asset manifest reserves an `audio` section so sound can be added without restructuring.]**
 
 **Out because of the platform or audience (judgment calls):**
 
@@ -2929,10 +2959,11 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 | Localization | English only | Text lives in content files, so translation stays possible later |
 | Anti-cheat and save validation beyond schema checks | D21 | The debug panel is a feature, not a cheat |
 | Mod support or a content editor | Content files are already plain TypeScript data | Edit content files directly |
-| Achievements | Not in the brief | **[JC: candidate for v1.0 polish; the owner decides at the v1.0 flesh-out]** |
+| Achievements | Not in the brief; the owner decided against them (D474) | The in-world records: the Names, the Bestiary, the Library and the Roll of Wardens |
 | Records screen; CSV/JSON export of history and logs | Declined in the GDD review (G9) | Reports keeps recent logs; the Roll of Wardens (v0.5) keeps per-cycle history in-world |
-| The Descent (a third ending) | Deferred (D448) | Its own later flesh-out |
-| Rising difficulty for Keep the Vigil (an endless mode) | Deferred (D453) | Keep the Vigil changes nothing for now; its own later flesh-out |
+| The Descent (a third ending) | Deferred (D448); after v1.0 (D477) | Its own milestone after v1.0, with its own flesh-out |
+| Rising difficulty for Keep the Vigil (an endless mode) | Deferred (D453); after v1.0 (D477) | Keep the Vigil changes nothing for now; its own milestone after v1.0, with its own flesh-out |
+| Screen-reader labels and keyboard focus | Considered for v1.0 and left out (D489) | Not planned; a later accessibility pass if wanted |
 | Orders giving silver or fight bonuses; events adding standing; a seat cost; a fifth Order | Not planned (D418) | — |
 
 **Deferred, not cut.** Anything listed at outline level in §5.8–5.13 is in scope for its milestone and gets full detail just before that milestone starts.
@@ -2950,8 +2981,9 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 7. **Two-column desktop layout at 900 px and wider,** three columns at 1300 px.
 8. **A screenshot-based "looks wrong on my phone" pass** in every milestone's playtest checklist.
 9. **No push notifications** (they need a server). An app-icon badge stands in where supported; support on iPhone home-screen apps is limited.
-10. **Audio is revisited after v1.0,** with a slot reserved in the asset manifest.
-11. **Achievements are a candidate for v1.0 polish.**
+10. **Audio comes after v1.0, as its own small milestone,** with a slot reserved in the asset manifest. (D476)
+11. **No achievements.** The in-world records do that job. (D474)
+12. **v1.0 is one polish milestone with no game-rule change;** the Descent and rising difficulty come after it. (D473, D477)
 
 ---
 
@@ -2982,7 +3014,7 @@ Each one is also marked **[JC]** where it appears.
 
 ## Judgment calls added from the lore revision (D32)
 
-1. **"Keeper" replaces Forge-Mother,** and **Gloam Wolf** replaces Hollow Wolf. (§2.5, §8.3)
+1. **"Keeper" replaces Forge-Mother,** and **Gaunt Wolf** replaces Hollow Wolf (the first draft said Gloam Wolf; D71 changed it, applied here by D483). (§2.5, §8.3)
 2. **Story hunters never die;** Arvid joins in v0.5. (§5.3.7, §8.5)
 3. **Four Orders, including the Quenchers;** the remnant Wrights join your order. (§5.13)
 4. **Six patrons;** the Unlit appears only after Act V. (§8.8)
