@@ -52,6 +52,9 @@ export const measure = (page: Page): Promise<Measured[]> =>
         const isPicture = el.tagName === 'IMG' || el.tagName === 'CANVAS';
         if (!own && !isPicture) continue;
         if (el.closest('[aria-hidden="true"]')) continue;
+        // A picture stretched to its container (scenes) follows the container's width, which
+        // moves with the page's padding; only pictures at a fixed size are held to "never scales".
+        if (isPicture && (el as HTMLElement).style.width.endsWith('%')) continue;
         const pixel = getComputedStyle(el).fontFamily.includes('Kenney');
         add(el, isPicture ? 'picture' : inBar ? 'bar' : pixel ? 'pixel' : 'text', i++);
       }

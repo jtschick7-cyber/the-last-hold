@@ -1,0 +1,154 @@
+TEXT SIZE LARGEST AT 320 PX: 151 findings over 72 screens
+hold-bastion: span "Food" scroll 38×24 box 1×1 x 21..22
+hold-bastion: span "Wood" scroll 44×24 box 1×1 x 96..97
+hold-bastion: span "Iron" scroll 29×24 box 1×1 x 178..179
+hold-bastion: span "Silver" scroll 42×24 box 1×1 x 259..260
+hold-bastion: h2 "Peasants 86 · 107 bedsⓘ" scroll 235×34 box 235×23 x 43..277
+hold-bastion: label "Auto-settle" scroll 86×62 box 56×62 x 43..98
+hold-bastion: span "next costs 3.31Mⓘ" scroll 180×34 box 169×25 x 109..277
+hold-bastion: span "Farmer 29/63" scroll 70×62 box 20×62 x 43..63
+hold-bastion: span "Woodcutter 27/39" scroll 114×62 box 20×62 x 43..63
+hold-bastion: span "Miner 28/28" scroll 59×62 box 20×62 x 43..63
+hold-bastion: span "Silver-digger 2/2" scroll 64×94 box 20×94 x 43..63
+hold-bastion: button "Upgrade" scroll 107×42 box 94×42 x 182..277
+breakdown: code "threat.defenseSlowPerLevel" scroll 244×23 box 244×23 x 118..362
+breakdown: span "Watchtower level 2" scroll 117×62 box 100×62 x 118..218
+breakdown: code "threat.defenseSlowPerLevel" scroll 244×23 box 244×23 x 118..362
+hunters-roster: span "Food" scroll 38×24 box 1×1 x 21..22
+hunters-roster: span "Wood" scroll 44×24 box 1×1 x 96..97
+hunters-roster: span "Iron" scroll 29×24 box 1×1 x 178..179
+hunters-roster: span "Silver" scroll 42×24 box 1×1 x 259..260
+hunter-sheet: span "H 306ⓘ" scroll 108×38 box 76×31 x 22..98
+hunter-sheet: span "M 33ⓘ" scroll 98×38 box 66×31 x 118..184
+hunter-sheet: span "A 16ⓘ" scroll 93×38 box 61×31 x 205..266
+hunter-sheet: span "S 7ⓘ" scroll 79×38 box 47×31 x 22..69
+hunter-sheet: div "Cost: 60 trophiesⓘ" scroll 137×60 box 133×51 x 22..155
+hunter-sheet: div "Cost: 10 trophiesⓘ + 20 Embersⓘ" scroll 133×85 box 133×76 x 165..298
+hunter-sheet: span "Armor: Emberwright Plate+8 Armor · −10% " scroll 131×170 box 94×170 x 72..166
+stores: span "Food" scroll 38×24 box 1×1 x 21..22
+stores: span "Wood" scroll 44×24 box 1×1 x 96..97
+stores: span "Iron" scroll 29×24 box 1×1 x 178..179
+stores: span "Silver" scroll 42×24 box 1×1 x 259..260
+contracts-board: span "Food" scroll 38×24 box 1×1 x 21..22
+contracts-board: span "Wood" scroll 44×24 box 1×1 x 96..97
+contracts-board: span "Iron" scroll 29×24 box 1×1 x 178..179
+contracts-board: span "Silver" scroll 42×24 box 1×1 x 259..260
+villages: span "Food" scroll 38×24 box 1×1 x 21..22
+villages: span "Wood" scroll 44×24 box 1×1 x 96..97
+villages: span "Iron" scroll 29×24 box 1×1 x 178..179
+villages: span "Silver" scroll 42×24 box 1×1 x 259..260
+bestiary: span "Food" scroll 38×24 box 1×1 x 21..22
+bestiary: span "Wood" scroll 44×24 box 1×1 x 96..97
+bestiary: span "Iron" scroll 29×24 box 1×1 x 178..179
+bestiary: span "Silver" scroll 42×24 box 1×1 x 259..260
+archive-library: span "Food" scroll 38×24 box 1×1 x 21..22
+archive-library: span "Wood" scroll 44×24 box 1×1 x 96..97
+archive-library: span "Iron" scroll 29×24 box 1×1 x 178..179
+archive-library: span "Silver" scroll 42×24 box 1×1 x 259..260
+archive-accounts: span "Food" scroll 38×24 box 1×1 x 21..22
+archive-accounts: span "Wood" scroll 44×24 box 1×1 x 96..97
+archive-accounts: span "Iron" scroll 29×24 box 1×1 x 178..179
+archive-accounts: span "Silver" scroll 42×24 box 1×1 x 259..260
+archive-names: span "Food" scroll 38×24 box 1×1 x 21..22
+archive-names: span "Wood" scroll 44×24 box 1×1 x 96..97
+archive-names: span "Iron" scroll 29×24 box 1×1 x 178..179
+archive-names: span "Silver" scroll 42×24 box 1×1 x 259..260
+order-sheet: p "Neighbour · Standing 5ⓘ · Next level at " scroll 276×71 box 276×64 x 22..298
+more-menu: span "Food" scroll 38×24 box 1×1 x 21..22
+more-menu: span "Wood" scroll 44×24 box 1×1 x 96..97
+more-menu: span "Iron" scroll 29×24 box 1×1 x 178..179
+more-menu: span "Silver" scroll 42×24 box 1×1 x 259..260
+more-settings: span "Reduce motion" scroll 74×62 box 3×62 x 22..25
+more-about: pre "The Last Hold is an original game. Every" scroll 261×989 box 233×989 x 44..276
+hut-book: button "Book" scroll 92×44 box 92×44 x 271..363
+hut-experiment: button "Book" scroll 92×44 box 92×44 x 273..365
+hunters-candidates: span "Food" scroll 38×24 box 1×1 x 21..22
+hunters-candidates: span "Wood" scroll 44×24 box 1×1 x 96..97
+hunters-candidates: span "Iron" scroll 29×24 box 1×1 x 178..179
+hunters-candidates: span "Silver" scroll 42×24 box 1×1 x 259..260
+hold-hamlet: span "Food" scroll 38×24 box 1×1 x 21..22
+hold-hamlet: span "Wood" scroll 44×24 box 1×1 x 80..81
+hold-hamlet: span "Iron" scroll 29×24 box 1×1 x 138..139
+hold-hamlet: span "Silver" scroll 42×24 box 1×1 x 189..190
+hold-hamlet: h2 "Peasants 3 · 3 bedsⓘ" scroll 235×34 box 235×23 x 43..277
+hold-hamlet: label "Auto-settle" scroll 86×62 box 82×62 x 43..124
+hold-hamlet: span "next costs 30ⓘ" scroll 154×34 box 143×25 x 135..277
+hold-hamlet: span "Farmer 1/3" scroll 70×62 box 20×62 x 43..63
+hold-hamlet: span "Woodcutter 2/3" scroll 114×62 box 20×62 x 43..63
+hold-keep: span "Food" scroll 38×24 box 1×1 x 21..22
+hold-keep: span "Wood" scroll 44×24 box 1×1 x 80..81
+hold-keep: span "Iron" scroll 29×24 box 1×1 x 138..139
+hold-keep: span "Silver" scroll 42×24 box 1×1 x 189..190
+hold-keep: h2 "Peasants 3 · 3 bedsⓘ" scroll 235×34 box 235×23 x 43..277
+hold-keep: label "Auto-settle" scroll 86×62 box 82×62 x 43..124
+hold-keep: span "next costs 30ⓘ" scroll 154×34 box 143×25 x 135..277
+hold-keep: span "Farmer 1/3" scroll 70×62 box 20×62 x 43..63
+hold-keep: span "Woodcutter 2/3" scroll 114×62 box 20×62 x 43..63
+hold-citadel: span "Food" scroll 38×24 box 1×1 x 21..22
+hold-citadel: span "Wood" scroll 44×24 box 1×1 x 80..81
+hold-citadel: span "Iron" scroll 29×24 box 1×1 x 138..139
+hold-citadel: span "Silver" scroll 42×24 box 1×1 x 189..190
+hold-citadel: h2 "Peasants 3 · 3 bedsⓘ" scroll 235×34 box 235×23 x 43..277
+hold-citadel: label "Auto-settle" scroll 86×62 box 82×62 x 43..124
+hold-citadel: span "next costs 30ⓘ" scroll 154×34 box 143×25 x 135..277
+hold-citadel: span "Farmer 1/3" scroll 70×62 box 20×62 x 43..63
+hold-citadel: span "Woodcutter 2/3" scroll 114×62 box 20×62 x 43..63
+chapter-scene: span "Food" scroll 38×24 box 1×1 x 21..22
+chapter-scene: span "Wood" scroll 44×24 box 1×1 x 96..97
+chapter-scene: span "Iron" scroll 29×24 box 1×1 x 178..179
+chapter-scene: span "Silver" scroll 42×24 box 1×1 x 259..260
+chapter-scene: h2 "Peasants 86 · 107 bedsⓘ" scroll 235×34 box 235×23 x 43..277
+chapter-scene: label "Auto-settle" scroll 86×62 box 56×62 x 43..98
+chapter-scene: span "next costs 3.31Mⓘ" scroll 180×34 box 169×25 x 109..277
+chapter-scene: span "Farmer 29/63" scroll 70×62 box 20×62 x 43..63
+chapter-scene: span "Woodcutter 27/39" scroll 114×62 box 20×62 x 43..63
+chapter-scene: span "Miner 28/28" scroll 59×62 box 20×62 x 43..63
+chapter-scene: span "Silver-digger 2/2" scroll 64×94 box 20×94 x 43..63
+chapter-scene: button "Upgrade" scroll 107×42 box 94×42 x 182..277
+events-boss-sheet: p "Tier 5ⓘ · Pool 38.2K of 38.2Kⓘ" scroll 276×70 box 276×62 x 22..298
+events-hunt-list: p "Points 0 of 100ⓘ" scroll 233×38 box 233×31 x 44..276
+events-hunt-list: p "Points 0 of 100ⓘ" scroll 233×38 box 233×31 x 44..276
+events-hunt-list: p "Points 0 of 100ⓘ" scroll 233×38 box 233×31 x 44..276
+remembering-card-not-ready: span "Food" scroll 38×24 box 1×1 x 21..22
+remembering-card-not-ready: span "Wood" scroll 44×24 box 1×1 x 96..97
+remembering-card-not-ready: span "Iron" scroll 29×24 box 1×1 x 172..173
+remembering-card-not-ready: span "Silver" scroll 42×24 box 1×1 x 222..223
+remembering-card-not-ready: h2 "Peasants 13 · 13 bedsⓘidle 7 ⚠️" scroll 235×57 box 235×46 x 43..277
+remembering-card-not-ready: label "Auto-settle" scroll 86×62 box 75×62 x 43..118
+remembering-card-not-ready: span "next costs 123ⓘ" scroll 161×34 box 149×25 x 128..277
+remembering-card-not-ready: span "Farmer 3/3" scroll 70×62 box 20×62 x 43..63
+remembering-card-not-ready: span "Woodcutter 3/3" scroll 114×62 box 20×62 x 43..63
+remembering-card-open: span "Food" scroll 38×24 box 1×1 x 21..22
+remembering-card-open: span "Wood" scroll 44×24 box 1×1 x 96..97
+remembering-card-open: span "Iron" scroll 29×24 box 1×1 x 172..173
+remembering-card-open: span "Silver" scroll 42×24 box 1×1 x 222..223
+remembering-card-open: h2 "Peasants 13 · 13 bedsⓘidle 7 ⚠️" scroll 235×57 box 235×46 x 43..277
+remembering-card-open: label "Auto-settle" scroll 86×62 box 75×62 x 43..118
+remembering-card-open: span "next costs 123ⓘ" scroll 161×34 box 149×25 x 128..277
+remembering-card-open: span "Farmer 3/3" scroll 70×62 box 20×62 x 43..63
+remembering-card-open: span "Woodcutter 3/3" scroll 114×62 box 20×62 x 43..63
+remembering-card-after: span "Food" scroll 38×24 box 1×1 x 21..22
+remembering-card-after: span "Wood" scroll 44×24 box 1×1 x 96..97
+remembering-card-after: span "Iron" scroll 29×24 box 1×1 x 172..173
+remembering-card-after: span "Silver" scroll 42×24 box 1×1 x 222..223
+remembering-card-after: h2 "Peasants 13 · 13 bedsⓘidle 7 ⚠️" scroll 235×57 box 235×46 x 43..277
+remembering-card-after: label "Auto-settle" scroll 86×62 box 75×62 x 43..118
+remembering-card-after: span "next costs 123ⓘ" scroll 161×34 box 149×25 x 128..277
+remembering-card-after: span "Farmer 3/3" scroll 70×62 box 20×62 x 43..63
+remembering-card-after: span "Woodcutter 3/3" scroll 114×62 box 20×62 x 43..63
+remembering-library: span "Food" scroll 38×24 box 1×1 x 21..22
+remembering-library: span "Wood" scroll 44×24 box 1×1 x 96..97
+remembering-library: span "Iron" scroll 29×24 box 1×1 x 172..173
+remembering-library: span "Silver" scroll 42×24 box 1×1 x 222..223
+remembering-card-after-vigil: span "Food" scroll 38×24 box 1×1 x 21..22
+remembering-card-after-vigil: span "Wood" scroll 44×24 box 1×1 x 96..97
+remembering-card-after-vigil: span "Iron" scroll 29×24 box 1×1 x 172..173
+remembering-card-after-vigil: span "Silver" scroll 42×24 box 1×1 x 222..223
+remembering-card-after-vigil: h2 "Peasants 13 · 13 bedsⓘidle 7 ⚠️" scroll 235×57 box 235×46 x 43..277
+remembering-card-after-vigil: label "Auto-settle" scroll 86×62 box 75×62 x 43..118
+remembering-card-after-vigil: span "next costs 123ⓘ" scroll 161×34 box 149×25 x 128..277
+remembering-card-after-vigil: span "Farmer 3/3" scroll 70×62 box 20×62 x 43..63
+remembering-card-after-vigil: span "Woodcutter 3/3" scroll 114×62 box 20×62 x 43..63
+long-night-view: p "Embers: 385ⓘ" scroll 276×38 box 276×31 x 22..298
+SCALED WHEN THEY MUST NOT: 0
+FLOW FAILURES: 0

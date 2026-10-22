@@ -245,6 +245,8 @@ test.afterAll(() => {
   const report = [
     `TEXT SIZE LARGEST AT ${WIDTH} PX: ${count} findings over ${new Set(rows.map((r) => r.id)).size} screens`,
     ...lines,
+    `SCALED WHEN THEY MUST NOT: ${scaled.length}`,
+    ...scaled,
     `FLOW FAILURES: ${failures.length}`,
     ...failures,
   ].join('\n');
