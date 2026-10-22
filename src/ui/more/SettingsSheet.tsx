@@ -15,8 +15,10 @@ const Choice = <K extends keyof Settings>({
 }) => {
   const current = game().settings[k];
   return (
-    <div class={`${styles.row} ${styles.divider}`}>
-      <span class={styles.grow}>{label}</span>
+    <div class={`${styles.row} ${styles.divider}`} style={{ flexWrap: 'wrap' }}>
+      <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+        {label}
+      </span>
       <div class={styles.segmented} role="group" aria-label={label}>
         {options.map(([value, text]) => (
           <button
@@ -45,8 +47,10 @@ const TEXT_SIZE_LABEL: Record<TextSize, string> = {
 const TextSizeChoice = () => {
   const current = appSettings.value.textSize;
   return (
-    <div class={`${styles.row} ${styles.divider}`}>
-      <span class={styles.grow}>Text size</span>
+    <div class={`${styles.row} ${styles.divider}`} style={{ flexWrap: 'wrap' }}>
+      <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+        Text size
+      </span>
       <div class={styles.segmentedWrap} role="group" aria-label="Text size">
         {TEXT_SIZES.map((size) => (
           <button

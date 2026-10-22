@@ -236,6 +236,24 @@ export const FLOWS: readonly Flow[] = [
       await btn(p, /My boy writes/).click();
     },
   ),
+  plain(
+    'document-note',
+    "Archive (document reader with Ilse's note)",
+    "Archive, Library, the first letter that has Ilse's note under it",
+    [/./],
+    async (p) => {
+      await archive(p, 'Library');
+      const rows = p.locator('button[class*="linkRow"]');
+      const n = Math.min(await rows.count(), 60);
+      for (let i = 0; i < n; i++) {
+        await rows.nth(i).click();
+        await p.waitForTimeout(150);
+        if ((await p.getByRole('dialog').last().locator('em').count()) > 0) return;
+        await p.getByRole('button', { name: 'Close' }).last().click();
+      }
+      throw new Error("no document with Ilse's note found");
+    },
+  ),
   plain('orders-seats', 'Orders (card, seats)', 'Hold, Change seats ▸', [/Seat/], (p) =>
     btn(p, /^Change seats/).click(),
   ),
@@ -498,6 +516,9 @@ export const FLOWS: readonly Flow[] = [
       await visit('remembering-card-after', 'Remembering (card, after Remember Them)');
       await archive(page, 'Library');
       await visit('remembering-library', 'Remembering (Library shelf)');
+      // The Rime shelf's warm entry opens the Rime reader (pale text on its dark card).
+      await page.getByRole('region', { name: 'Rime' }).getByRole('button').last().click();
+      await visit('rime-reader', 'Archive (the Rime reader)');
     },
   },
   {
