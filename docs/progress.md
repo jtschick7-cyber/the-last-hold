@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.9 (accessibility and layout checks).
-- **Next:** TL.10 (read the plan).
+- **Last task:** TL.10 (performance budgets and download size).
+- **Next:** TL.11 (simulator and determinism; run in CI).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -342,3 +342,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Own fix:** the Hamlet flow first used a fixture that does not show the Hold; it now uses a new game.
 - **Whole browser suite (Chromium):** 92 passed. The WebKit determinism test cannot run in this container (no WebKit installed); it needs CI or your machine.
 - **Q52:** the owner approved 40 (D511). Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.10: budgets and download size
+- **Benchmark (`tests/e2e/bench.spec.ts`, 4× slowdown, warn at the budget, fail at 2×):** odds budgets now 120 ms (identified) and 150 ms (3 candidates) (D505). New rows (D506): **v11 → v12 migration 13.4 ms** (budget 100), **Hold grid render 16.0 ms** (budget 16: right at the warning line), **Arrange Hold sheet open 17.2 ms** (budget 50). The last two mount the real components with all 40 pieces placed, into a detached box, so they time the component's render, not the browser's paint.
+- **Download size:** whole production build gzipped **582,081 bytes (568 KB), 306 files**; budget 600 KB. v1.0 was 506 KB: the 83 new pictures account for most of the +62 KB. Headroom is now about 5%, so more art would need a look.
+- **Not green here, not mine:** this container's CPU is too slow for the old rows: live odds 228 ms (fails at 240 only because of the new budget), Suggest 642 ms (fails at 600). No core code changed this milestone, so I read this as the container (D445); **TL.10's "no row fails" needs a CI run to confirm.** Please look at the bench job when you can.
+- **GDD §6.5** is not edited (your gate); the new rows live in the test until you approve them there.
+- **Also:** a first attempt that timed a tap to the next painted frame was too noisy (an existing sheet read 254 ms), so I dropped it. Nothing skipped.
