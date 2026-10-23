@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.4 (35 candidates converted; audition page built). **Waiting for the owner's picks (Q53).**
-- **Next:** SF.5 to SF.8 (no picks needed); SF.9 needs the picks (packs note, then stop for the owner's upload).
+- **Last task:** SF.5 (Sound setting and row). Owner's picks are in (Q53 answered).
+- **Next:** SF.6 (sound module), SF.7, SF.8, then SF.9 (packs note, then stop for the owner's upload).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -413,3 +413,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Note:** Vite prints a warning about extensionless imports in its config; harmless.
 - **Owner next:** open the preview's audition page, listen, and send one pick per sound (or "none of these"). The preview is built by the Deploy workflow from the latest pushed `milestone/*` branch; check the Deploy run is green.
 - **D527 first real test (CI run 525):** the browser install hung, my first retry did not help: the hung try left `apt-get` holding the system lock, so tries 2 and 3 failed at once. Fixed in the same step (after a failed try, stop any leftover `apt-get`/`dpkg`, wait 5 s). Still only that step in `ci.yml`. Results so far: runs 523, 524, 526 passed; 525 failed as above; the next runs will show whether the fix holds.
+
+## 2026-10-23 — v1.2 SF.5 the Sound setting
+- **Owner's picks (Q53 answered):** Build 2, Launch 10, Place 13, Win 18, Lose 21, Fanfare 28, Nightfall 31; recorded in `sound-marks.md` (28.5 KB on the page's count; the real budget comes at SF.9).
+- **Built:** `sound` (`on`/`off`, default Off, junk falls back to Off) in the settings key; Reset keeps it; a Sound row (On/Off buttons, help line) in Settings, using the three strings in `src/content/sound-text.ts`. No sound plays yet. Save schema and rules version untouched.
+- **Name difference (not a stop):** technical design §19.4 says `resetAppSettingsTimestamps`; the code's function is `afterReset`.
+- **Old-test edits (D525 (1)), nothing loosened:** `app-settings.test.ts`: the sample settings, the defaults and the Reset expectations now include `sound`; two tests added (parse, round-trip and failed write). New `tests/content/sound-text.test.ts` checks the strings against the GDD.
+- **Paste, Load and Restore** never touch the key (the existing "saving, backing up and loading leave the key untouched" test still passes).

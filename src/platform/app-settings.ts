@@ -11,11 +11,17 @@ export type TextSize = (typeof TEXT_SIZES)[number];
 export const HOLD_VIEWS = ['grid', 'scene'] as const;
 export type HoldView = (typeof HOLD_VIEWS)[number];
 
+/** GDD §9.22, technical design §20.1: short sounds, off by default. */
+export const SOUND_SETTINGS = ['off', 'on'] as const;
+export type SoundSetting = (typeof SOUND_SETTINGS)[number];
+
 export interface AppSettings {
   textSize: TextSize;
   /** GDD §9.21: the Hold screen's header, the 8 × 8 grid or the v1.0 pixel scene. */
   holdView: HoldView;
   backupReminder: boolean;
+  /** GDD §9.22: the Sound switch. Never read by anything in `src/core/`. */
+  sound: SoundSetting;
   /** Milliseconds since the epoch; null until recorded. */
   lastExportAt: number | null;
   snoozeUntil: number | null;
@@ -26,6 +32,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   textSize: 'match',
   holdView: 'grid',
   backupReminder: true,
+  sound: 'off',
   lastExportAt: null,
   snoozeUntil: null,
   firstSeenAt: null,
@@ -45,6 +52,7 @@ export const parseAppSettings = (text: string | null): AppSettings => {
   const o = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {};
   const size = TEXT_SIZES.find((t) => t === o.textSize);
   const view = HOLD_VIEWS.find((v) => v === o.holdView);
+  const sound = SOUND_SETTINGS.find((v) => v === o.sound);
   return {
     textSize: size ?? DEFAULT_APP_SETTINGS.textSize,
     holdView: view ?? DEFAULT_APP_SETTINGS.holdView,
@@ -52,6 +60,7 @@ export const parseAppSettings = (text: string | null): AppSettings => {
       typeof o.backupReminder === 'boolean'
         ? o.backupReminder
         : DEFAULT_APP_SETTINGS.backupReminder,
+    sound: sound ?? DEFAULT_APP_SETTINGS.sound,
     lastExportAt: timestamp(o.lastExportAt),
     snoozeUntil: timestamp(o.snoozeUntil),
     firstSeenAt: timestamp(o.firstSeenAt),
@@ -76,11 +85,12 @@ export const writeAppSettings = (storage: ChannelStorage, settings: AppSettings)
   }
 };
 
-/** GDD §9.20, technical design §19.4: "Reset everything…" clears the three timestamps and keeps the three choices. */
+/** GDD §9.20, technical design §19.4: "Reset everything…" clears the three timestamps and keeps the choices (Sound too, GDD §9.22). */
 export const afterReset = (s: AppSettings): AppSettings => ({
   textSize: s.textSize,
   holdView: s.holdView,
   backupReminder: s.backupReminder,
+  sound: s.sound,
   lastExportAt: null,
   snoozeUntil: null,
   firstSeenAt: null,

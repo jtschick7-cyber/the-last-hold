@@ -44,14 +44,16 @@ Candidates were chosen by **name and length only** (Claude cannot hear): the len
 
 ## Pick
 
+**Owner's picks, 2026-10-23** (28.5 KB on the audition page's own count).
+
 One number per slot (or "none of these").
 
 | slot | pick |
 |---|---|
-| build | |
-| launch | |
-| place | |
-| win | |
-| lose | |
-| fanfare | |
-| nightfall | |
+| build | 2 |
+| launch | 10 |
+| place | 13 |
+| win | 18 |
+| lose | 21 |
+| fanfare | 28 |
+| nightfall | 31 |
