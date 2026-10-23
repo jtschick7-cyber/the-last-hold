@@ -101,7 +101,7 @@ describe('the live build', () => {
           e.isDirectory() ? all(join(dir, e.name)) : [join(dir, e.name)],
         );
       const files = all(out);
-      expect(files.filter((f) => /audition|\.mp3$/.test(f))).toEqual([]);
+      expect(files.filter((f) => /audition|\/\d+\.mp3$/.test(f))).toEqual([]);
       expect(readFileSync(join(out, 'sw.js'), 'utf8')).not.toMatch(/audition/);
     } finally {
       rmSync(out, { recursive: true, force: true });

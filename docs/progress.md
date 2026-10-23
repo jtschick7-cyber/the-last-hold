@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.8 (wiring part 2).
-- **Next:** SF.9 (measure the build without sounds, convert and ship the picks) (packs note, then stop for the owner's upload).
+- **Last task:** SF.9 (the seven real sounds shipped; waiting for the owner to hear them on the preview).
+- **Next:** SF.10 (precache and offline checks, decode test, smoke scenario).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -441,3 +441,15 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Not run as their own e2e:** a Great Beast **milestone without a kill** (mapping covered in `sound-cues.test.ts`; the kill case runs through the same code) and **Leave run** (silent: no cue is wired to it).
 - **Found, not mine:** closing the Fight log inside a Delve reopens the Delve sheet on its next stage (the old behaviour; nothing changed).
 - **Unit tests added:** `momentForAttempt`, `momentForFloor`, `stand.make` in `sound-cues.test.ts`.
+
+## 2026-10-23 — v1.2 SF.9 the seven real sounds
+- **Measured first:** production build without sounds, gzipped, summed per file at level 9: **583,076 bytes** (306 files). Sound budget = 614,400 − 583,076 − 1,024 = **30,300 bytes** (under the 30,720 cap).
+- **Converted** your seven picks from the original packs (`tools/make-sounds.ts`, using `convertClip`): build 2,194, launch 2,664, place 1,410, win 5,015, lose 3,448, fanfare 7,053, nightfall 7,366 = **29,150 bytes**. They fit.
+- **Re-measured:** production build with the sounds: **610,463 bytes**, 313 files (room left: 3,937). Candidates are not in the live build.
+- **Shipped:** `public/assets/audio/<id>.mp3`, the audio list `src/content/audio.ts` (id, file, bytes, pack, URL, CC0, credit, original name), credits builder and `docs/credits.md` read it (new "Sound packs (CC0)" section in About & Credits; it is a heading plus pack lines, not a sound string; tell me if you want it gone).
+- **URLs not confirmed:** kenney.nl is unreachable here. I used the pack names and the four `License.txt` files (all say CC0) and the same URL pattern as the art packs.
+- **Tests:** new `tests/content/audio.test.ts` (files and rows both ways, credits, bytes, 30 KB cap, packs agree with credits, no tags).
+- **Old tests edited:** `tests/content/credits.test.ts` (manifest check also counts the audio list, D525 (4)); `tests/tools/audition.test.ts` (live build: no audition page and no numbered candidate files, instead of no mp3 at all; **owner's yes 2026-10-23**, not in D525).
+- **`npm run check` green, but 86 s and 95 s on two runs** (warns at 90 s); more files and tests were added. Watching; I will report the cause at SF.12 if it stays.
+- **Not yet precached:** the service worker list still shows 309 entries (the mp3 files are not in it); that is SF.10.
+- **Owner task:** hear the seven on the preview (More, Debug, with `?debug`, "Play sound") and approve, or say which to change.
