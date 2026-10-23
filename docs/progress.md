@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.11 (simulator and determinism).
-- **Next:** TL.12 (read the plan).
+- **Last task:** TL.11 done; TL.12 built, waiting on one question (see the last entry).
+- **Next:** finish TL.12 (one old smoke test fails on a date in its fixture).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -355,3 +355,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Golden fights and recorded stands:** replayed line for line by the unit tests inside `npm run check` (3,322 pass); `rulesVersion` unchanged at 5.
 - **Still for CI:** the WebKit determinism test (no WebKit in this container) and the slow-CPU benchmark rows (see TL.10). Please look at those two jobs.
 - **Nothing skipped.**
+
+## 2026-10-23 — v1.1 TL.12 (not ticked): smoke test added, one old smoke test blocked
+- **Added** to `tests/e2e/smoke.spec.ts`: loads the owner's `v11-owner.json` (it becomes v12), opens Arrange Hold, moves a building, Auto-arrange, switches Hold view to Classic scene, then reloads offline with both choices kept. Passes on the production build here.
+- **Blocked, found by the full smoke file:** the old test "seat an Order, read a chapter…" now fails, and will fail in CI too. Its fixture `v10-played.json` is dated 2026-10-23 12:30 UTC (a clock time that was still in the future when it was made). Now that the clock has passed it, loading it shows "While you were away", which the test's loop cannot close (the sheet's button is an ✕ with no text). Nothing in the game changed. **Question for the owner:** may I edit that test's loop to also press the sheet's Close button? (Not on the D507 list, so I did not.) Same date applies to `v9.json`; v12-played is dated 2026-10-26, so it will go stale then too.
+- **Preview:** the Deploy workflow succeeded for the latest push (the preview build is up); I cannot open it from here. The offline smoke test above covers the migration on the production build.
+- **CI note:** the `check` job of one earlier run (TL.9 docs commit) failed at "npm run check (90 s budget)" after 1 min 39 s; the next run passed. Likely runner speed against the 90 s budget; not confirmed.

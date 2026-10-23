@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 import { begin, tab } from './helpers';
 
 // Shared by the Hold grid and Arrange Hold specs (plan TL.7, TL.8): load an edited played save.
-const fixture = (name: string) =>
+export const fixture = (name: string) =>
   JSON.parse(readFileSync(new URL(`../saves/fixtures/${name}.json`, import.meta.url), 'utf8'));
 export const base = fixture('v12-played');
 // The v11 played save has chosen Remember Them (Act VI's stand applied); it migrates on load.
