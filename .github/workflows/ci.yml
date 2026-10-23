@@ -48,5 +48,13 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium webkit
+      # D527: this step hangs about one run in three, so it gets a time limit and up to three tries.
+      - name: Install the test browsers
+        timeout-minutes: 5
+        run: |
+          for try in 1 2 3; do
+            timeout 120 npx playwright install --with-deps chromium webkit && exit 0
+            echo "Browser install failed (try $try of 3)"
+          done
+          exit 1
       - run: npm run e2e

@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.1 (dated test saves moved).
-- **Next:** SF.2 (CI retry), then SF.3 (packs note, then stop for the owner's upload).
+- **Last task:** SF.2 (CI browser-install retry).
+- **Next:** SF.3 (packs note, then stop for the owner's upload).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -394,3 +394,7 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Offset:** +315,360,000,000 ms (10 years of 365 days). Changed files: those two fixtures, plus the new `scripts/shift-fixture-dates.mjs` (`apply` and `verify`). `verify` loads the old files from tag `v1.1.0`, subtracts the offset, and proves the rest is identical: passes for both.
 - **Scan of all 27 fixtures:** only `v12-played.json` (2026-10-26) was dated in the future; `v9.json` (2026-10-23 12:30) had just passed. All others are dated on or before 2026-10-23 and cannot go stale.
 - `npm run check` green (3,322 tests; golden fights and recorded stands unchanged). The browser tests run in CI.
+
+## 2026-10-23 — v1.2 SF.2 CI browser-install retry
+- **Changed only the browser-install step in `.github/workflows/ci.yml`:** each try is cut off after 120 s, up to three tries, and the step itself has a 5-minute limit. No test or pass rule changed.
+- **Judged over the next CI runs, not proven in advance.** Results so far: none yet. I'll add them here as they come; your yes or no on D527 comes after several runs.
