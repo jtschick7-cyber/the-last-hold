@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.7 (live grid header and Hold view setting).
-- **Next:** TL.8 (the Arrange Hold sheet).
+- **Last task:** TL.8 (the Arrange Hold sheet).
+- **Next:** TL.9 (read the plan).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -324,3 +324,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **`[Layout ▸]` opens a stub** for now: it shows only "TRAY (unplaced: n)". TL.8 replaces it with the real sheet.
 - **Tests:** `tests/e2e/hold-grid.spec.ts` (plain, cosmetics + frost, border cosmetics + lamp, Classic scene and the choice kept after reload, 320 px). The 15-tap check-in test still passes. Bundle: about 3 KB gzipped added.
 - **Still open:** Q52 (the piece count shown is for you to decide at TL.8). Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.8: the Arrange Hold sheet
+- **Owner:** the border bell stays where it is (tile of Watchtower 1).
+- **Sheet:** opens from `[Layout ▸]`. 8 × 8 buttons of 44 px; tap a piece or a tray item to select, tap a tile to move or swap (core's `layout.place` decides), `[Move to tray]` for 1 × 1 pieces, Auto-arrange, Clear to tray… with its confirmation, Blueprint ghosts On/Off. The sheet sends commands and draws; no rule lives in it. A locked tile says "Clears at {Rank}" (new read-only helper `clearsAtAge` in core).
+- **My choices:** a move or swap ends the selection, and tapping the selected piece again lets go of it (so you can pick another piece without swapping by accident). One white-over-black outline goes round the whole piece, so the 2 × 2 Hall shows as one block.
+- **Strings beyond the §9.21 table (please check):** the tray items' names (building name, plus its number for plots, walls and towers); the confirmation's two buttons, "Clear to tray" and "Cancel"; the tile buttons' hidden screen-reader labels. Subtitle total shows **40** (Q52).
+- **Footprint preview:** the 2 × 2 Hall is outlined as one block when selected, and moves when you tap its new top-left tile. There is no separate "where it will land" preview (tap-only, one tap moves it).
+- **At 320 px** the grid sits in its own scroll box (`data-internal-scroll`); the page does not scroll sideways.
+- **Tests:** `tests/e2e/arrange-hold.spec.ts` (select, move, swap, locked tile, Hall, tray, badge, Auto-arrange, Clear to tray cancel and confirm, ghosts, 320 px). Helpers shared in `tests/e2e/layout-helpers.ts`. Screenshot: `docs/flesh-out/v1.1/arrange-hold.png`.
+- **Nothing skipped.**

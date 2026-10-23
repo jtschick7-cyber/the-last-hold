@@ -1,4 +1,4 @@
-import type { AgeId } from '../../content/ages';
+import { AGE_IDS, type AgeId } from '../../content/ages';
 import {
   CANONICAL_LAYOUT,
   CLEARING_BOUNDS,
@@ -19,6 +19,13 @@ export const pieceDef = (id: HoldPieceId): PieceDef => {
 };
 
 export const clearingBounds = (age: AgeId): ClearingBounds => CLEARING_BOUNDS[age];
+
+/** The first Rank whose clearing holds this tile, for the "Clears at {Rank}" line (GDD §9.21). */
+export const clearsAtAge = (x: number, y: number): AgeId | null =>
+  AGE_IDS.find((a) => {
+    const b = CLEARING_BOUNDS[a];
+    return x >= b.minX && x <= b.maxX && y >= b.minY && y <= b.maxY;
+  }) ?? null;
 
 export const canonicalLayout = (): HoldLayoutState => ({
   placed: structuredClone(CANONICAL_LAYOUT),

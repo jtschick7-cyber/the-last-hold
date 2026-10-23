@@ -33,16 +33,16 @@ const pctY = (px: number): string => `${(px / H) * 100}%`;
 /** A fixed function of the tile's coordinates, so the ground never changes between visits. */
 const mix = (x: number, y: number): number =>
   (x * 5 + y * 7 + ((x * y) % 3) * 4 + (x >> 1) * (y >> 1) * 3) % 11;
-const groundLook = (x: number, y: number): 'grass' | 'earth' | 'flags' => {
+export const groundLook = (x: number, y: number): 'grass' | 'earth' | 'flags' => {
   const v = mix(x, y);
   return v === 0 ? 'earth' : v === 1 ? 'flags' : 'grass';
 };
-const outsideTile = (x: number, y: number): string =>
+export const outsideTile = (x: number, y: number): string =>
   (x * 5 + y * 3) % 5 === 0
     ? ruinTileId(String(1 + ((x + y) % 2)))
     : forestTileId(String(1 + ((x + 2 * y) % 2)));
 
-const pieceImage = (p: ActivePiece, age: string): string =>
+export const pieceImage = (p: ActivePiece, age: string): string =>
   p.id === 'hearth-hall'
     ? gridHallId(age as never)
     : p.id.startsWith('wall-')

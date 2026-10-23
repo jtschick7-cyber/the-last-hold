@@ -1,50 +1,9 @@
-import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { begin, tab } from './helpers';
+import { tab } from './helpers';
+import { clearScenes, load, remembered } from './layout-helpers';
 
 // Plan TL.7 (GDD §9.21): the Hold screen's grid header, its cosmetics, the Act VI frost and the
 // lamp, the Hold view setting and the Classic scene. Saves are the played v12 fixture, edited.
-
-const fixture = (name: string) =>
-  JSON.parse(readFileSync(new URL(`../saves/fixtures/${name}.json`, import.meta.url), 'utf8'));
-const base = fixture('v12-played');
-// The v11 played save has chosen Remember Them (Act VI's stand applied); it migrates on load.
-const remembered = fixture('v11-played');
-type Save = typeof base;
-
-// Scenes come a moment after the state that triggers them: close each until none is left.
-const clearScenes = async (page: Page): Promise<void> => {
-  for (let i = 0; i < 8; i++) {
-    await page.waitForTimeout(400);
-    const onward = page.getByRole('button', { name: 'Onward' });
-    const open = (await onward.isVisible().catch(() => false))
-      ? onward
-      : page.getByRole('button', { name: 'Close' }).first();
-    if (await open.isVisible().catch(() => false)) await open.click();
-    else if (i > 2) break;
-  }
-};
-
-const load = async (
-  page: Page,
-  edit: (s: Save['state']) => void,
-  from: Save = base,
-): Promise<void> => {
-  const save: Save = JSON.parse(JSON.stringify(from));
-  edit(save.state);
-  await page.goto('./?debug');
-  await begin(page, 'Mira');
-  await tab(page, 'More').click();
-  await page.getByRole('button', { name: /^Save/ }).first().click();
-  await page.locator('input[type="file"]').setInputFiles({
-    name: 'save.json',
-    mimeType: 'application/json',
-    buffer: Buffer.from(JSON.stringify(save)),
-  });
-  await page.getByRole('button', { name: 'Yes, load it' }).click();
-  await clearScenes(page);
-  await tab(page, 'Hold').click();
-};
 
 const all = ['gatehouse-banners', 'wall-lanterns', 'carved-hearth-hall-door', 'watchtower-bell'];
 const grid = (page: Page) => page.locator('[data-hold-grid]');
