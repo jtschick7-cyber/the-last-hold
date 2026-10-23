@@ -8,8 +8,13 @@ export const APP_SETTINGS_KEY = 'settings';
 export const TEXT_SIZES = ['match', 'large', 'largest'] as const;
 export type TextSize = (typeof TEXT_SIZES)[number];
 
+export const HOLD_VIEWS = ['grid', 'scene'] as const;
+export type HoldView = (typeof HOLD_VIEWS)[number];
+
 export interface AppSettings {
   textSize: TextSize;
+  /** GDD §9.21: the Hold screen's header, the 8 × 8 grid or the v1.0 pixel scene. */
+  holdView: HoldView;
   backupReminder: boolean;
   /** Milliseconds since the epoch; null until recorded. */
   lastExportAt: number | null;
@@ -19,6 +24,7 @@ export interface AppSettings {
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
   textSize: 'match',
+  holdView: 'grid',
   backupReminder: true,
   lastExportAt: null,
   snoozeUntil: null,
@@ -38,8 +44,10 @@ export const parseAppSettings = (text: string | null): AppSettings => {
   }
   const o = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {};
   const size = TEXT_SIZES.find((t) => t === o.textSize);
+  const view = HOLD_VIEWS.find((v) => v === o.holdView);
   return {
     textSize: size ?? DEFAULT_APP_SETTINGS.textSize,
+    holdView: view ?? DEFAULT_APP_SETTINGS.holdView,
     backupReminder:
       typeof o.backupReminder === 'boolean'
         ? o.backupReminder
@@ -68,9 +76,10 @@ export const writeAppSettings = (storage: ChannelStorage, settings: AppSettings)
   }
 };
 
-/** GDD §9.20: "Reset everything…" clears the three timestamps and keeps the two choices. */
+/** GDD §9.20, technical design §19.4: "Reset everything…" clears the three timestamps and keeps the three choices. */
 export const afterReset = (s: AppSettings): AppSettings => ({
   textSize: s.textSize,
+  holdView: s.holdView,
   backupReminder: s.backupReminder,
   lastExportAt: null,
   snoozeUntil: null,

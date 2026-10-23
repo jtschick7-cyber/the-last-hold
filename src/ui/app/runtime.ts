@@ -29,6 +29,7 @@ import {
   writeAppSettings,
   DEFAULT_APP_SETTINGS,
   type AppSettings,
+  type HoldView,
   type TextSize,
 } from '../../platform/app-settings';
 import { afterExport, snoozedFor, withExportAge } from '../../platform/backup-reminder';
@@ -104,6 +105,8 @@ const changeAppSettings = (next: AppSettings): void => {
 };
 export const setTextSize = (textSize: TextSize): void =>
   changeAppSettings({ ...appSettings.value, textSize });
+export const setHoldView = (holdView: HoldView): void =>
+  changeAppSettings({ ...appSettings.value, holdView });
 export const setBackupReminder = (backupReminder: boolean): void =>
   changeAppSettings({ ...appSettings.value, backupReminder });
 /** "Not now" and "Back up now" (GDD §9.20). */

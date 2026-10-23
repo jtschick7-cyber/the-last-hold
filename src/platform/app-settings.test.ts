@@ -17,6 +17,7 @@ import { createNewGame } from '../core/state/new-game';
 
 const chosen: AppSettings = {
   textSize: 'largest',
+  holdView: 'scene',
   backupReminder: false,
   lastExportAt: 1_000,
   snoozeUntil: 2_000,
@@ -27,6 +28,7 @@ describe('app settings key', () => {
   it('defaults: Match phone, reminder on, no times', () => {
     expect(DEFAULT_APP_SETTINGS).toEqual({
       textSize: 'match',
+      holdView: 'grid',
       backupReminder: true,
       lastExportAt: null,
       snoozeUntil: null,
@@ -82,11 +84,18 @@ describe('app settings key', () => {
   it('Reset everything keeps textSize and backupReminder and clears the three times', () => {
     expect(afterReset(chosen)).toEqual({
       textSize: 'largest',
+      holdView: 'scene',
       backupReminder: false,
       lastExportAt: null,
       snoozeUntil: null,
       firstSeenAt: null,
     });
+  });
+
+  it('holdView: grid by default, an unknown value falls back, and only grid or scene are kept', () => {
+    expect(parseAppSettings(JSON.stringify({ holdView: 'scene' })).holdView).toBe('scene');
+    expect(parseAppSettings(JSON.stringify({ holdView: 'map' })).holdView).toBe('grid');
+    expect(parseAppSettings(JSON.stringify({ textSize: 'large' })).holdView).toBe('grid');
   });
 
   it('firstSeenAt is set once and never moved', () => {

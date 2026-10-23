@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.4 (debug layout commands).
-- **Next:** TL.5a (grid art inventory, ground and border tiles).
+- **Last task:** TL.7 (live grid header and Hold view setting).
+- **Next:** TL.8 (the Arrange Hold sheet).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -315,3 +315,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Owner approved TL.6c.** All 25 redraws (TL.6a, b, c) are approved and ticked; TL.6 is done.
 - **Next:** TL.7, the Hold grid screen. Proposal to carry into it: choose ground looks by a fixed function of the tile's coordinates, mostly grass with earth and flags used sparingly.
 - **Nothing skipped.**
+
+## 2026-10-23 — v1.1 TL.7: the grid header and the Hold view setting
+- **Setting:** `More > Settings > Hold view` (Grid / Classic scene, default Grid), kept outside the save, kept on Reset everything, untouched by Paste/Load/Restore. Unit tests added (D507 (5)); no other old test edited.
+- **Grid header:** 8 × 8 grid read from `buildHoldGridView`; Fell Breach and Lowland Gate strips (with their two labels), ground, forest and ruin outside the clearing, active pieces, blueprint ghosts, all four cosmetics, Act VI frost, the lamp. Not tappable; scales to the card (320 px checked). `[Layout ▸]` sits beside `[Rank ▸]` in both views, badge counts the tray only.
+- **Ground:** a fixed function of the tile's coordinates: about 85% grass, earth and flags scattered. Looked at it in screenshots (Citadel and full Bastion); fixed a first draft that made column 0 all earth.
+- **Choices to check:** the border bell hangs on the tile where Watchtower 1 will stand; the strip labels are the two strings from GDD §9.21, drawn over the strips.
+- **`[Layout ▸]` opens a stub** for now: it shows only "TRAY (unplaced: n)". TL.8 replaces it with the real sheet.
+- **Tests:** `tests/e2e/hold-grid.spec.ts` (plain, cosmetics + frost, border cosmetics + lamp, Classic scene and the choice kept after reload, 320 px). The 15-tap check-in test still passes. Bundle: about 3 KB gzipped added.
+- **Still open:** Q52 (the piece count shown is for you to decide at TL.8). Nothing skipped.

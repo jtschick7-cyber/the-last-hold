@@ -1,10 +1,11 @@
 import type { Settings } from '../../core/state/game-state';
-import { TEXT_SIZES, type TextSize } from '../../platform/app-settings';
+import { HOLD_VIEWS, TEXT_SIZES, type HoldView, type TextSize } from '../../platform/app-settings';
 import {
   appSettings,
   dispatch,
   game,
   setBackupReminder,
+  setHoldView,
   setTextSize,
   version,
 } from '../app/runtime';
@@ -68,6 +69,33 @@ const TextSizeChoice = () => {
             onClick={() => setTextSize(size)}
           >
             {TEXT_SIZE_LABEL[size]}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const HOLD_VIEW_LABEL: Record<HoldView, string> = { grid: 'Grid', scene: 'Classic scene' };
+
+// GDD §9.21: also outside the save, like Text size.
+const HoldViewChoice = () => {
+  const current = appSettings.value.holdView;
+  return (
+    <div class={`${styles.row} ${styles.divider}`} style={{ flexWrap: 'wrap' }}>
+      <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+        Hold view
+      </span>
+      <div class={styles.segmented} role="group" aria-label="Hold view">
+        {HOLD_VIEWS.map((v) => (
+          <button
+            type="button"
+            key={v}
+            class={current === v ? styles.segmentOn : styles.segment}
+            aria-pressed={current === v}
+            onClick={() => setHoldView(v)}
+          >
+            {HOLD_VIEW_LABEL[v]}
           </button>
         ))}
       </div>
@@ -142,6 +170,7 @@ export const SettingsSheet = () => {
         ]}
       />
       <TextSizeChoice />
+      <HoldViewChoice />
       <BackupReminderChoice />
     </div>
   );
