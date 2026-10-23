@@ -65,44 +65,65 @@ export interface PieceDef {
   /** The building it shows, and the copies (count buildings) or level (level buildings) it needs. */
   readonly building: BuildingId;
   readonly unlockAt: number;
+  /**
+   * Where the second and third look start: the level (level buildings) or the copies owned
+   * (count buildings) at which it changes. GDD §5.1.5: level buildings show three tiers, plots three
+   * densities (a Silver Seam only two). A piece with none always shows its first look.
+   */
+  readonly tierFrom?: readonly [number, number];
 }
 
-const def = (id: HoldPieceId, building: BuildingId, unlockAt: number): PieceDef => ({
+const def = (
+  id: HoldPieceId,
+  building: BuildingId,
+  unlockAt: number,
+  tierFrom?: readonly [number, number],
+): PieceDef => ({
   id,
   w: 1,
   h: 1,
   building,
   unlockAt,
+  ...(tierFrom ? { tierFrom } : {}),
 });
+
+/** GDD §5.1.5: Tier I Lv 1–4, II Lv 5–10, III Lv 11+; for a 3-level cap one tier a level; for a 5-level cap 1–2, 3–4, 5. */
+const FREE_LEVELS = [5, 11] as const;
+const CAP_THREE = [2, 3] as const;
+const CAP_FIVE = [3, 5] as const;
+/** Plots: 1–4 owned a single structure, 5–14 a pair, 15+ a cluster. */
+const PLOT_DENSITY = [5, 15] as const;
+/** Silver Seams: one seam, then twin seams. */
+const SEAM_DENSITY = [2, 3] as const;
 
 /** In catalog order (the Hearth Hall first): the order overlaps are settled in (S13). Plots unlock at 1, 5, 15 owned (Silver Seams 1, 2); towers at Lv 1, 8, 15; four wall segments at Lv 1, then one more at Lv 3, 5, 7, 9, 11, 13, 15. */
 export const PIECES: readonly PieceDef[] = [
   { id: 'hearth-hall', w: 2, h: 2, building: 'hearth-hall', unlockAt: 1 },
-  def('mill', 'mill', 1),
-  def('sawpit', 'sawpit', 1),
-  def('smithy', 'smithy', 1),
-  def('bell-tower', 'bell-tower', 1),
-  def('barracks', 'barracks', 1),
+  def('mill', 'mill', 1, FREE_LEVELS),
+  def('sawpit', 'sawpit', 1, FREE_LEVELS),
+  def('smithy', 'smithy', 1, FREE_LEVELS),
+  def('bell-tower', 'bell-tower', 1, CAP_THREE),
+  def('barracks', 'barracks', 1, CAP_FIVE),
   def('trophy-hall', 'trophy-hall', 1),
-  def('lodge', 'hunters-lodge', 1),
-  def('alchemist', 'alchemists-hut', 1),
-  def('cottage-1', 'cottage', 1),
-  def('cottage-2', 'cottage', 5),
-  def('cottage-3', 'cottage', 15),
-  def('farm-1', 'farm', 1),
-  def('farm-2', 'farm', 5),
-  def('farm-3', 'farm', 15),
-  def('woodcutter-1', 'woodcutters-camp', 1),
-  def('woodcutter-2', 'woodcutters-camp', 5),
-  def('woodcutter-3', 'woodcutters-camp', 15),
-  def('mine-1', 'mine', 1),
-  def('mine-2', 'mine', 5),
-  def('mine-3', 'mine', 15),
-  def('herb-garden-1', 'herb-garden', 1),
-  def('herb-garden-2', 'herb-garden', 5),
-  def('herb-garden-3', 'herb-garden', 15),
-  def('silver-seam-1', 'silver-seam', 1),
-  def('silver-seam-2', 'silver-seam', 2),
+  def('lodge', 'hunters-lodge', 1, CAP_THREE),
+  def('alchemist', 'alchemists-hut', 1, CAP_FIVE),
+  def('cottage-1', 'cottage', 1, PLOT_DENSITY),
+  def('cottage-2', 'cottage', 5, PLOT_DENSITY),
+  def('cottage-3', 'cottage', 15, PLOT_DENSITY),
+  def('farm-1', 'farm', 1, PLOT_DENSITY),
+  def('farm-2', 'farm', 5, PLOT_DENSITY),
+  def('farm-3', 'farm', 15, PLOT_DENSITY),
+  def('woodcutter-1', 'woodcutters-camp', 1, PLOT_DENSITY),
+  def('woodcutter-2', 'woodcutters-camp', 5, PLOT_DENSITY),
+  def('woodcutter-3', 'woodcutters-camp', 15, PLOT_DENSITY),
+  def('mine-1', 'mine', 1, PLOT_DENSITY),
+  def('mine-2', 'mine', 5, PLOT_DENSITY),
+  def('mine-3', 'mine', 15, PLOT_DENSITY),
+  def('herb-garden-1', 'herb-garden', 1, PLOT_DENSITY),
+  def('herb-garden-2', 'herb-garden', 5, PLOT_DENSITY),
+  def('herb-garden-3', 'herb-garden', 15, PLOT_DENSITY),
+  def('silver-seam-1', 'silver-seam', 1, SEAM_DENSITY),
+  def('silver-seam-2', 'silver-seam', 2, SEAM_DENSITY),
   def('watchtower-1', 'watchtower', 1),
   def('watchtower-2', 'watchtower', 8),
   def('watchtower-3', 'watchtower', 15),
@@ -181,3 +202,6 @@ export const CANONICAL_LAYOUT: Readonly<Record<HoldPieceId, GridCoord>> = {
   'wall-10': { x: 4, y: 0 },
   'wall-11': { x: 5, y: 0 },
 };
+
+/** Which sides of a defense tile touch another defense tile (GDD §5.1.5): bits for the 16 connection looks. */
+export const CONNECTION_BITS = { n: 1, e: 2, s: 4, w: 8 } as const;

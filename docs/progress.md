@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.1 (save v12, layout catalog, migration).
-- **Next:** TL.2 (selectors, piece states, non-coupling lint test).
+- **Last task:** TL.2 (selectors, piece states, non-coupling check).
+- **Next:** TL.3 (layout commands, auto-placement, Long Night hooks).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -240,3 +240,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Old tests edited (D507 (1), and Q51 with your yes):** `v11-migration.test.ts` (schema number, newer-version case); `perks.test.ts` (unseats the copies first, since your Moot is seated); `opening.test.ts` (list of played saves gains three files). Nothing loosened.
 - **Docs off by one (Q52):** the docs say 39 pieces, 42 tiles, 22 open; the listed pieces are 40, 43 and 21. I built the list as written; the GDD is untouched (your gate).
 - **Env:** the installed formatter was older than the project asks for; ran `npm ci`. Not a repo change.
+
+## 2026-10-23 — v1.1 TL.2: piece states, looks and the grid view
+- **Built** (`src/core/systems/layout.ts`): the four exclusive piece states; the look of each piece (level-building tiers, plot densities; the thresholds are data in `content/hold-layout.ts`); the 16 wall connection masks; and the memoized grid view (active pieces, ghosts, tray, frost/lamp look, where each cosmetic shows).
+- **Non-coupling (S11):** a test scans all of `src/core` and fails if any file outside a short list mentions the layout. The list is the state, the save and the layout's own files. TL.3 must add the command and Long Night files to it on purpose.
+- **Checked:** every piece unlocks at its threshold and not one before; state counts at each Rank (13, 32, 36, 40 active with everything built and the canonical layout); Citadel defenses all active at Citadel, row 0 waits for Bastion; 16 masks; memoizing sees in-place changes. `npm run check` green (3,194 tests).
+- **Note for TL.7/TL.8:** the view gives `activeCount` and `pieceCount` (40). The sheet's subtitle string says "total = 39"; that is the Q52 off-by-one, so the number to show is for you to decide.
+- **Note:** pieces whose saved place is inside the clearing but under another piece are not possible by the guard or by TL.3's rules; the view does not handle them.
+- **No old test edited.**
