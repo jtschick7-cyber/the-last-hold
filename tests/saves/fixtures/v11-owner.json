@@ -1,0 +1,560 @@
+{
+  "app": "the-last-hold",
+  "schemaVersion": 11,
+  "rulesVersion": 5,
+  "savedAt": 1792741617076,
+  "state": {
+    "meta": {
+      "schemaVersion": 11,
+      "gameSeed": "4820c83083220787",
+      "createdAt": 1792712088863,
+      "lastSeen": 1792741616890,
+      "clockHighWater": 1792741616890,
+      "debugUsed": false
+    },
+    "time": 1792741616890,
+    "cycle": {
+      "number": 1,
+      "age": "keep"
+    },
+    "resources": {
+      "food": 27801.652886894564,
+      "wood": 7525.921098374277,
+      "iron": 665.5253455458776,
+      "silver": 15.446263638100842
+    },
+    "peasants": {
+      "total": 31,
+      "jobs": {
+        "farmer": 12,
+        "woodcutter": 9,
+        "miner": 8,
+        "silver-digger": 2
+      },
+      "autoSettle": true,
+      "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
+      "lastSettleAt": 1792720581594.4663
+    },
+    "buildings": {
+      "hearth-hall": 1,
+      "cottage": 14,
+      "farm": 4,
+      "woodcutters-camp": 3,
+      "mine": 4,
+      "silver-seam": 2,
+      "mill": 5,
+      "sawpit": 5,
+      "smithy": 3,
+      "bell-tower": 0,
+      "barracks": 0,
+      "trophy-hall": 1,
+      "hunters-lodge": 0,
+      "alchemists-hut": 0,
+      "herb-garden": 0,
+      "walls": 0,
+      "watchtower": 0
+    },
+    "hunters": {
+      "halvar": {
+        "level": 1,
+        "xp": 20,
+        "weapon": null,
+        "armor": null,
+        "rank": "apprentice",
+        "stars": 0,
+        "talents": ["vanguard-warden-1"],
+        "keepsake": null,
+        "recovery": null,
+        "record": {
+          "won": 1,
+          "lost": 0
+        }
+      },
+      "zora": {
+        "level": 1,
+        "xp": 20,
+        "weapon": null,
+        "armor": null,
+        "rank": "apprentice",
+        "stars": 0,
+        "talents": ["striker-edge-1"],
+        "keepsake": null,
+        "recovery": null,
+        "record": {
+          "won": 1,
+          "lost": 0
+        }
+      }
+    },
+    "roster": {
+      "active": ["halvar", "zora"]
+    },
+    "board": {
+      "opened": true,
+      "open": [
+        {
+          "id": "c2",
+          "village": "velkvik",
+          "monster": "wolf",
+          "tier": 1,
+          "location": "river",
+          "arrivedAt": 1792728778551,
+          "revealed": 0
+        },
+        {
+          "id": "c3",
+          "village": "velkvik",
+          "monster": "wolf",
+          "tier": 1,
+          "location": "river",
+          "arrivedAt": 1792735978551,
+          "revealed": 0
+        }
+      ],
+      "nextArrivalAt": 1792743178551,
+      "arrivals": 4,
+      "tierWins": [1, 0, 0, 0, 0]
+    },
+    "bestiary": {
+      "wolf": {
+        "level": 2,
+        "kills": 1
+      },
+      "kikimora": {
+        "level": 1,
+        "kills": 0
+      }
+    },
+    "stores": {
+      "grave-oil": 0,
+      "drowned-bane-oil": 0,
+      "thornbane-oil": 0,
+      "mending-draught": 0,
+      "hardwood-tonic": 0,
+      "quickfoot-tincture": 0,
+      "fire-pot": 0,
+      "frost-pot": 0,
+      "saltburst": 0,
+      "hidebane-oil": 0,
+      "wrights-oil": 0,
+      "coldwater-draught": 0,
+      "owl-eye-drops": 0,
+      "steadfast-draught": 0,
+      "poppy-smoke": 0,
+      "yarrow": 0,
+      "mugwort": 0,
+      "juniper": 0,
+      "honeycomb": 0,
+      "hares-foot": 0,
+      "pitch": 0,
+      "rime-salt": 1,
+      "grave-dust": 0,
+      "river-pearl": 0,
+      "thornwood": 0,
+      "wolf-fang": 1,
+      "noon-poppy": 0
+    },
+    "queues": {
+      "brewing": [],
+      "investigation": []
+    },
+    "garden": {
+      "nextAt": null
+    },
+    "running": [
+      {
+        "contract": {
+          "id": "c1",
+          "village": "velkvik",
+          "monster": "kikimora",
+          "tier": 1,
+          "location": "river",
+          "arrivedAt": 1792721578551,
+          "revealed": 0
+        },
+        "party": ["halvar", "zora"],
+        "snapshots": [
+          {
+            "id": "halvar",
+            "name": "Halvar Two-Smokes",
+            "role": "vanguard",
+            "damage": "steel",
+            "level": 1,
+            "base": {
+              "health": 170,
+              "might": 12,
+              "armor": 8,
+              "speed": 7
+            },
+            "traits": ["shieldwall", "steady"],
+            "weapon": null,
+            "armorGear": null,
+            "talents": ["vanguard-warden-1"]
+          },
+          {
+            "id": "zora",
+            "name": "Zora Sedlak",
+            "role": "striker",
+            "damage": "steel",
+            "level": 1,
+            "base": {
+              "health": 100,
+              "might": 20,
+              "armor": 3,
+              "speed": 13
+            },
+            "traits": ["fen-born", "quick"],
+            "weapon": null,
+            "armorGear": null,
+            "talents": ["striker-edge-1"]
+          }
+        ],
+        "launchedAt": 1792740650486,
+        "endsAt": 1792742450486,
+        "reckless": false,
+        "prep": {
+          "oils": {},
+          "potions": {},
+          "bombs": []
+        },
+        "knowledge": 1,
+        "alchemy": 0,
+        "winChance": 1
+      }
+    ],
+    "results": [],
+    "fallen": [],
+    "scenes": ["opening", "first-contract", "ilse", "vow"],
+    "log": {
+      "recentFights": [
+        {
+          "contractId": "c0",
+          "seed": "4820c83083220787:fight:c0:halvar,zora:",
+          "party": [
+            {
+              "id": "halvar",
+              "name": "Halvar Two-Smokes",
+              "role": "vanguard",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 170,
+                "might": 12,
+                "armor": 8,
+                "speed": 7
+              },
+              "traits": ["shieldwall", "steady"],
+              "weapon": null,
+              "armorGear": null,
+              "talents": ["vanguard-warden-1"]
+            },
+            {
+              "id": "zora",
+              "name": "Zora Sedlak",
+              "role": "striker",
+              "damage": "steel",
+              "level": 1,
+              "base": {
+                "health": 100,
+                "might": 20,
+                "armor": 3,
+                "speed": 13
+              },
+              "traits": ["fen-born", "quick"],
+              "weapon": null,
+              "armorGear": null,
+              "talents": ["striker-edge-1"]
+            }
+          ],
+          "monster": {
+            "monster": "wolf",
+            "tier": 1,
+            "knowledge": 1
+          },
+          "location": "river",
+          "result": "win",
+          "rulesVersion": 5,
+          "at": 1792717054361,
+          "prep": {
+            "oils": {},
+            "potions": {},
+            "bombs": []
+          },
+          "alchemy": 0
+        }
+      ]
+    },
+    "stats": {
+      "buildingsBought": 39,
+      "peasantsSettled": 28,
+      "contractsWon": 1,
+      "contractsLost": 0,
+      "trophies": 1,
+      "trophiesSpent": 0,
+      "bountySilver": 91,
+      "kills": {
+        "wolf": 1
+      },
+      "winsByLocation": {
+        "river": 1
+      }
+    },
+    "threat": 0.14842472222222217,
+    "embers": 0,
+    "upgrades": {
+      "kept-coals": 0,
+      "full-larder": 0,
+      "young-families": 0,
+      "old-hands": 0,
+      "drill-yard": 0,
+      "village-goodwill": 0,
+      "swift-roads": 0,
+      "late-lantern": 0
+    },
+    "relics": [],
+    "arrivalDue": false,
+    "cycles": [
+      {
+        "number": 1,
+        "startedAt": 1792712088863,
+        "ranks": {
+          "hamlet": 1792712088863,
+          "keep": 1792740548232
+        },
+        "contractThreat": {
+          "added": 0,
+          "removed": 0.76
+        },
+        "stand": null,
+        "act": 1,
+        "warden": "Jaromír",
+        "standPool": null
+      }
+    ],
+    "story": {
+      "arrivalDue": false,
+      "ilseAt": 1792717054361,
+      "acts": [
+        {
+          "act": 1,
+          "cycle": 1,
+          "startedAt": 1792712088863,
+          "wins": 1,
+          "winsByVillage": {
+            "velkvik": 1
+          },
+          "ruinWins": 0,
+          "winsByFamily": {
+            "beasts-and-wilds": 1
+          }
+        }
+      ],
+      "documents": [
+        {
+          "id": "D1-01",
+          "cycle": 1,
+          "at": 1792717054361,
+          "via": "contract"
+        }
+      ],
+      "names": [],
+      "ribbonshades": 0,
+      "peakLevels": {
+        "halvar": 1,
+        "zora": 1
+      },
+      "letters": [],
+      "trust": {
+        "dubno-ford": {
+          "level": "wary",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        },
+        "kozly-hollow": {
+          "level": "cold",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        },
+        "mirograd": {
+          "level": "hopeful",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        },
+        "velkvik": {
+          "level": "wary",
+          "progress": 1,
+          "won": 1,
+          "triumphs": 0
+        },
+        "ravenfell": {
+          "level": "cold",
+          "progress": 0,
+          "won": 0,
+          "triumphs": 0
+        }
+      },
+      "unread": []
+    },
+    "book": {
+      "properties": {
+        "yarrow": [0, 1],
+        "mugwort": [0, 1],
+        "juniper": [0, 1],
+        "honeycomb": [0],
+        "hares-foot": [0],
+        "pitch": [0],
+        "rime-salt": [0, 1],
+        "grave-dust": [0],
+        "river-pearl": [0],
+        "thornwood": [0, 1],
+        "wolf-fang": [],
+        "noon-poppy": []
+      },
+      "tried": []
+    },
+    "skills": {
+      "alchemy": 0,
+      "smithing": 6,
+      "lore": 20,
+      "command": 2
+    },
+    "delve": {
+      "run": null,
+      "result": null,
+      "runs": 0,
+      "riftglass": 0,
+      "allowance": 0.12368726851851854,
+      "allowanceAt": 1792741616890,
+      "sceneSeen": true,
+      "unlitOpen": false,
+      "shop": {
+        "lateHours": 0,
+        "traitsBought": [],
+        "traitsActive": [],
+        "cosmetics": [],
+        "chosenStart": false,
+        "reroll": false
+      },
+      "deep": {},
+      "relics": [],
+      "echoes": [],
+      "taken": {},
+      "kills": {},
+      "guardiansBeaten": {}
+    },
+    "events": {
+      "opened": false,
+      "sceneSeen": false,
+      "clock": {
+        "value": 29528027,
+        "high": 1792741616890
+      },
+      "tokens": {
+        "count": 0,
+        "at": null
+      },
+      "attempts": 0,
+      "rest": {},
+      "boss": {
+        "visit": 0,
+        "tier": null,
+        "pool": null,
+        "paid": 0,
+        "attempts": 0
+      },
+      "hunts": {
+        "stoneback": {
+          "points": 0,
+          "unlocked": false
+        },
+        "mara": {
+          "points": 0,
+          "unlocked": false
+        },
+        "likho": {
+          "points": 0,
+          "unlocked": false
+        }
+      },
+      "last": null,
+      "recent": []
+    },
+    "orders": {
+      "opened": {
+        "bellWatchers": {
+          "at": 1792717054361
+        },
+        "moot": {
+          "at": 1792740548232
+        }
+      },
+      "counts": {
+        "moot": {
+          "contract": 1
+        },
+        "greyWives": {
+          "brew": 0,
+          "experiment": 0,
+          "property": 0
+        },
+        "bellWatchers": {
+          "document": 1,
+          "letter": 0,
+          "name": 0
+        },
+        "quenchers": {
+          "kozlyContract": 0,
+          "delveFloor": 0
+        }
+      },
+      "start": {
+        "moot": 0,
+        "greyWives": 0,
+        "bellWatchers": 0,
+        "quenchers": 0
+      },
+      "triumphant": 0,
+      "delveWindow": null,
+      "levelHigh": {
+        "moot": 0,
+        "greyWives": 0,
+        "bellWatchers": 1,
+        "quenchers": 0
+      },
+      "seats": ["moot"],
+      "thirdSeat": false,
+      "lastChange": 5640045,
+      "chaptersRead": {
+        "moot": 0,
+        "greyWives": 0,
+        "bellWatchers": 1,
+        "quenchers": 0
+      },
+      "readWith": {
+        "moot": [],
+        "greyWives": [],
+        "bellWatchers": [["bellWatchers"]],
+        "quenchers": []
+      },
+      "openingQueue": [],
+      "seatStepPending": false
+    },
+    "remembering": {
+      "nearSeen": false,
+      "readyNoted": false,
+      "endings": []
+    },
+    "items": [],
+    "itemSeq": 0,
+    "legendaries": [],
+    "settings": {
+      "theme": "dark",
+      "bestBuyHint": true,
+      "rateUnit": "minute",
+      "reduceMotion": "system"
+    }
+  }
+}

@@ -199,3 +199,14 @@ Status: **Answered (a)** by the owner, 2026-10-21 (D469). T11.15b proposes N for
 ## v1.1 questions *(from the v1.1 flesh-out, 2026-10-22)*
 
 No open questions at the end of the v1.1 flesh-out. Any question Claude Code hits during v1.1 starts at **Q51**.
+
+### Q51 — Your real save has the Moot Order seated; two old Orders tests assume nothing is ever seated *(opened 2026-10-23; blocks TL.1 going green)*
+- **Context:** `v11-owner.json`, `v12.json` and `v12-played.json` (added under D507 (1)) come from your real save, where the Moot is seated. `tests/orders/perks.test.ts` ("Orders at level 4 but unseated change nothing") expects every fixture to have no seat, and `tests/orders/opening.test.ts` lists by name which fixtures are "played". Neither edit is on D507's list, so I stopped.
+- **Options:** (a) **Recommended:** edit just those two tests. The perks test clears the seat on its copy before it checks "unseated", which is what it says it checks; the opening test's list gains the three new files. Nothing is loosened and no other fixture is affected. (b) Unseat the Moot in the three new fixtures. Then they are no longer your real save. (c) Leave the tests failing until you decide.
+- **Answer (owner):** (a), 2026-10-23. Done in TL.1.
+- **Status:** **Answered.**
+
+### Q52 — Piece counts in the v1.1 docs are off by one *(informational; opened 2026-10-23)*
+- **Context:** GDD §5.1.5 and D501 say "39 pieces (42 tiles), 22 open tiles". The listed pieces are the 2 × 2 Hearth Hall plus 39 one-tile pieces: **40 pieces, 43 tiles, 21 open tiles**. Every coordinate and unlock is unambiguous, so I built what is listed and my tests assert 40 / 43 / 21. I did not edit the GDD (owner gate). The save-size test fills all 40 pieces (about 1.1 KB, under the 1.5 KB limit).
+- **Options:** (a) Correct the numbers in the GDD, D501 and the plan when you next approve doc edits. (b) Leave as is.
+- **Status:** **Open (informational).**

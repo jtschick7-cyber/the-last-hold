@@ -10,6 +10,7 @@ import { startingBook, startingSkills } from './book-state';
 import { startingDelve } from './delve-state';
 import { newEventsState } from './events-state';
 import { newOrdersState } from './orders-state';
+import { newLayoutState } from '../systems/layout-catalog';
 import { newRememberingState } from './remembering-state';
 import { freshAct, startingVillageTrust } from './story-state';
 
@@ -102,6 +103,7 @@ export const createNewGame = (seed: string, now: number): GameState => {
     events: newEventsState(now),
     orders: newOrdersState(),
     remembering: newRememberingState(),
+    layout: newLayoutState(),
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,

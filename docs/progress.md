@@ -6,9 +6,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** docs commit (flesh-out files applied).
-- **Next:** TL.1 (save v12, layout catalog, v11 to v12 migration).
-- **Open questions:** none (new ones start at Q51).
+- **Last task:** TL.1 (save v12, layout catalog, migration).
+- **Next:** TL.2 (selectors, piece states, non-coupling lint test).
+- **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -231,3 +231,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Applied:** decisions D498–D508; 16 exact GDD edits (all matched once); questions (Q41, Q46, Q48 closed); plan v1.1 + outlines v1.2–v1.5; technical design §19 plus schema 12 and `holdView` in §5.2/§9.4/§18; two names; two CLAUDE.md rules. Flesh-out files are in `docs/flesh-out/v1.1/`.
 - **Old `Proposed` rows:** many older rows still read Proposed; D472's blanket rule and D498 cover them. I did not edit any.
 - **Not done:** `v11-owner.json` file itself is not in the repo yet (needed at TL.1).
+
+## 2026-10-23 — v1.1 TL.1: save v12 and the layout catalog
+- **Built:** schema 12 with `state.layout` (placed coordinates, ghosts flag); the v11 to v12 migration (canonical layout for migrated saves, Hearth Hall only for a new game); the layout guard (bounds, Hall anchor 2..4, overlaps in catalog order, unknown keys dropped, all with warnings).
+- **Where things live:** the piece list, unlock levels, Rank clearings and canonical layout are data in `src/content/hold-layout.ts` (the lint rule bans number tables in `core/systems/`); `src/core/systems/layout-catalog.ts` holds the reads.
+- **Fixtures:** your real save as `v11-owner.json`; `v12.json` (it after migration); `v12-played.json` (72 h of Standard play). Made by `scripts/make-v12-fixtures.ts`.
+- **Checked:** every fixture loads with no warnings and round-trips; golden fights and recorded stands replay; schema 13 refused; layout block about 1.1 KB (limit 1.5 KB). `npm run check` green.
+- **Old tests edited (D507 (1), and Q51 with your yes):** `v11-migration.test.ts` (schema number, newer-version case); `perks.test.ts` (unseats the copies first, since your Moot is seated); `opening.test.ts` (list of played saves gains three files). Nothing loosened.
+- **Docs off by one (Q52):** the docs say 39 pieces, 42 tiles, 22 open; the listed pieces are 40, 43 and 21. I built the list as written; the GDD is untouched (your gate).
+- **Env:** the installed formatter was older than the project asks for; ran `npm ci`. Not a repo change.

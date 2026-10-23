@@ -35,8 +35,8 @@ const roundTrip = (s: GameState): GameState =>
 const EMPTY = { nearSeen: false, readyNoted: false, endings: [] };
 
 describe('the v10 → v11 migration', () => {
-  it('is schema 11, and rules version stays 5', () => {
-    expect(SCHEMA_VERSION).toBe(11);
+  it('is schema 11 or later, and rules version stays 5', () => {
+    expect(SCHEMA_VERSION).toBeGreaterThanOrEqual(11);
     expect(RULES_VERSION).toBe(5);
     for (const f of ['v10.json', 'v10-played.json']) {
       expect(readFixture(f).schemaVersion, f).toBe(10);
@@ -113,8 +113,8 @@ describe('the v10 → v11 migration', () => {
     }
   });
 
-  it('a save from a newer version (12) is refused with the usual message', () => {
-    const env = { ...readFixture('v11.json'), schemaVersion: 12 };
+  it('a save from a newer version is refused with the usual message', () => {
+    const env = { ...readFixture('v11.json'), schemaVersion: SCHEMA_VERSION + 1 };
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 
