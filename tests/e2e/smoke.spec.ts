@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { begin, closeOrdersScenes, onwardAll } from './helpers';
+import { clearScenes, fixture, load } from './layout-helpers';
 
 // Plan T1.38 / technical design §14: the phone-sized smoke test on the real
 // production build. Load → buy a Cottage → reload → the purchase is still
@@ -220,10 +221,17 @@ test('seat an Order, read a chapter, change a seat, and reload', async ({ page }
 
   // Sheets that come first (the away sheet, scenes) are closed until the load step is up.
   const step = page.getByRole('dialog', { name: 'Seat your Orders' });
-  for (let i = 0; i < 14 && !(await step.isVisible().catch(() => false)); i++) {
+  for (let i = 0; i < 30; i++) {
     await page.waitForTimeout(400);
+    // Looked at again after the wait: on a slow runner the step can appear during it, and pressing
+    // "Not now" or Close then would dismiss the step itself.
+    if (await step.isVisible().catch(() => false)) break;
+    // 'Close' is the sheet's ✕ button, found by its label, not by text (the away sheet has no other button).
     for (const name of ['Onward', 'Not now', 'Continue', 'Close']) {
-      const b = page.getByText(name, { exact: true });
+      const b =
+        name === 'Close'
+          ? page.getByRole('button', { name })
+          : page.getByText(name, { exact: true });
       if (
         await b
           .first()
@@ -235,7 +243,16 @@ test('seat an Order, read a chapter, change a seat, and reload', async ({ page }
       }
     }
   }
-  await expect(step).toBeVisible();
+  // The failure message names the sheets that were open, so a CI log shows what blocked the step.
+  const open = await page.evaluate(() =>
+    [...document.querySelectorAll('[role=dialog]')].map(
+      (d) =>
+        `${d.getAttribute('aria-label')}: ${[...d.querySelectorAll('button')]
+          .map((b) => b.getAttribute('aria-label') ?? b.textContent)
+          .join('|')}`,
+    ),
+  );
+  await expect(step, `open sheets: ${JSON.stringify(open)}`).toBeVisible();
   await step.getByRole('checkbox').first().check(); // the Moot
   await step.getByRole('button', { name: 'Done' }).click();
 
@@ -263,5 +280,64 @@ test('seat an Order, read a chapter, change a seat, and reload', async ({ page }
     page.getByRole('region', { name: 'Orders' }).getByText(/^In seats: Thanes' Moot, /),
   ).toBeVisible();
   await expect(page.getByRole('dialog', { name: 'A table at the gate' })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+// Plan TL.12 (S11): the owner's v11 save loads and becomes v12; then, on the grid, open Arrange Hold,
+// move a building, Auto-arrange, switch the Hold view, and reload offline with every choice kept.
+test('the v11 owner save, Arrange Hold, Auto-arrange, Hold view, and an offline reload', async ({
+  page,
+  context,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await load(page, () => {}, fixture('v11-owner'));
+  // It migrated: the grid header is up with pieces on it.
+  await expect(page.locator('[data-hold-grid]')).toBeVisible();
+  await expect(page.locator('[data-hold-grid] [data-piece]').first()).toBeVisible();
+
+  await page.locator('[data-layout-button]').click();
+  const sheet = page.getByRole('dialog', { name: 'Arrange Hold' });
+  const at = async (id: string) =>
+    sheet.locator(`[data-piece="${id}"]`).first().getAttribute('data-tile');
+  const before = await at('mill');
+  await sheet.locator(`[data-tile="${before}"]`).click();
+  const free = await sheet
+    .locator('[data-piece=""][data-locked="false"]')
+    .first()
+    .getAttribute('data-tile');
+  await sheet.locator(`[data-tile="${free}"]`).click();
+  expect(await at('mill')).toBe(free);
+  await sheet.getByRole('button', { name: 'Auto-arrange' }).click();
+  expect(await at('mill')).not.toBe(free);
+  const arranged = await at('mill');
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  // Hold view: Classic scene, then back to the grid at the end.
+  await tab(page, 'More').click();
+  await page.getByRole('button', { name: /^Settings/ }).click();
+  await page.getByRole('button', { name: 'Classic scene', exact: true }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
+  await tab(page, 'Hold').click();
+  await expect(page.locator('[data-hold-grid]')).toHaveCount(0);
+  await page.waitForTimeout(1500); // the save is written on a timer
+
+  // Offline: the service worker serves the app, and both choices are still there.
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+  await page.reload();
+  await expect
+    .poll(() => page.evaluate(() => navigator.serviceWorker.controller !== null))
+    .toBe(true);
+  await context.setOffline(true);
+  await page.reload();
+  await clearScenes(page);
+  await expect(page.locator('[data-hold-grid]')).toHaveCount(0);
+  await expect(page.locator('[data-layout-button]')).toBeVisible();
+  await page.locator('[data-layout-button]').click();
+  const again = page.getByRole('dialog', { name: 'Arrange Hold' });
+  await expect(again.locator(`[data-tile="${arranged}"]`)).toHaveAttribute('data-piece', 'mill');
+  await context.setOffline(false);
   expect(errors).toEqual([]);
 });

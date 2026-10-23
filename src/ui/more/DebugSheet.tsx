@@ -160,6 +160,23 @@ export const DebugSheet = () => {
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.runArrival' })}>
           Run the arrival
         </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.layoutFillBastion' })}
+        >
+          Fill Bastion (layout)
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.layoutAutoArrange' })}
+        >
+          Auto-arrange layout
+        </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.layoutClear' })}>
+          Clear layout
+        </button>
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.addToken' })}>
           +1 attempt token
         </button>

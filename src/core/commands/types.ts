@@ -15,6 +15,7 @@ import type { ResourceBundle } from '../../content/resources';
 import type { PolicyId } from '../policies/schedules';
 import type { Preparation, Settings } from '../state/game-state';
 import type { UpgradeId } from '../../content/warden-upgrades';
+import type { HoldPieceId } from '../../content/hold-layout';
 
 // Technical design §4.3: every player action is a plain JSON Command, applied
 // through apply(). The UI, the simulator and the debug panel all use these.
@@ -69,6 +70,12 @@ export type Command =
   | { type: 'roster.set'; hunter: HunterId; active: boolean }
   | { type: 'gear.upgrade'; hunter: HunterId; slot: GearSlot }
   | { type: 'settings.set'; patch: Partial<Settings> }
+  /** Technical design §19.3: moves a piece of the Hold's layout (decorative in v1.1). */
+  | { type: 'layout.place'; pieceId: HoldPieceId; x: number; y: number }
+  | { type: 'layout.unplace'; pieceId: HoldPieceId }
+  | { type: 'layout.autoArrange' }
+  | { type: 'layout.clear' }
+  | { type: 'layout.setShowGhosts'; showGhosts: boolean }
   /** GDD §5.9.3: the Last Stand, then the Long Night. Final: there is no undo. */
   | {
       type: 'stand.make';
@@ -171,7 +178,11 @@ export type Command =
   | { type: 'debug.addToken' }
   | { type: 'debug.fillBank' }
   | { type: 'debug.endRests' }
-  | { type: 'debug.unlockAge'; age: AgeId };
+  | { type: 'debug.unlockAge'; age: AgeId }
+  /** Plan TL.4: layout debug tools (set debugUsed). */
+  | { type: 'debug.layoutAutoArrange' }
+  | { type: 'debug.layoutClear' }
+  | { type: 'debug.layoutFillBastion' };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };
 

@@ -14,6 +14,12 @@ import { orderSheetView } from '../../src/core/systems/orders-sheet-view';
 import { ordersCardView } from '../../src/core/systems/orders-view';
 import v9Owner from '../saves/fixtures/v9-owner.json';
 import v10Played from '../saves/fixtures/v10-played.json';
+import v11Played from '../saves/fixtures/v11-played.json';
+import v12Played from '../saves/fixtures/v12-played.json';
+import { h, render } from 'preact';
+import { adoptGame, dispatch, startGame } from '../../src/ui/app/runtime';
+import { HoldGrid } from '../../src/ui/widgets/HoldGrid';
+import { ArrangeHoldSheet } from '../../src/ui/sheets/ArrangeHoldSheet';
 
 // GDD §6.5: the live odds panel (500 fights) and Suggested party, timed in this
 // browser. Playwright slows the CPU 4× first, as a stand-in for a mid-range phone,
@@ -54,6 +60,22 @@ type Bench = {
   ordersStanding: number;
   ordersMigration: number;
   rememberingMigration: number;
+  layoutMigration: number;
+  holdGrid: number;
+  arrangeSheet: number;
+};
+
+// Plan TL.10 (D506): the layout rows mount the real components for a played save with all 40
+// pieces placed (the worst case), into a detached box, so they time the component's render only.
+await startGame();
+const played = loadEnvelope(structuredClone(v12Played));
+if (!played.ok) throw new Error('bench: v12 save did not load');
+await adoptGame(played.value.state);
+dispatch({ type: 'debug.layoutFillBastion' });
+const box = document.createElement('div');
+const mount = (c: () => ReturnType<typeof h>) => () => {
+  render(c(), box);
+  render(null, box);
 };
 
 (window as unknown as { __bench: () => Bench }).__bench = () => {
@@ -143,6 +165,11 @@ type Bench = {
     ordersMigration: best(() => loadEnvelope(structuredClone(v9Owner))),
     // Plan T11.16 (D464 (5)): the v10 → v11 migration of a played v10 save, on the load path. GDD §6.5 row (D469).
     rememberingMigration: best(() => loadEnvelope(structuredClone(v10Played))),
+    // Plan TL.10 (GDD §6.5, D506): the v11 → v12 migration of a played v11 save, the grid header's
+    // render, and the Arrange Hold sheet's first render.
+    layoutMigration: best(() => loadEnvelope(structuredClone(v11Played))),
+    holdGrid: best(mount(() => h(HoldGrid, {}))),
+    arrangeSheet: best(mount(() => h(ArrangeHoldSheet, {}))),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),
     bossSuggest: best(() =>
       suggestBossParty({

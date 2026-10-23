@@ -1,5 +1,5 @@
 import { ages } from '../../content/ages';
-import { game, version } from '../app/runtime';
+import { appSettings, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { useEffect } from 'preact/hooks';
 import { sayAfterEnding, spoken } from '../app/lines';
@@ -8,6 +8,9 @@ import styles from '../styles/ui.module.css';
 import { BuildList } from './BuildList';
 import { PeasantsPanel } from './PeasantsPanel';
 import { HoldScene } from '../widgets/HoldScene';
+import { HoldGrid } from '../widgets/HoldGrid';
+import { ArrangeHoldSheet } from '../sheets/ArrangeHoldSheet';
+import { buildHoldGridView } from '../../core/systems/layout';
 import { ThreatMeter } from '../widgets/ThreatMeter';
 import { LongNightView, lastStand } from '../sheets/LongNightSheets';
 import { RiftCard } from '../delve/RiftCard';
@@ -23,12 +26,14 @@ export const HoldScreen = () => {
   void version.value;
   const s = game();
   const line = spoken.value;
+  // GDD §9.21: the badge counts only pieces in the tray.
+  const tray = buildHoldGridView(s).tray.length;
   useEffect(sayAfterEnding, []);
   return (
     <div>
       <header class={styles.card}>
         <div style={{ textAlign: 'center' }}>
-          <HoldScene age={s.cycle.age} />
+          {appSettings.value.holdView === 'grid' ? <HoldGrid /> : <HoldScene age={s.cycle.age} />}
         </div>
         <div class={styles.row}>
           <h1
@@ -47,6 +52,15 @@ export const HoldScreen = () => {
             onClick={() => openSheet('Rank', () => <AgeSheet />)}
           >
             Rank ▸
+          </button>
+          <button
+            type="button"
+            class={styles.btn}
+            data-layout-button="true"
+            data-tray-count={tray}
+            onClick={() => openSheet('Arrange Hold', () => <ArrangeHoldSheet />)}
+          >
+            {tray > 0 ? `Layout (${tray}) ▸` : 'Layout ▸'}
           </button>
         </div>
         <ThreatMeter />

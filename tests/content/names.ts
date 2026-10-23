@@ -16,6 +16,18 @@ const generic = (name: string): CheckedName => ({ name, checked: '2026-10-12', r
 export const checkedNames: readonly CheckedName[] = [
   // Searched 2026-10-12 (plan T1.6); no match in any influence.
   { name: 'Stanholm', checked: '2026-10-12', result: 'clear' },
+  {
+    name: 'The Fell Breach',
+    checked: '2026-10-22',
+    result: 'clear',
+    note: 'v1.1 north grid border; from the setting band The Fells (setting-primer §2). No game place or creature of this name in any influence.',
+  },
+  {
+    name: 'Lowland Gate',
+    checked: '2026-10-22',
+    result: 'clear',
+    note: 'v1.1 south grid border; from the setting band The Lowlands. Generic compound; nothing found in any influence.',
+  },
   { name: 'Brana Kolar', checked: '2026-10-12', result: 'clear' },
   { name: 'Brana', checked: '2026-10-12', result: 'clear', note: 'Short form of Brana Kolar.' },
   {

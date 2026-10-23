@@ -19,6 +19,7 @@ import type { RecipeBook, SkillXp } from './book-state';
 import type { DelveState } from './delve-state';
 import type { EventsState } from './events-state';
 import type { OrdersState } from './orders-state';
+import type { HoldLayoutState } from './layout-state';
 import type { RememberingState } from './remembering-state';
 import type { ItemState } from './item-state';
 import type { StoryState } from './story-state';
@@ -35,7 +36,7 @@ import type { InjuryKind } from '../contracts/injury';
 // Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317); v9 adds events (tokens,
 // rests, the boss visit, hunt points) and each cycle's stand pool (plan T9.1, D382); v10 adds the
 // Orders (plan T10.1); v11 adds the ending's block (plan T11.1, D452). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 11;
+export const SCHEMA_VERSION = 12;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -364,6 +365,8 @@ export interface GameState {
   orders: OrdersState;
   /** The ending: Pechko's near-scene, the ready line, the endings reached (v11, GDD §5.15). */
   remembering: RememberingState;
+  /** The Hold's layout blueprint (v12, GDD §5.1.5, D502). Decorative; kept whole through the Long Night. */
+  layout: HoldLayoutState;
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;

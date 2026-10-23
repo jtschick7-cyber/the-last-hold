@@ -10,6 +10,8 @@ import { startingBook, startingSkills } from './book-state';
 import { startingDelve } from './delve-state';
 import { newEventsState } from './events-state';
 import { newOrdersState } from './orders-state';
+import { newLayoutState } from '../systems/layout-catalog';
+import { autoPlaceUnlocked } from '../systems/layout-place';
 import { newRememberingState } from './remembering-state';
 import { freshAct, startingVillageTrust } from './story-state';
 
@@ -41,7 +43,7 @@ export const freshCycleRecord = (number: number, now: number, act: number | null
 /** A fresh game in the GDD §5.1.4 starting state. */
 export const createNewGame = (seed: string, now: number): GameState => {
   const jobs = { ...start.jobs };
-  return {
+  const state: GameState = {
     meta: {
       schemaVersion: SCHEMA_VERSION,
       gameSeed: seed,
@@ -102,6 +104,7 @@ export const createNewGame = (seed: string, now: number): GameState => {
     events: newEventsState(now),
     orders: newOrdersState(),
     remembering: newRememberingState(),
+    layout: newLayoutState(),
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,
@@ -115,4 +118,6 @@ export const createNewGame = (seed: string, now: number): GameState => {
     },
     settings: { ...DEFAULT_SETTINGS },
   };
+  autoPlaceUnlocked(state); // GDD §5.1.5 (M3): the starting Farm and Camp stand on the grid, not in the tray
+  return state;
 };

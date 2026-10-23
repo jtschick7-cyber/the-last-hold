@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
-- **Milestone:** v1.0 "Polish" (D472–D497), complete.
-- **Last task:** v1.0 complete: playtest passed, merged (D497).
-- **Next:** the owner tags `v1.0.0` by hand; then the next milestone's flesh-out (audio, the Descent, rising difficulty).
-- **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
+- **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
+- **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
+- **Last task:** v1.1 milestone end (playtest passed, `sim:accept` run, statuses set).
+- **Next:** merge pull request #18 and tag `v1.1.0` (waiting on the owner's go); then the v1.2 flesh-out.
+- **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -225,3 +225,158 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Merged** PR 17 from `milestone/v1.0`. **The owner tags `v1.0.0` by hand.**
 - **Deferred, by decision:** audio, the Descent, rising difficulty, event cosmetics and legendary hunters' animation, screen-reader labels, Q41 and Q48, the rare species' slow arrival (Q46).
 
+## 2026-10-23 — v1.1 docs commit
+- **Owner said yes to D508** (D498–D507 accepted as written, no exceptions) and confirmed the `v11-owner.json` export. I marked D498–D507 Decided on that basis.
+- **Preconditions checked:** `v1.0.0` is tagged and on `main`; baseline is the accepted v1.0 one. Branch `milestone/v1.1` made from `main`.
+- **Applied:** decisions D498–D508; 16 exact GDD edits (all matched once); questions (Q41, Q46, Q48 closed); plan v1.1 + outlines v1.2–v1.5; technical design §19 plus schema 12 and `holdView` in §5.2/§9.4/§18; two names; two CLAUDE.md rules. Flesh-out files are in `docs/flesh-out/v1.1/`.
+- **Old `Proposed` rows:** many older rows still read Proposed; D472's blanket rule and D498 cover them. I did not edit any.
+- **Not done:** `v11-owner.json` file itself is not in the repo yet (needed at TL.1).
+
+## 2026-10-23 — v1.1 TL.1: save v12 and the layout catalog
+- **Built:** schema 12 with `state.layout` (placed coordinates, ghosts flag); the v11 to v12 migration (canonical layout for migrated saves, Hearth Hall only for a new game); the layout guard (bounds, Hall anchor 2..4, overlaps in catalog order, unknown keys dropped, all with warnings).
+- **Where things live:** the piece list, unlock levels, Rank clearings and canonical layout are data in `src/content/hold-layout.ts` (the lint rule bans number tables in `core/systems/`); `src/core/systems/layout-catalog.ts` holds the reads.
+- **Fixtures:** your real save as `v11-owner.json`; `v12.json` (it after migration); `v12-played.json` (72 h of Standard play). Made by `scripts/make-v12-fixtures.ts`.
+- **Checked:** every fixture loads with no warnings and round-trips; golden fights and recorded stands replay; schema 13 refused; layout block about 1.1 KB (limit 1.5 KB). `npm run check` green.
+- **Old tests edited (D507 (1), and Q51 with your yes):** `v11-migration.test.ts` (schema number, newer-version case); `perks.test.ts` (unseats the copies first, since your Moot is seated); `opening.test.ts` (list of played saves gains three files). Nothing loosened.
+- **Docs off by one (Q52):** the docs say 39 pieces, 42 tiles, 22 open; the listed pieces are 40, 43 and 21. I built the list as written; the GDD is untouched (your gate).
+- **Env:** the installed formatter was older than the project asks for; ran `npm ci`. Not a repo change.
+
+## 2026-10-23 — v1.1 TL.2: piece states, looks and the grid view
+- **Built** (`src/core/systems/layout.ts`): the four exclusive piece states; the look of each piece (level-building tiers, plot densities; the thresholds are data in `content/hold-layout.ts`); the 16 wall connection masks; and the memoized grid view (active pieces, ghosts, tray, frost/lamp look, where each cosmetic shows).
+- **Non-coupling (S11):** a test scans all of `src/core` and fails if any file outside a short list mentions the layout. The list is the state, the save and the layout's own files. TL.3 must add the command and Long Night files to it on purpose.
+- **Checked:** every piece unlocks at its threshold and not one before; state counts at each Rank (13, 32, 36, 40 active with everything built and the canonical layout); Citadel defenses all active at Citadel, row 0 waits for Bastion; 16 masks; memoizing sees in-place changes. `npm run check` green (3,194 tests).
+- **Note for TL.7/TL.8:** the view gives `activeCount` and `pieceCount` (40). The sheet's subtitle string says "total = 39"; that is the Q52 off-by-one, so the number to show is for you to decide.
+- **Note:** pieces whose saved place is inside the clearing but under another piece are not possible by the guard or by TL.3's rules; the view does not handle them.
+- **No old test edited.**
+
+## 2026-10-23 — v1.1 TL.3: layout commands and auto-placement
+- **Built:** the five commands (`layout.place`, `unplace`, `autoArrange`, `clear`, `setShowGhosts`) and `autoPlaceUnlocked`. Moves, swaps and the Hearth Hall's 2..4 limit work as the docs say; refusals change nothing. The order data is in `content/hold-layout.ts`.
+- **Hooks:** buying and upgrading place only pieces that this action just unlocked (a piece you sent to the tray stays there); a Rank-up wakes ring pieces and places the tray; a new game and the start of a new cycle place the starting Farm and Camp. The Long Night keeps the saved layout exactly (tested).
+- **Choices to check:** (1) a blueprint tile also counts as taken when finding a free tile, so an automatic placement never sits on a built-later piece's saved spot; (2) a defense with no open defense tile (row 0 before Bastion) waits in the tray, it does not take an inner tile; (3) refusal reasons are short technical strings, not player text.
+- **Tests:** new `tests/layout/commands.test.ts` (move, swap, Hall, locked rings, blueprint protection, Rank-up, Long Night, layout-only changes). The non-coupling list gained `commands/apply.ts`, `commands/layout.ts`, `commands/types.ts`, `long-night/reset.ts`, `systems/layout-place.ts`. `npm run check` green; golden fights and stands unchanged.
+- **Two of this milestone's own tests changed** (not in D507's list; they asserted the old new-game state, which you told me to change): `v12-migration.test.ts` (new game now has the Farm and Camp placed) and `layout.test.ts` (grid view of a new game). Nothing loosened.
+- **Docs note:** GDD M3 says a new game places "the Hearth Hall only"; I followed your instruction that the Farm and Camp end up placed. The GDD is untouched.
+- **Next:** TL.4. **Skipped:** nothing.
+
+## 2026-10-23 — v1.1 docs commit for TL.3, and TL.4 debug layout commands
+- **Docs applied on your approval:** GDD §5.1.5 rule 6, technical design §19.2 and §19.3 (three clarifications), and D509 (Proposed). The draft file is marked applied.
+- **TL.4 built:** three debug commands in the debug panel under the Rank buttons: "Fill Bastion (layout)", "Auto-arrange layout", "Clear layout". Each sets `debugUsed`; the player's own layout commands do not. They are only wired to the debug sheet.
+- **Fill Bastion:** takes the hold to Bastion, raises each building to the figure that shows all its pieces in their top look (never past its copy limit or Bastion level cap, never lowering one), then lays out the canonical arrangement: all 40 pieces on the grid, tray and ghosts empty. It replaces any saved layout.
+- **Seen, for you to decide (not changed):** auto-placement puts ordinary buildings on the free tiles nearest the middle, and that can reach row 1 once the Keep opens. Then walls and towers that arrive later find row 1 taken and wait in the tray. Auto-arrange fixes it. A possible rule: keep the defense rows for defenses. That is a GDD change, so it is yours.
+- **Tests:** four new in `tests/layout/commands.test.ts`; `debug-layout.ts` joined the non-coupling list. `npm run check` green. No old test edited. Nothing skipped.
+
+## 2026-10-23 — v1.1 D510 and TL.5a: grid ground art
+- **D510 built (you agreed):** auto-placement never puts an ordinary building on the defense tiles (row 1, the row 2 wings, row 0). GDD §5.1.5 rule 4 and technical design §19.3 updated; D510 is `Proposed` until you mark it. One new test.
+- **TL.5a built:** 11 pictures in code, in the palette: 3 ground looks, 2 forest, 2 ruined stone, 2 blueprint ghosts (locked, dormant), and the two 256 × 16 border strips (Fell Breach, Lowland Gate). Registered as `grid.*` in the manifest; credits regenerated.
+- **Inventory:** `docs/flesh-out/v1.1/art-inventory.md` lists all **80** pictures (plan said about 75): 11 now, 46 at TL.5b, 23 at TL.5c. One call for you: the Watchtower gets one picture, not 16 connection ones (only walls connect visually).
+- **Hash baseline:** `art-src/v1.0-hashes.json` (209 entries: every shipped picture and app icon); a test fails if any v1.0 picture changes.
+- **Old test edited (D507 (4)):** `tests/tools/contact-sheet.test.ts` now counts only v1.0 pictures (not `grid.*`), so numbers 1–156 do not move. `contact-sheet-data.ts` got the matching filter.
+- **Not seen on a real screen yet;** I looked at a preview sheet only. The owner's art stop is TL.5c. `npm run check` green. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.5b: defenses, buildings and the Hall
+- **Owner decided:** D510 marked Decided; the Watchtower has one picture.
+- **Drawn in code (49 pictures):** 16 wall pictures (one per connection mask, so walls join into a line), the Watchtower, the Trophy Hall, 7 level buildings × 3 tiers (mill, sawpit, smithy, bell tower, barracks, lodge, alchemist), and the 64 px Hearth Hall at each Rank with its Carved Door and lamp overlays and a frost overlay per Rank.
+- **Two small changes from the plan, for you to know:** the frost is one per Rank (4), not one, because it follows each Rank's roofline; the door and the lamp stay one each because the door and window sit in the same place at every Rank. The 64 px Hall pictures are registered as kind `scene` because the manifest's size rule gives `building` only 32 px; no old test touched. The inventory now says **83** pictures in all; 23 left for TL.5c.
+- **Tests:** every file equals what its drawer draws, is in the palette and at its size; 16 distinct wall masks; tiers never shrink; the door and window overlays fit every Rank; v1.0 hashes still identical. `npm run check` green.
+- **First-pass art, not yet seen by you.** I looked at preview sheets; the weakest are the Sawpit and the Tier I Mill. All of it goes on the contact sheet at TL.5c for your Keep or Redraw marks.
+- **Nothing skipped.**
+
+## 2026-10-23 — v1.1 TL.5c: plots, cosmetics and the art stop
+- **Drawn (23 pictures):** 15 plot looks (Cottage, Farm, Woodcutter's Camp, Mine, Herb Garden × single, pair, cluster), 2 Silver Seam looks, the grid versions of Gatehouse banners, Watchtower bell (on the tower, and on a border post before it stands), Wall lanterns (on a wall, and along the Fell Breach before any wall stands), and one frost overlay for walls. **All 83 grid pictures now exist.**
+- **For your review:** 5 numbered sheets (numbers 1–83, their own numbering; both theme backgrounds; overlays shown over what they sit on) and two whole-grid mock-ups (a new hold at Hamlet, a full one at Bastion), in `docs/flesh-out/v1.1/contact-sheets/`. The marks table is `docs/flesh-out/v1.1/art-marks.md`. Mark Keep or Redraw; empty means Keep. At most 12 Redraws per session (D475).
+- **Size (N5):** the 83 pictures are 44 KB, about 36 KB zipped. The whole production build zips to about 561 KB against the 600 KB budget, so about 39 KB of room is left for the grid screens' code.
+- **Tool:** `tools/contact-sheet-layout.ts`, run through `contact-sheet.ts --layout-sheets`. It writes only v1.1 files; v1.0's hashes and numbers are untouched.
+- **Stopped for the owner.** No old test edited. Nothing skipped.
+
+## 2026-10-23 — v1.1 owner's art marks recorded
+- **You marked 25 of 83 Redraw** (58 Keep). Saved as `docs/flesh-out/v1.1/art-marks.md`; the numbering did not change.
+- **Batches (D475 allows 12 per session), split in the plan:** TL.6a 11 (the three ground tiles, Watchtower with its bell overlay, Hall door and lamp, Alchemist 3, Mill 1, Farm 3, Herb Garden 3); TL.6b 11 (Barracks, Mine, Sawpit, Silver Seam); TL.6c 3 (Woodcutter). Your note on the ground tiles means 6a is also judged on new Hamlet and Bastion mock-ups.
+- **Keep proof:** `art-src/v1.1-hashes.json` records all 83 as shown to you; a test fails if a picture not marked Redraw changes. Redraws will be re-recorded only as you approve each batch.
+- **Nothing drawn this session.** Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.6a: redraw batch 1 (11 pictures), awaiting approval
+- **Redrawn, from your notes:** the three ground tiles (calmer meadow green; deeper earth; darker worn flagstones that stay behind stone buildings), the Watchtower with short wall wings (and its bell moved up to suit), the Hall door (dark oak, bronze straps, a ring) and lamp (frame kept, warm panes, a lantern on the sill), Alchemist 3 (a framed glass lantern housing on the roof), Mill 1 (long blades), Farm 3 (one fenced barley field with a haystack), Herb Garden 3 (raised beds in bloom).
+- **Sheets for you:** `docs/flesh-out/v1.1/before-after/tl6a.png` and Hamlet and Bastion mock-ups before and after. The old versions are kept in `art-src/previous-v1.1/`.
+- **Choices to check:** the wall wings sit at the wall's own height (rows 11–20 of the tile) so they join flush, not 10–21 as noted; the earth is a rust-brown (the palette has no yellow-brown). The mock-ups scatter the three ground looks evenly; **for the real screen (TL.7) I recommend mostly grass with earth and flags used sparingly**, so it does not read as a checkerboard.
+- **Not marked done until you approve.** All 58 Keep pictures are byte-identical (tested). New tools: `before-after-layout.ts`, shared `layout-sheet-parts.ts`. `npm run check` green. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.6a approved; TL.6b drawn, awaiting approval
+- **TL.6a approved** by the owner and ticked.
+- **TL.6b redrawn (11), from your notes:** Barracks 1–3 (timber-framed martial hall, slate roof, weapon rack by the door; stone course and target from Tier II; crenellated eaves, shield emblem and banner at Tier III), Mine 1–3 (timbered mouths set in dark rock with rails and ore; two mouths and a lantern; then three mouths, a hoist frame and carts), Sawpit 1–3 (a log on trestles under a pit saw with planks; a roofed canopy; a full shed with a circular blade and tall stacks; the floating grey shape is gone), Silver Seam 1–2 (jagged outcrops with a branching silver vein).
+- **Sheets:** `docs/flesh-out/v1.1/before-after/tl6b.png` plus Hamlet and Bastion mock-ups. Old versions are in `art-src/previous-v1.1/`.
+- **Code:** Barracks and Sawpit moved to `draw-grid-yard.ts`, Mine and Silver Seam to `draw-grid-rock.ts`, shared helpers to `draw-grid-kit.ts`. All 47 other pictures not in a batch so far are byte-identical (tested). `npm run check` green. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.6b approved; TL.6c drawn, awaiting approval
+- **TL.6b approved** and ticked.
+- **TL.6c redrawn (3):** Woodcutter's Camp 1 (a round stump with a lighter top, an angled axe in it, two cut logs), 2 (stump and axe, plus a pyramid of round-ended logs with pale rings), 3 (a busy yard: cordwood piles, a log pyramid, the stump and axe, and a timber shelter with a sawbuck). New file `draw-grid-camp.ts`.
+- **Sheets:** `docs/flesh-out/v1.1/before-after/tl6c.png` plus Hamlet and Bastion mock-ups. All 25 marked pictures are now redrawn; the other 58 are byte-identical (tested). `npm run check` green. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.6c approved; TL.6 complete
+- **Owner approved TL.6c.** All 25 redraws (TL.6a, b, c) are approved and ticked; TL.6 is done.
+- **Next:** TL.7, the Hold grid screen. Proposal to carry into it: choose ground looks by a fixed function of the tile's coordinates, mostly grass with earth and flags used sparingly.
+- **Nothing skipped.**
+
+## 2026-10-23 — v1.1 TL.7: the grid header and the Hold view setting
+- **Setting:** `More > Settings > Hold view` (Grid / Classic scene, default Grid), kept outside the save, kept on Reset everything, untouched by Paste/Load/Restore. Unit tests added (D507 (5)); no other old test edited.
+- **Grid header:** 8 × 8 grid read from `buildHoldGridView`; Fell Breach and Lowland Gate strips (with their two labels), ground, forest and ruin outside the clearing, active pieces, blueprint ghosts, all four cosmetics, Act VI frost, the lamp. Not tappable; scales to the card (320 px checked). `[Layout ▸]` sits beside `[Rank ▸]` in both views, badge counts the tray only.
+- **Ground:** a fixed function of the tile's coordinates: about 85% grass, earth and flags scattered. Looked at it in screenshots (Citadel and full Bastion); fixed a first draft that made column 0 all earth.
+- **Choices to check:** the border bell hangs on the tile where Watchtower 1 will stand; the strip labels are the two strings from GDD §9.21, drawn over the strips.
+- **`[Layout ▸]` opens a stub** for now: it shows only "TRAY (unplaced: n)". TL.8 replaces it with the real sheet.
+- **Tests:** `tests/e2e/hold-grid.spec.ts` (plain, cosmetics + frost, border cosmetics + lamp, Classic scene and the choice kept after reload, 320 px). The 15-tap check-in test still passes. Bundle: about 3 KB gzipped added.
+- **Still open:** Q52 (the piece count shown is for you to decide at TL.8). Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.8: the Arrange Hold sheet
+- **Owner:** the border bell stays where it is (tile of Watchtower 1).
+- **Sheet:** opens from `[Layout ▸]`. 8 × 8 buttons of 44 px; tap a piece or a tray item to select, tap a tile to move or swap (core's `layout.place` decides), `[Move to tray]` for 1 × 1 pieces, Auto-arrange, Clear to tray… with its confirmation, Blueprint ghosts On/Off. The sheet sends commands and draws; no rule lives in it. A locked tile says "Clears at {Rank}" (new read-only helper `clearsAtAge` in core).
+- **My choices:** a move or swap ends the selection, and tapping the selected piece again lets go of it (so you can pick another piece without swapping by accident). One white-over-black outline goes round the whole piece, so the 2 × 2 Hall shows as one block.
+- **Strings beyond the §9.21 table (please check):** the tray items' names (building name, plus its number for plots, walls and towers); the confirmation's two buttons, "Clear to tray" and "Cancel"; the tile buttons' hidden screen-reader labels. Subtitle total shows **40** (Q52).
+- **Footprint preview:** the 2 × 2 Hall is outlined as one block when selected, and moves when you tap its new top-left tile. There is no separate "where it will land" preview (tap-only, one tap moves it).
+- **At 320 px** the grid sits in its own scroll box (`data-internal-scroll`); the page does not scroll sideways.
+- **Tests:** `tests/e2e/arrange-hold.spec.ts` (select, move, swap, locked tile, Hall, tray, badge, Auto-arrange, Clear to tray cancel and confirm, ghosts, 320 px). Helpers shared in `tests/e2e/layout-helpers.ts`. Screenshot: `docs/flesh-out/v1.1/arrange-hold.png`.
+- **Nothing skipped.**
+
+## 2026-10-23 — v1.1 TL.9: accessibility and layout checks
+- **Added to the screen list:** the Hold grid at Hamlet (a new game), Keep, Citadel (Bastion was already there), and the Arrange Hold sheet.
+- **Results, all at 320/360/900/1300 px as each suite runs them:** tap-target sweep 0 findings over 78 screens; Text size Largest at 320 px 0 findings; widths, reduced motion and contrast pass.
+- **One test edit, approved by the owner today:** the tap sweep (`polish-tap.ts`) no longer flags a control for sitting past the screen edge when it is inside a `data-internal-scroll` box (the Arrange Hold grid below 352 px). Size and cover are still checked for those tiles.
+- **Own fix:** the Hamlet flow first used a fixture that does not show the Hold; it now uses a new game.
+- **Whole browser suite (Chromium):** 92 passed. The WebKit determinism test cannot run in this container (no WebKit installed); it needs CI or your machine.
+- **Q52:** the owner approved 40 (D511). Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.10: budgets and download size
+- **Benchmark (`tests/e2e/bench.spec.ts`, 4× slowdown, warn at the budget, fail at 2×):** odds budgets now 120 ms (identified) and 150 ms (3 candidates) (D505). New rows (D506): **v11 → v12 migration 13.4 ms** (budget 100), **Hold grid render 16.0 ms** (budget 16: right at the warning line), **Arrange Hold sheet open 17.2 ms** (budget 50). The last two mount the real components with all 40 pieces placed, into a detached box, so they time the component's render, not the browser's paint.
+- **Download size:** whole production build gzipped **582,081 bytes (568 KB), 306 files**; budget 600 KB. v1.0 was 506 KB: the 83 new pictures account for most of the +62 KB. Headroom is now about 5%, so more art would need a look.
+- **Not green here, not mine:** this container's CPU is too slow for the old rows: live odds 228 ms (fails at 240 only because of the new budget), Suggest 642 ms (fails at 600). No core code changed this milestone, so I read this as the container (D445); **TL.10's "no row fails" needs a CI run to confirm.** Please look at the bench job when you can.
+- **GDD §6.5** is not edited (your gate); the new rows live in the test until you approve them there.
+- **Also:** a first attempt that timed a tap to the next painted frame was too noisy (an existing sheet read 254 ms), so I dropped it. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.11: simulator and determinism
+- **`npm run sim:check` here (55 runs, 369 s):** all **55 rows pass**; every player's report equals the v1.0 baseline: **176 of 176 same, 0 different**. `sim:accept` not run (milestone end only).
+- **Golden fights and recorded stands:** replayed line for line by the unit tests inside `npm run check` (3,322 pass); `rulesVersion` unchanged at 5.
+- **Still for CI:** the WebKit determinism test (no WebKit in this container) and the slow-CPU benchmark rows (see TL.10). Please look at those two jobs.
+- **Nothing skipped.**
+
+## 2026-10-23 — v1.1 TL.12 (not ticked): smoke test added, one old smoke test blocked
+- **Added** to `tests/e2e/smoke.spec.ts`: loads the owner's `v11-owner.json` (it becomes v12), opens Arrange Hold, moves a building, Auto-arrange, switches Hold view to Classic scene, then reloads offline with both choices kept. Passes on the production build here.
+- **Blocked, found by the full smoke file:** the old test "seat an Order, read a chapter…" now fails, and will fail in CI too. Its fixture `v10-played.json` is dated 2026-10-23 12:30 UTC (a clock time that was still in the future when it was made). Now that the clock has passed it, loading it shows "While you were away", which the test's loop cannot close (the sheet's button is an ✕ with no text). Nothing in the game changed. **Question for the owner:** may I edit that test's loop to also press the sheet's Close button? (Not on the D507 list, so I did not.) Same date applies to `v9.json`; v12-played is dated 2026-10-26, so it will go stale then too.
+- **Preview:** the Deploy workflow succeeded for the latest push (the preview build is up); I cannot open it from here. The offline smoke test above covers the migration on the production build.
+- **CI note:** the `check` job of one earlier run (TL.9 docs commit) failed at "npm run check (90 s budget)" after 1 min 39 s; the next run passed. Likely runner speed against the 90 s budget; not confirmed.
+
+## 2026-10-23 — v1.1 TL.12 done
+- **Owner approved** the test-loop edit. The old smoke test "seat an Order…" now also presses the sheet's Close button (found by its label) in its loop; nothing else in it changed. **All 6 smoke tests pass** on the production build.
+- **Still dated fixtures:** `v9.json` (12:30 today, already past) and `v12-played.json` (2026-10-26) will trip tests that do not dismiss the away sheet; worth moving their dates far ahead at some point (fixtures are protected, so your call).
+- **Preview:** Deploy succeeded on the latest push; I cannot open it from here, so please open the preview once and load your v11 save.
+
+## 2026-10-23 — v1.1 TL.13: hand-off
+- **CI:** run 501 is green (check and e2e, including WebKit determinism). Owner approved two CI edits: `check` warns at 90 s and fails at 120 s (D512); the e2e job's time limit is 15 minutes (D513). Only `.github/workflows/ci.yml` changed.
+- **Owner decisions this session:** 40 pieces on the sheet (D511); the border bell stays on Watchtower 1's tile; test edits: the tap sweep's scroll-box exemption and the Order smoke test's loop (it now closes the away sheet and waits longer; its failure message names the open sheets).
+- **Pull request opened** from `milestone/v1.1` with the template and the playtest checklist. Rolling back to v1.0 means importing `v11-owner.json`.
+- **Watch in CI:** the benchmark job runs for the first time on this pull request; this container's CPU failed its old rows (D445), so a red there may be the runner.
+- **Not done, by decision:** GDD, D501 and the plan still say 39 pieces (your gate); `sim:accept`, merge and tag wait for the playtest; dated test saves (`v9.json`, `v12-played.json`) are left alone.
+
+## 2026-10-23 — v1.1 milestone end
+- **The owner said the playtest passed** (all checklist items good, no issues; D516). `sim:accept`: 55 of 55 rows pass, 176 of 176 same, baseline file unchanged. Plan `Status: complete`.
+- **Last CI fix:** the Order smoke test's loop had a race on slow runners (it pressed "Not now" after the Seat step had opened); it now checks again after its wait. Not a game bug.
+- **Piece counts corrected** to 40 / 43 tiles / 21 open (D514, D515); the GDD, plan and technical design agree now.
+- **Still open for the owner:** the merge and the `v1.1.0` tag; D509 (Proposed) needs a yes or no.
+- **Seen, not mine:** `check` takes 94–99 s on GitHub (now warns at 90 s, fails at 120 s, D512); the e2e job's time limit is 15 minutes (D513).

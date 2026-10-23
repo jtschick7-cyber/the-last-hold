@@ -131,9 +131,9 @@ Status: **Closed.**
 The Unlit's answer after the fortieth name ("Forty. Known, every one. I can put the count down."), Pechko's line about the stove keeping itself (R-09), and the warm final rime (R-11) are the freshest text in this milestone. They waited for your yes in the first message of the thread (the D460 gate).
 Status: **Answered: yes**, owner, 2026-10-21 (D460).
 
-**Q41 — Name searches I could not fully settle.** *(Informational. Opened 2026-10-21.)*
+**Q41 — Name searches I could not fully settle.** *(Informational. Opened 2026-10-21; closed 2026-10-22.)*
 My search tool returned nothing that matches "Remember Them" or "Keep the Vigil" as a game ending, and nothing for "The Remembering" next to the games in GDD §2.3. It also returned unrelated games called "Vigil" and "Remember Me." The search tool is weak for exact phrases, so please treat this as "no collision found," not "checked everywhere." Details in OUT-6.
-Status: **Open (informational).**
+Status: **Closed (accepted by the owner, 2026-10-22, D505).**
 
 **Q42 — The Hearth Hall look: who draws it, and which scenes?** *(Blocks: T11.12. Opened 2026-10-21.)*
 D457 says it is drawn in code. If you would rather supply art, say so before T11.12; otherwise Claude Code draws it, shows a screenshot, and you approve (as with the Orders art, D434).
@@ -167,16 +167,16 @@ Status: **Answered (a)** by the owner, 2026-10-21 (D469). T11.15b proposes N for
 - **Blocks:** nothing in v1.0.
 - **Result of TV.11 (2026-10-22):** none of the 15 runs (plain Standard, A, B; 5 seeds; 25 cycles) gets all 16 Studied, and the rule does not help. A one-seed look: 10 of 16 by day 20, then stuck at 10 to 12; Draugr, Leshy, Strzyga and Rimewrought stay Identified. See `docs/flesh-out/v1.0/species-estimate.md`.
 - **The short look (2026-10-22):** the four missing species are rare on the board (0 to 8 contracts in 12 cycles, against about 90 for the Wolf): each Long Night resets to tier 1 and they only come at tier 3 or 4 up, in one place each. About 25 cycles or more for Standard, which fits the owner's about 20. A new option (d): change how often high tiers or those species come up (board generation or tier ranges); a design change.
-- **Answer (owner):** (c), 2026-10-22 (D493). The wording and where it shows are waiting for the owner's approval before building.
+- **Answer (owner):** (c), 2026-10-22 (D493). Built and shipped in v1.0 (*"Not yet known well: …"* on the Remembering card). Closed in the v1.1 flesh-out (2026-10-22, D505): the owner confirmed the long-term chase felt satisfying in play and no spawn-rate change is wanted.
 
 ### Q47 — Where do the settings live? *(opened 2026-10-21; answered by the review)*
 - **Answer from the review:** the existing settings (theme, best-buy hint, rate unit, reduce motion) are **inside the save** (technical design §5.2). Ruling D486 (Proposed): they stay as they are, with no schema change; Text size and the Backup reminder go in a new settings key outside the save; Reduce motion stays a boolean read as "phone or switch".
 - **Status:** **Answered (a)** by D486, pending the owner's yes (D491).
 
-### Q48 — The "Gaunt Wolf" name search *(informational; opened 2026-10-21)*
+### Q48 — The "Gaunt Wolf" name search *(informational; opened 2026-10-21; closed 2026-10-22)*
 - **Context:** the name "Gaunt Wolf" was settled in **D71** (the v0.5 flesh-out) and is already used in lore-secrets, Acts IV and VI, the Hidebane Oil row and Stanko's unlock; v1.0 only makes GDD §8.3, §9.4 and §9.8 agree (D483). I do not know whether D71's search considered that "Gaunt" is also a Warhammer 40,000 name (Commissar Ibram Gaunt, and "-gaunt" units); GDD §2.3's 40K rule, as I read it, bans named chapters, legions and characters, and "Gaunt Wolf" is none of those. My own search found nothing that matches a game creature, but the tool is weak for exact phrases.
 - **Options:** (a) Keep "Gaunt Wolf". (b) Use another name (it is a display-name change only).
-- **Status:** **Open (informational).**
+- **Answer (owner):** (a) Keep "Gaunt Wolf", closed 2026-10-22 (D505).
 
 ### Q49 — Two polish items earlier documents promised to v1.0 *(opened 2026-10-21; asks for a yes or no)*
 - **What I found:** GDD §5.12.12 says "Event-only cosmetics, art for the Great Beasts' full portraits and the legendary hunters' animation are polish (v1.0)", and the v0.9 plan says the same. Neither was in the v1.0 scope you approved.
@@ -193,4 +193,20 @@ Status: **Answered (a)** by the owner, 2026-10-21 (D469). T11.15b proposes N for
 - **Q42 (Hearth Hall look):** closed; the frost and lamp art is built and was approved in the v0.11 playtest.
 - **Q43 (Gaunt or Gloam Wolf):** **Answered: Gaunt Wolf**, owner, 2026-10-21 (D483; the name was already settled in D71).
 - **Q35:** already closed in D467; the v0.11 summary's question 10 is stale.
-- **Q41:** stays open (informational).
+- **Q41, Q46, Q48:** closed 2026-10-22 in the v1.1 flesh-out (D505).
+- **Q47:** closed as answered by D486 in v1.0; settings key expanded in v1.1 with `holdView` (D503).
+
+## v1.1 questions *(from the v1.1 flesh-out, 2026-10-22)*
+
+No open questions at the end of the v1.1 flesh-out. Any question Claude Code hits during v1.1 starts at **Q51**.
+
+### Q51 — Your real save has the Moot Order seated; two old Orders tests assume nothing is ever seated *(opened 2026-10-23; blocks TL.1 going green)*
+- **Context:** `v11-owner.json`, `v12.json` and `v12-played.json` (added under D507 (1)) come from your real save, where the Moot is seated. `tests/orders/perks.test.ts` ("Orders at level 4 but unseated change nothing") expects every fixture to have no seat, and `tests/orders/opening.test.ts` lists by name which fixtures are "played". Neither edit is on D507's list, so I stopped.
+- **Options:** (a) **Recommended:** edit just those two tests. The perks test clears the seat on its copy before it checks "unseated", which is what it says it checks; the opening test's list gains the three new files. Nothing is loosened and no other fixture is affected. (b) Unseat the Moot in the three new fixtures. Then they are no longer your real save. (c) Leave the tests failing until you decide.
+- **Answer (owner):** (a), 2026-10-23. Done in TL.1.
+- **Status:** **Answered.**
+
+### Q52 — Piece counts in the v1.1 docs are off by one *(informational; opened 2026-10-23)*
+- **Context:** GDD §5.1.5 and D501 say "39 pieces (42 tiles), 22 open tiles". The listed pieces are the 2 × 2 Hearth Hall plus 39 one-tile pieces: **40 pieces, 43 tiles, 21 open tiles**. Every coordinate and unlock is unambiguous, so I built what is listed and my tests assert 40 / 43 / 21. I did not edit the GDD (owner gate). The save-size test fills all 40 pieces (about 1.1 KB, under the 1.5 KB limit).
+- **Options:** (a) Correct the numbers in the GDD, D501 and the plan when you next approve doc edits. (b) Leave as is.
+- **Status:** **Open (informational).** TL.8: the Arrange Hold sheet's subtitle shows the true total, **40** (`{placed}/40 placed`), not the table's 39. One number in one place; **Answered 2026-10-23: 40 is approved (D511).** The doc numbers (GDD, D501, plan) are still to be corrected at the next doc-edit approval.

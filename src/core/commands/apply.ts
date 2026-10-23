@@ -10,6 +10,7 @@ import {
   debugOrdersReset,
   debugOrdersSetLevel,
 } from './debug-orders';
+import { debugLayoutAutoArrange, debugLayoutClear, debugLayoutFillBastion } from './debug-layout';
 import { debugAddToken, debugEndRests, debugFillBank } from './debug-events';
 import { bossAttempt, seeEventsScene } from './boss';
 import { addStar, rankUp } from './hunter-depth';
@@ -68,6 +69,14 @@ import {
   unseatOrder,
 } from './orders';
 import { openOrders } from '../systems/orders-open';
+import { autoPlaceUnlocked, unlockedPieces } from '../systems/layout-place';
+import {
+  layoutAutoArrange,
+  layoutClear,
+  layoutPlace,
+  layoutSetShowGhosts,
+  layoutUnplace,
+} from './layout';
 import { chooseEnding, noteReady, seeNear } from './remembering';
 import { debugRememberingFinishActVI, debugRememberingOpenGate } from './debug-remembering';
 import { refuse, type ApplyResult, type Command } from './types';
@@ -84,12 +93,27 @@ const opening = (state: GameState, result: ApplyResult): ApplyResult => {
   return result;
 };
 
+/** Plan TL.3: a piece that a purchase unlocks takes its saved spot, or the first free tile (GDD §5.1.5). */
+const placing = (state: GameState, run: () => ApplyResult): ApplyResult => {
+  const before = unlockedPieces(state);
+  const result = run();
+  if (result.ok) autoPlaceUnlocked(state, before);
+  return result;
+};
+
+/** A Rank-up opens ground: waiting pieces wake, and the tray is placed (GDD §5.1.5 rule 5). */
+const rankingUp = (state: GameState): ApplyResult => {
+  const result = ageUp(state);
+  if (result.ok) autoPlaceUnlocked(state);
+  return result;
+};
+
 export const apply = (state: GameState, cmd: Command, now: number): ApplyResult => {
   switch (cmd.type) {
     case 'build.buy':
-      return opening(state, buy(state, cmd.building, cmd.count));
+      return placing(state, () => opening(state, buy(state, cmd.building, cmd.count)));
     case 'build.upgrade':
-      return opening(state, upgrade(state, cmd.building));
+      return placing(state, () => opening(state, upgrade(state, cmd.building)));
     case 'peasants.add':
       return add(state, cmd.job);
     case 'peasants.remove':
@@ -103,7 +127,17 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
     case 'peasants.priority':
       return setPriority(state, cmd.order);
     case 'age.up':
-      return ageUp(state);
+      return rankingUp(state);
+    case 'layout.place':
+      return layoutPlace(state, cmd.pieceId, cmd.x, cmd.y);
+    case 'layout.unplace':
+      return layoutUnplace(state, cmd.pieceId);
+    case 'layout.autoArrange':
+      return layoutAutoArrange(state);
+    case 'layout.clear':
+      return layoutClear(state);
+    case 'layout.setShowGhosts':
+      return layoutSetShowGhosts(state, cmd.showGhosts);
     case 'contract.launch':
       return launch(state, cmd.contract, cmd.party, cmd.confirmReckless === true, cmd.prep);
     case 'contract.decline':
@@ -202,6 +236,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return debugReadyRanks(state);
     case 'debug.runArrival':
       return runArrival(state);
+    case 'debug.layoutAutoArrange':
+      return debugLayoutAutoArrange(state);
+    case 'debug.layoutClear':
+      return debugLayoutClear(state);
+    case 'debug.layoutFillBastion':
+      return debugLayoutFillBastion(state);
     case 'debug.unlockAge':
       return unlockAge(state, cmd.age);
     case 'debug.addArvid':

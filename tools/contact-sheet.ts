@@ -110,3 +110,5 @@ writeFileSync(new URL('../public/contact-sheet.html', import.meta.url), html);
 console.log('wrote public/contact-sheet.html');
 
 if (process.argv.includes('--sheets')) await import('./contact-sheet-numbered');
+// v1.1 (plan TL.5c): add --layout-sheets for the Hold grid's numbered sheets (tools/contact-sheet-layout.ts).
+if (process.argv.includes('--layout-sheets')) await import('./contact-sheet-layout');

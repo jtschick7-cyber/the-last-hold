@@ -86,6 +86,10 @@ describe('with no Order seated, every result equals what it was before Orders', 
   it.each(fixtures)('%s: Orders at level 4 but unseated change nothing', (file) => {
     const plain = load(file);
     const unseated = load(file);
+    // The owner's real saves (v11-owner, v12, v12-played, D507 (1)) have the Moot seated (Q51): this
+    // test is about no seat, so both copies are unseated first.
+    plain.orders.seats = [];
+    unseated.orders.seats = [];
     for (const id of ALL) unseated.orders.levelHigh[id] = 4;
     expect(unseated.orders.seats).toEqual([]);
     expect(numbers(unseated)).toEqual(numbers(plain));

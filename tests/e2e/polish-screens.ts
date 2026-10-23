@@ -151,6 +151,39 @@ const plain = (
 const READ = 'v11';
 export const FLOWS: readonly Flow[] = [
   plain('hold-bastion', 'Hold (Bastion)', 'fixture v11, nothing', [/Stanholm/], async () => {}),
+  // Plan TL.9 (GDD §9.21): the grid header at each Rank, and the Arrange Hold sheet.
+  plain(
+    'hold-grid-hamlet',
+    'Hold (Grid, Hamlet)',
+    'a new game, nothing',
+    [/Fell Breach/],
+    async () => {},
+    'new',
+  ),
+  plain(
+    'hold-grid-keep',
+    'Hold (Grid, Keep)',
+    'fixture v12, nothing',
+    [/Fell Breach/],
+    async () => {},
+    'v12',
+  ),
+  plain(
+    'hold-grid-citadel',
+    'Hold (Grid, Citadel)',
+    'fixture v12-played, nothing',
+    [/Fell Breach/],
+    async () => {},
+    'v12-played',
+  ),
+  plain(
+    'arrange-hold',
+    'Arrange Hold',
+    'Hold, Layout ▸',
+    [/Fell Breach/],
+    (p) => btn(p, /^Layout/).click(),
+    'v12-played',
+  ),
   plain('rates', 'rates sheet', 'the resource bar', [/per minute/i], (p) =>
     btn(p, /Food.*Wood/).click(),
   ),
