@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.5 (Sound setting and row). Owner's picks are in (Q53 answered).
-- **Next:** SF.6 (sound module), SF.7, SF.8, then SF.9 (packs note, then stop for the owner's upload).
+- **Last task:** SF.6 (sound module).
+- **Next:** SF.7, SF.8, then SF.9 (packs note, then stop for the owner's upload).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -420,3 +420,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Name difference (not a stop):** technical design §19.4 says `resetAppSettingsTimestamps`; the code's function is `afterReset`.
 - **Old-test edits (D525 (1)), nothing loosened:** `app-settings.test.ts`: the sample settings, the defaults and the Reset expectations now include `sound`; two tests added (parse, round-trip and failed write). New `tests/content/sound-text.test.ts` checks the strings against the GDD.
 - **Paste, Load and Restore** never touch the key (the existing "saving, backing up and loading leave the key untouched" test still passes).
+
+## 2026-10-23 — v1.2 SF.6 the sound module
+- **Built** in `src/platform/sound/`: `moments.ts` (the 15 moments → 7 sounds; strongest-wins order), `player.ts` (readiness, 150 ms hold, loading; outside things passed in), `browser.ts` (Web Audio, `fetch`, visibility, `click`/`touchend` resume, and the test hook `window.__lastholdSoundTest` whose fake replaces only the output). `src/ui/app/sound.ts` is where the UI asks; `setSound` and app start call it (the switch tap creates and resumes the audio).
+- **Rules covered by 18 unit tests with a fake clock:** all 15 moments; every pair's winner; the 150 ms hold; skip (never queue) when paused, interrupted, closed, hidden or hidden during the hold; Sound Off fetches and decodes nothing; a failed fetch or decode is silent; the first tap after a restart can still play its own sound.
+- **Non-coupling (D525 (5)):** new `tests/lint/sound-coupling.test.ts` (no core file mentions the module, the setting or the hook; no `sound` in the save state) and a planted-import case `core-imports-sound.ts` added to the guard-rail list.
+- **Not yet proven:** the browser side (`browser.ts`, the hook doing nothing unless set) is covered by the Playwright tests in SF.7. No file is shipped yet, so a real fetch 404s into silence until SF.9.
+- **Reading made:** a request is accepted while the context is paused only if the same tap is resuming it.

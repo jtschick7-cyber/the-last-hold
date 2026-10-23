@@ -36,6 +36,7 @@ import {
 import { afterExport, snoozedFor, withExportAge } from '../../platform/backup-reminder';
 import { levelUpLines, noticeChanges, type Watched } from './lines';
 import { skillLevels } from '../../core/skills/skills';
+import { applySoundSetting } from './sound';
 
 // Technical design §6.3 and §10: one mutable game state, plus a `version` signal
 // bumped after every apply and advance. Components re-read selectors when it
@@ -108,8 +109,10 @@ export const setTextSize = (textSize: TextSize): void =>
   changeAppSettings({ ...appSettings.value, textSize });
 export const setHoldView = (holdView: HoldView): void =>
   changeAppSettings({ ...appSettings.value, holdView });
-export const setSound = (sound: SoundSetting): void =>
+export const setSound = (sound: SoundSetting): void => {
   changeAppSettings({ ...appSettings.value, sound });
+  applySoundSetting(sound === 'on'); // inside the tap, so the phone lets audio start
+};
 export const setBackupReminder = (backupReminder: boolean): void =>
   changeAppSettings({ ...appSettings.value, backupReminder });
 /** "Not now" and "Back up now" (GDD §9.20). */
@@ -222,6 +225,7 @@ export const startGame = async (): Promise<void> => {
   store = createSaveStore(channelStorage, now);
   const seen = withFirstSeen(readAppSettings(channelStorage), now());
   changeAppSettings(seen);
+  applySoundSetting(seen.sound === 'on'); // the audio starts paused; the first tap resumes it
   installTipDue.value = !isInstalledApp() && channelStorage.get('installTipSeen') === null;
   const errors = diagnostics();
   if (errors) captureErrors(errors, () => currentScreen.value);
