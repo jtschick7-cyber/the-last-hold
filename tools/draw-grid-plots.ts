@@ -2,6 +2,7 @@
 // 1–4 owned a single structure, 5–14 a pair, 15 or more a cluster; the Silver Seam two) and the grid
 // versions of the four hold cosmetics. 32 px unless noted, drawn in code in the palette, ground left clear.
 import { C, Canvas } from './pixel';
+import { drawCamp } from './draw-grid-camp';
 import { drawMine, drawSeam, SEAM_LOOKS } from './draw-grid-rock';
 
 export const PLOT_BUILDINGS = ['cottage', 'farm', 'woodcutter', 'mine', 'herb-garden'] as const;
@@ -57,15 +58,6 @@ const field: Part = (c, cx, cy, s) => {
   }
 };
 
-const camp: Part = (c, cx, cy, s) => {
-  c.rect(cx - 5, cy + 2, 10, 3, C.brown); // a log
-  c.rect(cx - 5, cy + 2, 10, 1, C.rust);
-  c.rect(cx + 4, cy + 2, 1, 3, C.sand);
-  c.rect(cx - 3, cy - 3, 5, 5, C.brownDark); // a stump
-  c.rect(cx - 3, cy - 3, 5, 1, C.sand);
-  if (s !== 3) c.rect(cx + 3, cy - 6, 1, 7, C.ash); // an axe
-};
-
 const bed: Part = (c, cx, cy, s) => {
   const w = s === 1 ? 8 : 5;
   c.rect(cx - w, cy - 4, w * 2, 9, C.brownDark);
@@ -79,10 +71,9 @@ const bed: Part = (c, cx, cy, s) => {
   c.set(cx, cy, C.pink);
 };
 
-const PART: Record<Exclude<PlotBuilding, 'mine'>, Part> = {
+const PART: Record<Exclude<PlotBuilding, 'mine' | 'woodcutter'>, Part> = {
   cottage,
   farm: field,
-  woodcutter: camp,
   'herb-garden': bed,
 };
 
@@ -137,6 +128,7 @@ const lushBeds = (): Canvas => {
 
 export const drawPlot = (b: PlotBuilding, d: Density): Canvas => {
   if (b === 'mine') return drawMine(d);
+  if (b === 'woodcutter') return drawCamp(d);
   if (d === 3 && b === 'farm') return richField();
   if (d === 3 && b === 'herb-garden') return lushBeds();
   const c = new Canvas(32);
@@ -144,7 +136,6 @@ export const drawPlot = (b: PlotBuilding, d: Density): Canvas => {
   const size = d === 1 ? 1 : d === 2 ? 2 : 3;
   for (const [x, y] of spots) PART[b](c, x, y, size);
   // A cluster shows one larger piece in the middle.
-  if (d === 3 && b === 'woodcutter') c.rect(13, 14, 6, 4, C.brownDark);
   c.outline(C.wine);
   return c;
 };

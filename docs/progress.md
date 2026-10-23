@@ -305,3 +305,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **TL.6b redrawn (11), from your notes:** Barracks 1–3 (timber-framed martial hall, slate roof, weapon rack by the door; stone course and target from Tier II; crenellated eaves, shield emblem and banner at Tier III), Mine 1–3 (timbered mouths set in dark rock with rails and ore; two mouths and a lantern; then three mouths, a hoist frame and carts), Sawpit 1–3 (a log on trestles under a pit saw with planks; a roofed canopy; a full shed with a circular blade and tall stacks; the floating grey shape is gone), Silver Seam 1–2 (jagged outcrops with a branching silver vein).
 - **Sheets:** `docs/flesh-out/v1.1/before-after/tl6b.png` plus Hamlet and Bastion mock-ups. Old versions are in `art-src/previous-v1.1/`.
 - **Code:** Barracks and Sawpit moved to `draw-grid-yard.ts`, Mine and Silver Seam to `draw-grid-rock.ts`, shared helpers to `draw-grid-kit.ts`. All 47 other pictures not in a batch so far are byte-identical (tested). `npm run check` green. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.6b approved; TL.6c drawn, awaiting approval
+- **TL.6b approved** and ticked.
+- **TL.6c redrawn (3):** Woodcutter's Camp 1 (a round stump with a lighter top, an angled axe in it, two cut logs), 2 (stump and axe, plus a pyramid of round-ended logs with pale rings), 3 (a busy yard: cordwood piles, a log pyramid, the stump and axe, and a timber shelter with a sawbuck). New file `draw-grid-camp.ts`.
+- **Sheets:** `docs/flesh-out/v1.1/before-after/tl6c.png` plus Hamlet and Bastion mock-ups. All 25 marked pictures are now redrawn; the other 58 are byte-identical (tested). `npm run check` green. Nothing skipped.
