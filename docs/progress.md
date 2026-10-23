@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
-- **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** v1.1 milestone end (playtest passed, `sim:accept` run, statuses set).
-- **Next:** merge pull request #18 and tag `v1.1.0` (waiting on the owner's go); then the v1.2 flesh-out.
-- **Open questions:** Q52 (piece counts in the docs are off by one; informational).
+- **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
+- **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
+- **Last task:** the docs commit (flesh-out files applied; owner's yes recorded as D528).
+- **Next:** SF.1 (move the dated test saves), then SF.2 (CI retry), then SF.3 (packs note, then stop for the owner's upload).
+- **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -380,3 +380,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Piece counts corrected** to 40 / 43 tiles / 21 open (D514, D515); the GDD, plan and technical design agree now.
 - **Still open for the owner:** the merge and the `v1.1.0` tag; D509 (Proposed) needs a yes or no.
 - **Seen, not mine:** `check` takes 94–99 s on GitHub (now warns at 90 s, fails at 120 s, D512); the e2e job's time limit is 15 minutes (D513).
+
+## 2026-10-23 — v1.2 docs commit
+- **Start checked:** `v1.1.0` is tagged and in `main` (pull request #18 merged); `sim/baseline.json` is the v0.11 one, unchanged. Branch `milestone/v1.2` made from `main` and pushed.
+- **Owner said yes** to the whole flesh-out, no exceptions: D528 added; D519–D527 now Decided. No old row edited.
+- **Applied:** GDD (12 edits), plan (6), technical design (7 incl. new §20), questions (Q52 closed, Q53–Q56 added), OUT-6 (no new names). Every Find matched exactly once. Summary moved to `docs/flesh-out/v1.2-summary.md`.
+- **CLAUDE.md:** the three sound rules added.
+- **Next:** SF.1.
