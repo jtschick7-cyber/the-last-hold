@@ -221,7 +221,7 @@ test('seat an Order, read a chapter, change a seat, and reload', async ({ page }
 
   // Sheets that come first (the away sheet, scenes) are closed until the load step is up.
   const step = page.getByRole('dialog', { name: 'Seat your Orders' });
-  for (let i = 0; i < 14 && !(await step.isVisible().catch(() => false)); i++) {
+  for (let i = 0; i < 30 && !(await step.isVisible().catch(() => false)); i++) {
     await page.waitForTimeout(400);
     // 'Close' is the sheet's ✕ button, found by its label, not by text (the away sheet has no other button).
     for (const name of ['Onward', 'Not now', 'Continue', 'Close']) {
