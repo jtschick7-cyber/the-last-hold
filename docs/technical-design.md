@@ -924,7 +924,7 @@ export interface HoldLayoutState {
 }
 ```
 
-- **Size (M5):** At most 39 keys in `placed`, each `{x, y}` with single-digit integers. Serialized JSON is ~1,050–1,100 bytes when full (≤ 1.5 KB, enforced by `tests/layout/save-size.test.ts`, D506).  
+- **Size (M5):** At most 40 keys in `placed`, each `{x, y}` with single-digit integers. Serialized JSON is ~1,050–1,100 bytes when full (≤ 1.5 KB, enforced by `tests/layout/save-size.test.ts`, D506).  
 - **Long Night persistence:** `resetForLongNight` copies `state.layout` unchanged into the new cycle's state (D502). Starting buildings (Farm 1, Woodcutter 1, Young Families Cottages) wake up or auto-place at cycle start (M3).  
 - **Zero combat/economy coupling in v1.1 (S11):** A static lint test verifies that no module in `core/systems/economy.ts`, `combat.ts`, `stand.ts`, `contracts.ts` or `advance.ts` imports or references `layout`. `rulesVersion` stays 5.
 
