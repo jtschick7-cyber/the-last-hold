@@ -2,7 +2,7 @@
 
 Every picture the Hold's 8 × 8 grid needs, with its id, size and what state it shows. All are drawn in code, in the 32-colour palette, by `tools/draw-layout-grid.ts` (and its later siblings), written by `tools/gen-layout-grid.ts`, registered in `src/content/assets.ts` with ids starting `grid.`, and numbered on their own contact sheet at TL.5c (the v1.0 numbers 1–156 do not move; D507 (4)). `art-src/v1.0-hashes.json` holds the hash of every picture shipped in v1.0; a test proves none changed.
 
-**Total: 80 pictures** (the plan said about 75). 11 are drawn now (TL.5a); 46 at TL.5b; 23 at TL.5c, which ends with the owner's contact-sheet stop.
+**Total: 83 pictures** (the plan said about 75). 11 were drawn at TL.5a; 49 at TL.5b; 23 at TL.5c, which ends with the owner's contact-sheet stop.
 
 ## TL.5a — ground, border and blueprint tiles (drawn, 11)
 
@@ -20,7 +20,7 @@ Every picture the Hold's 8 × 8 grid needs, with its id, size and what state it 
 
 Proposal for TL.7 (the UI decides): the ground and forest/ruin looks are chosen by a fixed function of the tile's coordinates, so the grid never flickers or changes between visits.
 
-## TL.5b — defenses, level buildings and the Hearth Hall (46)
+## TL.5b — defenses, level buildings and the Hearth Hall (49, drawn)
 
 | Id | Size | State it shows |
 |---|---|---|
@@ -32,8 +32,8 @@ Proposal for TL.7 (the UI decides): the ground and forest/ruin looks are chosen 
 | `grid.trophy-hall` | 32 | Trophy Hall (a unique building, one look) (1) |
 | `grid.hearth-hall.hamlet`, `.keep`, `.citadel`, `.bastion` | 64 | The 2 × 2 Hearth Hall at each Rank (4) |
 | `grid.hearth-hall.door` | 64 | Overlay: Carved Hearth Hall door (cosmetic) (1) |
-| `grid.hearth-hall.frost` | 64 | Overlay: Act VI frost (1) |
-| `grid.hearth-hall.lamp` | 64 | Overlay: window lamp after Remember Them (1) |
+| `grid.hearth-hall.frost.hamlet`, `.keep`, `.citadel`, `.bastion` | 64 | Overlay: Act VI frost, one per Rank because it follows each Rank's roofline (4; the plan had one) |
+| `grid.hearth-hall.lamp` | 64 | Overlay: window lamp after Remember Them; the window is in the same place at every Rank, so one overlay (1) |
 
 ## TL.5c — plots, cosmetics and the contact sheet (23)
 
@@ -52,4 +52,5 @@ Proposal for TL.7 (the UI decides): the ground and forest/ruin looks are chosen 
 
 - Nothing here has a player-facing name; the labels in the manifest are for alt text only.
 - Ghost tiles are mostly transparent (over 80%), so the ground shows through.
-- `kind` in the manifest is `building` for tiles and `scene` for the strips.
+- `kind` in the manifest is `building` for 32 px tiles and `scene` for the strips and the 64 px Hall pictures (the manifest's size rule gives `building` 32 px only, and a scene may be any size).
+- The Hall's door sits in the same place at every Rank, so the Carved Door is one overlay.

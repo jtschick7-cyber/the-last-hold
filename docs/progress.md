@@ -272,3 +272,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Hash baseline:** `art-src/v1.0-hashes.json` (209 entries: every shipped picture and app icon); a test fails if any v1.0 picture changes.
 - **Old test edited (D507 (4)):** `tests/tools/contact-sheet.test.ts` now counts only v1.0 pictures (not `grid.*`), so numbers 1–156 do not move. `contact-sheet-data.ts` got the matching filter.
 - **Not seen on a real screen yet;** I looked at a preview sheet only. The owner's art stop is TL.5c. `npm run check` green. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.5b: defenses, buildings and the Hall
+- **Owner decided:** D510 marked Decided; the Watchtower has one picture.
+- **Drawn in code (49 pictures):** 16 wall pictures (one per connection mask, so walls join into a line), the Watchtower, the Trophy Hall, 7 level buildings × 3 tiers (mill, sawpit, smithy, bell tower, barracks, lodge, alchemist), and the 64 px Hearth Hall at each Rank with its Carved Door and lamp overlays and a frost overlay per Rank.
+- **Two small changes from the plan, for you to know:** the frost is one per Rank (4), not one, because it follows each Rank's roofline; the door and the lamp stay one each because the door and window sit in the same place at every Rank. The 64 px Hall pictures are registered as kind `scene` because the manifest's size rule gives `building` only 32 px; no old test touched. The inventory now says **83** pictures in all; 23 left for TL.5c.
+- **Tests:** every file equals what its drawer draws, is in the palette and at its size; 16 distinct wall masks; tiers never shrink; the door and window overlays fit every Rank; v1.0 hashes still identical. `npm run check` green.
+- **First-pass art, not yet seen by you.** I looked at preview sheets; the weakest are the Sawpit and the Tier I Mill. All of it goes on the contact sheet at TL.5c for your Keep or Redraw marks.
+- **Nothing skipped.**

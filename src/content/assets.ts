@@ -121,6 +121,24 @@ export const groundTileId = (l: string): string => `grid.ground.${l}`;
 export const forestTileId = (l: string): string => `grid.forest.${l}`;
 export const ruinTileId = (l: string): string => `grid.ruin.${l}`;
 export const ghostTileId = (l: string): string => `grid.ghost.${l}`;
+export const gridWallId = (mask: number): string => `grid.wall.${mask}`;
+export const GRID_WATCHTOWER_ID = 'grid.watchtower';
+export const GRID_TROPHY_HALL_ID = 'grid.trophy-hall';
+export const gridTierId = (building: string, tier: number): string => `grid.${building}.${tier}`;
+export const gridHallId = (age: AgeId): string => `grid.hearth-hall.${age}`;
+export const gridHallFrostId = (age: AgeId): string => `grid.hearth-hall.frost.${age}`;
+export const GRID_HALL_DOOR_ID = 'grid.hearth-hall.door';
+export const GRID_HALL_LAMP_ID = 'grid.hearth-hall.lamp';
+/** The seven level buildings with three looks each on the grid (v1.1 TL.5b). */
+export const GRID_TIERED = [
+  'mill',
+  'sawpit',
+  'smithy',
+  'bell-tower',
+  'barracks',
+  'lodge',
+  'alchemist',
+] as const;
 export const gridStripId = (e: string): string => `grid.strip.${e}`;
 export const cosmeticId = (c: CosmeticId, age: AgeId): string => `scene.cosmetic.${c}.${age}`;
 
@@ -507,6 +525,81 @@ export const assets: readonly AssetEntry[] = [
       GRID_GENERATOR,
       'scene',
     ),
+  ),
+  // v1.1 TL.5b: defenses, level buildings and the Hearth Hall (tools/draw-grid-*.ts).
+  ...Array.from({ length: 16 }, (_, m) =>
+    generated(
+      gridWallId(m),
+      [32, 32],
+      `Wall segment, connections ${m}`,
+      `grid/wall-${m}.png`,
+      GRID_GENERATOR,
+      'building',
+    ),
+  ),
+  generated(
+    GRID_WATCHTOWER_ID,
+    [32, 32],
+    'Watchtower',
+    'grid/watchtower.png',
+    GRID_GENERATOR,
+    'building',
+  ),
+  generated(
+    GRID_TROPHY_HALL_ID,
+    [32, 32],
+    'Trophy Hall',
+    'grid/trophy-hall.png',
+    GRID_GENERATOR,
+    'building',
+  ),
+  ...GRID_TIERED.flatMap((b) =>
+    [1, 2, 3].map((t) =>
+      generated(
+        gridTierId(b, t),
+        [32, 32],
+        `${titled(b)}, tier ${t}`,
+        `grid/${b}-${t}.png`,
+        GRID_GENERATOR,
+        'building',
+      ),
+    ),
+  ),
+  ...AGE_IDS.map((a) =>
+    generated(
+      gridHallId(a),
+      [64, 64],
+      `Hearth Hall at ${titled(a)}`,
+      `grid/hearth-hall-${a}.png`,
+      GRID_GENERATOR,
+      'scene',
+    ),
+  ),
+  ...AGE_IDS.map((a) =>
+    generated(
+      gridHallFrostId(a),
+      [64, 64],
+      `Frost on the Hearth Hall at ${titled(a)}`,
+      `grid/hearth-hall-frost-${a}.png`,
+      GRID_GENERATOR,
+      'scene',
+    ),
+  ),
+  generated(
+    GRID_HALL_DOOR_ID,
+    [64, 64],
+    'Carved Hearth Hall door',
+    'grid/hearth-hall-door.png',
+    GRID_GENERATOR,
+    'scene',
+  ),
+  generated(
+    GRID_HALL_LAMP_ID,
+    [64, 64],
+    'Lamp in the Hearth Hall window',
+    'grid/hearth-hall-lamp.png',
+    GRID_GENERATOR,
+    'scene',
   ),
   ...HOLD_LOOKS.flatMap((l) =>
     AGE_IDS.map((a) =>
