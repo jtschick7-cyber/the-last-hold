@@ -2,6 +2,7 @@
 // `fetch`, the page's visibility. No `<audio>` elements and no tricks around the silent switch.
 import { createSoundPlayer, type ContextState, type Engine, type SoundPlayer } from './player';
 import type { SoundId } from './moments';
+import { declareAmbient } from './session';
 
 /**
  * The one documented test hook (D522 (7)): a test sets `window.__lastholdSoundTest` before the app
@@ -37,6 +38,7 @@ const fakeEngine = (hook: SoundTestHook): Engine => ({
 const webAudioEngine = (): Engine | null => {
   const Ctor = window.AudioContext ?? window.webkitAudioContext;
   if (!Ctor) return null;
+  declareAmbient(navigator); // before the context exists: the silent switch must apply to it (D521 (5))
   const ctx = new Ctor();
   return {
     state: () => ctx.state as ContextState, // iOS adds 'interrupted', which the DOM types lack

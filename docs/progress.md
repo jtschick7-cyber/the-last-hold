@@ -479,3 +479,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **For your decision: CI job length.** The `e2e` job takes about 9 min (8 min 28 s for the tests) on CI. It was already about 9 min before any sound work (run 522, docs commit), so v1.2 did not cause it, but it is over the 5-minute rule (D320). I did not change it; tell me if you want it split.
 - **Old tests edited in v1.2, all listed:** `app-settings.test.ts` (SF.5), `credits.test.ts` (SF.9), `audition.test.ts` (SF.9, your yes), `smoke.spec.ts` (SF.10), `polish-screens.ts` (SF.11), v9 and v12-played dates (SF.1).
 - **Pull request opened** from `milestone/v1.2` to `main`. **Owner decisions waiting:** D527 yes or no; the CI job length question; the playtest (including Q55: all seven on your iPhone, silent switch, resume after leaving the app).
+
+## 2026-10-23 — v1.2 fix: silent switch (owner's playtest)
+- **Found by the owner on the iPhone:** the silent switch did not mute the game.
+- **Change (UI only):** before the audio starts, the sound module now tells the browser the audio is "ambient" (the Audio Session setting that follows the silent switch). New `src/platform/sound/session.ts` with unit tests. Proposed D529.
+- **Not proven:** CI and this container cannot test an iPhone. If it still plays with the switch on, the next step is to find out whether the cause is the Home Screen app, an iOS setting, or music playing in another app (an ambient sound mixes with it). Tell me which and I will look further.
+- **Not done:** technical design §20 still says nothing about this setting (design text is yours to approve). No old test edited. `npm run check` green.
