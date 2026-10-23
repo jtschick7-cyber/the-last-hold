@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.8 (the Arrange Hold sheet).
-- **Next:** TL.9 (read the plan).
+- **Last task:** TL.9 (accessibility and layout checks).
+- **Next:** TL.10 (read the plan).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -334,3 +334,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **At 320 px** the grid sits in its own scroll box (`data-internal-scroll`); the page does not scroll sideways.
 - **Tests:** `tests/e2e/arrange-hold.spec.ts` (select, move, swap, locked tile, Hall, tray, badge, Auto-arrange, Clear to tray cancel and confirm, ghosts, 320 px). Helpers shared in `tests/e2e/layout-helpers.ts`. Screenshot: `docs/flesh-out/v1.1/arrange-hold.png`.
 - **Nothing skipped.**
+
+## 2026-10-23 — v1.1 TL.9: accessibility and layout checks
+- **Added to the screen list:** the Hold grid at Hamlet (a new game), Keep, Citadel (Bastion was already there), and the Arrange Hold sheet.
+- **Results, all at 320/360/900/1300 px as each suite runs them:** tap-target sweep 0 findings over 78 screens; Text size Largest at 320 px 0 findings; widths, reduced motion and contrast pass.
+- **One test edit, approved by the owner today:** the tap sweep (`polish-tap.ts`) no longer flags a control for sitting past the screen edge when it is inside a `data-internal-scroll` box (the Arrange Hold grid below 352 px). Size and cover are still checked for those tiles.
+- **Own fix:** the Hamlet flow first used a fixture that does not show the Hold; it now uses a new game.
+- **Whole browser suite (Chromium):** 92 passed. The WebKit determinism test cannot run in this container (no WebKit installed); it needs CI or your machine.
+- **Q52:** the owner approved 40 (D511). Nothing skipped.
