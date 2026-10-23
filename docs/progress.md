@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.10 (performance budgets and download size).
-- **Next:** TL.11 (simulator and determinism; run in CI).
+- **Last task:** TL.11 (simulator and determinism).
+- **Next:** TL.12 (read the plan).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -349,3 +349,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Not green here, not mine:** this container's CPU is too slow for the old rows: live odds 228 ms (fails at 240 only because of the new budget), Suggest 642 ms (fails at 600). No core code changed this milestone, so I read this as the container (D445); **TL.10's "no row fails" needs a CI run to confirm.** Please look at the bench job when you can.
 - **GDD §6.5** is not edited (your gate); the new rows live in the test until you approve them there.
 - **Also:** a first attempt that timed a tap to the next painted frame was too noisy (an existing sheet read 254 ms), so I dropped it. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.11: simulator and determinism
+- **`npm run sim:check` here (55 runs, 369 s):** all **55 rows pass**; every player's report equals the v1.0 baseline: **176 of 176 same, 0 different**. `sim:accept` not run (milestone end only).
+- **Golden fights and recorded stands:** replayed line for line by the unit tests inside `npm run check` (3,322 pass); `rulesVersion` unchanged at 5.
+- **Still for CI:** the WebKit determinism test (no WebKit in this container) and the slow-CPU benchmark rows (see TL.10). Please look at those two jobs.
+- **Nothing skipped.**
