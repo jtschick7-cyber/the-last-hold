@@ -236,4 +236,4 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Context:** the files are converted to mono MP3 while authoring (D522 (2)). Claude Code's container may lack a converter (such as ffmpeg). The audition candidates must be converted to MP3 at SF.4 (the packs ship as OGG, which an iPhone may not play), so the question comes up there, not later.
 - **Options:** (a) install a system converter in the container (no change to the repo; recommended); (b) the owner converts on their computer with a tool Claude Code names, and uploads the files; (c) a new npm dev dependency for encoding (needs the owner's yes; it never ships to the player).
 - **Recommendation:** (a), then (b). (c) only with the owner's yes.
-- **Answer (owner):** *(pending; asked only if SF.4 finds no converter)*
+- **Answer (owner):** *(not needed)* **Resolved 2026-10-23 (SF.4):** the container has ffmpeg with an MP3 encoder, so option (a) was not even needed; nothing was installed.

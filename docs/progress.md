@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.3 (packs note written). **Waiting for the owner to upload the four zips.**
-- **Next:** SF.4 (after the upload); SF.5 to SF.8 do not need the packs (packs note, then stop for the owner's upload).
+- **Last task:** SF.4 (35 candidates converted; audition page built). **Waiting for the owner's picks (Q53).**
+- **Next:** SF.5 to SF.8 (no picks needed); SF.9 needs the picks (packs note, then stop for the owner's upload).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -404,3 +404,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Links not confirmed:** this container cannot open kenney.nl (the proxy refuses it). The links follow the v0.1 pattern and the note says so; please open each once.
 - **`.gitignore` changed (small, needed):** `art-src/packs/` was ignored whole, which would have kept your zips and this note out of git. Now only the contents other than `audio/` are ignored; I unpack into the ignored `art-src/packs/audio-unpacked/`.
 - **Waiting:** the owner uploads the zips. No sound task starts until then.
+
+## 2026-10-23 — v1.2 SF.4 audition candidates and page
+- **Candidates:** 35 clips, 5 per sound, chosen by name and length only (I cannot hear), from the four packs. Map: `docs/flesh-out/v1.2/sound-marks.md` (numbers 1–35, pack, file, slot). Converted to mono MP3 at 48 kbps, loudness evened, short fades, no tags, cut at each slot's limit; committed under `art-src/audition/` (133,533 bytes in all). Peaks stay below −2 dB.
+- **Audition page:** built into the **preview build only** (`audition.html` plus `audition/`). Each clip has a play button of 64 × 48 px or more, its length and size, and a Pick choice; the bottom shows the picks so far against the 30 KB cap and a "My picks" line to send me.
+- **Tests:** `tests/tools/audition.test.ts` (map, files, page, and a real **live build with no page and no candidate files, not in the precache list**); `tests/e2e/audition.spec.ts` (phone viewport: every button at least 44 px, all 35 decode in Chromium, page matches the map; passes here).
+- **New files:** `tools/sound-marks.ts`, `tools/audio-convert.ts`, `tools/make-audition.ts`, `tools/audition-page.ts`; `vite.config.ts` gained the preview-only plugin. Q56 resolved (container has ffmpeg).
+- **Note:** Vite prints a warning about extensionless imports in its config; harmless.
+- **Owner next:** open the preview's audition page, listen, and send one pick per sound (or "none of these"). The preview is built by the Deploy workflow from the latest pushed `milestone/*` branch; check the Deploy run is green.
