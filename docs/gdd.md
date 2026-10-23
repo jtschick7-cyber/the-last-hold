@@ -496,7 +496,7 @@ The Hold sits on an **8 × 8 grid** (`x = 0..7` west to east, `y = 0..7` north t
   3. Only if a newly unlocked piece has **no coordinate** in `state.layout.placed` does auto-placement assign it the first free tile in the current clearing (saving that coordinate). If the clearing is full, it waits in `tray`.
   4. Auto-placement ordering (S6): defenses (`wall-*`, `watchtower-*`) prioritize row `1` west to east, then row `2` wings, then row `0`. Other buildings prioritize tiles ordered by Manhattan distance from the center `(3.5, 3.5)`, then `y` ascending, then `x` ascending.
   5. On `hold.rankUp`, any `dormant-ring` piece whose tile opened becomes `active`. Any pieces in `tray` auto-place onto newly opened free tiles.
-  6. On new game creation (M3), `placed` initializes with only `hearth-hall: { x: 3, y: 3 }` (no ghosts for unbuilt buildings). At the start of a new cycle after the Long Night, starting buildings wake up or auto-place in Hamlet.
+  6. On new game creation (M3), `placed` starts with `hearth-hall: { x: 3, y: 3 }` (no ghosts for unbuilt buildings), and the starting Farm and Woodcutter's Camp are then placed by rules 3 and 4, nearest the middle first, so the tray starts empty. At the start of a new cycle after the Long Night, starting buildings wake up at their saved spots, or are placed by the same rules if they have none; the saved blueprint is otherwise untouched.
 - **Canonical Auto-arrange layout (D503, M1):**
   - `hearth-hall` at `(3, 3)–(4, 4)`.
   - Hamlet inner ring (`2..5 × 2..5`): `silver-seam-2 (2,2)`, `smithy (3,2)`, `silver-seam-1 (4,2)`, `mine-1 (5,2)`, `mill (2,3)`, `sawpit (5,3)`, `farm-1 (2,4)`, `woodcutter-1 (5,4)`, `cottage-1 (2,5)`, `cottage-2 (3,5)`, `farm-2 (4,5)`, `woodcutter-2 (5,5)`.

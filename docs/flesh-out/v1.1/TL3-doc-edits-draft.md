@@ -1,5 +1,7 @@
 # TL.3 doc edits — DRAFT for the owner to read (nothing below is applied yet)
 
+**Status: APPLIED 2026-10-23 on the owner's approval (D509 added as Proposed).**
+
 Why: the docs say a new game saves "only the Hearth Hall". The build saves the Hall at (3, 3) and then places the starting Farm and Woodcutter's Camp by the normal rules, so the tray starts empty (the owner asked for this in TL.3, and agreed on 2026-10-23).
 
 ## Edit 1 — GDD §5.1.5, rule 6 (`docs/gdd.md`, one occurrence)

@@ -952,7 +952,7 @@ export interface HoldLayoutState {
 
 **Migration v11 → v12 (`save/migration-v12.ts`):**  
 - Migrated saves set `schemaVersion = 12` and `layout = { placed: structuredClone(CANONICAL_LAYOUT), showGhosts: true }`.  
-- Brand new games (M3) initialize `placed` with only `{ 'hearth-hall': { x: 3, y: 3 } }` (no ghosts for undiscovered buildings).  
+- Brand new games (M3) start `placed` with `{ 'hearth-hall': { x: 3, y: 3 } }` (no ghosts for undiscovered buildings); `createNewGame` then calls `autoPlaceUnlocked`, which places the starting Farm and Woodcutter's Camp, so the tray starts empty.  
 - **Validation order on load (`validateLayout`, S13):**  
   1. Bounds check: any coordinate outside `0..7 × 0..7` is dropped.  
   2. Hearth Hall anchor validation: must be within `2..4 × 2..4`; if missing or outside `2..4 × 2..4`, it is restored to `(3, 3)`.  
@@ -984,6 +984,9 @@ export interface HoldLayoutState {
   - When a piece unlocks: if it already has a coordinate in `state.layout.placed`: if inside clearing and free, it becomes `active`; if in outer ring, it becomes `dormant-ring`; if occupied, it waits in `tray`.  
   - If a piece has no coordinate in `state.layout.placed`: auto-placement assigns the first free tile in clearing order.  
   - Order: defenses prioritize row 1 (`x = 0..7`), then row 2 wings (`(0,2)`, `(7,2)`), then row 0. Other buildings prioritize tiles ordered by Manhattan distance from center `(3.5, 3.5)`, then `y` asc, then `x` asc.  
+  - A tile held by any saved coordinate (including a piece not yet built) counts as taken when finding a free tile.
+  - Defenses use only the defense order; if none of those tiles is open in the current clearing, the piece waits in the tray.
+  - After a purchase, only pieces that purchase newly unlocked are placed; a piece the player sent to the tray stays there. A Rank-up, a new game and a new cycle place every unlocked piece that has no spot.
   - On `hold.rankUp`: `dormant-ring` pieces whose tiles opened wake up to `active`. Any items in `tray` auto-place onto free tiles.  
   - On cycle start after Long Night: starting buildings wake up or auto-place in Hamlet.
 
