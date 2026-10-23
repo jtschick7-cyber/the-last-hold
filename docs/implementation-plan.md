@@ -762,7 +762,7 @@ No new simulator row. All 55 existing rows must pass and every player's report m
 
 ### v1.2 — Sounds of the Frontier
 
-**Status:** built, waiting for the owner's iPhone playtest *(scheduled by D476, D499; fleshed out 2026-10-23; decisions D519–D528; files in `docs/flesh-out/v1.2/`)*
+**Status:** complete *(scheduled by D476, D499; fleshed out 2026-10-23; decisions D519–D528; files in `docs/flesh-out/v1.2/`)*
 
 **Scope:** **seven short sound effects for 15 moments**, **off by default**, with one **Sound** On/Off in `More ▸ Settings` (field `sound` in the settings key outside the save, `lasthold:settings`; **save schema stays 12, `rulesVersion` stays 5**). The sounds: Build, Launch, Place, Win, Lose, Fanfare, Nightfall (GDD §9.22, D520). **Web Audio only, mono MP3, no loops, no volume control, no new runtime dependency** (D522). The phone's silent switch is respected and never worked around. Nothing plays while the app is hidden; a sound that cannot play now is skipped, never queued; anything not on the list of 15 moments is silent (D520, D521, D522). All sounds together **≤ 30 KB** (target about 24 KB); **the whole build must still measure ≤ 600 KB gzipped** (D523). CC0 only, from four Kenney packs, picked by the owner by ear from an audition sheet in the preview build (D524). The game's core, the simulator and every golden fight are untouched. Also in this milestone, done first: moving the dated test saves into the future (D526) and a retry on CI's browser-install step (D527).
 

@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
-- **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.12 (wrap-up; pull request open).
-- **Next:** the owner's iPhone playtest (checklist in the plan and the pull request); then, only on "playtest passed": `sim:accept`, merge, tag `v1.2.0`.
+- **Branch:** `main` (v1.2 merged, tag `v1.2.0`).
+- **Milestone:** v1.2 "Sounds of the Frontier" (D519–D530), complete.
+- **Last task:** v1.2 milestone end (playtest passed, merged, tagged `v1.2.0`).
+- **Next:** the next milestone is v1.3 (outline only; it needs a flesh-out session first, plan §0.4).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -485,3 +485,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Change (UI only):** before the audio starts, the sound module now tells the browser the audio is "ambient" (the Audio Session setting that follows the silent switch). New `src/platform/sound/session.ts` with unit tests. Proposed D529.
 - **Not proven:** CI and this container cannot test an iPhone. If it still plays with the switch on, the next step is to find out whether the cause is the Home Screen app, an iOS setting, or music playing in another app (an ambient sound mixes with it). Tell me which and I will look further.
 - **Not done:** technical design §20 still says nothing about this setting (design text is yours to approve). No old test edited. `npm run check` green.
+
+## 2026-10-23 — v1.2 milestone end
+- **The owner said the playtest passed** on the iPhone, after the silent-switch fix (D529) worked.
+- **`npm run sim:accept`** (6 min 45 s here): 55 runs; the baseline file is byte-for-byte the same as before, so nothing moved. Plan `Status: complete`, D530.
+- **Still open for the owner:** D527 (CI browser-install retry) yes or no; D529 to be marked Decided (I may only add Proposed rows); the `e2e` CI job runs about 9 min (over the 5-minute rule, since before v1.2); technical design §20 does not yet mention the ambient setting (design text is the owner's).
+- Merged and tagged as below in the pull request.
