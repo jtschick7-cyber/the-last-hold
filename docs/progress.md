@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.10 (sounds cached offline, decode test, smoke scenario). Owner approved the seven sounds.
-- **Next:** SF.11 (Settings screen in the polish sweeps).
+- **Last task:** SF.11 (Settings screen with the Sound row in the polish sweeps).
+- **Next:** SF.12 (wrap-up, pull request).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -462,3 +462,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **One scenario added to `smoke.spec.ts`** (D525 (7)): Sound On, one Cottage, the fake engine records `build`. Passes.
 - **Old tests edited:** `smoke.spec.ts` only (the offline fetch and the new scenario, both D525).
 - Browser tests ran locally in Chromium (smoke 5 tests plus the decode test, all passed); CI will run the rest.
+
+## 2026-10-23 — v1.2 SF.11 polish sweeps
+- **Settings screen was already in the sweeps** (`more-settings`); the only edit to `polish-screens.ts` is that the screen must now also show the **Sound row and its help line** (silent switch), so the sweeps fail if either goes missing (D525 (2)). No baseline file changed.
+- **Ran locally in Chromium (Pixel 7), production build:** tap sweep (44 px) and widths (320, 360, 900, 1300): 19 passed; Text size (incl. 320 px at Largest), reduced motion, contrast, both themes: 39 passed. **0 findings** in every suite; the 15-tap routine check-in test is among them and passes.
+- **Time:** the tap sweep alone takes 5.7 min on this machine (one worker). The CI e2e job is not changed by this; I cannot see its time from here, so please check the 5-minute rule on the pull request.
+- **Old test edited:** `polish-screens.ts` (D525 (2)) only.
