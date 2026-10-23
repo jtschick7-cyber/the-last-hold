@@ -131,9 +131,9 @@ Status: **Closed.**
 The Unlit's answer after the fortieth name ("Forty. Known, every one. I can put the count down."), Pechko's line about the stove keeping itself (R-09), and the warm final rime (R-11) are the freshest text in this milestone. They waited for your yes in the first message of the thread (the D460 gate).
 Status: **Answered: yes**, owner, 2026-10-21 (D460).
 
-**Q41 — Name searches I could not fully settle.** *(Informational. Opened 2026-10-21.)*
+**Q41 — Name searches I could not fully settle.** *(Informational. Opened 2026-10-21; closed 2026-10-22.)*
 My search tool returned nothing that matches "Remember Them" or "Keep the Vigil" as a game ending, and nothing for "The Remembering" next to the games in GDD §2.3. It also returned unrelated games called "Vigil" and "Remember Me." The search tool is weak for exact phrases, so please treat this as "no collision found," not "checked everywhere." Details in OUT-6.
-Status: **Open (informational).**
+Status: **Closed (accepted by the owner, 2026-10-22, D505).**
 
 **Q42 — The Hearth Hall look: who draws it, and which scenes?** *(Blocks: T11.12. Opened 2026-10-21.)*
 D457 says it is drawn in code. If you would rather supply art, say so before T11.12; otherwise Claude Code draws it, shows a screenshot, and you approve (as with the Orders art, D434).
@@ -167,16 +167,16 @@ Status: **Answered (a)** by the owner, 2026-10-21 (D469). T11.15b proposes N for
 - **Blocks:** nothing in v1.0.
 - **Result of TV.11 (2026-10-22):** none of the 15 runs (plain Standard, A, B; 5 seeds; 25 cycles) gets all 16 Studied, and the rule does not help. A one-seed look: 10 of 16 by day 20, then stuck at 10 to 12; Draugr, Leshy, Strzyga and Rimewrought stay Identified. See `docs/flesh-out/v1.0/species-estimate.md`.
 - **The short look (2026-10-22):** the four missing species are rare on the board (0 to 8 contracts in 12 cycles, against about 90 for the Wolf): each Long Night resets to tier 1 and they only come at tier 3 or 4 up, in one place each. About 25 cycles or more for Standard, which fits the owner's about 20. A new option (d): change how often high tiers or those species come up (board generation or tier ranges); a design change.
-- **Answer (owner):** (c), 2026-10-22 (D493). The wording and where it shows are waiting for the owner's approval before building.
+- **Answer (owner):** (c), 2026-10-22 (D493). Built and shipped in v1.0 (*"Not yet known well: …"* on the Remembering card). Closed in the v1.1 flesh-out (2026-10-22, D505): the owner confirmed the long-term chase felt satisfying in play and no spawn-rate change is wanted.
 
 ### Q47 — Where do the settings live? *(opened 2026-10-21; answered by the review)*
 - **Answer from the review:** the existing settings (theme, best-buy hint, rate unit, reduce motion) are **inside the save** (technical design §5.2). Ruling D486 (Proposed): they stay as they are, with no schema change; Text size and the Backup reminder go in a new settings key outside the save; Reduce motion stays a boolean read as "phone or switch".
 - **Status:** **Answered (a)** by D486, pending the owner's yes (D491).
 
-### Q48 — The "Gaunt Wolf" name search *(informational; opened 2026-10-21)*
+### Q48 — The "Gaunt Wolf" name search *(informational; opened 2026-10-21; closed 2026-10-22)*
 - **Context:** the name "Gaunt Wolf" was settled in **D71** (the v0.5 flesh-out) and is already used in lore-secrets, Acts IV and VI, the Hidebane Oil row and Stanko's unlock; v1.0 only makes GDD §8.3, §9.4 and §9.8 agree (D483). I do not know whether D71's search considered that "Gaunt" is also a Warhammer 40,000 name (Commissar Ibram Gaunt, and "-gaunt" units); GDD §2.3's 40K rule, as I read it, bans named chapters, legions and characters, and "Gaunt Wolf" is none of those. My own search found nothing that matches a game creature, but the tool is weak for exact phrases.
 - **Options:** (a) Keep "Gaunt Wolf". (b) Use another name (it is a display-name change only).
-- **Status:** **Open (informational).**
+- **Answer (owner):** (a) Keep "Gaunt Wolf", closed 2026-10-22 (D505).
 
 ### Q49 — Two polish items earlier documents promised to v1.0 *(opened 2026-10-21; asks for a yes or no)*
 - **What I found:** GDD §5.12.12 says "Event-only cosmetics, art for the Great Beasts' full portraits and the legendary hunters' animation are polish (v1.0)", and the v0.9 plan says the same. Neither was in the v1.0 scope you approved.
@@ -193,4 +193,9 @@ Status: **Answered (a)** by the owner, 2026-10-21 (D469). T11.15b proposes N for
 - **Q42 (Hearth Hall look):** closed; the frost and lamp art is built and was approved in the v0.11 playtest.
 - **Q43 (Gaunt or Gloam Wolf):** **Answered: Gaunt Wolf**, owner, 2026-10-21 (D483; the name was already settled in D71).
 - **Q35:** already closed in D467; the v0.11 summary's question 10 is stale.
-- **Q41:** stays open (informational).
+- **Q41, Q46, Q48:** closed 2026-10-22 in the v1.1 flesh-out (D505).
+- **Q47:** closed as answered by D486 in v1.0; settings key expanded in v1.1 with `holdView` (D503).
+
+## v1.1 questions *(from the v1.1 flesh-out, 2026-10-22)*
+
+No open questions at the end of the v1.1 flesh-out. Any question Claude Code hits during v1.1 starts at **Q51**.

@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.0` (from `main` at the v0.11 merge).
-- **Milestone:** v1.0 "Polish" (D472–D497), complete.
-- **Last task:** v1.0 complete: playtest passed, merged (D497).
-- **Next:** the owner tags `v1.0.0` by hand; then the next milestone's flesh-out (audio, the Descent, rising difficulty).
-- **Open questions:** Q46 (the species estimate, after TV.11); Q41 and Q48 informational.
+- **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
+- **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
+- **Last task:** docs commit (flesh-out files applied).
+- **Next:** TL.1 (save v12, layout catalog, v11 to v12 migration).
+- **Open questions:** none (new ones start at Q51).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -225,3 +225,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Merged** PR 17 from `milestone/v1.0`. **The owner tags `v1.0.0` by hand.**
 - **Deferred, by decision:** audio, the Descent, rising difficulty, event cosmetics and legendary hunters' animation, screen-reader labels, Q41 and Q48, the rare species' slow arrival (Q46).
 
+## 2026-10-23 — v1.1 docs commit
+- **Owner said yes to D508** (D498–D507 accepted as written, no exceptions) and confirmed the `v11-owner.json` export. I marked D498–D507 Decided on that basis.
+- **Preconditions checked:** `v1.0.0` is tagged and on `main`; baseline is the accepted v1.0 one. Branch `milestone/v1.1` made from `main`.
+- **Applied:** decisions D498–D508; 16 exact GDD edits (all matched once); questions (Q41, Q46, Q48 closed); plan v1.1 + outlines v1.2–v1.5; technical design §19 plus schema 12 and `holdView` in §5.2/§9.4/§18; two names; two CLAUDE.md rules. Flesh-out files are in `docs/flesh-out/v1.1/`.
+- **Old `Proposed` rows:** many older rows still read Proposed; D472's blanket rule and D498 cover them. I did not edit any.
+- **Not done:** `v11-owner.json` file itself is not in the repo yet (needed at TL.1).
