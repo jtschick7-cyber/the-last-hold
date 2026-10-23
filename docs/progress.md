@@ -310,3 +310,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **TL.6b approved** and ticked.
 - **TL.6c redrawn (3):** Woodcutter's Camp 1 (a round stump with a lighter top, an angled axe in it, two cut logs), 2 (stump and axe, plus a pyramid of round-ended logs with pale rings), 3 (a busy yard: cordwood piles, a log pyramid, the stump and axe, and a timber shelter with a sawbuck). New file `draw-grid-camp.ts`.
 - **Sheets:** `docs/flesh-out/v1.1/before-after/tl6c.png` plus Hamlet and Bastion mock-ups. All 25 marked pictures are now redrawn; the other 58 are byte-identical (tested). `npm run check` green. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.6c approved; TL.6 complete
+- **Owner approved TL.6c.** All 25 redraws (TL.6a, b, c) are approved and ticked; TL.6 is done.
+- **Next:** TL.7, the Hold grid screen. Proposal to carry into it: choose ground looks by a fixed function of the tile's coordinates, mostly grass with earth and flags used sparingly.
+- **Nothing skipped.**
