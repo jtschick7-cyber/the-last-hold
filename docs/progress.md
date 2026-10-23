@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.13 (hand-off): all TL tasks done; the pull request is open.
-- **Next:** the owner's playtest. Only after "playtest passed": `sim:accept`, merge, tag `v1.1.0`, statuses.
+- **Last task:** v1.1 milestone end (playtest passed, `sim:accept` run, statuses set).
+- **Next:** merge pull request #18 and tag `v1.1.0` (waiting on the owner's go); then the v1.2 flesh-out.
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -373,3 +373,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Pull request opened** from `milestone/v1.1` with the template and the playtest checklist. Rolling back to v1.0 means importing `v11-owner.json`.
 - **Watch in CI:** the benchmark job runs for the first time on this pull request; this container's CPU failed its old rows (D445), so a red there may be the runner.
 - **Not done, by decision:** GDD, D501 and the plan still say 39 pieces (your gate); `sim:accept`, merge and tag wait for the playtest; dated test saves (`v9.json`, `v12-played.json`) are left alone.
+
+## 2026-10-23 — v1.1 milestone end
+- **The owner said the playtest passed** (all checklist items good, no issues; D516). `sim:accept`: 55 of 55 rows pass, 176 of 176 same, baseline file unchanged. Plan `Status: complete`.
+- **Last CI fix:** the Order smoke test's loop had a race on slow runners (it pressed "Not now" after the Seat step had opened); it now checks again after its wait. Not a game bug.
+- **Piece counts corrected** to 40 / 43 tiles / 21 open (D514, D515); the GDD, plan and technical design agree now.
+- **Still open for the owner:** the merge and the `v1.1.0` tag; D509 (Proposed) needs a yes or no.
+- **Seen, not mine:** `check` takes 94–99 s on GitHub (now warns at 90 s, fails at 120 s, D512); the e2e job's time limit is 15 minutes (D513).
