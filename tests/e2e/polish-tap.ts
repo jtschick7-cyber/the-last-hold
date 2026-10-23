@@ -64,7 +64,10 @@ export const scanTappables = (page: Page, min = MIN_TAP_PX): Promise<TapScan> =>
       const cls = String(el.getAttribute('class') ?? '');
       // A number that only responds to a long press (Num.tsx); its ⓘ sibling is not exempt.
       scanned++;
-      if (r.left < -0.5 || r.right > innerWidth + 0.5)
+      // GDD §9.21 (M7, D507 (6)): a control inside a self-contained scroll box (the Arrange Hold grid
+      // below 352 px) may sit past the screen's edge; it is still measured for size and cover.
+      const inOwnScroll = el.closest('[data-internal-scroll="true"]') !== null;
+      if (!inOwnScroll && (r.left < -0.5 || r.right > innerWidth + 0.5))
         outside.push(
           `${label(el)} (${Math.round(r.left)} to ${Math.round(r.right)} of ${innerWidth})`,
         );
