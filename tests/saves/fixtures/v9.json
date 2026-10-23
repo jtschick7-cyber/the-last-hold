@@ -2,17 +2,17 @@
   "app": "the-last-hold",
   "schemaVersion": 9,
   "rulesVersion": 5,
-  "savedAt": 1792758600000,
+  "savedAt": 2108118600000,
   "state": {
     "meta": {
       "schemaVersion": 9,
       "gameSeed": "fe9f602e3b10c984",
-      "createdAt": 1791905973806,
-      "lastSeen": 1792758600000,
-      "clockHighWater": 1792758600000,
+      "createdAt": 2107265973806,
+      "lastSeen": 2108118600000,
+      "clockHighWater": 2108118600000,
       "debugUsed": true
     },
-    "time": 1792758600000,
+    "time": 2108118600000,
     "cycle": {
       "number": 20,
       "age": "bastion"
@@ -33,7 +33,7 @@
       },
       "autoSettle": true,
       "priority": ["woodcutter", "miner", "farmer", "silver-digger"],
-      "lastSettleAt": 1792749403642.284
+      "lastSettleAt": 2108109403642.284
     },
     "buildings": {
       "hearth-hall": 1,
@@ -245,7 +245,7 @@
           "monster": "vodyanoy",
           "tier": 3,
           "location": "river",
-          "arrivedAt": 1792717200000,
+          "arrivedAt": 2108077200000,
           "revealed": 1
         },
         {
@@ -254,7 +254,7 @@
           "monster": "rusalka",
           "tier": 3,
           "location": "river",
-          "arrivedAt": 1792731600000,
+          "arrivedAt": 2108091600000,
           "revealed": 3
         },
         {
@@ -263,7 +263,7 @@
           "monster": "poludnitsa",
           "tier": 3,
           "location": "field",
-          "arrivedAt": 1792738800000,
+          "arrivedAt": 2108098800000,
           "revealed": 3
         },
         {
@@ -272,11 +272,11 @@
           "monster": "rimewrought",
           "tier": 4,
           "location": "ruin",
-          "arrivedAt": 1792753200000,
+          "arrivedAt": 2108113200000,
           "revealed": 0
         }
       ],
-      "nextArrivalAt": 1792760400000,
+      "nextArrivalAt": 2108120400000,
       "arrivals": 450,
       "tierWins": [14, 4, 4, 0, 0]
     },
@@ -380,7 +380,7 @@
         {
           "kind": "brew",
           "item": "frost-pot",
-          "doneAt": 1792759080000,
+          "doneAt": 2108119080000,
           "paid": {
             "ingredients": {
               "rime-salt": 1
@@ -393,7 +393,7 @@
         {
           "kind": "brew",
           "item": "frost-pot",
-          "doneAt": 1792759080000,
+          "doneAt": 2108119080000,
           "paid": {
             "ingredients": {
               "rime-salt": 1
@@ -406,7 +406,7 @@
         {
           "kind": "brew",
           "item": "mending-draught",
-          "doneAt": 1792759080000,
+          "doneAt": 2108119080000,
           "paid": {
             "ingredients": {
               "yarrow": 2,
@@ -419,12 +419,12 @@
       "investigation": [
         {
           "contractId": "c449",
-          "nextClueAt": 1792759609800
+          "nextClueAt": 2108119609800
         }
       ]
     },
     "garden": {
-      "nextAt": 1792759200000
+      "nextAt": 2108119200000
     },
     "running": [
       {
@@ -434,7 +434,7 @@
           "monster": "strzyga",
           "tier": 4,
           "location": "field",
-          "arrivedAt": 1792746000000,
+          "arrivedAt": 2108106000000,
           "revealed": 1
         },
         "party": ["halvar", "zora", "ostap", "vesna"],
@@ -517,8 +517,8 @@
             "talents": ["mender-hands-1", "mender-watch-1", "mender-herbs-1"]
           }
         ],
-        "launchedAt": 1792758600000,
-        "endsAt": 1792768680000,
+        "launchedAt": 2108118600000,
+        "endsAt": 2108128680000,
         "reckless": false,
         "prep": {
           "oils": {
@@ -598,7 +598,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 3,
-          "at": 1791782640000,
+          "at": 2107142640000,
           "prep": {
             "oils": {
               "toma": "thornbane-oil"
@@ -685,7 +685,7 @@
           "location": "ruin",
           "result": "win",
           "rulesVersion": 3,
-          "at": 1791787680000,
+          "at": 2107147680000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -738,7 +738,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791876060000,
+          "at": 2107236060000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -775,7 +775,7 @@
           "location": "river",
           "result": "loss",
           "rulesVersion": 4,
-          "at": 1791876060000,
+          "at": 2107236060000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -828,7 +828,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791886860000,
+          "at": 2107246860000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -897,7 +897,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791895860000,
+          "at": 2107255860000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -966,7 +966,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791905464227,
+          "at": 2107265464227,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1035,7 +1035,7 @@
           "location": "ruin",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791920520000,
+          "at": 2107280520000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1104,7 +1104,7 @@
           "location": "ruin",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791949924407,
+          "at": 2107309924407,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1157,7 +1157,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791949924407,
+          "at": 2107309924407,
           "prep": {
             "oils": {
               "vesna": "thornbane-oil"
@@ -1228,7 +1228,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791963720000,
+          "at": 2107323720000,
           "prep": {
             "oils": {
               "vesna": "thornbane-oil"
@@ -1299,7 +1299,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791966240000,
+          "at": 2107326240000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1368,7 +1368,7 @@
           "location": "barrow",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791974520000,
+          "at": 2107334520000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1405,7 +1405,7 @@
           "location": "barrow",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791974520000,
+          "at": 2107334520000,
           "prep": {
             "oils": {
               "radek": "grave-oil"
@@ -1476,7 +1476,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791977040000,
+          "at": 2107337040000,
           "prep": {
             "oils": {
               "halvar": "thornbane-oil"
@@ -1547,7 +1547,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791982260000,
+          "at": 2107342260000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1584,7 +1584,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791982260000,
+          "at": 2107342260000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1653,7 +1653,7 @@
           "location": "ruin",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791986040000,
+          "at": 2107346040000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1722,7 +1722,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791993124588,
+          "at": 2107353124588,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1791,7 +1791,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1791993124588,
+          "at": 2107353124588,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1860,7 +1860,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1792009440000,
+          "at": 2107369440000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1929,7 +1929,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1792016460000,
+          "at": 2107376460000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -1998,7 +1998,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1792036325313,
+          "at": 2107396325313,
           "prep": {
             "oils": {
               "halvar": "thornbane-oil",
@@ -2070,7 +2070,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1792052640000,
+          "at": 2107412640000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2155,7 +2155,7 @@
           "location": "ruin",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1792057680000,
+          "at": 2107417680000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2224,7 +2224,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1792059660000,
+          "at": 2107419660000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2293,7 +2293,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 4,
-          "at": 1792069920000,
+          "at": 2107429920000,
           "prep": {
             "oils": {
               "halvar": "thornbane-oil",
@@ -2375,7 +2375,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792505106500,
+          "at": 2107865106500,
           "prep": {
             "oils": {
               "halvar": "drowned-bane-oil"
@@ -2437,7 +2437,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792567260000,
+          "at": 2107927260000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2477,7 +2477,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792567260000,
+          "at": 2107927260000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2556,7 +2556,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792587060000,
+          "at": 2107947060000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2595,7 +2595,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792599660000,
+          "at": 2107959660000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2674,7 +2674,7 @@
           "location": "ruin",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792600920000,
+          "at": 2107960920000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2753,7 +2753,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792617660000,
+          "at": 2107977660000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2792,7 +2792,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792617660000,
+          "at": 2107977660000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2867,7 +2867,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792653660000,
+          "at": 2108013660000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2906,7 +2906,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792653660000,
+          "at": 2108013660000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -2985,7 +2985,7 @@
           "location": "barrow",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792654920000,
+          "at": 2108014920000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3064,7 +3064,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792664460000,
+          "at": 2108024460000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3146,7 +3146,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792664460000,
+          "at": 2108024460000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3202,7 +3202,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792664460000,
+          "at": 2108024460000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3281,7 +3281,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792673460000,
+          "at": 2108033460000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3363,7 +3363,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792673460000,
+          "at": 2108033460000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3445,7 +3445,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792686060000,
+          "at": 2108046060000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3524,7 +3524,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792687320000,
+          "at": 2108047320000,
           "prep": {
             "oils": {
               "halvar": "thornbane-oil",
@@ -3607,7 +3607,7 @@
           "location": "river",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792707840000,
+          "at": 2108067840000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3689,7 +3689,7 @@
           "location": "forest",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792707840000,
+          "at": 2108067840000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3773,7 +3773,7 @@
           "location": "barrow",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792741320000,
+          "at": 2108101320000,
           "prep": {
             "oils": {},
             "potions": {},
@@ -3852,7 +3852,7 @@
           "location": "barrow",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792743840000,
+          "at": 2108103840000,
           "prep": {
             "oils": {
               "halvar": "grave-oil"
@@ -3936,7 +3936,7 @@
           "location": "field",
           "result": "win",
           "rulesVersion": 5,
-          "at": 1792743840000,
+          "at": 2108103840000,
           "prep": {
             "oils": {
               "vesna": "thornbane-oil"
@@ -4014,16 +4014,16 @@
     "cycles": [
       {
         "number": 1,
-        "startedAt": 1788538653806,
+        "startedAt": 2103898653806,
         "ranks": {
-          "hamlet": 1788538653806
+          "hamlet": 2103898653806
         },
         "contractThreat": {
           "added": 0,
           "removed": 0
         },
         "stand": {
-          "at": 1788598769953,
+          "at": 2103958769953,
           "seed": "fe9f602e3b10c984:stand:1",
           "rank": "keep",
           "threat": 0,
@@ -4172,19 +4172,19 @@
       },
       {
         "number": 2,
-        "startedAt": 1788598769953,
+        "startedAt": 2103958769953,
         "ranks": {
-          "hamlet": 1788598769953,
-          "keep": 1788766680000,
-          "bastion": 1788858013362,
-          "citadel": 1788858124151
+          "hamlet": 2103958769953,
+          "keep": 2104126680000,
+          "bastion": 2104218013362,
+          "citadel": 2104218124151
         },
         "contractThreat": {
           "added": 6,
           "removed": 22.040000000000003
         },
         "stand": {
-          "at": 1788896280000,
+          "at": 2104256280000,
           "seed": "fe9f602e3b10c984:stand:2",
           "rank": "bastion",
           "threat": 13.79279862222238,
@@ -4304,19 +4304,19 @@
       },
       {
         "number": 3,
-        "startedAt": 1788896280000,
+        "startedAt": 2104256280000,
         "ranks": {
-          "hamlet": 1788896280000,
-          "keep": 1788939480000,
-          "citadel": 1789069080000,
-          "bastion": 1789112280000
+          "hamlet": 2104256280000,
+          "keep": 2104299480000,
+          "citadel": 2104429080000,
+          "bastion": 2104472280000
         },
         "contractThreat": {
           "added": 0,
           "removed": 13.679999999999998
         },
         "stand": {
-          "at": 1789117696992,
+          "at": 2104477696992,
           "seed": "fe9f602e3b10c984:stand:3",
           "rank": "bastion",
           "threat": 0,
@@ -4417,17 +4417,17 @@
       },
       {
         "number": 4,
-        "startedAt": 1789117696992,
+        "startedAt": 2104477696992,
         "ranks": {
-          "hamlet": 1789117696992,
-          "bastion": 1789117711537
+          "hamlet": 2104477696992,
+          "bastion": 2104477711537
         },
         "contractThreat": {
           "added": 0,
           "removed": 0
         },
         "stand": {
-          "at": 1789155480000,
+          "at": 2104515480000,
           "seed": "fe9f602e3b10c984:stand:4",
           "rank": "bastion",
           "threat": 10.491239722222323,
@@ -4526,19 +4526,19 @@
       },
       {
         "number": 5,
-        "startedAt": 1789155480000,
+        "startedAt": 2104515480000,
         "ranks": {
-          "hamlet": 1789155480000,
-          "keep": 1789198680000,
-          "citadel": 1789290542038,
-          "bastion": 1789377284563
+          "hamlet": 2104515480000,
+          "keep": 2104558680000,
+          "citadel": 2104650542038,
+          "bastion": 2104737284563
         },
         "contractThreat": {
           "added": 0,
           "removed": 15.959999999999999
         },
         "stand": {
-          "at": 1789377324108,
+          "at": 2104737324108,
           "seed": "fe9f602e3b10c984:stand:5",
           "rank": "bastion",
           "threat": 22.618379111111835,
@@ -4639,18 +4639,18 @@
       },
       {
         "number": 6,
-        "startedAt": 1789377324108,
+        "startedAt": 2104737324108,
         "ranks": {
-          "hamlet": 1789377324108,
-          "bastion": 1789377414088,
-          "citadel": 1789377455220
+          "hamlet": 2104737324108,
+          "bastion": 2104737414088,
+          "citadel": 2104737455220
         },
         "contractThreat": {
           "added": 0,
           "removed": 0
         },
         "stand": {
-          "at": 1789414680000,
+          "at": 2104774680000,
           "seed": "fe9f602e3b10c984:stand:6",
           "rank": "bastion",
           "threat": 10.351642222222317,
@@ -4749,19 +4749,19 @@
       },
       {
         "number": 7,
-        "startedAt": 1789414680000,
+        "startedAt": 2104774680000,
         "ranks": {
-          "hamlet": 1789414680000,
-          "keep": 1789457880000,
-          "citadel": 1789593491073,
-          "bastion": 1789703023179
+          "hamlet": 2104774680000,
+          "keep": 2104817880000,
+          "citadel": 2104953491073,
+          "bastion": 2105063023179
         },
         "contractThreat": {
           "added": 0,
           "removed": 18.240000000000002
         },
         "stand": {
-          "at": 1789736880000,
+          "at": 2105096880000,
           "seed": "fe9f602e3b10c984:stand:7",
           "rank": "bastion",
           "threat": 40.72852359999986,
@@ -4922,19 +4922,19 @@
       },
       {
         "number": 8,
-        "startedAt": 1789736880000,
+        "startedAt": 2105096880000,
         "ranks": {
-          "hamlet": 1789736880000,
-          "keep": 1789771080000,
-          "citadel": 1789823280000,
-          "bastion": 1789875846035
+          "hamlet": 2105096880000,
+          "keep": 2105131080000,
+          "citadel": 2105183280000,
+          "bastion": 2105235846035
         },
         "contractThreat": {
           "added": 0,
           "removed": 24.32
         },
         "stand": {
-          "at": 1789909680000,
+          "at": 2105269680000,
           "seed": "fe9f602e3b10c984:stand:8",
           "rank": "bastion",
           "threat": 8.783934311111304,
@@ -5093,19 +5093,19 @@
       },
       {
         "number": 9,
-        "startedAt": 1789909680000,
+        "startedAt": 2105269680000,
         "ranks": {
-          "hamlet": 1789909680000,
-          "keep": 1789943880000,
-          "citadel": 1790030280000,
-          "bastion": 1790082480000
+          "hamlet": 2105269680000,
+          "keep": 2105303880000,
+          "citadel": 2105390280000,
+          "bastion": 2105442480000
         },
         "contractThreat": {
           "added": 0,
           "removed": 22.8
         },
         "stand": {
-          "at": 1790113080000,
+          "at": 2105473080000,
           "seed": "fe9f602e3b10c984:stand:9",
           "rank": "bastion",
           "threat": 12.500000000000798,
@@ -5265,19 +5265,19 @@
       },
       {
         "number": 10,
-        "startedAt": 1790113080000,
+        "startedAt": 2105473080000,
         "ranks": {
-          "hamlet": 1790113080000,
-          "keep": 1790156280000,
-          "citadel": 1790199480000,
-          "bastion": 1790285880000
+          "hamlet": 2105473080000,
+          "keep": 2105516280000,
+          "citadel": 2105559480000,
+          "bastion": 2105645880000
         },
         "contractThreat": {
           "added": 0,
           "removed": 21.28
         },
         "stand": {
-          "at": 1790305680000,
+          "at": 2105665680000,
           "seed": "fe9f602e3b10c984:stand:10",
           "rank": "bastion",
           "threat": 16.013246944445104,
@@ -5430,19 +5430,19 @@
       },
       {
         "number": 11,
-        "startedAt": 1790305680000,
+        "startedAt": 2105665680000,
         "ranks": {
-          "hamlet": 1790305680000,
-          "keep": 1790339880000,
-          "citadel": 1790402028665,
-          "bastion": 1790458680000
+          "hamlet": 2105665680000,
+          "keep": 2105699880000,
+          "citadel": 2105762028665,
+          "bastion": 2105818680000
         },
         "contractThreat": {
           "added": 0,
           "removed": 25.080000000000002
         },
         "stand": {
-          "at": 1790478480000,
+          "at": 2105838480000,
           "seed": "fe9f602e3b10c984:stand:11",
           "rank": "bastion",
           "threat": 7.059752305555478,
@@ -5597,19 +5597,19 @@
       },
       {
         "number": 12,
-        "startedAt": 1790478480000,
+        "startedAt": 2105838480000,
         "ranks": {
-          "hamlet": 1790478480000,
-          "keep": 1790545080000,
-          "citadel": 1790631480000,
-          "bastion": 1790674680000
+          "hamlet": 2105838480000,
+          "keep": 2105905080000,
+          "citadel": 2105991480000,
+          "bastion": 2106034680000
         },
         "contractThreat": {
           "added": 0,
           "removed": 25.080000000000005
         },
         "stand": {
-          "at": 1790694480000,
+          "at": 2106054480000,
           "seed": "fe9f602e3b10c984:stand:12",
           "rank": "bastion",
           "threat": 6.912832416666735,
@@ -5764,19 +5764,19 @@
       },
       {
         "number": 13,
-        "startedAt": 1790694480000,
+        "startedAt": 2106054480000,
         "ranks": {
-          "hamlet": 1790694480000,
-          "keep": 1790728680000,
-          "citadel": 1790782680000,
-          "bastion": 1790883480000
+          "hamlet": 2106054480000,
+          "keep": 2106088680000,
+          "citadel": 2106142680000,
+          "bastion": 2106243480000
         },
         "contractThreat": {
           "added": 0,
           "removed": 24.320000000000007
         },
         "stand": {
-          "at": 1790930280000,
+          "at": 2106290280000,
           "seed": "fe9f602e3b10c984:stand:13",
           "rank": "bastion",
           "threat": 25.139999999999432,
@@ -5930,19 +5930,19 @@
       },
       {
         "number": 14,
-        "startedAt": 1790930280000,
+        "startedAt": 2106290280000,
         "ranks": {
-          "hamlet": 1790930280000,
-          "keep": 1790969880000,
-          "citadel": 1791049080000,
-          "bastion": 1791146280000
+          "hamlet": 2106290280000,
+          "keep": 2106329880000,
+          "citadel": 2106409080000,
+          "bastion": 2106506280000
         },
         "contractThreat": {
           "added": 0,
           "removed": 35.72000000000001
         },
         "stand": {
-          "at": 1791189480000,
+          "at": 2106549480000,
           "seed": "fe9f602e3b10c984:stand:14",
           "rank": "bastion",
           "threat": 17.036941305556066,
@@ -6104,19 +6104,19 @@
       },
       {
         "number": 15,
-        "startedAt": 1791189480000,
+        "startedAt": 2106549480000,
         "ranks": {
-          "hamlet": 1791189480000,
-          "keep": 1791221880000,
-          "citadel": 1791275880000,
-          "bastion": 1791294994254
+          "hamlet": 2106549480000,
+          "keep": 2106581880000,
+          "citadel": 2106635880000,
+          "bastion": 2106654994254
         },
         "contractThreat": {
           "added": 3,
           "removed": 18.240000000000002
         },
         "stand": {
-          "at": 1791319080000,
+          "at": 2106679080000,
           "seed": "fe9f602e3b10c984:stand:15",
           "rank": "bastion",
           "threat": 6.229999999999963,
@@ -6270,19 +6270,19 @@
       },
       {
         "number": 16,
-        "startedAt": 1791319080000,
+        "startedAt": 2106679080000,
         "ranks": {
-          "hamlet": 1791319080000,
-          "keep": 1791351480000,
-          "citadel": 1791405480000,
-          "bastion": 1791486000000
+          "hamlet": 2106679080000,
+          "keep": 2106711480000,
+          "citadel": 2106765480000,
+          "bastion": 2106846000000
         },
         "contractThreat": {
           "added": 0,
           "removed": 25.840000000000007
         },
         "stand": {
-          "at": 1791505800000,
+          "at": 2106865800000,
           "seed": "fe9f602e3b10c984:stand:16",
           "rank": "bastion",
           "threat": 10.052333333333497,
@@ -6436,19 +6436,19 @@
       },
       {
         "number": 17,
-        "startedAt": 1791505800000,
+        "startedAt": 2106865800000,
         "ranks": {
-          "hamlet": 1791505800000,
-          "keep": 1791529200000,
-          "citadel": 1791572400000,
-          "bastion": 1791615600000
+          "hamlet": 2106865800000,
+          "keep": 2106889200000,
+          "citadel": 2106932400000,
+          "bastion": 2106975600000
         },
         "contractThreat": {
           "added": 0,
           "removed": 14.440000000000001
         },
         "stand": {
-          "at": 1791635400000,
+          "at": 2106995400000,
           "seed": "fe9f602e3b10c984:stand:17",
           "rank": "bastion",
           "threat": 11.735538194444672,
@@ -6603,19 +6603,19 @@
       },
       {
         "number": 18,
-        "startedAt": 1791635400000,
+        "startedAt": 2106995400000,
         "ranks": {
-          "hamlet": 1791635400000,
-          "keep": 1791669600000,
-          "citadel": 1791702000000,
-          "bastion": 1791777600000
+          "hamlet": 2106995400000,
+          "keep": 2107029600000,
+          "citadel": 2107062000000,
+          "bastion": 2107137600000
         },
         "contractThreat": {
           "added": 0,
           "removed": 25.080000000000005
         },
         "stand": {
-          "at": 1791804893296,
+          "at": 2107164893296,
           "seed": "fe9f602e3b10c984:stand:18",
           "rank": "bastion",
           "threat": 9.359661172222836,
@@ -6770,19 +6770,19 @@
       },
       {
         "number": 19,
-        "startedAt": 1791804893296,
+        "startedAt": 2107164893296,
         "ranks": {
-          "hamlet": 1791804893296,
-          "keep": 1791894600000,
-          "citadel": 1792004400000,
-          "bastion": 1792058400000
+          "hamlet": 2107164893296,
+          "keep": 2107254600000,
+          "citadel": 2107364400000,
+          "bastion": 2107418400000
         },
         "contractThreat": {
           "added": 3,
           "removed": 38.00000000000001
         },
         "stand": {
-          "at": 1792530000000,
+          "at": 2107890000000,
           "seed": "fe9f602e3b10c984:stand:19",
           "rank": "bastion",
           "threat": 64.49741219444584,
@@ -6951,12 +6951,12 @@
       },
       {
         "number": 20,
-        "startedAt": 1792530000000,
+        "startedAt": 2107890000000,
         "ranks": {
-          "hamlet": 1792530000000,
-          "keep": 1792576800000,
-          "citadel": 1792652400000,
-          "bastion": 1792684800000
+          "hamlet": 2107890000000,
+          "keep": 2107936800000,
+          "citadel": 2108012400000,
+          "bastion": 2108044800000
         },
         "contractThreat": {
           "added": 0,
@@ -6970,12 +6970,12 @@
     ],
     "story": {
       "arrivalDue": false,
-      "ilseAt": 1789702894971,
+      "ilseAt": 2105062894971,
       "acts": [
         {
           "act": 1,
           "cycle": 7,
-          "startedAt": 1789688247330,
+          "startedAt": 2105048247330,
           "wins": 253,
           "winsByVillage": {
             "ravenfell": 52,
@@ -6996,7 +6996,7 @@
         {
           "act": 2,
           "cycle": 8,
-          "startedAt": 1789736880000,
+          "startedAt": 2105096880000,
           "wins": 247,
           "winsByVillage": {
             "velkvik": 46,
@@ -7017,7 +7017,7 @@
         {
           "act": 3,
           "cycle": 9,
-          "startedAt": 1789909680000,
+          "startedAt": 2105269680000,
           "wins": 230,
           "winsByVillage": {
             "kozly-hollow": 58,
@@ -7038,7 +7038,7 @@
         {
           "act": 4,
           "cycle": 19,
-          "startedAt": 1791812390022,
+          "startedAt": 2107172390022,
           "wins": 47,
           "winsByVillage": {
             "velkvik": 10,
@@ -7059,7 +7059,7 @@
         {
           "act": 5,
           "cycle": 20,
-          "startedAt": 1792530000000,
+          "startedAt": 2107890000000,
           "wins": 22,
           "winsByVillage": {
             "velkvik": 7,
@@ -7082,247 +7082,247 @@
         {
           "id": "D1-01",
           "cycle": 7,
-          "at": 1789702894971,
+          "at": 2105062894971,
           "via": "arrival"
         },
         {
           "id": "D1-09",
           "cycle": 7,
-          "at": 1789702894971,
+          "at": 2105062894971,
           "via": "arrival"
         },
         {
           "id": "D1-10",
           "cycle": 7,
-          "at": 1789703023179,
+          "at": 2105063023179,
           "via": "rank"
         },
         {
           "id": "D1-06",
           "cycle": 7,
-          "at": 1789736880000,
+          "at": 2105096880000,
           "via": "stand"
         },
         {
           "id": "D1-07",
           "cycle": 8,
-          "at": 1789736880000,
+          "at": 2105096880000,
           "via": "warden"
         },
         {
           "id": "D1-02",
           "cycle": 8,
-          "at": 1789792303807,
+          "at": 2105152303807,
           "via": "contract"
         },
         {
           "id": "D2-01",
           "cycle": 8,
-          "at": 1789792303807,
+          "at": 2105152303807,
           "via": "contract"
         },
         {
           "id": "D1-04",
           "cycle": 8,
-          "at": 1789815720000,
+          "at": 2105175720000,
           "via": "contract"
         },
         {
           "id": "D2-07",
           "cycle": 8,
-          "at": 1789823280000,
+          "at": 2105183280000,
           "via": "rank"
         },
         {
           "id": "D1-03",
           "cycle": 8,
-          "at": 1789872240000,
+          "at": 2105232240000,
           "via": "contract"
         },
         {
           "id": "D2-02",
           "cycle": 8,
-          "at": 1789872240000,
+          "at": 2105232240000,
           "via": "contract"
         },
         {
           "id": "D2-08",
           "cycle": 8,
-          "at": 1789875846035,
+          "at": 2105235846035,
           "via": "roster"
         },
         {
           "id": "D2-03",
           "cycle": 8,
-          "at": 1789878928350,
+          "at": 2105238928350,
           "via": "contract"
         },
         {
           "id": "D2-09",
           "cycle": 8,
-          "at": 1789909680000,
+          "at": 2105269680000,
           "via": "stand"
         },
         {
           "id": "D2-10",
           "cycle": 9,
-          "at": 1789909680000,
+          "at": 2105269680000,
           "via": "warden"
         },
         {
           "id": "D2-04",
           "cycle": 9,
-          "at": 1790032800000,
+          "at": 2105392800000,
           "via": "contract"
         },
         {
           "id": "D2-05",
           "cycle": 9,
-          "at": 1790076000000,
+          "at": 2105436000000,
           "via": "contract"
         },
         {
           "id": "D2-06",
           "cycle": 9,
-          "at": 1790097212739,
+          "at": 2105457212739,
           "via": "contract"
         },
         {
           "id": "D1-05",
           "cycle": 11,
-          "at": 1790474520000,
+          "at": 2105834520000,
           "via": "knowledge"
         },
         {
           "id": "D3-01",
           "cycle": 18,
-          "at": 1791761408383,
+          "at": 2107121408383,
           "via": "arrival"
         },
         {
           "id": "D3-02",
           "cycle": 18,
-          "at": 1791761408383,
+          "at": 2107121408383,
           "via": "arrival"
         },
         {
           "id": "D3-03",
           "cycle": 18,
-          "at": 1791761408383,
+          "at": 2107121408383,
           "via": "arrival"
         },
         {
           "id": "D3-04",
           "cycle": 18,
-          "at": 1791761408383,
+          "at": 2107121408383,
           "via": "arrival"
         },
         {
           "id": "D3-05",
           "cycle": 18,
-          "at": 1791761408383,
+          "at": 2107121408383,
           "via": "arrival"
         },
         {
           "id": "D3-08",
           "cycle": 18,
-          "at": 1791761408383,
+          "at": 2107121408383,
           "via": "arrival"
         },
         {
           "id": "D3-06",
           "cycle": 18,
-          "at": 1791804893296,
+          "at": 2107164893296,
           "via": "stand"
         },
         {
           "id": "D3-07",
           "cycle": 19,
-          "at": 1791804893296,
+          "at": 2107164893296,
           "via": "warden"
         },
         {
           "id": "D4-01",
           "cycle": 19,
-          "at": 1791860710068,
+          "at": 2107220710068,
           "via": "arrival"
         },
         {
           "id": "D4-02",
           "cycle": 19,
-          "at": 1791876060000,
+          "at": 2107236060000,
           "via": "contract"
         },
         {
           "id": "D4-03",
           "cycle": 19,
-          "at": 1791895860000,
+          "at": 2107255860000,
           "via": "contract"
         },
         {
           "id": "D4-08",
           "cycle": 19,
-          "at": 1791982260000,
+          "at": 2107342260000,
           "via": "contract"
         },
         {
           "id": "D4-04",
           "cycle": 19,
-          "at": 1792004400000,
+          "at": 2107364400000,
           "via": "rank"
         },
         {
           "id": "D4-05",
           "cycle": 19,
-          "at": 1792058400000,
+          "at": 2107418400000,
           "via": "rank"
         },
         {
           "id": "D4-06",
           "cycle": 19,
-          "at": 1792530000000,
+          "at": 2107890000000,
           "via": "stand"
         },
         {
           "id": "D4-07",
           "cycle": 20,
-          "at": 1792530000000,
+          "at": 2107890000000,
           "via": "warden"
         },
         {
           "id": "D5-01",
           "cycle": 20,
-          "at": 1792530000000,
+          "at": 2107890000000,
           "via": "warden"
         },
         {
           "id": "D5-02",
           "cycle": 20,
-          "at": 1792567260000,
+          "at": 2107927260000,
           "via": "contract"
         },
         {
           "id": "D5-03",
           "cycle": 20,
-          "at": 1792617660000,
+          "at": 2107977660000,
           "via": "contract"
         },
         {
           "id": "D5-04",
           "cycle": 20,
-          "at": 1792652400000,
+          "at": 2108012400000,
           "via": "rank"
         },
         {
           "id": "D5-08",
           "cycle": 20,
-          "at": 1792664460000,
+          "at": 2108024460000,
           "via": "contract"
         },
         {
           "id": "D5-05",
           "cycle": 20,
-          "at": 1792684800000,
+          "at": 2108044800000,
           "via": "rank"
         }
       ],
@@ -7330,182 +7330,182 @@
         {
           "n": 28,
           "cycle": 7,
-          "at": 1789702894971
+          "at": 2105062894971
         },
         {
           "n": 8,
           "cycle": 8,
-          "at": 1789872240000
+          "at": 2105232240000
         },
         {
           "n": 13,
           "cycle": 8,
-          "at": 1789872240000
+          "at": 2105232240000
         },
         {
           "n": 18,
           "cycle": 8,
-          "at": 1789872240000
+          "at": 2105232240000
         },
         {
           "n": 23,
           "cycle": 8,
-          "at": 1789872240000
+          "at": 2105232240000
         },
         {
           "n": 39,
           "cycle": 8,
-          "at": 1789872240000
+          "at": 2105232240000
         },
         {
           "n": 40,
           "cycle": 8,
-          "at": 1789875846035
+          "at": 2105235846035
         },
         {
           "n": 9,
           "cycle": 8,
-          "at": 1789878928350
+          "at": 2105238928350
         },
         {
           "n": 10,
           "cycle": 8,
-          "at": 1789878928350
+          "at": 2105238928350
         },
         {
           "n": 11,
           "cycle": 8,
-          "at": 1789878928350
+          "at": 2105238928350
         },
         {
           "n": 12,
           "cycle": 8,
-          "at": 1789878928350
+          "at": 2105238928350
         },
         {
           "n": 14,
           "cycle": 8,
-          "at": 1789878928350
+          "at": 2105238928350
         },
         {
           "n": 15,
           "cycle": 8,
-          "at": 1789878928350
+          "at": 2105238928350
         },
         {
           "n": 16,
           "cycle": 9,
-          "at": 1790032800000
+          "at": 2105392800000
         },
         {
           "n": 35,
           "cycle": 9,
-          "at": 1790097212739
+          "at": 2105457212739
         },
         {
           "n": 17,
           "cycle": 9,
-          "at": 1790097212739
+          "at": 2105457212739
         },
         {
           "n": 19,
           "cycle": 11,
-          "at": 1790374800000
+          "at": 2105734800000
         },
         {
           "n": 20,
           "cycle": 12,
-          "at": 1790666286919
+          "at": 2106026286919
         },
         {
           "n": 30,
           "cycle": 18,
-          "at": 1791761408383
+          "at": 2107121408383
         },
         {
           "n": 32,
           "cycle": 18,
-          "at": 1791761408383
+          "at": 2107121408383
         },
         {
           "n": 33,
           "cycle": 18,
-          "at": 1791761408383
+          "at": 2107121408383
         },
         {
           "n": 36,
           "cycle": 18,
-          "at": 1791761408383
+          "at": 2107121408383
         },
         {
           "n": 37,
           "cycle": 18,
-          "at": 1791761408383
+          "at": 2107121408383
         },
         {
           "n": 21,
           "cycle": 19,
-          "at": 1791876060000
+          "at": 2107236060000
         },
         {
           "n": 22,
           "cycle": 19,
-          "at": 1791876060000
+          "at": 2107236060000
         },
         {
           "n": 24,
           "cycle": 19,
-          "at": 1791876060000
+          "at": 2107236060000
         },
         {
           "n": 25,
           "cycle": 19,
-          "at": 1791895860000
+          "at": 2107255860000
         },
         {
           "n": 26,
           "cycle": 19,
-          "at": 1791895860000
+          "at": 2107255860000
         },
         {
           "n": 27,
           "cycle": 19,
-          "at": 1791895860000
+          "at": 2107255860000
         },
         {
           "n": 31,
           "cycle": 19,
-          "at": 1791993124588
+          "at": 2107353124588
         },
         {
           "n": 4,
           "cycle": 20,
-          "at": 1792617660000
+          "at": 2107977660000
         },
         {
           "n": 5,
           "cycle": 20,
-          "at": 1792617660000
+          "at": 2107977660000
         },
         {
           "n": 6,
           "cycle": 20,
-          "at": 1792617660000
+          "at": 2107977660000
         },
         {
           "n": 7,
           "cycle": 20,
-          "at": 1792617660000
+          "at": 2107977660000
         },
         {
           "n": 29,
           "cycle": 20,
-          "at": 1792687320000
+          "at": 2108047320000
         },
         {
           "n": 38,
           "cycle": 20,
-          "at": 1792743840000
+          "at": 2108103840000
         }
       ],
       "ribbonshades": 16,
@@ -7527,97 +7527,97 @@
           "hunter": "halvar",
           "slot": 0,
           "cycle": 7,
-          "at": 1789702894971
+          "at": 2105062894971
         },
         {
           "hunter": "zora",
           "slot": 0,
           "cycle": 7,
-          "at": 1789702894971
+          "at": 2105062894971
         },
         {
           "hunter": "ostap",
           "slot": 0,
           "cycle": 7,
-          "at": 1789702894971
+          "at": 2105062894971
         },
         {
           "hunter": "vesna",
           "slot": 0,
           "cycle": 12,
-          "at": 1790656320000
+          "at": 2106016320000
         },
         {
           "hunter": "halvar",
           "slot": 1,
           "cycle": 14,
-          "at": 1791167846733
+          "at": 2106527846733
         },
         {
           "hunter": "zora",
           "slot": 1,
           "cycle": 14,
-          "at": 1791167850185
+          "at": 2106527850185
         },
         {
           "hunter": "herdis",
           "slot": 0,
           "cycle": 19,
-          "at": 1791974520000
+          "at": 2107334520000
         },
         {
           "hunter": "bjarna",
           "slot": 0,
           "cycle": 19,
-          "at": 1791982260000
+          "at": 2107342260000
         },
         {
           "hunter": "ostap",
           "slot": 1,
           "cycle": 19,
-          "at": 1791993124588
+          "at": 2107353124588
         },
         {
           "hunter": "radek",
           "slot": 0,
           "cycle": 19,
-          "at": 1792052640000
+          "at": 2107412640000
         },
         {
           "hunter": "vesna",
           "slot": 1,
           "cycle": 20,
-          "at": 1792664460000
+          "at": 2108024460000
         },
         {
           "hunter": "toma",
           "slot": 0,
           "cycle": 20,
-          "at": 1792687320000
+          "at": 2108047320000
         },
         {
           "hunter": "stanko",
           "slot": 0,
           "cycle": 20,
-          "at": 1792707840000
+          "at": 2108067840000
         },
         {
           "hunter": "bjarna",
           "slot": 1,
           "cycle": 20,
-          "at": 1792741320000
+          "at": 2108101320000
         },
         {
           "hunter": "herdis",
           "slot": 1,
           "cycle": 20,
-          "at": 1792741320000
+          "at": 2108101320000
         },
         {
           "hunter": "sigrun",
           "slot": 0,
           "cycle": 20,
-          "at": 1792743840000
+          "at": 2108103840000
         }
       ],
       "trust": {
@@ -7788,7 +7788,7 @@
       "runs": 5,
       "riftglass": 8,
       "allowance": 76.51504374999068,
-      "allowanceAt": 1792758600000,
+      "allowanceAt": 2108118600000,
       "sceneSeen": true,
       "unlitOpen": true,
       "shop": {
@@ -7839,57 +7839,57 @@
         {
           "id": "E-07",
           "cycle": 19,
-          "at": 1792076736711
+          "at": 2107436736711
         },
         {
           "id": "E-11",
           "cycle": 19,
-          "at": 1792076804489
+          "at": 2107436804489
         },
         {
           "id": "E-13",
           "cycle": 19,
-          "at": 1792076813195
+          "at": 2107436813195
         },
         {
           "id": "E-01",
           "cycle": 19,
-          "at": 1792076843899
+          "at": 2107436843899
         },
         {
           "id": "E-05",
           "cycle": 19,
-          "at": 1792076853778
+          "at": 2107436853778
         },
         {
           "id": "E-02",
           "cycle": 19,
-          "at": 1792076859902
+          "at": 2107436859902
         },
         {
           "id": "E-08",
           "cycle": 19,
-          "at": 1792077329274
+          "at": 2107437329274
         },
         {
           "id": "E-18",
           "cycle": 19,
-          "at": 1792077378997
+          "at": 2107437378997
         },
         {
           "id": "E-04",
           "cycle": 19,
-          "at": 1792077570115
+          "at": 2107437570115
         },
         {
           "id": "E-16",
           "cycle": 19,
-          "at": 1792103343672
+          "at": 2107463343672
         },
         {
           "id": "E-10",
           "cycle": 19,
-          "at": 1792103349172
+          "at": 2107463349172
         }
       ],
       "taken": {
@@ -7919,7 +7919,7 @@
       "sceneSeen": false,
       "clock": {
         "value": 258533500,
-        "high": 1792758600000
+        "high": 2108118600000
       },
       "tokens": {
         "count": 0,
