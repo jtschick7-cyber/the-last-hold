@@ -38,9 +38,17 @@ jobs:
         env:
           LH_CHANNEL: preview
 
-  e2e:
+  # D533: the browser tests run in four parallel shards (D537: tests are spread one by one; each worker
+  # still checks its own sweep findings strictly). Nothing about which tests run
+  # or how they pass changes.
+  e2e-shards:
+    name: e2e shard ${{ matrix.shard }} of 4
     runs-on: ubuntu-latest
-    timeout-minutes: 15 # D513: the browser tests take 9 to 10 minutes on a runner
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -48,12 +56,17 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # D537: a stalled download from the Ubuntu mirror was the cause of the hangs, so apt gives up on
+      # a slow download after 20 s and tries again (up to five times) instead of waiting for ever.
+      - name: Make apt fail fast on a stalled download
+        run: |
+          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "20";\nAcquire::https::Timeout "20";\n' | sudo tee /etc/apt/apt.conf.d/99-fail-fast
       # D527: this step hangs about one run in three, so it gets a time limit and up to three tries.
       - name: Install the test browsers
-        timeout-minutes: 5
+        timeout-minutes: 6
         run: |
           for try in 1 2 3; do
-            timeout 120 npx playwright install --with-deps chromium webkit && exit 0
+            timeout 90 npx playwright install --with-deps chromium webkit && exit 0
             echo "Browser install failed (try $try of 3)"
             # A hung try can leave apt-get holding the system lock, which fails every later try at once.
             sudo pkill -KILL -x apt-get || true
@@ -61,4 +74,17 @@ jobs:
             sleep 5
           done
           exit 1
-      - run: npm run e2e
+      - run: npm run e2e -- --shard=${{ matrix.shard }}/4 --fully-parallel
+
+  # The one name a branch rule can wait for: green only when all four shards are green.
+  e2e:
+    needs: e2e-shards
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - run: |
+          if [ "${{ needs.e2e-shards.result }}" != "success" ]; then
+            echo "::error::The e2e shards finished as ${{ needs.e2e-shards.result }}"
+            exit 1
+          fi
