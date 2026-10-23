@@ -38,9 +38,17 @@ jobs:
         env:
           LH_CHANNEL: preview
 
-  e2e:
+  # D533: the browser tests run in four parallel shards (each test file stays whole, because the
+  # tap, contrast and Text size sweeps add up their findings per file). Nothing about which tests run
+  # or how they pass changes.
+  e2e-shards:
+    name: e2e shard ${{ matrix.shard }} of 4
     runs-on: ubuntu-latest
-    timeout-minutes: 15 # D513: the browser tests take 9 to 10 minutes on a runner
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -61,4 +69,17 @@ jobs:
             sleep 5
           done
           exit 1
-      - run: npm run e2e
+      - run: npm run e2e -- --shard=${{ matrix.shard }}/4
+
+  # The one name a branch rule can wait for: green only when all four shards are green.
+  e2e:
+    needs: e2e-shards
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - run: |
+          if [ "${{ needs.e2e-shards.result }}" != "success" ]; then
+            echo "::error::The e2e shards finished as ${{ needs.e2e-shards.result }}"
+            exit 1
+          fi

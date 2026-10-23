@@ -1030,6 +1030,7 @@ A module under `src/platform/sound/` (or the repo's nearest equivalent; it is br
 
 - **A pure mapping:** a table from the 15 moments to the 7 sound ids (GDD §9.22), and a pure function `strongest(candidates)` that returns the winner in the fixed order `fanfare`, `nightfall`, `win`, `lose`, `build`, `launch`, `place`. Both are unit tested without any audio.
 - **The player.** Web Audio only: `fetch` the file, `decodeAudioData`, play with an `AudioBufferSourceNode`. **No `<audio>` elements.** One `AudioContext`, created (suspended) when Sound is On and resumed on a `click` or `touchend` (see 20.4). Decoded buffers are kept for the session.
+- **Silent switch:** before the audio context exists, the page sets `navigator.audioSession.type` to `ambient` where the browser has it, so the phone's silent switch applies (D529, D531).
 - **With Sound Off:** the page creates no context and fetches and decodes nothing (the service worker still precaches the files at install; they count in the 600 KB). Turning Sound On creates and resumes the context in the same tap (the tap on the switch), then fetches and decodes the files.
 - **The 150 ms hold** (owner's choice) is a UI timing constant in this module, not a `balance.ts` constant (D520 (5) (b)). Each requested sound is held 150 ms; the strongest of those requested inside the hold plays and the others are dropped. Tests drive it with a fake clock.
 - **Failure is silence:** a file that fails to fetch or decode plays nothing, shows nothing and does not throw. A single failure never stops the other sounds.
