@@ -496,4 +496,4 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **v1.2:** pull request #19 merged to `main` (merge commit `0a41df8`); the owner tagged `v1.2.0`. D532 to D534 decided by the owner.
 - **e2e split (D533), first run on branch `ci/e2e-shards`:** shard 1 took 94 s of tests and shard 3 193 s. Shards 2 and 4 never reached the tests: the browser install hung. **Cause found in my own D527 numbers:** three tries of 120 s do not fit in a 5-minute step. Fixed (D535, Proposed): 90 s per try, 6 minutes for the step. Not yet known: the real time of the shard holding the tap sweep (shard 2).
 - **Risk to watch:** four shards mean four chances for the install to hang.
-- **Open:** the Benchmarks job (`bench.yml`) hung in the same install and has no retry; asking the owner whether to add the same one. The bench "odds" timing test failed once at 659 ms against 600 ms on a slow runner (not related to sound).
+- **Benchmarks job (`bench.yml`)** hung in the same install and had no retry; the owner said yes, so it now has the same one (D536). The bench "odds" timing test failed once at 659 ms against 600 ms on a slow runner (not related to sound).

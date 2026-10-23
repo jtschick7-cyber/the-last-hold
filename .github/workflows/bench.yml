@@ -19,5 +19,17 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      # D536: the same time limit and three tries as the e2e shards (D527, D535); this step hangs sometimes.
+      - name: Install the test browser
+        timeout-minutes: 6
+        run: |
+          for try in 1 2 3; do
+            timeout 90 npx playwright install --with-deps chromium && exit 0
+            echo "Browser install failed (try $try of 3)"
+            # A hung try can leave apt-get holding the system lock, which fails every later try at once.
+            sudo pkill -KILL -x apt-get || true
+            sudo pkill -KILL -x dpkg || true
+            sleep 5
+          done
+          exit 1
       - run: npm run bench
