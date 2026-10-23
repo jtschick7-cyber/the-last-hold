@@ -390,3 +390,19 @@ describe('debug layout commands (TL.4, N4)', () => {
     expect(s.meta.debugUsed).toBe(false);
   });
 });
+
+describe('the defense rows are kept for defenses (owner, 2026-10-23)', () => {
+  it('a full Bastion fill by auto-placement puts no ordinary piece on row 0, row 1 or the wings', () => {
+    const s = createNewGame('r', 0);
+    s.cycle.age = 'bastion';
+    for (const id of BUILDING_IDS) s.buildings[id] = 99;
+    s.layout.placed = { 'hearth-hall': { x: 3, y: 3 } };
+    autoPlaceUnlocked(s);
+    expect(buildHoldGridView(s).tray).toEqual([]);
+    for (const id of HOLD_PIECE_IDS) {
+      const c = must(s, id);
+      const defense = id.startsWith('wall-') || id.startsWith('watchtower-');
+      if (!defense) expect(c.y >= 2 && !(c.y === 2 && (c.x === 0 || c.x === 7)), id).toBe(true);
+    }
+  });
+});

@@ -40,9 +40,12 @@ const tileOrder = (state: GameState, id: HoldPieceId): GridCoord[] => {
   const bounds = clearingBounds(state.cycle.age);
   if (id.startsWith('wall-') || id.startsWith('watchtower-'))
     return DEFENSE_TILE_ORDER.filter((t) => inClearing(bounds, t));
+  // The defense rows are kept for defenses (the owner, 2026-10-23): other pieces never take them by themselves.
+  const defenseRows = new Set(DEFENSE_TILE_ORDER.map(key));
   const tiles: GridCoord[] = [];
   for (let y = 0; y < GRID_SIZE; y++)
-    for (let x = 0; x < GRID_SIZE; x++) if (inClearing(bounds, { x, y })) tiles.push({ x, y });
+    for (let x = 0; x < GRID_SIZE; x++)
+      if (inClearing(bounds, { x, y }) && !defenseRows.has(key({ x, y }))) tiles.push({ x, y });
   const dist = (t: GridCoord): number =>
     Math.abs(t.x - HOLD_CENTER.x) + Math.abs(t.y - HOLD_CENTER.y);
   return tiles.sort((a, b) => dist(a) - dist(b) || a.y - b.y || a.x - b.x);
