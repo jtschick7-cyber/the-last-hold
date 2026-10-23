@@ -88,7 +88,7 @@ const drawMill = (t: Tier): Canvas => {
     ] as const)
       for (let k = 2; k <= 9; k++) {
         c.set(cx + dx * k, cy + dy * k, k > 5 ? C.bone : C.brown);
-        c.set(cx + dx * k + dx, cy + dy * k, k > 5 ? C.cream : C.brownDark);
+        if (k > 5) c.set(cx + dx * k + dx, cy + dy * k, C.cream);
       }
   } else
     for (const [dx, dy] of [
