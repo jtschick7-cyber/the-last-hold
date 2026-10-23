@@ -346,3 +346,47 @@ describe('decorative (S11)', () => {
     expect(without(s)).toEqual(rest);
   });
 });
+
+describe('debug layout commands (TL.4, N4)', () => {
+  it('fill Bastion shows every piece at its top look, all placed, and sets debugUsed', () => {
+    const s = createNewGame('d', 0);
+    expect(run(s, { type: 'debug.layoutFillBastion' }).ok).toBe(true);
+    expect(s.cycle.age).toBe('bastion');
+    expect(s.meta.debugUsed).toBe(true);
+    const v = buildHoldGridView(s);
+    expect(v.activeCount).toBe(40);
+    expect(v.tray).toEqual([]);
+    expect(v.ghosts).toEqual([]);
+    expect(v.active.filter((p) => p.mask === null && p.tier === 3).length).toBeGreaterThan(10);
+  });
+
+  it('fill Bastion never lowers a building and lays out the canonical arrangement', () => {
+    const s = createNewGame('d', 0);
+    s.buildings.cottage = 40;
+    s.layout.placed.mill = { x: 6, y: 6 };
+    run(s, { type: 'debug.layoutFillBastion' });
+    expect(s.buildings.cottage).toBe(40);
+    expect(s.layout.placed).toEqual(CANONICAL_LAYOUT);
+  });
+
+  it('debug auto-arrange and clear do what the player commands do, and set debugUsed', () => {
+    const s = full();
+    run(s, { type: 'layout.setShowGhosts', showGhosts: true });
+    expect(s.meta.debugUsed).toBe(false);
+    expect(run(s, { type: 'debug.layoutClear' }).ok).toBe(true);
+    expect(Object.keys(s.layout.placed)).toEqual(['hearth-hall']);
+    expect(s.meta.debugUsed).toBe(true);
+    const t = full();
+    place(t, 'mill', 6, 6);
+    expect(run(t, { type: 'debug.layoutAutoArrange' }).ok).toBe(true);
+    expect(t.layout.placed).toEqual(CANONICAL_LAYOUT);
+    expect(t.meta.debugUsed).toBe(true);
+  });
+
+  it('the player commands do not set debugUsed', () => {
+    const s = full();
+    run(s, { type: 'layout.autoArrange' });
+    run(s, { type: 'layout.clear' });
+    expect(s.meta.debugUsed).toBe(false);
+  });
+});

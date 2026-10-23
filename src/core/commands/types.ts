@@ -178,7 +178,11 @@ export type Command =
   | { type: 'debug.addToken' }
   | { type: 'debug.fillBank' }
   | { type: 'debug.endRests' }
-  | { type: 'debug.unlockAge'; age: AgeId };
+  | { type: 'debug.unlockAge'; age: AgeId }
+  /** Plan TL.4: layout debug tools (set debugUsed). */
+  | { type: 'debug.layoutAutoArrange' }
+  | { type: 'debug.layoutClear' }
+  | { type: 'debug.layoutFillBastion' };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };
 

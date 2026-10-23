@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.3 (layout commands, blueprint protection, auto-placement, Long Night).
-- **Next:** TL.4 (debug layout commands).
+- **Last task:** TL.4 (debug layout commands).
+- **Next:** TL.5 (see the plan).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -257,3 +257,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Two of this milestone's own tests changed** (not in D507's list; they asserted the old new-game state, which you told me to change): `v12-migration.test.ts` (new game now has the Farm and Camp placed) and `layout.test.ts` (grid view of a new game). Nothing loosened.
 - **Docs note:** GDD M3 says a new game places "the Hearth Hall only"; I followed your instruction that the Farm and Camp end up placed. The GDD is untouched.
 - **Next:** TL.4. **Skipped:** nothing.
+
+## 2026-10-23 — v1.1 docs commit for TL.3, and TL.4 debug layout commands
+- **Docs applied on your approval:** GDD §5.1.5 rule 6, technical design §19.2 and §19.3 (three clarifications), and D509 (Proposed). The draft file is marked applied.
+- **TL.4 built:** three debug commands in the debug panel under the Rank buttons: "Fill Bastion (layout)", "Auto-arrange layout", "Clear layout". Each sets `debugUsed`; the player's own layout commands do not. They are only wired to the debug sheet.
+- **Fill Bastion:** takes the hold to Bastion, raises each building to the figure that shows all its pieces in their top look (never past its copy limit or Bastion level cap, never lowering one), then lays out the canonical arrangement: all 40 pieces on the grid, tray and ghosts empty. It replaces any saved layout.
+- **Seen, for you to decide (not changed):** auto-placement puts ordinary buildings on the free tiles nearest the middle, and that can reach row 1 once the Keep opens. Then walls and towers that arrive later find row 1 taken and wait in the tray. Auto-arrange fixes it. A possible rule: keep the defense rows for defenses. That is a GDD change, so it is yours.
+- **Tests:** four new in `tests/layout/commands.test.ts`; `debug-layout.ts` joined the non-coupling list. `npm run check` green. No old test edited. Nothing skipped.

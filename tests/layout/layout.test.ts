@@ -251,6 +251,7 @@ describe('the grid view', () => {
 describe('the layout is read by no rule (S11)', () => {
   const ALLOWED = new Set([
     'commands/apply.ts',
+    'commands/debug-layout.ts',
     'commands/layout.ts',
     'commands/types.ts',
     'long-night/reset.ts',

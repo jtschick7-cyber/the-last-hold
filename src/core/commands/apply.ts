@@ -10,6 +10,7 @@ import {
   debugOrdersReset,
   debugOrdersSetLevel,
 } from './debug-orders';
+import { debugLayoutAutoArrange, debugLayoutClear, debugLayoutFillBastion } from './debug-layout';
 import { debugAddToken, debugEndRests, debugFillBank } from './debug-events';
 import { bossAttempt, seeEventsScene } from './boss';
 import { addStar, rankUp } from './hunter-depth';
@@ -235,6 +236,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return debugReadyRanks(state);
     case 'debug.runArrival':
       return runArrival(state);
+    case 'debug.layoutAutoArrange':
+      return debugLayoutAutoArrange(state);
+    case 'debug.layoutClear':
+      return debugLayoutClear(state);
+    case 'debug.layoutFillBastion':
+      return debugLayoutFillBastion(state);
     case 'debug.unlockAge':
       return unlockAge(state, cmd.age);
     case 'debug.addArvid':
