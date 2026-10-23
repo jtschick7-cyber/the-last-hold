@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.12 (smoke test and preview build).
-- **Next:** TL.13 (read the plan; likely the milestone hand-off).
+- **Last task:** TL.13 (hand-off): all TL tasks done; the pull request is open.
+- **Next:** the owner's playtest. Only after "playtest passed": `sim:accept`, merge, tag `v1.1.0`, statuses.
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -366,3 +366,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Owner approved** the test-loop edit. The old smoke test "seat an Order…" now also presses the sheet's Close button (found by its label) in its loop; nothing else in it changed. **All 6 smoke tests pass** on the production build.
 - **Still dated fixtures:** `v9.json` (12:30 today, already past) and `v12-played.json` (2026-10-26) will trip tests that do not dismiss the away sheet; worth moving their dates far ahead at some point (fixtures are protected, so your call).
 - **Preview:** Deploy succeeded on the latest push; I cannot open it from here, so please open the preview once and load your v11 save.
+
+## 2026-10-23 — v1.1 TL.13: hand-off
+- **CI:** run 501 is green (check and e2e, including WebKit determinism). Owner approved two CI edits: `check` warns at 90 s and fails at 120 s (D512); the e2e job's time limit is 15 minutes (D513). Only `.github/workflows/ci.yml` changed.
+- **Owner decisions this session:** 40 pieces on the sheet (D511); the border bell stays on Watchtower 1's tile; test edits: the tap sweep's scroll-box exemption and the Order smoke test's loop (it now closes the away sheet and waits longer; its failure message names the open sheets).
+- **Pull request opened** from `milestone/v1.1` with the template and the playtest checklist. Rolling back to v1.0 means importing `v11-owner.json`.
+- **Watch in CI:** the benchmark job runs for the first time on this pull request; this container's CPU failed its old rows (D445), so a red there may be the runner.
+- **Not done, by decision:** GDD, D501 and the plan still say 39 pieces (your gate); `sim:accept`, merge and tag wait for the playtest; dated test saves (`v9.json`, `v12-played.json`) are left alone.
