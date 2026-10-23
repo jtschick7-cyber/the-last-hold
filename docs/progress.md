@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.9 (the seven real sounds shipped; waiting for the owner to hear them on the preview).
-- **Next:** SF.10 (precache and offline checks, decode test, smoke scenario).
+- **Last task:** SF.10 (sounds cached offline, decode test, smoke scenario). Owner approved the seven sounds.
+- **Next:** SF.11 (Settings screen in the polish sweeps).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -453,3 +453,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **`npm run check` green, but 86 s and 95 s on two runs** (warns at 90 s); more files and tests were added. Watching; I will report the cause at SF.12 if it stays.
 - **Not yet precached:** the service worker list still shows 309 entries (the mp3 files are not in it); that is SF.10.
 - **Owner task:** hear the seven on the preview (More, Debug, with `?debug`, "Play sound") and approve, or say which to change.
+
+## 2026-10-23 — v1.2 SF.10 offline and decoding
+- **Owner approved the seven sounds** (heard on the preview).
+- **Precache:** the mp3 pattern was missing. Added it, and `audition/**` is ignored, so the live service worker now lists 316 files (309 + the seven sounds) and the preview's 317 holds no candidate clips. The preview's scope rule against the live app is unchanged.
+- **Offline smoke (D525 (3)):** while offline after a reload, one sound is fetched from the cache: status 200 and the exact byte count from the audio list. Passes.
+- **Decode test** (`tests/e2e/sound-decode.spec.ts`, Chromium): all seven decode to non-empty mono buffers. **WebKit not tested:** the WebKit job here only runs the determinism scenario and I cannot confirm headless WebKit decodes MP3, so iPhone playback stays your Q55 check.
+- **One scenario added to `smoke.spec.ts`** (D525 (7)): Sound On, one Cottage, the fake engine records `build`. Passes.
+- **Old tests edited:** `smoke.spec.ts` only (the offline fetch and the new scenario, both D525).
+- Browser tests ran locally in Chromium (smoke 5 tests plus the decode test, all passed); CI will run the rest.

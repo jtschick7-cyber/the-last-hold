@@ -129,7 +129,10 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,woff2,webmanifest}'],
+        // SF.10: the seven sounds (assets/audio/*.mp3) are cached for offline play; the preview's
+        // audition candidates are listening copies and are not (D524 (2)).
+        globPatterns: ['**/*.{js,css,html,png,svg,woff2,webmanifest,mp3}'],
+        globIgnores: ['audition/**'],
         navigateFallback: 'index.html',
         // The live app must never serve or cache preview pages (technical design §11.3).
         navigateFallbackDenylist: channel === 'live' ? [/\/preview\//] : [],
