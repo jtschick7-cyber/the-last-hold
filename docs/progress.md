@@ -280,3 +280,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Tests:** every file equals what its drawer draws, is in the palette and at its size; 16 distinct wall masks; tiers never shrink; the door and window overlays fit every Rank; v1.0 hashes still identical. `npm run check` green.
 - **First-pass art, not yet seen by you.** I looked at preview sheets; the weakest are the Sawpit and the Tier I Mill. All of it goes on the contact sheet at TL.5c for your Keep or Redraw marks.
 - **Nothing skipped.**
+
+## 2026-10-23 — v1.1 TL.5c: plots, cosmetics and the art stop
+- **Drawn (23 pictures):** 15 plot looks (Cottage, Farm, Woodcutter's Camp, Mine, Herb Garden × single, pair, cluster), 2 Silver Seam looks, the grid versions of Gatehouse banners, Watchtower bell (on the tower, and on a border post before it stands), Wall lanterns (on a wall, and along the Fell Breach before any wall stands), and one frost overlay for walls. **All 83 grid pictures now exist.**
+- **For your review:** 5 numbered sheets (numbers 1–83, their own numbering; both theme backgrounds; overlays shown over what they sit on) and two whole-grid mock-ups (a new hold at Hamlet, a full one at Bastion), in `docs/flesh-out/v1.1/contact-sheets/`. The marks table is `docs/flesh-out/v1.1/art-marks.md`. Mark Keep or Redraw; empty means Keep. At most 12 Redraws per session (D475).
+- **Size (N5):** the 83 pictures are 44 KB, about 36 KB zipped. The whole production build zips to about 561 KB against the 600 KB budget, so about 39 KB of room is left for the grid screens' code.
+- **Tool:** `tools/contact-sheet-layout.ts`, run through `contact-sheet.ts --layout-sheets`. It writes only v1.1 files; v1.0's hashes and numbers are untouched.
+- **Stopped for the owner.** No old test edited. Nothing skipped.

@@ -139,6 +139,17 @@ export const GRID_TIERED = [
   'lodge',
   'alchemist',
 ] as const;
+export const GRID_PLOTS = ['cottage', 'farm', 'woodcutter', 'mine', 'herb-garden'] as const;
+export const GRID_COSMETIC_IDS = [
+  'banners',
+  'bell-tower',
+  'bell-border',
+  'lanterns-wall',
+  'lanterns-border',
+] as const;
+export const gridCosmeticId = (c: (typeof GRID_COSMETIC_IDS)[number]): string =>
+  `grid.cosmetic.${c}`;
+export const GRID_WALL_FROST_ID = 'grid.frost.wall';
 export const gridStripId = (e: string): string => `grid.strip.${e}`;
 export const cosmeticId = (c: CosmeticId, age: AgeId): string => `scene.cosmetic.${c}.${age}`;
 
@@ -600,6 +611,47 @@ export const assets: readonly AssetEntry[] = [
     'grid/hearth-hall-lamp.png',
     GRID_GENERATOR,
     'scene',
+  ),
+  // v1.1 TL.5c: count-building plots and the grid's cosmetics (tools/draw-grid-plots.ts).
+  ...GRID_PLOTS.flatMap((b) =>
+    [1, 2, 3].map((d) =>
+      generated(
+        gridTierId(b, d),
+        [32, 32],
+        `${titled(b)} plot, density ${d}`,
+        `grid/${b}-${d}.png`,
+        GRID_GENERATOR,
+        'building',
+      ),
+    ),
+  ),
+  ...[1, 2].map((l) =>
+    generated(
+      gridTierId('silver-seam', l),
+      [32, 32],
+      `Silver Seam ${l}`,
+      `grid/silver-seam-${l}.png`,
+      GRID_GENERATOR,
+      'building',
+    ),
+  ),
+  ...GRID_COSMETIC_IDS.map((c) =>
+    generated(
+      gridCosmeticId(c),
+      c === 'banners' || c === 'lanterns-border' ? [256, 16] : [32, 32],
+      `${titled(c)} on the grid`,
+      `grid/cosmetic-${c}.png`,
+      GRID_GENERATOR,
+      c === 'banners' || c === 'lanterns-border' ? 'scene' : 'building',
+    ),
+  ),
+  generated(
+    GRID_WALL_FROST_ID,
+    [32, 32],
+    'Frost on a wall segment',
+    'grid/frost-wall.png',
+    GRID_GENERATOR,
+    'building',
   ),
   ...HOLD_LOOKS.flatMap((l) =>
     AGE_IDS.map((a) =>

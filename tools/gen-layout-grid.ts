@@ -2,6 +2,19 @@
 // two border strips. The drawing lives in draw-layout-grid so tests can redraw and compare.
 // Run: npx vite-node tools/gen-layout-grid.ts
 import { mkdirSync, writeFileSync } from 'node:fs';
+import {
+  DENSITIES,
+  drawBanners,
+  drawBorderBell,
+  drawBorderLanterns,
+  drawPlot,
+  drawSeam,
+  drawTowerBell,
+  drawWallFrost,
+  drawWallLantern,
+  PLOT_BUILDINGS,
+  SEAM_LOOKS,
+} from './draw-grid-plots';
 import { drawWall, drawWatchtower, WALL_MASKS } from './draw-grid-defense';
 import { drawLevelBuilding, drawTrophyHall, LEVEL_BUILDINGS, TIERS } from './draw-grid-buildings';
 import { drawHall, drawHallDoor, drawHallFrost, drawHallLamp, HALL_RANKS } from './draw-grid-hall';
@@ -44,3 +57,14 @@ for (const a of HALL_RANKS) {
 }
 write('grid/hearth-hall-door.png', drawHallDoor().toPng(64));
 write('grid/hearth-hall-lamp.png', drawHallLamp().toPng(64));
+
+// TL.5c: count-building plots and the grid cosmetics.
+for (const b of PLOT_BUILDINGS)
+  for (const d of DENSITIES) write(`grid/${b}-${d}.png`, drawPlot(b, d).toPng());
+for (const l of SEAM_LOOKS) write(`grid/silver-seam-${l}.png`, drawSeam(l).toPng());
+write('grid/cosmetic-banners.png', drawBanners().toPng(16));
+write('grid/cosmetic-bell-tower.png', drawTowerBell().toPng());
+write('grid/cosmetic-bell-border.png', drawBorderBell().toPng());
+write('grid/cosmetic-lanterns-wall.png', drawWallLantern().toPng());
+write('grid/cosmetic-lanterns-border.png', drawBorderLanterns().toPng(16));
+write('grid/frost-wall.png', drawWallFrost().toPng());

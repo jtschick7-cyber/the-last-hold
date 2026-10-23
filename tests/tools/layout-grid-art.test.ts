@@ -6,7 +6,10 @@ import { describe, expect, it } from 'vitest';
 import {
   assetById,
   forestTileId,
+  GRID_COSMETIC_IDS,
   GRID_HALL_DOOR_ID,
+  GRID_WALL_FROST_ID,
+  gridCosmeticId,
   GRID_HALL_LAMP_ID,
   GRID_TROPHY_HALL_ID,
   GRID_WATCHTOWER_ID,
@@ -33,6 +36,19 @@ import {
   drawHallLamp,
   HALL_RANKS,
 } from '../../tools/draw-grid-hall';
+import {
+  DENSITIES,
+  drawBanners,
+  drawBorderBell,
+  drawBorderLanterns,
+  drawPlot,
+  drawSeam,
+  drawTowerBell,
+  drawWallFrost,
+  drawWallLantern,
+  PLOT_BUILDINGS,
+  SEAM_LOOKS,
+} from '../../tools/draw-grid-plots';
 import { currentHashes } from '../../tools/contact-sheet-data';
 import {
   drawForest,
@@ -134,6 +150,57 @@ const cases = [
     png: drawHallLamp().toPng(64),
     opaque: false,
   },
+  // TL.5c
+  ...PLOT_BUILDINGS.flatMap((b) =>
+    DENSITIES.map((d) => ({
+      id: gridTierId(b, d),
+      file: `grid/${b}-${d}.png`,
+      png: drawPlot(b, d).toPng(),
+      opaque: false,
+    })),
+  ),
+  ...SEAM_LOOKS.map((l) => ({
+    id: gridTierId('silver-seam', l),
+    file: `grid/silver-seam-${l}.png`,
+    png: drawSeam(l).toPng(),
+    opaque: false,
+  })),
+  {
+    id: gridCosmeticId('banners'),
+    file: 'grid/cosmetic-banners.png',
+    png: drawBanners().toPng(16),
+    opaque: false,
+  },
+  {
+    id: gridCosmeticId('bell-tower'),
+    file: 'grid/cosmetic-bell-tower.png',
+    png: drawTowerBell().toPng(),
+    opaque: false,
+  },
+  {
+    id: gridCosmeticId('bell-border'),
+    file: 'grid/cosmetic-bell-border.png',
+    png: drawBorderBell().toPng(),
+    opaque: false,
+  },
+  {
+    id: gridCosmeticId('lanterns-wall'),
+    file: 'grid/cosmetic-lanterns-wall.png',
+    png: drawWallLantern().toPng(),
+    opaque: false,
+  },
+  {
+    id: gridCosmeticId('lanterns-border'),
+    file: 'grid/cosmetic-lanterns-border.png',
+    png: drawBorderLanterns().toPng(16),
+    opaque: false,
+  },
+  {
+    id: GRID_WALL_FROST_ID,
+    file: 'grid/frost-wall.png',
+    png: drawWallFrost().toPng(),
+    opaque: false,
+  },
 ];
 
 describe('the grid ground art (TL.5a)', () => {
@@ -203,6 +270,20 @@ describe('the pieces of the grid (TL.5b)', () => {
         drawHallFrost(a).px.some((p) => p !== null),
         a,
       ).toBe(true);
+  });
+});
+
+describe('plots and cosmetics (TL.5c)', () => {
+  it('shows three densities per plot and two Silver Seam looks, all different', () => {
+    for (const b of PLOT_BUILDINGS)
+      expect(new Set(DENSITIES.map((d) => drawPlot(b, d).px.join())).size, b).toBe(3);
+    expect(drawSeam(1).px).not.toEqual(drawSeam(2).px);
+  });
+
+  it('has a manifest row for each of the 83 pieces of the grid art (11 + 49 + 23)', () => {
+    const grid = [...assetById.keys()].filter((id) => id.startsWith('grid.'));
+    expect(grid).toHaveLength(83);
+    for (const c of GRID_COSMETIC_IDS) expect(assetById.has(gridCosmeticId(c)), c).toBe(true);
   });
 });
 
