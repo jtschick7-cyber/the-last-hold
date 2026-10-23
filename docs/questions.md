@@ -213,24 +213,24 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 
 ## v1.2 questions *(from the v1.2 flesh-out, 2026-10-23)*
 
-### Q53 — Which clips make the seven sounds? *(opened 2026-10-23; blocks SF.9)*
+### Q53 — Which clips make the seven sounds? *(opened 2026-10-23; answered 2026-10-23)*
 - **Context:** Claude cannot hear. The sounds are picked by ear (D524). SF.4 builds an audition page (preview build only) with about 5 candidate clips per sound from the four Kenney packs (Interface Sounds, Impact Sounds, RPG Audio, Music Jingles).
 - **Question:** for each of Build, Launch, Place, Win, Lose, Fanfare and Nightfall, which candidate do you pick, or "none of these"?
 - **Options:** (a) pick from the candidates (recommended); (b) "none of these" for a slot, then Claude Code offers a second round of about 5 from the same packs; (c) allow one CC0 clip from another site for that slot, each source separately approved (D524 (1)).
 - **Recommendation:** (a). Plan about 15 minutes of listening.
 - **Blocks:** SF.9 (converting and shipping). SF.5–SF.8 do not wait for it.
-- **Answer (owner):** *(pending)*
+- **Answer (owner, 2026-10-23):** (a). Picks: Build 2, Launch 10, Place 13, Win 18, Lose 21, Fanfare 28, Nightfall 31 (recorded in `docs/flesh-out/v1.2/sound-marks.md`). The owner then heard the seven real files on the preview and approved them.
 
-### Q54 — Will the picked sounds fit under 600 KB with the new code? *(opened 2026-10-23; resolved in SF.9)*
+### Q54 — Will the picked sounds fit under 600 KB with the new code? *(opened 2026-10-23; resolved 2026-10-23 in SF.9)*
 - **Context:** v1.1 measured 582,081 bytes (568 KB). The row is 614,400 bytes, so 32,319 bytes (about 31.6 KB) are left for the sound files **and** the new sound code (estimated 3–6 KB gzipped; not measured). The sound files are capped at 30 KB (D523).
 - **Question (asked only if the picks do not fit):** SF.9 measures the build without sounds, computes the budget (`614,400 − that − 1,024`, at most 30 KB) and converts the picks. If they do not fit: (a) use fewer or shorter sounds (recommended); (b) pick shorter candidates for the longest slots; (c) propose a new measured size row for a later decision (not in v1.2). **The row is never changed silently.**
-- **Status:** **Open until SF.9.** Claude Code writes the numbers in the progress entry.
+- **Status:** **Resolved in SF.9: they fit.** Build without sounds 583,076 bytes gzipped; budget 30,300 bytes; the seven files total 29,150 bytes; the production build with sounds is 610,508 bytes against the row of 614,400 (about 3.9 KB left). Numbers are in the SF.9 and SF.12 progress entries. The row was not changed.
 
-### Q55 — Does Safari on your iPhone decode and play the files? *(opened 2026-10-23; answered at the playtest)*
+### Q55 — Does Safari on your iPhone decode and play the files? *(opened 2026-10-23; answered at the playtest 2026-10-23)*
 - **Context:** Web Audio on iPhone needs a tap to start, follows the silent switch, and can stop after a call or a lock (D522 (3)). Headless tests cannot prove the real phone's behaviour. CI's WebKit may not decode MP3 (SF.10 says so if it cannot).
 - **Question:** at the playtest, do all seven sounds play on your iPhone (live volume, silent switch respected, resume after leaving the app)?
 - **Options:** (a) yes, all good; (b) one or more fail: Claude Code is told which and what happened, and the fix is a follow-up task (for example another file format for that device) with the owner's yes.
-- **Status:** **Open until the playtest.**
+- **Status:** **Answered (owner, 2026-10-23): the playtest passed on the iPhone.** The sounds play, and the first build did not respect the silent switch; the fix (declare the audio ambient, D529, decided in D531) was confirmed working by the owner. Headless WebKit decoding was not tested in CI (left to the phone, SF.10).
 
 ### Q56 — The container may have no audio converter *(opened 2026-10-23; may block SF.4, which converts the audition candidates)*
 - **Context:** the files are converted to mono MP3 while authoring (D522 (2)). Claude Code's container may lack a converter (such as ffmpeg). The audition candidates must be converted to MP3 at SF.4 (the packs ship as OGG, which an iPhone may not play), so the question comes up there, not later.

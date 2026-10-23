@@ -8,7 +8,7 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D530), complete.
 - **Last task:** v1.2 milestone end (playtest passed, merged, tagged `v1.2.0`).
 - **Next:** the next milestone is v1.3 (outline only; it needs a flesh-out session first, plan §0.4).
-- **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
+- **Open questions:** none for v1.2 (Q53–Q56 answered; see `docs/questions.md`).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
