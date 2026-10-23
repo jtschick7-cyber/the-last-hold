@@ -41,6 +41,7 @@ const cases: [fixture: string, as: string, rule: string][] = [
   // Layer rules (technical design §4.2)
   ['core-imports-ui.ts', CORE, '@typescript-eslint/no-restricted-imports'],
   ['core-imports-platform.ts', CORE, '@typescript-eslint/no-restricted-imports'],
+  ['core-imports-sound.ts', CORE, '@typescript-eslint/no-restricted-imports'], // D525 (5)
   [
     'content-imports-core-value.ts',
     'src/content/fixture.ts',

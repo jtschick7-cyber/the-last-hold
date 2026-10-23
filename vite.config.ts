@@ -1,8 +1,17 @@
 import { execSync } from 'node:child_process';
-import { copyFileSync, readFileSync, readdirSync } from 'node:fs';
+import {
+  copyFileSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { candidateAudioFile, renderAuditionPage } from './tools/audition-page';
+import { parseSoundMarks } from './tools/sound-marks';
 
 // Technical design §11.3: the build channel decides the base path, the PWA's
 // name and scope, and (in src/platform/storage.ts) the storage namespace.
@@ -47,6 +56,33 @@ const previewIcons = {
   },
 };
 
+// D524 (2): the sound audition page and its converted candidates ship in the preview channel only.
+// They are written after the bundle and before the service worker is built; the live channel never
+// runs this and never contains them (a test checks the live build).
+const auditionPage = {
+  name: 'audition-page',
+  apply: 'build' as const,
+  writeBundle(options: { dir?: string }): void {
+    if (channel !== 'preview' || !options.dir) return;
+    const from = new URL('./art-src/audition/', import.meta.url);
+    const to = new URL('audition/', new URL(`file://${options.dir}/`));
+    mkdirSync(to, { recursive: true });
+    const sizes: Record<number, number> = {};
+    const marks = parseSoundMarks(
+      readFileSync(new URL('./docs/flesh-out/v1.2/sound-marks.md', import.meta.url), 'utf8'),
+    );
+    for (const c of marks.candidates) {
+      const file = candidateAudioFile(c.n);
+      copyFileSync(new URL(file, from), new URL(file, to));
+      sizes[c.n] = statSync(new URL(file, from)).size;
+    }
+    writeFileSync(
+      new URL('audition.html', new URL(`file://${options.dir}/`)),
+      renderAuditionPage(marks, sizes),
+    );
+  },
+};
+
 const appName = channel === 'preview' ? 'The Last Hold (Preview)' : 'The Last Hold';
 
 export default defineConfig({
@@ -57,6 +93,7 @@ export default defineConfig({
   plugins: [
     preact(),
     previewIcons,
+    auditionPage,
     {
       // iPhone uses the page title for the Home Screen name, so each channel
       // needs its own (plan v0.0 acceptance 3).
@@ -92,7 +129,10 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,woff2,webmanifest}'],
+        // SF.10: the seven sounds (assets/audio/*.mp3) are cached for offline play; the preview's
+        // audition candidates are listening copies and are not (D524 (2)).
+        globPatterns: ['**/*.{js,css,html,png,svg,woff2,webmanifest,mp3}'],
+        globIgnores: ['audition/**'],
         navigateFallback: 'index.html',
         // The live app must never serve or cache preview pages (technical design §11.3).
         navigateFallbackDenylist: channel === 'live' ? [/\/preview\//] : [],

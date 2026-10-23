@@ -1,7 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
+import { audio } from '../../src/content/audio';
 import { begin, closeOrdersScenes, onwardAll } from './helpers';
 import { clearScenes, fixture, load } from './layout-helpers';
+import { installSoundHook, played, soundOn } from './sound-helpers';
 
 // Plan T1.38 / technical design §14: the phone-sized smoke test on the real
 // production build. Load → buy a Cottage → reload → the purchase is still
@@ -38,6 +40,18 @@ test('buy a Cottage, reload, and reload again offline', async ({ page, context }
   await context.setOffline(true);
   await page.reload();
   await expect(cottageRow(page)).toContainText('×1');
+
+  // SF.10 (D525 (3)): a sound comes from the cache while offline, whole.
+  const sound = audio[0];
+  if (!sound) throw new Error('no sound in the audio list');
+  const cached = await page.evaluate(
+    async (path) => {
+      const r = await fetch(path);
+      return { status: r.status, bytes: (await r.arrayBuffer()).byteLength };
+    },
+    `${new URL('./', page.url()).pathname}assets/${sound.file}`,
+  );
+  expect(cached).toEqual({ status: 200, bytes: sound.bytes });
 
   // Plan TV.12 (a): still offline, the game takes commands and keeps their result across a reload.
   // Named commands: Buy Cottage, Buy Cottage, then (debug panel) +1K wood and Buy Cottage again.
@@ -339,5 +353,21 @@ test('the v11 owner save, Arrange Hold, Auto-arrange, Hold view, and an offline 
   const again = page.getByRole('dialog', { name: 'Arrange Hold' });
   await expect(again.locator(`[data-tile="${arranged}"]`)).toHaveAttribute('data-piece', 'mill');
   await context.setOffline(false);
+  expect(errors).toEqual([]);
+});
+
+// Plan SF.10 (D525 (7)): Sound On, one build, and the recording fake engine hears `build`.
+test('Sound On, buy one Cottage, and the fake engine records build', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await installSoundHook(page);
+  await page.goto('./');
+  await begin(page);
+  await soundOn(page);
+  await tab(page, 'Hold').click();
+  const row = cottageRow(page);
+  await row.getByRole('button', { name: 'Buy' }).click();
+  await expect(row).toContainText('×1');
+  await expect.poll(() => played(page)).toEqual(['build']);
   expect(errors).toEqual([]);
 });

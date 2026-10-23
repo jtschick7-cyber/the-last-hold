@@ -1,14 +1,22 @@
 import type { Settings } from '../../core/state/game-state';
-import { HOLD_VIEWS, TEXT_SIZES, type HoldView, type TextSize } from '../../platform/app-settings';
+import {
+  HOLD_VIEWS,
+  TEXT_SIZES,
+  type HoldView,
+  type SoundSetting,
+  type TextSize,
+} from '../../platform/app-settings';
 import {
   appSettings,
   dispatch,
   game,
   setBackupReminder,
   setHoldView,
+  setSound,
   setTextSize,
   version,
 } from '../app/runtime';
+import { SOUND_BUTTONS, SOUND_HELP, SOUND_LABEL } from '../../content/sound-text';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.10: theme, best-buy hint, rates per minute or hour, reduce motion.
@@ -103,6 +111,38 @@ const HoldViewChoice = () => {
   );
 };
 
+const SoundChoice = () => {
+  const current = appSettings.value.sound;
+  return (
+    <div class={styles.divider}>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+          {SOUND_LABEL}
+        </span>
+        <div class={styles.segmented} role="group" aria-label={SOUND_LABEL}>
+          {(
+            [
+              ['on', SOUND_BUTTONS.on],
+              ['off', SOUND_BUTTONS.off],
+            ] as [SoundSetting, string][]
+          ).map(([value, text]) => (
+            <button
+              type="button"
+              key={value}
+              class={current === value ? styles.segmentOn : styles.segment}
+              aria-pressed={current === value}
+              onClick={() => setSound(value)}
+            >
+              {text}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p class={`${styles.small} ${styles.dim}`}>{SOUND_HELP}</p>
+    </div>
+  );
+};
+
 const BackupReminderChoice = () => {
   const on = appSettings.value.backupReminder;
   return (
@@ -171,6 +211,7 @@ export const SettingsSheet = () => {
       />
       <TextSizeChoice />
       <HoldViewChoice />
+      <SoundChoice />
       <BackupReminderChoice />
     </div>
   );

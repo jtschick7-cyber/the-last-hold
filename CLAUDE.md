@@ -78,6 +78,9 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 - The UI never computes game rules.
 - In v1.1, `state.layout` is decorative only: no production rate, cost, Threat rate or fight calculation reads it (`rulesVersion` stays 5).
 - Write no player-facing strings for the layout beyond the table in GDD §9.21; if a screen needs one, ask.
+- Sound is UI-only: nothing in `src/core/` imports or reads the sound module or the `sound` setting (`rulesVersion` stays 5, save schema stays 12).
+- Sound is never the only signal, nothing plays while the app is hidden, and a sound that cannot play now is skipped, never queued.
+- Write no player-facing strings for sound beyond the table in GDD §9.22; if a screen needs one, ask.
 
 **Content and balance**
 - Content lives in `src/content/`. Shared numeric constants live in `src/content/balance.ts`, under their GDD §7 key, marked `tunable` or `locked`. Per-item numbers (hunter stats, monster stats, and the like) live in their content files (D44).

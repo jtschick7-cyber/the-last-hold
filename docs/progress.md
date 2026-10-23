@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
-- **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** v1.1 milestone end (playtest passed, `sim:accept` run, statuses set).
-- **Next:** merge pull request #18 and tag `v1.1.0` (waiting on the owner's go); then the v1.2 flesh-out.
-- **Open questions:** Q52 (piece counts in the docs are off by one; informational).
+- **Branch:** `main` (v1.2 merged, tag `v1.2.0`).
+- **Milestone:** v1.2 "Sounds of the Frontier" (D519–D530), complete.
+- **Last task:** v1.2 milestone end (playtest passed, merged, tagged `v1.2.0`).
+- **Next:** the next milestone is v1.3 (outline only; it needs a flesh-out session first, plan §0.4).
+- **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -380,3 +380,114 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Piece counts corrected** to 40 / 43 tiles / 21 open (D514, D515); the GDD, plan and technical design agree now.
 - **Still open for the owner:** the merge and the `v1.1.0` tag; D509 (Proposed) needs a yes or no.
 - **Seen, not mine:** `check` takes 94–99 s on GitHub (now warns at 90 s, fails at 120 s, D512); the e2e job's time limit is 15 minutes (D513).
+
+## 2026-10-23 — v1.2 docs commit
+- **Start checked:** `v1.1.0` is tagged and in `main` (pull request #18 merged); `sim/baseline.json` is the v0.11 one, unchanged. Branch `milestone/v1.2` made from `main` and pushed.
+- **Owner said yes** to the whole flesh-out, no exceptions: D528 added; D519–D527 now Decided. No old row edited.
+- **Applied:** GDD (12 edits), plan (6), technical design (7 incl. new §20), questions (Q52 closed, Q53–Q56 added), OUT-6 (no new names). Every Find matched exactly once. Summary moved to `docs/flesh-out/v1.2-summary.md`.
+- **CLAUDE.md:** the three sound rules added.
+- **Next:** SF.1.
+
+## 2026-10-23 — v1.2 SF.1 dated test saves
+- **Real dates (moved):** every number between 1.6e12 and 2.2e12 ms. In `v9.json`: 294 fields; in `v12-played.json`: 57. Same field names in both: `savedAt`, `meta.createdAt/lastSeen/clockHighWater`, `time`, `peasants.lastSettleAt`, `board.open[].arrivedAt`, `board.nextArrivalAt`, `queues` `doneAt`/`nextClueAt`, `garden.nextAt`, `running[]` `launchedAt`/`endsAt`/`contract.arrivedAt`, `log.recentFights[].at`, `cycles[]` start/rank/stand times, `story` times, `delve.allowanceAt`, `delve.echoes[].at` (v9 only), `events.clock.high`, `orders.opened.*.at`.
+- **Event clock (left alone):** `events.clock.value`, `events.tokens.at`, `orders.lastChange`. No rest or cooldown field holds a number in either file. Every field classed with certainty.
+- **Offset:** +315,360,000,000 ms (10 years of 365 days). Changed files: those two fixtures, plus the new `scripts/shift-fixture-dates.mjs` (`apply` and `verify`). `verify` loads the old files from tag `v1.1.0`, subtracts the offset, and proves the rest is identical: passes for both.
+- **Scan of all 27 fixtures:** only `v12-played.json` (2026-10-26) was dated in the future; `v9.json` (2026-10-23 12:30) had just passed. All others are dated on or before 2026-10-23 and cannot go stale.
+- `npm run check` green (3,322 tests; golden fights and recorded stands unchanged). The browser tests run in CI.
+
+## 2026-10-23 — v1.2 SF.2 CI browser-install retry
+- **Changed only the browser-install step in `.github/workflows/ci.yml`:** each try is cut off after 120 s, up to three tries, and the step itself has a 5-minute limit. No test or pass rule changed.
+- **Judged over the next CI runs, not proven in advance.** Results so far: none yet. I'll add them here as they come; your yes or no on D527 comes after several runs.
+
+## 2026-10-23 — v1.2 SF.3 packs note
+- **Written:** `art-src/packs/audio/PACKS-NEEDED.md` (four Kenney packs, CC0, zips, switch to `milestone/v1.2` first, the 25 MB case).
+- **Links not confirmed:** this container cannot open kenney.nl (the proxy refuses it). The links follow the v0.1 pattern and the note says so; please open each once.
+- **`.gitignore` changed (small, needed):** `art-src/packs/` was ignored whole, which would have kept your zips and this note out of git. Now only the contents other than `audio/` are ignored; I unpack into the ignored `art-src/packs/audio-unpacked/`.
+- **Waiting:** the owner uploads the zips. No sound task starts until then.
+
+## 2026-10-23 — v1.2 SF.4 audition candidates and page
+- **Candidates:** 35 clips, 5 per sound, chosen by name and length only (I cannot hear), from the four packs. Map: `docs/flesh-out/v1.2/sound-marks.md` (numbers 1–35, pack, file, slot). Converted to mono MP3 at 48 kbps, loudness evened, short fades, no tags, cut at each slot's limit; committed under `art-src/audition/` (133,533 bytes in all). Peaks stay below −2 dB.
+- **Audition page:** built into the **preview build only** (`audition.html` plus `audition/`). Each clip has a play button of 64 × 48 px or more, its length and size, and a Pick choice; the bottom shows the picks so far against the 30 KB cap and a "My picks" line to send me.
+- **Tests:** `tests/tools/audition.test.ts` (map, files, page, and a real **live build with no page and no candidate files, not in the precache list**); `tests/e2e/audition.spec.ts` (phone viewport: every button at least 44 px, all 35 decode in Chromium, page matches the map; passes here).
+- **New files:** `tools/sound-marks.ts`, `tools/audio-convert.ts`, `tools/make-audition.ts`, `tools/audition-page.ts`; `vite.config.ts` gained the preview-only plugin. Q56 resolved (container has ffmpeg).
+- **Note:** Vite prints a warning about extensionless imports in its config; harmless.
+- **Owner next:** open the preview's audition page, listen, and send one pick per sound (or "none of these"). The preview is built by the Deploy workflow from the latest pushed `milestone/*` branch; check the Deploy run is green.
+- **D527 first real test (CI run 525):** the browser install hung, my first retry did not help: the hung try left `apt-get` holding the system lock, so tries 2 and 3 failed at once. Fixed in the same step (after a failed try, stop any leftover `apt-get`/`dpkg`, wait 5 s). Still only that step in `ci.yml`. Results so far: runs 523, 524, 526 passed; 525 failed as above; the next runs will show whether the fix holds.
+
+## 2026-10-23 — v1.2 SF.5 the Sound setting
+- **Owner's picks (Q53 answered):** Build 2, Launch 10, Place 13, Win 18, Lose 21, Fanfare 28, Nightfall 31; recorded in `sound-marks.md` (28.5 KB on the page's count; the real budget comes at SF.9).
+- **Built:** `sound` (`on`/`off`, default Off, junk falls back to Off) in the settings key; Reset keeps it; a Sound row (On/Off buttons, help line) in Settings, using the three strings in `src/content/sound-text.ts`. No sound plays yet. Save schema and rules version untouched.
+- **Name difference (not a stop):** technical design §19.4 says `resetAppSettingsTimestamps`; the code's function is `afterReset`.
+- **Old-test edits (D525 (1)), nothing loosened:** `app-settings.test.ts`: the sample settings, the defaults and the Reset expectations now include `sound`; two tests added (parse, round-trip and failed write). New `tests/content/sound-text.test.ts` checks the strings against the GDD.
+- **Paste, Load and Restore** never touch the key (the existing "saving, backing up and loading leave the key untouched" test still passes).
+
+## 2026-10-23 — v1.2 SF.6 the sound module
+- **Built** in `src/platform/sound/`: `moments.ts` (the 15 moments → 7 sounds; strongest-wins order), `player.ts` (readiness, 150 ms hold, loading; outside things passed in), `browser.ts` (Web Audio, `fetch`, visibility, `click`/`touchend` resume, and the test hook `window.__lastholdSoundTest` whose fake replaces only the output). `src/ui/app/sound.ts` is where the UI asks; `setSound` and app start call it (the switch tap creates and resumes the audio).
+- **Rules covered by 18 unit tests with a fake clock:** all 15 moments; every pair's winner; the 150 ms hold; skip (never queue) when paused, interrupted, closed, hidden or hidden during the hold; Sound Off fetches and decodes nothing; a failed fetch or decode is silent; the first tap after a restart can still play its own sound.
+- **Non-coupling (D525 (5)):** new `tests/lint/sound-coupling.test.ts` (no core file mentions the module, the setting or the hook; no `sound` in the save state) and a planted-import case `core-imports-sound.ts` added to the guard-rail list.
+- **Not yet proven:** the browser side (`browser.ts`, the hook doing nothing unless set) is covered by the Playwright tests in SF.7. No file is shipped yet, so a real fetch 404s into silence until SF.9.
+- **Reading made:** a request is accepted while the context is paused only if the same tap is resuming it.
+
+## 2026-10-23 — v1.2 SF.7 wiring, part 1
+- **Where cues come from:** `src/ui/app/sound-cues.ts` maps a succeeded command, or a contract finishing in a live tick, to a moment. Nothing in `src/core/` changed. Contracts count only from the live tick (and the tap's own small tick); the return-from-away path never sounds.
+- **How each moment is reached in the tests:** Build / new building / bulk buy: new game with `?debug` and "+1K" buttons, Cottage ×10, Mine. Launch: the same game, Prepare then Send. Place: played v12 save, Arrange Hold (move, swap, tray item). Win and Lose: a save the core itself makes with one contract running (seed searched until it ends as asked), page clock set to the save's time, then a 13 h fast-forward = a live tick; the away case moves the clock without timers and fires the return event. Hunter rank-up: debug "Ready to rank up", then the hunter sheet. Hold Rank-up: v12 save edited to meet the Bastion's needs.
+- **Tests:** `src/ui/app/sound-cues.test.ts` (mapping and the silent list); `tests/e2e/sound.spec.ts` (12 tests, fake engine): Sound Off requests nothing; On loads the seven files in that tap; one sound per command (bulk buy once); two moments inside the hold give only the stronger; hidden, paused and interrupted skip and never replay; away is silent; the debug row plays each of the seven and leaves `debugUsed` false.
+- **Debug row:** "Play sound" with seven buttons (accessible names "Play build" and so on, so no old locator clashes).
+- **Not yet:** Delves, events, the Long Night (SF.8).
+
+## 2026-10-23 — v1.2 SF.8 wiring, part 2
+- **Wired (UI only, no core change):** a Delve fight is sounded when its playback ends or is skipped (cleared floor = Win, guardian = Fanfare, lost run = Lose); a Great Beast attempt or hunt when its playback ends, is skipped or the sheet is closed early (milestone or kill, or a Legendary hunter unlocked = Fanfare; one sound per attempt); the Long Night when "Go up to the walls" succeeds, i.e. when its sheet appears. Hunter rank-up was done in SF.7. Closing a Delve playback early is silent because that fight is not fought.
+- **How each is reached in the tests:** Delve: a Keep made by the core's own helper, strong party (six floors then the guardian: Win ×6, Fanfare) and frail party (Lose); the Fight log replay is silent. Beast kill: the owner's v8 save, migrated and edited so a kill is one hit away; both the "skip" and "close early" cases. Beast attempt with no milestone: owner save, silent. Unlock: owner save with every hunt on 99 points. Long Night: debug "Unlock Bastion", then the Last Stand; Start, the waves and reopening from the Hold card are silent.
+- **Not run as their own e2e:** a Great Beast **milestone without a kill** (mapping covered in `sound-cues.test.ts`; the kill case runs through the same code) and **Leave run** (silent: no cue is wired to it).
+- **Found, not mine:** closing the Fight log inside a Delve reopens the Delve sheet on its next stage (the old behaviour; nothing changed).
+- **Unit tests added:** `momentForAttempt`, `momentForFloor`, `stand.make` in `sound-cues.test.ts`.
+
+## 2026-10-23 — v1.2 SF.9 the seven real sounds
+- **Measured first:** production build without sounds, gzipped, summed per file at level 9: **583,076 bytes** (306 files). Sound budget = 614,400 − 583,076 − 1,024 = **30,300 bytes** (under the 30,720 cap).
+- **Converted** your seven picks from the original packs (`tools/make-sounds.ts`, using `convertClip`): build 2,194, launch 2,664, place 1,410, win 5,015, lose 3,448, fanfare 7,053, nightfall 7,366 = **29,150 bytes**. They fit.
+- **Re-measured:** production build with the sounds: **610,463 bytes**, 313 files (room left: 3,937). Candidates are not in the live build.
+- **Shipped:** `public/assets/audio/<id>.mp3`, the audio list `src/content/audio.ts` (id, file, bytes, pack, URL, CC0, credit, original name), credits builder and `docs/credits.md` read it (new "Sound packs (CC0)" section in About & Credits; it is a heading plus pack lines, not a sound string; tell me if you want it gone).
+- **URLs not confirmed:** kenney.nl is unreachable here. I used the pack names and the four `License.txt` files (all say CC0) and the same URL pattern as the art packs.
+- **Tests:** new `tests/content/audio.test.ts` (files and rows both ways, credits, bytes, 30 KB cap, packs agree with credits, no tags).
+- **Old tests edited:** `tests/content/credits.test.ts` (manifest check also counts the audio list, D525 (4)); `tests/tools/audition.test.ts` (live build: no audition page and no numbered candidate files, instead of no mp3 at all; **owner's yes 2026-10-23**, not in D525).
+- **`npm run check` green, but 86 s and 95 s on two runs** (warns at 90 s); more files and tests were added. Watching; I will report the cause at SF.12 if it stays.
+- **Not yet precached:** the service worker list still shows 309 entries (the mp3 files are not in it); that is SF.10.
+- **Owner task:** hear the seven on the preview (More, Debug, with `?debug`, "Play sound") and approve, or say which to change.
+
+## 2026-10-23 — v1.2 SF.10 offline and decoding
+- **Owner approved the seven sounds** (heard on the preview).
+- **Precache:** the mp3 pattern was missing. Added it, and `audition/**` is ignored, so the live service worker now lists 316 files (309 + the seven sounds) and the preview's 317 holds no candidate clips. The preview's scope rule against the live app is unchanged.
+- **Offline smoke (D525 (3)):** while offline after a reload, one sound is fetched from the cache: status 200 and the exact byte count from the audio list. Passes.
+- **Decode test** (`tests/e2e/sound-decode.spec.ts`, Chromium): all seven decode to non-empty mono buffers. **WebKit not tested:** the WebKit job here only runs the determinism scenario and I cannot confirm headless WebKit decodes MP3, so iPhone playback stays your Q55 check.
+- **One scenario added to `smoke.spec.ts`** (D525 (7)): Sound On, one Cottage, the fake engine records `build`. Passes.
+- **Old tests edited:** `smoke.spec.ts` only (the offline fetch and the new scenario, both D525).
+- Browser tests ran locally in Chromium (smoke 5 tests plus the decode test, all passed); CI will run the rest.
+
+## 2026-10-23 — v1.2 SF.11 polish sweeps
+- **Settings screen was already in the sweeps** (`more-settings`); the only edit to `polish-screens.ts` is that the screen must now also show the **Sound row and its help line** (silent switch), so the sweeps fail if either goes missing (D525 (2)). No baseline file changed.
+- **Ran locally in Chromium (Pixel 7), production build:** tap sweep (44 px) and widths (320, 360, 900, 1300): 19 passed; Text size (incl. 320 px at Largest), reduced motion, contrast, both themes: 39 passed. **0 findings** in every suite; the 15-tap routine check-in test is among them and passes.
+- **Time:** the tap sweep alone takes 5.7 min on this machine (one worker). The CI e2e job is not changed by this; I cannot see its time from here, so please check the 5-minute rule on the pull request.
+- **Old test edited:** `polish-screens.ts` (D525 (2)) only.
+
+## 2026-10-23 — v1.2 SF.12 wrap-up
+- **Simulator (`npm run sim:check`, 55 runs, 6 min 51 s here):** all rows pass; **176 of 176 player reports equal the v1.1 baseline**. Only the Saturday ✗ lines show (reported only). No `sim:accept` run.
+- **Old save, Sound Off:** new test `tests/e2e/sound-old-save.spec.ts` loads the v1.1 played save (schema 12) into the production build: Sound reads Off, nothing is fetched or played. Passes.
+- **Size:** production build **610,508 bytes** gzipped (313 files), limit 614,400; room 3,892. (The plan text still says 600 KB; the row is 614,400 bytes by D523.)
+- **`npm run check`:** 86 to 95 s across runs here (warn 90, fail 120); on CI it ran 80 s (run 535). The cause of the creep is more tests (the sound module, audio list, 3,368 unit tests); I changed nothing. Asking you below only if you want it trimmed.
+- **One flaky failure seen:** `tests/contracts/flow.test.ts` failed once inside a full `npm run check` (99 s, machine busy), then passed alone and in the next full run (91 s). I did not touch it; I could not see the failure message. Watch for it on CI.
+- **CI for D527 (browser-install retry):** runs 523, 524, 526 passed; 525 failed before the apt-get fix; **every run after the fix (529 to 535) passed**; 536 was still running. No browser-install hang since the fix.
+- **For your decision: CI job length.** The `e2e` job takes about 9 min (8 min 28 s for the tests) on CI. It was already about 9 min before any sound work (run 522, docs commit), so v1.2 did not cause it, but it is over the 5-minute rule (D320). I did not change it; tell me if you want it split.
+- **Old tests edited in v1.2, all listed:** `app-settings.test.ts` (SF.5), `credits.test.ts` (SF.9), `audition.test.ts` (SF.9, your yes), `smoke.spec.ts` (SF.10), `polish-screens.ts` (SF.11), v9 and v12-played dates (SF.1).
+- **Pull request opened** from `milestone/v1.2` to `main`. **Owner decisions waiting:** D527 yes or no; the CI job length question; the playtest (including Q55: all seven on your iPhone, silent switch, resume after leaving the app).
+
+## 2026-10-23 — v1.2 fix: silent switch (owner's playtest)
+- **Found by the owner on the iPhone:** the silent switch did not mute the game.
+- **Change (UI only):** before the audio starts, the sound module now tells the browser the audio is "ambient" (the Audio Session setting that follows the silent switch). New `src/platform/sound/session.ts` with unit tests. Proposed D529.
+- **Not proven:** CI and this container cannot test an iPhone. If it still plays with the switch on, the next step is to find out whether the cause is the Home Screen app, an iOS setting, or music playing in another app (an ambient sound mixes with it). Tell me which and I will look further.
+- **Not done:** technical design §20 still says nothing about this setting (design text is yours to approve). No old test edited. `npm run check` green.
+
+## 2026-10-23 — v1.2 milestone end
+- **The owner said the playtest passed** on the iPhone, after the silent-switch fix (D529) worked.
+- **`npm run sim:accept`** (6 min 45 s here): 55 runs; the baseline file is byte-for-byte the same as before, so nothing moved. Plan `Status: complete`, D530.
+- **Still open for the owner:** D527 (CI browser-install retry) yes or no; D529 to be marked Decided (I may only add Proposed rows); the `e2e` CI job runs about 9 min (over the 5-minute rule, since before v1.2); technical design §20 does not yet mention the ambient setting (design text is the owner's).
+- Merged and tagged as below in the pull request.

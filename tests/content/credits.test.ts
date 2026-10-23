@@ -4,6 +4,7 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { assets } from '../../src/content/assets';
+import { audio } from '../../src/content/audio';
 import { buildCredits } from '../../src/core/credits';
 
 const ASSET_DIR = fileURLToPath(new URL('../../public/assets/', import.meta.url));
@@ -41,7 +42,11 @@ describe('art licenses and credits', () => {
   });
 
   it('every file in public/assets/ is in the manifest (placeholders aside)', () => {
-    const listed = new Set(assets.flatMap((a) => (a.source === 'placeholder' ? [] : [a.file])));
+    // D525 (4): the audio list is a second manifest, for the sounds.
+    const listed = new Set([
+      ...assets.flatMap((a) => (a.source === 'placeholder' ? [] : [a.file])),
+      ...audio.map((a) => a.file),
+    ]);
     const files = filesUnder(ASSET_DIR)
       .map((f) => relative(ASSET_DIR, f).split('\\').join('/'))
       .filter((f) => !f.startsWith('placeholders/'));

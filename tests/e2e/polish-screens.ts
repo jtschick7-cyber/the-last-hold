@@ -325,8 +325,12 @@ export const FLOWS: readonly Flow[] = [
   plain('more-save', 'More (Save & Data)', 'More, Save & Data', [/Backup/i], (p) =>
     more(p, 'Save'),
   ),
-  plain('more-settings', 'More (Settings)', 'More, Settings', [/Theme|Reduce/i], (p) =>
-    more(p, 'Settings'),
+  plain(
+    'more-settings',
+    'More (Settings)',
+    'More, Settings',
+    [/Theme|Reduce/i, /^Sound/m, /silent switch/i],
+    (p) => more(p, 'Settings'),
   ),
   plain('more-about', 'More (About & Credits)', 'More, About & Credits', [/./], (p) =>
     more(p, 'About'),
