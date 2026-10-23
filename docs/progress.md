@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.11 (Settings screen with the Sound row in the polish sweeps).
-- **Next:** SF.12 (wrap-up, pull request).
+- **Last task:** SF.12 (wrap-up; pull request open).
+- **Next:** the owner's iPhone playtest (checklist in the plan and the pull request); then, only on "playtest passed": `sim:accept`, merge, tag `v1.2.0`.
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -468,3 +468,14 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Ran locally in Chromium (Pixel 7), production build:** tap sweep (44 px) and widths (320, 360, 900, 1300): 19 passed; Text size (incl. 320 px at Largest), reduced motion, contrast, both themes: 39 passed. **0 findings** in every suite; the 15-tap routine check-in test is among them and passes.
 - **Time:** the tap sweep alone takes 5.7 min on this machine (one worker). The CI e2e job is not changed by this; I cannot see its time from here, so please check the 5-minute rule on the pull request.
 - **Old test edited:** `polish-screens.ts` (D525 (2)) only.
+
+## 2026-10-23 — v1.2 SF.12 wrap-up
+- **Simulator (`npm run sim:check`, 55 runs, 6 min 51 s here):** all rows pass; **176 of 176 player reports equal the v1.1 baseline**. Only the Saturday ✗ lines show (reported only). No `sim:accept` run.
+- **Old save, Sound Off:** new test `tests/e2e/sound-old-save.spec.ts` loads the v1.1 played save (schema 12) into the production build: Sound reads Off, nothing is fetched or played. Passes.
+- **Size:** production build **610,508 bytes** gzipped (313 files), limit 614,400; room 3,892. (The plan text still says 600 KB; the row is 614,400 bytes by D523.)
+- **`npm run check`:** 86 to 95 s across runs here (warn 90, fail 120); on CI it ran 80 s (run 535). The cause of the creep is more tests (the sound module, audio list, 3,368 unit tests); I changed nothing. Asking you below only if you want it trimmed.
+- **One flaky failure seen:** `tests/contracts/flow.test.ts` failed once inside a full `npm run check` (99 s, machine busy), then passed alone and in the next full run (91 s). I did not touch it; I could not see the failure message. Watch for it on CI.
+- **CI for D527 (browser-install retry):** runs 523, 524, 526 passed; 525 failed before the apt-get fix; **every run after the fix (529 to 535) passed**; 536 was still running. No browser-install hang since the fix.
+- **For your decision: CI job length.** The `e2e` job takes about 9 min (8 min 28 s for the tests) on CI. It was already about 9 min before any sound work (run 522, docs commit), so v1.2 did not cause it, but it is over the 5-minute rule (D320). I did not change it; tell me if you want it split.
+- **Old tests edited in v1.2, all listed:** `app-settings.test.ts` (SF.5), `credits.test.ts` (SF.9), `audition.test.ts` (SF.9, your yes), `smoke.spec.ts` (SF.10), `polish-screens.ts` (SF.11), v9 and v12-played dates (SF.1).
+- **Pull request opened** from `milestone/v1.2` to `main`. **Owner decisions waiting:** D527 yes or no; the CI job length question; the playtest (including Q55: all seven on your iPhone, silent switch, resume after leaving the app).
