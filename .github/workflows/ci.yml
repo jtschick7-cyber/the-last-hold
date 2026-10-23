@@ -18,17 +18,20 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      # Technical design §11.2: `npm run check` must finish in 90 s or less. Timed as CI runs it
-      # (not counting npm ci or the build); a slow check fails the job.
-      - name: npm run check (90 s budget)
+      # Technical design §11.2: `npm run check` aims at 90 s or less. Timed as CI runs it (not counting
+      # npm ci or the build). Over 90 s is a warning; over 120 s (D512) fails the job, because shared
+      # runners vary by about 1.7x and a red check should mean a real problem.
+      - name: npm run check (90 s budget, fails at 120 s)
         run: |
           start=$SECONDS
           npm run check
           elapsed=$((SECONDS - start))
-          echo "npm run check took ${elapsed}s (budget 90s)"
-          if [ "$elapsed" -gt 90 ]; then
-            echo "::error::npm run check took ${elapsed}s, over the 90 s budget"
+          echo "npm run check took ${elapsed}s (budget 90s, fails at 120s)"
+          if [ "$elapsed" -gt 120 ]; then
+            echo "::error::npm run check took ${elapsed}s, over the 120 s limit"
             exit 1
+          elif [ "$elapsed" -gt 90 ]; then
+            echo "::warning::npm run check took ${elapsed}s, over the 90 s budget"
           fi
       - run: npm run build
       - run: npm run build -- --outDir dist-preview
