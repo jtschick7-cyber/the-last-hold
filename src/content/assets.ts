@@ -115,6 +115,13 @@ export const HOLD_LOOKS = ['frost', 'lamp'] as const;
 export type HoldLook = (typeof HOLD_LOOKS)[number];
 /** The ending's two looks of the hold scene (v0.11, D457): the frost, then the lamp. */
 export const holdLookId = (l: HoldLook, age: AgeId): string => `scene.look.${l}.${age}`;
+// v1.1 (plan TL.5a, D504): the Hold's 8 × 8 grid. 32 px tiles; the two border strips are 256 × 16.
+export const GRID_GENERATOR = 'tools/gen-layout-grid.ts';
+export const groundTileId = (l: string): string => `grid.ground.${l}`;
+export const forestTileId = (l: string): string => `grid.forest.${l}`;
+export const ruinTileId = (l: string): string => `grid.ruin.${l}`;
+export const ghostTileId = (l: string): string => `grid.ghost.${l}`;
+export const gridStripId = (e: string): string => `grid.strip.${e}`;
 export const cosmeticId = (c: CosmeticId, age: AgeId): string => `scene.cosmetic.${c}.${age}`;
 
 // Plan T1.31a: the v0.1 images, built from the owner's CC0 Kenney packs by
@@ -448,6 +455,57 @@ export const assets: readonly AssetEntry[] = [
         'tools/gen-sprites.ts',
         'scene',
       ),
+    ),
+  ),
+  // v1.1 TL.5a: the grid's ground, border and blueprint tiles (tools/draw-layout-grid.ts).
+  ...(['grass', 'earth', 'flags'] as const).map((l) =>
+    generated(
+      groundTileId(l),
+      [32, 32],
+      `Cleared ground, ${l}`,
+      `grid/ground-${l}.png`,
+      GRID_GENERATOR,
+      'building',
+    ),
+  ),
+  ...(['1', '2'] as const).map((l) =>
+    generated(
+      forestTileId(l),
+      [32, 32],
+      `Dark pine forest ${l}`,
+      `grid/forest-${l}.png`,
+      GRID_GENERATOR,
+      'building',
+    ),
+  ),
+  ...(['1', '2'] as const).map((l) =>
+    generated(
+      ruinTileId(l),
+      [32, 32],
+      `Ruined stones ${l}`,
+      `grid/ruin-${l}.png`,
+      GRID_GENERATOR,
+      'building',
+    ),
+  ),
+  ...(['locked', 'dormant'] as const).map((l) =>
+    generated(
+      ghostTileId(l),
+      [32, 32],
+      `Foundation outline, ${l}`,
+      `grid/ghost-${l}.png`,
+      GRID_GENERATOR,
+      'building',
+    ),
+  ),
+  ...(['north', 'south'] as const).map((e) =>
+    generated(
+      gridStripId(e),
+      [256, 16],
+      e === 'north' ? 'The Fell Breach' : 'The Lowland Gate',
+      `grid/strip-${e}.png`,
+      GRID_GENERATOR,
+      'scene',
     ),
   ),
   ...HOLD_LOOKS.flatMap((l) =>

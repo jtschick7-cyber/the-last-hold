@@ -264,3 +264,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Fill Bastion:** takes the hold to Bastion, raises each building to the figure that shows all its pieces in their top look (never past its copy limit or Bastion level cap, never lowering one), then lays out the canonical arrangement: all 40 pieces on the grid, tray and ghosts empty. It replaces any saved layout.
 - **Seen, for you to decide (not changed):** auto-placement puts ordinary buildings on the free tiles nearest the middle, and that can reach row 1 once the Keep opens. Then walls and towers that arrive later find row 1 taken and wait in the tray. Auto-arrange fixes it. A possible rule: keep the defense rows for defenses. That is a GDD change, so it is yours.
 - **Tests:** four new in `tests/layout/commands.test.ts`; `debug-layout.ts` joined the non-coupling list. `npm run check` green. No old test edited. Nothing skipped.
+
+## 2026-10-23 — v1.1 D510 and TL.5a: grid ground art
+- **D510 built (you agreed):** auto-placement never puts an ordinary building on the defense tiles (row 1, the row 2 wings, row 0). GDD §5.1.5 rule 4 and technical design §19.3 updated; D510 is `Proposed` until you mark it. One new test.
+- **TL.5a built:** 11 pictures in code, in the palette: 3 ground looks, 2 forest, 2 ruined stone, 2 blueprint ghosts (locked, dormant), and the two 256 × 16 border strips (Fell Breach, Lowland Gate). Registered as `grid.*` in the manifest; credits regenerated.
+- **Inventory:** `docs/flesh-out/v1.1/art-inventory.md` lists all **80** pictures (plan said about 75): 11 now, 46 at TL.5b, 23 at TL.5c. One call for you: the Watchtower gets one picture, not 16 connection ones (only walls connect visually).
+- **Hash baseline:** `art-src/v1.0-hashes.json` (209 entries: every shipped picture and app icon); a test fails if any v1.0 picture changes.
+- **Old test edited (D507 (4)):** `tests/tools/contact-sheet.test.ts` now counts only v1.0 pictures (not `grid.*`), so numbers 1–156 do not move. `contact-sheet-data.ts` got the matching filter.
+- **Not seen on a real screen yet;** I looked at a preview sheet only. The owner's art stop is TL.5c. `npm run check` green. Nothing skipped.

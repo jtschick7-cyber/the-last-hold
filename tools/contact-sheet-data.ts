@@ -12,9 +12,12 @@ export interface NumberedAsset {
   readonly asset: GeneratedAsset;
 }
 
+/** v1.1 pictures (the Hold's grid) are numbered on their own sheet at TL.5c, so the v1.0 numbers never move (D507 (4)). */
+export const isV11Asset = (id: string): boolean => id.startsWith('grid.');
+
 /** Numbered 1..N in plain id order; adding a row later never renumbers the ones before it in id order. */
 export const numberedAssets: readonly NumberedAsset[] = assets
-  .filter((a): a is GeneratedAsset => a.source === 'generated')
+  .filter((a): a is GeneratedAsset => a.source === 'generated' && !isV11Asset(a.id))
   .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
   .map((asset, i) => ({ n: i + 1, asset }));
 
