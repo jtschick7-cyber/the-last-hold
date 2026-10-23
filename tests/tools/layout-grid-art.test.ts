@@ -49,7 +49,7 @@ import {
   PLOT_BUILDINGS,
   SEAM_LOOKS,
 } from '../../tools/draw-grid-plots';
-import { currentHashes } from '../../tools/contact-sheet-data';
+import { currentHashes, redrawIds } from '../../tools/contact-sheet-data';
 import {
   drawForest,
   drawGhost,
@@ -300,5 +300,31 @@ describe('v1.0 pictures are byte-identical (S3)', () => {
 
   it('matches the recorded hash for every one of them', () => {
     for (const [id, hash] of Object.entries(recorded)) expect(now[id], id).toBe(hash);
+  });
+});
+
+describe('v1.1 pictures marked Keep are byte-identical (D475, D504)', () => {
+  const recorded = JSON.parse(
+    readFileSync(new URL('../../art-src/v1.1-hashes.json', import.meta.url), 'utf8'),
+  ) as Record<string, string>;
+  const redraw = redrawIds(
+    readFileSync(new URL('../../docs/flesh-out/v1.1/art-marks.md', import.meta.url), 'utf8'),
+  );
+  const now = currentHashes();
+
+  it('has a recorded hash for every grid picture', () => {
+    for (const id of [...assetById.keys()].filter((i) => i.startsWith('grid.')))
+      expect(recorded[id], id).toBeDefined();
+  });
+
+  it('matches the recorded hash for every picture not marked Redraw', () => {
+    for (const [id, hash] of Object.entries(recorded)) {
+      if (redraw.has(id)) continue;
+      expect(now[id], id).toBe(hash);
+    }
+  });
+
+  it('reads the owner marks: 25 Redraw', () => {
+    expect(redraw.size).toBe(25);
   });
 });

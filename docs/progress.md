@@ -287,3 +287,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Size (N5):** the 83 pictures are 44 KB, about 36 KB zipped. The whole production build zips to about 561 KB against the 600 KB budget, so about 39 KB of room is left for the grid screens' code.
 - **Tool:** `tools/contact-sheet-layout.ts`, run through `contact-sheet.ts --layout-sheets`. It writes only v1.1 files; v1.0's hashes and numbers are untouched.
 - **Stopped for the owner.** No old test edited. Nothing skipped.
+
+## 2026-10-23 — v1.1 owner's art marks recorded
+- **You marked 25 of 83 Redraw** (58 Keep). Saved as `docs/flesh-out/v1.1/art-marks.md`; the numbering did not change.
+- **Batches (D475 allows 12 per session), split in the plan:** TL.6a 11 (the three ground tiles, Watchtower with its bell overlay, Hall door and lamp, Alchemist 3, Mill 1, Farm 3, Herb Garden 3); TL.6b 11 (Barracks, Mine, Sawpit, Silver Seam); TL.6c 3 (Woodcutter). Your note on the ground tiles means 6a is also judged on new Hamlet and Bastion mock-ups.
+- **Keep proof:** `art-src/v1.1-hashes.json` records all 83 as shown to you; a test fails if a picture not marked Redraw changes. Redraws will be re-recorded only as you approve each batch.
+- **Nothing drawn this session.** Nothing skipped.
