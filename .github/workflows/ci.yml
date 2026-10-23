@@ -55,6 +55,10 @@ jobs:
           for try in 1 2 3; do
             timeout 120 npx playwright install --with-deps chromium webkit && exit 0
             echo "Browser install failed (try $try of 3)"
+            # A hung try can leave apt-get holding the system lock, which fails every later try at once.
+            sudo pkill -KILL -x apt-get || true
+            sudo pkill -KILL -x dpkg || true
+            sleep 5
           done
           exit 1
       - run: npm run e2e
