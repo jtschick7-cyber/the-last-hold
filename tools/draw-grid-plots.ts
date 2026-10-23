@@ -96,7 +96,58 @@ const PART: Record<PlotBuilding, Part> = {
   'herb-garden': bed,
 };
 
+/** TL.6a: one fenced field of ripe barley with a haystack, so a rich farm is not a grid of boxes. */
+const richField = (): Canvas => {
+  const c = new Canvas(32);
+  c.rect(3, 9, 26, 20, C.brownDark);
+  c.rect(4, 10, 24, 18, C.sand);
+  for (let x = 5; x < 27; x += 2) {
+    c.rect(x, 12, 1, 14, x % 4 === 1 ? C.gold : C.orange);
+    c.set(x, 11, C.cream);
+    c.set(x, 14, C.cream);
+    c.set(x, 19, C.cream);
+  }
+  for (let x = 3; x < 30; x += 5) {
+    c.rect(x, 7, 2, 4, C.brown); // fence posts along the top
+    c.rect(x, 27, 2, 3, C.brown);
+  }
+  c.rect(3, 9, 26, 1, C.brown);
+  c.rect(3, 28, 26, 1, C.brown);
+  c.ellipse(23, 21, 5, 4, C.clay); // a haystack
+  c.rect(18, 22, 11, 3, C.sand);
+  c.rect(20, 18, 6, 1, C.cream);
+  c.set(23, 16, C.sand);
+  c.outline(C.wine);
+  return c;
+};
+
+/** TL.6a: raised plank planters crowded with herbs, white, purple and blue in bloom. */
+const lushBeds = (): Canvas => {
+  const c = new Canvas(32);
+  for (const y of [5, 18]) {
+    c.rect(3, y, 26, 10, C.brown);
+    c.rect(3, y + 9, 26, 1, C.brownDark);
+    c.rect(3, y, 26, 1, C.rust);
+    c.rect(4, y + 1, 24, 7, C.moss);
+    for (let x = 4; x < 28; x += 2) {
+      c.set(x, y + 2 + (x % 4 === 0 ? 0 : 1), C.grass);
+      c.set(x + 1, y + 4, C.lime);
+      c.set(x, y + 6, C.pine);
+    }
+    const bloom = [C.frost, C.orchid, C.cyan, C.frost, C.pink, C.orchid] as const;
+    for (let i = 0; i < 6; i++) {
+      c.set(5 + i * 4, y + 3 + (i % 2), bloom[i] ?? C.frost);
+      c.set(6 + i * 4, y + 6 - (i % 2), bloom[(i + 2) % 6] ?? C.frost);
+    }
+    for (const x of [3, 27]) c.rect(x, y, 2, 10, C.brownDark); // corner posts
+  }
+  c.outline(C.wine);
+  return c;
+};
+
 export const drawPlot = (b: PlotBuilding, d: Density): Canvas => {
+  if (d === 3 && b === 'farm') return richField();
+  if (d === 3 && b === 'herb-garden') return lushBeds();
   const c = new Canvas(32);
   const spots = SPOTS[d];
   const size = d === 1 ? 1 : d === 2 ? 2 : 3;
@@ -148,18 +199,19 @@ export const drawBanners = (): Canvas => {
 /** The Watchtower bell, hung from a bracket on the platform (32 px, over `grid.watchtower`). */
 export const drawTowerBell = (): Canvas => {
   const c = new Canvas(32);
-  c.rect(25, 6, 4, 1, C.brownDark);
-  c.rect(26, 7, 2, 1, C.brownDark);
+  // TL.6a: hung higher, above the east wall wing the Watchtower now has.
+  c.rect(25, 3, 4, 1, C.brownDark);
+  c.rect(26, 4, 2, 1, C.brownDark);
   c.polygon(
     [
-      [26.5, 8],
-      [29, 12],
-      [24, 12],
+      [26.5, 5],
+      [29, 9],
+      [24, 9],
     ],
     C.gold,
   );
-  c.rect(24, 12, 5, 1, C.orange);
-  c.set(26, 13, C.cream);
+  c.rect(24, 9, 5, 1, C.orange);
+  c.set(26, 10, C.cream);
   return c;
 };
 

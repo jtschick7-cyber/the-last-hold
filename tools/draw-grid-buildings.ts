@@ -78,13 +78,27 @@ const drawMill = (t: Tier): Canvas => {
   const cx = 16;
   const cy = 30 - h - 1;
   const arm = 5 + t * 2;
-  for (const [dx, dy] of [
-    [1, 0],
-    [-1, 0],
-    [0, 1],
-    [0, -1],
-  ] as const)
-    for (let k = 3; k <= arm; k++) c.set(cx + dx * k, cy + dy * k, k > arm - 3 ? C.bone : C.brown);
+  if (t === 1) {
+    // TL.6a: four long wooden blades in an X, clear of the tower, not stubs.
+    for (const [dx, dy] of [
+      [1, 1],
+      [-1, -1],
+      [1, -1],
+      [-1, 1],
+    ] as const)
+      for (let k = 2; k <= 9; k++) {
+        c.set(cx + dx * k, cy + dy * k, k > 5 ? C.bone : C.brown);
+        c.set(cx + dx * k + dx, cy + dy * k, k > 5 ? C.cream : C.brownDark);
+      }
+  } else
+    for (const [dx, dy] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ] as const)
+      for (let k = 3; k <= arm; k++)
+        c.set(cx + dx * k, cy + dy * k, k > arm - 3 ? C.bone : C.brown);
   if (t >= 2)
     for (const [dx, dy] of [
       [1, 1],
@@ -228,9 +242,19 @@ const drawAlchemist = (t: Tier): Canvas => {
     c.set(x + w - 1, 1, C.lime);
   }
   if (t === 3) {
-    c.ellipse(x + 3, 6, 3, 3, C.cyan); // a hanging flask
-    c.rect(x + 2, 2, 3, 2, C.ice);
-    c.set(x + 2, 5, C.frost);
+    // TL.6a: a framed glass lantern housing on the roof ridge, not a floating flask.
+    c.rect(x + 2, 5, 7, 6, C.brown);
+    c.rect(x + 3, 6, 5, 4, C.cyan);
+    c.rect(x + 5, 6, 1, 4, C.brown);
+    c.set(x + 3, 6, C.frost);
+    c.polygon(
+      [
+        [x + 5.5, 1],
+        [x + 10, 5],
+        [x + 1, 5],
+      ],
+      C.orchid,
+    );
   }
   c.outline(C.wine);
   return c;

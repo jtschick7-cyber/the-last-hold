@@ -19,8 +19,8 @@ const stoneAt = (x: number, y: number): string => {
 
 export const WALL_MASKS = Array.from({ length: 16 }, (_, i) => i);
 
-/** One wall segment; `mask` says which sides continue to a neighbouring wall or tower. */
-export const drawWall = (mask: number): Canvas => {
+/** A wall segment without its outline, so the Watchtower can stand on one; `mask` says which sides continue. */
+const wallBody = (mask: number): Canvas => {
   const c = new Canvas(TILE);
   const top = new Set<number>();
   const mark = (x0: number, y0: number, x1: number, y1: number): void => {
@@ -47,13 +47,20 @@ export const drawWall = (mask: number): Canvas => {
   }
   // The post stands a little proud: a bone cap.
   c.rect(LO + 1, LO + 1, 8, 1, C.bone);
+  return c;
+};
+
+/** One wall segment; `mask` says which sides continue to a neighbouring wall or tower. */
+export const drawWall = (mask: number): Canvas => {
+  const c = wallBody(mask);
   c.outline(C.wine);
   return c;
 };
 
 /** The Watchtower: a stone tower with a crenellated platform and a lit slit. */
 export const drawWatchtower = (): Canvas => {
-  const c = new Canvas(TILE);
+  // TL.6a (owner's mark): short wall wings east and west, at wall height, so the walls beside it join flush.
+  const c = wallBody(CONNECTION_BITS.e | CONNECTION_BITS.w);
   c.rect(9, 12, 14, 18, C.stone); // shaft
   for (let y = 12; y < 30; y++) for (let x = 9; x < 23; x++) c.set(x, y, stoneAt(x, y));
   c.rect(9, 12, 14, 1, C.ash);

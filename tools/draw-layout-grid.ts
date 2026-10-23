@@ -26,28 +26,38 @@ export const drawGround = (look: GroundLook): Canvas => {
   const roll = seedRolls(`grid.ground.${look}`);
   const at = (): [number, number] => [Math.floor(roll() * TILE), Math.floor(roll() * TILE)];
   if (look === 'grass') {
-    c.fill(C.grass);
-    for (let i = 0; i < 26; i++) {
-      const [x, y] = at();
-      c.set(x, y, C.moss);
-      c.set(x + 1, y, C.moss);
-    }
-    for (let i = 0; i < 10; i++) {
-      const [x, y] = at();
-      c.set(x, y, C.lime);
-      c.set(x - 1, y - 1, C.lime);
-      c.set(x + 1, y - 1, C.lime);
-    }
-  } else if (look === 'earth') {
-    c.fill(C.clay);
+    // TL.6a: a calmer frontier meadow, closer to the Lowland Gate strip and the pines.
+    c.fill(C.moss);
     for (let i = 0; i < 30; i++) {
       const [x, y] = at();
-      c.set(x, y, C.rust);
-      c.set(x + 1, y, C.rust);
+      c.set(x, y, C.grass);
+      c.set(x + 1, y, C.grass);
     }
     for (let i = 0; i < 12; i++) {
       const [x, y] = at();
-      c.set(x, y, C.cream);
+      c.set(x, y, C.pine);
+      c.set(x + 1, y + 1, C.pine);
+    }
+    for (let i = 0; i < 5; i++) {
+      const [x, y] = at();
+      c.set(x, y, C.lime);
+      c.set(x - 1, y - 1, C.lime);
+    }
+  } else if (look === 'earth') {
+    // TL.6a: a deeper, warmer trodden earth, soil texture and a few pebbles.
+    c.fill(C.rust);
+    for (let i = 0; i < 40; i++) {
+      const [x, y] = at();
+      c.set(x, y, C.brown);
+      c.set(x + 1, y, C.brown);
+    }
+    for (let i = 0; i < 16; i++) {
+      const [x, y] = at();
+      c.set(x, y, C.brownDark);
+    }
+    for (let i = 0; i < 10; i++) {
+      const [x, y] = at();
+      c.set(x, y, C.clay);
     }
     for (let i = 0; i < 4; i++) {
       const [x, y] = at();
@@ -55,18 +65,17 @@ export const drawGround = (look: GroundLook): Canvas => {
       c.set(x, y + 1, C.coal);
     }
   } else {
-    c.fill(C.stone);
-    // Flagstones in offset courses, 16 × 8 px, mortar in coal, a bone highlight on each top-left.
+    // TL.6a: worn courtyard flags, darker than any stone building so the buildings stand clear of them.
+    c.fill(C.coal);
     for (let row = 0; row < 4; row++) {
       const off = row % 2 === 0 ? 0 : 8;
       for (let x = -off; x < TILE; x += 16) {
-        c.rect(Math.max(0, x), row * 8, 1, 8, C.coal);
-        c.set(x + 2, row * 8 + 1, C.ash);
-        c.set(x + 3, row * 8 + 1, C.ash);
-        c.set(x + 2, row * 8 + 2, C.ash);
-        if (roll() < 0.5) c.set(x + 9 + Math.floor(roll() * 4), row * 8 + 5, C.coal);
+        c.rect(Math.max(0, x), row * 8, 1, 8, C.ink);
+        c.set(x + 2, row * 8 + 1, C.stone);
+        c.set(x + 3, row * 8 + 1, C.stone);
+        if (roll() < 0.5) c.set(x + 9 + Math.floor(roll() * 4), row * 8 + 5, C.ink);
       }
-      c.rect(0, row * 8, TILE, 1, C.coal);
+      c.rect(0, row * 8, TILE, 1, C.ink);
     }
   }
   return c;

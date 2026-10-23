@@ -123,31 +123,45 @@ export const drawHall = (age: AgeId): Canvas => {
   return c;
 };
 
-/** The Carved Hearth Hall door: the same door, framed, with gold carving. */
+/** The Carved Hearth Hall door: dark oak planks, bronze hinge straps, a ring at the centre. */
 export const drawHallDoor = (): Canvas => {
   const c = new Canvas(N);
   const [x, y, w, h] = HALL_DOOR;
-  c.rect(x - 1, y - 2, w + 2, h + 2, C.gold);
-  c.rect(x, y - 1, w, h + 1, C.brownDark);
-  c.rect(x + 4, y - 1, 1, h + 1, C.gold);
-  for (let k = 0; k < 4; k++) {
-    c.set(x + 2, y + 2 + k * 4, C.cream);
-    c.set(x + 7, y + 2 + k * 4, C.cream);
+  c.rect(x + 1, y - 1, w - 2, 1, C.brownDark); // the rounded head
+  c.rect(x, y, w, h, C.brownDark);
+  for (const px of [x + 2, x + 5, x + 7]) c.rect(px, y, 1, h, C.brown); // plank joints
+  c.rect(x, y, 1, h, C.wine);
+  c.rect(x + w - 1, y, 1, h, C.wine);
+  for (const py of [y + 3, y + 13]) {
+    c.rect(x, py, w, 2, C.clay); // bronze straps
+    c.rect(x, py + 1, w, 1, C.rust);
+    for (const px of [x + 1, x + w - 2]) c.set(px, py, C.gold); // rivets
   }
-  c.set(x + 3, y + 9, C.orange);
-  c.set(x + 6, y + 9, C.orange);
+  c.rect(x + 4, y + 7, 2, 2, C.gold); // the ring, with its hole
+  c.set(x + 4, y + 7, C.orange);
+  c.set(x + 5, y + 8, C.brownDark);
+  c.set(x + 4, y + 9, C.gold);
+  c.set(x + 5, y + 9, C.gold);
   return c;
 };
 
-/** After Remember Them: a lamp in the left window. */
+/** After Remember Them: a lantern on the sill, the panes warm, the frame and mullions kept. */
 export const drawHallLamp = (): Canvas => {
   const c = new Canvas(N);
-  const [x, y, w, h] = HALL_WINDOW;
-  c.rect(x, y, w, h, C.gold);
-  c.rect(x + 2, y, 2, h, C.orange);
-  c.set(x, y, C.cream);
-  c.set(x + 5, y, C.cream);
-  c.set(x + 1, y + 1, C.cream);
+  const [x, y, , h] = HALL_WINDOW;
+  for (const [px, py, pw, ph] of [
+    [x, y, 2, 3],
+    [x + 3, y, 3, 3],
+    [x, y + 4, 2, 3],
+    [x + 3, y + 4, 3, 3],
+  ] as const) {
+    c.rect(px, py, pw, ph, C.orange);
+    c.rect(px, py, pw, 1, C.sand);
+  }
+  c.rect(x + 1, y + h - 3, 4, 3, C.gold); // the lantern on the sill
+  c.rect(x + 2, y + h - 2, 2, 1, C.cream);
+  c.set(x + 2, y + h - 4, C.gold);
+  c.set(x + 3, y + h - 4, C.gold);
   return c;
 };
 
