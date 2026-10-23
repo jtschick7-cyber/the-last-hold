@@ -155,10 +155,10 @@ export const FLOWS: readonly Flow[] = [
   plain(
     'hold-grid-hamlet',
     'Hold (Grid, Hamlet)',
-    'fixture v1, nothing',
+    'a new game, nothing',
     [/Fell Breach/],
     async () => {},
-    'v1',
+    'new',
   ),
   plain(
     'hold-grid-keep',
