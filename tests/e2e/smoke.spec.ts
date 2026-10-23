@@ -240,6 +240,19 @@ test('seat an Order, read a chapter, change a seat, and reload', async ({ page }
       }
     }
   }
+  if (!(await step.isVisible().catch(() => false)))
+    // Shows in the CI log which sheet blocked the step (the test passes on a fast machine).
+    console.log(
+      'Seat step missing; open sheets:',
+      await page.evaluate(() =>
+        [...document.querySelectorAll('[role=dialog]')].map(
+          (d) =>
+            `${d.getAttribute('aria-label')}: ${[...d.querySelectorAll('button')]
+              .map((b) => b.getAttribute('aria-label') ?? b.textContent)
+              .join('|')}`,
+        ),
+      ),
+    );
   await expect(step).toBeVisible();
   await step.getByRole('checkbox').first().check(); // the Moot
   await step.getByRole('button', { name: 'Done' }).click();
