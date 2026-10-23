@@ -223,8 +223,12 @@ test('seat an Order, read a chapter, change a seat, and reload', async ({ page }
   const step = page.getByRole('dialog', { name: 'Seat your Orders' });
   for (let i = 0; i < 14 && !(await step.isVisible().catch(() => false)); i++) {
     await page.waitForTimeout(400);
+    // 'Close' is the sheet's ✕ button, found by its label, not by text (the away sheet has no other button).
     for (const name of ['Onward', 'Not now', 'Continue', 'Close']) {
-      const b = page.getByText(name, { exact: true });
+      const b =
+        name === 'Close'
+          ? page.getByRole('button', { name })
+          : page.getByText(name, { exact: true });
       if (
         await b
           .first()
