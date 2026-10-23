@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.2 (CI browser-install retry).
-- **Next:** SF.3 (packs note, then stop for the owner's upload).
+- **Last task:** SF.3 (packs note written). **Waiting for the owner to upload the four zips.**
+- **Next:** SF.4 (after the upload); SF.5 to SF.8 do not need the packs (packs note, then stop for the owner's upload).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -398,3 +398,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 ## 2026-10-23 — v1.2 SF.2 CI browser-install retry
 - **Changed only the browser-install step in `.github/workflows/ci.yml`:** each try is cut off after 120 s, up to three tries, and the step itself has a 5-minute limit. No test or pass rule changed.
 - **Judged over the next CI runs, not proven in advance.** Results so far: none yet. I'll add them here as they come; your yes or no on D527 comes after several runs.
+
+## 2026-10-23 — v1.2 SF.3 packs note
+- **Written:** `art-src/packs/audio/PACKS-NEEDED.md` (four Kenney packs, CC0, zips, switch to `milestone/v1.2` first, the 25 MB case).
+- **Links not confirmed:** this container cannot open kenney.nl (the proxy refuses it). The links follow the v0.1 pattern and the note says so; please open each once.
+- **`.gitignore` changed (small, needed):** `art-src/packs/` was ignored whole, which would have kept your zips and this note out of git. Now only the contents other than `audio/` are ignored; I unpack into the ignored `art-src/packs/audio-unpacked/`.
+- **Waiting:** the owner uploads the zips. No sound task starts until then.
