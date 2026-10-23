@@ -154,7 +154,9 @@ sim/reports/
 dist-preview/
 
 # Unpacked art packs (reproducible from the zips in art-src/)
-art-src/packs/
+art-src/packs/*
+# v1.2: the sound zips and their note live in audio/ and are tracked (D524); unpack them into audio-unpacked/ (ignored)
+!art-src/packs/audio/
 
 # Playwright output
 test-results/
