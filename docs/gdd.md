@@ -475,7 +475,7 @@ The Hold sits on an **8 × 8 grid** (`x = 0..7` west to east, `y = 0..7` north t
   - **Keep (`6 × 6`, 36 tiles):** columns `1–6`, rows `1–6`.
   - **Citadel (`8 × 6`, 48 tiles):** columns `0–7`, rows `1–6` (uncovers the full 8-tile north curtain line along row `1`, facing row `0`).
   - **Bastion (`8 × 8`, 64 tiles):** columns `0–7`, rows `0–7` (opens row `0` right along the Fell Breach and row `7` along the Lowland Gate).
-- **Pieces on the grid (D501).** Exactly **39 pieces (42 tiles)** exist at full Bastion, leaving exactly 22 open tiles of courtyard and roads:
+- **Pieces on the grid (D501).** Exactly **40 pieces (43 tiles)** exist at full Bastion (the 2 × 2 Hearth Hall and 39 one-tile pieces), leaving exactly 21 open tiles of courtyard and roads (Q52, D511, D514):
 
 | Category | Piece ids | Size | When each piece unlocks | Visual tiers on the grid |
 |---|---|---|---|---|
@@ -1705,7 +1705,7 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Hold grid render** *(v1.1, D506)* | ≤ 16 ms (one frame) | The Hold screen's 8 × 8 grid header, from the view built in `core` (memoized) |
 | **Arrange Hold sheet open** *(v1.1, D506)* | ≤ 50 ms | Opening the 8 × 8 placement sheet with its tray |
 | **v11 → v12 migration** *(v1.1, D506)* | ≤ 100 ms | A played v11 save, on the load path (the throttled benchmark) |
-| **Hold layout save growth** *(v1.1, D506, M5)* | ≤ 1.5 KB | The whole `layout` block with all 39 pieces placed (checked by a unit test, not the throttled benchmark; measured ~1.1 KB) |
+| **Hold layout save growth** *(v1.1, D506, M5)* | ≤ 1.5 KB | The whole `layout` block with all 40 pieces placed (checked by a unit test, not the throttled benchmark; measured ~1.1 KB) |
 | **Download size** *(v1.0, D494)* | ≤ 600 KB | The production build, every file compressed with gzip (v0.11: 500 KB; v1.0: 506 KB). Measured at the milestone end; not a test in `npm run check` |
 | **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
@@ -3004,7 +3004,7 @@ v1.0 changes **no game number, formula or save field.** Everything below is pres
 ```
 ┌──────────────────────────────────┐
 │ Arrange Hold                 [✕] │
-│ Bastion · 8×8 open · 24/39 placed│
+│ Bastion · 8×8 open · 24/40 placed│
 │ ▲ The Fell Breach                │
 │ ┌───┬───┬───┬───┬───┬───┬───┬───┐│
 │ │   │   │🧱 │🗼 │🧱 │   │   │   ││
@@ -3033,7 +3033,7 @@ v1.0 changes **no game number, formula or save field.** Everything below is pres
   | String | Where it shows | Purpose |
   |---|---|---|
   | `Arrange Hold` | Sheet title | Header |
-  | `{Rank} · {w}×{h} open · {placed}/{total} placed` | Subtitle | Grid summary (`total` = 39, `placed` counts active pieces only) |
+  | `{Rank} · {w}×{h} open · {placed}/{total} placed` | Subtitle | Grid summary (`total` = 40, `placed` counts active pieces only) |
   | `▲ The Fell Breach` / `▼ Lowland Gate` | Border strips | Spatial orientation |
   | `Tap an open tile to move or swap` | Info bar | Instruction when piece selected |
   | `Tap an active piece or tray item to select` | Info bar | Default instruction when nothing selected |
