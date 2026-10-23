@@ -984,6 +984,7 @@ export interface HoldLayoutState {
   - When a piece unlocks: if it already has a coordinate in `state.layout.placed`: if inside clearing and free, it becomes `active`; if in outer ring, it becomes `dormant-ring`; if occupied, it waits in `tray`.  
   - If a piece has no coordinate in `state.layout.placed`: auto-placement assigns the first free tile in clearing order.  
   - Order: defenses prioritize row 1 (`x = 0..7`), then row 2 wings (`(0,2)`, `(7,2)`), then row 0. Other buildings prioritize tiles ordered by Manhattan distance from center `(3.5, 3.5)`, then `y` asc, then `x` asc.  
+  - Other buildings never take a defense tile (row 1, the row 2 wings, row 0) by auto-placement; those tiles stay free for walls and towers (D510).
   - A tile held by any saved coordinate (including a piece not yet built) counts as taken when finding a free tile.
   - Defenses use only the defense order; if none of those tiles is open in the current clearing, the piece waits in the tray.
   - After a purchase, only pieces that purchase newly unlocked are placed; a piece the player sent to the tray stays there. A Rank-up, a new game and a new cycle place every unlocked piece that has no spot.
