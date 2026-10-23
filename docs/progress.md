@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.7 (wiring part 1).
-- **Next:** SF.8, then SF.9 (packs note, then stop for the owner's upload).
+- **Last task:** SF.8 (wiring part 2).
+- **Next:** SF.9 (measure the build without sounds, convert and ship the picks) (packs note, then stop for the owner's upload).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -434,3 +434,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Tests:** `src/ui/app/sound-cues.test.ts` (mapping and the silent list); `tests/e2e/sound.spec.ts` (12 tests, fake engine): Sound Off requests nothing; On loads the seven files in that tap; one sound per command (bulk buy once); two moments inside the hold give only the stronger; hidden, paused and interrupted skip and never replay; away is silent; the debug row plays each of the seven and leaves `debugUsed` false.
 - **Debug row:** "Play sound" with seven buttons (accessible names "Play build" and so on, so no old locator clashes).
 - **Not yet:** Delves, events, the Long Night (SF.8).
+
+## 2026-10-23 — v1.2 SF.8 wiring, part 2
+- **Wired (UI only, no core change):** a Delve fight is sounded when its playback ends or is skipped (cleared floor = Win, guardian = Fanfare, lost run = Lose); a Great Beast attempt or hunt when its playback ends, is skipped or the sheet is closed early (milestone or kill, or a Legendary hunter unlocked = Fanfare; one sound per attempt); the Long Night when "Go up to the walls" succeeds, i.e. when its sheet appears. Hunter rank-up was done in SF.7. Closing a Delve playback early is silent because that fight is not fought.
+- **How each is reached in the tests:** Delve: a Keep made by the core's own helper, strong party (six floors then the guardian: Win ×6, Fanfare) and frail party (Lose); the Fight log replay is silent. Beast kill: the owner's v8 save, migrated and edited so a kill is one hit away; both the "skip" and "close early" cases. Beast attempt with no milestone: owner save, silent. Unlock: owner save with every hunt on 99 points. Long Night: debug "Unlock Bastion", then the Last Stand; Start, the waves and reopening from the Hold card are silent.
+- **Not run as their own e2e:** a Great Beast **milestone without a kill** (mapping covered in `sound-cues.test.ts`; the kill case runs through the same code) and **Leave run** (silent: no cue is wired to it).
+- **Found, not mine:** closing the Fight log inside a Delve reopens the Delve sheet on its next stage (the old behaviour; nothing changed).
+- **Unit tests added:** `momentForAttempt`, `momentForFloor`, `stand.make` in `sound-cues.test.ts`.

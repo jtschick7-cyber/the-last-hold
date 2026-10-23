@@ -1,9 +1,11 @@
 import type { Page } from '@playwright/test';
 import type { SoundTestHook } from '../../src/platform/sound/browser';
 import type { SoundId } from '../../src/platform/sound/moments';
-import { makeEnvelope } from '../../src/core/save';
+import { loadEnvelope, makeEnvelope } from '../../src/core/save';
+import type { GameState } from '../../src/core/state/game-state';
 import { advance } from '../../src/core/sim';
 import { give, hamletWithMine, run, T0 } from '../contracts/helpers';
+import { frailKeep, strongKeep } from '../delves/helpers';
 import { tab } from './helpers';
 
 // Plan SF.7 (D522 (7)): the sound tests run on the real app with the recording fake engine
@@ -92,4 +94,19 @@ export const runningContractSave = (
     return { save: makeEnvelope(s, T0), endsAt, at: T0 };
   }
   throw new Error(`no seed gave a ${outcome}`);
+};
+
+/** A Keep ready to Delve (a strong or a frail party), made by the core's own test helper. */
+export const delveSave = (kind: 'strong' | 'frail'): { save: object; at: number } => {
+  const s = kind === 'strong' ? strongKeep(`sound-${kind}`) : frailKeep(`sound-${kind}`);
+  return { save: makeEnvelope(s, s.time), at: s.time };
+};
+
+/** The owner's real v8 save, migrated by the core, with `edit` applied to the migrated state. */
+export const ownerSaveEdited = (raw: unknown, edit: (s: GameState) => void): object => {
+  const r = loadEnvelope(raw);
+  if (!r.ok) throw new Error(r.error);
+  const s = r.value.state;
+  edit(s);
+  return makeEnvelope(s, s.time);
 };

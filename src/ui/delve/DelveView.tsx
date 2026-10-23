@@ -7,6 +7,8 @@ import { BreakdownView } from '../sheets/BreakdownView';
 import styles from '../styles/ui.module.css';
 import { Arena } from './Arena';
 import css from './Delve.module.css';
+import { playMoment } from '../app/sound';
+import { momentForFloor } from '../app/sound-cues';
 import { PlaybackView } from './PlaybackView';
 import { ResultView } from './ResultView';
 import { StageViewScreen } from './StageViews';
@@ -127,7 +129,11 @@ export const DelveView = () => {
     return (
       <PlaybackView
         pb={played}
-        onFinish={() => dispatch({ type: 'delve.fight' })}
+        onFinish={() => {
+          // GDD §9.22: the result is heard the first time it is shown, when the playback reaches its
+          // end (or is skipped to it). A floor closed before then is not fought and is silent.
+          if (dispatch({ type: 'delve.fight' }).ok) playMoment(momentForFloor(played));
+        }}
         onContinue={() => setPlayed(null)}
       />
     );

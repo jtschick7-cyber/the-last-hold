@@ -4,6 +4,8 @@
 import type { Command } from '../../core/commands';
 import type { AdvanceLog } from '../../core/sim/advance';
 import type { BuildingId } from '../../content/buildings';
+import type { FloorPlayback } from '../../core/delves/view';
+import type { EventResult } from '../../core/state/events-state';
 import type { Moment } from '../../platform/sound/moments';
 
 /** A command that has just succeeded. `owned` reads the Hold before the command ran. */
@@ -21,6 +23,10 @@ export const momentForCommand = (cmd: Command, owned: (b: BuildingId) => number)
       return 'hold.rankUp';
     case 'hunter.rankUp':
       return 'hunter.rankUp';
+    // The Last Stand's sheet opens the moment this succeeds: that sheet is the Long Night arriving.
+    // Starting the stand and its result are not sounded; reopening the sheet later is not either.
+    case 'stand.make':
+      return 'longNight.arrives';
     default:
       return null;
   }
@@ -33,3 +39,22 @@ export const momentsForLiveTick = (log: AdvanceLog): Moment[] =>
       ? [e.result.success ? ('contract.won' as const) : ('contract.lost' as const)]
       : [],
   );
+
+/**
+ * The one sound for a boss or hunt attempt (GDD §9.22): a Great Beast milestone, its kill, or a
+ * Legendary hunter unlocked. An attempt that earns none of these is silent.
+ */
+export const momentForAttempt = (last: EventResult | null): Moment | null => {
+  if (!last) return null;
+  if (last.kind === 'boss' && last.boss) {
+    if (last.boss.killed) return 'beast.kill';
+    return last.boss.milestones.length > 0 ? 'beast.milestone' : null;
+  }
+  return last.hunt?.unlocked ? 'legendary.unlocked' : null;
+};
+
+/** A Delve fight that has just been shown to its end (GDD §9.22, §9.15). */
+export const momentForFloor = (pb: Pick<FloorPlayback, 'result' | 'guardian'>): Moment => {
+  if (pb.result === 'loss') return 'delve.runLost';
+  return pb.guardian ? 'delve.guardianBeaten' : 'delve.floorCleared';
+};

@@ -1,10 +1,14 @@
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { begin, debugPress, onwardAll, tab } from './helpers';
+import type { SoundId } from '../../src/platform/sound/moments';
+import { begin, closeOrdersScenes, debugPress, onwardAll, tab } from './helpers';
 import { load, type Save } from './layout-helpers';
 import {
   hold,
   installSoundHook,
   played,
+  delveSave,
+  ownerSaveEdited,
   runningContractSave,
   setAudioState,
   soundOn,
@@ -300,4 +304,240 @@ test("the Hold's own Rank-up plays Fanfare once", async ({ page }) => {
   await page.getByRole('button', { name: 'Rank up to Bastion' }).click();
   await hold(page);
   expect(await played(page)).toEqual(['fanfare']);
+});
+
+/** Plays a whole Delve with Skip, checking after each fight that its one sound matches the line. */
+const playDelve = async (page: Page, tookSound: () => Promise<SoundId[]>): Promise<SoundId[]> => {
+  const sheet = page.getByRole('dialog', { name: 'Delve' });
+  let seen = 0;
+  const heard: SoundId[] = [];
+  for (let i = 0; i < 80; i++) {
+    if (await sheet.getByRole('button', { name: 'Done' }).isVisible()) break;
+    if (await sheet.getByRole('button', { name: 'Take this blessing' }).isVisible()) {
+      await sheet.locator('button[aria-pressed="false"]').first().click();
+      await sheet.getByRole('button', { name: 'Take this blessing' }).click();
+    } else if (await sheet.getByText(/Two doors/).isVisible()) {
+      await sheet.getByRole('button').filter({ hasText: 'Ahead:' }).first().click();
+    } else if (await sheet.getByRole('button', { name: 'Fight', exact: true }).isVisible()) {
+      await sheet.getByRole('button', { name: 'Fight', exact: true }).click();
+      await sheet.getByRole('button', { name: 'Skip' }).click();
+      const line = (await sheet.locator('[aria-live="polite"]').last().textContent()) ?? '';
+      await hold(page);
+      const all = await tookSound();
+      expect(all.length, `one sound for this fight (${line})`).toBe(seen + 1);
+      seen = all.length;
+      const sound = all[all.length - 1] as SoundId;
+      expect(sound).toBe(
+        line.includes('falls') ? 'lose' : line.includes('guardian') ? 'fanfare' : 'win',
+      );
+      heard.push(sound);
+      // The log is a replay of what was just shown: opening it plays nothing.
+      await sheet.getByRole('button', { name: 'Log' }).click();
+      await page
+        .getByRole('dialog', { name: 'Fight log' })
+        .getByRole('button', { name: 'Close' })
+        .click();
+      await hold(page);
+      expect((await tookSound()).length).toBe(seen);
+      // Closing the log re-opens the sheet on the next stage; if it did not, carry on from here.
+      const next = sheet.getByRole('button', { name: 'Continue' });
+      if (await next.isVisible()) await next.click();
+    } else await page.waitForTimeout(150);
+  }
+  return heard;
+};
+
+const openDelve = async (page: Page): Promise<void> => {
+  await tab(page, 'Hold').click();
+  await page
+    .getByRole('region', { name: 'The Rift' })
+    .getByRole('button', { name: 'Delve', exact: true })
+    .click();
+  await page.getByRole('dialog', { name: 'Delve' }).getByRole('button', { name: 'Start' }).click();
+};
+
+test('Delve: each floor cleared plays Win, the guardian plays Fanfare; the log replays silently; Leave run is silent', async ({
+  page,
+}) => {
+  const { save, at } = delveSave('strong');
+  await page.clock.install({ time: at });
+  await installSoundHook(page);
+  await load(page, () => {}, save as unknown as Save);
+  await soundOn(page);
+  await openDelve(page);
+  const heard = await playDelve(page, () => played(page));
+  expect(heard.slice(0, -1).every((s) => s === 'win')).toBe(true);
+  expect(heard.at(-1)).toBe('fanfare'); // a strong party reaches and beats the guardian
+  expect(heard.length).toBe(7);
+});
+
+test('Delve: a lost run plays Lose once; closing a playback before its end is silent', async ({
+  page,
+}) => {
+  const { save, at } = delveSave('frail');
+  await page.clock.install({ time: at });
+  await installSoundHook(page);
+  await load(page, () => {}, save as unknown as Save);
+  await soundOn(page);
+  await openDelve(page);
+  const sheet = page.getByRole('dialog', { name: 'Delve' });
+  // Get to the first fight, start it, and close the sheet before it ends: not fought, so silent.
+  for (let i = 0; i < 40; i++) {
+    if (await sheet.getByRole('button', { name: 'Fight', exact: true }).isVisible()) break;
+    if (await sheet.getByRole('button', { name: 'Take this blessing' }).isVisible()) {
+      await sheet.locator('button[aria-pressed="false"]').first().click();
+      await sheet.getByRole('button', { name: 'Take this blessing' }).click();
+    } else if (await sheet.getByText(/Two doors/).isVisible()) {
+      await sheet.getByRole('button').filter({ hasText: 'Ahead:' }).first().click();
+    } else await page.waitForTimeout(150);
+  }
+  await sheet.getByRole('button', { name: 'Fight', exact: true }).click();
+  await sheet.getByRole('button', { name: 'Close' }).first().click();
+  await hold(page);
+  expect(await played(page)).toEqual([]);
+  await page
+    .getByRole('region', { name: 'The Rift' })
+    .getByRole('button', { name: /^Continue/ })
+    .click();
+  const heard = await playDelve(page, () => played(page));
+  expect(heard.at(-1)).toBe('lose');
+  expect(heard.filter((s) => s === 'lose')).toHaveLength(1);
+});
+
+const ownerSave = JSON.parse(
+  readFileSync(new URL('../saves/fixtures/v8-owner.json', import.meta.url), 'utf8'),
+);
+
+const sendBossParty = async (page: Page): Promise<void> => {
+  await debugPress(page, 'Fill the attempt bank');
+  await tab(page, 'Hold').click();
+  await page
+    .getByRole('region', { name: 'Events' })
+    .getByRole('button', { name: /The Great Beast/ })
+    .click();
+  await page
+    .getByRole('dialog', { name: 'The Great Beast' })
+    .getByRole('button', { name: 'Send a party' })
+    .click();
+  const party = page.getByRole('dialog', { name: 'Send a party' });
+  await party.getByRole('button', { name: 'Suggest best' }).click();
+  await expect(party.getByText(/^Expected damage: /)).toBeVisible({ timeout: 20_000 });
+  await party.getByRole('button', { name: 'Send the hunters' }).click();
+};
+
+test('a Great Beast attempt that earns nothing is silent; sending is silent; the result sheet adds nothing', async ({
+  page,
+}) => {
+  await installSoundHook(page);
+  await load(page, () => {}, ownerSave);
+  await soundOn(page);
+  await sendBossParty(page);
+  const play = page.getByRole('dialog', { name: 'The Lindworm of Velk Fjord' });
+  await expect(play.getByRole('button', { name: 'Skip' })).toBeVisible();
+  await play.getByRole('button', { name: 'Skip' }).click();
+  await play.getByRole('button', { name: 'See the result' }).click();
+  await expect(page.getByRole('dialog', { name: 'Result' })).toContainText(
+    'Milestones: None this time',
+  );
+  await hold(page);
+  expect(await played(page)).toEqual([]);
+});
+
+const lowPool = ownerSaveEdited(ownerSave, (s) => {
+  Object.assign(s.events.boss, { tier: 3, pool: 10, paid: 3, attempts: 3 });
+});
+
+for (const how of ['skip', 'close'] as const) {
+  test(`a Great Beast kill plays Fanfare once; ${how === 'skip' ? 'at the end of the playback' : 'at once when the sheet is closed early'}`, async ({
+    page,
+  }) => {
+    await installSoundHook(page);
+    await load(page, () => {}, lowPool as unknown as Save);
+    await soundOn(page);
+    await sendBossParty(page);
+    const play = page.getByRole('dialog').last();
+    await expect(play.getByRole('button', { name: 'Skip' })).toBeVisible();
+    await hold(page);
+    expect(await played(page)).toEqual([]); // not before the result is shown
+    if (how === 'skip') {
+      await play.getByRole('button', { name: 'Skip' }).click();
+      await hold(page);
+      expect(await played(page)).toEqual(['fanfare']);
+      await play.getByRole('button', { name: 'See the result' }).click();
+    } else {
+      await play.getByRole('button', { name: 'Close' }).first().click();
+    }
+    await hold(page);
+    expect(await played(page)).toEqual(['fanfare']);
+  });
+}
+
+test('a Legendary hunter unlocked plays Fanfare once, when the result is shown', async ({
+  page,
+}) => {
+  // One point short on every hunt: a win on the track unlocks (content/balance.ts hunt.unlockPoints).
+  const almost = ownerSaveEdited(ownerSave, (s) => {
+    for (const h of Object.values(s.events.hunts)) h.points = 99;
+  });
+  await installSoundHook(page);
+  await load(page, () => {}, almost as unknown as Save);
+  await soundOn(page);
+  await debugPress(page, 'Fill the attempt bank');
+  await tab(page, 'Hold').click();
+  await page
+    .getByRole('region', { name: 'Events' })
+    .getByRole('button', { name: /Legendary Hunts/ })
+    .click();
+  await page
+    .getByRole('dialog', { name: 'Legendary Hunts' })
+    .getByRole('button', { name: /The Toll Road/ })
+    .first()
+    .click();
+  const track = page.getByRole('dialog').last();
+  await track.getByRole('button', { name: 'Suggest best' }).click();
+  await expect(track.getByText(/^ODDS \d+%/)).toBeVisible({ timeout: 30_000 });
+  await track.getByRole('button', { name: 'Send the hunters' }).click();
+  const play = page.getByRole('dialog').last();
+  await expect(play.getByRole('button', { name: 'Skip' })).toBeVisible();
+  expect(await played(page)).toEqual([]);
+  await play.getByRole('button', { name: 'Skip' }).click();
+  await play.getByRole('button', { name: 'See the result' }).click();
+  await hold(page);
+  await expect(page.getByRole('dialog', { name: 'A hunter joins' })).toBeVisible();
+  expect(await played(page)).toEqual(['fanfare']);
+});
+
+test('the Long Night plays Nightfall once, when its sheet appears; the Last Stand before it and reopening it are silent', async ({
+  page,
+}) => {
+  await installSoundHook(page);
+  await page.goto('./?debug');
+  await begin(page);
+  await debugPress(page, 'Unlock Bastion');
+  await onwardAll(page);
+  await closeOrdersScenes(page);
+  await soundOn(page);
+  await tab(page, 'Hold').click();
+  await page.getByRole('button', { name: 'Rank ▸' }).click();
+  await page.getByRole('button', { name: 'Make the Last Stand' }).click();
+  await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 15_000 });
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await hold(page);
+  expect(await played(page)).toEqual([]); // starting the stand is silent
+  await page.getByRole('button', { name: 'Go up to the walls' }).click();
+  const night = page.getByRole('dialog', { name: 'The Long Night' });
+  await expect(night.getByText(/The walls held/)).toBeVisible();
+  await hold(page);
+  expect(await played(page)).toEqual(['nightfall']);
+  // Its waves and pages are silent.
+  await night.getByRole('button', { name: '1', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Wave 1' }).getByRole('button', { name: 'Close' }).click();
+  await night.getByRole('button', { name: 'Next' }).click();
+  await hold(page);
+  expect(await played(page)).toEqual(['nightfall']);
+  // Closed unread: the Hold's card brings it back, and that is silent.
+  await night.getByRole('button', { name: 'Close' }).first().click();
+  await page.getByRole('button', { name: /The Long Night: what happened/ }).click();
+  await hold(page);
+  expect(await played(page)).toEqual(['nightfall']);
 });
