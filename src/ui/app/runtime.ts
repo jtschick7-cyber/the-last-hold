@@ -36,7 +36,9 @@ import {
 import { afterExport, snoozedFor, withExportAge } from '../../platform/backup-reminder';
 import { levelUpLines, noticeChanges, type Watched } from './lines';
 import { skillLevels } from '../../core/skills/skills';
-import { applySoundSetting } from './sound';
+import type { BuildingId } from '../../content/buildings';
+import { applySoundSetting, playMoment } from './sound';
+import { momentForCommand, momentsForLiveTick } from './sound-cues';
 
 // Technical design §6.3 and §10: one mutable game state, plus a `version` signal
 // bumped after every apply and advance. Components re-read selectors when it
@@ -81,8 +83,10 @@ const REPORTS_KEEP = 3;
 let state: GameState | null = null;
 
 /** Live time passing: remembers what experiments showed, so the Hut can say so. */
-const advanceLive = (s: GameState, t: number): void => {
+const advanceLive = (s: GameState, t: number, sounds = false): void => {
   const log = advance(s, t);
+  // GDD §9.22: a contract that finishes in the live tick is heard; a catch-up on return is not.
+  if (sounds) for (const m of momentsForLiveTick(log)) playMoment(m);
   const lines = log.events.flatMap((e) =>
     e.type === 'experiment' ? experimentLines((id) => consumables[id].name, e) : [],
   );
@@ -174,10 +178,15 @@ export const saveNow = (): boolean => {
 export const dispatch = (cmd: Command): ApplyResult => {
   const s = game();
   const t = now();
-  advanceLive(s, t);
+  advanceLive(s, t, true);
+  const owned = (b: BuildingId): number => s.buildings[b];
+  const moment = momentForCommand(cmd, owned); // read before the command changes the Hold
   const result = apply(s, cmd, t);
   bump();
-  if (result.ok) saveNow();
+  if (result.ok) {
+    if (moment) playMoment(moment);
+    saveNow();
+  }
   return result;
 };
 
@@ -250,7 +259,7 @@ export const startGame = async (): Promise<void> => {
   // not motion: the game clock's tick
   setInterval(() => {
     if (document.visibilityState !== 'visible' || catchUpProgress.value) return;
-    advanceLive(game(), now());
+    advanceLive(game(), now(), true);
     bump();
   }, LIVE_TICK_MS);
 

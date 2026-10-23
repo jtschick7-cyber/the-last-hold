@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.2` (from `main` at the v1.1 merge, tag `v1.1.0`).
 - **Milestone:** v1.2 "Sounds of the Frontier" (D519–D528), in progress.
-- **Last task:** SF.6 (sound module).
-- **Next:** SF.7, SF.8, then SF.9 (packs note, then stop for the owner's upload).
+- **Last task:** SF.7 (wiring part 1).
+- **Next:** SF.8, then SF.9 (packs note, then stop for the owner's upload).
 - **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -427,3 +427,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Non-coupling (D525 (5)):** new `tests/lint/sound-coupling.test.ts` (no core file mentions the module, the setting or the hook; no `sound` in the save state) and a planted-import case `core-imports-sound.ts` added to the guard-rail list.
 - **Not yet proven:** the browser side (`browser.ts`, the hook doing nothing unless set) is covered by the Playwright tests in SF.7. No file is shipped yet, so a real fetch 404s into silence until SF.9.
 - **Reading made:** a request is accepted while the context is paused only if the same tap is resuming it.
+
+## 2026-10-23 — v1.2 SF.7 wiring, part 1
+- **Where cues come from:** `src/ui/app/sound-cues.ts` maps a succeeded command, or a contract finishing in a live tick, to a moment. Nothing in `src/core/` changed. Contracts count only from the live tick (and the tap's own small tick); the return-from-away path never sounds.
+- **How each moment is reached in the tests:** Build / new building / bulk buy: new game with `?debug` and "+1K" buttons, Cottage ×10, Mine. Launch: the same game, Prepare then Send. Place: played v12 save, Arrange Hold (move, swap, tray item). Win and Lose: a save the core itself makes with one contract running (seed searched until it ends as asked), page clock set to the save's time, then a 13 h fast-forward = a live tick; the away case moves the clock without timers and fires the return event. Hunter rank-up: debug "Ready to rank up", then the hunter sheet. Hold Rank-up: v12 save edited to meet the Bastion's needs.
+- **Tests:** `src/ui/app/sound-cues.test.ts` (mapping and the silent list); `tests/e2e/sound.spec.ts` (12 tests, fake engine): Sound Off requests nothing; On loads the seven files in that tap; one sound per command (bulk buy once); two moments inside the hold give only the stronger; hidden, paused and interrupted skip and never replay; away is silent; the debug row plays each of the seven and leaves `debugUsed` false.
+- **Debug row:** "Play sound" with seven buttons (accessible names "Play build" and so on, so no old locator clashes).
+- **Not yet:** Delves, events, the Long Night (SF.8).
