@@ -299,3 +299,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Sheets for you:** `docs/flesh-out/v1.1/before-after/tl6a.png` and Hamlet and Bastion mock-ups before and after. The old versions are kept in `art-src/previous-v1.1/`.
 - **Choices to check:** the wall wings sit at the wall's own height (rows 11–20 of the tile) so they join flush, not 10–21 as noted; the earth is a rust-brown (the palette has no yellow-brown). The mock-ups scatter the three ground looks evenly; **for the real screen (TL.7) I recommend mostly grass with earth and flags used sparingly**, so it does not read as a checkerboard.
 - **Not marked done until you approve.** All 58 Keep pictures are byte-identical (tested). New tools: `before-after-layout.ts`, shared `layout-sheet-parts.ts`. `npm run check` green. Nothing skipped.
+
+## 2026-10-23 — v1.1 TL.6a approved; TL.6b drawn, awaiting approval
+- **TL.6a approved** by the owner and ticked.
+- **TL.6b redrawn (11), from your notes:** Barracks 1–3 (timber-framed martial hall, slate roof, weapon rack by the door; stone course and target from Tier II; crenellated eaves, shield emblem and banner at Tier III), Mine 1–3 (timbered mouths set in dark rock with rails and ore; two mouths and a lantern; then three mouths, a hoist frame and carts), Sawpit 1–3 (a log on trestles under a pit saw with planks; a roofed canopy; a full shed with a circular blade and tall stacks; the floating grey shape is gone), Silver Seam 1–2 (jagged outcrops with a branching silver vein).
+- **Sheets:** `docs/flesh-out/v1.1/before-after/tl6b.png` plus Hamlet and Bastion mock-ups. Old versions are in `art-src/previous-v1.1/`.
+- **Code:** Barracks and Sawpit moved to `draw-grid-yard.ts`, Mine and Silver Seam to `draw-grid-rock.ts`, shared helpers to `draw-grid-kit.ts`. All 47 other pictures not in a batch so far are byte-identical (tested). `npm run check` green. Nothing skipped.

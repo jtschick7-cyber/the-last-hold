@@ -2,6 +2,7 @@
 // 1–4 owned a single structure, 5–14 a pair, 15 or more a cluster; the Silver Seam two) and the grid
 // versions of the four hold cosmetics. 32 px unless noted, drawn in code in the palette, ground left clear.
 import { C, Canvas } from './pixel';
+import { drawMine, drawSeam, SEAM_LOOKS } from './draw-grid-rock';
 
 export const PLOT_BUILDINGS = ['cottage', 'farm', 'woodcutter', 'mine', 'herb-garden'] as const;
 export type PlotBuilding = (typeof PLOT_BUILDINGS)[number];
@@ -65,16 +66,6 @@ const camp: Part = (c, cx, cy, s) => {
   if (s !== 3) c.rect(cx + 3, cy - 6, 1, 7, C.ash); // an axe
 };
 
-const pit: Part = (c, cx, cy, s) => {
-  c.rect(cx - 6, cy - 2, 12, 9, C.coal);
-  c.rect(cx - 4, cy, 8, 7, C.ink);
-  c.rect(cx - 6, cy - 4, 12, 2, C.brownDark);
-  c.rect(cx - 6, cy - 4, 2, 11, C.brown);
-  c.rect(cx + 4, cy - 4, 2, 11, C.brown);
-  if (s === 1) c.set(cx + 2, cy + 5, C.gold); // a glint of ore
-  c.rect(cx - 7, cy + 7, 14, 1, C.stone);
-};
-
 const bed: Part = (c, cx, cy, s) => {
   const w = s === 1 ? 8 : 5;
   c.rect(cx - w, cy - 4, w * 2, 9, C.brownDark);
@@ -88,11 +79,10 @@ const bed: Part = (c, cx, cy, s) => {
   c.set(cx, cy, C.pink);
 };
 
-const PART: Record<PlotBuilding, Part> = {
+const PART: Record<Exclude<PlotBuilding, 'mine'>, Part> = {
   cottage,
   farm: field,
   woodcutter: camp,
-  mine: pit,
   'herb-garden': bed,
 };
 
@@ -146,6 +136,7 @@ const lushBeds = (): Canvas => {
 };
 
 export const drawPlot = (b: PlotBuilding, d: Density): Canvas => {
+  if (b === 'mine') return drawMine(d);
   if (d === 3 && b === 'farm') return richField();
   if (d === 3 && b === 'herb-garden') return lushBeds();
   const c = new Canvas(32);
@@ -154,32 +145,11 @@ export const drawPlot = (b: PlotBuilding, d: Density): Canvas => {
   for (const [x, y] of spots) PART[b](c, x, y, size);
   // A cluster shows one larger piece in the middle.
   if (d === 3 && b === 'woodcutter') c.rect(13, 14, 6, 4, C.brownDark);
-  if (d === 3 && b === 'mine') c.rect(14, 14, 4, 4, C.ash);
   c.outline(C.wine);
   return c;
 };
 
-export const SEAM_LOOKS = [1, 2] as const;
-/** A Silver Seam: a rock outcrop shot through with silver; one seam, then twin seams. */
-export const drawSeam = (look: 1 | 2): Canvas => {
-  const c = new Canvas(32);
-  const rock = (cx: number, cy: number, rx: number, ry: number): void => {
-    c.ellipse(cx, cy, rx, ry, (x, y) =>
-      y < cy - ry / 2 ? C.ash : x > cx + rx / 3 ? C.coal : C.stone,
-    );
-    for (let k = 0; k < 4; k++) {
-      c.set(cx - 3 + k * 2, cy - 2 + (k % 2) * 3, C.frost);
-      c.set(cx - 2 + k * 2, cy - 1 + (k % 2) * 3, C.ice);
-    }
-  };
-  if (look === 1) rock(16, 19, 9, 7);
-  else {
-    rock(10, 16, 7, 6);
-    rock(22, 23, 7, 6);
-  }
-  c.outline(C.wine);
-  return c;
-};
+export { drawSeam, SEAM_LOOKS };
 
 /** Gatehouse banners: two banners hang from the Lowland Gate's posts (256 × 16, over `grid.strip.south`). */
 export const drawBanners = (): Canvas => {

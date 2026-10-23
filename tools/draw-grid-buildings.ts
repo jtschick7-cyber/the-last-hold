@@ -2,6 +2,8 @@
 // III), and the Trophy Hall. 32 px, drawn in code in the palette, with the ground left clear so the
 // tile under them shows. Each tier is larger or richer than the last, and never smaller.
 import { C, Canvas } from './pixel';
+import { drawBarracks, drawSawpit } from './draw-grid-yard';
+import { BLUE, RED, SLATE, STRAW, chimney, door, roof, wall, window } from './draw-grid-kit';
 
 export const LEVEL_BUILDINGS = [
   'mill',
@@ -15,59 +17,6 @@ export const LEVEL_BUILDINGS = [
 export type LevelBuilding = (typeof LEVEL_BUILDINGS)[number];
 export type Tier = 1 | 2 | 3;
 export const TIERS: readonly Tier[] = [1, 2, 3];
-
-type Roof = { top: string; shade: string };
-const RED: Roof = { top: C.orange, shade: C.red };
-const BLUE: Roof = { top: C.blue, shade: C.night };
-const SLATE: Roof = { top: C.slate, shade: C.plum };
-const STRAW: Roof = { top: C.gold, shade: C.sand };
-
-/** A wall block with a lit top edge and a shaded foot. */
-const wall = (
-  c: Canvas,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  body: string,
-  shade: string,
-): void => {
-  c.rect(x, y, w, h, body);
-  c.rect(x, y + h - 1, w, 1, shade);
-  c.rect(x + w - 1, y, 1, h, shade);
-};
-
-/** A hip roof drawn as stacked rows, narrowing upward, with a lit left half. */
-const roof = (c: Canvas, x: number, y: number, w: number, h: number, r: Roof): void => {
-  for (let row = 0; row < h; row++) {
-    const inset = Math.floor(((h - 1 - row) * 3) / 4) === 0 ? 0 : Math.floor((h - 1 - row) / 2);
-    const left = x + inset;
-    const width = w - inset * 2;
-    c.rect(left, y + row, width, 1, row % 3 === 2 ? r.shade : r.top);
-    c.set(left + width - 1, y + row, r.shade);
-  }
-};
-
-const door = (c: Canvas, x: number, y: number, w = 4, h = 6): void => {
-  c.rect(x, y, w, h, C.brownDark);
-  c.rect(x, y, w, 1, C.brown);
-  c.set(x + w - 2, y + Math.floor(h / 2), C.gold);
-};
-
-const chimney = (c: Canvas, x: number, y: number, h: number, smoke: boolean): void => {
-  c.rect(x, y, 3, h, C.stone);
-  c.rect(x, y, 3, 1, C.ash);
-  if (smoke) {
-    c.set(x + 1, y - 2, C.ash);
-    c.set(x + 2, y - 4, C.bone);
-    c.set(x, y - 6, C.ash);
-  }
-};
-
-const window = (c: Canvas, x: number, y: number, lit = false): void => {
-  c.rect(x, y, 3, 3, lit ? C.gold : C.night);
-  c.set(x, y, lit ? C.cream : C.blue);
-};
 
 const drawMill = (t: Tier): Canvas => {
   const c = new Canvas(32);
@@ -114,36 +63,6 @@ const drawMill = (t: Tier): Canvas => {
   return c;
 };
 
-const drawSawpit = (t: Tier): Canvas => {
-  const c = new Canvas(32);
-  const logs = (x: number, y: number, n: number): void => {
-    for (let i = 0; i < n; i++) {
-      c.rect(x, y - i * 3, 12, 3, C.brown);
-      c.rect(x, y - i * 3, 12, 1, C.rust);
-      c.rect(x + 10, y - i * 3, 2, 3, C.sand);
-    }
-  };
-  logs(3, 29, t === 1 ? 1 : t === 2 ? 2 : 3);
-  // The saw frame over a pit.
-  c.rect(17, 14, 2, 15, C.brownDark);
-  c.rect(27, 14, 2, 15, C.brownDark);
-  c.rect(17, 14, 12, 2, C.brown);
-  c.rect(19, 18, 8, 1, C.ash); // the blade
-  c.rect(19, 24, 8, 4, C.ink);
-  if (t >= 2) {
-    roof(c, 15, 8, 16, 6, STRAW);
-    c.rect(17, 14, 12, 1, C.sand);
-  }
-  if (t === 3) {
-    logs(18, 29, 1);
-    c.rect(4, 6, 8, 1, C.stone);
-    c.rect(3, 7, 10, 5, C.ash); // a stone grindwheel in front
-    c.rect(6, 8, 4, 3, C.stone);
-  }
-  c.outline(C.wine);
-  return c;
-};
-
 const drawSmithy = (t: Tier): Canvas => {
   const c = new Canvas(32);
   const w = 14 + t * 3;
@@ -175,26 +94,6 @@ const drawBellTower = (t: Tier): Canvas => {
   c.set(16, 30 - h - 8, C.gold);
   door(c, 15, 25, 3, 5);
   if (t === 3) c.rect(13, 20, 7, 1, C.coal);
-  c.outline(C.wine);
-  return c;
-};
-
-const drawBarracks = (t: Tier): Canvas => {
-  const c = new Canvas(32);
-  const w = 16 + t * 4;
-  const x = Math.floor((32 - w) / 2);
-  wall(c, x, 15, w, 15, C.cream, C.sand);
-  c.rect(x, 15, w, 2, C.brown);
-  roof(c, x - 1, 8, w + 2, 7, t === 1 ? RED : BLUE);
-  door(c, x + Math.floor(w / 2) - 2, 22, 4, 8);
-  window(c, x + 2, 20);
-  if (t >= 2) window(c, x + w - 5, 20);
-  if (t === 3) {
-    c.rect(x + w - 4, 1, 1, 10, C.brownDark); // a banner pole
-    c.rect(x + w - 3, 2, 5, 4, C.red);
-    c.rect(x + w - 3, 5, 3, 1, C.red);
-    c.set(x + w - 1, 3, C.gold);
-  }
   c.outline(C.wine);
   return c;
 };
