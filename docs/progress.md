@@ -497,3 +497,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **e2e split (D533), first run on branch `ci/e2e-shards`:** shard 1 took 94 s of tests and shard 3 193 s. Shards 2 and 4 never reached the tests: the browser install hung. **Cause found in my own D527 numbers:** three tries of 120 s do not fit in a 5-minute step. Fixed (D535, Proposed): 90 s per try, 6 minutes for the step. Not yet known: the real time of the shard holding the tap sweep (shard 2).
 - **Risk to watch:** four shards mean four chances for the install to hang.
 - **Benchmarks job (`bench.yml`)** hung in the same install and had no retry; the owner said yes, so it now has the same one (D536). The bench "odds" timing test failed once at 659 ms against 600 ms on a slow runner (not related to sound).
+
+## 2026-10-23 — e2e split, second look (D537)
+- **Shard times (first fixed run):** shard 1 1 min 34 s, shard 2 **7 min 31 s**, shard 3 3 min 16 s; shard 4 failed in the install. Install stalled on the Ubuntu Azure mirror (all three tries), so the tries were not the problem.
+- **Owner said do both:** `--fully-parallel` on the shard command (tests spread one by one; expected about 2 to 3 min of tests per shard) and an apt fail-fast setting before the install in `ci.yml` and `bench.yml` (D537). Locally the four shards hold 126 tests in total.
+- **Still to see on CI:** every shard job under 5 minutes. If not, the fallback is a longer limit for the e2e shards. Bench change is untested until a pull request exists.

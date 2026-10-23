@@ -38,8 +38,8 @@ jobs:
         env:
           LH_CHANNEL: preview
 
-  # D533: the browser tests run in four parallel shards (each test file stays whole, because the
-  # tap, contrast and Text size sweeps add up their findings per file). Nothing about which tests run
+  # D533: the browser tests run in four parallel shards (D537: tests are spread one by one; each worker
+  # still checks its own sweep findings strictly). Nothing about which tests run
   # or how they pass changes.
   e2e-shards:
     name: e2e shard ${{ matrix.shard }} of 4
@@ -56,6 +56,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # D537: a stalled download from the Ubuntu mirror was the cause of the hangs, so apt gives up on
+      # a slow download after 20 s and tries again (up to five times) instead of waiting for ever.
+      - name: Make apt fail fast on a stalled download
+        run: |
+          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "20";\nAcquire::https::Timeout "20";\n' | sudo tee /etc/apt/apt.conf.d/99-fail-fast
       # D527: this step hangs about one run in three, so it gets a time limit and up to three tries.
       - name: Install the test browsers
         timeout-minutes: 6
@@ -69,7 +74,7 @@ jobs:
             sleep 5
           done
           exit 1
-      - run: npm run e2e -- --shard=${{ matrix.shard }}/4
+      - run: npm run e2e -- --shard=${{ matrix.shard }}/4 --fully-parallel
 
   # The one name a branch rule can wait for: green only when all four shards are green.
   e2e:
