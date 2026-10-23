@@ -1,3 +1,4 @@
+import { autoPlaceUnlocked } from '../systems/layout-place';
 import { BUILDING_IDS, type BuildingId } from '../../content/buildings';
 import { CONSUMABLE_IDS } from '../../content/consumables';
 import { HUNTER_IDS, type HunterId } from '../../content/hunters';
@@ -122,4 +123,5 @@ export const resetForNewCycle = (state: GameState): void => {
   state.cycles.push(freshCycleRecord(ending + 1, state.time, act));
   state.story.acts.push(freshAct(act, ending + 1, state.time));
   syncBoardOpen(state);
+  autoPlaceUnlocked(state); // GDD §5.1.5 (M3): the starting buildings wake at their saved spots; the blueprint itself is kept
 };

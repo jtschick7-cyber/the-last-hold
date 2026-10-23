@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.1` (from `main` at the v1.0 merge, tag `v1.0.0`).
 - **Milestone:** v1.1 "The Hold's Layout" (D498–D508), in progress.
-- **Last task:** TL.2 (selectors, piece states, non-coupling check).
-- **Next:** TL.3 (layout commands, auto-placement, Long Night hooks).
+- **Last task:** TL.3 (layout commands, blueprint protection, auto-placement, Long Night).
+- **Next:** TL.4 (debug layout commands).
 - **Open questions:** Q52 (piece counts in the docs are off by one; informational).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -248,3 +248,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Note for TL.7/TL.8:** the view gives `activeCount` and `pieceCount` (40). The sheet's subtitle string says "total = 39"; that is the Q52 off-by-one, so the number to show is for you to decide.
 - **Note:** pieces whose saved place is inside the clearing but under another piece are not possible by the guard or by TL.3's rules; the view does not handle them.
 - **No old test edited.**
+
+## 2026-10-23 — v1.1 TL.3: layout commands and auto-placement
+- **Built:** the five commands (`layout.place`, `unplace`, `autoArrange`, `clear`, `setShowGhosts`) and `autoPlaceUnlocked`. Moves, swaps and the Hearth Hall's 2..4 limit work as the docs say; refusals change nothing. The order data is in `content/hold-layout.ts`.
+- **Hooks:** buying and upgrading place only pieces that this action just unlocked (a piece you sent to the tray stays there); a Rank-up wakes ring pieces and places the tray; a new game and the start of a new cycle place the starting Farm and Camp. The Long Night keeps the saved layout exactly (tested).
+- **Choices to check:** (1) a blueprint tile also counts as taken when finding a free tile, so an automatic placement never sits on a built-later piece's saved spot; (2) a defense with no open defense tile (row 0 before Bastion) waits in the tray, it does not take an inner tile; (3) refusal reasons are short technical strings, not player text.
+- **Tests:** new `tests/layout/commands.test.ts` (move, swap, Hall, locked rings, blueprint protection, Rank-up, Long Night, layout-only changes). The non-coupling list gained `commands/apply.ts`, `commands/layout.ts`, `commands/types.ts`, `long-night/reset.ts`, `systems/layout-place.ts`. `npm run check` green; golden fights and stands unchanged.
+- **Two of this milestone's own tests changed** (not in D507's list; they asserted the old new-game state, which you told me to change): `v12-migration.test.ts` (new game now has the Farm and Camp placed) and `layout.test.ts` (grid view of a new game). Nothing loosened.
+- **Docs note:** GDD M3 says a new game places "the Hearth Hall only"; I followed your instruction that the Farm and Camp end up placed. The GDD is untouched.
+- **Next:** TL.4. **Skipped:** nothing.

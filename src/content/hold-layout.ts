@@ -205,3 +205,14 @@ export const CANONICAL_LAYOUT: Readonly<Record<HoldPieceId, GridCoord>> = {
 
 /** Which sides of a defense tile touch another defense tile (GDD §5.1.5): bits for the 16 connection looks. */
 export const CONNECTION_BITS = { n: 1, e: 2, s: 4, w: 8 } as const;
+
+/** GDD §5.1.5 auto-placement (S6): other pieces take the free tile nearest this point, then lowest y, then lowest x. */
+export const HOLD_CENTER = { x: 3.5, y: 3.5 } as const;
+
+/** GDD §5.1.5 auto-placement (S6): defenses take row 1 west to east, then the row 2 wings, then row 0. */
+export const DEFENSE_TILE_ORDER: readonly GridCoord[] = [
+  ...Array.from({ length: GRID_SIZE }, (_, x) => ({ x, y: 1 })),
+  { x: 0, y: 2 },
+  { x: GRID_SIZE - 1, y: 2 },
+  ...Array.from({ length: GRID_SIZE }, (_, x) => ({ x, y: 0 })),
+];

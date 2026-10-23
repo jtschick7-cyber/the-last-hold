@@ -191,9 +191,10 @@ describe('the grid view', () => {
     expect(v.ghosts).toHaveLength(27);
   });
 
-  it('a new game: the hall on the grid, the starting buildings waiting in the tray (TL.3 places them)', () => {
+  it('a new game: the hall and the starting Farm and Camp on the grid, nothing in the tray', () => {
     const v = buildHoldGridView(createNewGame('new', 0));
-    expect(v.active.map((p) => p.id)).toEqual(['hearth-hall']);
+    expect(v.active.map((p) => p.id)).toEqual(['hearth-hall', 'farm-1', 'woodcutter-1']);
+    expect(v.tray).toEqual([]);
     expect(v.ghosts).toEqual([]);
     expect(v.look).toBe('plain');
   });
@@ -249,6 +250,10 @@ describe('the grid view', () => {
 // file adds it here on purpose, and CLAUDE.md says why that is allowed.
 describe('the layout is read by no rule (S11)', () => {
   const ALLOWED = new Set([
+    'commands/apply.ts',
+    'commands/layout.ts',
+    'commands/types.ts',
+    'long-night/reset.ts',
     'save/migration-v12.ts',
     'save/validate-layout.ts',
     'save/validate.ts',
@@ -256,6 +261,7 @@ describe('the layout is read by no rule (S11)', () => {
     'state/layout-state.ts',
     'state/new-game.ts',
     'systems/layout-catalog.ts',
+    'systems/layout-place.ts',
     'systems/layout.ts',
   ]);
   const walk = (dir: string): string[] =>

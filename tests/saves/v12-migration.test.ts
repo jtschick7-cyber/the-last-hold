@@ -122,9 +122,13 @@ describe('the v11 → v12 migration', () => {
 });
 
 describe('a new game and the Long Night (D502)', () => {
-  it('starts with only the Hearth Hall placed, at (3, 3), the ghosts on', () => {
+  it('starts with the Hearth Hall at (3, 3), the starting Farm and Camp placed (TL.3), no ghosts shown for the rest', () => {
     expect(createNewGame('seed', 0).layout).toEqual({
-      placed: { 'hearth-hall': { x: 3, y: 3 } },
+      placed: {
+        'hearth-hall': { x: 3, y: 3 },
+        'farm-1': { x: 3, y: 2 },
+        'woodcutter-1': { x: 4, y: 2 },
+      },
       showGhosts: true,
     });
   });
