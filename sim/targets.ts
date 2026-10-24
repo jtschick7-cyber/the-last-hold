@@ -17,6 +17,7 @@ export const MILESTONES = [
   'v0.9',
   'v0.10',
   'v0.11',
+  'v1.3',
 ] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
@@ -351,6 +352,26 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     text: "The Remembering is reachable: all 40 names are found and Act VI's stand is applied by the end of cycle 6 (Standard)",
     bounds: [],
     enforcedFrom: 'v0.11',
+  },
+  // v1.3 (GDD §6.2, D546 (5), D554; the three rows approved by the owner). Rising Vigil, judged on the
+  // Vigilant's Monday runs and its probe, in `sim.yml` only; the tolerance is in VIGIL below.
+  {
+    id: 'vigil-level-rises',
+    text: 'The vigil level rises by exactly 1 per On stand: the saved levels are 1, 2, 3 (Vigilant)',
+    bounds: [],
+    enforcedFrom: 'v1.3',
+  },
+  {
+    id: 'vigil-never-more-waves',
+    text: "More vigil never holds more waves: the probe's median waves at level L + 1 are never above level L, L = 0 to 10 (every Monday seed)",
+    bounds: [],
+    enforcedFrom: 'v1.3',
+  },
+  {
+    id: 'vigil-embers-level',
+    text: 'Embers at levels 1 to 3 stay level with level 0 within the tolerance (probe, median of the 5 Monday seeds)',
+    bounds: [],
+    enforcedFrom: 'v1.3',
   },
 ];
 
