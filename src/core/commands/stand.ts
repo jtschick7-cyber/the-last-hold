@@ -74,6 +74,7 @@ export const makeStand = (
     threat: input.threat,
     trophies: state.stats.trophies,
     trophyCap: arrivalTrophyCap(state),
+    vigilLevel: input.vigilLevel,
   });
   const found = relicsFound(
     input.seed,
@@ -101,6 +102,7 @@ export const makeStand = (
     band: bandFor(result.wavesHeld),
     alchemy: input.alchemy ?? 0, // frozen with the stand (D206)
     ...(input.pool === 'dross' ? { pool: 'dross' as const } : {}),
+    ...(input.vigilLevel ? { vigilLevel: input.vigilLevel } : {}),
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];

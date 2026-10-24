@@ -82,6 +82,7 @@ export const StandResultView = ({ stand }: { stand: StandRecord }) => {
     trophies: stand.embers.trophies,
     // GDD §5.9.8: the arrival's trophies part was capped (the record keeps the capped part).
     trophyCap: stand.arrival ? arrivalCapValue() : null,
+    vigilLevel: stand.vigilLevel,
   });
   return (
     <div>

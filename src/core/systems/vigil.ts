@@ -1,0 +1,63 @@
+import { num } from '../balance-access';
+import type { Breakdown, Explained } from '../breakdown/breakdown';
+
+// GDD §5.9.10, §7.13 (D539–D541, technical design §21.2): Rising Vigil's two terms. Each is
+// worked out here and nowhere else, with its breakdown built by the same function, so the
+// number and its explanation cannot disagree. Level 0 keeps the old expression exactly (no
+// added term), so a stand with the switch Off, or any stand before v1.3, is bit for bit what it was.
+
+/** The Threat line of a multiplier: 1 plus the per-point rate times Threat. */
+const threatLine = (label: string, value: number, formula: string, key: Breakdown['key']) => ({
+  label,
+  value,
+  formula,
+  key,
+});
+
+/** Wave Health and Might × this (GDD §5.9.10): 1 + w × Threat + s × level. */
+export const waveFactor = (threat: number, level: number): Explained => {
+  const w = num('threat.waveStrengthPerPoint');
+  const base = 1 + w * threat;
+  const children: Breakdown[] = [
+    threatLine(
+      `Threat ${Math.round(threat)}`,
+      base,
+      `1 + ${w} × Threat`,
+      'threat.waveStrengthPerPoint',
+    ),
+  ];
+  if (level === 0)
+    return { value: base, breakdown: { label: 'Wave strength', value: base, children } };
+  const s = num('vigil.strengthPerLevel');
+  const step = s * level;
+  children.push({
+    label: `Rising Vigil, level ${level}`,
+    value: step,
+    formula: `${s} × level`,
+    key: 'vigil.strengthPerLevel',
+  });
+  const value = base + step;
+  return { value, breakdown: { label: 'Wave strength', value, children } };
+};
+
+/** The waves part of the Embers × this (GDD §5.9.4): 1 + b × Threat + e × level. */
+export const embersMultiplier = (threat: number, level: number): Explained => {
+  const b = num('embers.threatBonus');
+  const base = 1 + b * threat;
+  const children: Breakdown[] = [
+    threatLine(`Threat ${Math.round(threat)}`, base, `1 + ${b} × Threat`, 'embers.threatBonus'),
+  ];
+  if (level === 0)
+    return { value: base, breakdown: { label: 'Embers multiplier', value: base, children } };
+  const e = num('vigil.embersPerLevel');
+  const step = e * level;
+  // GDD §9.23: whole percent of the base 1, rounded down.
+  children.push({
+    label: `Rising Vigil: +${Math.floor(100 * step)}% on the waves part`,
+    value: step,
+    formula: `${e} × level ${level}`,
+    key: 'vigil.embersPerLevel',
+  });
+  const value = base + step;
+  return { value, breakdown: { label: 'Embers multiplier', value, children } };
+};

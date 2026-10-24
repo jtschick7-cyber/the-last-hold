@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/clever-fermi-gkis1l` (the session's branch; the plan names `milestone/v1.3`, see the entry below).
 - **Milestone:** v1.3 "Keep the Vigil" (D538–D551), in progress.
-- **Last task:** KV.2 (save schema 13, the migration, `v13.json`) is done.
-- **Next:** KV.3 (the two constants and the two factor functions); then KV.4.
+- **Last task:** KV.3 (the two factor functions, one place each) is done.
+- **Next:** KV.4 (the command, the level, the debug command, `v13-played.json`).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -518,7 +518,16 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Tests first?** Not strictly: I wrote the code, then the tests in the same session. No test was weakened.
 - **Old-test edits (D548):** (1) `v12-migration.test.ts`: schema 12 → 13 (two places) and "newer version" 13 → 14; (6) `opening.test.ts`: the "left out" fixture list gains `v12-owner.json` and `v13.json`. Also added: a `vigilMigration` benchmark row (100 ms) in `bench-page.ts` and `bench.spec.ts`.
 - **Timing:** migration of the played v12 save: 1.0 ms in node here. The browser benchmark could not run in this container (Playwright's browser build is missing); CI runs it. `npm run check`: 87–97 s here.
-- **Size:** the production build summed to **606,607 bytes** (per-file gzip -9, limit 614,400) but I could not count the files (the shell then refused access to `dist`), so I cannot confirm it matches the 610,508 of 313 files in v1.2. Treat as unconfirmed; to be re-measured at KV.3.
+- **Size (corrected at KV.3):** the first number here was unconfirmed; see KV.3.
+- **Size, first reading:** the production build summed to **606,607 bytes** (per-file gzip -9, limit 614,400) but I could not count the files (the shell then refused access to `dist`), so I cannot confirm it matches the 610,508 of 313 files in v1.2. Treat as unconfirmed; to be re-measured at KV.3.
 - **The prettier format of `v12-owner.json`** was normalised (whitespace only), like the other fixtures.
 - **Next:** KV.3.
+
+## 2026-10-24 — v1.3 KV.3: the two factor functions
+- **Done:** new `src/core/systems/vigil.ts` with `waveFactor(threat, level)` and `embersMultiplier(threat, level)`, each with its breakdown from the same function. The stand fight, practice stands, preview, wave-log rebuild and Embers payout all call them; the level travels as an optional `vigilLevel` on the stand input and the saved record (absent = 0). Level 0 keeps the old expression with no added term. Nothing sets a level yet (KV.4).
+- **Placeholders:** `vigil.strengthPerLevel` and `vigil.embersPerLevel` are 0.25 each (marked placeholder in `balance.ts`, added at KV.1). KV.9 replaces them.
+- **Tests first:** `tests/stand/vigil-factors.test.ts` was written before the code and failed first. It checks level 0 with `===` for 7 Threat values, level > 0 against an independent table, that the lines add up, the Embers line text, and that each of the four constants is read in exactly one file under `src/core`. No old test was edited. Golden fights and recorded stands replay as before; `npm run check` is green (87–97 s here).
+- **Also:** the Ilse story test now pins the clock (owner chose option a): it failed on weekend mornings because the debug run plays the Standard player over the last 12 h of the real clock. Passes locally on a Saturday. Old-test edit outside D548, with the owner's yes.
+- **Size:** measured by the SF.9 method here, 313 files, `main` = **606,280**, this branch = **607,108** (+828: KV.2 +327, KV.3 +501). This container reads about 4.2 KB lower than the recorded v1.2 figure (610,508) for the same code, cause unknown (probably the gzip build), so the deltas are what to trust: on v1.2's scale that is about **611,336, room 3,064**.
+- **Not run here:** the browser benchmark (Playwright's browser build is missing); CI runs it.
 

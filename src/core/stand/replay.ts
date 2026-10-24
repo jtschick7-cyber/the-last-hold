@@ -15,6 +15,7 @@ export const standInputOf = (record: StandRecord, log = true): StandInput => ({
   knowledge: record.knowledge,
   alchemy: record.alchemy,
   ...(record.pool ? { pool: record.pool } : {}),
+  ...(record.vigilLevel ? { vigilLevel: record.vigilLevel } : {}),
   log,
 });
 
