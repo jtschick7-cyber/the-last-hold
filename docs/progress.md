@@ -5,10 +5,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.8 done (KV.8 waits for the owner's reading of the curve, Q57); size routes 1 and 2 done (D553).
-- **Last task:** KV.8 (the probe, the Vigilant, the `vigil` shard; measure only). Before it: KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
-- **Next:** the owner reads `docs/flesh-out/v1.3/vigil-curve.md` and answers Q57; then KV.9 (choose `s` and `e`, propose the rows).
-- **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.9 done (KV.9 waits for the owner's yes or no to the values, the tolerance and the rows); size routes 1 and 2 done (D553).
+- **Last task:** KV.9 (constants, tolerance, rows). Before it: KV.8 (the probe, the Vigilant, the `vigil` shard), KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
+- **Next:** the owner says yes or no to D554 (s = 0.32, e = 0.22) and D555 (5% tolerance, rows A to C), each in its own commit; then KV.10 (the e2e and the docs sweep).
+- **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 answered (a), additive. Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -583,3 +583,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Old-test edit (needs the owner's yes, given):** `sim/shards.test.ts` skips `vigil` in the fair-share check like `events` and `orders` (one line; the check for the other shards is unchanged). D548 did not list it.
 - **Also:** `clearNumCache` added to `core/balance-access.ts` (the probe tries a constant and puts it back; nothing in the game calls it); `stateAtVigilLevel` and `stands` on `vigilView` in `systems/vigil.ts` (the lint stays unloosened). The plan said `sim/policies/vigilant.ts`; the repo keeps policies in `src/core/policies/`, so it is there.
 - **Not done, by plan:** no constant set, no `sim/targets.ts` row (KV.9).
+
+## 2026-10-24 — KV.9 the constants, the tolerance and the rows
+- **Q57 answered (a): additive** (owner). No formula changed.
+- **Four commits, each revertible on its own:** (1) the probe judges the shipped constants, the wide grid stays on demand (`npm run sim:vigil -- --s ... --e ... --kinds additive --out file`); (2) **`s` = 0.32, `e` = 0.22** (D554, Proposed); (3) **the Embers tolerance 5%** in `sim/targets.ts` (D555); (4) **rows A, B, C** with their checks and GDD §6.2 (D555, enforced from v1.3; `CURRENT_MILESTONE` is now v1.3).
+- **How `s` was chosen:** on a finer additive grid (0.20 to 0.44 by 0.02) the waves lost by level 3 are exactly 3 at s = 0.28 to 0.34 at the stand's own Threat, and 3 at 0.32 to 0.36 at twice that Threat; 0.32 is the smallest value that reaches 3 at both. Per level it loses 1, 2, 3. **How `e` was chosen** (with s = 0.32): Embers at levels 1, 2, 3 are 1.00, 0.99, 0.99 of level 0 at e = 0.22 (0.23 ties). Details in D554.
+- **Judging run (`sim:check`, 60 runs, 5 min here):** rows A, B, C pass (Vigilant levels 1, 2, 3 on all 5 seeds; no rise in waves on any curve at either Threat point; Embers 1.015, 1.003, 0.979 of level 0 at the stand's Threat, 1.098, 1.080, 1.009 at twice it, which is reported only). Every other row passes and **176 of 176 moments are the same** as the baseline. The `vigil` shard now takes about 70 s here.
+- **`npm run check`:** green, 71 s (3,527 tests; 9 more in `sim/checks/v13.test.ts`).
+- **Fixture rewritten, please look at this one:** `tests/saves/fixtures/v13-played.json` was made again with its own script (`scripts/make-v13-played-fixture.ts`), because its three vigil stands were recorded under the 0.25 placeholders and replayed differently at 0.32 and 0.22. It is a fixture made this milestone (KV.4), not an older golden one, and no shipped save holds a vigil stand. Eight lines changed: the level-3 stand now holds 2 waves, not 3, and the Embers follow. The golden fights are untouched.
+- **No placeholder is left** in `balance.ts` or the GDD (§7.13 note deleted). KV.11 can check it.
+- **Not done:** nothing from the plan's KV.9 text. The wide-grid curve file from KV.8 still says "placeholders" because it is a record of that run.
