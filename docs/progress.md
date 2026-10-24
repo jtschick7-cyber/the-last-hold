@@ -7,7 +7,7 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Branch:** `claude/clever-fermi-gkis1l` (the session's branch; the plan names `milestone/v1.3`, see the entry below).
 - **Milestone:** v1.3 "Keep the Vigil" (D538–D551), in progress.
 - **Last task:** KV.5 (the preview works out the level) is done.
-- **Next:** KV.6 (the stand-screen row; the owner confirms the nine strings after it). The owner is deciding how to handle the size budget first (see the KV.5 entry).
+- **Next:** KV.6 (the stand-screen row; the owner confirms the nine strings after it). Size: D553 done (routes 1 and 2); route 3 (the worker's duplicate code) is being looked at.
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -547,4 +547,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Size:** 313 files, now 608,264 versus `main` 606,280 (**+1,984**; KV.5 +3). Room on the v1.2 scale about 1,900. Size options asked of the owner (see the thread).
 - **Seen once, not mine:** `tests/contracts/flow.test.ts` ("only a confirmed Reckless contract can kill a hunter") hit its 5 s limit in one `npm run check`; it passes alone (11 s for the file) and on the next full run. Slow container, not a change; listed so it is not lost.
 - **No old test edited.**
+
+## 2026-10-24 — Size routes 1 and 2 (D553, owner's yes)
+- **Route 1, pictures:** `tools/png-pack.ts` re-packs every picture as an indexed PNG at build time (Vite step, before the service worker). It compares all pixels with the original and keeps the original on any doubt. `public/` files and the art hashes are untouched. Pictures: 264.7 KB to 102.4 KB gzipped.
+- **Route 2, contact sheet:** `contact-sheet.html` is removed from the live build, kept in the preview (7.9 KB).
+- **Result (this container's scale, 312 files):** 438,190 bytes; `main` is 606,280 here. On the v1.2 scale that is about **442,418, room about 171,982** under the unchanged 614,400 row. The D547 fallback order is no longer needed for v1.3.
+- **Tests:** `tests/tools/png-pack.test.ts` (packer cases, every shipped picture identical, a live build with no contact sheet and nothing left to pack, the preview build keeps the sheet). Adds about 10 s of test time; `npm run check` took 112 s on this container in one run (CI measures it).
+- **Docs:** D553 added (Decided on the owner's yes), GDD §6.5 download row updated. Not in `npm run check`, as before: the milestone-end size number.
+- **Not done:** route 3 (see below once looked at); the question of splitting the row into first-visit and offline figures is for the v1.4 flesh-out.
 

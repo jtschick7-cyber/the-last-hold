@@ -4,6 +4,7 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
+  rmSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
@@ -11,6 +12,7 @@ import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { candidateAudioFile, renderAuditionPage } from './tools/audition-page';
+import { packPng } from './tools/png-pack';
 import { parseSoundMarks } from './tools/sound-marks';
 
 // Technical design §11.3: the build channel decides the base path, the PWA's
@@ -83,6 +85,41 @@ const auditionPage = {
   },
 };
 
+// D553 (1): every picture is re-packed as an indexed PNG after the bundle is written and before the
+// service worker is built, so the precache sees the small files. Not one pixel changes (tools/png-pack.ts
+// compares the result with the original and keeps the original otherwise); the files in `public/` and
+// the recorded art hashes are untouched. The preview build is packed too, so it measures what ships.
+const packPictures = {
+  name: 'pack-pictures',
+  apply: 'build' as const,
+  writeBundle(options: { dir?: string }): void {
+    if (!options.dir) return;
+    const walk = (dir: string): string[] =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory()
+          ? walk(`${dir}/${e.name}`)
+          : e.name.endsWith('.png')
+            ? [`${dir}/${e.name}`]
+            : [],
+      );
+    for (const file of walk(options.dir)) {
+      const packed = packPng(readFileSync(file));
+      if (packed) writeFileSync(file, packed);
+    }
+  },
+};
+
+// D553 (2): the contact sheet is an art-review page for the owner, so it ships in the preview build
+// only, like the sound audition page. The live download no longer carries it.
+const contactSheetPreviewOnly = {
+  name: 'contact-sheet-preview-only',
+  apply: 'build' as const,
+  writeBundle(options: { dir?: string }): void {
+    if (channel === 'live' && options.dir)
+      rmSync(`${options.dir}/contact-sheet.html`, { force: true });
+  },
+};
+
 const appName = channel === 'preview' ? 'The Last Hold (Preview)' : 'The Last Hold';
 
 export default defineConfig({
@@ -94,6 +131,8 @@ export default defineConfig({
     preact(),
     previewIcons,
     auditionPage,
+    contactSheetPreviewOnly,
+    packPictures,
     {
       // iPhone uses the page title for the Home Screen name, so each channel
       // needs its own (plan v0.0 acceptance 3).
