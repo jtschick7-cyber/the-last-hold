@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.10 done (owner approved the values, the tolerance, rows A to C and the v13-played fixture rewrite); size routes 1 and 2 done (D553).
-- **Last task:** KV.10 (budgets, size, old-test list). Before it: KV.9 (constants, tolerance, rows), KV.8 (the probe, the Vigilant, the `vigil` shard), KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
-- **Next:** KV.11 (wrap-up and the pull request). D554 and D555 are Decided (owner, 2026-10-24).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.11 done (pull request open, waiting for the playtest) (owner approved the values, the tolerance, rows A to C and the v13-played fixture rewrite); size routes 1 and 2 done (D553).
+- **Last task:** KV.11 (wrap-up, pull request). Before it: KV.10 (budgets, size, old-test list), KV.9 (constants, tolerance, rows), KV.8 (the probe, the Vigilant, the `vigil` shard), KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
+- **Next:** the owner's playtest. After "playtest passed": `sim:accept`, merge, tag `v1.3.0` (owner gates). D554 and D555 are Decided (owner, 2026-10-24).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 answered (a), additive. Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -602,3 +602,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Bench:** the "odds with 3 candidates" row still fails on this CPU (831 ms against 600 ms), as before (D445); not part of `check`, nothing changed.
 - **Old-test edits, full list (diff against `main`, nothing loosened):** `v12-migration.test.ts` (schema 12 to 13, newer-version case 13 to 14; D548 (1)); `opening.test.ts` (fixture lists gain `v12-owner.json`, `v13.json`, `v13-played.json`; D548 (6)); `polish-screens.ts` (stand screen On and Off, Roll flow; D548 (3)); `bench.spec.ts` and `bench-page.ts` (a new row only); `sim/shards.test.ts` (`vigil` left out of the fair-share check; your yes); `story.spec.ts` (clock pinned to a Monday so the Ilse test passes on weekends; your yes, option a); `v13-played.json` rewritten with its script (your yes). New, not edited: `tests/lint/vigil-coupling.test.ts`. The list is complete.
 - **GDD §6.5:** the migration and save-growth rows are already in and decided (D547); nothing to change. Not done: no motion or contrast baseline file was edited (D548 (5) not needed).
+
+## 2026-10-24 — v1.3 KV.11 wrap-up and the pull request
+- **Checks (this container):** `npm run check` green (94.7 s at KV.10). `sim:check`: 60 runs, 407 s, every enforced row passes (rows A to C included), **176 of 176 moments same** as the baseline; the Vigilant's 16 moments are new. The ✗ lines are Saturday runs, reported only.
+- **e2e, 4 shards (local chromium build):** 141 s, 403 s, 172 s, 121 s; 143 tests pass, 2 fail. Shard 2 is over 5 minutes here (CI's limit is 8, D552; CI is the judge). The two failures are the known offline-reload tests in `smoke.spec.ts` (this container's browser build, with and without my changes).
+- **Production build opens real saves:** new `tests/e2e/vigil-open.spec.ts`: your v12 save (`v12-owner.json`) with the gate closed (no vigil row) and then open (row there), and the played v13 save (row and status line). Passes.
+- **Size:** 438,916 bytes (KV.10; build unchanged since). Schema 13, `rulesVersion` 5, golden fights and recorded stands replay (in `check`). No placeholder constant.
+- **Docs:** plan KV.11 ticked, v1.3 `Status: in progress`, §0.7 actuals added (v1.2 final 16, v1.3 12 entries).
+- **Not done, waiting on you:** the playtest, then `sim:accept`, merge, tag. **Please export your save from the game just before the merge.**
