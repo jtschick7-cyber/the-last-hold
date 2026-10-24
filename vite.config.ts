@@ -88,7 +88,9 @@ const auditionPage = {
 // D553 (1): every picture is re-packed as an indexed PNG after the bundle is written and before the
 // service worker is built, so the precache sees the small files. Not one pixel changes (tools/png-pack.ts
 // compares the result with the original and keeps the original otherwise); the files in `public/` and
-// the recorded art hashes are untouched. The preview build is packed too, so it measures what ships.
+// the recorded art hashes are untouched. The app icons are left as they are: the PWA plugin lists them
+// with the hash of the original, and a packed copy would give a second, conflicting entry (Workbox then
+// refuses to install and nothing works offline). The preview build is packed too, so it measures what ships.
 const packPictures = {
   name: 'pack-pictures',
   apply: 'build' as const,
@@ -98,7 +100,7 @@ const packPictures = {
       readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
         e.isDirectory()
           ? walk(`${dir}/${e.name}`)
-          : e.name.endsWith('.png')
+          : e.name.endsWith('.png') && dir !== `${options.dir}/icons`
             ? [`${dir}/${e.name}`]
             : [],
       );

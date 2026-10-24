@@ -615,3 +615,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **The owner said the playtest passed** (Remember Them path included).
 - **Done:** `npm run sim:accept` (6 min 49 s here): the baseline moves to v1.3; the only differences are the milestone and the new Vigilant moments. Plan `Status: complete`, D556.
 - **Left:** merge PR 21 and tag `v1.3.0`, after the owner confirms they exported their save.
+
+## 2026-10-24 — v1.3 fix: offline reload broken by the picture packing (D553)
+- **What was wrong:** CI shard 3 failed the two offline-reload tests in `smoke.spec.ts` on every push since D553. I had called them "known, this container's browser" in KV.10 and KV.11; **that was wrong**. I checked: they pass on the commit before D553 and fail after it.
+- **Cause:** packing the pictures also repacked the five app icons. The PWA plugin lists the icons twice (once with the original's hash, once with the packed file's), and Workbox refuses an install with two different hashes for one file, so nothing was kept for offline use. This would have shipped.
+- **Fix:** `vite.config.ts` leaves the `icons/` files unpacked (D553 otherwise unchanged). `sw.js` now has one hash per file. All 7 smoke tests pass here, including the two. **Size: 449,810 bytes** (was 438,916; the icons are back to full size), still far under 614,400.
+- **Test changed (my own D553 test, same milestone):** `tests/tools/png-pack.test.ts` now skips the top-level `icons/` folder in the "every picture is packed" loop, and gains a check that `sw.js` never lists one file with two different hashes (the check that would have caught this). Nothing else loosened.
+- **Left:** CI to confirm on the new push, then merge. The earlier `sim:accept` is not affected (no game rule changed).

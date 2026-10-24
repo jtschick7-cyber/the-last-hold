@@ -4,7 +4,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 import { packPng } from '../../tools/png-pack';
@@ -120,7 +120,20 @@ describe('the live build', () => {
       expect(readFileSync(join(out, 'sw.js'), 'utf8')).not.toMatch(/contact-sheet/);
       const shipped = all(out);
       expect(shipped.length).toBeGreaterThan(250);
-      for (const f of shipped) expect(packPng(readFileSync(f)), f).toBeNull();
+      // The app icons are left as they are (vite.config.ts): the PWA plugin lists them with the hash of
+      // the original, and a packed copy would make a second, different hash for the same file.
+      for (const f of shipped)
+        if (!f.startsWith(join(out, 'icons') + sep)) expect(packPng(readFileSync(f)), f).toBeNull();
+      // The service worker lists every file once, or with the same hash each time: Workbox refuses to
+      // install otherwise and the game stops working offline.
+      const entries = [
+        ...readFileSync(join(out, 'sw.js'), 'utf8').matchAll(/\{url:"([^"]+)",revision:([^}]+)\}/g),
+      ];
+      const seen = new Map<string, string>();
+      for (const [, url, revision] of entries) {
+        expect(seen.get(url as string) ?? revision, url).toBe(revision);
+        seen.set(url as string, revision as string);
+      }
     } finally {
       rmSync(out, { recursive: true, force: true });
     }
