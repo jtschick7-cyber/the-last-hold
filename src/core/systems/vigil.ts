@@ -70,3 +70,23 @@ export const vigilAvailable = (state: GameState): boolean => endingChoosable(sta
 /** The level a stand started now would be fought at: 0 unless the switch is On and the gate open (D544 (2)). */
 export const vigilLevelFor = (state: GameState): number =>
   state.vigil.on && vigilAvailable(state) ? state.vigil.stands + 1 : 0;
+
+/** What the Last Stand screen shows for the switch (GDD §9.23): whether the row is shown, its state, and the numbers for its status line. */
+export interface VigilView {
+  available: boolean;
+  on: boolean;
+  /** The level this stand would be fought at (0 when Off). */
+  level: number;
+  /** The level the next On stand would have, or 0 when no stand has been fought On yet (no status line). */
+  next: number;
+}
+
+export const vigilView = (state: GameState): VigilView => {
+  const available = vigilAvailable(state);
+  return {
+    available,
+    on: available && state.vigil.on,
+    level: vigilLevelFor(state),
+    next: state.vigil.stands > 0 ? state.vigil.stands + 1 : 0,
+  };
+};

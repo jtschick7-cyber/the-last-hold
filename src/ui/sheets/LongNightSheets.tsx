@@ -3,6 +3,7 @@ import { hunters, roleNames, type HunterId } from '../../content/hunters';
 import { relics } from '../../content/relics';
 import { describeRelic } from '../../core/describe-long-night';
 import { formatNumber } from '../../core/format';
+import { VIGIL_RESULT, vigilLine } from '../../content/vigil-text';
 import { embersPayout } from '../../core/stand/embers';
 import { arrivalCapValue } from '../../core/stand/from-state';
 import { OLDER_RULES_NOTE, standReplayDiffers } from '../../core/replay-check';
@@ -92,6 +93,9 @@ export const StandResultView = ({ stand }: { stand: StandRecord }) => {
         .
       </p>
       <BandLine stand={stand} />
+      {stand.vigilLevel ? (
+        <p data-testid="vigil-result">{vigilLine(VIGIL_RESULT, stand.vigilLevel)}</p>
+      ) : null}
       <p>
         <Sprite id={EMBERS_ICON} /> Embers:{' '}
         <Num text={formatNumber(stand.embers.total)} breakdown={() => payout.breakdown} marked />

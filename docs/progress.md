@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.5 done; size routes 1 and 2 done (D553).
-- **Last task:** KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
-- **Next:** KV.6 (the stand-screen row and the nine strings; stop for the owner to confirm the strings), then KV.7 (Roll tally).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.6 done (KV.6 waits for the owner to read the nine strings); size routes 1 and 2 done (D553).
+- **Last task:** KV.6 (stand-screen row and strings). Before it: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
+- **Next:** the owner confirms the nine strings as built (D545); then KV.7 (Roll tally).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -557,3 +557,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Route 3 looked at, not built:** building the app and the odds worker as two entries of one build lets Rollup share one chunk; measured on a scratch copy (worker not yet wired to it): JavaScript 284.8 KB to about 230 KB gzipped, **about 55 KB saved**. Needs: a stable worker file name, a dev-server branch for the worker URL, the service worker precaching the shared chunk, and an offline check; module workers are already required. Recommended for the v1.4 flesh-out if its needs call for it; not needed for v1.3.
 - **Also not done:** splitting the row into first-visit and offline figures (v1.4 flesh-out).
 
+## 2026-10-24 — KV.6 the stand-screen row and the lines
+- **Built:** the Rising Vigil row (label, On / Off, help line, status line) above Start on the stand sheet, shown only when `vigilAvailable`; the confirmation line (when On) and the result line (when the record has a level). The Embers breakdown line was already built in core. Strings in `src/content/vigil-text.ts`; `tests/content/vigil-text.test.ts` makes them equal GDD §9.23 (nine table rows).
+- **Core selector:** `vigilView(state)` in `systems/vigil.ts` (available, on, level, next); the UI reads nothing else and dispatches `vigil.set`. The vigil-coupling lint is unchanged and green.
+- **Playwright (phone):** new `tests/e2e/vigil-row.spec.ts` (11 tests: gate closed has no vigil test id; gate open row, flip, preview recompute, status line in each state, Embers breakdown line, confirmation and result only when On; 44 px buttons and no sideways scroll at 320 and 360 px at all three Text sizes). The tap, contrast (both themes), text-size (Largest, 320 px) sweeps pass on the two new screens. The routine check-in gains no tap (nothing added to any routine flow).
+- **Old-test edit (D548 (3)), only this:** two flows appended to `tests/e2e/polish-screens.ts` (`last-stand-vigil-off`, `last-stand-vigil-on`). Nothing else touched; no existing spec edited.
+- **Size:** 312 files, 438,674 bytes (KV.5 end 438,190: +484).
+- **`npm run check`:** green, 75 s here (3,506 tests).
+- **Not mine:** `smoke.spec.ts` "offline reload" (2 tests) fail in this container's browser build with and without my changes.
+- **For the owner:** read the nine strings on the stand screen (screenshots in the thread).
