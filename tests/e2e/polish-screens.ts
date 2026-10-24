@@ -224,6 +224,22 @@ export const FLOWS: readonly Flow[] = [
     [/Embers/, /Roll of Wardens/i, /Riftglass shop/i],
     (p) => btn(p, /^Rank/).click(),
   ),
+  {
+    id: 'roll-vigil',
+    fixture: 'v13-played',
+    mutates: true,
+    how: 'fixture v13-played (stands at vigil levels 1 to 3; the new warden is welcomed first), Hold, Rank ▸',
+    run: async (page, visit) => {
+      await btn(page, 'Welcome them').click();
+      await dismiss(page);
+      await tabTo(page, 'Hold');
+      await btn(page, /^Rank/).click();
+      await visit('roll-vigil', 'Roll of Wardens (with Rising Vigil marks)', [
+        /Roll of Wardens/i,
+        /Rising Vigil, level 3\./,
+      ]);
+    },
+  },
   plain('hunters-roster', 'Hunters (roster)', 'Hunters tab', [/By slot/], (p) =>
     tabTo(p, 'Hunters'),
   ),

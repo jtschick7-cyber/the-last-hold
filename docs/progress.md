@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.6 done (KV.6 waits for the owner to read the nine strings); size routes 1 and 2 done (D553).
-- **Last task:** KV.6 (stand-screen row and strings). Before it: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
-- **Next:** the owner confirms the nine strings as built (D545); then KV.7 (Roll tally).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.7 done (owner confirmed the nine strings); size routes 1 and 2 done (D553).
+- **Last task:** KV.7 (Roll tally). Before it: KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
+- **Next:** KV.8 (the simulator policy and the curve; then stop for Q57).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -566,3 +566,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **`npm run check`:** green, 75 s here (3,506 tests).
 - **Not mine:** `smoke.spec.ts` "offline reload" (2 tests) fail in this container's browser build with and without my changes.
 - **For the owner:** read the nine strings on the stand screen (screenshots in the thread).
+
+## 2026-10-24 — KV.7 the Roll of Wardens tally
+- **Owner confirmed the nine strings as built** (D545).
+- **Built:** `WardenLine.vigilLevel` (0 when the stand has none) in `core/story/wardens.ts`; the Roll shows a small mark drawn in code (an SVG, no picture file, no manifest row, nothing under `public/assets/`) and "Rising Vigil, level {n}." for a warden at level 1 or more. A warden with no level reads exactly as before.
+- **Tests:** `tests/vigil/roll.test.ts` (fixture v13-played shows levels 1 to 3 and 0 elsewhere; a v12 save has none). Playwright sweeps on the new flow `roll-vigil` (v13-played, shows "Rising Vigil, level 3."): tap targets, contrast in both themes, Largest at 320 px: 0 findings. The motion sweep only measures named moments, and this adds none.
+- **Old-test edit (D548 (3), (5)):** one flow appended to `tests/e2e/polish-screens.ts`. No baseline file needed a key (the Text-size baseline lists five named screens only). Nothing else edited.
+- **Size:** 312 files, 438,763 bytes (+89 over KV.6).
+- **`npm run check`:** green, 80 s (3,508 tests).
