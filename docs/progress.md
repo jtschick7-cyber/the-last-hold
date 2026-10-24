@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `claude/clever-fermi-gkis1l` (the session's branch; the plan names `milestone/v1.3`, see the entry below).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D551), in progress.
-- **Last task:** KV.5 (the preview works out the level) is done.
-- **Next:** KV.6 (the stand-screen row; the owner confirms the nine strings after it). Size: D553 done (routes 1 and 2); route 3 (the worker's duplicate code) is being looked at.
-- **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a).
+- **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.5 done; size routes 1 and 2 done (D553).
+- **Last task:** KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
+- **Next:** KV.6 (the stand-screen row and the nine strings; stop for the owner to confirm the strings), then KV.7 (Roll tally).
+- **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
