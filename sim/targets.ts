@@ -372,6 +372,16 @@ export const ORDERS = {
  * The Remembering's reachability row (v0.11, D469). The measured median of the 5 Monday Standard seeds
  * was cycle 6 (6, 6, 6, 6, 7). The species half of the gate is proved by the content test, not here.
  */
+/**
+ * Rising Vigil's Embers row (v1.3, D546 (5) C, D554): at levels 1 to 3 the median total Embers
+ * (waves part plus trophies) of the 5 Monday seeds are within this share of level 0's, at the stand's
+ * own Threat. Fixed before the final judging run; measured 0.015, 0.003 and 0.021 off at the chosen
+ * values. The probe also reports twice that Threat (0.098 off at its worst), which is not judged.
+ */
+export const VIGIL = {
+  embersTolerance: 0.05,
+} as const;
+
 export const REMEMBERING = {
   /** All 40 names found and Act VI's stand applied by the end of this cycle. */
   byCycle: 6,
