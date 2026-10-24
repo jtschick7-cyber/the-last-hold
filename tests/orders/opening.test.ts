@@ -39,7 +39,7 @@ const expectedOpen = (s: GameState): OrderId[] => {
   return table.filter(([, yes]) => yes).map(([id]) => id);
 };
 
-// Played saves (v10-played.json, v11-played.json, v12-played.json) and the owner's own v11/v12 saves (Q51) have already opened their Orders; v10-played.json is checked in full-run.test.ts.
+// Played saves (v10-played.json, v11-played.json, v12-played.json) and the owner's own v11/v12 saves (v13.json is v12-owner.json migrated) (Q51) have already opened their Orders; v10-played.json is checked in full-run.test.ts.
 const migrated = fixtures.filter((f) => Object.keys(load(f).orders.opened).length === 0);
 
 describe('a save on load opens exactly the Orders it is past', () => {
@@ -48,8 +48,11 @@ describe('a save on load opens exactly the Orders it is past', () => {
       'v10-played.json',
       'v11-owner.json',
       'v11-played.json',
+      'v12-owner.json', // D548 (6): the owner's real v12 save and its v13 form join the list
       'v12-played.json',
       'v12.json',
+      'v13-played.json',
+      'v13.json',
     ]);
   });
 

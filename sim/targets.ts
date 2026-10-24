@@ -17,6 +17,7 @@ export const MILESTONES = [
   'v0.9',
   'v0.10',
   'v0.11',
+  'v1.3',
 ] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
@@ -352,6 +353,26 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v0.11',
   },
+  // v1.3 (GDD §6.2, D546 (5), D554; the three rows approved by the owner). Rising Vigil, judged on the
+  // Vigilant's Monday runs and its probe, in `sim.yml` only; the tolerance is in VIGIL below.
+  {
+    id: 'vigil-level-rises',
+    text: 'The vigil level rises by exactly 1 per On stand: the saved levels are 1, 2, 3 (Vigilant)',
+    bounds: [],
+    enforcedFrom: 'v1.3',
+  },
+  {
+    id: 'vigil-never-more-waves',
+    text: "More vigil never holds more waves: the probe's median waves at level L + 1 are never above level L, L = 0 to 10 (every Monday seed)",
+    bounds: [],
+    enforcedFrom: 'v1.3',
+  },
+  {
+    id: 'vigil-embers-level',
+    text: 'Embers at levels 1 to 3 stay level with level 0 within the tolerance (probe, median of the 5 Monday seeds)',
+    bounds: [],
+    enforcedFrom: 'v1.3',
+  },
 ];
 
 /**
@@ -372,6 +393,16 @@ export const ORDERS = {
  * The Remembering's reachability row (v0.11, D469). The measured median of the 5 Monday Standard seeds
  * was cycle 6 (6, 6, 6, 6, 7). The species half of the gate is proved by the content test, not here.
  */
+/**
+ * Rising Vigil's Embers row (v1.3, D546 (5) C, D554): at levels 1 to 3 the median total Embers
+ * (waves part plus trophies) of the 5 Monday seeds are within this share of level 0's, at the stand's
+ * own Threat. Fixed before the final judging run; measured 0.015, 0.003 and 0.021 off at the chosen
+ * values. The probe also reports twice that Threat (0.098 off at its worst), which is not judged.
+ */
+export const VIGIL = {
+  embersTolerance: 0.05,
+} as const;
+
 export const REMEMBERING = {
   /** All 40 names found and Act VI's stand applied by the end of this cycle. */
   byCycle: 6,

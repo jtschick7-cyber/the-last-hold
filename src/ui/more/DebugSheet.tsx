@@ -23,6 +23,7 @@ export const DebugSheet = () => {
   const [order, setOrder] = useState<OrderId>('moot');
   const [amount, setAmount] = useState('10');
   const [hours, setHours] = useState('12');
+  const [vigilStands, setVigilStands] = useState('3');
   const [exportAge, setExportAge] = useState('20');
   const [seed, setSeed] = useState(game().meta.gameSeed);
   const [note, setNote] = useState<string | null>(null);
@@ -357,6 +358,22 @@ export const DebugSheet = () => {
           onClick={() => run({ type: 'debug.rememberingOpenGate' })}
         >
           Open the gate
+        </button>
+      </div>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <input
+          aria-label="Stands fought with Rising Vigil"
+          inputMode="numeric"
+          size={4}
+          value={vigilStands}
+          onInput={(e) => setVigilStands(e.currentTarget.value)}
+        />
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.vigilSetStands', stands: Number(vigilStands) })}
+        >
+          Set vigil stands to {vigilStands || '?'}
         </button>
       </div>
       {note && <p class={styles.small}>{note}</p>}

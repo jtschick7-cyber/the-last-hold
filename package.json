@@ -18,6 +18,7 @@
     "e2e": "playwright test --project=phone-chromium --project=webkit",
     "bench": "playwright test --project=bench",
     "sim": "vite-node sim/cli.ts --",
+    "sim:vigil": "vite-node sim/vigil-curve-cli.ts",
     "sim:check": "vite-node sim/cli.ts -- --check",
     "sim:accept": "vite-node sim/cli.ts -- --check --accept",
     "check": "node scripts/check.mjs"

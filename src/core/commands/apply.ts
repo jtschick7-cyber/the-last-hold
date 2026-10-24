@@ -78,6 +78,7 @@ import {
   layoutUnplace,
 } from './layout';
 import { chooseEnding, noteReady, seeNear } from './remembering';
+import { debugVigilSetStands, vigilSet } from './vigil';
 import { debugRememberingFinishActVI, debugRememberingOpenGate } from './debug-remembering';
 import { refuse, type ApplyResult, type Command } from './types';
 
@@ -190,6 +191,10 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return skipSeatStep(state);
     case 'orders.setSeats':
       return setSeats(state, cmd.orders);
+    case 'vigil.set':
+      return vigilSet(state, cmd.on);
+    case 'debug.vigilSetStands':
+      return debugVigilSetStands(state, cmd.stands);
     case 'remembering.seeNear':
       return seeNear(state);
     case 'remembering.choose':

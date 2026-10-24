@@ -23,6 +23,8 @@ const BUDGET = {
   rememberingMigration: 100,
   // v1.1 (D506).
   layoutMigration: 100,
+  // v1.3 (D547).
+  vigilMigration: 100,
   holdGrid: 16,
   arrangeSheet: 50,
 };
@@ -42,6 +44,7 @@ type Bench = {
   ordersMigration: number;
   rememberingMigration: number;
   layoutMigration: number;
+  vigilMigration: number;
   holdGrid: number;
   arrangeSheet: number;
 };
@@ -71,6 +74,7 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     `v11 → v12 migration ${ms.layoutMigration.toFixed(1)} ms, Hold grid render ${ms.holdGrid.toFixed(1)} ms, ` +
       `Arrange Hold sheet ${ms.arrangeSheet.toFixed(1)} ms`,
   );
+  console.log(`v12 → v13 migration (played save): ${ms.vigilMigration.toFixed(1)} ms`);
   console.log(
     `hunt odds ${ms.huntOdds.toFixed(0)} ms, hunt Suggest ${ms.huntSuggest.toFixed(0)} ms`,
   );
@@ -90,6 +94,7 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     ['the v9 → v10 migration', ms.ordersMigration, BUDGET.ordersMigration],
     ['the v10 → v11 migration', ms.rememberingMigration, BUDGET.rememberingMigration],
     ['the v11 → v12 migration', ms.layoutMigration, BUDGET.layoutMigration],
+    ['the v12 → v13 migration', ms.vigilMigration, BUDGET.vigilMigration],
     ['the Hold grid render', ms.holdGrid, BUDGET.holdGrid],
     ['the Arrange Hold sheet open', ms.arrangeSheet, BUDGET.arrangeSheet],
   ] as const) {

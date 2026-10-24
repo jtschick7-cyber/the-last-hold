@@ -8,6 +8,10 @@ import { begin, closeOrdersScenes, onwardAll, tab } from './helpers';
 test('a won contract brings Ilse, and the Archive opens her first document', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  // The debug run plays the Standard player over the last 12 hours of the real clock, and that player
+  // checks in on a weekday timetable (GDD §6.1). A fixed Monday evening gives it four check-ins
+  // whatever day and hour the test runs; on a weekend morning it got one and no contract was won.
+  await page.clock.install({ time: new Date('2026-10-26T21:30:00Z') });
   await page.goto('./?debug');
   await begin(page, 'Mira');
 

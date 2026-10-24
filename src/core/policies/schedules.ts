@@ -10,6 +10,7 @@ export const POLICY_IDS = [
   'delver',
   'eventer',
   'orderer',
+  'vigilant',
 ] as const;
 export type PolicyId = (typeof POLICY_IDS)[number];
 
@@ -72,7 +73,11 @@ export const isDelveSession = (policy: PolicyId, time: number): boolean => {
  */
 export const nextCheckIn = (policy: PolicyId, after: number, startedAt: number): number => {
   if (
-    (policy === 'opening' || policy === 'delver' || policy === 'eventer' || policy === 'orderer') &&
+    (policy === 'opening' ||
+      policy === 'delver' ||
+      policy === 'eventer' ||
+      policy === 'orderer' ||
+      policy === 'vigilant') &&
     after < startedAt + OPENING_LENGTH
   ) {
     const steps = Math.floor((after - startedAt) / OPENING_STEP) + 1;

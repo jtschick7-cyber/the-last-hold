@@ -148,6 +148,33 @@ const plain = (
   },
 });
 
+/** D548 (3): the stand screen with the Rising Vigil row: Act VI finished, the gate opened and Bastion unlocked by the debug panel, three stands fought On. */
+const vigilStand = async (page: Page, on: boolean, visit: Visit): Promise<void> => {
+  await tabTo(page, 'More');
+  await btn(page, /^Debug/).click();
+  await page.getByRole('button', { name: 'Finish Act VI', exact: true }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
+  await dismiss(page);
+  await tabTo(page, 'More');
+  await btn(page, /^Debug/).click();
+  for (const b of ['Open the gate', 'Unlock Bastion'])
+    await page.getByRole('button', { name: b, exact: true }).click();
+  await page.getByLabel('Stands fought with Rising Vigil').fill('3');
+  await page.getByRole('button', { name: /^Set vigil stands to/ }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
+  await dismiss(page);
+  await tabTo(page, 'Hold');
+  await btn(page, /^Rank/).click();
+  await btn(page, 'Make the Last Stand').click();
+  await page.getByTestId(on ? 'vigil-on' : 'vigil-off').click();
+  await page.waitForTimeout(300);
+  await visit(
+    on ? 'last-stand-vigil-on' : 'last-stand-vigil-off',
+    on ? 'Last Stand screen (Rising Vigil On)' : 'Last Stand screen (Rising Vigil Off)',
+    [/Rising Vigil/, on ? /This stand: vigil level 4/ : /Next level when on: 4/],
+  );
+};
+
 const READ = 'v11';
 export const FLOWS: readonly Flow[] = [
   plain('hold-bastion', 'Hold (Bastion)', 'fixture v11, nothing', [/Stanholm/], async () => {}),
@@ -197,6 +224,22 @@ export const FLOWS: readonly Flow[] = [
     [/Embers/, /Roll of Wardens/i, /Riftglass shop/i],
     (p) => btn(p, /^Rank/).click(),
   ),
+  {
+    id: 'roll-vigil',
+    fixture: 'v13-played',
+    mutates: true,
+    how: 'fixture v13-played (stands at vigil levels 1 to 3; the new warden is welcomed first), Hold, Rank ▸',
+    run: async (page, visit) => {
+      await btn(page, 'Welcome them').click();
+      await dismiss(page);
+      await tabTo(page, 'Hold');
+      await btn(page, /^Rank/).click();
+      await visit('roll-vigil', 'Roll of Wardens (with Rising Vigil marks)', [
+        /Roll of Wardens/i,
+        /Rising Vigil, level 3\./,
+      ]);
+    },
+  },
   plain('hunters-roster', 'Hunters (roster)', 'Hunters tab', [/By slot/], (p) =>
     tabTo(p, 'Hunters'),
   ),
@@ -316,6 +359,20 @@ export const FLOWS: readonly Flow[] = [
       await btn(p, 'Make the Last Stand').click();
     },
   ),
+  {
+    id: 'last-stand-vigil-off',
+    fixture: 'v11',
+    mutates: true,
+    how: 'fixture v11; More, Debug, Finish Act VI, Open the gate, Unlock Bastion, set vigil stands to 3; Hold, Rank ▸, Make the Last Stand (switch Off)',
+    run: (page, visit) => vigilStand(page, false, visit),
+  },
+  {
+    id: 'last-stand-vigil-on',
+    fixture: 'v11',
+    mutates: true,
+    how: 'as last-stand-vigil-off, then the On button',
+    run: (page, visit) => vigilStand(page, true, visit),
+  },
   plain('delve-entry', 'a Delve (entry)', 'Hold, Delve', [/Start/], (p) => btn(p, 'Delve').click()),
   plain('more-menu', 'More', 'More tab', [/Reports/], (p) => tabTo(p, 'More')),
   plain('more-reports', 'More (Reports)', 'More, Reports', [/./], (p) => more(p, 'Reports')),

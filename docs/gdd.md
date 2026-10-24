@@ -165,6 +165,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | v1.0 | Polish: accessibility, Text size, reduced motion, contrast, tap targets, backup reminder, redrawn art (§9.20) |
 | v1.1 | The Hold's Layout: decorative 8 × 8 building placement grid and persistent blueprint (§5.1.5, §9.21) |
 | v1.2 | Sounds of the Frontier: seven short sound effects for the big moments, off by default (§9.22) |
+| v1.3 | Keep the Vigil: Rising Vigil, an optional On / Off switch on the Last Stand screen that makes stands harder, one step more each time, once the Remembering gate is open (§5.9.10, §9.23) |
 
 ---
 
@@ -957,6 +958,7 @@ From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat
   - Each wave's species is picked from those whose tier range includes the wave's tier (above tier 5: those that reach tier 5).
   - **From Act VI (D363),** a stand's species pool also includes **the Dross-Tide**, at any tier. Which pool a stand uses is fixed when its wave list is first fixed, at the moment Bastion is reached: `standPool` is `dross` if **Act VI has begun in the save at that moment** (Act VI's own cycle and every cycle after it, including the story-less ones; owner, D386), otherwise `base` (the species of §8.3.1 only). **No wave of the Dross-Tide is guaranteed:** a `dross` stand may roll none. It is saved on the cycle record, so **a stand made earlier, and every golden or recorded stand, keeps its old pool and replays line for line** (`rulesVersion` stays 5). A `dross` stand's wave list **shows the Dross-Tide by name** (it can never be investigated), and its stand kills **count nowhere**: no bestiary entry, no knowledge level, no drop (§5.10.7). Its Health in a stand is the ordinary tier-scaled Health, without the Delve guardian multiplier (D363, D369).
   - Threat makes every wave stronger (§5.9.1).
+  - **From v1.3, once the Remembering gate is open (D539),** the player may switch on **Rising Vigil**, which makes every wave stronger by a further step per level (§5.9.10). With the switch Off, nothing here changes.
 - **The party:** up to **6** active hunters *(locked)*. A suggested six fills the slots: the highest levels, with at least one Vanguard and one Mender; any can be swapped. Injured hunters can join (recovery timers are ignored). Contracts still running finish on the spot with their real result before the stand begins (§5.9.7).
 - **Preparation:** one oil and one potion per hunter for the whole stand, chosen with the contract pickers. Bombs are thrown automatically from the stores, up to 2 per wave (`prep.bombSlots`): bombs the wave's species is weak to first, then one Saltburst, then one Poppy Smoke (v0.6). The stores reset after the Long Night anyway.
 - **The fight:** one wave at a time, using the contract fight rules (§5.5), with these differences:
@@ -972,11 +974,12 @@ From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat
 
 ```
 wavesPart = Σ (n = 1 … waves held)  4 × 1.15^(n − 1)
-Embers    = floor( rankMult × wavesPart × (1 + 0.007 × Threat)  +  1 × trophies earned this cycle )
+Embers    = floor( rankMult × wavesPart × (1 + 0.007 × Threat + e × L)  +  1 × trophies earned this cycle )
 rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 ```
 
 - In normal play the stand is only open in Bastion, so `rankMult` is 1. The lower values matter only for the arrival (§5.9.8).
+- `L` is the stand's Rising Vigil level (§5.9.10): **0** unless the Remembering gate is open and the switch was On when the stand started, so every stand before v1.3, and every stand with the switch Off, pays exactly as before. `e` is `vigil.embersPerLevel` (§7.13).
 - The trophies counted are the cycle's cumulative count (A7). At the arrival the trophies part is capped (§5.9.8).
 - **The sweet spot.** Early in Bastion, defenses, hunter levels and gear grow faster than Threat, so each day holds more waves. Later, level costs climb (×1.75 per level) while Threat keeps rising, and the waves win. Trophies add a steady amount throughout. Total Embers keeps creeping up if you wait, but **Embers per day of the cycle** rises, peaks and falls. The target is a peak on **days 4–5** (§6.2).
 - **How the simulator measures it:** from Bastion on, at every check-in up to day 7, it runs a practice stand on a throwaway copy of the game and records Embers ÷ days so far. The median time of the peak over the 5 seeds must fall on days 4–5.
@@ -1009,6 +1012,7 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 | | Hunter ranks, stars and talents; Legendaries (v0.8) |
 | | Orders: standing, which Orders have opened, the third seat, chapters read and the seats they were read with (v0.10) |
 | | The Hold's layout blueprint: placed coordinates for every building, plot and defense piece, and the blueprint-ghost setting (v1.1, §5.1.5) |
+| | Rising Vigil: the switch as left and the count of stands fought with it On (v1.3, §5.9.10) |
 
 - **Hunter levels:** each hunter keeps half the levels above 1, rounded down (6 → 3, 5 → 3, 4 → 2); Old Hands raises the share. XP toward the next level goes to 0. A kept level above the current Rank's cap stays; the cap only stops new levels. Ranks, stars and talents are kept (v0.8).
 - **Contracts still running** when the stand starts finish on the spot with their real result (the dice were fixed at launch); their rewards apply and their trophies count.
@@ -1037,6 +1041,33 @@ rankMult  = Hamlet 0.25, Keep 0.5, Citadel 0.75, Bastion 1
 
 - **A new warden each cycle** *(⚑ lore L4)*: after each Long Night a new warden arrives; **from v0.5** you name them. The **Roll of Wardens** (L9) carves each warden's name, Ranks reached, Last Stand band and relics into the Hearth Hall. From v0.4 the save keeps one short history entry per cycle for it (technical design §5.2, D113).
 - **Story (v0.5):** Acts I and II, documents, names, letters and trust (§5.14). Residents react to how the stand went. **Every act is written (v0.11, D455); a cycle with no act closes with nothing in that step.** *(⚑ P4 [JC], superseded by D455)*
+
+#### 5.9.10 Rising Vigil *(v1.3; ⚑ v1.3 flesh-out, D538–D551)*
+
+An optional switch for a player who has finished the story and wants harder stands. It is the rising difficulty that Keep the Vigil left for later (D453, D477, D499). Nothing here is needed to finish the game, and no stand fought before the gate is open changes.
+
+- **Availability (D539).** The switch is on the Last Stand screen (§9.23) and is shown **only when the Remembering gate is open** (`endingChoosable`, §5.15.1: 40 names found, every contract species Studied, Act VI's stand applied). It stays available after Remember Them. **Keep the Vigil on the ending card still plays R-10 once and changes nothing** (§5.15.3); it does not turn Rising Vigil on. While the gate is closed the stand screen is exactly as before.
+- **The level (D539).** A stand's level `L` is the number of stands already fought with the switch On, **plus one** for the stand being started. The first On stand is level 1. A level counts **only when a stand is started with the switch On.** With the switch Off the stand is an ordinary stand (level 0, the old rules to the last digit), and the level is **kept**: the next On stand carries on from where the last On stand left off. The switch stays as the player left it across the Long Night. There is no cap and no end.
+- **What a level does to the waves (D540).** One lever only: the Health and Might of every wave.
+
+  ```
+  waveFactor = 1 + 0.0061 × Threat + s × L            (Health and Might of every wave; 0.0061 is threat.waveStrengthPerPoint)
+  ```
+
+  `s` is `vigil.strengthPerLevel` (§7.13, tunable). **The wave list, the tiers, Armor, the Watchtower, Walls, bombs, the party and the 400-tick limit do not change.** The step is the same at every level (steady, additive). **Target (owner): about one wave fewer held per level, measured on the simulated Vigilant's gate-open stand** (the Standard player never opens the gate, so it cannot be the reference). The value of `s` is 0.32 (D554): measured on the simulator probe (KV.8, KV.9) by the rule in §6.2, the owner answered Q57 (a), additive, and approves the value. The Threat part and the level part add; they do not multiply each other.
+- **What a level does to the Embers (D541).**
+
+  ```
+  Embers = floor( rankMult × wavesPart × (1 + 0.007 × Threat + e × L)  +  1 × trophies earned this cycle )
+  ```
+
+  `e` is `vigil.embersPerLevel` (§7.13, tunable). **Target (owner): at levels 1 to 3 a stand pays about as many total Embers (waves part plus trophies) as a level 0 stand** (the bonus makes up for the wave the level costs). The term multiplies the waves part only, not the trophies. The breakdown of the Embers (§5.0, §5.9.4) gets a "Rising Vigil" line, in additive terms that add up with the Threat line, from the same function that builds the number.
+- **When the stand starts (D544).** The command that starts the stand reads the switch. With the gate open and the switch On it fixes `L = stands + 1`, adds 1 to the count of stands fought On, and saves the level with the stand's saved inputs (`vigilLevel`, the same record that holds `standPool`; technical design §21). The stand's saved inputs carry it, so **a wave log rebuilt later uses the same strength, and every earlier stand, golden fight and recorded fight replays line for line** (`rulesVersion` stays 5, D542). The switch can be flipped any time before the stand starts; a flip needs no confirmation, Start is the final step (§5.9.3).
+- **The preview (D544).** Expected waves, the Embers now (with the breakdown) and the estimate of tomorrow's Embers are worked out again when the switch flips, with the level the stand would have. The labels for the estimate do not change.
+- **The Roll of Wardens (D545).** A warden whose stand was fought at level 1 or more has, beside the stand's band, a small mark drawn in code and the line *"Rising Vigil, level N."* No story text, no new picture file.
+- **What it never touches (D539).** Contracts, Delves, events, Threat rates, the band thresholds (Broken ≤ 11, Held 12–14, Triumphant ≥ 15), the relic milestones (`relics.waveMilestones`), Orders standing sources, trust and the Remembering's records. A Triumphant stand at any level counts for trust and Orders standing as a Triumphant stand does today (D549 (7)).
+- **Honest limits.** (1) A steady additive step means each new level costs fewer waves than the one before (the waves held fall more slowly as the level climbs, though the strength never stops rising); a compounding step is the alternative (Q57, answered before KV.9). (2) Embers have a finite use: warden upgrades have maximum levels and stars stop at 5, so once those are bought, extra Embers buy nothing. Rising Vigil is a challenge, not a reward track (D541). (3) Fewer waves held means fewer Triumphant stands (15 or more). A Triumphant stand is worth 10 contracts of trust for every village (§5.14.8) and `orders.triumphantChunk` of standing for every Order (§5.13.2), so a player whose trust or Orders are not full is slowed by a high level (D549 (10)). (4) Command skill XP is earned per wave held, so fewer waves means less of it. (5) The vigil term does not grow with Threat, so it matters less the later in the cycle the stand is fought. (6) Fixed-damage sources (the Watchtower's volley, bombs) get relatively weaker, and the Dross-Tide's hit-everyone effect relatively stronger. (7) Each stand fought On adds about 16 bytes to the save, for ever, since there is no cap. (8) If the pinned contract-species list ever changes (D461) the gate could close; the row then hides with the switch still On, which is harmless (level 0).
+- **The simulator (D546).** A probe runs a throwaway stand at levels 0 to N; one player, the Vigilant, plays three endless cycles (§6.1, §6.2). Every other player never touches the switch, so their reports do not change.
 
 ### 5.10 Delves *(v0.7; ⚑ v0.7 flesh-out, D244–D272)*
 
@@ -1430,7 +1461,7 @@ The ending shipped in v0.11 (§5.15, D415, D448); anything that gives Orders a s
 #### 5.14.5 Wardens
 
 - **Naming** (D152): the new-warden sheet asks for a name: free text up to 24 characters, with **Suggest**, which offers a name from a short list of Slavic and Nordic given names (collision-checked, `src/content/`). A new game names its first warden in the opening scene. A save from before v0.5 names its earlier wardens once, on arrival; a blank one is carved as *"the warden before"*. Names can be changed later from the Roll.
-- **The Roll of Wardens** (D153) is in the Hearth Hall, on the Rank screen beside The Hearth. Each warden has one line: the name; the years they kept the hearth (cycle n covers years `300 + 3(n − 1)` to `300 + 3n` of the order); the Ranks they reached; the stand's band and waves held; and the relics found. The current warden's line reads *"…keeping the hearth"*.
+- **The Roll of Wardens** (D153) is in the Hearth Hall, on the Rank screen beside The Hearth. Each warden has one line: the name; the years they kept the hearth (cycle n covers years `300 + 3(n − 1)` to `300 + 3n` of the order); the Ranks they reached; the stand's band and waves held; and the relics found. The current warden's line reads *"…keeping the hearth"*. **From v1.3,** a warden whose stand was fought with Rising Vigil at level 1 or more also has a small mark drawn in code and the line *"Rising Vigil, level N."* (§5.9.10, §9.23, D545).
 - **Above the first warden** is a worn line: *"A first line, worn smooth. Pechko dusts it every morning."* It becomes legible in Act IV.
 
 #### 5.14.6 Village trust
@@ -1463,7 +1494,7 @@ The ending shipped in v0.11 (§5.15, D415, D448); anything that gives Orders a s
 
 ### 5.15 The Remembering *(v0.11; ⚑ v0.11 flesh-out, D446–D460)*
 
-**What it is.** The end of the story. After Act VI the player can **Remember Them** (read the Sent's 40 names aloud in the Hearth Hall) or **Keep the Vigil** (not yet). Two endings ship; **The Descent is deferred** (D448). The Orders are **not** a gate and **never change which ending is open** (D447).
+**What it is.** The end of the story. After Act VI the player can **Remember Them** (read the Sent's 40 names aloud in the Hearth Hall) or **Keep the Vigil** (not yet; from v1.3 the stand screen also has the optional Rising Vigil switch, §5.9.10). Two endings ship; **The Descent is deferred** (D448). The Orders are **not** a gate and **never change which ending is open** (D447).
 
 **5.15.1 The gate (D449).** Remember Them is open when:
 1. **all 40 names are found** (§5.14.4), and
@@ -1483,7 +1514,7 @@ The gate is **worked out from the state each time and never stored.** Names foun
 **5.15.3 The choice (D453, D459).**
 - **When it can be chosen:** Act VI's stand result has been applied **and** the gate is open. The command is refused otherwise (D461).
 - **Remember Them** plays the whole sequence: R-03, the reading, R-04, R-04b (only if Sigrun is on the roster), the Order cards, R-09, R-11 (5.15.5, 5.15.6). It is recorded **once,** the moment it is chosen. The Library entry replays the **whole sequence,** so an interrupted ending loses nothing (D461).
-- **Keep the Vigil** is offered only when the gate is open (D459 (1)). It plays R-10 once, is recorded once, and **changes nothing in the game.** It adds **no** difficulty (rising difficulty is a later flesh-out, §10). After it, the card shows only Remember Them.
+- **Keep the Vigil** is offered only when the gate is open (D459 (1)). It plays R-10 once, is recorded once, and **changes nothing in the game.** It adds **no** difficulty by itself. From v1.3 the stand screen has a separate optional switch, **Rising Vigil** (§5.9.10, D539): it is available once the gate is open, whichever ending has been chosen, and Keep the Vigil does not turn it on. After it, the card shows only Remember Them.
 - Nothing locks. Both can be re-read from the Library shelf "The Remembering" (§9.19).
 - The reading never starts by itself: only a tap on the card starts it (D459 (3)).
 
@@ -1547,6 +1578,7 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 | **Delver** (`delver`, *from v0.7*, D269) | Same as Standard | One 20-min session at 15:00 on weekends, plus Wednesday at 19:00: Delves | The v0.7 Delve rows only; the Idle-only row's comparison |
 | **Eventer** (`eventer`, *from v0.9*, D367) | Same as Standard | None. At each check-in, it spends banked tokens (below) | The v0.9 event rows only. **Monday seeds only.** |
 | **Orderer** (`orderer`, *from v0.10*, D417) | Same as Standard | One 20-min Delve session at 15:00 on weekends, plus Wednesday at 19:00, once Delves are open | The v0.10 Orders rows only. **Monday seeds only.** |
+| **Vigilant** (`vigilant`, *from v1.3*, D546) | Same as Standard | None. After Act VI's stand it opens the gate with `debug.remembering.openGate()` (a declared shortcut: Standard never opens the gate, Q45) and switches Rising Vigil On | The v1.3 Rising Vigil rows only. **Monday seeds only.** |
 | **Light** | 07:00, 12:30, 21:00 every day | None | "Still works for a busy week" checks |
 | **Heavy** | Every 2 h from 07:00 to 23:00 | One per day *(no Delves)* | "Can't be rushed too fast" checks |
 | **Opening** *(⚑ revision A10)* | Acts every 10 s for the first 15 min of a fresh game, using the default job priority and greedy best-payback buys; then switches to Standard | — | Opening targets (first Cottage, first Mine) |
@@ -1587,6 +1619,8 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
   - **Standard, Light, Heavy, Opening and the Delver never touch events.** The Eventer's contract decisions are Standard's, so it leaves hunters on contracts when Standard would.
 
 - **Orders** *(Orderer only, v0.10, D417)*: plays like Standard on the Monday seeds only, **and runs Delves as the Delver does once they are open,** and is the only player that seats an Order. It taps 'Seat it' at an opening when a seat is free. At each new warden it seats the Orders ranked by chapters playable now, then chapters unread, then list order (Moot, Grey Wives, Bell-Watchers, Quenchers). It takes the third seat the moment it opens, never uses the mid-cycle swap, reads every chapter when it is playable, and plays until every chapter has played, up to the 42-day cap. Every other player never seats an Order, so their baselines do not change (D417).
+
+- **Vigil** *(Vigilant only, v1.3, D546)*: plays like Standard on the Monday seeds only until Act VI's stand has been applied, then calls `debug.remembering.openGate()` once (which marks `debugUsed`; the report says so), switches Rising Vigil On with `vigil.set` before each stand, and plays **3 endless cycles** (levels 1, 2 and 3). It is the only player that issues `vigil.set`; every other player's baseline does not change. Its shard is `vigil` (technical design §13).
 
 ### 6.2 Targets
 
@@ -1640,6 +1674,11 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | *Proposed:* Provisions share with the Moot perk *(D417)* | Stays in 20–40% (Orderer, median of the 5 Monday seeds) | v0.10 |
 | *Proposed:* Stand rows with the Quenchers perk *(D417)* | 'Best Last Stand timing' (days 4–5), 'First Long Night' (days 3–5), 'Act VI lands in its cycle' and the Dross-Tide stand probe still pass; Embers per stand with and without the perk are reported (Orderer, median of the 5 Monday seeds) | v0.10 |
 | The Remembering is reachable *(D458, D464, D469)* | All 40 names are found and Act VI's stand is applied by the end of cycle **6** (Standard, median of the 5 Monday seeds; measured 6, 6, 6, 6, 7, approved by the owner). A seed that never gets there counts as later than any N. The species half of the gate (every contract species Studied) is proved by the content test, not by this row, because the Standard player does not look for species it lacks (Q45). Judged only in `sim.yml`, not in the fast set. | v0.11 |
+| The vigil level rises by exactly 1 per On stand *(D546 A)* | Over the Vigilant's 3 real endless cycles the saved levels are 1, 2, 3 and `stands` is 3 (Vigilant, every Monday seed) | v1.3 |
+| More vigil never holds more waves *(D546 B)* | On the probe, per Monday seed, the median waves held over the preview's 100 practice stands (`laststand.previewSamples`, the same seeds at every level) at level L+1 are never more than at level L, for L from 0 to 10. The probe state is a clone of the Vigilant at the check-in where it would start its first endless stand (Bastion, Standard's stand-timing rule). Judged only in `sim.yml` unless CI `npm run check` stays at 90 s or less on 3 runs with it in | v1.3 |
+| Embers at levels 1 to 3 stay level with level 0 *(D546 C, D554)* | On the probe, at the stand's own Threat, the median total Embers (waves part plus trophies) at each of levels 1 to 3 are within **5%** of level 0 (median of the 5 Monday seeds; measured 1.5%, 0.3% and 2.1% off at the chosen values; fixed before the final judging run). Twice that Threat is reported, not judged (9.8% off at its worst). | v1.3 |
+
+*A fourth idea, "a stand with the switch Off equals a level 0 stand", is true by construction and is a unit test (technical design §21.8), not a row (D546 (5)).*
 
 Reported only: the stand band per cycle (with waves), skill levels per cycle, properties found per cycle (v0.6); Riftglass per week, floors reached per run, Delve relics found (v0.7, Delver); stars per cycle, items by rarity per cycle, Legendaries found, Delve XP (v0.8).
 
@@ -1708,8 +1747,11 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **v11 → v12 migration** *(v1.1, D506)* | ≤ 100 ms | A played v11 save, on the load path (the throttled benchmark) |
 | **Hold layout save growth** *(v1.1, D506, M5)* | ≤ 1.5 KB | The whole `layout` block with all 40 pieces placed (checked by a unit test, not the throttled benchmark; measured ~1.1 KB) |
 | **Sound files, total** *(v1.2, D523)* | ≤ 30 KB (target about 24 KB) | All shipped sound files together (1 KB = 1,024 bytes). Checked by a unit test on the files, not the throttled benchmark. **The download row below is the binding limit:** the sound code also counts, so the room for sound is what is left of 600 KB after the code is built |
-| **Download size** *(v1.0, D494)* | ≤ 600 KB | The production build, every file compressed with gzip (v0.11: 500 KB; v1.0: 506 KB; v1.1: 568 KB, measured as 582,081 bytes; **v1.2 (D523): the row stays; the sounds are capped at 30 KB and the whole build must still measure 600 KB or less**). Measured at the milestone end; not a test in `npm run check` |
+| **v12 → v13 migration** *(v1.3, D547)* | ≤ 100 ms | A played v12 save, on the load path (the throttled benchmark) |
+| **Vigil save growth** *(v1.3, D547)* | ≤ 0.5 KB | The whole `vigil` block plus 20 recorded `vigilLevel` values (checked by a unit test, not the throttled benchmark). Each stand fought On adds about 16 bytes for ever; there is no cap |
+| **Download size** *(v1.0, D494)* | ≤ 600 KB | The production build, every file compressed with gzip (v0.11: 500 KB; v1.0: 506 KB; v1.1: 568 KB, measured as 582,081 bytes; **v1.2 (D523): the row stays; the sounds are capped at 30 KB and the whole build must still measure 600 KB or less; measured 610,508 bytes**; **v1.3 (D547): the row stays; 3,892 bytes are left for the vigil code (a rough guess of 2–4 KB gzipped, not measured); if the build is over 614,400 bytes, stop and ask, never change the row**; **D553: the build packs every picture as an indexed PNG without changing a pixel and the live build no longer carries the contact sheet, which took the same build from about 612,000 to about 442,000 bytes on this scale (room about 172 KB)**). Measured at the milestone end; not a test in `npm run check` |
 | **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
+| **Simulator: the Vigilant shard** *(v1.3, D546)* | ≤ 5 min per CI job *(D320)*; stop and ask if it would pass 4 min | The `vigil` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
 | **Simulator: full suite** | **≤ 5 min per CI job** *(D320)* | All policies and checks; the runs play in parallel, one per core (D169), split across parallel CI jobs whose results a final job combines and judges. Never trimmed: same runs, seeds and rows |
 
@@ -1808,7 +1850,7 @@ Every constant here is tunable unless marked locked.
 |---|---|---|---|
 | Threat rate | per hour by Rank, × (1 − slow); slow = 2% per level of Walls or Watchtower | `threat.ratePerHour` = { hamlet 0, keep 0.5, citadel 1, bastion 1 } *(D138)*, `threat.defenseSlowPerLevel` = 0.02 | 5.9.1 |
 | Threat from contracts | +f × tier on a failure; −c × tier on a success; never below 0 | `threat.failedPerTier` = 3, `threat.completedPerTier` = 0.76 *(D138)* | 5.9.1 |
-| Wave strength from Threat | Health and Might × (1 + w × Threat) | `threat.waveStrengthPerPoint` = 0.0061 *(D138)* | 5.9.3 |
+| Wave strength from Threat (and, from v1.3, Rising Vigil) | Health and Might × (1 + w × Threat + s × L), L = the stand's Rising Vigil level (0 unless the switch was On, §5.9.10, §7.13) | `threat.waveStrengthPerPoint` = 0.0061 *(D138)* | 5.9.3 |
 | Walls | party taken% −x per level in the stand (75% cap, `combat.takenCap`) | `walls.takenPerLevel` = 0.02 | 5.9.2 |
 | Watchtower | at tick 1 of each wave, v × level Steel damage, ignores Armor | `watchtower.volleyPerLevel` = 20 | 5.9.2 |
 | Defense costs | level building, `base × 1.75^(L−1)` | Walls 20,000 wood + 10,000 iron; Watchtower 15,000 wood + 8,000 iron + 100 silver (content, D44) | 5.9.2 |
@@ -1816,7 +1858,7 @@ Every constant here is tunable unless marked locked.
 | Stand party | up to N active hunters | `laststand.partyMax` = 6 **(locked)** | 5.9.3 |
 | Between waves | standing hunters recover a share of max Health | `laststand.recoverBetween` = 0.20 | 5.9.3 |
 | Stand preview | practice stands; range = 10th–90th percentile | `laststand.previewSamples` = 100, `laststand.policySamples` = 20 | 5.9.3, 6.5 |
-| Embers | `floor(rankMult × Σ_(n ≤ waves) p × g^(n−1) × (1 + b × Threat) + q × trophies)` | `embers.perWave` = 4, `embers.waveGrowth` = 1.15, `embers.threatBonus` = 0.007 *(D138)*, `embers.perTrophy` = 1, `embers.rankMult` = { hamlet 0.25, keep 0.5, citadel 0.75, bastion 1 } | 5.9.4 |
+| Embers | `floor(rankMult × Σ_(n ≤ waves) p × g^(n−1) × (1 + b × Threat + e × L) + q × trophies)` | `embers.perWave` = 4, `embers.waveGrowth` = 1.15, `embers.threatBonus` = 0.007 *(D138)*, `embers.perTrophy` = 1, `embers.rankMult` = { hamlet 0.25, keep 0.5, citadel 0.75, bastion 1 } | 5.9.4 |
 | Relic milestones | the first stand ever to hold each wave count | `relics.waveMilestones` = [6, 9, 12, 15, 18, 21] | 5.9.6 |
 | Levels kept | `1 + floor((L − 1) × k)`, k = base + Old Hands | `longNight.levelsKept` = 0.5 | 5.9.7 |
 | Warden upgrades | level L costs `c × g^(L−1)` Embers | per upgrade, in the content (§8.9) | 5.9.5 |
@@ -1967,6 +2009,17 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 - **Standing per command, not per tick:** each source adds standing in the command or event that does the thing (including events inside `advance` such as a contract resolving), so nothing is added on a timer.
 - **No randomness:** Orders use no random streams (technical design §7.2).
 - **Tunable content values (not constants):** the chapter, opening-scene and perk texts (OUT-3), which are word for word and change only through the owner.
+
+### 7.13 Rising Vigil *(v1.3, D538–D551)*
+
+Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's probe (D554) and are the owner's to approve.
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Wave strength per vigil level | Health and Might × (1 + w × Threat + s × L), w = `threat.waveStrengthPerPoint` (§7.6) | `vigil.strengthPerLevel` = 0.32 *(D554; about 3 waves fewer held by level 3 on the Vigilant's gate-open stand)* | 5.9.10 |
+| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = 0.22 *(D554; Embers at levels 1 to 3 within about 1% of level 0 at the stand's own Threat)* | 5.9.10 |
+| The level | L = stands already fought with the switch On + 1, for an On stand; 0 for an Off stand | — (no cap) | 5.9.10 |
+
 
 ---
 
@@ -2846,6 +2899,7 @@ The Hut opens from its building row on the Hold screen.
 | v1.0 | Polish: no new game screen. The Archive tabs fit (two rows when needed); Text size and Backup reminder in Settings; the backup line on the away sheet; reduced motion, contrast and tap-size fixes everywhere; redrawn art and the app icon (§9.12, §9.20) |
 | v1.1 | The Hold's Layout: the live 8 × 8 grid header on the Hold screen, the Arrange Hold sheet (44 px tile buttons, tray, Auto-arrange, Clear, Blueprint ghosts toggle), and the Hold view setting (Grid / Classic scene) (§5.1.5, §9.12, §9.20, §9.21) |
 | v1.2 | Sounds of the Frontier: no new screen. One Sound row (On / Off, default Off) in Settings; seven short sounds for 15 moments; a Play sound row in the debug panel (§9.22) |
+| v1.3 | Keep the Vigil: no new screen. One Rising Vigil row (On / Off) on the Last Stand screen once the Remembering gate is open, two extra lines in the stand preview, one in the confirmation and one in the result, and a mark and a line on the Roll of Wardens (§5.9.10, §9.23) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -2882,7 +2936,7 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 
 - **Threat meter** (Hold screen, from the Keep): the value and "+X per hour now". Long-press for the breakdown: the Rank's rate, what defenses take off, contracts completed and failed.
 - **Rank screen** (Hearth Hall): Citadel and Bastion Rank-ups with requirements and costs; the restoration sheet without an inscription (v0.5 adds them); **The Hearth** (Embers on hand, the warden upgrades, the relics you own); from Bastion, **Make the Last Stand**; from v0.6, **What the ember remembers**: the four warden skills (§5.8.6).
-- **Last Stand screen:** the wave list (the first 12; "?" for species not yet Identified); six slots with the suggested six; one oil and one potion per hunter; bombs shown as "thrown automatically from stores"; the preview (expected waves with a range; Embers now with the breakdown and per day of the cycle; Threat by tomorrow; Embers tomorrow, labeled as an estimate); **Start**, with a confirmation that says the Long Night follows.
+- **Last Stand screen:** the wave list (the first 12; "?" for species not yet Identified); six slots with the suggested six; one oil and one potion per hunter; bombs shown as "thrown automatically from stores"; the preview (expected waves with a range; Embers now with the breakdown and per day of the cycle; Threat by tomorrow; Embers tomorrow, labeled as an estimate); **Start**, with a confirmation that says the Long Night follows. **From v1.3,** once the Remembering gate is open, a **Rising Vigil** row sits above Start (§9.23).
 - **The Long Night sheets**, in order (§5.9.7): the stand's result, with a link to each wave's log; the closing line; The Hearth; the new-warden sheet with the choice of 3 active hunters.
 - **Arrival sheet** (old saves only, §5.9.8).
 
@@ -3105,6 +3159,33 @@ v1.2 changes **no game number, formula, rule or save field** (`rulesVersion` sta
 - **Layout and checks.** No tap, sheet, confirmation or animation is added to any routine flow (the Sound row adds two buttons in Settings only); a routine check-in stays at 15 taps or fewer. The Sound row is a tappable thing of at least 44 × 44 px at 320 and 360 px and at every Text size, and meets the contrast ratios of §9.20 in both themes.
 - **Deferred, not cut (with reasons).** An ambience loop and music (they do not fit the 600 KB row; they would need a new measured row); volume and categories (one On/Off is enough); cues for the Remembering and the endings (silence is deliberate there); sound on taps (too noisy for a check-in game); sound for other kinds of buying and for Auto-arrange.
 
+### 9.23 Rising Vigil *(v1.3, D538–D551)*
+
+v1.3 adds **no new screen**. It adds one row to the Last Stand screen (§9.13) and a few lines to sheets that already exist. Rising Vigil changes **no number for a player who leaves it Off** (§5.9.10).
+
+- **The row.** Label **Rising Vigil**, then **[On] [Off]**, then a help line, then one status line. It sits above **Start** and is **shown only when the Remembering gate is open** (§5.15.1); while the gate is closed there is no row and no hint of one. The default is Off. The state is saved in the game (technical design §21), not in the settings key.
+- **Status line.** When On: *"This stand: vigil level {n}"*. When Off and at least one On stand has been fought: *"Next level when on: {n}"* (n = stands fought On + 1). Otherwise nothing. The level is a count, not a number with a formula.
+- **In the preview.** Expected waves, Embers now and Embers tomorrow are worked out again as soon as the switch flips. The wave strength has no breakdown sheet on this screen today (§9.13), and v1.3 adds none; it shows through the expected waves. The existing Embers breakdown sheet (long-press, §5.0) gets one line, *"Rising Vigil: +{y}% on the waves part"*, in additive terms with the Threat line so the lines add up to the multiplier (`y` = `e × L` as a whole percent of the base 1, rounded down; built by the same function that builds the number).
+- **In the confirmation and the result.** The confirmation that says the Long Night follows adds *"Rising Vigil is on at level {n}."* when On. The stand's result sheet adds *"Fought with Rising Vigil at level {n}."*
+- **On the Roll of Wardens.** For a warden whose stand was fought at level 1 or more, a small mark drawn in code and *"Rising Vigil, level {n}."*
+- **Player-facing strings (nine, word for word, approved by the owner at D551; no others):**
+
+  | String | Where it shows |
+  |---|---|
+  | `Rising Vigil` | Row label |
+  | `On` / `Off` | Row buttons |
+  | `On: every wave is stronger, one step more for each stand you make with it on, and the Embers rise to make up for it. Off: an ordinary stand. Your level is kept.` | Help line under the row |
+  | `This stand: vigil level {n}` | Status line, when On |
+  | `Next level when on: {n}` | Status line, when Off and stands > 0 |
+  | `Rising Vigil: +{y}% on the waves part` | Embers breakdown line |
+  | `Rising Vigil is on at level {n}.` | Confirmation, when On |
+  | `Fought with Rising Vigil at level {n}.` | Result sheet, when the stand was fought On |
+  | `Rising Vigil, level {n}.` | Roll of Wardens line |
+
+- **Layout and checks.** No new tap, sheet, confirmation or animation in any routine flow; **a routine check-in stays at 15 taps or fewer.** The two buttons are tappable things of at least 44 × 44 px at 320 and 360 px and at every Text size; the help line wraps with no sideways scroll at 320 px at Largest; the row meets the contrast ratios of §9.20 in both themes. The stand screen with the row (On and Off) and the Roll of Wardens are added to the screen list the sweeps read (D548).
+- **Debug.** `debug.vigil.setStands(n)` (a core command, marks `debugUsed`) reaches a high level without playing; the switch itself is the real command (technical design §15, §21).
+- **Deferred, not cut (with reasons).** A cap or ceiling (owner chose none); a second lever such as an extra tier or Armor (harder to read and balance); in-world Roll lines (needs lore; the owner chose a plain tally); new art (the owner chose none); a sound for the vigil (the endings are silent); a new Embers sink (a new feature).
+
 ---
 
 ## 10. Out of Scope
@@ -3131,7 +3212,7 @@ v1.2 changes **no game number, formula, rule or save field** (`rulesVersion` sta
 | Achievements | Not in the brief; the owner decided against them (D474) | The in-world records: the Names, the Bestiary, the Library and the Roll of Wardens |
 | Records screen; CSV/JSON export of history and logs | Declined in the GDD review (G9) | Reports keeps recent logs; the Roll of Wardens (v0.5) keeps per-cycle history in-world |
 | The Descent (a third ending) | Deferred (D448, D477); scheduled as v1.4 (D499) | Milestone v1.4 "The Descent", with its own flesh-out |
-| Rising difficulty for Keep the Vigil (an endless mode) | Deferred (D453, D477); scheduled as v1.3 (D499) | Milestone v1.3 "Keep the Vigil", with its own flesh-out |
+| Rising difficulty for Keep the Vigil (an endless mode) | Deferred (D453, D477); scheduled as v1.3 (D499); **fleshed out 2026-10-24 as Rising Vigil, an optional switch on the stand screen (D538–D551, §5.9.10, §9.23)** | Milestone v1.3 "Keep the Vigil" |
 | Tactical building placement in the Last Stand ("The Breach") | Split from decorative placement (D499, D500) | Milestone v1.5 "The Breach", reusing v1.1's saved 8 × 8 layout format without another save migration, with its own flesh-out |
 | Screen-reader labels and keyboard focus | Considered for v1.0 and left out (D489) | Not planned; a later accessibility pass if wanted |
 | Orders giving silver or fight bonuses; events adding standing; a seat cost; a fifth Order | Not planned (D418) | — |
@@ -3285,3 +3366,15 @@ Each one is also marked **[JC]** where it appears.
 6. **The 600 KB row stays; the sounds are capped at 30 KB; the whole build is the binding limit** because the new code also counts (D523).
 7. **The owner picks each sound by ear from an audition sheet in the preview build;** Claude cannot hear (D524).
 8. **A Play sound row in the debug panel** is the second UI-only debug exception (D522 (6)).
+
+## Judgment calls added in the v1.3 flesh-out (D538–D551)
+
+1. **Rising Vigil is a switch, not a mode or a forced step:** On or Off before each stand, once the gate is open; Keep the Vigil on the ending card still changes nothing (D539).
+2. **One lever, steady additive steps, no ceiling:** wave Health and Might only (D540).
+3. **A small Embers bonus per level, so levels 1 to 3 pay about the same as level 0;** Embers have a finite use, which is said plainly (D541).
+4. **The level-0 path is bit for bit the old one; `rulesVersion` stays 5** because the level is saved on the stand's record (D542, the D363 precedent).
+5. **Save schema 13:** a small `vigil` block and an optional `vigilLevel` on cycle records, kept through the Long Night (D543).
+6. **The row is shown only when the gate is open, and flipping it needs no confirmation** (D544, D549).
+7. **A plain Roll tally, a drawn mark and no new art or story text** (D545).
+8. **The Vigilant opens the gate with a declared debug shortcut, in its own shard; the probe is judged in `sim.yml` only** (D546, D549).
+9. **The download row stays at 600 KB; the vigil code must fit in what is left (3,892 bytes at v1.2), or the milestone stops and asks** (D547).

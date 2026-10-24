@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
 import { ages } from '../../content/ages';
+import { VIGIL_ROLL, vigilLine } from '../../content/vigil-text';
 import { rollMarkText } from '../../content/text/remembering';
 import { relics } from '../../content/relics';
 import { bandLabels, keepingTheHearth, wornFirstLine } from '../../content/story/scenes';
@@ -45,6 +46,19 @@ const ReadAloudMark = () => (
   </span>
 );
 
+// GDD §9.23: a small flame-and-bar mark drawn in code (no picture file), with the line beside it.
+const VigilMark = ({ level }: { level: number }) => (
+  <span class={styles.small} data-testid="vigil-roll">
+    {' '}
+    <svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true">
+      <rect x="5" y="1" width="2" height="9" fill="var(--c-ember)" />
+      <rect x="2" y="5" width="8" height="2" fill="var(--c-ember)" />
+      <rect x="2" y="11" width="8" height="2" fill="currentColor" />
+    </svg>{' '}
+    <em>{vigilLine(VIGIL_ROLL, level)}</em>
+  </span>
+);
+
 const WardenRow = ({ l }: { l: WardenLine }) => {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(l.named ? l.name : '');
@@ -53,6 +67,7 @@ const WardenRow = ({ l }: { l: WardenLine }) => {
     <li class={styles.divider}>
       <strong class={l.named ? undefined : styles.dim}>{l.name}</strong>
       {l.readAloud && <ReadAloudMark />}
+      {l.vigilLevel >= 1 && <VigilMark level={l.vigilLevel} />}
       <br />
       <span class={`${styles.small} ${styles.dim}`}>{lineText(l)}</span>
       {editing ? (

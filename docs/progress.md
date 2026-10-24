@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `main` (v1.2 merged, tag `v1.2.0`).
-- **Milestone:** v1.2 "Sounds of the Frontier" (D519–D530), complete.
-- **Last task:** v1.2 milestone end (playtest passed, merged, tagged `v1.2.0`).
-- **Next:** the next milestone is v1.3 (outline only; it needs a flesh-out session first, plan §0.4).
-- **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
+- **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.11 done (playtest passed, D556) (owner approved the values, the tolerance, rows A to C and the v13-played fixture rewrite); size routes 1 and 2 done (D553).
+- **Last task:** KV.11 (wrap-up, pull request). Before it: KV.10 (budgets, size, old-test list), KV.9 (constants, tolerance, rows), KV.8 (the probe, the Vigilant, the `vigil` shard), KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
+- **Next:** merge PR 21 and tag `v1.3.0` once the owner has exported their save; then the v1.4 flesh-out. D554 and D555 are Decided (owner, 2026-10-24).
+- **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 answered (a), additive. Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -502,3 +502,123 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Shard times (first fixed run):** shard 1 1 min 34 s, shard 2 **7 min 31 s**, shard 3 3 min 16 s; shard 4 failed in the install. Install stalled on the Ubuntu Azure mirror (all three tries), so the tries were not the problem.
 - **Owner said do both:** `--fully-parallel` on the shard command (tests spread one by one; expected about 2 to 3 min of tests per shard) and an apt fail-fast setting before the install in `ci.yml` and `bench.yml` (D537). Locally the four shards hold 126 tests in total.
 - **Still to see on CI:** every shard job under 5 minutes. If not, the fallback is a longer limit for the e2e shards. Bench change is untested until a pull request exists.
+
+## 2026-10-24 — v1.3 KV.1: docs commit
+- **Preconditions:** tag `v1.2.0` is on `main` (merge `0a41df8`); the CI changes (PR #20, D533–D537) are on `main`. Branch `milestone/v1.3` was **not** created: this session may only push `claude/clever-fermi-gkis1l`; the owner decides whether the preview needs `milestone/v1.3`.
+- **CI on `main`:** last finished run (PR #20 merge): shard 2 took 5 min 22 s as a job (tests 4 min 1 s); run on the owner's upload (`d66683f`): shard 2 took 5 min 10 s, and **shard 4 failed** (`story.spec.ts` "a won contract brings Ilse": waited 45 s for the "Through the gate" dialog). No code changed between the runs, so likely a timing flake; not yet re-run. Shard 2 is over the 5-minute rule: the owner agreed to the D537 fallback (a longer e2e limit) as its own small change; the number is theirs (asked).
+- **Applied:** all 35 Find/Replace edits (GDD 23, plan 6, technical design 6) matched exactly once, checked by machine before and during applying. Rows D538–D550 are Decided and D551 is added (owner's yes; Q58 answered (a)); Q57 and Q58 are in `questions.md`; the summary moved to `docs/flesh-out/v1.3-summary.md`; three rules are in `CLAUDE.md`. No old row or cell edited. The two placeholder constants (0.25 each, GDD §7.13) were added to `balance.ts` now, because the GDD §7 keys test fails without them (OUT-2a says so); KV.3 wires them in.
+- **Sweep:** no `Proposed` row from D519 up is left outside D538/D551.
+- **Owner's save uploaded** (renamed to `tests/saves/fixtures/v12-owner.json`; it arrived as `V12-owner.json`): schema 12, rules 5, cycle 1, Keep, Act 1 with 14 wins, 1 cycle record. **The Remembering gate is closed**, so the owner will see Rising Vigil only through the debug commands for a long while (Q46: about 20–25 cycles).
+- **D552:** e2e shards may take up to 8 minutes (owner's number); `ci.yml` timeout 10 → 8, own commit. Shard 4's failure (story spec) is being re-run once to confirm a flake.
+- **Branches:** the owner asked for `milestone/v1.3` too; both branches get the same commits.
+
+## 2026-10-24 — v1.3 KV.2: save schema 13
+- **Done:** `SCHEMA_VERSION` 13; `state.vigil = { on, stands }` (new `vigil-state.ts`); optional `vigilLevel` on the stand record; migration `migration-v13.ts` (adds the empty block, nothing else); guard `validate-vigil.ts` (bad block refuses, unknown field warns, `vigilLevel` must be a whole number of 1 or more, count mismatch only warns and is quiet once `debugUsed`). The Long Night keeps the block (test). `rulesVersion` 5.
+- **Fixtures:** `v13.json` = the owner's v12 save migrated (`scripts/make-v13-fixtures.ts`). `v13-played.json` comes in KV.4. New tests: `tests/saves/v13-migration.test.ts` (all fixtures load, round-trip, golden fights and recorded stands replay, refuses schema 14, ≤ 0.5 KB growth).
+- **Tests first?** Not strictly: I wrote the code, then the tests in the same session. No test was weakened.
+- **Old-test edits (D548):** (1) `v12-migration.test.ts`: schema 12 → 13 (two places) and "newer version" 13 → 14; (6) `opening.test.ts`: the "left out" fixture list gains `v12-owner.json` and `v13.json`. Also added: a `vigilMigration` benchmark row (100 ms) in `bench-page.ts` and `bench.spec.ts`.
+- **Timing:** migration of the played v12 save: 1.0 ms in node here. The browser benchmark could not run in this container (Playwright's browser build is missing); CI runs it. `npm run check`: 87–97 s here.
+- **Size (corrected at KV.3):** the first number here was unconfirmed; see KV.3.
+- **Size, first reading:** the production build summed to **606,607 bytes** (per-file gzip -9, limit 614,400) but I could not count the files (the shell then refused access to `dist`), so I cannot confirm it matches the 610,508 of 313 files in v1.2. Treat as unconfirmed; to be re-measured at KV.3.
+- **The prettier format of `v12-owner.json`** was normalised (whitespace only), like the other fixtures.
+- **Next:** KV.3.
+
+## 2026-10-24 — v1.3 KV.3: the two factor functions
+- **Done:** new `src/core/systems/vigil.ts` with `waveFactor(threat, level)` and `embersMultiplier(threat, level)`, each with its breakdown from the same function. The stand fight, practice stands, preview, wave-log rebuild and Embers payout all call them; the level travels as an optional `vigilLevel` on the stand input and the saved record (absent = 0). Level 0 keeps the old expression with no added term. Nothing sets a level yet (KV.4).
+- **Placeholders:** `vigil.strengthPerLevel` and `vigil.embersPerLevel` are 0.25 each (marked placeholder in `balance.ts`, added at KV.1). KV.9 replaces them.
+- **Tests first:** `tests/stand/vigil-factors.test.ts` was written before the code and failed first. It checks level 0 with `===` for 7 Threat values, level > 0 against an independent table, that the lines add up, the Embers line text, and that each of the four constants is read in exactly one file under `src/core`. No old test was edited. Golden fights and recorded stands replay as before; `npm run check` is green (87–97 s here).
+- **Also:** the Ilse story test now pins the clock (owner chose option a): it failed on weekend mornings because the debug run plays the Standard player over the last 12 h of the real clock. Passes locally on a Saturday. Old-test edit outside D548, with the owner's yes.
+- **Size:** measured by the SF.9 method here, 313 files, `main` = **606,280**, this branch = **607,108** (+828: KV.2 +327, KV.3 +501). This container reads about 4.2 KB lower than the recorded v1.2 figure (610,508) for the same code, cause unknown (probably the gzip build), so the deltas are what to trust: on v1.2's scale that is about **611,336, room 3,064**.
+- **Not run here:** the browser benchmark (Playwright's browser build is missing); CI runs it.
+
+## 2026-10-24 — v1.3 KV.4: the command, the level, the debug command
+- **Done:** `vigil.set { on }` (On refused while the gate is closed; Off and the same value always accepted); the stand reads the switch once in `standInputFor`, fixes `L = stands + 1`, saves `vigilLevel` on the record and moves `stands` in `stand.make`; level 0 adds no field. `vigilAvailable` and `vigilLevelFor` in `systems/vigil.ts`. Debug command `debug.vigilSetStands` (named like the other debug commands, not `debug.vigil.setStands`), with a small input and button in the debug panel.
+- **No "stand started" refusal:** the stand and the Long Night are one command, so that window does not exist (D544 (6)); a test proves the switch works right after a stand.
+- **Tests first:** `tests/vigil/commands.test.ts` and `tests/lint/vigil-coupling.test.ts` (checks state reads and factor imports, not the word; a planted read from `src/ui/` fails). Covered: the accept/refuse table, no double level, rebuild from the record ignores the switch, Off equals a level 0 stand, Keep the Vigil and Remember Them leave the block alone, bad input to the debug command.
+- **`v13-played.json`** (script `scripts/make-v13-played-fixture.ts`, real commands from the owner's save): levels 1, 2, 3, then one Off stand with no level, switch On again, so the next On stand is level 4. I read "one more On" in the plan as turning the switch On, not fighting a fifth stand; tell me if you meant otherwise.
+- **Old-test edits (D548):** (6) `opening.test.ts` list gains `v13-played.json`. Added a describe to `v13-migration.test.ts`. Nothing loosened. `npm run check` green (about 98 s here).
+- **Size:** 313 files, `main` 606,280, now 608,261 (**+1,981**; KV.4 alone +1,153). On the v1.2 scale about **612,489, room about 1,911.** KV.6 and KV.7 are still to come: the fallback order (D547) will probably be needed; the owner is told.
+
+## 2026-10-24 — v1.3 KV.5: the preview
+- **Finding:** the plan says the odds worker's `stateSlice` carries the switch. It does not exist: the worker receives a ready-made preview input, and since KV.3/KV.4 `previewInputFor` already carries `vigilLevel` (from `vigilLevelFor`), and both Embers figures (now, tomorrow) use it. So no worker or protocol change was needed (the worker stays byte-for-byte the same).
+- **The one real gap, fixed:** the stand screen re-asked for the preview only when party, kit or Threat changed. Its key now includes the level (read from `vigilLevelFor`), so a flip recomputes it. The "an estimate" wording is untouched.
+- **Tests (`tests/vigil/preview.test.ts`, 10):** the request carries no field at level 0 and `vigilLevel` n otherwise; the preview equals one built independently at that level (same seeds and samples); the Rising Vigil line is in the breakdown of both Embers figures and absent with the switch Off; a higher level never holds more waves in the median; with the switch Off, or On with the gate closed, the preview equals the pre-v1.3 preview for five states. Not tested here: a flip on the real screen (needs KV.6's row; the Playwright check is there).
+- **Time:** 100 practice stands at the owner's save, Threat 30: Off 293 ms, level 1 112 ms, level 10 19 ms in node (higher levels end sooner), well inside the 1 s budget.
+- **Size:** 313 files, now 608,264 versus `main` 606,280 (**+1,984**; KV.5 +3). Room on the v1.2 scale about 1,900. Size options asked of the owner (see the thread).
+- **Seen once, not mine:** `tests/contracts/flow.test.ts` ("only a confirmed Reckless contract can kill a hunter") hit its 5 s limit in one `npm run check`; it passes alone (11 s for the file) and on the next full run. Slow container, not a change; listed so it is not lost.
+- **No old test edited.**
+
+## 2026-10-24 — Size routes 1 and 2 (D553, owner's yes)
+- **Route 1, pictures:** `tools/png-pack.ts` re-packs every picture as an indexed PNG at build time (Vite step, before the service worker). It compares all pixels with the original and keeps the original on any doubt. `public/` files and the art hashes are untouched. Pictures: 264.7 KB to 102.4 KB gzipped.
+- **Route 2, contact sheet:** `contact-sheet.html` is removed from the live build, kept in the preview (7.9 KB).
+- **Result (this container's scale, 312 files):** 438,190 bytes; `main` is 606,280 here. On the v1.2 scale that is about **442,418, room about 171,982** under the unchanged 614,400 row. The D547 fallback order is no longer needed for v1.3.
+- **Tests:** `tests/tools/png-pack.test.ts` (packer cases, every shipped picture identical, a live build with no contact sheet and nothing left to pack, the preview build keeps the sheet). Adds about 10 s of test time; `npm run check` took 112 s on this container in one run (CI measures it).
+- **Docs:** D553 added (Decided on the owner's yes), GDD §6.5 download row updated. Not in `npm run check`, as before: the milestone-end size number.
+- **Route 3 looked at, not built:** building the app and the odds worker as two entries of one build lets Rollup share one chunk; measured on a scratch copy (worker not yet wired to it): JavaScript 284.8 KB to about 230 KB gzipped, **about 55 KB saved**. Needs: a stable worker file name, a dev-server branch for the worker URL, the service worker precaching the shared chunk, and an offline check; module workers are already required. Recommended for the v1.4 flesh-out if its needs call for it; not needed for v1.3.
+- **Also not done:** splitting the row into first-visit and offline figures (v1.4 flesh-out).
+
+## 2026-10-24 — KV.6 the stand-screen row and the lines
+- **Built:** the Rising Vigil row (label, On / Off, help line, status line) above Start on the stand sheet, shown only when `vigilAvailable`; the confirmation line (when On) and the result line (when the record has a level). The Embers breakdown line was already built in core. Strings in `src/content/vigil-text.ts`; `tests/content/vigil-text.test.ts` makes them equal GDD §9.23 (nine table rows).
+- **Core selector:** `vigilView(state)` in `systems/vigil.ts` (available, on, level, next); the UI reads nothing else and dispatches `vigil.set`. The vigil-coupling lint is unchanged and green.
+- **Playwright (phone):** new `tests/e2e/vigil-row.spec.ts` (11 tests: gate closed has no vigil test id; gate open row, flip, preview recompute, status line in each state, Embers breakdown line, confirmation and result only when On; 44 px buttons and no sideways scroll at 320 and 360 px at all three Text sizes). The tap, contrast (both themes), text-size (Largest, 320 px) sweeps pass on the two new screens. The routine check-in gains no tap (nothing added to any routine flow).
+- **Old-test edit (D548 (3)), only this:** two flows appended to `tests/e2e/polish-screens.ts` (`last-stand-vigil-off`, `last-stand-vigil-on`). Nothing else touched; no existing spec edited.
+- **Size:** 312 files, 438,674 bytes (KV.5 end 438,190: +484).
+- **`npm run check`:** green, 75 s here (3,506 tests).
+- **Not mine:** `smoke.spec.ts` "offline reload" (2 tests) fail in this container's browser build with and without my changes.
+- **For the owner:** read the nine strings on the stand screen (screenshots in the thread).
+
+## 2026-10-24 — KV.7 the Roll of Wardens tally
+- **Owner confirmed the nine strings as built** (D545).
+- **Built:** `WardenLine.vigilLevel` (0 when the stand has none) in `core/story/wardens.ts`; the Roll shows a small mark drawn in code (an SVG, no picture file, no manifest row, nothing under `public/assets/`) and "Rising Vigil, level {n}." for a warden at level 1 or more. A warden with no level reads exactly as before.
+- **Tests:** `tests/vigil/roll.test.ts` (fixture v13-played shows levels 1 to 3 and 0 elsewhere; a v12 save has none). Playwright sweeps on the new flow `roll-vigil` (v13-played, shows "Rising Vigil, level 3."): tap targets, contrast in both themes, Largest at 320 px: 0 findings. The motion sweep only measures named moments, and this adds none.
+- **Old-test edit (D548 (3), (5)):** one flow appended to `tests/e2e/polish-screens.ts`. No baseline file needed a key (the Text-size baseline lists five named screens only). Nothing else edited.
+- **Size:** 312 files, 438,763 bytes (+89 over KV.6).
+- **`npm run check`:** green, 80 s (3,508 tests).
+
+## 2026-10-24 — KV.8 the probe, the Vigilant and the shard (measure only)
+- **Built:** the `vigilant` player (`src/core/policies/vigilant.ts`): Standard plus two moves, the declared debug shortcut `debug.rememberingOpenGate` once Act VI's stand is applied (Q58) and `vigil.set On` before each stand, for 3 stands. Monday seeds only, own shard `vigil` (`sim.yml` matrix updated). The probe (`sim/vigil-probe.ts`) as D546 (1): a copy of the state at the first On stand, levels 0 to 10, 100 practice stands with the same seeds at every level, two Threat points (the stand's own and twice it), a grid of `s` (0.1 to 0.8) and `e` (0.05 to 0.3), additive and compounding. Waves depend on `s` only; Embers are the real payout of the median waves. `npm run sim:vigil` writes the curve to `docs/flesh-out/v1.3/vigil-curve.md`; reports get a "Rising Vigil" section.
+- **Results (placeholder constants unchanged):** the Vigilant reaches levels 1, 2, 3 on all 5 Monday seeds (cycles 7, 8, 9; gate opened at 458 to 486 h). Waves held never rise with the level on any of the 140 curves. `debugUsed` is true for every Vigilant run and the report says why. The other players: **176 of 176 moments same** as the baseline, every check still passes (`sim:check`, 60 runs, 6 min 52 s here).
+- **Reading the curve, in short:** at the stand's own Threat, additive `s` = 0.3 loses 1, 2, 3 waves at levels 1, 2, 3 (about one a level, the owner's target); at level 10 it has lost 7. Compounding `s` = 0.2 loses 0, 1, 2 at levels 1 to 3 but 11 by level 10; compounding 0.3 or more leaves 0 to 1 waves by level 10 (effectively unwinnable). Full tables, bands and per-seed numbers are in the curve file. The owner answers Q57.
+- **Time:** the `vigil` shard takes 161 s here (4 cores); the probe is about 57 s of each 82 s run. Under the 4-minute limit on 4 cores; on 2 cores it would be about 250 s. The probe is not in the fast set, so `npm run check` is unchanged: 72 s here (3,517 tests). Judged in `sim.yml` only (D546 (4)); I could not run CI's 3 `check` runs from here.
+- **Old-test edit (needs the owner's yes, given):** `sim/shards.test.ts` skips `vigil` in the fair-share check like `events` and `orders` (one line; the check for the other shards is unchanged). D548 did not list it.
+- **Also:** `clearNumCache` added to `core/balance-access.ts` (the probe tries a constant and puts it back; nothing in the game calls it); `stateAtVigilLevel` and `stands` on `vigilView` in `systems/vigil.ts` (the lint stays unloosened). The plan said `sim/policies/vigilant.ts`; the repo keeps policies in `src/core/policies/`, so it is there.
+- **Not done, by plan:** no constant set, no `sim/targets.ts` row (KV.9).
+
+## 2026-10-24 — KV.9 the constants, the tolerance and the rows
+- **Q57 answered (a): additive** (owner). No formula changed.
+- **Four commits, each revertible on its own:** (1) the probe judges the shipped constants, the wide grid stays on demand (`npm run sim:vigil -- --s ... --e ... --kinds additive --out file`); (2) **`s` = 0.32, `e` = 0.22** (D554, Proposed); (3) **the Embers tolerance 5%** in `sim/targets.ts` (D555); (4) **rows A, B, C** with their checks and GDD §6.2 (D555, enforced from v1.3; `CURRENT_MILESTONE` is now v1.3).
+- **How `s` was chosen:** on a finer additive grid (0.20 to 0.44 by 0.02) the waves lost by level 3 are exactly 3 at s = 0.28 to 0.34 at the stand's own Threat, and 3 at 0.32 to 0.36 at twice that Threat; 0.32 is the smallest value that reaches 3 at both. Per level it loses 1, 2, 3. **How `e` was chosen** (with s = 0.32): Embers at levels 1, 2, 3 are 1.00, 0.99, 0.99 of level 0 at e = 0.22 (0.23 ties). Details in D554.
+- **Judging run (`sim:check`, 60 runs, 5 min here):** rows A, B, C pass (Vigilant levels 1, 2, 3 on all 5 seeds; no rise in waves on any curve at either Threat point; Embers 1.015, 1.003, 0.979 of level 0 at the stand's Threat, 1.098, 1.080, 1.009 at twice it, which is reported only). Every other row passes and **176 of 176 moments are the same** as the baseline. The `vigil` shard now takes about 70 s here.
+- **`npm run check`:** green, 71 s (3,527 tests; 9 more in `sim/checks/v13.test.ts`).
+- **Fixture rewritten, please look at this one:** `tests/saves/fixtures/v13-played.json` was made again with its own script (`scripts/make-v13-played-fixture.ts`), because its three vigil stands were recorded under the 0.25 placeholders and replayed differently at 0.32 and 0.22. It is a fixture made this milestone (KV.4), not an older golden one, and no shipped save holds a vigil stand. Eight lines changed: the level-3 stand now holds 2 waves, not 3, and the Embers follow. The golden fights are untouched.
+- **No placeholder is left** in `balance.ts` or the GDD (§7.13 note deleted). KV.11 can check it.
+- **Not done:** nothing from the plan's KV.9 text. The wide-grid curve file from KV.8 still says "placeholders" because it is a record of that run.
+
+## 2026-10-24 — v1.3 KV.10 budgets, size and the old-test list
+- **Size (SF.9 method, sum of per-file gzip -9 of `dist`, 1 KB = 1,024 bytes, this container's scale):** **438,916 bytes**, 312 files. The row is 614,400 and unchanged; `main` measures 606,280 here, so the branch is 167,000 under it (the packed pictures, D553). No fallback needed.
+- **v12 → v13 migration** (played v12 save, 4× throttled browser): **7.9 ms** (budget 100 ms). Same run: v10 → v11 38.6 ms, v11 → v12 26.5 ms, Last Stand preview 729 ms (budget 1 s).
+- **Save growth:** the `vigil` block plus 20 recorded levels, a unit test in `tests/saves/v13-migration.test.ts`: passes (limit 512 bytes).
+- **`npm run check`:** green, **94.7 s** this run (warn at 90 s, fail at 120 s). Earlier runs this milestone read 71 to 98 s on this machine, so it swings with load; I watch it, not fixed.
+- **Bench:** the "odds with 3 candidates" row still fails on this CPU (831 ms against 600 ms), as before (D445); not part of `check`, nothing changed.
+- **Old-test edits, full list (diff against `main`, nothing loosened):** `v12-migration.test.ts` (schema 12 to 13, newer-version case 13 to 14; D548 (1)); `opening.test.ts` (fixture lists gain `v12-owner.json`, `v13.json`, `v13-played.json`; D548 (6)); `polish-screens.ts` (stand screen On and Off, Roll flow; D548 (3)); `bench.spec.ts` and `bench-page.ts` (a new row only); `sim/shards.test.ts` (`vigil` left out of the fair-share check; your yes); `story.spec.ts` (clock pinned to a Monday so the Ilse test passes on weekends; your yes, option a); `v13-played.json` rewritten with its script (your yes). New, not edited: `tests/lint/vigil-coupling.test.ts`. The list is complete.
+- **GDD §6.5:** the migration and save-growth rows are already in and decided (D547); nothing to change. Not done: no motion or contrast baseline file was edited (D548 (5) not needed).
+
+## 2026-10-24 — v1.3 KV.11 wrap-up and the pull request
+- **Checks (this container):** `npm run check` green (94.7 s at KV.10). `sim:check`: 60 runs, 407 s, every enforced row passes (rows A to C included), **176 of 176 moments same** as the baseline; the Vigilant's 16 moments are new. The ✗ lines are Saturday runs, reported only.
+- **e2e, 4 shards (local chromium build):** 141 s, 403 s, 172 s, 121 s; 143 tests pass, 2 fail. Shard 2 is over 5 minutes here (CI's limit is 8, D552; CI is the judge). The two failures are the known offline-reload tests in `smoke.spec.ts` (this container's browser build, with and without my changes).
+- **Production build opens real saves:** new `tests/e2e/vigil-open.spec.ts`: your v12 save (`v12-owner.json`) with the gate closed (no vigil row) and then open (row there), and the played v13 save (row and status line). Passes.
+- **Size:** 438,916 bytes (KV.10; build unchanged since). Schema 13, `rulesVersion` 5, golden fights and recorded stands replay (in `check`). No placeholder constant.
+- **Docs:** plan KV.11 ticked, v1.3 `Status: in progress`, §0.7 actuals added (v1.2 final 16, v1.3 12 entries).
+- **Not done, waiting on you:** the playtest, then `sim:accept`, merge, tag. **Please export your save from the game just before the merge.**
+
+## 2026-10-24 — v1.3 milestone end
+- **The owner said the playtest passed** (Remember Them path included).
+- **Done:** `npm run sim:accept` (6 min 49 s here): the baseline moves to v1.3; the only differences are the milestone and the new Vigilant moments. Plan `Status: complete`, D556.
+- **Left:** merge PR 21 and tag `v1.3.0`, after the owner confirms they exported their save.
+
+## 2026-10-24 — v1.3 fix: offline reload broken by the picture packing (D553)
+- **What was wrong:** CI shard 3 failed the two offline-reload tests in `smoke.spec.ts` on every push since D553. I had called them "known, this container's browser" in KV.10 and KV.11; **that was wrong**. I checked: they pass on the commit before D553 and fail after it.
+- **Cause:** packing the pictures also repacked the five app icons. The PWA plugin lists the icons twice (once with the original's hash, once with the packed file's), and Workbox refuses an install with two different hashes for one file, so nothing was kept for offline use. This would have shipped.
+- **Fix:** `vite.config.ts` leaves the `icons/` files unpacked (D553 otherwise unchanged). `sw.js` now has one hash per file. All 7 smoke tests pass here, including the two. **Size: 449,810 bytes** (was 438,916; the icons are back to full size), still far under 614,400.
+- **Test changed (my own D553 test, same milestone):** `tests/tools/png-pack.test.ts` now skips the top-level `icons/` folder in the "every picture is packed" loop, and gains a check that `sw.js` never lists one file with two different hashes (the check that would have caught this). Nothing else loosened.
+- **Left:** CI to confirm on the new push, then merge. The earlier `sim:accept` is not affected (no game rule changed).

@@ -3,6 +3,10 @@ import { LEGENDARY_HUNTER_IDS } from '../src/content/hunters-v09';
 import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
 import { play, type CheckInRecord, type PolicyId } from '../src/core/policies';
 import { allChaptersRead } from '../src/core/policies/orderer';
+import { vigilantDone } from '../src/core/policies/vigilant';
+import { probeVigil, shippedGrid, type ProbeGrid, type VigilProbe } from './vigil-probe';
+import { bandFor } from '../src/core/story/band';
+import { num } from '../src/core/balance-access';
 import { ORDER_IDS, type OrderId } from '../src/content/orders';
 import { orderLevel, orderStanding } from '../src/core/systems/orders';
 import type { EventAttemptRecord } from '../src/core/policies/eventer';
@@ -67,6 +71,8 @@ export interface RunSpec {
    * Idle-only row can compare when each player finished. Only the Monday Standard and Delver runs.
    */
   readonly untilContent?: boolean;
+  /** The Vigilant's probe grid (KV.8, D546); absent = the shipped constants, the additive step. */
+  readonly probe?: ProbeGrid;
 }
 
 /** v0.11: the first moment the ending was choosable, and what the hold had of it when the run stopped. */
@@ -355,6 +361,30 @@ export interface OrdersRecord {
   };
 }
 
+/** One stand the Vigilant made with Rising Vigil On (GDD §6.1, D546). */
+export interface VigilStand {
+  readonly cycle: number;
+  readonly level: number;
+  readonly waves: number;
+  readonly embers: number;
+  readonly band: string;
+  readonly threat: number;
+}
+
+/**
+ * What the Vigilant did over a run (GDD §6.1–§6.2 v1.3, D546; plan KV.8). `debugUsed` is true on
+ * purpose: it opens the Remembering gate with a debug shortcut (Q58) so the vigil mechanics can be
+ * measured; it proves the switch and the curve, not that a real player reaches the gate.
+ */
+export interface VigilRecord {
+  readonly debugUsed: boolean;
+  /** When (hours, cycle) the shortcut opened the gate; null if it was never needed or reached. */
+  readonly gateOpened: { readonly hours: number; readonly cycle: number } | null;
+  readonly stands: readonly VigilStand[];
+  /** The probe at the first stand made with the switch On; null if no such stand happened. */
+  readonly probe: VigilProbe | null;
+}
+
 export interface RunResult {
   readonly spec: RunSpec;
   /** Hours from the start to each GDD §6.2 moment, or null if never reached. */
@@ -386,6 +416,8 @@ export interface RunResult {
   readonly drossStands?: readonly DrossStand[];
   /** v0.11 (D464 (2)): when the ending first became choosable (the gate open and Act VI's stand applied); null if never in the run. The players never choose it. Absent in older shard files. */
   readonly ending?: EndingRecord;
+  /** v1.3 (D546): only the Vigilant's runs hold this; absent in older shard files. */
+  readonly vigil?: VigilRecord;
 }
 
 const largest = (value: unknown): number => {
@@ -460,6 +492,8 @@ export const runOne = (spec: RunSpec): RunResult => {
   };
   const drossStands: DrossStand[] = [];
   let ending: { hours: number; cycle: number } | null = null;
+  let gateOpened: { hours: number; cycle: number } | null = null;
+  let probe: VigilProbe | null = null;
   let namesAndStand: { hours: number; cycle: number } | null = null;
   const eventsSeen = {
     openedHours: null as number | null,
@@ -559,9 +593,22 @@ export const runOne = (spec: RunSpec): RunResult => {
     policy: spec.policy === 'standard' ? 'opening' : spec.policy, // the Delver opens the same way (nextCheckIn)
     startedAt: start,
     until: start + Math.max(spec.days, spec.minCycles ? (spec.maxDays ?? spec.days) : 0) * DAY,
+    onFirstVigilStand: (before, stand) => {
+      // D546 (1): two Threat points, the stand's own and twice it.
+      probe = probeVigil(
+        before,
+        stand,
+        num('laststand.previewSamples'),
+        [before.threat, before.threat * 2],
+        spec.probe ?? shippedGrid(),
+      );
+    },
     stop: (st) =>
       (spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null)) ||
-      (spec.minCycles !== undefined &&
+      // The Vigilant plays until its three On stands are made (D546 (2)).
+      (spec.policy === 'vigilant' && vigilantDone(st)) ||
+      (spec.policy !== 'vigilant' &&
+        spec.minCycles !== undefined &&
         st.time >= start + spec.days * DAY &&
         st.cycle.number > spec.minCycles &&
         (!spec.untilContent ||
@@ -596,6 +643,8 @@ export const runOne = (spec: RunSpec): RunResult => {
       if (namesAndStand === null && namesFound(s) >= 40 && actVIStandApplied(s))
         namesAndStand = { hours: (rec.at - start) / HOUR, cycle: prevCycle };
       if (rec.orders) noteOrders(rec, s);
+      if (rec.vigil?.openedGate && gateOpened === null)
+        gateOpened = { hours: (rec.at - start) / HOUR, cycle: prevCycle };
       if (rec.events?.unlocked) {
         eventsSeen.checkIns += 1;
         if (rec.events.bankFull) eventsSeen.fullBank += 1;
@@ -717,7 +766,8 @@ export const runOne = (spec: RunSpec): RunResult => {
             spec.policy === 'standard' ||
             spec.policy === 'delver' ||
             spec.policy === 'eventer' ||
-            spec.policy === 'orderer') &&
+            spec.policy === 'orderer' ||
+            spec.policy === 'vigilant') &&
           rec.at <= start + OPENING_LENGTH,
         cycle: prevCycle,
       });
@@ -796,6 +846,29 @@ export const runOne = (spec: RunSpec): RunResult => {
     },
     contracts,
     story,
+    ...(spec.policy === 'vigilant'
+      ? {
+          vigil: {
+            debugUsed: state.meta.debugUsed,
+            gateOpened,
+            stands: state.cycles.flatMap((c) =>
+              c.stand?.vigilLevel
+                ? [
+                    {
+                      cycle: c.number,
+                      level: c.stand.vigilLevel,
+                      waves: c.stand.wavesHeld,
+                      embers: c.stand.embers.total,
+                      band: bandFor(c.stand.wavesHeld),
+                      threat: c.stand.threat,
+                    },
+                  ]
+                : [],
+            ),
+            probe,
+          } satisfies VigilRecord,
+        }
+      : {}),
     discovery: { hutHours, firstNewBrewHours, cycles: discoveryCycles },
     content: { book36Hours, skills4Hours, wrightsHours },
     depth: {

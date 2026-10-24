@@ -9,6 +9,7 @@ import { roundHalfUp } from '../combat/build';
 import { seeded } from '../rng';
 import type { Preparation } from '../state/game-state';
 import { DROSS_TIDE, waveAt, type StandPool, type Wave } from './waves';
+import { waveFactor } from '../systems/vigil';
 
 // GDD §5.9.3 (D107, D115): the Last Stand runs one wave at a time through the
 // contract fight engine, with these differences: Health carries over and standing
@@ -39,6 +40,8 @@ export interface StandInput {
   readonly alchemy?: number;
   /** The species pool (GDD §5.9.3, D363); absent means `base`, as every stand before v0.9. */
   readonly pool?: StandPool;
+  /** Rising Vigil level the stand is fought at (v13, GDD §5.9.10); absent means 0, as every stand before v1.3. */
+  readonly vigilLevel?: number;
 }
 
 export interface WaveOutcome {
@@ -135,7 +138,7 @@ export const runStand = (input: StandInput): StandResult => {
   const health: Partial<Record<string, number>> = {};
   const down = new Set<string>();
   const potionUsed = new Set<string>();
-  const strength = 1 + num('threat.waveStrengthPerPoint') * input.threat;
+  const strength = waveFactor(input.threat, input.vigilLevel ?? 0).value;
   const partyTaken = standTaken(input.defenses, input.relics);
   const volley = standVolley(input.defenses);
   const recover = num('laststand.recoverBetween');

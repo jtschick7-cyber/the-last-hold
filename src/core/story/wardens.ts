@@ -51,6 +51,8 @@ export interface WardenLine {
   readonly current: boolean;
   /** The warden in office when Remember Them was chosen: "Read the roll aloud." (lore §34.7). */
   readonly readAloud: boolean;
+  /** The Rising Vigil level the warden's stand was fought at (GDD §9.23); 0 when it was fought without. */
+  readonly vigilLevel: number;
 }
 
 export const rollOfWardens = (state: GameState): WardenLine[] =>
@@ -67,6 +69,7 @@ export const rollOfWardens = (state: GameState): WardenLine[] =>
       stand: c.stand ? { band: c.stand.band, waves: c.stand.wavesHeld } : null,
       relics: c.stand?.relicsFound ?? [],
       current,
+      vigilLevel: c.stand?.vigilLevel ?? 0,
       readAloud: state.remembering.endings.some(
         (e) => e.ending === 'remember' && e.cycle === c.number,
       ),

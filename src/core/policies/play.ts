@@ -1,4 +1,4 @@
-import { apply } from '../commands';
+import { apply, type Command } from '../commands';
 import { catchUpNow, type AwaySummary } from '../sim/offline';
 import type { GameState } from '../state/game-state';
 import type { DelveResult } from '../state/delve-state';
@@ -6,6 +6,8 @@ import { decideCheckIn, type CheckInDecision } from './decide';
 import { delveSession } from './delver';
 import { eventerMoves, type EventerCheckIn } from './eventer';
 import { ordererMoves, type OrdererCheckIn } from './orderer';
+import { vigilantMoves, type VigilantCheckIn } from './vigilant';
+import { vigilView } from '../systems/vigil';
 import { freshMemory, type PolicyMemory } from './long-night';
 import { isDelveSession, nextCheckIn, type PolicyId } from './schedules';
 
@@ -25,6 +27,8 @@ export interface CheckInRecord extends CheckInDecision {
   readonly events?: EventerCheckIn;
   /** What the Orderer did with the Orders (GDD §6.1, D417); absent for every other policy. */
   readonly orders?: OrdererCheckIn;
+  /** What the Vigilant did (GDD §6.1, D546); absent for every other policy. */
+  readonly vigil?: VigilantCheckIn;
   /** The preview a stand made at this check-in was made on (waves, median and 10th–90th range). */
   readonly standPreview?: { readonly median: number; readonly p10: number; readonly p90: number };
 }
@@ -39,6 +43,14 @@ export interface PlayOptions {
   readonly onCheckIn?: (record: CheckInRecord, state: GameState) => void;
   /** Stop early once this returns true. */
   readonly stop?: (state: GameState) => boolean;
+  /**
+   * The Vigilant's first stand made with the switch On (D546 (1)): called with a copy of the state
+   * as it stands just before the stand command, and the command's party and kit.
+   */
+  readonly onFirstVigilStand?: (
+    before: GameState,
+    stand: Extract<Command, { type: 'stand.make' }>,
+  ) => void;
   /** Carried between check-ins (the stand rule); a fresh one if absent. */
   readonly memory?: PolicyMemory;
 }
@@ -85,6 +97,12 @@ export const play = (state: GameState, opts: PlayOptions): void => {
       opts.policy === 'orderer'
         ? ordererMoves(state, (cmd) => apply(state, cmd, at).ok, false)
         : undefined;
+    // GDD §6.1 (D546 (2)): the Vigilant opens the gate (debug shortcut) and switches Rising Vigil On
+    // before the stand rule runs; every other policy never issues either command.
+    const vigil =
+      opts.policy === 'vigilant'
+        ? vigilantMoves(state, (cmd) => apply(state, cmd, at).ok)
+        : undefined;
     const cycleBefore = state.cycle.number;
     const decision = decideCheckIn(state, checkInAfter(checkInAfter(at)) - at, memory);
     let standSeats: OrdererCheckIn['seats'] | undefined;
@@ -92,6 +110,13 @@ export const play = (state: GameState, opts: PlayOptions): void => {
       if (opts.policy === 'orderer' && cmd.type === 'stand.make') {
         standSeats = [...state.orders.seats];
       }
+      if (
+        opts.policy === 'vigilant' &&
+        cmd.type === 'stand.make' &&
+        vigilView(state).stands === 0 &&
+        vigilView(state).level > 0
+      )
+        opts.onFirstVigilStand?.(structuredClone(state), cmd);
       const result = apply(state, cmd, at);
       // The decision was made on a copy of this exact state, so it can't fail.
       if (!result.ok) throw new Error(`Policy command refused: ${result.reason}`);
@@ -123,6 +148,7 @@ export const play = (state: GameState, opts: PlayOptions): void => {
         peasantsBefore,
         ...(events ? { events } : {}),
         ...(ordersRecord ? { orders: ordersRecord } : {}),
+        ...(vigil ? { vigil } : {}),
         ...(standPreview ? { standPreview } : {}),
       },
       state,

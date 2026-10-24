@@ -5,6 +5,7 @@ import type { MonsterId } from '../../content/monsters';
 import { num } from '../balance-access';
 import type { GameState, Preparation } from '../state/game-state';
 import { snapshotOf } from '../systems/hunters';
+import { vigilLevelFor } from '../systems/vigil';
 import { threatRate } from '../threat/threat';
 import { MS_PER_DAY } from '../time';
 import type { StandInput } from './engine';
@@ -52,6 +53,8 @@ export const standInputFor = (
   alchemy: skillLevel(state, 'alchemy'),
   // Only a `dross` pool is named, so an ordinary stand's input is exactly what it was (D363).
   ...(standPoolOf(state) === 'dross' ? { pool: 'dross' as const } : {}),
+  // Level 0 adds no field, so a stand with the switch Off is exactly an ordinary stand (D542).
+  ...(vigilLevelFor(state) > 0 ? { vigilLevel: vigilLevelFor(state) } : {}),
 });
 
 /** GDD §5.9.8 (D112): the arrival caps the trophies part at share × the cycle-1 median. */

@@ -1,4 +1,5 @@
 import { AGE_IDS, type AgeId } from '../../content/ages';
+import { vigilLevelFrom } from './validate-vigil';
 import { CONSUMABLE_IDS } from '../../content/consumables';
 import { MONSTER_IDS } from '../../content/monsters';
 import { RELIC_IDS, type RelicId } from '../../content/relics';
@@ -74,6 +75,7 @@ const stand = (v: unknown, where: string, warnings: string[]): StandRecord => {
     relicsFound: relicList(o.relicsFound, `${where}.relicsFound`),
     arrival: bool(o.arrival, `${where}.arrival`),
     ...(o.pool === undefined ? {} : { pool: oneOf(o.pool, ['dross'] as const, `${where}.pool`) }),
+    ...vigilLevelFrom(o.vigilLevel, `${where}.vigilLevel`),
     // D183: stands saved before this field existed brought no recorded steps.
     trustSteps:
       o.trustSteps === undefined

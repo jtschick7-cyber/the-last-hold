@@ -5,6 +5,7 @@ import { num } from '../../core/balance-access';
 import { standProblem } from '../../core/commands/stand';
 import { formatNumber, formatRate } from '../../core/format';
 import { bombStock, previewInputFor } from '../../core/stand/from-state';
+import { vigilLevelFor, vigilView } from '../../core/systems/vigil';
 import { suggestSix } from '../../core/stand/suggest';
 import { standPoolOf } from '../../core/stand/pool';
 import { creatureOf, DROSS_TIDE, standSeed, waveList } from '../../core/stand/waves';
@@ -13,6 +14,15 @@ import { requestStandPreview, type StandAnswer } from '../app/odds-client';
 import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
+import {
+  VIGIL_BUTTONS,
+  VIGIL_CONFIRM,
+  VIGIL_HELP,
+  VIGIL_LABEL,
+  VIGIL_STATUS_OFF,
+  VIGIL_STATUS_ON,
+  vigilLine,
+} from '../../content/vigil-text';
 import { bandThresholdsLine } from '../../content/story/scenes';
 import { standDelveLine } from '../../core/delves/view-run';
 import { Num } from '../widgets/Num';
@@ -88,6 +98,57 @@ const KitPicker = ({
   );
 };
 
+// GDD §9.23: the Rising Vigil row, shown only once the Remembering gate is open. The state and the
+// numbers come from the core (vigilView); the buttons are the real `vigil.set` command.
+const VigilRow = () => {
+  void version.value;
+  const v = vigilView(game());
+  if (!v.available) return null;
+  const status = v.on
+    ? vigilLine(VIGIL_STATUS_ON, v.level)
+    : v.next > 0
+      ? vigilLine(VIGIL_STATUS_OFF, v.next)
+      : null;
+  return (
+    <div class={styles.divider} data-testid="vigil-row">
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+          {VIGIL_LABEL}
+        </span>
+        <div class={styles.segmented} role="group" aria-label={VIGIL_LABEL}>
+          {(
+            [
+              [true, VIGIL_BUTTONS.on],
+              [false, VIGIL_BUTTONS.off],
+            ] as [boolean, string][]
+          ).map(([value, text]) => (
+            <button
+              type="button"
+              key={text}
+              class={v.on === value ? styles.segmentOn : styles.segment}
+              aria-pressed={v.on === value}
+              data-testid={value ? 'vigil-on' : 'vigil-off'}
+              onClick={() => {
+                if (v.on !== value) dispatch({ type: 'vigil.set', on: value });
+              }}
+            >
+              {text}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p class={`${styles.small} ${styles.dim}`} data-testid="vigil-help">
+        {VIGIL_HELP}
+      </p>
+      {status && (
+        <p class={styles.small} data-testid="vigil-status">
+          {status}
+        </p>
+      )}
+    </div>
+  );
+};
+
 const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => (
   <div>
     <p>
@@ -95,6 +156,11 @@ const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => (
       hamlet. Your hunters (with part of their levels), the bestiary, Embers, relics and warden
       upgrades are kept.
     </p>
+    {vigilLevelFor(game()) > 0 && (
+      <p class={styles.small} data-testid="vigil-confirm">
+        {vigilLine(VIGIL_CONFIRM, vigilLevelFor(game()))}
+      </p>
+    )}
     {standDelveLine(game()) && <p class={styles.small}>{standDelveLine(game())}</p>}
     <p class={`${styles.small} ${styles.dim}`}>This can't be undone.</p>
     <button
@@ -128,7 +194,9 @@ export const StandView = () => {
     ),
   });
   const chosenKit = kitFor(party);
-  const key = `${party.join(',')}|${JSON.stringify(chosenKit)}|${s.threat.toFixed(2)}`;
+  // GDD §9.23: the preview is worked out again when the Rising Vigil switch flips, so the level the
+  // stand would have is part of the key (read from the core, never computed here).
+  const key = `${party.join(',')}|${JSON.stringify(chosenKit)}|${s.threat.toFixed(2)}|${vigilLevelFor(s)}`;
   useEffect(() => {
     if (party.length === 0) return;
     let live = true;
@@ -232,6 +300,7 @@ export const StandView = () => {
           </p>
         </div>
       )}
+      <VigilRow />
       <button
         type="button"
         class={styles.btnPrimary}

@@ -300,6 +300,21 @@ export const orderLines = (runs: readonly RunResult[]): string[] =>
       );
     });
 
+/** Reported only (GDD §6.2 v1.3): what the Vigilant made with Rising Vigil On; the curve is in `npm run sim:vigil`. */
+export const vigilLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.vigil !== undefined)
+    .map((r) => {
+      const v = r.vigil as NonNullable<RunResult['vigil']>;
+      const stands = v.stands
+        .map((s) => `L${s.level} c${s.cycle}: ${s.waves} waves (${s.band}), ${s.embers} Embers`)
+        .join('; ');
+      return (
+        `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: debugUsed ${v.debugUsed} (the gate is opened with a declared debug shortcut, Q58); ` +
+        `gate ${v.gateOpened ? `c${v.gateOpened.cycle}` : 'never'}; ${stands || 'no stand with the switch On'}; probe ${v.probe ? 'run' : 'not run'}`
+      );
+    });
+
 export const markdown = (report: Report, previous: Baseline | null): string => {
   const out: string[] = [
     `# Simulator report: ${report.name}`,
@@ -331,6 +346,7 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
   );
   out.push('', '## Events (reported only; the Eventer)', '', ...eventLines(report.runs));
   out.push('', '## Orders (reported only; the Orderer)', '', ...orderLines(report.runs));
+  out.push('', '## Rising Vigil (reported only; the Vigilant)', '', ...vigilLines(report.runs));
   out.push('', '## The Remembering (reported only; Standard)', '', ...endingLines(report.runs));
   out.push(
     '',

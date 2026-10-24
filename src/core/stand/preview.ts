@@ -62,6 +62,7 @@ export const previewStand = (input: StandPreviewInput): StandPreview => {
     threat: input.stand.threat,
     trophies: input.trophies,
     trophyCap: input.trophyCap,
+    vigilLevel: input.stand.vigilLevel,
   });
   const threatTomorrow = input.stand.threat + input.threatPerDay;
   const embersTomorrow = embersPayout({
@@ -70,6 +71,7 @@ export const previewStand = (input: StandPreviewInput): StandPreview => {
     threat: threatTomorrow,
     trophies: input.trophies + input.trophiesPerDay,
     trophyCap: input.trophyCap,
+    vigilLevel: input.stand.vigilLevel,
   });
   return {
     samples: input.samples,

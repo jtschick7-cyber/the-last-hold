@@ -52,6 +52,7 @@ import {
   ordersStandRowsCheck,
 } from './v010';
 import { rememberingReachableCheck } from './v011';
+import { vigilEmbersLevelCheck, vigilLevelRisesCheck, vigilNeverMoreWavesCheck } from './v13';
 import type { Check } from './types';
 
 export type { Check, CheckResult } from './types';
@@ -122,4 +123,8 @@ export const CHECKS: readonly Check[] = [
   ordersStandRowsCheck,
   // v0.11 (D469)
   rememberingReachableCheck,
+  // v1.3 (D546, D554)
+  vigilLevelRisesCheck,
+  vigilNeverMoreWavesCheck,
+  vigilEmbersLevelCheck,
 ];
