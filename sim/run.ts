@@ -4,7 +4,7 @@ import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
 import { play, type CheckInRecord, type PolicyId } from '../src/core/policies';
 import { allChaptersRead } from '../src/core/policies/orderer';
 import { vigilantDone } from '../src/core/policies/vigilant';
-import { probeVigil, type VigilProbe } from './vigil-probe';
+import { probeVigil, shippedGrid, type ProbeGrid, type VigilProbe } from './vigil-probe';
 import { bandFor } from '../src/core/story/band';
 import { num } from '../src/core/balance-access';
 import { ORDER_IDS, type OrderId } from '../src/content/orders';
@@ -71,6 +71,8 @@ export interface RunSpec {
    * Idle-only row can compare when each player finished. Only the Monday Standard and Delver runs.
    */
   readonly untilContent?: boolean;
+  /** The Vigilant's probe grid (KV.8, D546); absent = the shipped constants, the additive step. */
+  readonly probe?: ProbeGrid;
 }
 
 /** v0.11: the first moment the ending was choosable, and what the hold had of it when the run stopped. */
@@ -593,10 +595,13 @@ export const runOne = (spec: RunSpec): RunResult => {
     until: start + Math.max(spec.days, spec.minCycles ? (spec.maxDays ?? spec.days) : 0) * DAY,
     onFirstVigilStand: (before, stand) => {
       // D546 (1): two Threat points, the stand's own and twice it.
-      probe = probeVigil(before, stand, num('laststand.previewSamples'), [
-        before.threat,
-        before.threat * 2,
-      ]);
+      probe = probeVigil(
+        before,
+        stand,
+        num('laststand.previewSamples'),
+        [before.threat, before.threat * 2],
+        spec.probe ?? shippedGrid(),
+      );
     },
     stop: (st) =>
       (spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null)) ||

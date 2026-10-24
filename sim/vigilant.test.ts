@@ -10,7 +10,7 @@ import { suggestSix } from '../src/core/stand/suggest';
 import { stateAtVigilLevel } from '../src/core/systems/vigil';
 import { shardOf, specsOfShard } from './shards';
 import { buildSpecs } from './specs';
-import { E_GRID, probeVigil, S_GRID, stepFor, withConstant } from './vigil-probe';
+import { probeVigil, stepFor, withConstant } from './vigil-probe';
 import { curveMarkdown } from './vigil-curve';
 import type { RunResult } from './run';
 
@@ -59,21 +59,35 @@ describe('the probe', () => {
     const e = num('vigil.embersPerLevel');
     const off = stateAtVigilLevel(state, 0);
     const plain = previewStand(previewInputFor(off, party, stand.prep, 8));
-    const p = probeVigil(state, stand, 8, [state.threat]);
+    const grid = {
+      sGrid: [0.2, 0.4],
+      eGrid: [0.1, 0.2, 0.3],
+      kinds: ['additive', 'compounding'],
+    } as const;
+    const p = probeVigil(state, stand, 8, [state.threat], grid);
     expect(num('vigil.strengthPerLevel')).toBe(s);
     expect(num('vigil.embersPerLevel')).toBe(e);
     const t = p.threats[0];
     expect(t?.base.median).toBe(plain.median);
     expect(t?.base.embers).toBe(plain.embersNow.value);
     expect(p.levels).toBe(10);
-    for (const kind of ['additive', 'compounding'] as const) {
-      expect(t?.waves[kind]).toHaveLength(S_GRID.length);
-      expect(t?.waves[kind][0]).toHaveLength(11);
-      expect(t?.waves[kind][0]?.[0]?.median).toBe(plain.median);
-      expect(t?.embers[kind][0]).toHaveLength(E_GRID.length);
+    for (const kind of grid.kinds) {
+      const waves = t?.waves[kind] ?? [];
+      expect(waves).toHaveLength(2);
+      expect(waves[0]).toHaveLength(11);
+      expect(waves[0]?.[0]?.median).toBe(plain.median);
+      const embers = t?.embers[kind] ?? [];
+      expect(embers[0]).toHaveLength(3);
       // Level 0 pays the ordinary Embers at every e.
-      expect(t?.embers[kind][0]?.[0]?.[0]).toBe(plain.embersNow.value);
+      expect(embers[0]?.[0]?.[0]).toBe(plain.embersNow.value);
     }
+  }, 60_000);
+
+  it('with no grid given, it tries the shipped constants and the additive step only', () => {
+    const p = probeVigil(state, stand, 4, [state.threat]);
+    expect(p.kinds).toEqual(['additive']);
+    expect(p.sGrid).toEqual([num('vigil.strengthPerLevel')]);
+    expect(p.eGrid).toEqual([num('vigil.embersPerLevel')]);
   }, 60_000);
 
   it('a stronger step never holds more waves', () => {
