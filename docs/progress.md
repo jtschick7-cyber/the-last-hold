@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.9 done (KV.9 waits for the owner's yes or no to the values, the tolerance and the rows); size routes 1 and 2 done (D553).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.9 done (owner approved the values, the tolerance, rows A to C and the v13-played fixture rewrite); size routes 1 and 2 done (D553).
 - **Last task:** KV.9 (constants, tolerance, rows). Before it: KV.8 (the probe, the Vigilant, the `vigil` shard), KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
-- **Next:** the owner says yes or no to D554 (s = 0.32, e = 0.22) and D555 (5% tolerance, rows A to C), each in its own commit; then KV.10 (the e2e and the docs sweep).
+- **Next:** KV.10 (the e2e and the docs sweep). D554 and D555 are Decided (owner, 2026-10-24).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 answered (a), additive. Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
