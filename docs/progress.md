@@ -554,5 +554,6 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Result (this container's scale, 312 files):** 438,190 bytes; `main` is 606,280 here. On the v1.2 scale that is about **442,418, room about 171,982** under the unchanged 614,400 row. The D547 fallback order is no longer needed for v1.3.
 - **Tests:** `tests/tools/png-pack.test.ts` (packer cases, every shipped picture identical, a live build with no contact sheet and nothing left to pack, the preview build keeps the sheet). Adds about 10 s of test time; `npm run check` took 112 s on this container in one run (CI measures it).
 - **Docs:** D553 added (Decided on the owner's yes), GDD §6.5 download row updated. Not in `npm run check`, as before: the milestone-end size number.
-- **Not done:** route 3 (see below once looked at); the question of splitting the row into first-visit and offline figures is for the v1.4 flesh-out.
+- **Route 3 looked at, not built:** building the app and the odds worker as two entries of one build lets Rollup share one chunk; measured on a scratch copy (worker not yet wired to it): JavaScript 284.8 KB to about 230 KB gzipped, **about 55 KB saved**. Needs: a stable worker file name, a dev-server branch for the worker URL, the service worker precaching the shared chunk, and an offline check; module workers are already required. Recommended for the v1.4 flesh-out if its needs call for it; not needed for v1.3.
+- **Also not done:** splitting the row into first-visit and offline figures (v1.4 flesh-out).
 
