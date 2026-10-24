@@ -1054,7 +1054,7 @@ An optional switch for a player who has finished the story and wants harder stan
   waveFactor = 1 + 0.0061 × Threat + s × L            (Health and Might of every wave; 0.0061 is threat.waveStrengthPerPoint)
   ```
 
-  `s` is `vigil.strengthPerLevel` (§7.13, tunable). **The wave list, the tiers, Armor, the Watchtower, Walls, bombs, the party and the 400-tick limit do not change.** The step is the same at every level (steady, additive). **Target (owner): about one wave fewer held per level, measured on the simulated Vigilant's gate-open stand** (the Standard player never opens the gate, so it cannot be the reference). The value of `s` is measured in KV.8 on the simulator probe, chosen in KV.9 by the rule in §6.2 and approved by the owner. The Threat part and the level part add; they do not multiply each other.
+  `s` is `vigil.strengthPerLevel` (§7.13, tunable). **The wave list, the tiers, Armor, the Watchtower, Walls, bombs, the party and the 400-tick limit do not change.** The step is the same at every level (steady, additive). **Target (owner): about one wave fewer held per level, measured on the simulated Vigilant's gate-open stand** (the Standard player never opens the gate, so it cannot be the reference). The value of `s` is 0.32 (D554): measured on the simulator probe (KV.8, KV.9) by the rule in §6.2, the owner answered Q57 (a), additive, and approves the value. The Threat part and the level part add; they do not multiply each other.
 - **What a level does to the Embers (D541).**
 
   ```
@@ -2012,15 +2012,14 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 
 ### 7.13 Rising Vigil *(v1.3, D538–D551)*
 
-Every constant here is **tunable**. Neither is a sketch the owner has accepted as a number: both are measured in KV.9 on the probe and approved by the owner in their own row.
+Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's probe (D554) and are the owner's to approve.
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Wave strength per vigil level | Health and Might × (1 + w × Threat + s × L), w = `threat.waveStrengthPerPoint` (§7.6) | `vigil.strengthPerLevel` = *set in KV.9 (target: about one wave fewer held per level on the Vigilant's gate-open stand)* | 5.9.10 |
-| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = *set in KV.9 (target: Embers at levels 1 to 3 about level with level 0)* | 5.9.10 |
+| Wave strength per vigil level | Health and Might × (1 + w × Threat + s × L), w = `threat.waveStrengthPerPoint` (§7.6) | `vigil.strengthPerLevel` = 0.32 *(D554; about 3 waves fewer held by level 3 on the Vigilant's gate-open stand)* | 5.9.10 |
+| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = 0.22 *(D554; Embers at levels 1 to 3 within about 1% of level 0 at the stand's own Threat)* | 5.9.10 |
 | The level | L = stands already fought with the switch On + 1, for an On stand; 0 for an Off stand | — (no cap) | 5.9.10 |
 
-*Until KV.9 sets them, balance.ts holds clearly marked placeholder values (0.25 each, a guess with no measurement behind it) so the code and the keys test can run; the placeholder is replaced, not tuned, and the milestone cannot be accepted with a placeholder still in place.*
 
 ---
 

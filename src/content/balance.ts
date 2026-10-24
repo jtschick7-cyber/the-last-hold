@@ -374,12 +374,12 @@ export const balance = {
       quenchers: { threatStep: tunable(0.03) },
     },
   },
-  // ---- GDD §7.13 Rising Vigil (v1.3, D538–D551) ----
-  // PLACEHOLDERS: a guess with no measurement behind it (GDD §7.13). KV.9 replaces both with
-  // values measured on the probe and approved by the owner; v1.3 is not accepted before that.
+  // ---- GDD §7.13 Rising Vigil (v1.3, D538–D551, D554) ----
+  // Measured in KV.9 on the Vigilant's probe (docs/flesh-out/v1.3/vigil-curve.md): s loses about 3 waves
+  // by level 3, e keeps the Embers at levels 1 to 3 level with level 0 (D546 (1)).
   vigil: {
-    strengthPerLevel: tunable(0.25),
-    embersPerLevel: tunable(0.25),
+    strengthPerLevel: tunable(0.32),
+    embersPerLevel: tunable(0.22),
   },
 } as const;
 

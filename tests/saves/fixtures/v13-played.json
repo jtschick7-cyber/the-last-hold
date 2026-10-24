@@ -1206,7 +1206,7 @@
       }
     },
     "threat": 0,
-    "embers": 196,
+    "embers": 185,
     "upgrades": {
       "kept-coals": 0,
       "full-larder": 0,
@@ -1501,9 +1501,9 @@
           "rulesVersion": 5,
           "wavesHeld": 3,
           "embers": {
-            "waves": 17.362499999999997,
+            "waves": 16.9458,
             "trophies": 0,
-            "total": 17
+            "total": 16
           },
           "relicsFound": [],
           "arrival": false,
@@ -1619,7 +1619,7 @@
           "rulesVersion": 5,
           "wavesHeld": 3,
           "embers": {
-            "waves": 20.834999999999997,
+            "waves": 20.001599999999996,
             "trophies": 0,
             "total": 20
           },
@@ -1735,11 +1735,11 @@
             "rimewrought": 3
           },
           "rulesVersion": 5,
-          "wavesHeld": 3,
+          "wavesHeld": 2,
           "embers": {
-            "waves": 24.307499999999997,
+            "waves": 14.276,
             "trophies": 0,
-            "total": 24
+            "total": 14
           },
           "relicsFound": [],
           "arrival": false,
@@ -2336,7 +2336,7 @@
       "alchemy": 36,
       "smithing": 20,
       "lore": 175,
-      "command": 84
+      "command": 83
     },
     "delve": {
       "run": null,
