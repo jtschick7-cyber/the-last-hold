@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/clever-fermi-gkis1l` (the session's branch; the plan names `milestone/v1.3`, see the entry below).
 - **Milestone:** v1.3 "Keep the Vigil" (D538–D551), in progress.
-- **Last task:** KV.1 docs commit (flesh-out applied, D551 Decided).
-- **Next:** the owner uploads `v12-owner.json`; then KV.2 (schema 13) and KV.3 (the two constants), either order.
+- **Last task:** KV.1 (flesh-out applied, D551 Decided, owner's save in as `v12-owner.json`) is done.
+- **Next:** KV.2 (schema 13) and KV.3 (the two constants), either order.
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -508,4 +508,6 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **CI on `main`:** last finished run (PR #20 merge): shard 2 took 5 min 22 s as a job (tests 4 min 1 s); run on the owner's upload (`d66683f`): shard 2 took 5 min 10 s, and **shard 4 failed** (`story.spec.ts` "a won contract brings Ilse": waited 45 s for the "Through the gate" dialog). No code changed between the runs, so likely a timing flake; not yet re-run. Shard 2 is over the 5-minute rule: the owner agreed to the D537 fallback (a longer e2e limit) as its own small change; the number is theirs (asked).
 - **Applied:** all 35 Find/Replace edits (GDD 23, plan 6, technical design 6) matched exactly once, checked by machine before and during applying. Rows D538–D550 are Decided and D551 is added (owner's yes; Q58 answered (a)); Q57 and Q58 are in `questions.md`; the summary moved to `docs/flesh-out/v1.3-summary.md`; three rules are in `CLAUDE.md`. No old row or cell edited. The two placeholder constants (0.25 each, GDD §7.13) were added to `balance.ts` now, because the GDD §7 keys test fails without them (OUT-2a says so); KV.3 wires them in.
 - **Sweep:** no `Proposed` row from D519 up is left outside D538/D551.
-- **Gate state of the owner's save:** unknown until `v12-owner.json` is uploaded. **Waiting for the owner's upload.**
+- **Owner's save uploaded** (renamed to `tests/saves/fixtures/v12-owner.json`; it arrived as `V12-owner.json`): schema 12, rules 5, cycle 1, Keep, Act 1 with 14 wins, 1 cycle record. **The Remembering gate is closed**, so the owner will see Rising Vigil only through the debug commands for a long while (Q46: about 20–25 cycles).
+- **D552:** e2e shards may take up to 8 minutes (owner's number); `ci.yml` timeout 10 → 8, own commit. Shard 4's failure (story spec) is being re-run once to confirm a flake.
+- **Branches:** the owner asked for `milestone/v1.3` too; both branches get the same commits.
