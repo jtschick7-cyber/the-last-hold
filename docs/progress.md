@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.11 done (playtest passed, D556) (owner approved the values, the tolerance, rows A to C and the v13-played fixture rewrite); size routes 1 and 2 done (D553).
+- **Branch:** `main` at `v1.3.0` (`6286e3a`). v1.3 work was on `claude/clever-fermi-gkis1l` and `milestone/v1.3`.
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.11 done (playtest passed, D556); merged and tagged `v1.3.0` (owner approved the values, the tolerance, rows A to C and the v13-played fixture rewrite); size routes 1 and 2 done (D553).
 - **Last task:** KV.11 (wrap-up, pull request). Before it: KV.10 (budgets, size, old-test list), KV.9 (constants, tolerance, rows), KV.8 (the probe, the Vigilant, the `vigil` shard), KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
-- **Next:** merge PR 21 and tag `v1.3.0` once the owner has exported their save; then the v1.4 flesh-out. D554 and D555 are Decided (owner, 2026-10-24).
+- **Next:** the v1.4 flesh-out. Q53–Q56 are still open. D554 and D555 are Decided (owner, 2026-10-24).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 answered (a), additive. Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -622,3 +622,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Fix:** `vite.config.ts` leaves the `icons/` files unpacked (D553 otherwise unchanged). `sw.js` now has one hash per file. All 7 smoke tests pass here, including the two. **Size: 449,810 bytes** (was 438,916; the icons are back to full size), still far under 614,400.
 - **Test changed (my own D553 test, same milestone):** `tests/tools/png-pack.test.ts` now skips the top-level `icons/` folder in the "every picture is packed" loop, and gains a check that `sw.js` never lists one file with two different hashes (the check that would have caught this). Nothing else loosened.
 - **Left:** CI to confirm on the new push, then merge. The earlier `sim:accept` is not affected (no game rule changed).
+
+## 2026-10-24 — v1.3 merged and tagged
+- **Merged** PR 21 (squash, `6286e3a`) after CI was green on the last commit; **the owner tagged `v1.3.0`** (checked: the tag points at `6286e3a`). The owner exported their save before the merge.
+- **A real bug was found by CI, not by the playtest:** the picture packing (D553) broke offline reload (see the fix entry above). The owner should check airplane-mode reload once on the live app.
+- **Correction:** KV.10 and KV.11 called the two offline-reload failures "known, this container"; that was wrong, and they were real.
+- **CI times (last run):** e2e shard 2 about 7 min (limit 8, D552); other shards 3 to 4 min; simulator shards 1 to 2 min. Over 5 minutes is only shard 2.
+- **Next:** v1.4 flesh-out (size room: 449,810 of 614,400 bytes; route 3 about 55 KB is measured). Open: Q53–Q56.
