@@ -880,7 +880,7 @@ No new simulator row. All 55 existing rows must pass and every player's report m
 
 ### v1.3 — Keep the Vigil
 
-**Status:** in progress *(scheduled by D453, D477, D499; fleshed out 2026-10-24; decisions D538–D551; files in `docs/flesh-out/v1.3/`)*
+**Status:** complete *(scheduled by D453, D477, D499; fleshed out 2026-10-24; decisions D538–D551; files in `docs/flesh-out/v1.3/`)*
 
 **Scope:** **Rising Vigil**: an **On / Off switch on the Last Stand screen**, shown only when the Remembering gate is open (GDD §5.9.10, §9.23, D539). Each stand fought with it On is one level harder than the last On stand: wave **Health and Might × (1 + 0.0061 × Threat + s × level)**, a small Embers bonus per level, **no cap, one lever, steady steps** (D540, D541). Off is exactly an ordinary stand and the level is kept. **Save schema 12 → 13** (a small `vigil` block and an optional `vigilLevel` on each cycle record, D543); **`rulesVersion` stays 5** because the level is saved on the stand's record and level 0 takes the old path bit for bit (D542). One new command, `vigil.set`; one row on the stand screen; a drawn mark and a plain line on the Roll of Wardens; **no new art, no story text, no sound** (D545). Simulator: a probe, a new player (the Vigilant) in its own `vigil` shard, and three Proposed rows A–C (D546; a fourth is a unit test). **The download row stays at 600 KB; 3,892 bytes are left, and the vigil code must fit in them or the milestone stops and asks** (D547). No stand fought before the gate is open, Delves, events, contracts, Threat rates, band thresholds, relic milestones or any other player's baseline changes.
 
