@@ -374,6 +374,13 @@ export const balance = {
       quenchers: { threatStep: tunable(0.03) },
     },
   },
+  // ---- GDD §7.13 Rising Vigil (v1.3, D538–D551) ----
+  // PLACEHOLDERS: a guess with no measurement behind it (GDD §7.13). KV.9 replaces both with
+  // values measured on the probe and approved by the owner; v1.3 is not accepted before that.
+  vigil: {
+    strengthPerLevel: tunable(0.25),
+    embersPerLevel: tunable(0.25),
+  },
 } as const;
 
 export type Balance = typeof balance;

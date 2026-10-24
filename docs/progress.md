@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `main` (v1.2 merged, tag `v1.2.0`).
-- **Milestone:** v1.2 "Sounds of the Frontier" (D519–D530), complete.
-- **Last task:** v1.2 milestone end (playtest passed, merged, tagged `v1.2.0`).
-- **Next:** the next milestone is v1.3 (outline only; it needs a flesh-out session first, plan §0.4).
-- **Open questions:** Q53–Q56 (sound picks, size fit, iPhone playback, audio converter).
+- **Branch:** `claude/clever-fermi-gkis1l` (the session's branch; the plan names `milestone/v1.3`, see the entry below).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D551), in progress.
+- **Last task:** KV.1 docs commit (flesh-out applied, D551 Decided).
+- **Next:** the owner uploads `v12-owner.json`; then KV.2 (schema 13) and KV.3 (the two constants), either order.
+- **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
 
@@ -502,3 +502,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Shard times (first fixed run):** shard 1 1 min 34 s, shard 2 **7 min 31 s**, shard 3 3 min 16 s; shard 4 failed in the install. Install stalled on the Ubuntu Azure mirror (all three tries), so the tries were not the problem.
 - **Owner said do both:** `--fully-parallel` on the shard command (tests spread one by one; expected about 2 to 3 min of tests per shard) and an apt fail-fast setting before the install in `ci.yml` and `bench.yml` (D537). Locally the four shards hold 126 tests in total.
 - **Still to see on CI:** every shard job under 5 minutes. If not, the fallback is a longer limit for the e2e shards. Bench change is untested until a pull request exists.
+
+## 2026-10-24 — v1.3 KV.1: docs commit
+- **Preconditions:** tag `v1.2.0` is on `main` (merge `0a41df8`); the CI changes (PR #20, D533–D537) are on `main`. Branch `milestone/v1.3` was **not** created: this session may only push `claude/clever-fermi-gkis1l`; the owner decides whether the preview needs `milestone/v1.3`.
+- **CI on `main`:** last finished run (PR #20 merge): shard 2 took 5 min 22 s as a job (tests 4 min 1 s); run on the owner's upload (`d66683f`): shard 2 took 5 min 10 s, and **shard 4 failed** (`story.spec.ts` "a won contract brings Ilse": waited 45 s for the "Through the gate" dialog). No code changed between the runs, so likely a timing flake; not yet re-run. Shard 2 is over the 5-minute rule: the owner agreed to the D537 fallback (a longer e2e limit) as its own small change; the number is theirs (asked).
+- **Applied:** all 35 Find/Replace edits (GDD 23, plan 6, technical design 6) matched exactly once, checked by machine before and during applying. Rows D538–D550 are Decided and D551 is added (owner's yes; Q58 answered (a)); Q57 and Q58 are in `questions.md`; the summary moved to `docs/flesh-out/v1.3-summary.md`; three rules are in `CLAUDE.md`. No old row or cell edited. The two placeholder constants (0.25 each, GDD §7.13) were added to `balance.ts` now, because the GDD §7 keys test fails without them (OUT-2a says so); KV.3 wires them in.
+- **Sweep:** no `Proposed` row from D519 up is left outside D538/D551.
+- **Gate state of the owner's save:** unknown until `v12-owner.json` is uploaded. **Waiting for the owner's upload.**
