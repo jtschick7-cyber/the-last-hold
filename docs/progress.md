@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.9 done (owner approved the values, the tolerance, rows A to C and the v13-played fixture rewrite); size routes 1 and 2 done (D553).
-- **Last task:** KV.9 (constants, tolerance, rows). Before it: KV.8 (the probe, the Vigilant, the `vigil` shard), KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
-- **Next:** KV.10 (the e2e and the docs sweep). D554 and D555 are Decided (owner, 2026-10-24).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.10 done (owner approved the values, the tolerance, rows A to C and the v13-played fixture rewrite); size routes 1 and 2 done (D553).
+- **Last task:** KV.10 (budgets, size, old-test list). Before it: KV.9 (constants, tolerance, rows), KV.8 (the probe, the Vigilant, the `vigil` shard), KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
+- **Next:** KV.11 (wrap-up and the pull request). D554 and D555 are Decided (owner, 2026-10-24).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 answered (a), additive. Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -593,3 +593,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Fixture rewritten, please look at this one:** `tests/saves/fixtures/v13-played.json` was made again with its own script (`scripts/make-v13-played-fixture.ts`), because its three vigil stands were recorded under the 0.25 placeholders and replayed differently at 0.32 and 0.22. It is a fixture made this milestone (KV.4), not an older golden one, and no shipped save holds a vigil stand. Eight lines changed: the level-3 stand now holds 2 waves, not 3, and the Embers follow. The golden fights are untouched.
 - **No placeholder is left** in `balance.ts` or the GDD (§7.13 note deleted). KV.11 can check it.
 - **Not done:** nothing from the plan's KV.9 text. The wide-grid curve file from KV.8 still says "placeholders" because it is a record of that run.
+
+## 2026-10-24 — v1.3 KV.10 budgets, size and the old-test list
+- **Size (SF.9 method, sum of per-file gzip -9 of `dist`, 1 KB = 1,024 bytes, this container's scale):** **438,916 bytes**, 312 files. The row is 614,400 and unchanged; `main` measures 606,280 here, so the branch is 167,000 under it (the packed pictures, D553). No fallback needed.
+- **v12 → v13 migration** (played v12 save, 4× throttled browser): **7.9 ms** (budget 100 ms). Same run: v10 → v11 38.6 ms, v11 → v12 26.5 ms, Last Stand preview 729 ms (budget 1 s).
+- **Save growth:** the `vigil` block plus 20 recorded levels, a unit test in `tests/saves/v13-migration.test.ts`: passes (limit 512 bytes).
+- **`npm run check`:** green, **94.7 s** this run (warn at 90 s, fail at 120 s). Earlier runs this milestone read 71 to 98 s on this machine, so it swings with load; I watch it, not fixed.
+- **Bench:** the "odds with 3 candidates" row still fails on this CPU (831 ms against 600 ms), as before (D445); not part of `check`, nothing changed.
+- **Old-test edits, full list (diff against `main`, nothing loosened):** `v12-migration.test.ts` (schema 12 to 13, newer-version case 13 to 14; D548 (1)); `opening.test.ts` (fixture lists gain `v12-owner.json`, `v13.json`, `v13-played.json`; D548 (6)); `polish-screens.ts` (stand screen On and Off, Roll flow; D548 (3)); `bench.spec.ts` and `bench-page.ts` (a new row only); `sim/shards.test.ts` (`vigil` left out of the fair-share check; your yes); `story.spec.ts` (clock pinned to a Monday so the Ilse test passes on weekends; your yes, option a); `v13-played.json` rewritten with its script (your yes). New, not edited: `tests/lint/vigil-coupling.test.ts`. The list is complete.
+- **GDD §6.5:** the migration and save-growth rows are already in and decided (D547); nothing to change. Not done: no motion or contrast baseline file was edited (D548 (5) not needed).
