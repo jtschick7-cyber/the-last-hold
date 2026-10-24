@@ -20,6 +20,7 @@ import type { DelveState } from './delve-state';
 import type { EventsState } from './events-state';
 import type { OrdersState } from './orders-state';
 import type { HoldLayoutState } from './layout-state';
+import type { VigilState } from './vigil-state';
 import type { RememberingState } from './remembering-state';
 import type { ItemState } from './item-state';
 import type { StoryState } from './story-state';
@@ -36,7 +37,7 @@ import type { InjuryKind } from '../contracts/injury';
 // Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317); v9 adds events (tokens,
 // rests, the boss visit, hunt points) and each cycle's stand pool (plan T9.1, D382); v10 adds the
 // Orders (plan T10.1); v11 adds the ending's block (plan T11.1, D452). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 12;
+export const SCHEMA_VERSION = 13;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -240,6 +241,8 @@ export interface StandRecord {
   alchemy: number;
   /** v9 (D363): set only when the stand drew from the `dross` pool; absent means the species of §8.3.1 only. */
   pool?: 'dross';
+  /** v13 (D543): the Rising Vigil level it was fought at (GDD §5.9.10); absent means 0. An integer of 1 or more when present. */
+  vigilLevel?: number;
   /** The result sheet has been seen. */
   seen: boolean;
 }
@@ -367,6 +370,8 @@ export interface GameState {
   remembering: RememberingState;
   /** The Hold's layout blueprint (v12, GDD §5.1.5, D502). Decorative; kept whole through the Long Night. */
   layout: HoldLayoutState;
+  /** Rising Vigil: the switch and the count of stands fought On (v13, GDD §5.9.10). Kept whole through the Long Night. */
+  vigil: VigilState;
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;

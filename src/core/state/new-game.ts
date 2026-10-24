@@ -11,6 +11,7 @@ import { startingDelve } from './delve-state';
 import { newEventsState } from './events-state';
 import { newOrdersState } from './orders-state';
 import { newLayoutState } from '../systems/layout-catalog';
+import { newVigilState } from './vigil-state';
 import { autoPlaceUnlocked } from '../systems/layout-place';
 import { newRememberingState } from './remembering-state';
 import { freshAct, startingVillageTrust } from './story-state';
@@ -105,6 +106,7 @@ export const createNewGame = (seed: string, now: number): GameState => {
     orders: newOrdersState(),
     remembering: newRememberingState(),
     layout: newLayoutState(),
+    vigil: newVigilState(),
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,

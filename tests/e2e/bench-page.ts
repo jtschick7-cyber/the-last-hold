@@ -61,6 +61,7 @@ type Bench = {
   ordersMigration: number;
   rememberingMigration: number;
   layoutMigration: number;
+  vigilMigration: number;
   holdGrid: number;
   arrangeSheet: number;
 };
@@ -168,6 +169,8 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
     // Plan TL.10 (GDD §6.5, D506): the v11 → v12 migration of a played v11 save, the grid header's
     // render, and the Arrange Hold sheet's first render.
     layoutMigration: best(() => loadEnvelope(structuredClone(v11Played))),
+    // Plan KV.2 (GDD §6.5, D547): the v12 → v13 migration of a played v12 save, on the load path.
+    vigilMigration: best(() => loadEnvelope(structuredClone(v12Played))),
     holdGrid: best(mount(() => h(HoldGrid, {}))),
     arrangeSheet: best(mount(() => h(ArrangeHoldSheet, {}))),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),

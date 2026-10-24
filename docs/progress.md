@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/clever-fermi-gkis1l` (the session's branch; the plan names `milestone/v1.3`, see the entry below).
 - **Milestone:** v1.3 "Keep the Vigil" (D538–D551), in progress.
-- **Last task:** KV.1 (flesh-out applied, D551 Decided, owner's save in as `v12-owner.json`) is done.
-- **Next:** KV.2 (schema 13) and KV.3 (the two constants), either order.
+- **Last task:** KV.2 (save schema 13, the migration, `v13.json`) is done.
+- **Next:** KV.3 (the two constants and the two factor functions); then KV.4.
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -511,3 +511,14 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Owner's save uploaded** (renamed to `tests/saves/fixtures/v12-owner.json`; it arrived as `V12-owner.json`): schema 12, rules 5, cycle 1, Keep, Act 1 with 14 wins, 1 cycle record. **The Remembering gate is closed**, so the owner will see Rising Vigil only through the debug commands for a long while (Q46: about 20–25 cycles).
 - **D552:** e2e shards may take up to 8 minutes (owner's number); `ci.yml` timeout 10 → 8, own commit. Shard 4's failure (story spec) is being re-run once to confirm a flake.
 - **Branches:** the owner asked for `milestone/v1.3` too; both branches get the same commits.
+
+## 2026-10-24 — v1.3 KV.2: save schema 13
+- **Done:** `SCHEMA_VERSION` 13; `state.vigil = { on, stands }` (new `vigil-state.ts`); optional `vigilLevel` on the stand record; migration `migration-v13.ts` (adds the empty block, nothing else); guard `validate-vigil.ts` (bad block refuses, unknown field warns, `vigilLevel` must be a whole number of 1 or more, count mismatch only warns and is quiet once `debugUsed`). The Long Night keeps the block (test). `rulesVersion` 5.
+- **Fixtures:** `v13.json` = the owner's v12 save migrated (`scripts/make-v13-fixtures.ts`). `v13-played.json` comes in KV.4. New tests: `tests/saves/v13-migration.test.ts` (all fixtures load, round-trip, golden fights and recorded stands replay, refuses schema 14, ≤ 0.5 KB growth).
+- **Tests first?** Not strictly: I wrote the code, then the tests in the same session. No test was weakened.
+- **Old-test edits (D548):** (1) `v12-migration.test.ts`: schema 12 → 13 (two places) and "newer version" 13 → 14; (6) `opening.test.ts`: the "left out" fixture list gains `v12-owner.json` and `v13.json`. Also added: a `vigilMigration` benchmark row (100 ms) in `bench-page.ts` and `bench.spec.ts`.
+- **Timing:** migration of the played v12 save: 1.0 ms in node here. The browser benchmark could not run in this container (Playwright's browser build is missing); CI runs it. `npm run check`: 87–97 s here.
+- **Size:** the production build summed to **606,607 bytes** (per-file gzip -9, limit 614,400) but I could not count the files (the shell then refused access to `dist`), so I cannot confirm it matches the 610,508 of 313 files in v1.2. Treat as unconfirmed; to be re-measured at KV.3.
+- **The prettier format of `v12-owner.json`** was normalised (whitespace only), like the other fixtures.
+- **Next:** KV.3.
+
