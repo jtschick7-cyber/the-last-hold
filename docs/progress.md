@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/clever-fermi-gkis1l` (the session's branch; the plan names `milestone/v1.3`, see the entry below).
 - **Milestone:** v1.3 "Keep the Vigil" (D538–D551), in progress.
-- **Last task:** KV.4 (the command, the level, the debug command, `v13-played.json`) is done.
-- **Next:** KV.5 (the preview and tomorrow's estimate), then KV.6 (the stand-screen row; the owner confirms the nine strings after it).
+- **Last task:** KV.5 (the preview works out the level) is done.
+- **Next:** KV.6 (the stand-screen row; the owner confirms the nine strings after it). The owner is deciding how to handle the size budget first (see the KV.5 entry).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -538,4 +538,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **`v13-played.json`** (script `scripts/make-v13-played-fixture.ts`, real commands from the owner's save): levels 1, 2, 3, then one Off stand with no level, switch On again, so the next On stand is level 4. I read "one more On" in the plan as turning the switch On, not fighting a fifth stand; tell me if you meant otherwise.
 - **Old-test edits (D548):** (6) `opening.test.ts` list gains `v13-played.json`. Added a describe to `v13-migration.test.ts`. Nothing loosened. `npm run check` green (about 98 s here).
 - **Size:** 313 files, `main` 606,280, now 608,261 (**+1,981**; KV.4 alone +1,153). On the v1.2 scale about **612,489, room about 1,911.** KV.6 and KV.7 are still to come: the fallback order (D547) will probably be needed; the owner is told.
+
+## 2026-10-24 — v1.3 KV.5: the preview
+- **Finding:** the plan says the odds worker's `stateSlice` carries the switch. It does not exist: the worker receives a ready-made preview input, and since KV.3/KV.4 `previewInputFor` already carries `vigilLevel` (from `vigilLevelFor`), and both Embers figures (now, tomorrow) use it. So no worker or protocol change was needed (the worker stays byte-for-byte the same).
+- **The one real gap, fixed:** the stand screen re-asked for the preview only when party, kit or Threat changed. Its key now includes the level (read from `vigilLevelFor`), so a flip recomputes it. The "an estimate" wording is untouched.
+- **Tests (`tests/vigil/preview.test.ts`, 10):** the request carries no field at level 0 and `vigilLevel` n otherwise; the preview equals one built independently at that level (same seeds and samples); the Rising Vigil line is in the breakdown of both Embers figures and absent with the switch Off; a higher level never holds more waves in the median; with the switch Off, or On with the gate closed, the preview equals the pre-v1.3 preview for five states. Not tested here: a flip on the real screen (needs KV.6's row; the Playwright check is there).
+- **Time:** 100 practice stands at the owner's save, Threat 30: Off 293 ms, level 1 112 ms, level 10 19 ms in node (higher levels end sooner), well inside the 1 s budget.
+- **Size:** 313 files, now 608,264 versus `main` 606,280 (**+1,984**; KV.5 +3). Room on the v1.2 scale about 1,900. Size options asked of the owner (see the thread).
+- **Seen once, not mine:** `tests/contracts/flow.test.ts` ("only a confirmed Reckless contract can kill a hunter") hit its 5 s limit in one `npm run check`; it passes alone (11 s for the file) and on the next full run. Slow container, not a change; listed so it is not lost.
+- **No old test edited.**
 

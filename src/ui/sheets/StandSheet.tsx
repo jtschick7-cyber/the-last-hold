@@ -5,6 +5,7 @@ import { num } from '../../core/balance-access';
 import { standProblem } from '../../core/commands/stand';
 import { formatNumber, formatRate } from '../../core/format';
 import { bombStock, previewInputFor } from '../../core/stand/from-state';
+import { vigilLevelFor } from '../../core/systems/vigil';
 import { suggestSix } from '../../core/stand/suggest';
 import { standPoolOf } from '../../core/stand/pool';
 import { creatureOf, DROSS_TIDE, standSeed, waveList } from '../../core/stand/waves';
@@ -128,7 +129,9 @@ export const StandView = () => {
     ),
   });
   const chosenKit = kitFor(party);
-  const key = `${party.join(',')}|${JSON.stringify(chosenKit)}|${s.threat.toFixed(2)}`;
+  // GDD §9.23: the preview is worked out again when the Rising Vigil switch flips, so the level the
+  // stand would have is part of the key (read from the core, never computed here).
+  const key = `${party.join(',')}|${JSON.stringify(chosenKit)}|${s.threat.toFixed(2)}|${vigilLevelFor(s)}`;
   useEffect(() => {
     if (party.length === 0) return;
     let live = true;
