@@ -23,3 +23,9 @@ export const num = (key: BalanceKey): number => {
   cache.set(key, value);
   return value;
 };
+
+/**
+ * Forgets the looked-up values, so the simulator probe (sim/vigil-probe.ts) can try a constant at
+ * another value and put it back. Nothing in the game calls it.
+ */
+export const clearNumCache = (): void => cache.clear();

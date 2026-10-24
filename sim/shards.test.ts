@@ -51,7 +51,9 @@ describe('the simulator shards (D320)', () => {
     // The Orderer is its own shard too (v0.10, D417): five Monday runs.
     expect(specsOfShard(full, 'orders')).toHaveLength(5);
     expect(specsOfShard(full, 'orders').every((r) => r.policy === 'orderer')).toBe(true);
-    const others = parts.filter((_, i) => SHARD_IDS[i] !== 'events' && SHARD_IDS[i] !== 'orders');
+    // The Vigilant is its own shard too (v1.3, D546): five Monday runs, left out of the fair share like these.
+    const own = ['events', 'orders', 'vigil'];
+    const others = parts.filter((_, i) => !own.includes(SHARD_IDS[i] ?? ''));
     for (const p of others) expect(p.length).toBeLessThanOrEqual((45 / others.length) * 1.34);
   });
 

@@ -245,7 +245,7 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Question:** is that the feel you want, or should each level be the **same percentage** harder than the one before (compounding, `intPow(1 + s, level)`, which loses about one wave at every level)?
 - **Options:** (a) keep steady additive steps, as chosen (recommended until the numbers are in); (b) compounding steps. There is no "decide after the playtest": switching after any vigil stand has been recorded in a save changes how those stands replay, which is a combat math change (a `rulesVersion` bump or a formula id on the record).
 - **Recommendation:** (a) for now. KV.8 measures waves held and Embers for every level on the simulator probe, for both steps, at two Threat points, and reports the curve; you answer after seeing the numbers and before KV.9. Switching to (b) at that point changes one formula and one constant (it needs a new decisions row).
-- **Blocks:** KV.9. **Answer (owner):** *(pending; asked with the curve after KV.8)*
+- **Blocks:** KV.9. **Answer (owner):** *(pending; the curve is in `docs/flesh-out/v1.3/vigil-curve.md`, reported by KV.8)*
 
 ### Q58 — The simulated Vigilant opens the gate with a debug shortcut *(opened 2026-10-24; answered at the docs commit, D551)*
 - **Context:** the simulated Standard player never makes the ending choosable (Q45, D469): it does not look for the contract species it lacks. So the new player, the Vigilant, cannot play to the gate honestly. To test the vigil mechanics at all, it plays like Standard to Act VI's stand and then calls the debug command `debug.remembering.openGate()` once (D462), which marks the run as `debugUsed`. The report says so.

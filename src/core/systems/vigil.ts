@@ -79,6 +79,8 @@ export interface VigilView {
   level: number;
   /** The level the next On stand would have, or 0 when no stand has been fought On yet (no status line). */
   next: number;
+  /** How many stands have been fought with the switch On (the simulated Vigilant counts its levels with it). */
+  stands: number;
 }
 
 export const vigilView = (state: GameState): VigilView => {
@@ -88,5 +90,17 @@ export const vigilView = (state: GameState): VigilView => {
     on: available && state.vigil.on,
     level: vigilLevelFor(state),
     next: state.vigil.stands > 0 ? state.vigil.stands + 1 : 0,
+    stands: state.vigil.stands,
   };
+};
+
+/**
+ * A copy of the state as it would be when a stand is made at vigil `level` (0 = switch Off), for the
+ * simulator probe (GDD §6.2 v1.3, D546): the level a stand gets is `stands + 1` with the switch On.
+ */
+export const stateAtVigilLevel = (state: GameState, level: number): GameState => {
+  const copy = structuredClone(state);
+  copy.vigil.on = level > 0;
+  copy.vigil.stands = Math.max(level - 1, 0);
+  return copy;
 };

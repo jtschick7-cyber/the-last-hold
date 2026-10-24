@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `claude/clever-fermi-gkis1l`, pushed also to `milestone/v1.3` (same commits; the owner asked for both).
-- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.7 done (owner confirmed the nine strings); size routes 1 and 2 done (D553).
-- **Last task:** KV.7 (Roll tally). Before it: KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
-- **Next:** KV.8 (the simulator policy and the curve; then stop for Q57).
+- **Milestone:** v1.3 "Keep the Vigil" (D538–D553), in progress. KV.1–KV.8 done (KV.8 waits for the owner's reading of the curve, Q57); size routes 1 and 2 done (D553).
+- **Last task:** KV.8 (the probe, the Vigilant, the `vigil` shard; measure only). Before it: KV.7 (Roll tally), KV.6, KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Earlier: KV.5 (preview), then D553 (pictures packed, contact sheet preview-only). Route 3 (shared chunk for the odds worker, about 55 KB) is measured and left for the v1.4 flesh-out.
+- **Next:** the owner reads `docs/flesh-out/v1.3/vigil-curve.md` and answers Q57; then KV.9 (choose `s` and `e`, propose the rows).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a). Size room: about 172 KB under the 614,400 row (v1.2 scale).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -574,3 +574,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Old-test edit (D548 (3), (5)):** one flow appended to `tests/e2e/polish-screens.ts`. No baseline file needed a key (the Text-size baseline lists five named screens only). Nothing else edited.
 - **Size:** 312 files, 438,763 bytes (+89 over KV.6).
 - **`npm run check`:** green, 80 s (3,508 tests).
+
+## 2026-10-24 — KV.8 the probe, the Vigilant and the shard (measure only)
+- **Built:** the `vigilant` player (`src/core/policies/vigilant.ts`): Standard plus two moves, the declared debug shortcut `debug.rememberingOpenGate` once Act VI's stand is applied (Q58) and `vigil.set On` before each stand, for 3 stands. Monday seeds only, own shard `vigil` (`sim.yml` matrix updated). The probe (`sim/vigil-probe.ts`) as D546 (1): a copy of the state at the first On stand, levels 0 to 10, 100 practice stands with the same seeds at every level, two Threat points (the stand's own and twice it), a grid of `s` (0.1 to 0.8) and `e` (0.05 to 0.3), additive and compounding. Waves depend on `s` only; Embers are the real payout of the median waves. `npm run sim:vigil` writes the curve to `docs/flesh-out/v1.3/vigil-curve.md`; reports get a "Rising Vigil" section.
+- **Results (placeholder constants unchanged):** the Vigilant reaches levels 1, 2, 3 on all 5 Monday seeds (cycles 7, 8, 9; gate opened at 458 to 486 h). Waves held never rise with the level on any of the 140 curves. `debugUsed` is true for every Vigilant run and the report says why. The other players: **176 of 176 moments same** as the baseline, every check still passes (`sim:check`, 60 runs, 6 min 52 s here).
+- **Reading the curve, in short:** at the stand's own Threat, additive `s` = 0.3 loses 1, 2, 3 waves at levels 1, 2, 3 (about one a level, the owner's target); at level 10 it has lost 7. Compounding `s` = 0.2 loses 0, 1, 2 at levels 1 to 3 but 11 by level 10; compounding 0.3 or more leaves 0 to 1 waves by level 10 (effectively unwinnable). Full tables, bands and per-seed numbers are in the curve file. The owner answers Q57.
+- **Time:** the `vigil` shard takes 161 s here (4 cores); the probe is about 57 s of each 82 s run. Under the 4-minute limit on 4 cores; on 2 cores it would be about 250 s. The probe is not in the fast set, so `npm run check` is unchanged: 72 s here (3,517 tests). Judged in `sim.yml` only (D546 (4)); I could not run CI's 3 `check` runs from here.
+- **Old-test edit (needs the owner's yes, given):** `sim/shards.test.ts` skips `vigil` in the fair-share check like `events` and `orders` (one line; the check for the other shards is unchanged). D548 did not list it.
+- **Also:** `clearNumCache` added to `core/balance-access.ts` (the probe tries a constant and puts it back; nothing in the game calls it); `stateAtVigilLevel` and `stands` on `vigilView` in `systems/vigil.ts` (the lint stays unloosened). The plan said `sim/policies/vigilant.ts`; the repo keeps policies in `src/core/policies/`, so it is there.
+- **Not done, by plan:** no constant set, no `sim/targets.ts` row (KV.9).
