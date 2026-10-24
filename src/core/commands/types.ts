@@ -76,6 +76,10 @@ export type Command =
   | { type: 'layout.autoArrange' }
   | { type: 'layout.clear' }
   | { type: 'layout.setShowGhosts'; showGhosts: boolean }
+  /** GDD §5.9.10: the Rising Vigil switch (technical design §21.3). */
+  | { type: 'vigil.set'; on: boolean }
+  /** Plan KV.4 (D544 (7)): sets the count of stands fought On; sets debugUsed. */
+  | { type: 'debug.vigilSetStands'; stands: number }
   /** GDD §5.9.3: the Last Stand, then the Long Night. Final: there is no undo. */
   | {
       type: 'stand.make';

@@ -1,4 +1,6 @@
 import { num } from '../balance-access';
+import type { GameState } from '../state/game-state';
+import { endingChoosable } from '../story/remembering';
 import type { Breakdown, Explained } from '../breakdown/breakdown';
 
 // GDD §5.9.10, §7.13 (D539–D541, technical design §21.2): Rising Vigil's two terms. Each is
@@ -61,3 +63,10 @@ export const embersMultiplier = (threat: number, level: number): Explained => {
   const value = base + step;
   return { value, breakdown: { label: 'Embers multiplier', value, children } };
 };
+
+/** Rising Vigil can be switched on: the Remembering gate is open (GDD §5.9.10, D539). Never closes again in play. */
+export const vigilAvailable = (state: GameState): boolean => endingChoosable(state);
+
+/** The level a stand started now would be fought at: 0 unless the switch is On and the gate open (D544 (2)). */
+export const vigilLevelFor = (state: GameState): number =>
+  state.vigil.on && vigilAvailable(state) ? state.vigil.stands + 1 : 0;

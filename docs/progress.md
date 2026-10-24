@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `claude/clever-fermi-gkis1l` (the session's branch; the plan names `milestone/v1.3`, see the entry below).
 - **Milestone:** v1.3 "Keep the Vigil" (D538–D551), in progress.
-- **Last task:** KV.3 (the two factor functions, one place each) is done.
-- **Next:** KV.4 (the command, the level, the debug command, `v13-played.json`).
+- **Last task:** KV.4 (the command, the level, the debug command, `v13-played.json`) is done.
+- **Next:** KV.5 (the preview and tomorrow's estimate), then KV.6 (the stand-screen row; the owner confirms the nine strings after it).
 - **Open questions:** Q53–Q56 (v1.2 leftovers), Q57 (additive or compounding step, after KV.8). Q58 answered (a).
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15) and [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15). Read only the last entry at session start.
@@ -530,4 +530,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Also:** the Ilse story test now pins the clock (owner chose option a): it failed on weekend mornings because the debug run plays the Standard player over the last 12 h of the real clock. Passes locally on a Saturday. Old-test edit outside D548, with the owner's yes.
 - **Size:** measured by the SF.9 method here, 313 files, `main` = **606,280**, this branch = **607,108** (+828: KV.2 +327, KV.3 +501). This container reads about 4.2 KB lower than the recorded v1.2 figure (610,508) for the same code, cause unknown (probably the gzip build), so the deltas are what to trust: on v1.2's scale that is about **611,336, room 3,064**.
 - **Not run here:** the browser benchmark (Playwright's browser build is missing); CI runs it.
+
+## 2026-10-24 — v1.3 KV.4: the command, the level, the debug command
+- **Done:** `vigil.set { on }` (On refused while the gate is closed; Off and the same value always accepted); the stand reads the switch once in `standInputFor`, fixes `L = stands + 1`, saves `vigilLevel` on the record and moves `stands` in `stand.make`; level 0 adds no field. `vigilAvailable` and `vigilLevelFor` in `systems/vigil.ts`. Debug command `debug.vigilSetStands` (named like the other debug commands, not `debug.vigil.setStands`), with a small input and button in the debug panel.
+- **No "stand started" refusal:** the stand and the Long Night are one command, so that window does not exist (D544 (6)); a test proves the switch works right after a stand.
+- **Tests first:** `tests/vigil/commands.test.ts` and `tests/lint/vigil-coupling.test.ts` (checks state reads and factor imports, not the word; a planted read from `src/ui/` fails). Covered: the accept/refuse table, no double level, rebuild from the record ignores the switch, Off equals a level 0 stand, Keep the Vigil and Remember Them leave the block alone, bad input to the debug command.
+- **`v13-played.json`** (script `scripts/make-v13-played-fixture.ts`, real commands from the owner's save): levels 1, 2, 3, then one Off stand with no level, switch On again, so the next On stand is level 4. I read "one more On" in the plan as turning the switch On, not fighting a fifth stand; tell me if you meant otherwise.
+- **Old-test edits (D548):** (6) `opening.test.ts` list gains `v13-played.json`. Added a describe to `v13-migration.test.ts`. Nothing loosened. `npm run check` green (about 98 s here).
+- **Size:** 313 files, `main` 606,280, now 608,261 (**+1,981**; KV.4 alone +1,153). On the v1.2 scale about **612,489, room about 1,911.** KV.6 and KV.7 are still to come: the fallback order (D547) will probably be needed; the owner is told.
 

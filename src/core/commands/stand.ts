@@ -107,6 +107,8 @@ export const makeStand = (
   };
   const record = state.cycles[state.cycles.length - 1];
   if (record) record.stand = stand;
+  // The switch was read once, in standInputFor; the count moves with the level it fixed (D544 (2)).
+  if (input.vigilLevel) state.vigil.stands = input.vigilLevel;
   state.embers += payout.value;
   for (const id of found) state.relics.push({ id, cycle: state.cycle.number });
   // GDD §5.14.9: the stand closes the act (its testament on the result sheet), and a

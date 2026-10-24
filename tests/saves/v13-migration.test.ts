@@ -188,3 +188,26 @@ describe('the vigil guard (technical design §21.6)', () => {
     expect(block + levels).toBeLessThanOrEqual(512);
   });
 });
+
+describe('v13-played.json (made in KV.4 with the real commands)', () => {
+  const loaded = () => loadFull(readFixture('v13-played.json'));
+
+  it('loads with no warnings, validates and round-trips', () => {
+    const r = loaded();
+    expect(r.warnings).toEqual([]);
+    expect(r.state.meta.schemaVersion).toBe(13);
+    expect(roundTrip(r.state)).toEqual(r.state);
+  });
+
+  it('has recorded levels 1, 2, 3, a stand with no level after them, and the switch On again', () => {
+    const { state } = loaded();
+    const levels = state.cycles.filter((c) => c.stand).map((c) => c.stand?.vigilLevel);
+    expect(levels.slice(-4)).toEqual([1, 2, 3, undefined]);
+    expect(state.vigil).toEqual({ on: true, stands: 3 }); // the next On stand is level 4
+  });
+
+  it('every recorded stand replays line for line, the vigil ones at their saved level', () => {
+    for (const c of loaded().state.cycles)
+      if (c.stand) expect(standReplayDiffers(c.stand, replayStand(c.stand))).toBe(false);
+  });
+});
