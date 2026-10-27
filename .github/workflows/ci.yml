@@ -43,7 +43,7 @@ jobs:
   # or how they pass changes.
   e2e-shards:
     name: e2e shard ${{ matrix.shard }} of 4
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # D552: a shard may run up to 8 minutes (D320's 5 minutes still holds for every other job).
     timeout-minutes: 8
     strategy:
