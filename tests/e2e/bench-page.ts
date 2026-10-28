@@ -153,6 +153,20 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
           defenses: { walls: 10, watchtower: 10 },
           relics: [],
           knowledge: {},
+          // v1.5 (D590): the stand carries a lane table (three towers, a spread of walls), so the
+          // preview budget now covers the lanes too.
+          lanes: {
+            pieces: [2, 1, 3, 1, 1, 2, 1, 1],
+            towerCols: [1, 2, 5],
+            k: {
+              coverOwn: 0.5,
+              coverNeighbour: 0.25,
+              depthStep: 0.25,
+              depthMax: 2,
+              towerReach: [1, 0.5, 0.25],
+              volleyScale: 1,
+            },
+          },
         },
         samples: 100,
         rank: 'bastion',

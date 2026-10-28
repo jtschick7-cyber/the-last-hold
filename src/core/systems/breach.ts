@@ -7,7 +7,10 @@ import { standPoolOf } from '../stand/pool';
 import { standSeed, waveList, type Wave } from '../stand/waves';
 import type { GameState } from '../state/game-state';
 import type { LaneTable } from '../state/lane-table';
-import { getPieceStatus } from './layout';
+import { greedyPlacement, type SuggestTile } from './breach-suggest';
+import { footprint, getPieceStatus, inClearing, isPieceUnlocked } from './layout';
+import { clearingBounds } from './layout-catalog';
+import { autoArrange } from './layout-place';
 
 // GDD §5.9.11, §7.15 and technical design §23.2 (v1.5, D580–D583): the lanes of the Last Stand, the
 // pieces that count, cover, depth, the wall cut and the shared volley. Each number is worked out here
@@ -68,30 +71,42 @@ export const countedPieces = (state: Hold): CountedPiece[] => {
   return out;
 };
 
-/** The table a stand freezes when Start is pressed: the only place the layout is read for combat. */
-export const laneTableFor = (state: Hold): LaneTable => {
+/** The `breach.*` numbers in force now. */
+const numbersNow = (): LaneTable['k'] => ({
+  coverOwn: num('breach.coverOwn'),
+  coverNeighbour: num('breach.coverNeighbour'),
+  depthStep: num('breach.depthStep'),
+  depthMax: num('breach.depthMax'),
+  towerReach: [...(constantAt('breach.towerReach').value as number[])],
+  volleyScale: num('breach.volleyScale'),
+});
+
+/** The table for counted pieces at these columns: how many in each column, and where the towers are. */
+const tableOf = (cols: readonly { x: number; tower: boolean }[], k: LaneTable['k']): LaneTable => {
   const pieces = new Array<number>(num('breach.lanes')).fill(0);
   const towerCols: number[] = [];
-  for (const p of countedPieces(state)) {
+  for (const p of cols) {
     pieces[p.x] = (pieces[p.x] ?? 0) + 1;
     if (p.tower) towerCols.push(p.x);
   }
   towerCols.sort((a, b) => a - b);
-  return {
-    pieces,
-    towerCols,
-    k: {
-      coverOwn: num('breach.coverOwn'),
-      coverNeighbour: num('breach.coverNeighbour'),
-      depthStep: num('breach.depthStep'),
-      depthMax: num('breach.depthMax'),
-      towerReach: [...(constantAt('breach.towerReach').value as number[])],
-      volleyScale: num('breach.volleyScale'),
-    },
-  };
+  return { pieces, towerCols, k };
 };
 
+/** The table a stand freezes when Start is pressed: the only place the layout is read for combat. */
+export const laneTableFor = (state: Hold): LaneTable => tableOf(countedPieces(state), numbersNow());
+
 const percent = (v: number): number => Math.round(100 * v);
+
+/** Cover of lane c as a plain number, for the Suggest rule's many trials; equals `cover(...).value` (a test checks every pattern). */
+export const coverValue = (table: LaneTable, c: number): number => {
+  const last = table.pieces.length - 1;
+  const has = (i: number): boolean => (table.pieces[i] ?? 0) > 0;
+  let value = has(c) ? table.k.coverOwn : 0;
+  if (c === 0 || has(c - 1)) value += table.k.coverNeighbour;
+  if (c === last || has(c + 1)) value += table.k.coverNeighbour;
+  return value;
+};
 
 /** Cover of lane c: own column, plus each neighbouring column; the ruined edge counts as walled (D581). */
 export const cover = (table: LaneTable, c: number): Explained => {
@@ -270,3 +285,82 @@ export const laneView = (state: GameState): LaneView => {
   memo = { key, view };
   return view;
 };
+
+/**
+ * The score Suggest layout maximizes (technical design §23.2): for each lane, its number of waves
+ * times its cover (with depth) plus its tower reach. Cover and tower reach weigh the same, a fixed
+ * design choice and not a tuned one.
+ */
+export const layoutScore = (table: LaneTable, waves: readonly number[]): number => {
+  const towers = table.towerCols.length;
+  let sum = 0;
+  for (let c = 0; c < table.pieces.length; c++) {
+    const w = waves[c] ?? 0;
+    if (w === 0) continue;
+    const shares = table.towerCols.reduce((s, col) => s + reachShare(table, Math.abs(col - c)), 0);
+    const reach = towers === 0 ? 0 : shares / (100 * towers);
+    sum += w * (coverValue(table, c) * (1 + table.k.depthStep * extra(table, c)) + reach);
+  }
+  return sum;
+};
+
+/** One defense to put on one front-row tile; a list of these is what Suggest layout returns. */
+export interface LayoutMove {
+  readonly pieceId: HoldPieceId;
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface LayoutSuggestion {
+  /** In the order they were chosen. Empty when no wall or tower is owned. */
+  readonly moves: readonly LayoutMove[];
+  readonly score: number;
+  /** The score of Auto-arrange's defense positions that stand on free tiles (what the rule had to beat). */
+  readonly autoScore: number;
+}
+
+const isDefense = (id: string): boolean => id.startsWith('wall-') || id.startsWith('watchtower-');
+
+/** Suggest layout for a given list of lanes (the first waves of the stand, or a fixed fixture). Changes nothing. */
+export const suggestLayoutFor = (state: GameState, lanes: readonly number[]): LayoutSuggestion => {
+  const rows = num('breach.frontRows');
+  const k = numbersNow();
+  const waves = Array.from(
+    { length: num('breach.lanes') },
+    (_, c) => lanes.filter((l) => l === c).length,
+  );
+  // Tiles another building holds, wherever that building is in its states (a blueprint holds its tile).
+  const held = new Set<string>();
+  for (const def of PIECES) {
+    const at = state.layout.placed[def.id];
+    if (at && !isDefense(def.id)) for (const t of footprint(def, at)) held.add(`${t.x},${t.y}`);
+  }
+  const bounds = clearingBounds(state.cycle.age);
+  const free: SuggestTile[] = [];
+  for (let y = 0; y < rows; y++)
+    for (let x = 0; x < num('breach.lanes'); x++)
+      if (inClearing(bounds, { x, y }) && !held.has(`${x},${y}`)) free.push({ x, y });
+  const owned = PIECES.filter((p) => isDefense(p.id) && isPieceUnlocked(state, p.id)).map((p) => ({
+    id: p.id,
+    tower: p.id.startsWith('watchtower-'),
+  }));
+  const scored = (cols: readonly { x: number; tower: boolean }[]): number =>
+    layoutScore(tableOf(cols, k), waves);
+  const greedy = greedyPlacement(owned, free, scored);
+  // Auto-arrange's defense positions, on the tiles Suggest may use, worked out on a copy.
+  const probe = { ...state, layout: { ...state.layout } } as GameState;
+  autoArrange(probe);
+  const freeKeys = new Set(free.map((t) => `${t.x},${t.y}`));
+  const auto = countedPieces(probe).filter((p) => freeKeys.has(`${p.x},${p.y}`));
+  const greedyScore = scored(greedy);
+  const autoScore = scored(auto);
+  const chosen =
+    autoScore > greedyScore
+      ? auto.map((p) => ({ pieceId: p.id, x: p.x, y: p.y }))
+      : greedy.map((p) => ({ pieceId: p.id as HoldPieceId, x: p.x, y: p.y }));
+  return { moves: chosen, score: Math.max(greedyScore, autoScore), autoScore };
+};
+
+/** Suggest layout from the stand's own lanes: the first `breach.suggestWaves` waves (GDD §5.9.11). */
+export const suggestLayout = (state: GameState): LayoutSuggestion =>
+  suggestLayoutFor(state, lanesFor(standSeed(state), num('breach.suggestWaves')));
