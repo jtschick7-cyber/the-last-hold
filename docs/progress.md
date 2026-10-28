@@ -43,5 +43,5 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Lane table:** the stand record can now hold an optional table (`lanes`). A bad table refuses the load; an unknown field is dropped with a warning. The shape sizes equal the locked lane and front-row counts (a test keeps them equal).
 - **Tests (first):** new `v15-migration.test.ts`: all fixtures load, round-trip, keep layout and fights; 27 malformed-table cases refuse; a 3-tower table is under 0.4 KB; newer-version guard refuses 16; step under 100 ms.
 - **Old-test edits (D593):** (a) schema numbers 14 → 15 and "newer" 15 → 16 in `v12-`, `v13-` and `v14-migration.test.ts` (numbers only); (b) `v14-owner.json` and `v15.json` added to the fixture list in `opening.test.ts` (`saves.test.ts` picks fixtures up by itself). Nothing loosened.
-- **Numbers:** `npm run check` green, 93.2 s here (warn at 90, fail at 120). Size 452,544 bytes (per-file gzip -9 of `dist`, my own sum; 157 KB of room used by v1.4's 457,443).
+- **Numbers:** `npm run check` green, 93.2 s here (warn at 90, fail at 120). Size 452,544 bytes (per-file gzip -9 of `dist`, my own sum; v1.4 measured 457,443 by its own run, so the two may differ a little in method).
 - **Deferred:** `v15-played.json` (TB.10); the benchmark row for the migration (TB.14).
