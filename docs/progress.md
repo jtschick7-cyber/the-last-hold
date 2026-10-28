@@ -6,9 +6,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.8b (Descent probe, `sim:descent`, calibration report). Before it: TD.8a. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** your answer to Q59 (calibration table in `docs/flesh-out/v1.4/descent-calibration.md`), then TD.9; your look at the Descent screens and strings on the preview is still owed; then TD.10, TD.11.
-- **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
+- **Last task:** TD.9 (calibrated constants, simulator rows A and B). Before it: TD.8b, TD.8a. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** your look at the Descent screens and strings on the preview (still owed); then TD.10 (budgets, benchmarks, size, old-test list) and TD.11 (wrap-up).
+- **Open questions:** Q59 is answered (D577). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -142,3 +142,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **What the table shows (for Q59):** the cliff is narrow. At tiers 5/6/7 the maxed roster wins 100% up to Unlit Health 7500; at 7/8/9 with 4500 it wins 82% (median 6 downed, zeroed bonus 0%, Hamlet 0%). The minimal gate-open roster almost never wins once tiers pass 5/6/7 (43% at 5/6/7 with 4500, 0% beyond).
 - **Two things to settle in Q59:** (1) Row A says "gate-open full roster", but minimal and maxed differ by a wide margin; which one the 50–85% band judges is the owner's call. (2) Losses at tiers 5 to 6 end with 0 hunters downed (time runs out on The Unlit), so "2 to 8 downed" only holds in the harder cells, where wins also drop.
 - **Left:** Q59 to the owner; TD.9 sets the constants and rows after the answer.
+
+## 2026-10-28 — v1.4 TD.9: calibrated constants and rows A and B
+- **Owner said:** Row A judges the maxed roster, and approved stage tiers [7, 8, 9] with Unlit base Health 4,500 and both rows (Q59 (a), D577, Decided).
+- **Commit 1 (constants):** `balance.ts`, GDD §7.14 (placeholder notes gone), `unlit.ts` comment, D577. No placeholder constant remains. The recorded Descents in `v14-played.json` keep their own frozen tiers [5, 6, 7] and replay unchanged, so the fixture was not regenerated. No old test needed an edit.
+- **Commit 2 (rows):** `descent-victory` (maxed roster wins 50–85%, median 2–8 hunters downed) and `descent-learned-matters` (at least 25 points over the zeroed bonus; Hamlet loses in Stage 1 on every seed) in `sim/targets.ts`, judged in `sim/checks/v14.ts`; `CURRENT_MILESTONE` is `v1.4`. I read "2 to 8" as inclusive (the question text said "strictly between"; the measured median is 6 either way).
+- **Measured (full `sim:check`, 466 s):** 60 of 60 rows pass (58 old + 2 new); 192 of 192 moments same as the v1.3 baseline. Row A: median 81% wins (seeds 80–88%; one seed is above 85%, the median is what is judged), median 6 downed. Row B: 81 points over the zeroed bonus; Hamlet clears no stage. `npm run check` green.
+- **Left:** `sim:accept` only at milestone end. TD.10 and TD.11 next, after your look at the Descent screens.
