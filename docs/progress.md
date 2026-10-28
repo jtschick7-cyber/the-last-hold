@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.8a (endgame roster builder for the simulator). Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** TD.8b (the Descent probe and calibration command); your look at the Descent screens and strings on the preview is still owed; then TD.9, TD.10, TD.11.
+- **Last task:** TD.8b (Descent probe, `sim:descent`, calibration report). Before it: TD.8a. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** your answer to Q59 (calibration table in `docs/flesh-out/v1.4/descent-calibration.md`), then TD.9; your look at the Descent screens and strings on the preview is still owed; then TD.10, TD.11.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -134,3 +134,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Tests (10, `sim/descent-roster.test.ts`):** both profiles deterministic, idempotent, valid after a save round-trip, able to start a Descent; minimal and maxed match their specs (14 hunters at Master Wright, 5 stars, 5 talents, 36 properties, 4 skills x 10 levels = 40, 4 Orders x 4 chapters = 16, 6 + 6 relics).
 - **Notes:** the "12 relics" are the 6 Hold relics plus the 6 Delve relics, and "40 skills" is 4 skills at level 10. Minimal gets its Act VI stand from the real stand code, so some hunters level a little; chapters read are 0 only on a state that had none (new game). No policy issues `descent.start`; no report changes.
 - **No old test edited, no constant, target or fixture touched. `rulesVersion` 5.**
+
+## 2026-10-28 — v1.4 TD.8b: the Descent probe and calibration command
+- **Probe:** `sim/descent-probe.ts`. In the Vigilant's run, at its first Rising Vigil stand (gate open, Bastion), a copy of the hold fights the preview's 100 practice runs (same dice for every roster and value) for five rosters: minimal gate-open, maxed, each with the learned bonus zeroed, and the Hamlet starter party. Values are set on the fight's input, never on the constants. Reported only (a line in the report); no row yet.
+- **`npm run sim:descent`** (`-- --tiers "5,6,7;7,8,9" --health 4500,9000 --out f.md`): 4 tier sets x 5 Health values on the 5 Monday seeds, 122 s. Table committed: `docs/flesh-out/v1.4/descent-calibration.md`.
+- **Checks here:** `npm run check` green (3,732 tests). Vigil shard 105 s (limit 240 s). Full `sim:check` 524 s: 58 of 58 rows pass, **192 of 192 moments same** as the v1.3 baseline. No old test, target, fixture or constant touched; `rulesVersion` 5.
+- **What the table shows (for Q59):** the cliff is narrow. At tiers 5/6/7 the maxed roster wins 100% up to Unlit Health 7500; at 7/8/9 with 4500 it wins 82% (median 6 downed, zeroed bonus 0%, Hamlet 0%). The minimal gate-open roster almost never wins once tiers pass 5/6/7 (43% at 5/6/7 with 4500, 0% beyond).
+- **Two things to settle in Q59:** (1) Row A says "gate-open full roster", but minimal and maxed differ by a wide margin; which one the 50–85% band judges is the owner's call. (2) Losses at tiers 5 to 6 end with 0 hunters downed (time runs out on The Unlit), so "2 to 8 downed" only holds in the harder cells, where wins also drop.
+- **Left:** Q59 to the owner; TD.9 sets the constants and rows after the answer.
