@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { DESCENT_STRINGS } from '../../content/descent-text';
 import type { DescentStagePlayback } from '../../core/systems/descent-playback';
-import { lastDescentView } from '../../core/systems/descent-playback';
+import { descentReplayView, lastDescentView } from '../../core/systems/descent-playback';
 import { dispatch, game } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { playSoundById } from '../app/sound';
@@ -89,4 +89,53 @@ export const openDescentPlayback = (resultOnly = false): void => {
   if (!view) return;
   const progress = { at: resultOnly ? view.playback.beats.length : 0 };
   openSheet(DESCENT_STRINGS.button, () => <Flow view={view} progress={progress} />);
+};
+
+type Replay = NonNullable<ReturnType<typeof descentReplayView>>;
+
+const ReplayView = ({ view, progress }: { view: Replay; progress: { at: number } }) => {
+  const [i, setI] = useState(progress.at);
+  const card = view.cards[i];
+  if (card)
+    return (
+      <div data-testid={`descent-replay-${card.id}`}>
+        {card.paragraphs.map((p) => (
+          <p key={p}>{p}</p>
+        ))}
+        <button
+          type="button"
+          class={styles.btnPrimary}
+          style={{ width: '100%' }}
+          onClick={() => {
+            progress.at = i + 1;
+            setI(i + 1);
+          }}
+        >
+          Continue
+        </button>
+      </div>
+    );
+  return (
+    <div data-testid="descent-replay-logs" style={{ display: 'grid', gap: 'var(--space-2)' }}>
+      {view.stages.map((s) => (
+        <button
+          key={s.stage}
+          type="button"
+          class={styles.btn}
+          data-testid={`descent-replay-log-${s.stage}`}
+          onClick={() => openStageLog(s)}
+        >
+          {s.logLabel}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+/** The Library's "The Descent": the first victory's cards D-01 to D-06, then its three stage logs. */
+export const openDescentReplay = (): void => {
+  const view = descentReplayView(game());
+  if (!view) return;
+  const progress = { at: 0 };
+  openSheet(DESCENT_STRINGS.button, () => <ReplayView view={view} progress={progress} />);
 };

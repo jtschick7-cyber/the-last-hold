@@ -8,6 +8,7 @@ import {
   UNLIT_PORTRAIT_ID,
   UNLIT_SPRITE_ID,
 } from '../../content/assets';
+import { unlit } from '../../content/unlit';
 import { hunters } from '../../content/hunters';
 import type { GuardianId } from '../../content/delves/guardians';
 import type { MonsterId } from '../../content/monsters';
@@ -19,6 +20,7 @@ import {
 } from '../delves/view';
 import type { DescentRecord } from '../state/descent-state';
 import type { GameState } from '../state/game-state';
+import { creatureLines } from './events-view';
 import { rebuildDescentLogs } from './descent-record';
 import type { DescentStageRun } from './descent-fight';
 
@@ -192,3 +194,56 @@ export const lastDescentView = (state: GameState): LastDescentView | null =>
 /** Whether an unread result is waiting, without replaying anything. */
 export const descentResultUnread = (state: GameState): boolean =>
   state.descent.last !== null && state.descent.unreadResult;
+
+export interface DescentReplayView {
+  /** D-01 to D-06, in order. */
+  readonly cards: readonly DescentCard[];
+  /** The three stage fights, with their log buttons. */
+  readonly stages: readonly DescentStagePlayback[];
+}
+
+/**
+ * The Library's replay (GDD §9.24): the first victory's cards and its three stage logs, rebuilt from
+ * `descent.firstWin` alone, so a later attempt never changes it. Null before the first win.
+ */
+export const descentReplayView = (state: GameState): DescentReplayView | null => {
+  const win = state.descent.firstWin;
+  if (!win) return null;
+  const pb = descentPlaybackOf(win);
+  return {
+    cards: pb.beats.flatMap((b) => (b.kind === 'card' ? [b.card] : [])),
+    stages: pb.stages,
+  };
+};
+
+export interface UnlitShelfEntry {
+  readonly name: string;
+  readonly portraitId: string;
+  readonly whatItWas: string;
+  readonly notebook: string;
+  readonly stats: readonly string[];
+  readonly weak: string;
+  readonly resists: string;
+  readonly abilities: readonly string[];
+}
+
+/** The Great Beasts shelf's entry for The Unlit, once Stage 3 has been reached (GDD §5.12.8). */
+export const unlitShelfEntry = (state: GameState): UnlitShelfEntry | null => {
+  if (!state.descent.unlitMet) return null;
+  const lines = creatureLines(unlit);
+  return {
+    name: unlit.name,
+    portraitId: UNLIT_PORTRAIT_ID,
+    whatItWas: unlit.whatItWas,
+    notebook: unlit.blurb,
+    stats: [
+      `Might ${unlit.might}`,
+      `Armor ${unlit.armor}`,
+      `Speed ${unlit.speed}`,
+      `${unlit.attacks} ${unlit.attacks === 1 ? 'attack' : 'attacks'} an action`,
+    ],
+    weak: lines.weak,
+    resists: lines.resists,
+    abilities: lines.abilities,
+  };
+};

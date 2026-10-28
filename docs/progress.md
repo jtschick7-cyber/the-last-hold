@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.7b (playback, story cards, sound cues, result sheet). Before it: TD.6 (art approved and frozen), TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** TD.7c (Roll mark, Library replay, Great Beasts shelf, last polish rows); TD.8a (simulator probe) can run any time.
+- **Last task:** TD.7c (Roll mark, Library replay, resident lines, The Unlit on the shelf). Before it: TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** your look at the Descent screens and strings on the preview (plan: after TD.7c); TD.8a (simulator probe) then TD.8b, TD.9, TD.10, TD.11.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -118,3 +118,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Small changes to my own earlier code:** the stage run now also lists everyone who fought and the mid-stage step-in ticks (additive; every golden fight and recorded stand replays; `rulesVersion` 5); the Delve playback view takes optional banner, outcome and opening-line props (the Delve's own look is unchanged). `descent-playback.ts` joins the lint list of files allowed to read `state.descent`. No old test edited.
 - **Readings to confirm:** (1) the banner sits above the arena, not behind the sprites, so names and bars keep their contrast; (2) "View Descent result" is the plain text GDD §9.24 names and is kept outside the string table; (3) with the placeholder constants even level-1 hunters win from the played fixture, so the loss test strips gear and ranks.
 - **Size (SF.9 method):** 453,208 bytes; 161,192 under 614,400. `npm run check` 88 s, 3,710 tests.
+
+## 2026-10-28 — v1.4 TD.7c: Roll mark, Library replay, resident lines, The Unlit on the shelf
+- **Roll of Wardens:** the warden in office when The Descent was first won gets a small stair mark drawn in code (inline SVG) and *"Led the Descent."* Read from the saved ending's cycle, so nothing new reads `state.descent`.
+- **Library:** the Remembering shelf gains **The Descent** (title only: GDD §9.24 gives no blurb). It replays D-01 to D-06, then offers the three stage logs, all rebuilt from `descent.firstWin`; a later attempt never changes it, and it is not an attempt.
+- **Resident lines:** one pool per ending: the eight after Remember Them, the three of lore §34.11 after the Descent, all eleven after both (still one line a session). The ordinary lines keep their own triggers, which is how the pools rotate.
+- **Great Beasts shelf:** The Unlit appears once Stage 3 has been reached (`unlitMet`), with stats, weaknesses, resistances, abilities, "What it was" and its notebook line.
+- **Tests:** 6 new unit tests (`tests/descent/shelves.test.ts`), 3 Playwright (`descent-shelves.spec.ts`: Roll mark, Library replay with logs, Unlit entry). New polish screen `roll-marks` (fixture `v14-played:marks`: lamp, Rising Vigil level 2 and Descent marks together); tap-size, text-size and contrast sweeps pass for it and the earlier Descent screens. `npm run check` green (3,716 tests, 88 s). Golden fights replay; `rulesVersion` 5; no old test edited.
+- **Readings to confirm:** (1) the Library entry has no blurb; (2) the Unlit entry reuses the notes already written in `unlit.ts` (TD.3); (3) the shelf shows the Unlit even if the Events card has not opened.
+- **Owner task now (plan):** look at the Descent sheet, playback and strings on the preview and say yes, or what to change.

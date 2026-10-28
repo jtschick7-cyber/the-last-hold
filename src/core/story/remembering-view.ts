@@ -7,6 +7,8 @@ import {
   rememberingShelfEntries,
   type RememberingScene,
 } from '../../content/text/remembering';
+import { DESCENT_STRINGS } from '../../content/descent-text';
+import { descentResidentLines } from '../../content/story/descent';
 import { endingWarm, type EndingCard } from '../../content/text/remembering-ending';
 import { afterEndingLines } from '../../content/text/remembering';
 import { CONTRACT_SPECIES } from '../../content/remembering';
@@ -107,8 +109,9 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
 };
 
 export interface RememberingShelfEntry {
-  readonly id: 'reading' | 'later';
+  readonly id: 'reading' | 'later' | 'descent';
   readonly title: string;
+  /** Empty for The Descent: GDD §9.24 gives the shelf entry a title only. */
   readonly blurb: string;
 }
 
@@ -122,6 +125,10 @@ export const rememberingShelf = (state: GameState): RememberingShelfEntry[] => {
   return [
     ...(chosen('remember') ? [{ id: 'reading' as const, ...rememberingShelfEntries.reading }] : []),
     ...(chosen('vigil') ? [{ id: 'later' as const, ...rememberingShelfEntries.later }] : []),
+    // v1.4 (GDD §9.24): once The Descent is won; the shelf's text is the string table's `The Descent`.
+    ...(state.remembering.endings.some((e) => e.ending === 'descent')
+      ? [{ id: 'descent' as const, title: DESCENT_STRINGS.button, blurb: '' }]
+      : []),
   ];
 };
 
@@ -149,16 +156,23 @@ export const readingFrames = (): ReadingFrame[] =>
 export const rimeAfterEnding = (state: GameState): EndingCard | null =>
   state.remembering.endings.some((e) => e.ending === 'remember') ? endingWarm : null;
 
-/** One resident line after Remember Them; `r` in [0, 1) picks it. Null until the ending is recorded. */
+/**
+ * One resident line once an ending is recorded; `r` in [0, 1) picks it. After Remember Them the eight
+ * lines of lore §34.7; after The Descent the three of §34.11; with both, one pool of all eleven
+ * (GDD §5.15.10). Null until either ending is recorded.
+ */
 export const afterEndingLine = (
   state: GameState,
   r: number,
-): (typeof afterEndingLines)[number] | null =>
-  state.remembering.endings.some((e) => e.ending === 'remember')
-    ? (afterEndingLines[
-        Math.min(afterEndingLines.length - 1, Math.floor(r * afterEndingLines.length))
-      ] ?? null)
-    : null;
+): (typeof afterEndingLines)[number] | null => {
+  const has = (e: 'remember' | 'descent'): boolean =>
+    state.remembering.endings.some((x) => x.ending === e);
+  const pool: readonly (typeof afterEndingLines)[number][] = [
+    ...(has('remember') ? afterEndingLines : []),
+    ...(has('descent') ? descentResidentLines : []),
+  ];
+  return pool[Math.min(pool.length - 1, Math.floor(r * pool.length))] ?? null;
+};
 
 export type HoldLookState = 'plain' | 'frost' | 'lamp';
 

@@ -10,6 +10,7 @@ import {
   type ShelfLetter,
 } from '../../core/story/archive';
 import { ordersShelf } from '../../core/story/orders-chapter-view';
+import { openDescentReplay } from '../sheets/DescentPlayback';
 import { rememberingShelf, rimeAfterEnding } from '../../core/story/remembering-view';
 import { afterTheEnding, rememberingShelfTitle } from '../../content/text/remembering';
 import { openWarmRime, playEnding } from '../remembering/ReadingScene';
@@ -249,11 +250,19 @@ const Library = () => {
                 <button
                   type="button"
                   class={styles.linkRow}
-                  onClick={e.id === 'reading' ? playEnding : openVigilScene}
+                  onClick={
+                    e.id === 'reading'
+                      ? playEnding
+                      : e.id === 'descent'
+                        ? openDescentReplay
+                        : openVigilScene
+                  }
                 >
                   <span class={styles.grow}>
                     <strong>{e.title}</strong>
-                    <span class={`${styles.small} ${styles.dim}`}> · {e.blurb}</span>
+                    {e.blurb !== '' && (
+                      <span class={`${styles.small} ${styles.dim}`}> · {e.blurb}</span>
+                    )}
                   </span>
                 </button>
               </li>

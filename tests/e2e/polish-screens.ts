@@ -40,6 +40,14 @@ export const loadFixture = async (
     delete save.state.story.peakLevels.herdis;
     for (const it of save.state.items) if (it.where?.hunter === 'herdis') it.where = null;
   }
+  // v1.4 (D566 (4)): v14-played:marks gives the Roll all three marks: the lamp (cycle 1), Rising Vigil
+  // level 2 (cycle 2) and The Descent (cycle 3, the fixture's own win).
+  if (variant === 'marks') {
+    const st = save.state;
+    st.remembering.nearSeen = true;
+    st.remembering.endings.push({ ending: 'remember', at: 1, cycle: 1 });
+    st.cycles[1].stand.vigilLevel = 2;
+  }
   await page.goto('./?debug');
   await begin(page, 'Mira');
   await tab(page, 'More').click();
@@ -285,6 +293,22 @@ export const FLOWS: readonly Flow[] = [
       await page.getByRole('button', { name: 'Continue' }).click();
       await page.getByRole('button', { name: 'Continue' }).click();
       await visit('descent-stage-playback', 'The Descent stage playback', [/Stage 1: The Crack/]);
+    },
+  },
+  {
+    id: 'roll-marks',
+    fixture: 'v14-played:marks',
+    mutates: true,
+    how: 'fixture v14-played with the lamp, Rising Vigil and the Descent marks (a test-only edit), Hold, Rank ▸',
+    run: async (page, visit) => {
+      await dismiss(page);
+      await tabTo(page, 'Hold');
+      await btn(page, /^Rank/).click();
+      await visit('roll-marks', 'Roll of Wardens (all three marks)', [
+        /Read the roll aloud\./,
+        /Rising Vigil, level 2\./,
+        /Led the Descent\./,
+      ]);
     },
   },
   plain('hunters-roster', 'Hunters (roster)', 'Hunters tab', [/By slot/], (p) =>

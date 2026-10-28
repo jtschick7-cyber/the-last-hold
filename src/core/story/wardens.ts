@@ -53,6 +53,8 @@ export interface WardenLine {
   readonly readAloud: boolean;
   /** The Rising Vigil level the warden's stand was fought at (GDD §9.23); 0 when it was fought without. */
   readonly vigilLevel: number;
+  /** v1.4 (GDD §9.24): the warden in office when The Descent was first won ("Led the Descent."). */
+  readonly ledDescent: boolean;
 }
 
 export const rollOfWardens = (state: GameState): WardenLine[] =>
@@ -70,6 +72,9 @@ export const rollOfWardens = (state: GameState): WardenLine[] =>
       relics: c.stand?.relicsFound ?? [],
       current,
       vigilLevel: c.stand?.vigilLevel ?? 0,
+      ledDescent: state.remembering.endings.some(
+        (e) => e.ending === 'descent' && e.cycle === c.number,
+      ),
       readAloud: state.remembering.endings.some(
         (e) => e.ending === 'remember' && e.cycle === c.number,
       ),
