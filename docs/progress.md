@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.2 (save schema 14, the migration, `v14.json`). Before it: TD.1 (docs commit) and two CI repairs (D569).
-- **Next:** TD.3 (content, The Unlit, the story texts from `lore-secrets.md` §34.11, the learned bonus). Then TD.4a.
+- **Last task:** TD.3 (The Unlit, story texts, UI strings, `learnedBonus`). Before it: TD.2 (save schema 14) and TD.1 (docs commit).
+- **Next:** TD.4a (the isolated Descent fight engine and abilities). TD.5 (art) also needs only TD.3.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -51,3 +51,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 
 ## 2026-10-28 — v1.4 Q60 answered (docs only)
 - The owner pasted the approved wording of D-01 to D-07 and the three resident lines. Written word for word as `lore-secrets.md` §34.11 (the end of §34 and of the file), D570. Q60 closed; TD.3 is no longer `[?]`.
+
+## 2026-10-28 — v1.4 TD.3: The Unlit, story texts, strings, the learned bonus
+- **Done (tests first):** `src/content/unlit.ts` (stats, resistances, First Cold, Heavy Dark with Chill, Great Beasts lines, `descentOnly: true`; Health reads `descent.unlitBaseHealth`); `story/descent.ts` (D-01 to D-07 and the 3 resident lines, word for word from §34.11); `descent-text.ts` (the 26 GDD §9.24 strings); `core/systems/descent.ts` `learnedBonus(state)`: Might, Health and damage taken, with the breakdown tree from the same function and the active Delve relics (Whorl, Nail, Lantern, Salt Ring).
+- **Tests:** `descent-text` (cards and lines equal the lore file paragraph by paragraph; forbidden words, digits, the forty names, allowed people; strings equal the GDD table both ways), `unlit`, `descent/learned-bonus` (9 states added up by hand), `descent/unlit-no-leak` (guardian draws, floor groups, candidates, stand waves and the Forgotten's count hash-identical to before). Names, §7 keys and every golden fight and recorded stand pass unchanged; `rulesVersion` 5.
+- **Old tests edited:** none.
+- **Decision to confirm, D571 (Proposed):** The Unlit sits beside the species lists (not in `MONSTER_IDS`), re-exported from `monsters.ts`; this is what keeps it out of every draw. Its abilities have their own types, so no combat code changed.
+- **Please check:** percents print with up to two decimals (GDD §9.24 gives no rounding rule). The headline "+m%" is the learned sum only; Spindle Whorl, Cold Iron Nail, Rift Lantern and Salt Ring are listed under "Active Delve relics:" and applied by the fight in TD.4a, so they are not counted twice.
+- **Placeholders:** `descent.stageTiers` and `descent.unlitBaseHealth` stay placeholders until TD.9. Names were already in `names.ts` (TD.1); nothing new needed.
+- **Not done / later:** the Unlit's art (TD.5), the engine (TD.4a), the UI (TD.7).
