@@ -78,6 +78,9 @@ const playStage = async (page: Page, n: 1 | 2 | 3): Promise<void> => {
   await expect(view).toBeVisible();
   await expect(view.getByRole('heading', { name: new RegExp(`^Stage ${n}:`) })).toBeVisible();
   await view.getByRole('button', { name: 'Skip' }).click();
+  // Cues asked for within the player's 150 ms hold are merged into the strongest one (D521); a fast
+  // runner skips stages quicker than a player, so let each stage's cue go out before the next.
+  await page.waitForTimeout(250);
   await view.getByRole('button', { name: 'Continue' }).click();
 };
 

@@ -170,3 +170,4 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **The owner said the playtest passed** and that their save was exported.
 - **`sim:accept`** (470 s here): the baseline moves to v1.4; the only differences are the milestone and the two new rows. Plan `Status: complete`, D578.
 - **Left:** the owner tags `v1.4.0` by hand after the merge.
+- **A CI flake, fixed:** on the last push, `descent-playback.spec.ts` (full win, loss) failed in one CI run and passed in the other run of the same commit. Cause: the sound player merges cues asked for within 150 ms (D521), and a fast runner skips stages quicker than a player. The test now waits 250 ms after each Skip; nothing else changed, and 9 of 9 runs pass here.
