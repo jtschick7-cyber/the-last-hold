@@ -128,7 +128,7 @@ describe('the v13 → v14 migration', () => {
   });
 
   it('every golden fight and recorded stand keeps its result', () => {
-    for (const f of [...OLD, 'v14.json']) {
+    for (const f of [...OLD, 'v14.json', 'v14-played.json']) {
       const after = loadFull(readFixture(f)).state;
       for (const ref of after.log.recentFights) {
         const replay = runFight({

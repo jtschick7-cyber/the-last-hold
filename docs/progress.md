@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.4a (the Descent fight engine, The Unlit's abilities). Before it: TD.3, TD.2, TD.1.
-- **Next:** TD.4b (the `descent.start` command, the frozen record, log rebuild, `v14-played.json`). TD.5 (art) can also run.
+- **Last task:** TD.4b (`descent.start`, the frozen record, log rebuild, debug path, `v14-played.json`). Before it: TD.4a, TD.3, TD.2, TD.1.
+- **Next:** TD.4c (Suggest order, preview worker, benchmark). TD.5 (art) can also run.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -67,3 +67,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Ordinary fight code touched only by exports and extractions** (`runTicks`, `startPotion`, `throwBomb`, `resolveEnds` exported; the `unlit` instance in `species.ts`). `npm run check` green (3,649 tests, 85 s): every golden fight and recorded stand replays; `rulesVersion` 5. No old test edited.
 - **Decisions to confirm:** D572 records your yes to D571. D573 (Proposed) lists six small readings: when First Cold fires, who Heavy Dark chills, which monster each bomb hits, potions used once, the sign of the frozen cut, the extractions.
 - **Not done / later:** the command, the frozen record and `rebuildDescentLogs` (TD.4b); preview (TD.4c); the debug roster (TD.4b).
+
+## 2026-10-28 — v1.4 TD.4b: the Descent command, the frozen record, the debug path
+- **Done (tests first, 22 new tests in `tests/descent/start.test.ts`, 5 in `tests/lint/descent-coupling.test.ts`):** `descent.start` through `apply()`; refused when the gate is closed, below Bastion, empty, duplicate, unowned, over 14, on a contract or in a Delve, or the stores cannot pay. A win records `'descent'` once, sets `firstWin`, `last`, `unlitMet`; nothing else in the hold moves (compared whole). A loss spends what was thrown, records `last`, and retries at once.
+- **Record and rebuild:** every combat input is frozen on the record; `rebuildDescentLogs(record)` re-runs the 3 stages with logs and agrees line for line, and a test wipes levels, gear, relics and the bestiary first.
+- **Debug:** `debug.prepareEndgameRoster` (14 hunters Master-Wright, 5 stars, 5 talents, Wright gear, 16/16 Mastered, 36/36 properties, 40/40 skills, 16/16 chapters, 12 relics, stocked stores; idempotent) and `debug.descentWin` (real stand if needed, gate, Bastion, real attempts). `v14-played.json` made by `scripts/make-v14-fixtures.ts`; it won on attempt 1 with 0 hunters downed, so the placeholder constants are far too easy (TD.9 calibrates).
+- **Save growth (M4):** one record about 6.0 KB (1.4 KB gzipped); `descent` with two records about 12.1 KB (1.5 KB gzipped); above the 4 KB sketch, so D575 (Proposed) asks you to approve a GDD §6.5 row. **Size:** 446,693 bytes (+5,371 since TD.2), 167,707 under 614,400.
+- **Old tests edited (D566):** (2) `opening.test.ts` lists `v14-played.json` among the played saves; (5) new non-coupling test (`descent-coupling`); (7) no existing test lists every command, so nothing to add. My own TD.2 test `v14-migration` now also replays `v14-played.json`'s golden fights. Nothing loosened. `npm run check` green (3,675 tests).
+- **Not done / later:** Suggest, preview worker, benchmark (TD.4c); the `unreadResult` clearing command comes with the UI (TD.7b).

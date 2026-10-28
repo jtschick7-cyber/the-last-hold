@@ -79,6 +79,8 @@ import {
 } from './layout';
 import { chooseEnding, noteReady, seeNear } from './remembering';
 import { debugVigilSetStands, vigilSet } from './vigil';
+import { startDescent } from './descent';
+import { debugDescentWin, debugPrepareEndgameRoster } from './debug-descent';
 import { debugRememberingFinishActVI, debugRememberingOpenGate } from './debug-remembering';
 import { refuse, type ApplyResult, type Command } from './types';
 
@@ -193,6 +195,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return setSeats(state, cmd.orders);
     case 'vigil.set':
       return vigilSet(state, cmd.on);
+    case 'descent.start':
+      return startDescent(state, cmd.order, cmd.prep, now);
+    case 'debug.prepareEndgameRoster':
+      return debugPrepareEndgameRoster(state);
+    case 'debug.descentWin':
+      return debugDescentWin(state, now);
     case 'debug.vigilSetStands':
       return debugVigilSetStands(state, cmd.stands);
     case 'remembering.seeNear':
