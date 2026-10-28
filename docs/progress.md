@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.2 (save schema 15). Before it: TB.1.
-- **Next:** TB.3 (the constants, lane and cover functions, breakdowns; nothing wired into combat yet).
+- **Last task:** TB.3 (lane and cover maths). Before it: TB.2, TB.1.
+- **Next:** TB.4 (lanes in the wave list). TB.5 needs TB.2, TB.3 and Q62 (answered).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -45,3 +45,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Old-test edits (D593):** (a) schema numbers 14 → 15 and "newer" 15 → 16 in `v12-`, `v13-` and `v14-migration.test.ts` (numbers only); (b) `v14-owner.json` and `v15.json` added to the fixture list in `opening.test.ts` (`saves.test.ts` picks fixtures up by itself). Nothing loosened.
 - **Numbers:** `npm run check` green, 93.2 s here (warn at 90, fail at 120). Size 452,544 bytes (per-file gzip -9 of `dist`, my own sum; v1.4 measured 457,443 by its own run, so the two may differ a little in method).
 - **Deferred:** `v15-played.json` (TB.10); the benchmark row for the migration (TB.14).
+
+## 2026-10-28 — v1.5 TB.3: the lane, cover, depth and volley maths
+- **Built, not yet in any fight:** new `src/core/systems/breach.ts`: the lane of a wave, the counted pieces (active walls and towers in rows 0 to 2), the lane table a stand will freeze, cover (own 50% plus 25% a neighbour, ruined edge counts), depth, the wall cut, the shared volley, each with its breakdown from the same function, and the strip's view. The wave number is counted from 1, as the species picks count.
+- **Strings:** `src/content/breach-text.ts` holds the nine §9.25 breakdown lines, word for word (a test checks them against the GDD). No other string.
+- **Constants:** the nine `breach.*` keys were already in `balance.ts` (TB.1); each is read in one file under `src/core` (a test enforces it). Placeholders stay placeholders until TB.13.
+- **One detail for you to know:** the lint allows only 0, 1, 2 and 100 as plain numbers there, so the volley is worked with reach and scale in hundredths, not quarters. It gives exactly the same whole numbers as the quarters order in the design (both sides scale by 25).
+- **Tests first:** 60-odd new tests: worked lane lists, species picks unchanged, every one of the 256 column patterns for cover, 2% per level with full cover, worked volley tables (1, 2, 3 towers, floor, scale and reach changes, Tray tower dilutes nothing, an upgrade never lowers a lane), the 25 breakdown lines, the view and its memo. Planted reads of the layout from stand, combat, economy, contracts and advance code fail; nothing in `src/ui` may import a formula.
+- **Old-test edit (D593 c):** `systems/breach.ts` added to the allowed readers in `tests/layout/layout.test.ts`. A stale comment in `layout.ts` was updated.
+- **Numbers:** `npm run check` green, 94.8 s here (warn at 90, fail at 120; CI is the judge). Every golden fight and recorded stand still replays (they are in `check`).
+- **Not done:** nothing is wired into combat or the wave list (TB.4, TB.5); no UI.

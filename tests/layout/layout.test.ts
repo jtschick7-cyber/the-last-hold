@@ -261,6 +261,7 @@ describe('the layout is read by no rule (S11)', () => {
     'state/game-state.ts',
     'state/layout-state.ts',
     'state/new-game.ts',
+    'systems/breach.ts', // D593 (c): the one new reader, for the lane table
     'systems/layout-catalog.ts',
     'systems/layout-place.ts',
     'systems/layout.ts',
