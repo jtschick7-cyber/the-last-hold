@@ -1,7 +1,7 @@
 import { CONSUMABLE_IDS } from '../../content/consumables';
 import { DELVE_RELIC_IDS } from '../../content/delves/relics';
 import { GEAR_IDS, gear } from '../../content/gear';
-import { HUNTER_IDS, hunters, type HunterId } from '../../content/hunters';
+import { HUNTER_IDS, hunters } from '../../content/hunters';
 import { INGREDIENT_IDS } from '../../content/ingredients';
 import { ORDER_IDS } from '../../content/orders';
 import { RELIC_IDS } from '../../content/relics';
@@ -13,7 +13,7 @@ import { HUNTER_RANK_IDS } from '../../content/ranks';
 import { freshHunter } from '../state/hunters-state';
 import type { GameState } from '../state/game-state';
 import { levelFor, maxSkillLevel, xpToNext } from '../skills/skills';
-import { eligibleForDescent } from '../systems/descent-record';
+import { suggestDescentOrder } from '../systems/descent-order';
 import { equipItem, makeItem } from '../systems/items';
 import { talentPointsAt } from '../systems/ranks';
 import { actVIStandApplied } from '../story/remembering';
@@ -101,24 +101,6 @@ export const debugPrepareEndgameRoster = (state: GameState): ApplyResult => {
   return ok;
 };
 
-/** A marching order: one Vanguard and one Mender first, then by level and content order, the rest after. */
-const orderFor = (state: GameState): HunterId[] => {
-  const free = eligibleForDescent(state);
-  const byLevel = [...free].sort(
-    (a, b) =>
-      (state.hunters[b]?.level ?? 0) - (state.hunters[a]?.level ?? 0) ||
-      free.indexOf(a) - free.indexOf(b),
-  );
-  const front: HunterId[] = [];
-  for (const role of ['vanguard', 'mender'] as const) {
-    const pick = byLevel.find((id) => hunters[id].role === role);
-    if (pick) front.push(pick);
-  }
-  for (const id of byLevel)
-    if (!front.includes(id) && front.length < num('laststand.partyMax')) front.push(id);
-  return [...front, ...byLevel.filter((id) => !front.includes(id))];
-};
-
 const MAX_ATTEMPTS = 60;
 
 /**
@@ -140,7 +122,7 @@ export const debugDescentWin = (state: GameState, now: number): ApplyResult => {
   prepareEndgameRoster(state);
   for (let i = 0; i < MAX_ATTEMPTS; i++) {
     for (const id of CONSUMABLE_IDS) state.stores[id] = Math.max(state.stores[id], ENDGAME_STOCK);
-    const r = startDescent(state, orderFor(state), { oils: {}, potions: {} }, now);
+    const r = startDescent(state, suggestDescentOrder(state), { oils: {}, potions: {} }, now);
     if (!r.ok) return r;
     if (state.descent.firstWin) {
       state.meta.debugUsed = true;

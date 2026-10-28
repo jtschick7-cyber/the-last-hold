@@ -12,6 +12,7 @@ import type {
   HuntSuggestInput,
   HuntSuggestion,
 } from '../../core/systems/hunt-odds';
+import type { DescentPreview, DescentPreviewInput } from '../../core/systems/descent-odds';
 import type { StandPreview, StandPreviewInput } from '../../core/stand/preview';
 
 // Technical design §10.1: odds and Suggest run in a Web Worker, so a slow phone
@@ -26,7 +27,9 @@ export type WorkerRequest =
   | { id: number; kind: 'bossSuggest'; input: BossSuggestInput }
   /** GDD §5.12.6, §9.17: a hunt track's odds and Suggest. */
   | { id: number; kind: 'huntOdds'; input: HuntOddsInput }
-  | { id: number; kind: 'huntSuggest'; input: HuntSuggestInput };
+  | { id: number; kind: 'huntSuggest'; input: HuntSuggestInput }
+  /** GDD §5.15.10, §6.5, technical design §22.4: the Descent preview (100 practice runs). */
+  | { id: number; kind: 'descentPreview'; input: DescentPreviewInput };
 
 export type WorkerResponse =
   | { id: number; kind: 'odds'; result: Odds; ms: number }
@@ -36,4 +39,5 @@ export type WorkerResponse =
   | { id: number; kind: 'bossSuggest'; result: BossSuggestion | null; ms: number }
   | { id: number; kind: 'huntOdds'; result: HuntOdds; ms: number }
   | { id: number; kind: 'huntSuggest'; result: HuntSuggestion | null; ms: number }
+  | { id: number; kind: 'descentPreview'; result: DescentPreview; ms: number }
   | { id: number; kind: 'error'; message: string };

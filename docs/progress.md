@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.4b (`descent.start`, the frozen record, log rebuild, debug path, `v14-played.json`). Before it: TD.4a, TD.3, TD.2, TD.1.
-- **Next:** TD.4c (Suggest order, preview worker, benchmark). TD.5 (art) can also run.
+- **Last task:** TD.4c (Suggest order, preview worker, benchmark). Before it: TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** TD.5 (art) or TD.7a (needs TD.4c, now done), TD.8a (needs TD.4b).
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -75,3 +75,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Save growth (M4):** one record about 6.0 KB (1.4 KB gzipped); `descent` with two records about 12.1 KB (1.5 KB gzipped); above the 4 KB sketch, so D575 (Proposed) asks you to approve a GDD §6.5 row. **Size:** 446,693 bytes (+5,371 since TD.2), 167,707 under 614,400.
 - **Old tests edited (D566):** (2) `opening.test.ts` lists `v14-played.json` among the played saves; (5) new non-coupling test (`descent-coupling`); (7) no existing test lists every command, so nothing to add. My own TD.2 test `v14-migration` now also replays `v14-played.json`'s golden fights. Nothing loosened. `npm run check` green (3,675 tests).
 - **Not done / later:** Suggest, preview worker, benchmark (TD.4c); the `unreadResult` clearing command comes with the UI (TD.7b).
+
+## 2026-10-28 — v1.4 TD.4c: Suggest marching order, the preview worker, the benchmark
+- **Done (tests first, 9 new tests in `tests/descent/preview.test.ts`):** `suggestDescentOrder(state)` (`descent-order.ts`): everyone who can march; the best Vanguard and best Mender take front places, the other front places go to the highest levels (ties in roster order), the rest wait in the reserve by level. The debug path now uses it instead of its own copy.
+- **Preview:** `previewDescent` (`descent-odds.ts`) runs `descent.previewSamples` (100) real engine runs on seeds `gameSeed:descentodds:attempt:i` (stages `…:stage:1|2|3`), never the real attempt's seed. The seed does not depend on party or prep, so compared orders share dice. Returns win chance with margin, median stages cleared and outcome, hunters downed (median, 10th to 90th), and a Why? tree. A test recomputes all of it from 100 direct engine runs and gets the same numbers.
+- **Worker and client:** worker kind `descentPreview` (the existing message shape is `{ id, kind, input }`, so I followed it rather than `type`/`requestId`; same meaning). `requestDescentPreview` drops stale requests (older answers resolve to nothing); with no worker it runs 20 runs as a "quick estimate".
+- **Benchmark:** `Descent preview` in `bench.spec.ts` and `bench-page.ts`, budget 1,500 ms (fails at 2x). Measured 340 ms at 4x slowdown, 14 hunters. The placeholder constants make fights easy, so TD.10 measures again.
+- **Checks:** `npm run check` green (3,684 tests, 78 s). Golden fights and recorded stands replay; `rulesVersion` 5. No old test edited. The lint READERS list needs no new file: none of the new core files reads `state.descent`.
+- **Container note:** `npm ci` was needed here, and the bench browser had to be pointed at `/opt/pw-browsers/chromium` with a throwaway config (not committed).
+- **Not done / later:** the preview's screen (TD.7), the Descent's art (TD.5).

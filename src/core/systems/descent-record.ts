@@ -12,6 +12,7 @@ import { endingChoosable } from '../story/remembering';
 import { runDescent, type DescentInput, type DescentRun } from './descent-fight';
 import { hunterStatus, snapshotOf } from './hunters';
 import { learnedBonus } from './descent';
+import type { DescentPreviewInput } from './descent-odds';
 
 // GDD §5.15.10, technical design §22.1, §22.2 (D558, D562): who can go, what a Descent freezes, and the
 // rebuild of its logs. Every combat input is frozen on the record, so a replay depends on nothing in the
@@ -126,3 +127,16 @@ export const rebuildMatches = (record: DescentRecord, run: DescentRun): boolean 
   run.outcome === record.outcome &&
   run.stagesCleared === record.stagesCleared &&
   JSON.stringify(run.stages.map((s) => s.summary)) === JSON.stringify(record.stages);
+
+/** What the odds worker needs for a preview: plain data, built from the hold as it is now (technical design §22.4). */
+export const descentPreviewInputFor = (
+  state: GameState,
+  order: readonly HunterId[],
+  prep: Pick<Preparation, 'oils' | 'potions'>,
+  samples?: number,
+): DescentPreviewInput => ({
+  gameSeed: state.meta.gameSeed,
+  attempt: state.descent.attempts + 1,
+  run: descentInputFor(state, order, prep).input,
+  ...(samples === undefined ? {} : { samples }),
+});

@@ -3,6 +3,7 @@ import { computeOdds } from '../../src/core/contracts/odds';
 import { suggestParty } from '../../src/core/contracts/suggest';
 import { computeHuntOdds, suggestHuntParty } from '../../src/core/systems/hunt-odds';
 import { previewBoss, suggestBossParty } from '../../src/core/systems/boss-odds';
+import { previewDescent } from '../../src/core/systems/descent-odds';
 import { previewStand } from '../../src/core/stand/preview';
 import { snap } from '../combat/helpers';
 import { ORDER_IDS } from '../../src/content/orders';
@@ -51,6 +52,7 @@ type Bench = {
   oddsUnknown: number;
   suggestUnknown: number;
   stand: number;
+  descentPreview: number;
   bossPreview: number;
   bossSuggest: number;
   huntOdds: number;
@@ -156,6 +158,27 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
         cycleDays: 3,
         threatPerDay: 40,
         trophiesPerDay: 20,
+      }),
+    ),
+    // Plan TD.4c (GDD §6.5, D565): the Descent preview, 100 three-stage practice runs with all 14
+    // hunters marching (the longest runs, as the reserve steps in).
+    descentPreview: best(() =>
+      previewDescent({
+        gameSeed: 'bench',
+        attempt: 1,
+        run: {
+          seed: 'bench:descent:1',
+          order: HUNTER_IDS.slice(0, 14).map((id) => snap(id, { level: 10 })),
+          prep: { oils: {}, potions: { [HUNTER_IDS[0] ?? 'halvar']: 'mending-draught' } },
+          bombs: { 'fire-pot': 4, saltburst: 2 },
+          learned: { mightAndHealth: 0.2, taken: 0.05 },
+          delveRelics: [],
+          knowledge: {},
+          stageTiers: [5, 6, 7],
+          unlitBaseHealth: 4500,
+          alchemy: 0,
+        },
+        samples: 100,
       }),
     ),
     // Plan T10.19 (GDD §6.5, D445): the Orders' card, an Order sheet, the standing of all four after

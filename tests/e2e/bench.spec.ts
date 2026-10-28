@@ -10,6 +10,8 @@ const BUDGET = {
   oddsUnknown: 150,
   suggest: 300,
   stand: 1000,
+  // v1.4 (D565): 100 three-stage practice runs, GDD §6.5.
+  descentPreview: 1500,
   bossPreview: 150,
   bossSuggest: 800,
   huntOdds: 1500,
@@ -34,6 +36,7 @@ type Bench = {
   oddsUnknown: number;
   suggestUnknown: number;
   stand: number;
+  descentPreview: number;
   bossPreview: number;
   bossSuggest: number;
   huntOdds: number;
@@ -75,6 +78,7 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
       `Arrange Hold sheet ${ms.arrangeSheet.toFixed(1)} ms`,
   );
   console.log(`v12 → v13 migration (played save): ${ms.vigilMigration.toFixed(1)} ms`);
+  console.log(`Descent preview (100 practice runs): ${ms.descentPreview.toFixed(0)} ms`);
   console.log(
     `hunt odds ${ms.huntOdds.toFixed(0)} ms, hunt Suggest ${ms.huntSuggest.toFixed(0)} ms`,
   );
@@ -84,6 +88,7 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     ['odds with 3 candidates and preparation', ms.oddsUnknown, BUDGET.oddsUnknown],
     ['Suggest with 3 candidates and preparation', ms.suggestUnknown, BUDGET.suggest],
     ['the Last Stand preview (100 practice stands)', ms.stand, BUDGET.stand],
+    ['the Descent preview (100 practice runs)', ms.descentPreview, BUDGET.descentPreview],
     ['the boss preview', ms.bossPreview, BUDGET.bossPreview],
     ['Suggest for a boss (14 hunters, 10 tries)', ms.bossSuggest, BUDGET.bossSuggest],
     ['hunt odds (prepared and unprepared)', ms.huntOdds, BUDGET.huntOdds],

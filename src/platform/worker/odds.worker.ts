@@ -2,6 +2,7 @@ import { computeOdds } from '../../core/contracts/odds';
 import { suggestParty } from '../../core/contracts/suggest';
 import { previewBoss, suggestBossParty } from '../../core/systems/boss-odds';
 import { computeHuntOdds, suggestHuntParty } from '../../core/systems/hunt-odds';
+import { previewDescent } from '../../core/systems/descent-odds';
 import { previewStand } from '../../core/stand/preview';
 import type { WorkerRequest, WorkerResponse } from './protocol';
 
@@ -55,6 +56,13 @@ scope.onmessage = (e) => {
         id: req.id,
         kind: 'huntSuggest',
         result: suggestHuntParty(req.input),
+        ms: performance.now() - started,
+      });
+    } else if (req.kind === 'descentPreview') {
+      scope.postMessage({
+        id: req.id,
+        kind: 'descentPreview',
+        result: previewDescent(req.input),
         ms: performance.now() - started,
       });
     } else {
