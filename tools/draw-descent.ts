@@ -5,7 +5,7 @@
 // The banners carry no lettering: the rime on the last wall only suggests writing.
 import { C, Canvas, seedRolls } from './pixel';
 import { CX } from './portrait-parts';
-import { SPRITE_SIZE } from './sprite-frames';
+import { SPRITE_SIZE, framesOf, type SpriteFrame } from './sprite-frames';
 
 export const DESCENT_SCENE_W = 160;
 export const DESCENT_SCENE_H = 64;
@@ -37,13 +37,16 @@ export const drawUnlitPortrait = (): Canvas => {
       return d > 20 ? C.plum : d > 11 ? C.violet : C.dusk;
     },
   );
-  // The face-hollow: a dark oval with a pale edge, nothing in it but two calm eyes.
-  c.ellipse(CX, 28, 8, 11, C.ink);
-  c.ellipse(CX, 28, 7, 10, C.night);
+  // The face-hollow: a void, near-black, with a faint rim, so the two pale eyes glow out of shadow.
+  c.ellipse(CX, 28, 8, 11, C.plum);
+  c.ellipse(CX, 28, 7, 10, C.ink);
   c.mirrored((set) => {
-    set(CX - 4, 26, C.ice);
-    set(CX - 3, 26, C.frost);
-    set(CX - 4, 27, C.cyan);
+    set(CX - 5, 26, C.blue); // the glow around each eye
+    set(CX - 4, 25, C.night);
+    set(CX - 4, 27, C.night);
+    set(CX - 3, 26, C.night);
+    set(CX - 4, 26, C.frost);
+    set(CX - 5, 27, C.cyan);
   });
   // Rime crown: tall frost shards rising from the hood, tallest at the middle.
   const shards: readonly [number, number, number][] = [
@@ -62,18 +65,13 @@ export const drawUnlitPortrait = (): Canvas => {
     }
     c.set(x, y - h + 2, C.frost);
   }
-  // Frost along the shoulders.
   const roll = seedRolls('unlit-portrait');
-  for (let i = 0; i < 46; i++) {
-    const x = 8 + Math.floor(roll() * 48);
-    const y = 42 + Math.floor(roll() * 20);
-    if (c.get(x, y) !== null && c.get(x, y) !== C.ink) c.set(x, y, roll() < 0.5 ? C.ice : C.dusk);
-  }
-  // Threads of draught hanging from the hem, uneven, fading into the dark.
-  for (let x = 12; x < 54; x += 3) {
-    const len = 6 + Math.floor(roll() * 8);
+  // Frost dripping from the hem: short vertical threads, one pixel wide, two to five tall, never in a pattern.
+  for (let x = 9; x < 56; x += 2 + Math.floor(roll() * 3)) {
+    const top = 50 + Math.floor(roll() * 8);
+    const len = 2 + Math.floor(roll() * 4);
     for (let j = 0; j < len; j++)
-      c.set(x + (j % 5 === 3 ? 1 : 0), 50 + j, j < len / 2 ? C.dusk : C.slate);
+      c.set(x, top + j, j === 0 ? C.frost : j < len - 1 ? C.ice : C.dusk);
   }
   // The small thing it was: one warm spark kept low in the chest, the only warm colour.
   c.rect(CX - 1, 47, 2, 2, C.gold);
@@ -82,36 +80,71 @@ export const drawUnlitPortrait = (): Canvas => {
   return c;
 };
 
-/** The base battle frame, 32 px, facing left, outlined; the strip is made by `framesOf`. */
-export const drawUnlitSprite = (): Canvas => {
+interface Pose {
+  /** Sideways shift of the whole figure. */
+  readonly ox: number;
+  /** The upper body (hood, crown, arm) is moved by this much, on top of `ox`. */
+  readonly upperDx: number;
+  /** The upper body and crown sink by this many rows. */
+  readonly bob: number;
+  /** How far the reaching arm extends, in pixels. */
+  readonly arm: number;
+  /** Shifts the hem's threads, so two frames never share them. */
+  readonly tendrils: 0 | 1;
+}
+
+/** One standing frame, 32 px, facing left, outlined. */
+const drawStanding = (pose: Pose): Canvas => {
   const c = new Canvas(SPRITE_SIZE);
-  // Hem: threads of cold, not feet.
-  for (const [x, len] of [
-    [8, 4],
-    [11, 6],
-    [14, 3],
-    [17, 7],
-    [20, 4],
-    [23, 5],
-  ] as const)
-    for (let j = 0; j < len; j++) c.set(x, 26 + j, j < 3 ? C.dusk : C.slate);
-  // Body: a tall hooded shape that widens toward the hem.
+  const { ox, upperDx, bob, arm, tendrils } = pose;
+  const ux = ox + upperDx;
+  // Hem: threads of cold, not feet; the phase moves them in the second idle frame.
+  const hem: readonly (readonly [number, number])[] =
+    tendrils === 0
+      ? [
+          [8, 4],
+          [11, 6],
+          [14, 3],
+          [17, 7],
+          [20, 4],
+          [23, 5],
+        ]
+      : [
+          [9, 6],
+          [12, 3],
+          [15, 7],
+          [18, 4],
+          [21, 6],
+          [24, 3],
+        ];
+  for (const [x, len] of hem)
+    for (let j = 0; j < len; j++) c.set(x + ox, 26 + j, j < 3 ? C.dusk : C.slate);
+  // The lower body stays put; the upper body bobs and lunges.
   c.polygon(
     [
       [6, 27],
+      [8, 22],
+      [24, 22],
+      [26, 27],
+    ].map(([x, y]) => [(x as number) + ox, y as number] as [number, number]),
+    (x) => (x < 13 + ox ? C.dusk : x < 18 + ox ? C.violet : C.plum),
+  );
+  c.polygon(
+    [
+      [8, 22],
       [9, 15],
       [11, 8],
       [15, 4],
       [20, 7],
       [22, 15],
-      [26, 27],
-    ],
-    (x, y) => (x < 13 ? C.dusk : y < 14 || x < 18 ? C.violet : C.plum),
+      [24, 22],
+    ].map(([x, y]) => [(x as number) + ux, (y as number) + bob] as [number, number]),
+    (x, y) => (x < 13 + ux ? C.dusk : y < 14 + bob || x < 18 + ux ? C.violet : C.plum),
   );
   // Hood hollow, turned left, with one pale eye.
-  c.ellipse(13, 12, 3, 4, C.ink);
-  c.set(11, 11, C.frost);
-  c.set(11, 12, C.ice);
+  c.ellipse(13 + ux, 12 + bob, 3, 4, C.ink);
+  c.set(11 + ux, 11 + bob, C.frost);
+  c.set(11 + ux, 12 + bob, C.ice);
   // Rime crown.
   for (const [x, y, h] of [
     [15, 4, 4],
@@ -120,15 +153,76 @@ export const drawUnlitSprite = (): Canvas => {
     [9, 9, 2],
     [21, 9, 2],
   ] as const)
-    for (let j = 0; j < h; j++) c.set(x, y - j, j === h - 1 ? C.frost : C.ice);
-  // A reaching arm of cold, toward the foe.
-  c.line(9, 17, 3, 21, C.dusk, 2);
-  c.set(2, 22, C.ice);
+    for (let j = 0; j < h; j++) c.set(x + ux, y + bob - j, j === h - 1 ? C.frost : C.ice);
+  // A reaching arm of cold, toward the foe; a longer reach ends in a frost tip.
+  const tipX = 4 - arm;
+  c.line(9 + ux, 17 + bob, tipX + ux, 21 + bob, C.dusk, 2);
+  c.set(tipX - 1 + ux, 22 + bob, C.ice);
+  if (arm > 0) {
+    c.set(tipX - 2 + ux, 22 + bob, C.cyan);
+    c.set(tipX - 1 + ux, 21 + bob, C.cyan);
+    c.set(tipX - 1 + ux, 23 + bob, C.cyan);
+  }
   // The warm spark.
-  c.set(15, 18, C.gold);
-  c.set(15, 19, C.orange);
+  c.set(15 + ux, 18 + bob, C.gold);
+  c.set(15 + ux, 19 + bob, C.orange);
   c.outline(C.ink);
   return c;
+};
+
+/** The downed pose: the cloak crumpled flat along the ground, the crown's shards broken off beside it. */
+const drawDowned = (): Canvas => {
+  const c = new Canvas(SPRITE_SIZE);
+  // A low solid mound on the bottom edge: no gaps between rows, folds laid over it.
+  c.ellipse(14, 28, 12, 3.2, (x, y) => (y < 27 ? C.dusk : x < 12 ? C.violet : C.plum));
+  c.rect(4, 29, 20, 2, C.plum);
+  c.polygon(
+    [
+      [3, 28],
+      [6, 25],
+      [12, 24],
+      [18, 25],
+      [23, 28],
+    ],
+    (x, y) => (y < 26 ? C.dusk : x < 14 ? C.violet : C.plum),
+  );
+  for (const [x0, y0, x1, y1] of [
+    [8, 26, 10, 30],
+    [14, 25, 15, 30],
+    [19, 26, 20, 30],
+  ] as const)
+    c.line(x0, y0, x1, y1, C.slate, 1);
+  // The hood's dark hollow at the left end, one eye still open.
+  c.ellipse(6, 28, 2.2, 1.8, C.ink);
+  c.set(5, 28, C.ice);
+  // The warm spark, nearly out.
+  c.set(15, 27, C.orange);
+  // Broken crown shards lying beside it, cyan and frost.
+  for (const [x, y, len] of [
+    [25, 30, 3],
+    [28, 29, 2],
+    [27, 27, 3],
+  ] as const) {
+    for (let j = 0; j < len; j++)
+      c.set(x + j, y - (j > 1 ? 1 : 0), j === len - 1 ? C.frost : C.cyan);
+  }
+  c.set(24, 28, C.ice);
+  c.set(30, 30, C.cyan);
+  c.outline(C.ink);
+  return c;
+};
+
+/** The five frames: each is drawn, not made from the base, so they differ at 1×. */
+export const drawUnlitFrames = (): Record<SpriteFrame, Canvas> => {
+  const base: Pose = { ox: 5, upperDx: 0, bob: 0, arm: 0, tendrils: 0 };
+  const idle = drawStanding(base);
+  return {
+    idle,
+    idle2: drawStanding({ ...base, bob: 1, tendrils: 1 }),
+    lunge: drawStanding({ ...base, upperDx: -3, arm: 4 }),
+    hit: framesOf(idle, 'left').hit,
+    downed: drawDowned(),
+  };
 };
 
 type Scene = (c: Canvas) => void;
@@ -136,42 +230,90 @@ type Scene = (c: Canvas) => void;
 const W = DESCENT_SCENE_W;
 const H = DESCENT_SCENE_H;
 
+const BAYER = [0, 2, 3, 1] as const;
+/** A dithered blend: `t` (0 to 1) of the way from `a` to `b`, laid out in a fixed 2 × 2 pattern. */
+const blend = (x: number, y: number, t: number, a: string, b: string): string =>
+  t * 4 > (BAYER[(y % 2) * 2 + (x % 2)] as number) ? b : a;
+
 /** Stage 1, The Crack: a split in the rock running down the middle, cold light seeping out. */
 const crack: Scene = (c) => {
   const roll = seedRolls('descent-stage-1');
-  c.rect(0, 0, W, H, C.coal);
-  c.rect(0, 0, W, 18, C.ink);
-  for (let i = 0; i < 90; i++) {
-    const x = Math.floor(roll() * W);
-    const y = Math.floor(roll() * H);
-    c.set(x, y, roll() < 0.5 ? C.stone : C.ink);
-  }
+  // Rock all the way to the top, shaded in a soft dither (no seam), darkest at the very top.
+  for (let y = 0; y < 52; y++)
+    for (let x = 0; x < W; x++) c.set(x, y, blend(x, y, Math.min(1, y / 22), C.ink, C.coal));
   // Floor of broken stone.
   c.rect(0, 52, W, 12, C.ink);
   c.rect(0, 52, W, 1, C.stone);
   // The crack: a jagged dark gap, wider toward the foot, with a pale seep inside it.
+  const spine: number[] = [];
   let x = 78;
   for (let y = 0; y < 52; y++) {
     x += Math.round(roll() * 2 - 1);
     x = Math.max(70, Math.min(88, x));
+    spine.push(x);
     const half = 2 + Math.floor(y / 11);
     c.rect(x - half - 1, y, half * 2 + 2, 1, C.stone);
     c.rect(x - half, y, half * 2, 1, C.night);
     c.rect(x - 1, y, 2, 1, y % 6 < 3 ? C.cyan : C.ice);
     if (y % 9 === 0) c.set(x - half - 2, y, C.ash);
   }
+  // Jagged diagonal micro-cracks branching off both sides, each a short zigzag with a frost tip.
+  for (const [y0, side, len] of [
+    [6, -1, 11],
+    [14, 1, 13],
+    [22, -1, 14],
+    [30, 1, 12],
+    [38, -1, 10],
+    [44, 1, 9],
+    [10, 1, 7],
+    [34, -1, 8],
+  ] as const) {
+    let px = (spine[y0] as number) + side * (3 + Math.floor(y0 / 11));
+    let py = y0;
+    for (let i = 0; i < len; i++) {
+      c.set(px, py, i % 3 === 2 ? C.slate : C.ink);
+      px += side * (i % 2 === 0 ? 1 : 2);
+      py += i % 3 === 1 ? 0 : 1;
+    }
+    c.set(px, py, C.ice);
+  }
   // Cold light on the floor beneath it.
   c.ellipse(x, 56, 16, 3, C.blue);
   c.ellipse(x, 56, 8, 2, C.ice);
-  // Frost on the rock, thickest nearest the crack.
-  for (let i = 0; i < 70; i++) {
-    const fx = Math.floor(roll() * W);
+  // Frost on the rock, packed tight within 15 px of the crack and nowhere else.
+  for (let i = 0; i < 110; i++) {
     const fy = Math.floor(roll() * 52);
-    const near = Math.abs(fx - x) < 34;
-    if (near || roll() < 0.15) c.set(fx, fy, roll() < 0.5 ? C.dusk : C.ice);
+    const mid = spine[fy] as number;
+    const off = Math.floor((roll() + roll() - 1) * 15);
+    const fx = mid + off;
+    if (Math.abs(off) < 4 + Math.floor(fy / 11) + 1) continue; // keep the gap itself clear
+    c.set(fx, fy, Math.abs(off) < 8 ? C.ice : C.dusk);
   }
-  // Cold breath drifting out of the crack.
-  for (let i = 0; i < 6; i++) c.line(x + 3, 40 - i * 5, x + 14 + i * 3, 36 - i * 5, C.slate, 1);
+};
+
+/** A small anvil, horn pointing left: face, waist and base, in near-black iron with a pale edge. */
+const anvil = (c: Canvas, x: number, y: number): void => {
+  const iron = C.ink;
+  // Horn (tapering to the left), face, then waist and base.
+  c.polygon(
+    [
+      [x, y + 2],
+      [x + 6, y],
+      [x + 6, y + 4],
+      [x + 4, y + 4],
+    ],
+    iron,
+  );
+  c.rect(x + 6, y, 12, 4, iron); // the face
+  c.rect(x + 9, y + 4, 6, 4, iron); // the waist
+  c.rect(x + 5, y + 8, 16, 4, iron); // the base
+  c.rect(x + 3, y + 11, 20, 2, iron); // the foot
+  // A cool edge of light along the face and the horn, so the dark shape reads against the bricks.
+  c.rect(x + 6, y, 12, 1, C.slate);
+  c.line(x + 1, y + 2, x + 6, y, C.slate, 1);
+  c.rect(x + 5, y + 8, 16, 1, C.stone);
+  // Frost sitting on it.
+  c.rect(x + 8, y - 1, 5, 1, C.ice);
 };
 
 /** Stage 2, The Sealed Stair: steps cut in a regular measure, down toward a great round seal. */
@@ -190,15 +332,47 @@ const sealedStair: Scene = (c) => {
       c.rect(x, y, 15, 1, C.stone);
     }
   }
-  // The seal: a great round door of old iron-grey stone with rings and a bar, frosted.
+  // The seal: a great round door with rings, eight spokes, a notched rim and a star at its hub.
   c.ellipse(80, 28, 26, 26, C.slate);
   c.ellipse(80, 28, 22, 22, C.coal);
   c.ellipse(80, 28, 16, 16, C.slate);
   c.ellipse(80, 28, 12, 12, C.coal);
-  c.rect(52, 26, 56, 4, C.stone);
-  c.rect(52, 26, 56, 1, C.ash);
-  c.ellipse(80, 28, 4, 4, C.ink);
-  c.set(80, 27, C.rust);
+  for (let k = 0; k < 8; k++) {
+    const a = (k * Math.PI) / 4 + Math.PI / 8;
+    const at = (r: number): [number, number] => [
+      80 + Math.round(Math.cos(a) * r),
+      28 + Math.round(Math.sin(a) * r),
+    ];
+    const [x0, y0] = at(6);
+    const [x1, y1] = at(21);
+    c.line(x0, y0, x1, y1, C.ash, 1);
+    const [nx, ny] = at(24);
+    c.rect(nx - 1, ny - 1, 2, 2, C.coal); // a notch in the rim between the spokes
+  }
+  for (let k = 0; k < 16; k++) {
+    const a = (k * Math.PI) / 8;
+    c.set(80 + Math.round(Math.cos(a) * 24), 28 + Math.round(Math.sin(a) * 24), C.ash);
+  }
+  // The hub: a diamond with a dark centre.
+  c.polygon(
+    [
+      [80, 21],
+      [87, 28],
+      [80, 35],
+      [73, 28],
+    ],
+    C.stone,
+  );
+  c.polygon(
+    [
+      [80, 24],
+      [84, 28],
+      [80, 32],
+      [76, 28],
+    ],
+    C.ink,
+  );
+  c.set(80, 28, C.rust);
   // Frost creeping over the seal's upper rim, and a seam of cold light at its foot.
   for (let a = 200; a < 340; a += 5) {
     const px = 80 + Math.round(Math.cos((a * Math.PI) / 180) * 25);
@@ -215,12 +389,37 @@ const sealedStair: Scene = (c) => {
     c.rect(inset, y, W - inset * 2, 2, i % 2 === 0 ? C.stone : C.coal);
     c.rect(inset, y, W - inset * 2, 1, i % 2 === 0 ? C.ash : C.stone);
   }
-  // A dead smith's anvil at the foot of the left wall, cold under frost.
-  c.rect(14, 44, 14, 3, C.stone);
-  c.rect(14, 44, 14, 1, C.ash);
-  c.rect(18, 47, 6, 5, C.coal);
-  c.rect(16, 52, 10, 1, C.stone);
-  c.rect(14, 43, 4, 1, C.ice);
+  // A dead smith's anvil at the foot of the left wall, cold iron under frost.
+  anvil(c, 10, 39);
+};
+
+/** Runic strokes, 3 × 5 px each ('#' lit). Every glyph differs, so a line never repeats. */
+const GLYPHS: readonly (readonly string[])[] = [
+  ['#..', '#.#', '###', '#..', '#..'],
+  ['.#.', '.#.', '###', '.#.', '.#.'],
+  ['#.#', '#.#', '.#.', '.#.', '.#.'],
+  ['###', '..#', '.#.', '#..', '###'],
+  ['#..', '##.', '.##', '..#', '..#'],
+  ['.##', '#..', '.#.', '..#', '##.'],
+  ['#.#', '.#.', '#.#', '.#.', '#.#'],
+  ['..#', '.##', '#.#', '.##', '..#'],
+  ['###', '#..', '###', '..#', '#..'],
+  ['.#.', '#.#', '..#', '.#.', '#..'],
+  ['#..', '#..', '###', '#.#', '#.#'],
+  ['##.', '..#', '.#.', '#..', '.##'],
+];
+
+const rune = (c: Canvas, x: number, y: number, g: readonly string[]): void => {
+  const lit = (i: number, j: number): boolean => g[j]?.[i] === '#';
+  // A soft dark-cyan halo first: every empty pixel that touches a stroke.
+  for (let j = -1; j <= 5; j++)
+    for (let i = -1; i <= 3; i++) {
+      if (lit(i, j)) continue;
+      if (lit(i - 1, j) || lit(i + 1, j) || lit(i, j - 1) || lit(i, j + 1))
+        c.set(x + i, y + j, C.blue);
+    }
+  for (let j = 0; j < 5; j++)
+    for (let i = 0; i < 3; i++) if (lit(i, j)) c.set(x + i, y + j, j === 0 ? C.frost : C.ice);
 };
 
 /** Stage 3, Below the Seal: a wide, dry, very still floor; the rime on the far wall marks out a line. */
@@ -228,19 +427,18 @@ const belowSeal: Scene = (c) => {
   const roll = seedRolls('descent-stage-3');
   c.rect(0, 0, W, H, C.ink);
   c.rect(0, 0, W, 6, C.night);
-  // The far wall, and a low pale seep along its foot.
-  c.rect(0, 6, W, 34, C.coal);
-  for (let i = 0; i < 80; i++) c.set(Math.floor(roll() * W), 6 + Math.floor(roll() * 34), C.ink);
-  // Rime writing: a single line of short frost strokes, evenly spaced, that stops short of the edge.
-  let x = 22;
-  while (x < 118) {
-    const w = 2 + Math.floor(roll() * 5);
-    const tall = roll() < 0.4;
-    c.rect(x, 18, w, 1, C.ice);
-    c.rect(x, tall ? 14 : 16, 1, tall ? 8 : 6, C.frost);
-    if (roll() < 0.5) c.set(x + w, 20, C.dusk);
-    x += w + 3 + Math.floor(roll() * 3);
+  // The far wall, shaded from dark at the ceiling to lit stone mid-wall, then dark again at its foot.
+  for (let y = 6; y < 40; y++) {
+    const t = y < 22 ? (y - 6) / 16 : (39 - y) / 17;
+    for (let x = 0; x < W; x++)
+      c.set(x, y, blend(x, y, Math.max(0, Math.min(1, t)), C.ink, C.stone));
   }
+  for (let i = 0; i < 40; i++) c.set(Math.floor(roll() * W), 6 + Math.floor(roll() * 34), C.ink);
+  // Rime writing: twelve different strokes in a line that stops short of the edge.
+  const order = [0, 5, 2, 9, 4, 11, 1, 7, 3, 10, 6, 8];
+  order.forEach((g, i) =>
+    rune(c, 24 + i * 9, 16 + (i % 3 === 1 ? 1 : 0), GLYPHS[g] as readonly string[]),
+  );
   // The wide stone floor: dry flags in perspective, with a single cold glow in the middle.
   c.rect(0, 40, W, 24, C.ink);
   c.rect(0, 40, W, 1, C.stone);

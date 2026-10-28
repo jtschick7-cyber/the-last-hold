@@ -15,16 +15,16 @@ import {
   DESCENT_SCENE_H,
   drawDescentScene,
   drawUnlitPortrait,
-  drawUnlitSprite,
+  drawUnlitFrames,
 } from '../../tools/draw-descent';
 import { PALETTE_HEX } from '../../tools/pixel';
-import { framesOf, stripPng } from '../../tools/sprite-frames';
+import { stripPng } from '../../tools/sprite-frames';
 
 const cases = [
   { row: UNLIT_PORTRAIT_ID, drawn: () => drawUnlitPortrait().toPng(), size: [64, 64] },
   {
     row: UNLIT_SPRITE_ID,
-    drawn: () => stripPng(framesOf(drawUnlitSprite(), 'left')),
+    drawn: () => stripPng(drawUnlitFrames()),
     size: [160, 32],
   },
   ...([1, 2, 3] as const).map((n) => ({
@@ -66,7 +66,7 @@ describe('the v1.4 art', () => {
   });
 
   it('gives The Unlit a strip of five different frames', () => {
-    const f = framesOf(drawUnlitSprite(), 'left');
+    const f = drawUnlitFrames();
     const keys = Object.values(f).map((c) => JSON.stringify(c.px));
     expect(new Set(keys).size).toBe(5);
   });

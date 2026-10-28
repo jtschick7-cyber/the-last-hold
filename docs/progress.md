@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.5 (the five Descent pictures and the contact sheet). Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** the owner's Keep/Redraw marks on the sheet (`docs/flesh-out/v1.4/art-marks.md`), then TD.6 (only if any Redraw) and TD.7b. TD.8a (simulator probe) can run meanwhile.
+- **Last task:** TD.6 draft (all five Descent pictures redrawn to the owner's notes; awaiting approval of the before/after sheet). Before it: TD.5. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** the owner approves (or revises) the before/after sheet; then freeze `art-src/v1.4-hashes.json` and run TD.7b. TD.8a (simulator probe) can run meanwhile.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -102,3 +102,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Old test edited (D566 (6)):** `contact-sheet.test.ts`: its two "every generated row" filters also skip the v1.4 pictures, so the v1.0 numbers 1–156 stay put. Nothing loosened.
 - **Size (SF.9 method):** 451,041 bytes (includes TD.4c and TD.7a code); 163,359 under 614,400.
 - **Waiting on you:** Keep or Redraw for pictures 1 to 5. Hashes are frozen in `art-src/v1.4-hashes.json` at TD.6 once all five are approved.
+
+## 2026-10-28 — v1.4 TD.6 draft: the five pictures redrawn
+- **Marks (your notes, written to `art-marks.md`):** all five Redraw. Done as written: void-dark hood and dripping frost threads (1); five drawn frames, not made from one base: idle 2 bob and tendril shift, lunge with the upper body 3 px left and a longer arm with a cyan tip, a solid flat downed cloak on the bottom edge with broken crown shards (2); rock to the top with a soft dither, frost only within 15 px of the crack, jagged diagonal micro-cracks both sides (3); a dark-iron anvil with horn, waist and base, and eight spokes, a notched rim and a hub on the seal (4); twelve different 3 × 5 runes with a dark-cyan halo and a vertical shadow gradient (5).
+- **Sheet (shown in the conversation):** `docs/flesh-out/v1.4/before-after/descent.png`; the old pictures are kept in `art-src/previous-v1.4/`. New tool `tools/before-after-descent.ts`.
+- **Checks:** `npm run check` green (3,700 tests). Existing art tests (file equals generator, palette, size) pass on the new pictures. v1.0 and v1.1 hashes unchanged.
+- **Not done, on purpose:** `art-src/v1.4-hashes.json` and its test wait for your approval of this sheet (CLAUDE.md: redrawn art ships only after approval).

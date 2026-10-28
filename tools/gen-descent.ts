@@ -6,9 +6,9 @@ import {
   DESCENT_SCENE_H,
   drawDescentScene,
   drawUnlitPortrait,
-  drawUnlitSprite,
+  drawUnlitFrames,
 } from './draw-descent';
-import { framesOf, stripPng } from './sprite-frames';
+import { stripPng } from './sprite-frames';
 
 const root = new URL('../public/assets/', import.meta.url);
 const write = (file: string, png: Buffer): void => {
@@ -19,6 +19,6 @@ const write = (file: string, png: Buffer): void => {
 };
 
 write('portraits/monster-unlit.png', drawUnlitPortrait().toPng());
-write('sprites/monster-unlit.png', stripPng(framesOf(drawUnlitSprite(), 'left')));
+write('sprites/monster-unlit.png', stripPng(drawUnlitFrames()));
 for (const n of [1, 2, 3] as const)
   write(`scenes/descent-stage-${n}.png`, drawDescentScene(n).toPng(DESCENT_SCENE_H));
