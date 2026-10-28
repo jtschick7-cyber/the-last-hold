@@ -34,7 +34,7 @@ import { LongNightView } from './LongNightSheets';
 // Start, with a confirmation that says the Long Night follows. Neutral text only
 // (setting-primer §6.8).
 
-type Kit = Pick<Preparation, 'oils' | 'potions'>;
+export type Kit = Pick<Preparation, 'oils' | 'potions'>;
 const SHOWN_WAVES = 12;
 const IDENTIFIED = 2;
 
@@ -60,7 +60,7 @@ const WaveList = ({ s }: { s: GameState }) => (
 const used = (kit: Kit, item: ConsumableId): number =>
   [...Object.values(kit.oils), ...Object.values(kit.potions)].filter((x) => x === item).length;
 
-const KitPicker = ({
+export const KitPicker = ({
   s,
   hunter,
   kind,

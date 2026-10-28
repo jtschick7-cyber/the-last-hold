@@ -15,6 +15,7 @@ import { monsters } from '../../content/monsters';
 import { villages } from '../../content/villages';
 import { levelOf } from '../investigation/knowledge';
 import type { GameState } from '../state/game-state';
+import { descentAvailable } from '../systems/descent-record';
 import { actVIStandApplied, namesFound, rememberingGate, speciesStudied } from './remembering';
 
 // GDD §5.15.2 (D450, D461, D466): what the Hold screen's card, Pechko's near-scene and the ready line
@@ -36,7 +37,13 @@ export const rememberingReadyNote = (state: GameState): string | null => {
     : null;
 };
 
-export type RememberingForm = 'notOpen' | 'open' | 'afterVigil' | 'afterRemember';
+export type RememberingForm =
+  | 'notOpen'
+  | 'open'
+  | 'afterVigil'
+  | 'afterRemember'
+  /** v1.4 (GDD §9.24, S3): the Descent is won and Remember Them is not chosen. */
+  | 'afterDescent';
 
 export interface RememberingCardView {
   readonly form: RememberingForm;
@@ -47,6 +54,12 @@ export interface RememberingCardView {
   readonly namesFound: number;
   readonly speciesKnown: number;
   readonly speciesTotal: number;
+  /** v1.4: the gate is open and the hold is at Bastion, so The Descent can be fought now (S6). */
+  readonly descentAvailable: boolean;
+  /** v1.4: `'descent'` is recorded. */
+  readonly descentWon: boolean;
+  /** Keep the Vigil was chosen (so its button is not offered again). */
+  readonly vigilChosen: boolean;
 }
 
 /**
@@ -60,13 +73,17 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
   const known = speciesStudied(state);
   const total = CONTRACT_SPECIES.length;
   const names = namesFound(state);
-  const form: RememberingForm = r.endings.some((e) => e.ending === 'remember')
+  const has = (e: 'remember' | 'vigil' | 'descent'): boolean =>
+    r.endings.some((x) => x.ending === e);
+  const form: RememberingForm = has('remember')
     ? 'afterRemember'
-    : r.endings.some((e) => e.ending === 'vigil')
-      ? 'afterVigil'
-      : rememberingGate(state)
-        ? 'open'
-        : 'notOpen';
+    : has('descent')
+      ? 'afterDescent'
+      : has('vigil')
+        ? 'afterVigil'
+        : rememberingGate(state)
+          ? 'open'
+          : 'notOpen';
   const met = CONTRACT_SPECIES.filter((m) => levelOf(state, m) >= 2 && levelOf(state, m) < 3);
   return {
     form,
@@ -79,6 +96,9 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
     namesFound: names,
     speciesKnown: known,
     speciesTotal: total,
+    descentAvailable: descentAvailable(state),
+    descentWon: has('descent'),
+    vigilChosen: has('vigil'),
   };
 };
 

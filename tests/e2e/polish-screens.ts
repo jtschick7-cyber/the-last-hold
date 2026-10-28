@@ -240,6 +240,29 @@ export const FLOWS: readonly Flow[] = [
       ]);
     },
   },
+  {
+    id: 'descent',
+    fixture: 'v14-played',
+    mutates: true,
+    how: 'fixture v14-played (The Descent won), Hold, The Remembering card, Fight the Descent again, the sheet and What the hold learned',
+    run: async (page, visit) => {
+      await dismiss(page);
+      await tabTo(page, 'Hold');
+      const card = page.getByRole('region', { name: 'The Remembering' });
+      await card.scrollIntoViewIfNeeded();
+      await visit('descent-card', 'The Remembering card (Descent won)', [
+        /The Unlit was scattered in the Deep\./,
+      ]);
+      await card.getByRole('button', { name: 'Fight the Descent again' }).click();
+      await page
+        .getByTestId('descent-preview')
+        .getByText(/Win chance/)
+        .waitFor();
+      await visit('descent-sheet', 'The Descent sheet', [/Three stages in the Deep/, /Win chance/]);
+      await page.getByRole('button', { name: 'Show what the hold learned' }).click();
+      await visit('descent-learned', 'What the hold learned (breakdown)', [/Mastered species/]);
+    },
+  },
   plain('hunters-roster', 'Hunters (roster)', 'Hunters tab', [/By slot/], (p) =>
     tabTo(p, 'Hunters'),
   ),

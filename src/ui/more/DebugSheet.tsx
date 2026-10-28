@@ -359,6 +359,16 @@ export const DebugSheet = () => {
         >
           Open the gate
         </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => run({ type: 'debug.prepareEndgameRoster' })}
+        >
+          Prepare endgame roster
+        </button>
+        <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.descentWin' })}>
+          Win the Descent
+        </button>
       </div>
       <div class={styles.row} style={{ flexWrap: 'wrap' }}>
         <input
