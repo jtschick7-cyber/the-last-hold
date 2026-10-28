@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.7b (Suggest layout), with the benchmark table from TB.7a. Before it: TB.7a to TB.1.
-- **Next:** TB.8a (the Lanes strip and the Last Stand screen; needs TB.4 and TB.7a). Size is due there.
+- **Last task:** TB.8a (the Lanes strip on Arrange Hold). Before it: TB.7b to TB.1.
+- **Next:** TB.8b (the strip on the Last Stand screen, the Arrange Hold button, Suggest button and Use this layout; needs TB.7b and TB.8a). TB.9 can follow TB.8a.
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -102,3 +102,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Old-test edits:** none beyond the bench page.
 - **Not done:** the button and strip (TB.8a, TB.8b); the `layout.setDefenses` command (end of TB.8b, Q61).
 - **Numbers:** `npm run check` green, 87 s here (warn 90, fail 120; 3,896 tests).
+
+## 2026-10-28 — v1.5 TB.8a: the Lanes strip on Arrange Hold
+- **Built:** from Bastion on, the Arrange Hold sheet shows the Lanes strip above the grid: eight boxes (Lane n, cover %, a dot per upcoming wave of the first 12), two rows of four below 600 px and one row of eight above. A Strip / List switch gives eight text lines. A tap on a lane (box or line) opens its breakdown sheet (Walls line with its cover and stacked lines, then the volley with each tower), and on return the pieces that cover the lane are lit on the grid with a dashed outline and a corner mark, no animation. Hint, help and empty-state lines are in. Nothing appears before Bastion.
+- **Where the numbers come from:** only `laneView`, which now also says whether the strip shows (Bastion) and how many waves it looks at. The screen computes nothing.
+- **Strings:** the strip, list, hint, help and empty-state strings and the forms of the waves list were added to `breach-text.ts` word for word, with a test against the GDD table. TB.9 checks the whole table.
+- **Tests first:** `tests/e2e/lanes-strip.spec.ts` (14, phone): eight boxes with the right text and 12 dots; Clear to tray changes the strip to the empty state with 25% on the two edge lanes; a tap opens "Lane 4" and lights pieces (dashed, corner mark, no animation); the list equals the strip; no strip at Citadel; at 320, 360, 375 and 390 px, at match and Largest text, every control is at least 44 px, two rows of four, no sideways scroll; one row of eight at 900 px. Plus the string test and `lane-view-shown.test.ts`. All pass here in chromium.
+- **Old-test edit (D593 d):** one flow, the Bastion Arrange Hold with the strip, appended to `polish-screens.ts`. Tap-target, contrast, Text size, motion and widths sweeps: 73 of 73 pass here (9.4 min, chromium). No baseline changed.
+- **Numbers:** `npm run check` green, 81 s here (warn 90, fail 120). Size 459,884 bytes (614,400 row; 458,266 at TB.6).
+- **Behaviour to know:** the lit lane is kept in memory so it survives the breakdown sheet closing; each visit from the Hold starts with nothing lit. The existing sheet already dropped a selected piece when another sheet opened over it.
+- **Not done:** the strip on the Last Stand screen, the Arrange Hold button there, Suggest and Use this layout (TB.8b); the Start Tray line and the full string check (TB.9). No contrast check of the lit-piece marks was possible beyond the sweep.
