@@ -265,7 +265,9 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Options:** (a) approve the proposed calibrated values and rows A and B (recommended once TD.8b shows they land in the 50%–85% win rate and 2–8 downed band on the chosen profile); (b) pick a harder or easier point from the TD.8b grid; (c) adjust the `descent.learned.*` tunable steps too.
 - **Recommendation:** (a).
 - **Blocks:** TD.9 (setting the calibrated constants and committing rows A and B to `sim/targets.ts`).
-- **Answer (owner):** *(pending; asked with the calibration table after TD.8b)*
+- **Partly answered (owner, 2026-10-28):** Row A judges the **maxed endgame** roster; the minimal gate-open roster is reported only. Still open: the constants themselves and the two rows' final wording (below).
+- **TD.8b proposal (for the owner's yes or no):** `descent.stageTiers` **[7, 8, 9]** and `descent.unlitBaseHealth` **4,500**. Maxed roster: wins 82%, median 6 hunters downed (inside both Row A bands); learned bonus zeroed: 0% (Row B, far above 25 points); Hamlet starter: 0 stages cleared (loses in Stage 1). Caveat: 82% is close to the 85% ceiling, and the minimal roster wins 0% there. A finer sweep around this point is available if you want more margin.
+- **Answer (owner):** *(pending for the constants and rows)*
 
 ### Q60 — The approved wording of the Descent story texts is not in the repo *(opened 2026-10-28; blocks the story-text part of TD.3 and `lore-secrets.md` §34.11)*
 - **Context:** the plan asks TD.1 to put the approved texts D-01 to D-07 and the three post-Descent resident lines (Pechko, Brana, Ilse) into `lore-secrets.md` §34.11, word for word. The v1.4 flesh-out folder has no lore file (no `OUT-3`, which v0.11 had). The only wording in it is one-line descriptions of each card in `OUT-2a-gdd-changes.md` (for example D-01 "Pechko at the Bastion stair with the thirty-nine faded ribbons") and the first few words of each resident line, cut off with "...". CLAUDE.md says to invent none, so I did not write §34.11. Everything else in TD.1 is applied.
