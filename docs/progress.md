@@ -7,7 +7,7 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
 - **Last task:** TD.1 docs commit (flesh-out files applied, D568 added, the `descent.*` keys in `balance.ts`, three `CLAUDE.md` rules). Before it: two CI repairs on `main` (PR 23, PR 24, D569).
-- **Next:** TD.1 is waiting on you for `tests/saves/fixtures/v13-owner.json` (TD.2 needs it; TD.3 does not) and for Q60 (the approved Descent story wording is missing from the repo). Then TD.2.
+- **Next:** TD.2 (save schema 14). Q60 (the approved Descent story wording is missing from the repo) blocks only the story-text part of TD.3.
 - **Open questions:** Q59 (calibration, asked after TD.8b) and Q60 (the missing story wording). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -39,5 +39,5 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Sweep:** `Proposed` from D519 up: only D529 and D535, both covered by D557. Nothing else to ask.
 - **Also applied:** D557–D569 in `decisions.md`; `descent.*` keys in `balance.ts` (stageTiers and unlitBaseHealth are marked placeholders); six names in `names.ts`; three `CLAUDE.md` rules; `progress.md` archived (was 108 KB).
 - **Not done:** `lore-secrets.md` §34.11 (last §34 subsection is §34.10): the approved wording of D-01 to D-07 and the 3 resident lines is not in the repo. Q60 asks; TD.3 is `[?]` for that part only.
-- **Blocked, not committed:** `npm run check` has one red test, `tests/content/vigil-text.test.ts` ("the table holds exactly nine rows"). It passes without my changes. It cuts the GDD §9.23 section at the next `## 10.` heading, and the new §9.24 now sits inside that cut. Fixing it is a test edit that D566 does not list, so I stopped and asked.
-- **Waiting on you:** the test edit above, `v13-owner.json` upload, Q60.
+- **Test edits (owner said yes, 2026-10-28):** `tests/content/vigil-text.test.ts` now ends its §9.23 cut at the next `###` heading (not on D566's list; §9.24 follows §9.23 now; nothing loosened). `tests/orders/opening.test.ts` lists `v13-owner.json` (D566 (2)). Your save `v13-owner.json` is in; reformatted with Prettier only, data hash identical.
+- **Waiting on you:** Q60 (the approved Descent wording). TD.2 can start.

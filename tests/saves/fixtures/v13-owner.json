@@ -32,12 +32,7 @@
         "silver-digger": 2
       },
       "autoSettle": false,
-      "priority": [
-        "farmer",
-        "woodcutter",
-        "miner",
-        "silver-digger"
-      ],
+      "priority": ["farmer", "woodcutter", "miner", "silver-digger"],
       "lastSettleAt": 1793006868119.5593
     },
     "buildings": {
@@ -67,11 +62,7 @@
         "armor": "i22",
         "rank": "wright",
         "stars": 0,
-        "talents": [
-          "vanguard-warden-1",
-          "vanguard-retort-1",
-          "vanguard-wall-1"
-        ],
+        "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -86,11 +77,7 @@
         "armor": "i23",
         "rank": "wright",
         "stars": 0,
-        "talents": [
-          "striker-edge-1",
-          "striker-hunt-1",
-          "striker-pace-1"
-        ],
+        "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -105,11 +92,7 @@
         "armor": "i25",
         "rank": "wright",
         "stars": 0,
-        "talents": [
-          "mender-hands-1",
-          "mender-herbs-1",
-          "mender-watch-1"
-        ],
+        "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -124,11 +107,7 @@
         "armor": "i27",
         "rank": "wright",
         "stars": 0,
-        "talents": [
-          "striker-hunt-1",
-          "striker-pace-1",
-          "striker-edge-1"
-        ],
+        "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -143,11 +122,7 @@
         "armor": null,
         "rank": "wright",
         "stars": 0,
-        "talents": [
-          "mender-watch-1",
-          "mender-herbs-1",
-          "mender-hands-1"
-        ],
+        "talents": ["mender-watch-1", "mender-herbs-1", "mender-hands-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -162,11 +137,7 @@
         "armor": "i33",
         "rank": "wright",
         "stars": 0,
-        "talents": [
-          "striker-hunt-1",
-          "striker-pace-1",
-          "striker-edge-1"
-        ],
+        "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -181,11 +152,7 @@
         "armor": "i29",
         "rank": "wright",
         "stars": 1,
-        "talents": [
-          "striker-pace-1",
-          "striker-hunt-1",
-          "striker-edge-1"
-        ],
+        "talents": ["striker-pace-1", "striker-hunt-1", "striker-edge-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -200,9 +167,7 @@
         "armor": null,
         "rank": "apprentice",
         "stars": 0,
-        "talents": [
-          "vanguard-retort-1"
-        ],
+        "talents": ["vanguard-retort-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -217,11 +182,7 @@
         "armor": "i31",
         "rank": "wright",
         "stars": 0,
-        "talents": [
-          "vanguard-warden-1",
-          "vanguard-wall-1",
-          "vanguard-retort-1"
-        ],
+        "talents": ["vanguard-warden-1", "vanguard-wall-1", "vanguard-retort-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -236,9 +197,7 @@
         "armor": "i35",
         "rank": "apprentice",
         "stars": 0,
-        "talents": [
-          "mender-hands-1"
-        ],
+        "talents": ["mender-hands-1"],
         "keepsake": null,
         "recovery": null,
         "record": {
@@ -276,13 +235,7 @@
       ],
       "nextArrivalAt": 1793149455772,
       "arrivals": 54,
-      "tierWins": [
-        12,
-        5,
-        4,
-        1,
-        0
-      ]
+      "tierWins": [12, 5, 4, 1, 0]
     },
     "bestiary": {
       "wolf": {
@@ -393,10 +346,7 @@
           "arrivedAt": 1793135055772,
           "revealed": 0
         },
-        "party": [
-          "bjarna",
-          "vesna"
-        ],
+        "party": ["bjarna", "vesna"],
         "snapshots": [
           {
             "id": "bjarna",
@@ -410,18 +360,11 @@
               "armor": 3,
               "speed": 12
             },
-            "traits": [
-              "cold-blooded",
-              "fell-born"
-            ],
+            "traits": ["cold-blooded", "fell-born"],
             "weapon": "iron-blade",
             "armorGear": "hide-armor",
             "skill": "rime-dipped",
-            "talents": [
-              "striker-hunt-1",
-              "striker-pace-1",
-              "striker-edge-1"
-            ]
+            "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
           },
           {
             "id": "vesna",
@@ -435,18 +378,11 @@
               "armor": 4,
               "speed": 11
             },
-            "traits": [
-              "herbwise",
-              "fen-born"
-            ],
+            "traits": ["herbwise", "fen-born"],
             "weapon": null,
             "armorGear": null,
             "skill": "stopping-root",
-            "talents": [
-              "mender-watch-1",
-              "mender-herbs-1",
-              "mender-hands-1"
-            ]
+            "talents": ["mender-watch-1", "mender-herbs-1", "mender-hands-1"]
           }
         ],
         "launchedAt": 1793136731196,
@@ -464,14 +400,7 @@
     ],
     "results": [],
     "fallen": [],
-    "scenes": [
-      "opening",
-      "first-contract",
-      "ilse",
-      "vow",
-      "sigrun-door",
-      "sigrun-vow"
-    ],
+    "scenes": ["opening", "first-contract", "ilse", "vow", "sigrun-door", "sigrun-vow"],
     "log": {
       "recentFights": [
         {
@@ -490,15 +419,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -512,15 +436,10 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -555,15 +474,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -577,15 +491,10 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -620,15 +529,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -642,15 +546,10 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -685,15 +584,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -707,15 +601,10 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -750,15 +639,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -772,15 +656,10 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -815,15 +694,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             }
           ],
           "monster": {
@@ -858,15 +732,10 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             },
             {
               "id": "ostap",
@@ -880,15 +749,10 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "mender-hands-1"
-              ]
+              "talents": ["mender-hands-1"]
             }
           ],
           "monster": {
@@ -923,15 +787,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -945,15 +804,10 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             },
             {
               "id": "ostap",
@@ -967,15 +821,10 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "mender-hands-1"
-              ]
+              "talents": ["mender-hands-1"]
             }
           ],
           "monster": {
@@ -1010,15 +859,10 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "mender-hands-1"
-              ]
+              "talents": ["mender-hands-1"]
             },
             {
               "id": "bjarna",
@@ -1032,15 +876,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             }
           ],
           "monster": {
@@ -1075,15 +914,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -1097,10 +931,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": null,
               "lines": [
@@ -1113,9 +944,7 @@
                   "size": 0.06
                 }
               ],
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -1150,15 +979,10 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "mender-hands-1"
-              ]
+              "talents": ["mender-hands-1"]
             },
             {
               "id": "bjarna",
@@ -1172,15 +996,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             }
           ],
           "monster": {
@@ -1215,15 +1034,10 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -1237,10 +1051,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": null,
               "lines": [
@@ -1253,9 +1064,7 @@
                   "size": 0.06
                 }
               ],
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -1290,10 +1099,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": null,
               "lines": [
@@ -1306,9 +1112,7 @@
                   "size": 0.06
                 }
               ],
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -1343,10 +1147,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": "hide-armor",
               "lines": [
@@ -1355,9 +1156,7 @@
                   "size": 0.08
                 }
               ],
-              "talents": [
-                "mender-hands-1"
-              ]
+              "talents": ["mender-hands-1"]
             },
             {
               "id": "bjarna",
@@ -1371,15 +1170,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             }
           ],
           "monster": {
@@ -1414,10 +1208,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": null,
               "lines": [
@@ -1426,9 +1217,7 @@
                   "size": 1
                 }
               ],
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             },
             {
               "id": "zora",
@@ -1442,10 +1231,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": null,
               "lines": [
@@ -1458,9 +1244,7 @@
                   "size": 0.06
                 }
               ],
-              "talents": [
-                "striker-edge-1"
-              ]
+              "talents": ["striker-edge-1"]
             }
           ],
           "monster": {
@@ -1495,15 +1279,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             },
             {
               "id": "vesna",
@@ -1517,15 +1296,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "mender-watch-1"
-              ]
+              "talents": ["mender-watch-1"]
             }
           ],
           "monster": {
@@ -1560,10 +1334,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -1581,11 +1352,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             }
           ],
           "monster": {
@@ -1620,15 +1387,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "mender-watch-1"
-              ]
+              "talents": ["mender-watch-1"]
             },
             {
               "id": "stanko",
@@ -1642,15 +1404,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             }
           ],
           "monster": {
@@ -1685,10 +1442,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": "mail",
               "lines": [
@@ -1697,9 +1451,7 @@
                   "size": 0.08
                 }
               ],
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             },
             {
               "id": "stanko",
@@ -1713,15 +1465,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             }
           ],
           "monster": {
@@ -1756,10 +1503,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": "hide-armor",
               "lines": [
@@ -1769,11 +1513,7 @@
                 }
               ],
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             },
             {
               "id": "vesna",
@@ -1787,15 +1527,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "mender-watch-1"
-              ]
+              "talents": ["mender-watch-1"]
             }
           ],
           "monster": {
@@ -1830,10 +1565,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -1847,11 +1579,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "zora",
@@ -1865,10 +1593,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -1886,11 +1611,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             }
           ],
           "monster": {
@@ -1925,15 +1646,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             },
             {
               "id": "sigrun",
@@ -1947,15 +1663,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             }
           ],
           "monster": {
@@ -1990,10 +1701,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -2011,11 +1719,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             }
           ],
           "monster": {
@@ -2050,10 +1754,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -2063,11 +1764,7 @@
                 }
               ],
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             },
             {
               "id": "sigrun",
@@ -2081,15 +1778,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             }
           ],
           "monster": {
@@ -2124,15 +1816,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "mender-watch-1"
-              ]
+              "talents": ["mender-watch-1"]
             },
             {
               "id": "stanko",
@@ -2146,15 +1833,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             },
             {
               "id": "toma",
@@ -2168,15 +1850,10 @@
                 "armor": 7,
                 "speed": 8
               },
-              "traits": [
-                "haggler",
-                "quick"
-              ],
+              "traits": ["haggler", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "vanguard-retort-1"
-              ]
+              "talents": ["vanguard-retort-1"]
             }
           ],
           "monster": {
@@ -2211,10 +1888,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -2228,11 +1902,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "bjarna",
@@ -2246,10 +1916,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -2258,9 +1925,7 @@
                   "size": 0.08
                 }
               ],
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             }
           ],
           "monster": {
@@ -2295,10 +1960,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -2316,11 +1978,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             }
           ],
           "monster": {
@@ -2355,10 +2013,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -2376,11 +2031,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             }
           ],
           "monster": {
@@ -2415,18 +2066,11 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             }
           ],
           "monster": {
@@ -2461,18 +2105,11 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             }
           ],
           "monster": {
@@ -2507,18 +2144,11 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             }
           ],
           "monster": {
@@ -2553,18 +2183,11 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": null,
               "armorGear": null,
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "ostap",
@@ -2578,18 +2201,11 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             }
           ],
           "monster": {
@@ -2624,18 +2240,11 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": null,
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             },
             {
               "id": "ostap",
@@ -2649,18 +2258,11 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             }
           ],
           "monster": {
@@ -2695,10 +2297,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": null,
               "lines": [
@@ -2708,11 +2307,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "ostap",
@@ -2726,18 +2321,11 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             }
           ],
           "monster": {
@@ -2772,18 +2360,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "sigrun",
@@ -2797,15 +2378,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             }
           ],
           "monster": {
@@ -2840,18 +2416,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "sigrun",
@@ -2865,15 +2434,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             },
             {
               "id": "vesna",
@@ -2887,18 +2451,11 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "stopping-root",
-              "talents": [
-                "mender-watch-1",
-                "mender-herbs-1",
-                "mender-hands-1"
-              ]
+              "talents": ["mender-watch-1", "mender-herbs-1", "mender-hands-1"]
             }
           ],
           "monster": {
@@ -2933,15 +2490,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             },
             {
               "id": "vesna",
@@ -2955,18 +2507,11 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "stopping-root",
-              "talents": [
-                "mender-watch-1",
-                "mender-herbs-1",
-                "mender-hands-1"
-              ]
+              "talents": ["mender-watch-1", "mender-herbs-1", "mender-hands-1"]
             }
           ],
           "monster": {
@@ -3001,18 +2546,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "sigrun",
@@ -3026,15 +2564,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             }
           ],
           "monster": {
@@ -3069,15 +2602,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             },
             {
               "id": "vesna",
@@ -3091,18 +2619,11 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "stopping-root",
-              "talents": [
-                "mender-watch-1",
-                "mender-herbs-1",
-                "mender-hands-1"
-              ]
+              "talents": ["mender-watch-1", "mender-herbs-1", "mender-hands-1"]
             }
           ],
           "monster": {
@@ -3137,15 +2658,10 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             }
           ],
           "monster": {
@@ -3180,10 +2696,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -3197,11 +2710,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "ostap",
@@ -3215,18 +2724,11 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             },
             {
               "id": "bjarna",
@@ -3240,18 +2742,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             }
           ],
           "monster": {
@@ -3286,15 +2781,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             },
             {
               "id": "vesna",
@@ -3308,18 +2798,11 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "stopping-root",
-              "talents": [
-                "mender-watch-1",
-                "mender-herbs-1",
-                "mender-hands-1"
-              ]
+              "talents": ["mender-watch-1", "mender-herbs-1", "mender-hands-1"]
             }
           ],
           "monster": {
@@ -3354,10 +2837,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": "hide-armor",
               "lines": [
@@ -3367,11 +2847,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             },
             {
               "id": "toma",
@@ -3385,15 +2861,10 @@
                 "armor": 7,
                 "speed": 8
               },
-              "traits": [
-                "haggler",
-                "quick"
-              ],
+              "traits": ["haggler", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-retort-1"
-              ]
+              "talents": ["vanguard-retort-1"]
             },
             {
               "id": "radek",
@@ -3407,15 +2878,10 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             }
           ],
           "monster": {
@@ -3450,10 +2916,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -3467,11 +2930,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "bjarna",
@@ -3485,18 +2944,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             }
           ],
           "monster": {
@@ -3531,18 +2983,11 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": null,
               "armorGear": null,
               "skill": "the-other-hand",
-              "talents": [
-                "striker-pace-1",
-                "striker-hunt-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-pace-1", "striker-hunt-1", "striker-edge-1"]
             },
             {
               "id": "stanko",
@@ -3556,18 +3001,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": null,
               "armorGear": null,
               "skill": "up-before-the-wolves",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             }
           ],
           "monster": {
@@ -3602,10 +3040,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -3619,11 +3054,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "bjarna",
@@ -3637,18 +3068,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "toma",
@@ -3662,15 +3086,10 @@
                 "armor": 7,
                 "speed": 8
               },
-              "traits": [
-                "haggler",
-                "quick"
-              ],
+              "traits": ["haggler", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "vanguard-retort-1"
-              ]
+              "talents": ["vanguard-retort-1"]
             }
           ],
           "monster": {
@@ -3705,18 +3124,11 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             },
             {
               "id": "herdis",
@@ -3730,15 +3142,10 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "mender-hands-1"
-              ]
+              "talents": ["mender-hands-1"]
             }
           ],
           "monster": {
@@ -3773,18 +3180,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "skill": "up-before-the-wolves",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "herdis",
@@ -3798,15 +3198,10 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "mender-hands-1"
-              ]
+              "talents": ["mender-hands-1"]
             }
           ],
           "monster": {
@@ -3841,10 +3236,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -3858,11 +3250,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "herdis",
@@ -3876,15 +3264,10 @@
                 "armor": 4,
                 "speed": 10
               },
-              "traits": [
-                "tracker",
-                "hard-to-kill"
-              ],
+              "traits": ["tracker", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "mender-hands-1"
-              ]
+              "talents": ["mender-hands-1"]
             }
           ],
           "monster": {
@@ -3919,10 +3302,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": "silvered-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -3936,11 +3316,7 @@
                 }
               ],
               "skill": "the-other-hand",
-              "talents": [
-                "striker-pace-1",
-                "striker-hunt-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-pace-1", "striker-hunt-1", "striker-edge-1"]
             }
           ],
           "monster": {
@@ -4050,10 +3426,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -4071,11 +3444,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             },
             {
               "id": "ostap",
@@ -4089,10 +3458,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -4102,11 +3468,7 @@
                 }
               ],
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             },
             {
               "id": "bjarna",
@@ -4120,10 +3482,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -4133,11 +3492,7 @@
                 }
               ],
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "vesna",
@@ -4151,10 +3506,7 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -4164,11 +3516,7 @@
                 }
               ],
               "skill": "stopping-root",
-              "talents": [
-                "mender-watch-1",
-                "mender-herbs-1",
-                "mender-hands-1"
-              ]
+              "talents": ["mender-watch-1", "mender-herbs-1", "mender-hands-1"]
             },
             {
               "id": "stanko",
@@ -4182,10 +3530,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -4195,11 +3540,7 @@
                 }
               ],
               "skill": "up-before-the-wolves",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "halvar",
@@ -4213,10 +3554,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -4234,11 +3572,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             }
           ],
           "prep": {
@@ -4285,11 +3619,7 @@
             "trophies": 60,
             "total": 204
           },
-          "relicsFound": [
-            "tally-stick",
-            "masons-plumb",
-            "bone-whistle"
-          ],
+          "relicsFound": ["tally-stick", "masons-plumb", "bone-whistle"],
           "arrival": false,
           "trustSteps": [],
           "band": "held",
@@ -4701,66 +4031,18 @@
     },
     "book": {
       "properties": {
-        "yarrow": [
-          0,
-          1,
-          2
-        ],
-        "mugwort": [
-          0,
-          1,
-          2
-        ],
-        "juniper": [
-          0,
-          1,
-          2
-        ],
-        "honeycomb": [
-          0,
-          1,
-          2
-        ],
-        "hares-foot": [
-          0,
-          1,
-          2
-        ],
-        "pitch": [
-          0,
-          1,
-          2
-        ],
-        "rime-salt": [
-          0,
-          1,
-          2
-        ],
-        "grave-dust": [
-          0,
-          1,
-          2
-        ],
-        "river-pearl": [
-          0,
-          1,
-          2
-        ],
-        "thornwood": [
-          0,
-          1,
-          2
-        ],
-        "wolf-fang": [
-          0,
-          1,
-          2
-        ],
-        "noon-poppy": [
-          0,
-          1,
-          2
-        ]
+        "yarrow": [0, 1, 2],
+        "mugwort": [0, 1, 2],
+        "juniper": [0, 1, 2],
+        "honeycomb": [0, 1, 2],
+        "hares-foot": [0, 1, 2],
+        "pitch": [0, 1, 2],
+        "rime-salt": [0, 1, 2],
+        "grave-dust": [0, 1, 2],
+        "river-pearl": [0, 1, 2],
+        "thornwood": [0, 1, 2],
+        "wolf-fang": [0, 1, 2],
+        "noon-poppy": [0, 1, 2]
       },
       "tried": [
         "yarrow+juniper",
@@ -4916,30 +4198,11 @@
         }
       ],
       "taken": {
-        "hearth-crone": [
-          "bright",
-          "faint",
-          "warm"
-        ],
-        "wolf": [
-          "warm",
-          "faint"
-        ],
-        "drowned-bell": [
-          "warm",
-          "faint",
-          "bright"
-        ],
-        "weaver": [
-          "bright",
-          "warm",
-          "faint"
-        ],
-        "pale-smith": [
-          "faint",
-          "warm",
-          "bright"
-        ]
+        "hearth-crone": ["bright", "faint", "warm"],
+        "wolf": ["warm", "faint"],
+        "drowned-bell": ["warm", "faint", "bright"],
+        "weaver": ["bright", "warm", "faint"],
+        "pale-smith": ["faint", "warm", "bright"]
       },
       "kills": {
         "restless-dead": 7,
@@ -5021,12 +4284,7 @@
             }
           ],
           "found": [],
-          "party": [
-            "halvar",
-            "sigrun",
-            "ostap",
-            "stanko"
-          ],
+          "party": ["halvar", "sigrun", "ostap", "stanko"],
           "restUntil": 474991347
         }
       },
@@ -5047,10 +4305,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -5068,11 +4323,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             },
             {
               "id": "halvar",
@@ -5086,10 +4337,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -5103,11 +4351,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "ostap",
@@ -5121,10 +4365,7 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": null,
               "armorGear": "hide-armor",
               "lines": [
@@ -5134,11 +4375,7 @@
                 }
               ],
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             },
             {
               "id": "stanko",
@@ -5152,15 +4389,10 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": null,
               "armorGear": null,
-              "talents": [
-                "striker-hunt-1"
-              ]
+              "talents": ["striker-hunt-1"]
             }
           ],
           "monster": {
@@ -5200,15 +4432,10 @@
                 "armor": 7,
                 "speed": 8
               },
-              "traits": [
-                "haggler",
-                "quick"
-              ],
+              "traits": ["haggler", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "vanguard-retort-1"
-              ]
+              "talents": ["vanguard-retort-1"]
             },
             {
               "id": "sigrun",
@@ -5222,15 +4449,10 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
-              "talents": [
-                "striker-pace-1"
-              ]
+              "talents": ["striker-pace-1"]
             },
             {
               "id": "bjarna",
@@ -5244,10 +4466,7 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -5257,11 +4476,7 @@
                 }
               ],
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "radek",
@@ -5275,10 +4490,7 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "mail",
               "lines": [
@@ -5287,9 +4499,7 @@
                   "size": 0.08
                 }
               ],
-              "talents": [
-                "vanguard-warden-1"
-              ]
+              "talents": ["vanguard-warden-1"]
             }
           ],
           "monster": {
@@ -5328,10 +4538,7 @@
                 "armor": 3,
                 "speed": 13
               },
-              "traits": [
-                "fen-born",
-                "quick"
-              ],
+              "traits": ["fen-born", "quick"],
               "weapon": null,
               "armorGear": "hide-armor",
               "lines": [
@@ -5341,11 +4548,7 @@
                 }
               ],
               "skill": "boathook",
-              "talents": [
-                "striker-edge-1",
-                "striker-hunt-1",
-                "striker-pace-1"
-              ]
+              "talents": ["striker-edge-1", "striker-hunt-1", "striker-pace-1"]
             },
             {
               "id": "bjarna",
@@ -5359,18 +4562,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "cold-blooded",
-                "fell-born"
-              ],
+              "traits": ["cold-blooded", "fell-born"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "skill": "rime-dipped",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             },
             {
               "id": "vesna",
@@ -5384,18 +4580,11 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "herbwise",
-                "fen-born"
-              ],
+              "traits": ["herbwise", "fen-born"],
               "weapon": null,
               "armorGear": null,
               "skill": "stopping-root",
-              "talents": [
-                "mender-watch-1",
-                "mender-herbs-1",
-                "mender-hands-1"
-              ]
+              "talents": ["mender-watch-1", "mender-herbs-1", "mender-hands-1"]
             },
             {
               "id": "radek",
@@ -5409,18 +4598,11 @@
                 "armor": 9,
                 "speed": 7
               },
-              "traits": [
-                "grave-warden",
-                "hard-to-kill"
-              ],
+              "traits": ["grave-warden", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "skill": "shovelful",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-wall-1",
-                "vanguard-retort-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-wall-1", "vanguard-retort-1"]
             }
           ],
           "monster": {
@@ -5459,10 +4641,7 @@
                 "armor": 8,
                 "speed": 7
               },
-              "traits": [
-                "shieldwall",
-                "steady"
-              ],
+              "traits": ["shieldwall", "steady"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "lines": [
@@ -5476,11 +4655,7 @@
                 }
               ],
               "skill": "banked-smoke",
-              "talents": [
-                "vanguard-warden-1",
-                "vanguard-retort-1",
-                "vanguard-wall-1"
-              ]
+              "talents": ["vanguard-warden-1", "vanguard-retort-1", "vanguard-wall-1"]
             },
             {
               "id": "sigrun",
@@ -5494,18 +4669,11 @@
                 "armor": 4,
                 "speed": 11
               },
-              "traits": [
-                "fire-touched",
-                "lantern-bearer"
-              ],
+              "traits": ["fire-touched", "lantern-bearer"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "skill": "the-other-hand",
-              "talents": [
-                "striker-pace-1",
-                "striker-hunt-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-pace-1", "striker-hunt-1", "striker-edge-1"]
             },
             {
               "id": "ostap",
@@ -5519,18 +4687,11 @@
                 "armor": 4,
                 "speed": 9
               },
-              "traits": [
-                "bonesetter",
-                "hard-to-kill"
-              ],
+              "traits": ["bonesetter", "hard-to-kill"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "skill": "bonesetters-hands",
-              "talents": [
-                "mender-hands-1",
-                "mender-herbs-1",
-                "mender-watch-1"
-              ]
+              "talents": ["mender-hands-1", "mender-herbs-1", "mender-watch-1"]
             },
             {
               "id": "stanko",
@@ -5544,18 +4705,11 @@
                 "armor": 3,
                 "speed": 12
               },
-              "traits": [
-                "wolf-friend",
-                "quick"
-              ],
+              "traits": ["wolf-friend", "quick"],
               "weapon": "iron-blade",
               "armorGear": "hide-armor",
               "skill": "up-before-the-wolves",
-              "talents": [
-                "striker-hunt-1",
-                "striker-pace-1",
-                "striker-edge-1"
-              ]
+              "talents": ["striker-hunt-1", "striker-pace-1", "striker-edge-1"]
             }
           ],
           "monster": {
@@ -5629,10 +4783,7 @@
         "bellWatchers": 4,
         "quenchers": 2
       },
-      "seats": [
-        "moot",
-        "greyWives"
-      ],
+      "seats": ["moot", "greyWives"],
       "thirdSeat": false,
       "lastChange": null,
       "chaptersRead": {
@@ -5642,42 +4793,13 @@
         "quenchers": 0
       },
       "readWith": {
-        "moot": [
-          [
-            "moot"
-          ],
-          [
-            "moot",
-            "greyWives"
-          ]
-        ],
+        "moot": [["moot"], ["moot", "greyWives"]],
         "greyWives": [
-          [
-            "moot",
-            "greyWives"
-          ],
-          [
-            "moot",
-            "greyWives"
-          ],
-          [
-            "moot",
-            "greyWives"
-          ]
+          ["moot", "greyWives"],
+          ["moot", "greyWives"],
+          ["moot", "greyWives"]
         ],
-        "bellWatchers": [
-          [
-            "bellWatchers"
-          ],
-          [
-            "moot",
-            "bellWatchers"
-          ],
-          [
-            "moot",
-            "bellWatchers"
-          ]
-        ],
+        "bellWatchers": [["bellWatchers"], ["moot", "bellWatchers"], ["moot", "bellWatchers"]],
         "quenchers": []
       },
       "openingQueue": [],

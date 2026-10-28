@@ -51,6 +51,7 @@ describe('a save on load opens exactly the Orders it is past', () => {
       'v12-owner.json', // D548 (6): the owner's real v12 save and its v13 form join the list
       'v12-played.json',
       'v12.json',
+      'v13-owner.json', // D566 (2): the owner's real v13 save joins the list
       'v13-played.json',
       'v13.json',
     ]);
