@@ -2083,15 +2083,15 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 
 ### 7.14 The Descent *(v1.4, D557–D568)*
 
-`descent.previewSamples` is **locked** (plan §0.6). Every other constant here is **tunable**. `descent.stageTiers` and `descent.unlitBaseHealth` start as clearly marked placeholders and are calibrated in the v1.4 calibration on the Descent probe and approved by the owner in their own commit (D564).
+`descent.previewSamples` is **locked** (plan §0.6). Every other constant here is **tunable**. `descent.stageTiers` and `descent.unlitBaseHealth` were calibrated on the Descent probe (`docs/flesh-out/v1.4/descent-calibration.md`) and approved by the owner (Q59, D577): the maxed endgame roster wins 82% of practice runs with a median of 6 hunters downed, and 0% with What the Hold Learned zeroed.
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Learned Might bonus | `+perMastered × masteredContractSpecies + perProperty × revealedProperties + perSkill × totalSkillLevels + perChapter × orderChaptersRead` (in `stat%` applied to `Might_eff`, scaling attacks, Mender heals and Silver/Rune sub-hits, in the Descent only) | `descent.learned.perMasteredSpecies` = 0.01, `descent.learned.perProperty` = 0.0025, `descent.learned.perSkillLevel` = 0.005, `descent.learned.perOrderChapter` = 0.005 | 5.0, 5.15.10 |
 | Learned max Health bonus | same sum as Might (`stat%`, in the Descent only) | shares the constants above | 5.0, 5.15.10 |
 | Learned damage-taken cut | `−takenPerRelic × ownedHoldAndDelveRelics` (in `taken%`, inside the 75% cap, in the Descent only) | `descent.learned.takenPerRelic` = 0.01 | 5.0, 5.15.10 |
-| Stage tiers | tiers of Stages 1, 2 and 3 (scaled from each monster's base tier as §7.4) | `descent.stageTiers` = [5, 6, 7] *(calibrated in TD.9)* | 5.15.10 |
-| The Unlit's base Health | base Health at base tier 5 before tier scaling (and × 0.90 when the Salt Ring is owned; sits in `balance.ts`, read by `monsters.ts`) | `descent.unlitBaseHealth` = 4500 *(calibrated in TD.9)* | 5.15.10, 8.3 |
+| Stage tiers | tiers of Stages 1, 2 and 3 (scaled from each monster's base tier as §7.4) | `descent.stageTiers` = [7, 8, 9] *(D577)* | 5.15.10 |
+| The Unlit's base Health | base Health at base tier 5 before tier scaling (and × 0.90 when the Salt Ring is owned; sits in `balance.ts`, read by `monsters.ts`) | `descent.unlitBaseHealth` = 4500 *(D577)* | 5.15.10, 8.3 |
 | Between stages | standing hunters recover `laststand.recoverBetween` (0.20) of max Health (+ 0.10 with Rift Lantern) | — (reuses `laststand.recoverBetween`, §7.6) | 5.15.10 |
 | Descent preview | 100 three-stage practice runs in the odds worker | `descent.previewSamples` = 100 **(locked)** | 5.15.10, 6.5 |
 

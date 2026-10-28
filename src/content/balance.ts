@@ -391,10 +391,10 @@ export const balance = {
       perOrderChapter: tunable(0.005), // +0.5% per Order chapter read (up to +8%)
       takenPerRelic: tunable(0.01), // -1% damage taken per owned Hold or Delve relic (up to -12%)
     },
-    // PLACEHOLDER (D560, D564): replaced by the owner-approved calibrated values in TD.9 (Q59).
-    // TD.11 must not pass while either of the next two lines is still a placeholder.
-    stageTiers: tunable([5, 6, 7]),
-    unlitBaseHealth: tunable(4500), // PLACEHOLDER, see above
+    // Calibrated on the Descent probe and approved by the owner (Q59, D577): the maxed roster wins 82%
+    // with a median of 6 hunters downed; with the learned bonus zeroed it wins 0%.
+    stageTiers: tunable([7, 8, 9]),
+    unlitBaseHealth: tunable(4500), // base tier 5; see above
   },
 } as const;
 

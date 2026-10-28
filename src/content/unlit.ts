@@ -5,7 +5,7 @@ import type { DamageType } from './damage';
 // is flagged `descentOnly` and kept OUT of MONSTER_IDS, GUARDIAN_IDS and the bestiary: no Delve guardian
 // draw, contract list, stand pool or Forgotten count can reach it (the Delve guardians sit outside the
 // saved-state id lists the same way, D171). Stats are at its base tier (5); the fight scales Health and
-// Might by tier as §7.4 (TD.4a). Health reads `descent.unlitBaseHealth` (a placeholder until TD.9).
+// Might by tier as §7.4 (TD.4a). Health reads `descent.unlitBaseHealth` (calibrated in TD.9, D577).
 
 export type UnlitAbility =
   /** On each of its actions every standing hunter loses this share of max Health as Frost (ignores Armor; `taken%` applies) and has their turn meter knocked back; Halvar's Smoke-Lunged halves both. */
