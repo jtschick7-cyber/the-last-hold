@@ -18,6 +18,7 @@ export const MILESTONES = [
   'v0.10',
   'v0.11',
   'v1.3',
+  'v1.4',
 ] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
@@ -373,7 +374,34 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v1.3',
   },
+  // v1.4 (GDD §5.15.10, §7.14, D564, D577, Q59; the two rows approved by the owner). The Descent, judged
+  // on the Vigilant's Monday probe (the maxed endgame roster), in `sim.yml` only; the bands are in DESCENT below.
+  {
+    id: 'descent-victory',
+    text: 'The Descent is a costly, heroic victory: the maxed endgame roster wins 50% to 85% of the 100 practice runs (median of the 5 Monday seeds) with a median of 2 to 8 hunters downed',
+    bounds: [],
+    enforcedFrom: 'v1.4',
+  },
+  {
+    id: 'descent-learned-matters',
+    text: 'What the Hold Learned matters: the maxed roster wins at least 25 percentage points more often than the same roster with the bonus zeroed (median of the 5 Monday seeds), and the Hamlet starter party loses in Stage 1 on every seed',
+    bounds: [],
+    enforcedFrom: 'v1.4',
+  },
 ];
+
+/**
+ * The Descent's two rows (v1.4, D577). Win rates are of the preview's practice runs, the median of the
+ * 5 Monday seeds. Measured at the calibrated values (stage tiers 7, 8, 9; Unlit Health 4,500) in TD.9.
+ */
+export const DESCENT = {
+  winMin: 0.5,
+  winMax: 0.85,
+  downedMin: 2,
+  downedMax: 8,
+  /** The learned bonus is worth at least this much win rate (a share, 0.25 = 25 points). */
+  learnedPoints: 0.25,
+} as const;
 
 /**
  * The Orderer's Orders rows (v0.10, D417, D440). Cycles count from the start of the run.
