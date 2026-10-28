@@ -7,8 +7,9 @@ import { formatNumber, formatRate } from '../../core/format';
 import { bombStock, previewInputFor } from '../../core/stand/from-state';
 import { vigilLevelFor, vigilView } from '../../core/systems/vigil';
 import { suggestSix } from '../../core/stand/suggest';
-import { standPoolOf } from '../../core/stand/pool';
-import { creatureOf, DROSS_TIDE, standSeed, waveList } from '../../core/stand/waves';
+import { creatureOf, DROSS_TIDE } from '../../core/stand/waves';
+import { standWaves } from '../../core/systems/breach';
+import { BREACH_TEXT } from '../../content/breach-text';
 import type { GameState, Preparation } from '../../core/state/game-state';
 import { requestStandPreview, type StandAnswer } from '../app/odds-client';
 import { dispatch, game, version } from '../app/runtime';
@@ -43,7 +44,7 @@ const WaveList = ({ s }: { s: GameState }) => (
     class={styles.small}
     style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 var(--space-3)' }}
   >
-    {waveList(standSeed(s), SHOWN_WAVES, standPoolOf(s)).map((w) => (
+    {standWaves(s, SHOWN_WAVES).map((w) => (
       <div key={w.n}>
         <span class={styles.dim}>{w.n}.</span>{' '}
         {/* The Dross-Tide can never be investigated, so it is named at once (GDD §5.9.3, D363). */}
@@ -51,6 +52,14 @@ const WaveList = ({ s }: { s: GameState }) => (
           ? creatureOf(w.monster).name
           : '?'}{' '}
         <span class={styles.dim}>(tier {w.tier})</span>
+        {w.lane !== null && (
+          <>
+            {' '}
+            <span class={styles.dim} data-testid="wave-lane">
+              {BREACH_TEXT.lane(w.lane + 1)}
+            </span>
+          </>
+        )}
       </div>
     ))}
   </div>

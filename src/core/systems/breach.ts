@@ -3,7 +3,8 @@ import { PIECES, type HoldPieceId } from '../../content/hold-layout';
 import { constantAt, num } from '../balance-access';
 import type { Breakdown, Explained } from '../breakdown/breakdown';
 import { seeded } from '../rng';
-import { standSeed } from '../stand/waves';
+import { standPoolOf } from '../stand/pool';
+import { standSeed, waveList, type Wave } from '../stand/waves';
 import type { GameState } from '../state/game-state';
 import type { LaneTable } from '../state/lane-table';
 import { getPieceStatus } from './layout';
@@ -25,6 +26,24 @@ export const laneOf = (seed: string, n: number): number =>
 /** The lanes of waves 1 to `count`. */
 export const lanesFor = (seed: string, count: number): number[] =>
   Array.from({ length: count }, (_, i) => laneOf(seed, i + 1));
+
+/** A wave of the stand's list with its lane; `null` below Bastion, where no lane is shown (GDD §5.9.3). */
+export interface LaneWave extends Wave {
+  readonly lane: number | null;
+}
+
+/**
+ * The first `count` waves with each one's lane (TB.4). The species and tiers are `waveList`'s, unchanged;
+ * the lane is `laneOf` of the stand seed, so it is fixed with the list and never touched by the layout.
+ */
+export const standWaves = (state: GameState, count: number): LaneWave[] => {
+  const seed = standSeed(state);
+  const shown = state.cycle.age === 'bastion';
+  return waveList(seed, count, standPoolOf(state)).map((w) => ({
+    ...w,
+    lane: shown ? laneOf(seed, w.n) : null,
+  }));
+};
 
 export interface CountedPiece {
   readonly id: HoldPieceId;

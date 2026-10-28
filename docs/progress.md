@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.3 (lane and cover maths). Before it: TB.2, TB.1.
-- **Next:** TB.4 (lanes in the wave list). TB.5 needs TB.2, TB.3 and Q62 (answered).
+- **Last task:** TB.4 (lanes in the wave list). Before it: TB.3, TB.2, TB.1.
+- **Next:** TB.5 (the stand fight reads the lane table; `rulesVersion` 6; needs Q62, answered).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -55,3 +55,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Old-test edit (D593 c):** `systems/breach.ts` added to the allowed readers in `tests/layout/layout.test.ts`. A stale comment in `layout.ts` was updated.
 - **Numbers:** `npm run check` green, 94.8 s here (warn at 90, fail at 120; CI is the judge). Every golden fight and recorded stand still replays (they are in `check`).
 - **Not done:** nothing is wired into combat or the wave list (TB.4, TB.5); no UI.
+
+## 2026-10-28 — v1.5 TB.4: lanes in the wave list
+- **Built:** a new core function (`standWaves` in `breach.ts`) gives each wave of the stand list its lane from `laneOf` of the stand seed; below Bastion the lane is empty. The stand screen's wave list now reads it and shows "Lane {n}" (1 to 8) after the tier, "?" species too. Species and tiers come from the same list as before.
+- **Not touched:** the layout is never read (the lane depends on the seed alone); no fight, preview or save changes; no new strings (the tag is the §9.25 line already in `breach-text.ts`).
+- **Tests first:** new `tests/breach/wave-lanes.test.ts` (same lanes on every call, unchanged after any layout change, species and tiers equal to v1.4's list for four seeds, no lane at Hamlet, Keep or Citadel). New `tests/e2e/wave-lanes.spec.ts` (phone): the first 12 waves each show "Lane 1" to "Lane 8" including a "?" wave; on a Keep save no lane text appears. Both pass here in chromium (the container's browser needed a throwaway config; nothing committed for that).
+- **Weak spot:** the "before Bastion" browser check does not open the stand screen (it opens only at Bastion); the unit test covers the gating.
+- **Old-test edits:** none. The layout lint tests stay green.
+- **Numbers:** `npm run check` green, 80 s here (warn at 90, fail at 120; CI is the judge).
+- **Not done:** TB.5 onward.
