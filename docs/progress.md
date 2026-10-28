@@ -6,9 +6,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.1 (docs commit, preconditions, branch, name check).
-- **Next:** TB.2 (save schema 15, needs your real v14 save export) or TB.3 (constants and lane maths; either order).
-- **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 457,443 bytes at v1.4 (about 157 KB under the row).
+- **Last task:** TB.2 (save schema 15). Before it: TB.1.
+- **Next:** TB.3 (the constants, lane and cover functions, breakdowns; nothing wired into combat yet).
+- **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -36,3 +36,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Names:** searched the web 2026-10-28; no collision (lanes, cover, reach, stacked, tactician, The Breach are generic or plan-only). Dated in `names.ts`.
 - **One extra old-test edit (you approved):** `descent-text.test.ts` now stops reading the GDD at §9.25 instead of §10, so the Breach strings are not read as Descent strings. Same checks, nothing loosened.
 - **Numbers:** `npm run check` green, 88.5 s here. This container had no `node_modules` at first; `npm ci` fixed the format check (a stale prettier, not a repo problem).
+
+## 2026-10-28 — v1.5 TB.2: save schema 15, the migration and your real v14 save
+- **Your save:** `v14-owner.json` is your real v1.4 save (schema 14, cycle 2, Bastion, 40 placed pieces). `v15.json` is that save migrated, not played (`scripts/make-v15-fixtures.ts`). Your layout comes through unchanged.
+- **Schema 14 → 15:** the number moves and nothing else. No old stand gets a lane table, so every recorded stand still replays under the version 5 rules. `rulesVersion` stays 5 until TB.5.
+- **Lane table:** the stand record can now hold an optional table (`lanes`). A bad table refuses the load; an unknown field is dropped with a warning. The shape sizes equal the locked lane and front-row counts (a test keeps them equal).
+- **Tests (first):** new `v15-migration.test.ts`: all fixtures load, round-trip, keep layout and fights; 27 malformed-table cases refuse; a 3-tower table is under 0.4 KB; newer-version guard refuses 16; step under 100 ms.
+- **Old-test edits (D593):** (a) schema numbers 14 → 15 and "newer" 15 → 16 in `v12-`, `v13-` and `v14-migration.test.ts` (numbers only); (b) `v14-owner.json` and `v15.json` added to the fixture list in `opening.test.ts` (`saves.test.ts` picks fixtures up by itself). Nothing loosened.
+- **Numbers:** `npm run check` green, 93.2 s here (warn at 90, fail at 120). Size 452,544 bytes (per-file gzip -9 of `dist`, my own sum; 157 KB of room used by v1.4's 457,443).
+- **Deferred:** `v15-played.json` (TB.10); the benchmark row for the migration (TB.14).

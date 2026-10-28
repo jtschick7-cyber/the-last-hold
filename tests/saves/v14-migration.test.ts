@@ -80,7 +80,7 @@ const block = (patch: Record<string, unknown>) => ({ ...EMPTY, ...patch });
 
 describe('the v13 → v14 migration', () => {
   it('is schema 14, and rules version stays 5', () => {
-    expect(SCHEMA_VERSION).toBe(14);
+    expect(SCHEMA_VERSION).toBe(15); // D593 (a): was 14 before v1.5
     expect(RULES_VERSION).toBe(5);
     expect(readFixture('v13-owner.json').schemaVersion).toBe(13);
     expect(readFixture('v14.json').schemaVersion).toBe(14);
@@ -91,7 +91,7 @@ describe('the v13 → v14 migration', () => {
     (f) => {
       const loaded = loadFull(readFixture(f));
       expect(loaded.warnings).toEqual([]);
-      expect(loaded.state.meta.schemaVersion).toBe(14);
+      expect(loaded.state.meta.schemaVersion).toBe(15); // D593 (a): was 14 before v1.5
       expect(loaded.state.descent).toEqual(EMPTY);
       expect(roundTrip(loaded.state)).toEqual(loaded.state);
     },
@@ -147,8 +147,8 @@ describe('the v13 → v14 migration', () => {
     }
   });
 
-  it('the current code refuses a save from a newer version (15)', () => {
-    const env = { ...readFixture('v14.json'), schemaVersion: 15 };
+  it('the current code refuses a save from a newer version (16)', () => {
+    const env = { ...readFixture('v14.json'), schemaVersion: 16 }; // D593 (a): was 15 before v1.5
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 
