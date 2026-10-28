@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.6 (Start freezes the lane table). Before it: TB.5, TB.4, TB.3, TB.2, TB.1.
-- **Next:** TB.7a (needs TB.6). TB.7b needs TB.3 and could go first.
+- **Last task:** TB.7a (the preview carries the lanes). Before it: TB.6 to TB.1.
+- **Next:** TB.7b (Suggest layout; needs TB.3). TB.8a needs TB.4 and TB.7a, so it can follow.
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -83,3 +83,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Numbers:** `npm run check` green, 80 s here (warn 90, fail 120). Size 458,266 bytes (614,400 row; 452,544 at TB.2).
 - **Heads-up:** simulator stands now fight version 6 with whatever layout the policy has, so `sim:check` will differ from the v1.4 baseline until TB.11a re-records it. I did not run the full `sim:check`; the fast set in `npm run check` passes.
 - **Not done:** TB.7a onward; no browser test for the log header line yet.
+
+## 2026-10-28 — v1.5 TB.7a: the preview and the worker carry the lanes
+- **Mostly already true from TB.6:** the preview request is built by the same function as the real stand's input, so it carries the lane table the layout gives now and the real stand's seed. Practice stands draw species and dice from their own seeds and, because the lane of wave n comes from the real seed, take the real stand's lanes. No worker or protocol change was needed: it computes each lane on demand.
+- **New here:** (1) the Last Stand preview request now drops stale answers (an older request that finishes after a newer one gets nothing back, as the Descent preview does); (2) the stand screen's refresh key includes the lane table, read from the core's request, so moving a piece works the preview out again.
+- **Tests first** (`tests/stand/preview-lanes.test.ts`, 6): the request carries the table and seed and no layout; with the Auto-arrange layout the preview equals 100 practice stands run by hand (median, 10th and 90th); lifting the defenses changes the preview; with every defense in the Tray the table counts nothing and the preview is no better; same seeds give the same preview; a stale request gets null.
+- **Old-test edits:** none.
+- **Timing:** unthrottled, 100 practice stands of six level-8-or-so hunters with full defenses take 252 ms with a table and 172 ms without (the stands last longer). I did not change the bench page (its input has no table, and editing it is not on the pre-approved list), so CI's throttled bench still measures the old path; the 4× throttle puts this about at the 1 s budget, inside the 2× ceiling the bench enforces.
+- **Numbers:** `npm run check` green, 83 s here (warn 90, fail 120); no size measurement due (TB.8a).
+- **Not done:** the bench measuring the table path (asks for your yes to extend `bench-page.ts`); no browser test for the preview refreshing on a piece move (the Arrange Hold sheet and the strip come in TB.8a/8b).

@@ -205,13 +205,16 @@ export const StandView = () => {
   const chosenKit = kitFor(party);
   // GDD §9.23: the preview is worked out again when the Rising Vigil switch flips, so the level the
   // stand would have is part of the key (read from the core, never computed here).
-  const key = `${party.join(',')}|${JSON.stringify(chosenKit)}|${s.threat.toFixed(2)}|${vigilLevelFor(s)}`;
+  // The lane table the layout gives now is part of the key, so moving a piece works the preview out
+  // again (technical design §23.5). It is read from the request the core builds, never computed here.
+  const request = party.length > 0 ? previewInputFor(s, party, chosenKit) : null;
+  const key = `${party.join(',')}|${JSON.stringify(chosenKit)}|${s.threat.toFixed(2)}|${vigilLevelFor(s)}|${JSON.stringify(request?.stand.lanes ?? null)}`;
   useEffect(() => {
     if (party.length === 0) return;
     let live = true;
     setAnswer(null);
-    void requestStandPreview(previewInputFor(s, party, chosenKit)).then((a) => {
-      if (live) setAnswer(a);
+    void requestStandPreview(request ?? previewInputFor(s, party, chosenKit)).then((a) => {
+      if (live && a) setAnswer(a);
     });
     return () => {
       live = false;
