@@ -396,6 +396,19 @@ export const balance = {
     stageTiers: tunable([7, 8, 9]),
     unlitBaseHealth: tunable(4500), // base tier 5; see above
   },
+  // GDD §7.15 (v1.5, D581-D583). Only lanes and frontRows are locked; every other value here is a
+  // PLACEHOLDER to be replaced at TB.13 with values the owner approved from the TB.12 table (Q63).
+  breach: {
+    lanes: locked(8), // the 8 columns of the Fell Breach
+    frontRows: locked(3), // rows 0 to 2 count
+    coverOwn: tunable(0.5), // PLACEHOLDER (TB.13); coverOwn + 2 x coverNeighbour = 1
+    coverNeighbour: tunable(0.25), // PLACEHOLDER (TB.13)
+    depthStep: tunable(0.25), // PLACEHOLDER (TB.13): wall cut per extra piece in a column
+    depthMax: tunable(2), // PLACEHOLDER (TB.13): extra pieces that count, a whole number
+    towerReach: tunable([1, 0.5, 0.25]), // PLACEHOLDER (TB.13): own column, 1 away, 2 away; multiples of 0.25
+    volleyScale: tunable(1), // PLACEHOLDER (TB.13): pure placeholder, expect it to rise; in hundredths
+    suggestWaves: tunable(12), // PLACEHOLDER (TB.13): waves the Suggest rule and the strip's dots look at
+  },
 } as const;
 
 export type Balance = typeof balance;

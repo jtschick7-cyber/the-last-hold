@@ -267,10 +267,34 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Blocks:** TD.9 (setting the calibrated constants and committing rows A and B to `sim/targets.ts`).
 - **Partly answered (owner, 2026-10-28):** Row A judges the **maxed endgame** roster; the minimal gate-open roster is reported only. Still open: the constants themselves and the two rows' final wording (below).
 - **TD.8b proposal (for the owner's yes or no):** `descent.stageTiers` **[7, 8, 9]** and `descent.unlitBaseHealth` **4,500**. Maxed roster: wins 82%, median 6 hunters downed (inside both Row A bands); learned bonus zeroed: 0% (Row B, far above 25 points); Hamlet starter: 0 stages cleared (loses in Stage 1). Caveat: 82% is close to the 85% ceiling, and the minimal roster wins 0% there. A finer sweep around this point is available if you want more margin.
-- **Answer (owner):** *(pending for the constants and rows)*
+- **Answer (owner):** (a), 2026-10-28 (D577): `descent.stageTiers` [7, 8, 9], `descent.unlitBaseHealth` 4,500, rows A and B. Row A judges the maxed roster. Closed in the v1.5 sweep.
 
 ### Q60 — The approved wording of the Descent story texts is not in the repo *(opened 2026-10-28; blocks the story-text part of TD.3 and `lore-secrets.md` §34.11)*
 - **Context:** the plan asks TD.1 to put the approved texts D-01 to D-07 and the three post-Descent resident lines (Pechko, Brana, Ilse) into `lore-secrets.md` §34.11, word for word. The v1.4 flesh-out folder has no lore file (no `OUT-3`, which v0.11 had). The only wording in it is one-line descriptions of each card in `OUT-2a-gdd-changes.md` (for example D-01 "Pechko at the Bastion stair with the thirty-nine faded ribbons") and the first few words of each resident line, cut off with "...". CLAUDE.md says to invent none, so I did not write §34.11. Everything else in TD.1 is applied.
 - **Options:** (a) **Recommended:** you upload the missing lore file (the full approved texts) to `docs/flesh-out/v1.4/OUT-3-lore-secrets-descent.md` on `milestone/v1.4`; I apply it as §34.11 in a small docs commit and tick the rest. (b) You paste the seven texts and three lines into this thread. (c) I draft the texts from the one-line descriptions, in the style of §34, for you to approve word by word before they count as canon (slower, and it is new writing, not the approved text).
 - **Blocks:** the story-text part of TD.3 (`src/content/story/descent.ts` and its tests); `lore-secrets.md` §34.11. Everything else in TD.3 and TD.4 onward does not wait for it.
 - **Answer (owner):** the owner pasted the approved wording of D-01 to D-07 and the three resident lines on 2026-10-28 (option b). It is now `lore-secrets.md` §34.11, unchanged (D570). **Answered, closed.**
+
+## v1.5 questions *(from the v1.5 flesh-out, 2026-10-28)*
+
+### Q61 — May the player tap "Use this layout" after Suggest layout? *(opened 2026-10-28; asked in the first message of the build thread, with Q62; blocks the last part of TB.8b)*
+- **Context:** the owner agreed that **Suggest layout** shows a proposed arrangement and its preview and **places nothing by itself** (D588). With 10 to 14 defense pieces, following the suggestion by hand takes about 20 to 30 taps. A separate button the player taps would apply it in one command. That is a player choice, not an automatic placement, but it is a change from "never places".
+- **Options:** (a) **Yes: add an explicit "Use this layout" button** (one atomic command, `layout.setDefenses`: it lifts every defense in the front rows that is not in the suggestion to the Tray, then places the suggested defenses; it moves only walls and towers and is shown with what will move; recommended). (b) **No:** the suggestion is shown on the grid as highlighted target tiles and the player moves pieces by hand. (c) Yes, but behind a confirmation sheet.
+- **Recommendation:** (a). It moves only defenses, only on the player's tap, and the lanes strip shows the result before Start.
+- **Blocks:** the "Use this layout" button and the `layout.setDefenses` command at the end of TB.8b (built only if yes; if no, neither exists). The Tactician simulator uses `layout.unplace` and `layout.place` either way. It also decides what the CLAUDE.md rule about changing the layout says.
+- **Answer (owner):** (a), 2026-10-28 (D595): yes. "Use this layout" is allowed: one atomic command, `layout.setDefenses`, moving only walls and towers and only on the player's tap. Built at the end of TB.8b. **Answered, closed.**
+
+### Q62 — The golden test's version number (a locked file) *(opened 2026-10-28; asked in the first message of the build thread; blocks TB.5)*
+- **Context:** `rulesVersion` goes from 5 to 6 (D584). The golden-fight test file asserts the version number; in v0.8 it moved from 4 to 5 while every fight line stayed identical (D337 (9)). This milestone needs the same one-line move, 5 to 6. Golden fixtures are an owner gate (CLAUDE.md).
+- **Options:** (a) **Approve the one-line version edit, every fight line unchanged** (recommended). (b) Keep the golden file at 5 and add the version 6 assertion in a new file. (c) Other.
+- **Recommendation:** (a): the same change as in v0.8, with a test that every golden fight still replays line for line.
+- **Blocks:** TB.5 (rulesVersion 6).
+- **Answer (owner):** (a), 2026-10-28 (D595): approved. The golden test's version number may move from 5 to 6 as a one-line edit with every fight line unchanged; this is the only golden-file edit approved. **Answered, closed.**
+
+### Q63 — Approve the lane calibration table, the constants and the three rows *(opened 2026-10-28; answered after TB.12 reports the Breach probe, before TB.13)*
+- **Context:** the `breach.*` tunables start as values to be confirmed (`breach.volleyScale` is a pure placeholder, D583). TB.12's `npm run sim:breach -- …` sweeps them and reports, in `docs/flesh-out/v1.5/breach-calibration.md`: waves held (median, 10th–90th) for Auto-arrange, the Tactician and the bad layout, beside the same state under the v5 rules, at the Citadel and Bastion, over the 5 Monday seeds, plus how far each existing stand row moves.
+- **Question:** do you approve the proposed values and the three rows (A: Auto-arrange within 1 wave of today and at least 12; B: Tactician at least 1 wave more than Auto-arrange; C: bad layout at least 2 waves fewer)?
+- **Options:** (a) approve (recommended once the table lands in those bands); (b) pick another point from the grid; (c) change a row's wording.
+- **Recommendation:** (a).
+- **Blocks:** TB.13 (setting the constants, recording the v6 stand goldens, committing the rows).
+- **Answer (owner):** *(pending)*
