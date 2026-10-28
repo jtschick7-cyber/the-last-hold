@@ -10,7 +10,7 @@ import {
   UNLIT_PORTRAIT_ID,
   UNLIT_SPRITE_ID,
 } from '../../src/content/assets';
-import { numberedAssets, v14Numbered } from '../../tools/contact-sheet-data';
+import { currentHashes, numberedAssets, v14Numbered } from '../../tools/contact-sheet-data';
 import {
   DESCENT_SCENE_H,
   drawDescentScene,
@@ -76,5 +76,20 @@ describe('the v1.4 art', () => {
     expect(v14Numbered.map((x) => x.asset.id)).toEqual(cases.map((c) => c.row));
     const v10 = new Set(numberedAssets.map((x) => x.asset.id));
     for (const c of cases) expect(v10.has(c.row), c.row).toBe(false);
+  });
+});
+
+describe('the approved v1.4 pictures are frozen (S12)', () => {
+  const recorded = JSON.parse(
+    readFileSync(new URL('../../art-src/v1.4-hashes.json', import.meta.url), 'utf8'),
+  ) as Record<string, string>;
+
+  it('records a hash for each of the five and nothing else', () => {
+    expect(Object.keys(recorded).sort()).toEqual(cases.map((c) => c.row).sort());
+  });
+
+  it('matches the recorded hash for every one of them', () => {
+    const now = currentHashes();
+    for (const [id, hash] of Object.entries(recorded)) expect(now[id], id).toBe(hash);
   });
 });

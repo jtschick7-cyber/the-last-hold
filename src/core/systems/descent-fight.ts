@@ -73,6 +73,10 @@ export interface DescentStageRun {
   readonly log: readonly LogEntry[];
   /** Each front-line hunter's Health when the stage began (after the between-stage recovery). */
   readonly startHealth: Readonly<Partial<Record<HunterId, number>>>;
+  /** Everyone who fought in this stage, in order of arrival (including those later replaced mid-stage). */
+  readonly fought: readonly { id: HunterId; health: number; maxHealth: number; downed: boolean }[];
+  /** Mid-stage step-ins: the tick each batch of reserves arrived at, and who came. */
+  readonly entries: readonly { tick: number; ids: readonly HunterId[] }[];
   /** The front line at the end of the stage. */
   readonly hunters: readonly { id: HunterId; health: number; maxHealth: number; downed: boolean }[];
   readonly monsters: readonly { id: string; name: string; health: number; maxHealth: number }[];
@@ -258,6 +262,8 @@ export const runDescent = (input: DescentInput): DescentRun => {
     });
 
     const startHealth = Object.fromEntries(hunters.map((c) => [c.id, c.health]));
+    const fought: Combatant[] = [...hunters];
+    const entries: { tick: number; ids: HunterId[] }[] = [];
     const instances = stageMonsters(input, n);
     const monsterList = instances.map((m, slot) => {
       const def = speciesOf(m);
@@ -327,6 +333,8 @@ export const runDescent = (input: DescentInput): DescentRun => {
       const fresh = coming.map((snap, slot) => build(snap, slot));
       fight.hunters.splice(0, fight.hunters.length, ...fresh);
       everyone.push(...fresh);
+      fought.push(...fresh);
+      entries.push({ tick: fight.tick, ids: fresh.map((c) => c.id as HunterId) });
       fight.over = null;
       for (const c of fresh) {
         steppedIn.push(c.id as HunterId);
@@ -371,6 +379,13 @@ export const runDescent = (input: DescentInput): DescentRun => {
       },
       endedBy,
       startHealth,
+      fought: fought.map((c) => ({
+        id: c.id as HunterId,
+        health: c.health,
+        maxHealth: c.maxHealth,
+        downed: !standing(c),
+      })),
+      entries,
       bombs: f.bombs,
       log: f.log,
       hunters: f.hunters.map((c) => ({

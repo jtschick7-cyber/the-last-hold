@@ -15,6 +15,7 @@ import { monsters } from '../../content/monsters';
 import { villages } from '../../content/villages';
 import { levelOf } from '../investigation/knowledge';
 import type { GameState } from '../state/game-state';
+import { descentResultUnread } from '../systems/descent-playback';
 import { descentAvailable } from '../systems/descent-record';
 import { actVIStandApplied, namesFound, rememberingGate, speciesStudied } from './remembering';
 
@@ -60,6 +61,8 @@ export interface RememberingCardView {
   readonly descentWon: boolean;
   /** Keep the Vigil was chosen (so its button is not offered again). */
   readonly vigilChosen: boolean;
+  /** v1.4 (S9): an attempt's result has not been seen yet, so the card offers "View Descent result". */
+  readonly descentUnread: boolean;
 }
 
 /**
@@ -99,6 +102,7 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
     descentAvailable: descentAvailable(state),
     descentWon: has('descent'),
     vigilChosen: has('vigil'),
+    descentUnread: descentResultUnread(state),
   };
 };
 

@@ -4,6 +4,7 @@ import type { FloorPlayback } from '../../core/delves/view';
 import { openSheet } from '../app/sheets';
 import { motionInterval } from '../motion/registry';
 import styles from '../styles/ui.module.css';
+import { Sprite } from '../widgets/Sprite';
 import { Arena } from './Arena';
 import css from './Delve.module.css';
 
@@ -44,12 +45,21 @@ export const PlaybackView = ({
   onContinue,
   onFinish,
   continueLabel = 'Continue',
+  banner,
+  outcome,
+  opening = 'The fight begins.',
 }: {
   pb: FloorPlayback;
   onContinue: () => void;
   /** Runs once, when the playback reaches its end (or was skipped to it): a floor is fought then. */
   onFinish?: () => void;
   continueLabel?: string;
+  /** A scene picture shown above the arena (the Descent's stage banners). */
+  banner?: string;
+  /** The line shown at the end; `null` shows none (the Descent has its own result sheet). */
+  outcome?: string | null;
+  /** The line before the first step. */
+  opening?: string;
 }) => {
   const last = pb.steps.length - 1;
   const [i, setI] = useState(-1);
@@ -90,12 +100,18 @@ export const PlaybackView = ({
       frames[step.target] = 'hit';
   }
 
+  // A fight with step-ins lists who is on the field after each line; the others show everyone.
+  const onField = finished ? pb.steps[last]?.present : step?.present;
+  const shown = onField ? pb.combatants.filter((c) => onField.includes(c.id)) : pb.combatants;
+  const closing = outcome === undefined ? outcomeLine(pb) : outcome;
+
   return (
     <div>
       <h3 class={styles.cardTitle}>{pb.title}</h3>
-      <Arena combatants={pb.combatants} bars={bars} frames={frames} />
+      {banner && <Sprite id={banner} fill />}
+      <Arena combatants={shown} bars={bars} frames={frames} />
       <p class={css.line} aria-live="polite">
-        {finished ? <strong>{outcomeLine(pb)}</strong> : (step?.text ?? 'The fight begins.')}
+        {finished ? closing && <strong>{closing}</strong> : (step?.text ?? opening)}
       </p>
       <div class={styles.row}>
         {!finished && (

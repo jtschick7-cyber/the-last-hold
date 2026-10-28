@@ -1,9 +1,10 @@
-import { DESCENT_STRINGS } from '../../content/descent-text';
+import { DESCENT_STRINGS, DESCENT_VIEW_RESULT } from '../../content/descent-text';
 import { rememberingCard } from '../../content/text/remembering';
 import { rememberingCardView } from '../../core/story/remembering-view';
 import { dispatch, game, version } from '../app/runtime';
 import { openArchiveSection } from '../screens/ArchiveScreen';
 import { playEnding } from './ReadingScene';
+import { openDescentPlayback } from '../sheets/DescentPlayback';
 import { openDescentSheet } from '../sheets/DescentSheet';
 import { openVigilScene } from './VigilScene';
 import styles from '../styles/ui.module.css';
@@ -136,6 +137,16 @@ export const RememberingCard = () => {
             )}
           </div>
         </>
+      )}
+      {v.descentUnread && (
+        <button
+          type="button"
+          class={styles.btnPrimary}
+          data-testid="descent-view-result"
+          onClick={() => openDescentPlayback(true)}
+        >
+          {DESCENT_VIEW_RESULT}
+        </button>
       )}
     </section>
   );

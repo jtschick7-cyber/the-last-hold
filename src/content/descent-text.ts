@@ -47,6 +47,9 @@ export const DESCENT_STRINGS = {
   roll: 'Led the Descent.',
 } as const;
 
+/** GDD §9.24 (S9, in the playback text, not the string table): the card's button after a playback was closed early. */
+export const DESCENT_VIEW_RESULT = 'View Descent result';
+
 /** The sheet's heading for a stage: its name, a dash, and its monsters (GDD §9.24). */
 export const descentStageLine = (stage: 1 | 2 | 3): string =>
   `${DESCENT_STRINGS.stages[stage - 1]} — ${DESCENT_STRINGS.stageMonsters[stage - 1]}`;

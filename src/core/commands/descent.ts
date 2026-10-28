@@ -41,3 +41,9 @@ export const startDescent = (
   }
   return ok;
 };
+
+/** The result sheet has been shown: the card stops offering "View Descent result" (GDD §9.24, S9). */
+export const markDescentRead = (state: GameState): ApplyResult => {
+  state.descent.unreadResult = false;
+  return ok;
+};

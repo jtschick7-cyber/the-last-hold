@@ -10,6 +10,7 @@ import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
 import { useLongPress } from '../widgets/use-long-press';
+import { openDescentPlayback } from './DescentPlayback';
 import { KitPicker, type Kit } from './StandSheet';
 
 // GDD §9.24 (D563, S4): the Descent sheet. Header and stages, What the Hold Learned (summary with a
@@ -207,8 +208,10 @@ export const DescentView = () => {
         data-testid="descent-start"
         onClick={() => {
           const r = dispatch({ type: 'descent.start', order, prep: chosenKit });
-          if (r.ok) closeAllSheets();
-          else setRefused(r.reason);
+          if (r.ok) {
+            closeAllSheets();
+            openDescentPlayback();
+          } else setRefused(r.reason);
         }}
       >
         {DESCENT_STRINGS.start}

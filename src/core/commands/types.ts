@@ -88,6 +88,8 @@ export type Command =
   /** Technical design §15 (M5): all 14 hunters at the top, the lore and relics full, stores stocked; sets debugUsed. */
   | { type: 'debug.prepareEndgameRoster' }
   /** Technical design §15 (M5): real Descents until one is won; sets debugUsed. */
+  /** GDD §9.24 (S9): the player has seen the latest Descent's result sheet. */
+  | { type: 'descent.markRead' }
   | { type: 'debug.descentWin' }
   /** Plan KV.4 (D544 (7)): sets the count of stands fought On; sets debugUsed. */
   | { type: 'debug.vigilSetStands'; stands: number }

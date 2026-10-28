@@ -24,6 +24,7 @@ const READERS = [
   'src/core/commands/descent.ts',
   'src/core/commands/debug-descent.ts',
   'src/core/systems/descent-record.ts',
+  'src/core/systems/descent-playback.ts',
   'src/core/long-night/reset.ts',
 ];
 

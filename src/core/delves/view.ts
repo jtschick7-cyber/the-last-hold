@@ -123,6 +123,8 @@ export interface PlaybackStep {
   readonly actor: string | null;
   readonly target: string | null;
   readonly bars: Readonly<Record<string, number>>;
+  /** Who is on the field after this line, when the fight has step-ins (the Descent); absent means everyone. */
+  readonly present?: readonly string[];
 }
 
 export interface FloorPlayback {
@@ -145,7 +147,7 @@ export interface FloorPlayback {
  * max Health after each line. Shared by a Delve floor and by event fights (GDD §9.15, §9.17).
  */
 export const playbackSteps = (
-  r: FightResult,
+  r: Pick<FightResult, 'log' | 'hunters' | 'monsters'>,
   combatants: readonly FloorCombatant[],
   /** A creature's bar is its Health over this, when it is not its own max (a boss's pool). */
   barMax: Readonly<Record<string, number>> = {},

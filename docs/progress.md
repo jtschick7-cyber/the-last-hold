@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.6 draft (all five Descent pictures redrawn to the owner's notes; awaiting approval of the before/after sheet). Before it: TD.5. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** the owner approves (or revises) the before/after sheet; then freeze `art-src/v1.4-hashes.json` and run TD.7b. TD.8a (simulator probe) can run meanwhile.
+- **Last task:** TD.7b (playback, story cards, sound cues, result sheet). Before it: TD.6 (art approved and frozen), TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** TD.7c (Roll mark, Library replay, Great Beasts shelf, last polish rows); TD.8a (simulator probe) can run any time.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -108,3 +108,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Sheet (shown in the conversation):** `docs/flesh-out/v1.4/before-after/descent.png`; the old pictures are kept in `art-src/previous-v1.4/`. New tool `tools/before-after-descent.ts`.
 - **Checks:** `npm run check` green (3,700 tests). Existing art tests (file equals generator, palette, size) pass on the new pictures. v1.0 and v1.1 hashes unchanged.
 - **Not done, on purpose:** `art-src/v1.4-hashes.json` and its test wait for your approval of this sheet (CLAUDE.md: redrawn art ships only after approval).
+
+## 2026-10-28 — v1.4 TD.6 closed, TD.7b: playback, story cards, sound cues, result sheet
+- **TD.6:** you approved the art; `art-src/v1.4-hashes.json` (five hashes) is frozen with a test in `descent-art.test.ts`.
+- **Playback (tests first, 9 new unit tests in `tests/descent/playback.test.ts`):** `descent-playback.ts` rebuilds the three stages from the saved record alone and shapes them for the screen: cards D-01 to D-06 around the stages (D-07 on a loss), the stage heading, banner, the log lines, who is on the field after each step (a mid-stage step-in replaces the front line), and the result heading and summary. The sheet (`DescentPlayback.tsx`) reuses the Delve's playback view (Skip, Log, Continue) with the stage banner above the arena. Cards word for word from the lore file.
+- **Sound (UI only):** Stage 1 and 2 cleared play `win`, Stage 3 `fanfare`, a loss `lose`, cards and logs silent. I used the existing play-by-id call, so the 15 moments and their test are untouched.
+- **Result sheet:** heading, summary, and a log button for each stage reached. Reaching it marks the result as seen (new command `descent.markRead`). Closing early leaves it unread: the card shows **View Descent result**, which opens the result sheet directly (also after a reload).
+- **Tests (Playwright, 360 px):** a full win with every card and the cues `win, win, fanfare`; a loss (hunters at level 1, no gear) with D-07, `Driven back at Stage 2.` and `win, lose`; a playback closed early, a reload, and the card's button. Polish sweeps (tap size, text size, contrast) pass on the new screens, added to the `descent` flow.
+- **Small changes to my own earlier code:** the stage run now also lists everyone who fought and the mid-stage step-in ticks (additive; every golden fight and recorded stand replays; `rulesVersion` 5); the Delve playback view takes optional banner, outcome and opening-line props (the Delve's own look is unchanged). `descent-playback.ts` joins the lint list of files allowed to read `state.descent`. No old test edited.
+- **Readings to confirm:** (1) the banner sits above the arena, not behind the sprites, so names and bars keep their contrast; (2) "View Descent result" is the plain text GDD §9.24 names and is kept outside the string table; (3) with the placeholder constants even level-1 hunters win from the played fixture, so the loss test strips gear and ranks.
+- **Size (SF.9 method):** 453,208 bytes; 161,192 under 614,400. `npm run check` 88 s, 3,710 tests.

@@ -261,6 +261,30 @@ export const FLOWS: readonly Flow[] = [
       await visit('descent-sheet', 'The Descent sheet', [/Three stages in the Deep/, /Win chance/]);
       await page.getByRole('button', { name: 'Show what the hold learned' }).click();
       await visit('descent-learned', 'What the hold learned (breakdown)', [/Mastered species/]);
+      await dismiss(page);
+      // The saved attempt is unread: the card offers its result sheet, then a stage log.
+      await tabTo(page, 'Hold');
+      await card.scrollIntoViewIfNeeded();
+      await page.getByTestId('descent-view-result').click();
+      await visit('descent-result', 'The Descent result sheet', [
+        /Victory — The Unlit is scattered\./,
+      ]);
+      await page.getByTestId('descent-log-1').click();
+      await visit('descent-log', 'The Descent stage log', [/t\d+/]);
+      await dismiss(page);
+      // A new attempt: the first story card, then a stage's playback with the banner over the arena.
+      await tabTo(page, 'Hold');
+      await card.scrollIntoViewIfNeeded();
+      await card.getByRole('button', { name: 'Fight the Descent again' }).click();
+      await page
+        .getByTestId('descent-preview')
+        .getByText(/Win chance/)
+        .waitFor();
+      await page.getByTestId('descent-start').click();
+      await visit('descent-card', 'The Descent story card', [/Pechko doesn't stand/]);
+      await page.getByRole('button', { name: 'Continue' }).click();
+      await page.getByRole('button', { name: 'Continue' }).click();
+      await visit('descent-stage-playback', 'The Descent stage playback', [/Stage 1: The Crack/]);
     },
   },
   plain('hunters-roster', 'Hunters (roster)', 'Hunters tab', [/By slot/], (p) =>
