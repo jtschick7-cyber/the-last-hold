@@ -2465,3 +2465,59 @@ Then **R-11** (34.7) is the last card, and the ending returns to the Hold screen
 8. **No side effects (D463):** across the whole ending, `orders` (standing, counts, seats, levels, `readWith`) and `skills` are unchanged, and no document is filed.
 
 **Note (D463).** After Remember Them the Long Night carries on unchanged. The fallen warden's ember still goes to the seal (§7); "the seal no longer needs fuel" (§6) is read as R-09 says: the hearth keeps itself, and wardens still come by old habit.
+
+---
+
+### 34.11 The Descent *(v1.4, D560, D563; the single canonical source for these texts, approved word for word by the owner, 2026-10-28, Q60)*
+
+Seven story cards and three resident lines. The Descent screen shows D-01 to D-07 as scene sheets (GDD §5.15.10, §9.24); the strings around them are in GDD §9.24, not here. Nothing here names any of the Sent's forty names; the people named are Pechko, Brana and Ilse, and the place Stanholm.
+
+**D-01 · Before the march** *(when Start is tapped)*
+
+> Pechko doesn't stand in front of the door at the foot of the Bastion stair. He only holds the lantern up so you can see the thirty-nine faded ribbons on the handle.
+>
+> "You know what's under the stone now," he says. "And you're going anyway. Take everyone who can walk. Leave the stove to me."
+
+**D-02 · Stage 1: The Crack**
+
+> The air below the Hearth Hall smells of wet iron and old snow. The shapes that come out of the dark are the ones the rift has been practicing.
+
+**D-03 · Stage 2: The Sealed Stair**
+
+> Further down, the steps are cut in the old order's measure. Something heavy shifts against the inner seal, and the dead smiths who built it stand up in the frost.
+
+**D-04 · Stage 3: Below the Seal**
+
+> The bottom of the stair is dry and very still. There is no forge here, only a wide stone floor and the cold that waited under it before the first stone of Stanholm was laid.
+>
+> The rime on the wall writes one line and stops:
+>
+> YOU BROUGHT THEM ALL.
+
+**D-05 · Victory** *(when Stage 3 falls)*
+
+> The cold does not die when the last blow lands. It breaks apart like thin ice on a trough, running back into the narrow cracks of the rock where no hammer can reach.
+>
+> Up above, the floor of the Hearth Hall shivers once and settles. Those who can stand help the others up the stair. Nobody speaks until the gatehouse air hits their faces.
+>
+> It is not gone. It is scattered small, into a hundred cold seams under the fells, and it will take a long time to gather itself again.
+
+**D-06 · Aftermath** *(back in the Hearth Hall)*
+
+> Brana counts the hunters at the door, then counts them again before she sits down on the bench and lets her hands shake.
+>
+> Pechko sets the kettle on the hob. "You broke its grip," he says. "Not for ever. Nothing down there ends for ever. But the villages will sleep through this winter, and the next, and the one after that."
+
+**D-07 · Defeat** *(when every hunter is downed before Stage 3 falls)*
+
+> The cold pushes you back up the stair, step by step, until the Bastion door shuts behind the last hunter.
+>
+> Pechko is already there with blankets and hot water. "Sit," he says. "Nobody died. The stair will still be there when you're ready."
+
+**Three post-Descent resident lines** *(added to the resident lines pool once `'descent'` is recorded in `remembering.endings`; when both Remember Them and the Descent are won, the pools rotate, GDD §5.15.10)*
+
+- **Pechko:** "The crack behind the stove is quiet today. Just a draught, like any old house."
+- **Brana:** "Everyone who went down that stair gets the first cut of the roast. I don't care what the ledger says."
+- **Ilse:** "I wrote down who went down the stair, and in what order. The next warden ought to know it can be done."
+
+**Checks for the content test (TD.3; they follow 34.10).** (1) Every text above equals this file, string for string. (2) The forbidden words of 34.10 (2) are absent, and none of the 40 names appears. (3) No relative years and no number of years. (4) Only Pechko, Brana, Ilse, Stanholm, Bastion and Hearth Hall are named. (5) The Descent changes no `orders` and no `skills`, and files no document.
