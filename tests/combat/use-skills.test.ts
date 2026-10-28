@@ -22,8 +22,8 @@ const ticks = (r: FightResult, actor: string): number[] =>
   r.log.filter((e) => e.actor === actor && e.kind !== 'skill').map((e) => e.tick);
 
 describe('the rules version', () => {
-  it('is 5 for the use-skills and item lines (D308)', () => {
-    expect(RULES_VERSION).toBe(5);
+  it('is 6 from v1.5 (it was 5 for the use-skills and item lines, D308)', () => {
+    expect(RULES_VERSION).toBe(6);
   });
 });
 

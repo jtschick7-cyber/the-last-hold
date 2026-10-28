@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.4 (lanes in the wave list). Before it: TB.3, TB.2, TB.1.
-- **Next:** TB.5 (the stand fight reads the lane table; `rulesVersion` 6; needs Q62, answered).
+- **Last task:** TB.5 (the stand fight reads the lane table; rules version 6). Before it: TB.4, TB.3, TB.2, TB.1.
+- **Next:** TB.6 (Start freezes the lane table; needs TB.5).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -64,3 +64,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Old-test edits:** none. The layout lint tests stay green.
 - **Numbers:** `npm run check` green, 80 s here (warn at 90, fail at 120; CI is the judge).
 - **Not done:** TB.5 onward.
+
+## 2026-10-28 — v1.5 TB.5: the stand fight reads the lane table; rules version 6
+- **Built:** the stand fight takes the optional lane table. Absent: the old path, unchanged. Present: each wave's lane (from the stand seed) gives its wall cut (in the taken% bucket, under the 75% cap) and its volley (replacing the flat one). Each wave of such a stand also carries the lane's Walls and volley breakdowns (cover and depth lines from the same function). A record with a table rebuilds with it; one without replays as version 5. Nothing makes a table yet (Start does at TB.6), so no real stand changes.
+- **Rules version is now 6.** Replay was already by result, so records stamped 5 or 6 replay either way.
+- **Tests first** (`tests/stand/lanes-fight.test.ts`): the two equality tests with version 5, an empty table differs as the rules say, per-wave lane numbers, breakdown lines, rebuild from a record, the 75% cap counted on a deep-wall fixture. New `layout-isolation.test.ts`: the same five days of contracts with the layout cleared or not give identical states. Every golden fight and recorded stand still replay line for line.
+- **Old-test edits (you approved, number and wording only):** the golden test's version line 5 → 6 (Q62), and the same number in `events`, `use-skills`, the Descent start test, and the v9, v11, v12, v13, v14, v15 migration tests (titles that said "stays 5" now say 6).
+- **Numbers:** `npm run check` green, 82 s here (warn 90, fail 120).
+- **Weak spots:** the cap test works the sums by hand rather than running a full fight under the cap; the isolation test covers contracts and time, while events, Delves, bosses, hunts and the Descent are kept off the layout by the lint.
+- **Not done:** TB.6 onward. Size was not measured (due at TB.6).

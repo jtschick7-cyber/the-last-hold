@@ -10,5 +10,8 @@
 // contract fight and Last Stand wave recorded under versions 1 to 3 replays unchanged. Version 5
 // (owner-approved, D308): the Wrights' use-skills, with the meter knock-back as a general fight
 // rule, and the bonus lines of items; a hunter with no rank, no stars and only Common items fights
-// exactly as before, so every golden fight and every recorded fight replays unchanged.
-export const RULES_VERSION = 5;
+// exactly as before, so every golden fight and every recorded fight replays unchanged. Version 6
+// (owner-approved, D584, Q62): the Breach. A Last Stand whose record holds a lane table fights under the
+// version 6 rules (the wave's lane gives its wall cut and volley); a record without one replays under the
+// version 5 rules, bit for bit. Every other fight's maths is the same in 5 and 6, and replay accepts both.
+export const RULES_VERSION = 6;

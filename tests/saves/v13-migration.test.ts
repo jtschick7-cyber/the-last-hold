@@ -39,9 +39,9 @@ const withVigil = (vigil: unknown, debugUsed = false): Env => {
 const OLD = ['v12-owner.json', 'v12.json', 'v12-played.json'];
 
 describe('the v12 → v13 migration', () => {
-  it('is schema 13, and rules version stays 5', () => {
+  it('is schema 13, and rules version is 6 from v1.5', () => {
     expect(SCHEMA_VERSION).toBe(15); // D593 (a): was 14 before v1.5
-    expect(RULES_VERSION).toBe(5);
+    expect(RULES_VERSION).toBe(6);
     expect(readFixture('v12-owner.json').schemaVersion).toBe(12);
     expect(readFixture('v13.json').schemaVersion).toBe(13);
   });

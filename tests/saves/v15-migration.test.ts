@@ -63,9 +63,9 @@ const mutate = (patch: (t: Record<string, unknown>) => void): unknown => {
 const k = (t: Record<string, unknown>) => t.k as Record<string, unknown>;
 
 describe('the v14 → v15 migration', () => {
-  it('is schema 15, and rules version stays 5 until TB.5', () => {
+  it('is schema 15, and rules version is 6 from TB.5', () => {
     expect(SCHEMA_VERSION).toBe(15);
-    expect(RULES_VERSION).toBe(5);
+    expect(RULES_VERSION).toBe(6);
     expect(readFixture('v14-owner.json').schemaVersion).toBe(14);
     expect(readFixture('v15.json').schemaVersion).toBe(15);
   });

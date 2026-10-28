@@ -39,9 +39,9 @@ const withLayout = (layout: unknown): Env => {
 };
 
 describe('the v11 → v12 migration', () => {
-  it('is schema 12, and rules version stays 5', () => {
+  it('is schema 12, and rules version is 6 from v1.5', () => {
     expect(SCHEMA_VERSION).toBe(15); // D593 (a): was 14 before v1.5
-    expect(RULES_VERSION).toBe(5);
+    expect(RULES_VERSION).toBe(6);
     expect(readFixture('v11-owner.json').schemaVersion).toBe(11);
     expect(readFixture('v12.json').schemaVersion).toBe(12);
   });
