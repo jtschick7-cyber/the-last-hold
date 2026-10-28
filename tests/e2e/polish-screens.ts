@@ -749,6 +749,15 @@ export const FLOWS: readonly Flow[] = [
       }
     },
   },
+  // Plan TB.8a (GDD §9.25, D593 (d)): the Arrange Hold sheet at Bastion, with the Lanes strip.
+  plain(
+    'arrange-hold-lanes',
+    'Arrange Hold (Bastion, Lanes strip)',
+    'Hold, Layout ▸ (Bastion)',
+    [/Fell Breach/, /Lanes/, /Tap a lane to see what covers it\./],
+    (p) => btn(p, /^Layout/).click(),
+    'v11',
+  ),
 ];
 
 /**

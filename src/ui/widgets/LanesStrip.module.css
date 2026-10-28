@@ -1,0 +1,88 @@
+/* GDD §9.25: the Lanes strip. Two rows of four below 600 px, one row of eight above; boxes grow taller
+   at larger text instead of scrolling. A box is a tappable thing of at least 44 × 44 px. */
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+@media (min-width: 600px) {
+  .strip {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+
+.box {
+  min-width: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--c-border);
+  background: var(--c-surface-raised);
+  color: var(--c-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.box:focus-visible {
+  outline: 2px solid var(--c-text);
+  outline-offset: 2px;
+}
+
+/* The chosen lane: a thick outline and a heavier border, never colour alone. */
+.boxOn {
+  outline: 3px solid var(--c-text);
+  outline-offset: -3px;
+  border-style: double;
+  border-width: 4px;
+}
+
+.laneName {
+  font-weight: bold;
+}
+
+.dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.line {
+  min-height: 44px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-2);
+  border: 1px solid var(--c-border);
+  background: var(--c-surface-raised);
+  color: var(--c-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.line:focus-visible {
+  outline: 2px solid var(--c-text);
+  outline-offset: 2px;
+}

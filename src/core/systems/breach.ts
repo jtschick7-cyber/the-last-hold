@@ -229,6 +229,10 @@ export interface LaneInfo {
 }
 
 export interface LaneView {
+  /** Lanes exist from Bastion on; before it the strip does not appear (GDD §9.25). */
+  readonly shown: boolean;
+  /** `breach.suggestWaves`: how many upcoming waves the dots and the list look at. */
+  readonly waveCount: number;
   readonly lanes: readonly LaneInfo[];
   /** No piece counts: only the ruined edge gives cover. */
   readonly none: boolean;
@@ -258,7 +262,12 @@ const build = (state: GameState): LaneView => {
         .map((p) => p.id),
     };
   });
-  return { lanes, none: counted.length === 0 };
+  return {
+    shown: state.cycle.age === 'bastion',
+    waveCount: num('breach.suggestWaves'),
+    lanes,
+    none: counted.length === 0,
+  };
 };
 
 /** Everything the view reads, as one string: the view is rebuilt only when it changes (like the grid view, N6). */

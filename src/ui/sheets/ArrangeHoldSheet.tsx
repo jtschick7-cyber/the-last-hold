@@ -4,10 +4,12 @@ import { buildings } from '../../content/buildings';
 import { ghostTileId, groundTileId } from '../../content/assets';
 import type { HoldPieceId } from '../../content/hold-layout';
 import { buildHoldGridView, inClearing } from '../../core/systems/layout';
+import { laneView } from '../../core/systems/breach';
 import { clearsAtAge, pieceDef } from '../../core/systems/layout-catalog';
 import { dispatch, game, version } from '../app/runtime';
 import styles from '../styles/ui.module.css';
 import { groundLook, outsideTile, pieceImage } from '../widgets/HoldGrid';
+import { LanesStrip, litLane } from '../widgets/LanesStrip';
 import { Sprite } from '../widgets/Sprite';
 
 // GDD §9.21: the Arrange Hold sheet. Tap-only. Every rule (what fits, swaps, the Hall's anchor)
@@ -31,6 +33,9 @@ export const ArrangeHoldSheet = () => {
   const [confirming, setConfirming] = useState(false);
   const s = game();
   const v = buildHoldGridView(s);
+  const lanes = laneView(s);
+  const lane = litLane.value === null ? undefined : lanes.lanes[litLane.value];
+  const lit = new Set<string>([...(lane?.coverPieces ?? []), ...(lane?.towerPieces ?? [])]);
   const b = v.clearing;
   const at = (x: number, y: number) =>
     v.active.find((p) => x >= p.x && x < p.x + p.w && y >= p.y && y < p.y + p.h);
@@ -65,6 +70,7 @@ export const ArrangeHoldSheet = () => {
         {ages[v.age].name} · {b.maxX - b.minX + 1}×{b.maxY - b.minY + 1} open · {v.activeCount}/
         {v.pieceCount} placed
       </p>
+      <LanesStrip view={lanes} light />
       <p class={styles.small} style={{ margin: 0 }}>
         ▲ The Fell Breach
       </p>
@@ -97,6 +103,40 @@ export const ArrangeHoldSheet = () => {
               <Sprite id={pieceImage(p, v.age)} fill />
             </span>
           ))}
+          {/* GDD §9.25: the pieces that cover the chosen lane, an outline and a corner mark (never colour alone), no animation. */}
+          {lanes.shown &&
+            v.active
+              .filter((p) => lit.has(p.id))
+              .map((p) => (
+                <span
+                  key={p.id}
+                  data-lit-piece={p.id}
+                  style={{
+                    ...cellBox(p.x, p.y, p.w, p.h),
+                    boxSizing: 'border-box',
+                    outline: '3px dashed #fff',
+                    outlineOffset: '-3px',
+                    boxShadow: 'inset 0 0 0 5px #000',
+                    pointerEvents: 'none',
+                    lineHeight: 1,
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      padding: '1px 3px',
+                      background: '#000',
+                      color: '#fff',
+                      fontSize: '10px',
+                    }}
+                  >
+                    ◤
+                  </span>
+                </span>
+              ))}
           {/* N9: one high-contrast outline round the whole piece (white over black), 2 × 2 included. */}
           {sel && (
             <span

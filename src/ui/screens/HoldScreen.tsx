@@ -10,6 +10,7 @@ import { PeasantsPanel } from './PeasantsPanel';
 import { HoldScene } from '../widgets/HoldScene';
 import { HoldGrid } from '../widgets/HoldGrid';
 import { ArrangeHoldSheet } from '../sheets/ArrangeHoldSheet';
+import { litLane } from '../widgets/LanesStrip';
 import { buildHoldGridView } from '../../core/systems/layout';
 import { ThreatMeter } from '../widgets/ThreatMeter';
 import { LongNightView, lastStand } from '../sheets/LongNightSheets';
@@ -58,7 +59,10 @@ export const HoldScreen = () => {
             class={styles.btn}
             data-layout-button="true"
             data-tray-count={tray}
-            onClick={() => openSheet('Arrange Hold', () => <ArrangeHoldSheet />)}
+            onClick={() => {
+              litLane.value = null; // a fresh visit lights nothing
+              openSheet('Arrange Hold', () => <ArrangeHoldSheet />);
+            }}
           >
             {tray > 0 ? `Layout (${tray}) ▸` : 'Layout ▸'}
           </button>
