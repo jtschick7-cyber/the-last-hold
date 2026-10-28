@@ -4,6 +4,12 @@ import { RESOURCE_IDS, type ResourceId } from '../src/content/resources';
 import { play, type CheckInRecord, type PolicyId } from '../src/core/policies';
 import { allChaptersRead } from '../src/core/policies/orderer';
 import { vigilantDone } from '../src/core/policies/vigilant';
+import {
+  probeDescent,
+  shippedDescentGrid,
+  type DescentGrid,
+  type DescentProbe,
+} from './descent-probe';
 import { probeVigil, shippedGrid, type ProbeGrid, type VigilProbe } from './vigil-probe';
 import { bandFor } from '../src/core/story/band';
 import { num } from '../src/core/balance-access';
@@ -73,6 +79,8 @@ export interface RunSpec {
   readonly untilContent?: boolean;
   /** The Vigilant's probe grid (KV.8, D546); absent = the shipped constants, the additive step. */
   readonly probe?: ProbeGrid;
+  /** The Descent probe's grid (TD.8b, D564); absent = the shipped values, one cell. */
+  readonly descentProbe?: DescentGrid;
 }
 
 /** v0.11: the first moment the ending was choosable, and what the hold had of it when the run stopped. */
@@ -383,6 +391,8 @@ export interface VigilRecord {
   readonly stands: readonly VigilStand[];
   /** The probe at the first stand made with the switch On; null if no such stand happened. */
   readonly probe: VigilProbe | null;
+  /** The Descent probe (TD.8b), taken from the same state as `probe`; null if no such stand happened. */
+  readonly descent: DescentProbe | null;
 }
 
 export interface RunResult {
@@ -494,6 +504,7 @@ export const runOne = (spec: RunSpec): RunResult => {
   let ending: { hours: number; cycle: number } | null = null;
   let gateOpened: { hours: number; cycle: number } | null = null;
   let probe: VigilProbe | null = null;
+  let descent: DescentProbe | null = null;
   let namesAndStand: { hours: number; cycle: number } | null = null;
   const eventsSeen = {
     openedHours: null as number | null,
@@ -601,6 +612,12 @@ export const runOne = (spec: RunSpec): RunResult => {
         num('laststand.previewSamples'),
         [before.threat, before.threat * 2],
         spec.probe ?? shippedGrid(),
+      );
+      // TD.8b (D564): the same state, gate open and at Bastion, fights the Descent's practice runs.
+      descent = probeDescent(
+        before,
+        num('descent.previewSamples'),
+        spec.descentProbe ?? shippedDescentGrid(),
       );
     },
     stop: (st) =>
@@ -866,6 +883,7 @@ export const runOne = (spec: RunSpec): RunResult => {
                 : [],
             ),
             probe,
+            descent,
           } satisfies VigilRecord,
         }
       : {}),
