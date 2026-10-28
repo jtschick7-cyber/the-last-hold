@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.10 (benchmarks, size, old-test list). Before it: TD.9, TD.8b. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** TD.11 (wrap-up, five e2e shards, offline reload, pull request). Owner's look at the Descent screens: done, all good (2026-10-28).
+- **Last task:** TD.11 (wrap-up, pull request). Before it: TD.10, TD.9. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** your playtest on the iPhone (checklist in the plan and the pull request). After you say it passed: `sim:accept`, merge, tag `v1.4.0`. Export your save just before the merge.
 - **Open questions:** Q59 is answered (D577). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -157,3 +157,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Save growth:** new test `tests/descent/save-growth.test.ts`: both records full, 14 hunters, within 14 KB (D576). Passes.
 - **`npm run check`: 131 s here (tests 81 s), over the 120 s fail line.** The TD.7c commit measured 117 s on the same container today (it was 88 s earlier in the day), so most of it is the container; the branch adds about 14 s (3,742 tests against 3,716). Needs your call, see below.
 - **Old-test edits since `main` (all within D566 or reported earlier; nothing loosened):** schema 13 to 14 and "newer" 14 to 15 (`v12-migration`, `v13-migration`); `descent` swapped for an invalid ending name `banner` (`choose`, `v11-migration`; D566 (3)); `v13-owner`, `v14`, `v14-played` added to `opening.test.ts` (D566 (2)); v14 assets skipped in `contact-sheet.test.ts` (D566 (6)); `names.ts` (D566 (6)); `polish-screens.ts` (D566 (4)); `vigil-text.test.ts` ends its section cut at the next heading (not on the list; you approved it at TD.1).
+
+## 2026-10-28 — v1.4 TD.11: wrap-up and the pull request
+- **Open the real saves (new `descent-open.spec.ts`, 3 tests):** your v13 save and the same save after the v14 migration open with the gate closed (no Descent button anywhere), then with Act VI finished and the gate open the card offers The Descent and the sheet opens; the played v14 save opens and shows its Descent. No page errors. All pass.
+- **e2e, five shards here (local chromium):** 130 s, 190 s, 384 s, 173 s, 142 s (slowest 6 min 24 s, under the 8-minute ceiling). Two failures, both explained: (1) WebKit determinism: this container has no WebKit and my throwaway config pointed it at chromium; the chromium determinism test passes; CI is the judge. (2) `descent-sheet.spec.ts` "no Descent button below Bastion" (my TD.7a test): it counted "View Descent result", which the card shows for any finished unviewed Descent. It failed the same way at the TD.7c commit, so it predates TD.8 to TD.10. I narrowed the test to the two buttons that start a Descent (the same intent; nothing loosened); the file's 8 tests pass.
+- **Offline reload on the production build:** the smoke tests pass, and the `sw.js` duplicate-hash test is in `npm run check` (green).
+- **Simulator:** full `sim:check` at TD.9 (466 s): 60 of 60 rows, 192 of 192 moments same; no code in `src/` or `sim/` has changed since. Vigil shard 105 s.
+- **Numbers:** build 457,443 bytes (156,957 under the row); `npm run check` 131 s here (117 s at TD.7c on the same machine today; CI is the judge, accepted by you).
+- **Not done, waiting on you:** the playtest, then `sim:accept`, merge, tag. Status stays "in progress" until the merge.

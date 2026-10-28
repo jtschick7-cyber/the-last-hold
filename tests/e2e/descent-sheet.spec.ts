@@ -96,7 +96,11 @@ test('no Descent button below Bastion', async ({ page }) => {
   const c = card(page);
   await c.scrollIntoViewIfNeeded();
   await expect(c.getByRole('button', { name: 'Remember Them' })).toBeVisible();
-  await expect(c.getByRole('button', { name: /Descent/ })).toHaveCount(0);
+  // The buttons that start a Descent. "View Descent result" stays: the fixture holds a finished Descent
+  // nobody has viewed yet (S9), and reading a result needs no Bastion.
+  await expect(
+    c.getByRole('button', { name: /^(The Descent|Fight the Descent again)$/ }),
+  ).toHaveCount(0);
 });
 
 test('the Descent sheet: stages, learned bonus, swap, preview, tap sizes', async ({ page }) => {
