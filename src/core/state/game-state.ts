@@ -21,6 +21,7 @@ import type { EventsState } from './events-state';
 import type { OrdersState } from './orders-state';
 import type { HoldLayoutState } from './layout-state';
 import type { VigilState } from './vigil-state';
+import type { DescentState } from './descent-state';
 import type { RememberingState } from './remembering-state';
 import type { ItemState } from './item-state';
 import type { StoryState } from './story-state';
@@ -36,8 +37,8 @@ import type { InjuryKind } from '../contracts/injury';
 // T6.3, D218); v7 adds Delves and per-act family counts (plan T7.1, T7.5); v8 adds items,
 // Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317); v9 adds events (tokens,
 // rests, the boss visit, hunt points) and each cycle's stand pool (plan T9.1, D382); v10 adds the
-// Orders (plan T10.1); v11 adds the ending's block (plan T11.1, D452). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 13;
+// Orders (plan T10.1); v11 adds the ending's block (plan T11.1, D452); v12 the layout (D502); v13 Rising Vigil (D543); v14 the Descent (D562). Times are epoch milliseconds.
+export const SCHEMA_VERSION = 14;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -372,6 +373,8 @@ export interface GameState {
   layout: HoldLayoutState;
   /** Rising Vigil: the switch and the count of stands fought On (v13, GDD §5.9.10). Kept whole through the Long Night. */
   vigil: VigilState;
+  /** The Descent: attempts, the latest and first winning records (v14, GDD §5.15.10). Kept whole through the Long Night. */
+  descent: DescentState;
   stats: {
     /** Lifetime buildings bought and levels added; drives "first building" lines. */
     buildingsBought: number;

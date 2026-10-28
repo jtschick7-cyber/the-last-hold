@@ -12,6 +12,7 @@ import { newEventsState } from './events-state';
 import { newOrdersState } from './orders-state';
 import { newLayoutState } from '../systems/layout-catalog';
 import { newVigilState } from './vigil-state';
+import { newDescentState } from './descent-state';
 import { autoPlaceUnlocked } from '../systems/layout-place';
 import { newRememberingState } from './remembering-state';
 import { freshAct, startingVillageTrust } from './story-state';
@@ -107,6 +108,7 @@ export const createNewGame = (seed: string, now: number): GameState => {
     remembering: newRememberingState(),
     layout: newLayoutState(),
     vigil: newVigilState(),
+    descent: newDescentState(),
     stats: {
       buildingsBought: 0,
       peasantsSettled: 0,

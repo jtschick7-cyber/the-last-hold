@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.1 docs commit (flesh-out files applied, D568 added, the `descent.*` keys in `balance.ts`, three `CLAUDE.md` rules). Before it: two CI repairs on `main` (PR 23, PR 24, D569).
-- **Next:** TD.2 (save schema 14). Q60 (the approved Descent story wording is missing from the repo) blocks only the story-text part of TD.3.
+- **Last task:** TD.2 (save schema 14, the migration, `v14.json`). Before it: TD.1 (docs commit) and two CI repairs (D569).
+- **Next:** TD.3 (content, The Unlit, the learned bonus; its story-text part waits for Q60). Then TD.4a.
 - **Open questions:** Q59 (calibration, asked after TD.8b) and Q60 (the missing story wording). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -41,3 +41,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Not done:** `lore-secrets.md` §34.11 (last §34 subsection is §34.10): the approved wording of D-01 to D-07 and the 3 resident lines is not in the repo. Q60 asks; TD.3 is `[?]` for that part only.
 - **Test edits (owner said yes, 2026-10-28):** `tests/content/vigil-text.test.ts` now ends its §9.23 cut at the next `###` heading (not on D566's list; §9.24 follows §9.23 now; nothing loosened). `tests/orders/opening.test.ts` lists `v13-owner.json` (D566 (2)). Your save `v13-owner.json` is in; reformatted with Prettier only, data hash identical.
 - **Waiting on you:** Q60 (the approved Descent wording). TD.2 can start.
+
+## 2026-10-28 — v1.4 TD.2: save schema 14
+- **Done (tests first, 30 new tests in `tests/saves/v14-migration.test.ts`):** schema 13 → 14; `state.descent` (types in `state/descent-state.ts`); `save/migration-v14.ts` adds only the empty block; `save/validate-descent.ts`; `'descent'` is a third ending id (any order, one of each; `remembering.choose` refuses it); the Long Night keeps the block (a test). `v14.json` is your v1.3 save migrated, not played (`scripts/make-v14-fixtures.ts`). `v13-owner.json` loads, validates and round-trips with every other fixture; golden fights and recorded stands replay; schema 15 is refused.
+- **Size (SF.9 method, sum of per-file gzip -9 of `dist`):** 441,322 bytes, +988 for TD.2 (440,334 before); 173,078 under 614,400.
+- **Ids:** the technical design names two stage monsters `unlit-breath` and `forgotten`; the repo's ids are `unlits-breath` and `the-forgotten`. I used the repo's. TD.4 should read them the same way.
+- **Old-test edits (D566):** (1) schema 13 → 14 and newer-version guard 14 → 15 in `v12-migration` and `v13-migration` tests; (2) `v14.json` in `opening.test.ts`'s list. **My reading of (3), please say if wrong:** `choose.test.ts` and `v11-migration.test.ts` used `'descent'` as their made-up ending; it is real now, so both use `'banner'` (assertions unchanged).
+- **Not done / later:** `v14-played.json` (TD.4b); the non-coupling lint entry and command lists (D566 (5), (7)) come with the code that needs them.

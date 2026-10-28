@@ -159,7 +159,7 @@ describe('the remembering guard (D461)', () => {
   });
 
   it('drops an unknown ending id with a warning', () => {
-    const r = loadFull(withEndings([rec('descent'), rec('remember')]));
+    const r = loadFull(withEndings([rec('banner'), rec('remember')]));
     expect(r.state.remembering.endings).toEqual([rec('remember')]);
     expect(r.warnings).toHaveLength(1);
   });

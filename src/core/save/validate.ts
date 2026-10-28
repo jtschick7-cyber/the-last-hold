@@ -40,6 +40,7 @@ import { eventsFrom } from './validate-events';
 import { ordersFrom } from './validate-orders';
 import { layoutFrom } from './validate-layout';
 import { reconcileVigil, vigilFrom } from './validate-vigil';
+import { descentFrom } from './validate-descent';
 import { reconcileEndings, rememberingFrom } from './validate-remembering';
 import type {
   ContractInstance,
@@ -412,6 +413,7 @@ const check = (raw: unknown, warnings: string[], notes: string[]): GameState => 
     remembering: rememberingFrom(s.remembering, cycleNumber, warnings),
     layout: layoutFrom(s.layout, warnings),
     vigil: vigilFrom(s.vigil, warnings),
+    descent: descentFrom(s.descent, warnings),
     ...itemsFrom(s, owned, warnings),
     settings: settingsFrom(s.settings, warnings),
   };

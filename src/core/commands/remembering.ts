@@ -24,6 +24,8 @@ export const noteReady = (state: GameState): ApplyResult => {
 /** Why an ending cannot be chosen now, or null (GDD §5.15.3, D461 (1)). */
 const choiceProblem = (state: GameState, ending: EndingId): string | null => {
   if (!(ENDING_IDS as readonly string[]).includes(ending)) return 'No such ending.';
+  // D562 (S2): only a won Descent records 'descent', and the Descent command does that itself.
+  if (ending === 'descent') return 'The Descent is fought, not chosen.';
   if (!actVIStandApplied(state)) return "Act VI's Last Stand has not been applied yet.";
   if (!rememberingGate(state)) return 'The roll is not full yet, or the beasts are not all known.';
   const done = state.remembering.endings;
