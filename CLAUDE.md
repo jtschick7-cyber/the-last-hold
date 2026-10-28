@@ -84,6 +84,8 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 - Rising Vigil level 0 takes the old stand path bit for bit: nothing outside the stand code reads `vigil`, and nothing in `src/ui/` computes the vigil factor.
 - A stand's vigil level is saved on its record; a wave list, a log or a preview is always rebuilt with the saved level, never the switch's current state.
 - Write no player-facing strings for Rising Vigil beyond the table in GDD §9.23; if a screen needs one, ask.
+- The Descent runs on its own isolated fight path: nothing in contracts, Delves, events or the Last Stand reads `state.descent`, and nothing in `src/ui/` computes the `What the Hold Learned` bonus (`rulesVersion` stays 5, D561).
+- Write the Descent story texts D-01 to D-07 and the three post-Descent resident lines word for word from `lore-secrets.md` §34.11, and write no player-facing strings for the Descent beyond GDD §9.24; if a screen needs one, ask (D560, D563).
 
 **Content and balance**
 - Content lives in `src/content/`. Shared numeric constants live in `src/content/balance.ts`, under their GDD §7 key, marked `tunable` or `locked`. Per-item numbers (hunter stats, monster stats, and the like) live in their content files (D44).
@@ -101,6 +103,7 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 **Tests**
 - **Never weaken a test to make it pass.** Golden tests, simulator thresholds, and coverage rules are fixed. A failure means a bug, or a question for the owner.
 - Don't claim something works until a test or a run shows it.
+- No failing test in `npm run check`, `e2e`, `sim` or `bench` may ever be called a "known container or runner problem" unless it is first shown to fail on `main` before the branch's changes (D557).
 
 **Originality and assets**
 - **Write the Orders texts word for word from `docs/lore-secrets.md` §33; invent none.**
