@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
-- **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.11 (wrap-up, pull request). Before it: TD.10, TD.9. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** your playtest on the iPhone (checklist in the plan and the pull request). After you say it passed: `sim:accept`, merge, tag `v1.4.0`. Export your save just before the merge.
+- **Milestone:** v1.4 "The Descent" (D557–D578), complete (D578). v1.3 is merged, tagged `v1.3.0` and accepted (D556).
+- **Last task:** v1.4 milestone end (playtest passed, `sim:accept`, merge). Before it: TD.10, TD.9. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** the owner tags `v1.4.0` by hand. Then v1.5 "The Breach" needs a flesh-out session first (plan §0.4).
 - **Open questions:** Q59 is answered (D577). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -165,3 +165,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Simulator:** full `sim:check` at TD.9 (466 s): 60 of 60 rows, 192 of 192 moments same; no code in `src/` or `sim/` has changed since. Vigil shard 105 s.
 - **Numbers:** build 457,443 bytes (156,957 under the row); `npm run check` 131 s here (117 s at TD.7c on the same machine today; CI is the judge, accepted by you).
 - **Not done, waiting on you:** the playtest, then `sim:accept`, merge, tag. Status stays "in progress" until the merge.
+
+## 2026-10-28 — v1.4 milestone end
+- **The owner said the playtest passed** and that their save was exported.
+- **`sim:accept`** (470 s here): the baseline moves to v1.4; the only differences are the milestone and the two new rows. Plan `Status: complete`, D578.
+- **Left:** the owner tags `v1.4.0` by hand after the merge.

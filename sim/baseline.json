@@ -1,5 +1,5 @@
 {
-  "milestone": "v1.3",
+  "milestone": "v1.4",
   "rulesVersion": 5,
   "groups": {
     "opening/mon": {
@@ -277,6 +277,8 @@
     "remembering-reachable": true,
     "vigil-level-rises": true,
     "vigil-never-more-waves": true,
-    "vigil-embers-level": true
+    "vigil-embers-level": true,
+    "descent-victory": true,
+    "descent-learned-matters": true
   }
 }
