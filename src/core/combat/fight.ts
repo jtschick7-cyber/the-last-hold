@@ -116,7 +116,7 @@ const countKill = (f: Fight, m: Combatant): void => {
  * monster of the group is down (D251), lost when every hunter is. In a Delve, a hunter downed
  * may be lifted by Mended Cloth, and the last one down by the Long Vigil (D255).
  */
-const resolveEnds = (f: Fight): void => {
+export const resolveEnds = (f: Fight): void => {
   let anyUp = false;
   for (const m of f.monsters) {
     if (m.health <= 0) {
@@ -359,7 +359,9 @@ const monsterAct = (f: Fight, m: Combatant): void => {
   }
   const skipAttack = startOfMonsterAction(f, m);
   resolveEnds(f);
-  const settling = m.abilities.find((a) => a.kind === 'settling' || a.kind === 'boulderToss');
+  const settling = m.abilities.find(
+    (a) => a.kind === 'settling' || a.kind === 'boulderToss' || a.kind === 'heavyDark',
+  );
   if (
     !skipAttack &&
     settling &&
@@ -375,12 +377,27 @@ const monsterAct = (f: Fight, m: Combatant): void => {
       text: () =>
         settling.kind === 'settling'
           ? `${cap(m.name)} settles over the whole party`
-          : `${cap(m.name)} hurls a boulder at the whole party`,
+          : settling.kind === 'heavyDark'
+            ? `${cap(m.name)}'s Heavy Dark falls on the whole party`
+            : `${cap(m.name)} hurls a boulder at the whole party`,
       rolls: [],
     });
     for (const h of f.hunters.filter(present)) {
       if (f.over || !present(h)) continue;
-      directAttack(f, m, h);
+      const hit = directAttack(f, m, h);
+      if (hit && settling.kind === 'heavyDark' && present(h)) {
+        // Heavy Dark (GDD §8.3): a hunter it hits is chilled, as by Unlit's Breath (healing cut, refreshes).
+        h.healCutLeft = settling.chill.actions;
+        h.healCut = settling.chill.healingLoss;
+        emit(f, {
+          actor: m.id,
+          kind: 'ability',
+          target: h.id,
+          text: () =>
+            `${h.name} is chilled (healing −${Math.round(settling.chill.healingLoss * 100)}% for ${settling.chill.actions} actions)`,
+          rolls: [],
+        });
+      }
       resolveEnds(f);
     }
   } else if (!skipAttack) {
@@ -396,6 +413,46 @@ const monsterAct = (f: Fight, m: Combatant): void => {
     resolveEnds(f);
   }
   f.monsterActing = false;
+};
+
+/**
+ * The tick loop of §5.5, shared by `runFight` and the Descent's relay (GDD §5.15.10). `everyone` is the
+ * list the loop walks and may grow while it runs; `afterAct` runs after each combatant's action and
+ * may clear `f.over` (a reserve stepping in), so the stage goes on.
+ */
+export const runTicks = (f: Fight, everyone: Combatant[], afterAct?: (f: Fight) => void): void => {
+  const threshold = K.meterThreshold;
+  const maxTicks = K.maxTicks;
+  let tick = 0;
+  while (tick < maxTicks && !f.over) {
+    tick += 1;
+    f.tick = tick;
+    // Most ticks nobody acts, so only build the acting list when someone reached the threshold.
+    let anyReady = false;
+    for (const c of everyone) {
+      if (!standing(c) || c.awayLeft > 0) continue;
+      c.meter += c.speed;
+      if (c.meter >= threshold) anyReady = true;
+    }
+    if (!anyReady) continue;
+    const acting = everyone
+      .filter((c) => standing(c) && c.awayLeft === 0 && c.meter >= threshold)
+      .sort(actsBefore);
+    for (const c of acting) {
+      if (f.over) break;
+      if (!standing(c) || c.awayLeft > 0) continue; // downed or carried off earlier this tick
+      c.meter -= threshold;
+      c.actions += 1;
+      if (c.lostActions > 0) loseAction(f, c);
+      else if (c.side === 'hunter') {
+        hunterAct(f, c);
+        c.skillArmed = false;
+        partyActed(f, c);
+      } else monsterAct(f, c);
+      endOwnAction(c);
+      afterAct?.(f);
+    }
+  }
 };
 
 export const runFight = (input: FightInput): FightResult => {
@@ -555,38 +612,7 @@ export const runFight = (input: FightInput): FightResult => {
     }
   }
   resolveEnds(f);
-  const threshold = K.meterThreshold;
-  const maxTicks = K.maxTicks;
-  let tick = 0;
-  const everyone = [...hunters, ...monsterList];
-  while (tick < maxTicks && !f.over) {
-    tick += 1;
-    f.tick = tick;
-    // Most ticks nobody acts, so only build the acting list when someone reached the threshold.
-    let anyReady = false;
-    for (const c of everyone) {
-      if (!standing(c) || c.awayLeft > 0) continue;
-      c.meter += c.speed;
-      if (c.meter >= threshold) anyReady = true;
-    }
-    if (!anyReady) continue;
-    const acting = everyone
-      .filter((c) => standing(c) && c.awayLeft === 0 && c.meter >= threshold)
-      .sort(actsBefore);
-    for (const c of acting) {
-      if (f.over) break;
-      if (!standing(c) || c.awayLeft > 0) continue; // downed or carried off earlier this tick
-      c.meter -= threshold;
-      c.actions += 1;
-      if (c.lostActions > 0) loseAction(f, c);
-      else if (c.side === 'hunter') {
-        hunterAct(f, c);
-        c.skillArmed = false;
-        partyActed(f, c);
-      } else monsterAct(f, c);
-      endOwnAction(c);
-    }
-  }
+  runTicks(f, [...hunters, ...monsterList]);
   const endedBy = f.over ?? 'retreat';
   const result = endedBy === 'monster-down' ? 'win' : 'loss';
   emit(f, {

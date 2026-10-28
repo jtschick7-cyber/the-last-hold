@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.3 (The Unlit, story texts, UI strings, `learnedBonus`). Before it: TD.2 (save schema 14) and TD.1 (docs commit).
-- **Next:** TD.4a (the isolated Descent fight engine and abilities). TD.5 (art) also needs only TD.3.
+- **Last task:** TD.4a (the Descent fight engine, The Unlit's abilities). Before it: TD.3, TD.2, TD.1.
+- **Next:** TD.4b (the `descent.start` command, the frozen record, log rebuild, `v14-played.json`). TD.5 (art) can also run.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -60,3 +60,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Please check:** percents print with up to two decimals (GDD §9.24 gives no rounding rule). The headline "+m%" is the learned sum only; Spindle Whorl, Cold Iron Nail, Rift Lantern and Salt Ring are listed under "Active Delve relics:" and applied by the fight in TD.4a, so they are not counted twice.
 - **Placeholders:** `descent.stageTiers` and `descent.unlitBaseHealth` stay placeholders until TD.9. Names were already in `names.ts` (TD.1); nothing new needed.
 - **Not done / later:** the Unlit's art (TD.5), the engine (TD.4a), the UI (TD.7).
+
+## 2026-10-28 — v1.4 TD.4a: the Descent fight engine and The Unlit's abilities
+- **Done (tests first, 24 new tests in `tests/descent/descent-fight.test.ts`):** `runDescent` in `core/systems/descent-fight.ts`: three stages, front line of 6, reserve of 8, step-ins between stages (slot order, full Health) and mid-stage (up to 6 at once, meter 0, start-of-fight potions and meter traits on entry), 20% recovery (30% with the Rift Lantern), learned bonus and Delve relics applied, Salt Ring on Deep monsters, automatic bombs (up to 2 per stage), potions and "once" skills across all 3 stages, 400-tick limit. Stage seeds `${seed}:stage:n`.
+- **The Unlit:** First Cold (3% Frost, 15 meter) and Heavy Dark (every 3rd action, sweep, Chill) work in a normal fight; Saltburst cancels the first trigger and blocks 3 actions; Smoke-Lunged halves First Cold; the Crook clears Chill (the old rule reads the same fields).
+- **Ordinary fight code touched only by exports and extractions** (`runTicks`, `startPotion`, `throwBomb`, `resolveEnds` exported; the `unlit` instance in `species.ts`). `npm run check` green (3,649 tests, 85 s): every golden fight and recorded stand replays; `rulesVersion` 5. No old test edited.
+- **Decisions to confirm:** D572 records your yes to D571. D573 (Proposed) lists six small readings: when First Cold fires, who Heavy Dark chills, which monster each bomb hits, potions used once, the sign of the frozen cut, the extractions.
+- **Not done / later:** the command, the frozen record and `rebuildDescentLogs` (TD.4b); preview (TD.4c); the debug roster (TD.4b).

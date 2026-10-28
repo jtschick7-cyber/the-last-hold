@@ -5,7 +5,7 @@ import type { LegendaryDef, LegendaryId } from '../../content/legendaries';
 import type { HunterId, RoleId, Stats } from '../../content/hunters';
 import type { BossId, EventAbility } from '../../content/great-beasts';
 import type { QuarryId } from '../../content/hunts';
-import type { MonsterAbility, MonsterId } from '../../content/monsters';
+import type { MonsterAbility, MonsterId, UnlitAbility } from '../../content/monsters';
 import type { GuardianId } from '../../content/delves/guardians';
 import type { DelveRelicId } from '../../content/delves/relics';
 import type { TraitEffect, TraitId } from '../../content/traits';
@@ -96,11 +96,24 @@ export interface EventInstance {
   readonly mightMult?: number;
 }
 
-/** What a fight is against: a contract species, a Deep guardian, or an event creature. */
-export type FightMonster = MonsterInstance | GuardianInstance | EventInstance;
+/**
+ * The Unlit (GDD §8.3, D560): Stage 3 of the Descent and nowhere else. `baseHealth` is the frozen
+ * `descent.unlitBaseHealth`; `healthMult` is the Salt Ring's 0.90.
+ */
+export interface UnlitInstance {
+  readonly unlit: true;
+  readonly tier: number;
+  readonly baseHealth: number;
+  readonly knowledge?: number;
+  readonly healthMult?: number;
+  readonly mightMult?: number;
+}
+
+/** What a fight is against: a contract species, a Deep guardian, an event creature, or The Unlit. */
+export type FightMonster = MonsterInstance | GuardianInstance | EventInstance | UnlitInstance;
 
 /** Every ability a monster-side combatant can carry. */
-export type FightAbility = MonsterAbility | EventAbility;
+export type FightAbility = MonsterAbility | EventAbility | UnlitAbility;
 
 /** A Delve floor's fight (GDD §5.10, D254, D255): what the run brings into it. */
 export interface DelveFightOptions {

@@ -458,6 +458,31 @@ export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
         });
         checkPotion(f, h);
       }
+    } else if (a.kind === 'firstCold') {
+      // The Unlit's First Cold (GDD §8.3): Frost on every standing hunter as Drain does (ignores Armor,
+      // taken% applies, Smoke-Lunged halves it), and each loses turn meter.
+      if (cancelsAbility(f, m, 'First Cold')) continue;
+      for (const h of f.hunters) {
+        if (!standing(h)) continue;
+        const raw = h.maxHealth * a.maxHealthFraction;
+        const amount = abilityTaken(
+          h,
+          finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, 'frost', f.hunters), 1),
+        );
+        hurt(h, amount);
+        knockBack(h, a.meterKnockBack);
+        emit(f, {
+          actor: m.id,
+          kind: 'ability',
+          target: h.id,
+          text: () =>
+            `The first cold reaches ${h.name}: Frost ${raw.toFixed(2)} = ${amount}, turn ${a.meterKnockBack} later · ${h.name} ${h.health}/${h.maxHealth}`,
+          rolls: [],
+          amount,
+          targetHealth: h.health,
+        });
+        checkPotion(f, h);
+      }
     } else if (a.kind === 'drain' || a.kind === 'graveChill') {
       // Unlit's Breath (Deep) and the Barrow-King's Grave Chill (v0.9): Frost on every standing
       // hunter, ignoring Armor; taken% still applies.
