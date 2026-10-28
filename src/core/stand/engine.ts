@@ -11,7 +11,7 @@ import type { Explained } from '../breakdown/breakdown';
 import type { Preparation } from '../state/game-state';
 import type { LaneTable } from '../state/lane-table';
 import { DROSS_TIDE, waveAt, type StandPool, type Wave } from './waves';
-import { laneOf, volley as laneVolley, wallCut } from '../systems/breach';
+import { laneOf, logHeader, volley as laneVolley, wallCut } from '../systems/breach';
 import { waveFactor } from '../systems/vigil';
 
 // GDD §5.9.3 (D107, D115): the Last Stand runs one wave at a time through the
@@ -61,6 +61,8 @@ export interface WaveOutcome {
   /** A version 6 stand only: the wave's lane and the wall cut and volley it took, with their breakdowns (GDD §9.25). */
   readonly breach?: {
     readonly lane: number;
+    /** The log's header line, `Lane {n} · cover {p}%` (GDD §9.25). */
+    readonly header: string;
     readonly wallCut: Explained;
     readonly volley: Explained;
   };
@@ -210,7 +212,14 @@ export const runStand = (input: StandInput): StandResult => {
       bombs,
       fight,
       ...(cut && shot && lane !== undefined
-        ? { breach: { lane, wallCut: cut, volley: shot } }
+        ? {
+            breach: {
+              lane,
+              header: logHeader(input.lanes as LaneTable, lane),
+              wallCut: cut,
+              volley: shot,
+            },
+          }
         : {}),
     });
     for (const id of fight.potionsUsed) potionUsed.add(id);

@@ -99,6 +99,8 @@ export type Command =
       party: HunterId[];
       /** One oil and one potion per hunter, from the stores; bombs are thrown automatically. */
       prep?: Pick<Preparation, 'oils' | 'potions'>;
+      /** Tests only (D593 (f)): freeze no lane table. Refused unless a test switches it on; marks debugUsed. */
+      noLanes?: boolean;
     }
   /** The stand's result sheet has been read. */
   | { type: 'stand.seen' }

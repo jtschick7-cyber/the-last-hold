@@ -174,7 +174,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
     case 'settings.set':
       return setSettings(state, cmd.patch);
     case 'stand.make':
-      return makeStand(state, cmd.party, cmd.prep ?? { oils: {}, potions: {} });
+      return makeStand(
+        state,
+        cmd.party,
+        cmd.prep ?? { oils: {}, potions: {} },
+        cmd.noLanes === true,
+      );
     case 'stand.seen':
       return markStandSeen(state);
     case 'upgrade.buy':

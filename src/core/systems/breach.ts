@@ -123,6 +123,10 @@ export const cover = (table: LaneTable, c: number): Explained => {
   };
 };
 
+/** The header line of a version 6 wave log: the wave's lane (1 to 8) and its cover (GDD §9.25). */
+export const logHeader = (table: LaneTable, c: number): string =>
+  BREACH_TEXT.logHeader(c + 1, percent(cover(table, c).value));
+
 /** Extra counted pieces in column c that add depth: 0 for an empty column, at most `depthMax` (D581). */
 export const extra = (table: LaneTable, c: number): number =>
   Math.min(table.k.depthMax, Math.max(0, (table.pieces[c] ?? 0) - 1));

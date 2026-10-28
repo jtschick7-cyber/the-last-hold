@@ -13,4 +13,6 @@ export const BREACH_TEXT = {
   walls: (t: number | string) => `Walls: −${t}% damage taken in this lane`,
   tower: (x: number | string, p: number | string) => `Tower in column ${x}: ${p}% of its share`,
   volley: (v: number | string) => `Watchtower volley in this lane: ${v}`,
+  /** The header line of a stand wave log (new stands only). */
+  logHeader: (n: number | string, p: number | string) => `Lane ${n} · cover ${p}%`,
 } as const;

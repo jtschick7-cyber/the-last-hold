@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.5 (the stand fight reads the lane table; rules version 6). Before it: TB.4, TB.3, TB.2, TB.1.
-- **Next:** TB.6 (Start freezes the lane table; needs TB.5).
+- **Last task:** TB.6 (Start freezes the lane table). Before it: TB.5, TB.4, TB.3, TB.2, TB.1.
+- **Next:** TB.7a (needs TB.6). TB.7b needs TB.3 and could go first.
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -73,3 +73,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Numbers:** `npm run check` green, 82 s here (warn 90, fail 120).
 - **Weak spots:** the cap test works the sums by hand rather than running a full fight under the cap; the isolation test covers contracts and time, while events, Delves, bosses, hunts and the Descent are kept off the layout by the lint.
 - **Not done:** TB.6 onward. Size was not measured (due at TB.6).
+
+## 2026-10-28 — v1.5 TB.6: Start freezes the lane table
+- **Built:** from Bastion, Start saves the lane table on the stand's record in the step that fixes its other inputs (that makes it a version 6 stand). The layout is read only by `breach.ts`, called from the stand input builder, so `stand.ts` never reads it and no split was needed. A stand made below Bastion (the v0.4 arrival) saves none and takes the version 5 path. The preview uses the table the layout gives now.
+- **Log header:** a version 6 wave log opens with "Lane {n} · cover {p}%" (the GDD §9.25 string, added to `breach-text.ts`; checked against the GDD in the new tests). Older stands show none.
+- **Test-only start option:** a start flag that freezes no table. It is refused unless a test switches it on (no screen does) and it marks the save as debug-used.
+- **Tests first** (`tests/stand/freeze.test.ts`, 9): the saved table equals the layout's; the layout is identical before and after Start; a second Start is refused and the first table stays; the preview changes nothing; below Bastion no table; logs rebuild identical after the layout is cleared and after `balance.breach` is changed; a record without a table rebuilds as version 5; the header; the option is refused unless switched on. All golden fights and recorded stands still replay line for line.
+- **Old-test edit (D593 f):** one test, `stand-story.test.ts` "a Triumphant stand records the steps" (it needs exactly 20 waves held, which a stand with no walls placed no longer reaches), is pinned to the version 5 path with its assertions unchanged. Its version 6 counterpart is new: a table stand records the steps its band brought. Only this one test changed result; the rest of the suite passed as it was.
+- **Numbers:** `npm run check` green, 80 s here (warn 90, fail 120). Size 458,266 bytes (614,400 row; 452,544 at TB.2).
+- **Heads-up:** simulator stands now fight version 6 with whatever layout the policy has, so `sim:check` will differ from the v1.4 baseline until TB.11a re-records it. I did not run the full `sim:check`; the fast set in `npm run check` passes.
+- **Not done:** TB.7a onward; no browser test for the log header line yet.

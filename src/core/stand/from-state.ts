@@ -10,6 +10,7 @@ import { threatRate } from '../threat/threat';
 import { MS_PER_DAY } from '../time';
 import type { StandInput } from './engine';
 import { previewStand, type StandPreview, type StandPreviewInput } from './preview';
+import { laneTableFor } from '../systems/breach';
 import { standPoolOf } from './pool';
 import { standSeed } from './waves';
 
@@ -40,6 +41,8 @@ export const standInputFor = (
   state: GameState,
   party: readonly HunterId[],
   prep: Pick<Preparation, 'oils' | 'potions'>,
+  /** The test-only start option (D593 (f)): freeze no table, so the stand takes the version 5 path. */
+  noLanes = false,
 ): StandInput => ({
   seed: standSeed(state),
   // GDD §5.9.8: at the v0.4 arrival Threat is 0 (it starts counting afterwards).
@@ -55,6 +58,9 @@ export const standInputFor = (
   ...(standPoolOf(state) === 'dross' ? { pool: 'dross' as const } : {}),
   // Level 0 adds no field, so a stand with the switch Off is exactly an ordinary stand (D542).
   ...(vigilLevelFor(state) > 0 ? { vigilLevel: vigilLevelFor(state) } : {}),
+  // Technical design §23.3: from Bastion the stand carries the lane table the hold gives now, which is
+  // what makes it a version 6 stand; below Bastion (the v0.4 arrival) there is none (version 5).
+  ...(state.cycle.age === 'bastion' && !noLanes ? { lanes: laneTableFor(state) } : {}),
 });
 
 /** GDD §5.9.8 (D112): the arrival caps the trophies part at share × the cycle-1 median. */
