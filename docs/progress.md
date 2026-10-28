@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.7c (Roll mark, Library replay, resident lines, The Unlit on the shelf). Before it: TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** your look at the Descent screens and strings on the preview (plan: after TD.7c); TD.8a (simulator probe) then TD.8b, TD.9, TD.10, TD.11.
+- **Last task:** TD.8a (endgame roster builder for the simulator). Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** TD.8b (the Descent probe and calibration command); your look at the Descent screens and strings on the preview is still owed; then TD.9, TD.10, TD.11.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -127,3 +127,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Tests:** 6 new unit tests (`tests/descent/shelves.test.ts`), 3 Playwright (`descent-shelves.spec.ts`: Roll mark, Library replay with logs, Unlit entry). New polish screen `roll-marks` (fixture `v14-played:marks`: lamp, Rising Vigil level 2 and Descent marks together); tap-size, text-size and contrast sweeps pass for it and the earlier Descent screens. `npm run check` green (3,716 tests, 88 s). Golden fights replay; `rulesVersion` 5; no old test edited.
 - **Readings to confirm:** (1) the Library entry has no blurb; (2) the Unlit entry reuses the notes already written in `unlit.ts` (TD.3); (3) the shelf shows the Unlit even if the Events card has not opened.
 - **Owner task now (plan):** look at the Descent sheet, playback and strings on the preview and say yes, or what to change.
+
+## 2026-10-28 — v1.4 TD.8a: the endgame roster builder
+- **Scope reading:** the plan's TD.8a is the roster builder (`sim/descent-roster.ts`); the probe itself is TD.8b. I built the former only.
+- **Built:** `buildEndgameRoster(state, profile)`. Both profiles open the gate and take the hold to Bastion (same steps as `debug.descentWin`). *Maxed* calls the core `prepareEndgameRoster`, the same function as the debug button, so they cannot drift. *Minimal* sets all 16 species to exactly Studied (none Mastered) and leaves hunters, skills, Orders and relics as the run left them.
+- **Tests (10, `sim/descent-roster.test.ts`):** both profiles deterministic, idempotent, valid after a save round-trip, able to start a Descent; minimal and maxed match their specs (14 hunters at Master Wright, 5 stars, 5 talents, 36 properties, 4 skills x 10 levels = 40, 4 Orders x 4 chapters = 16, 6 + 6 relics).
+- **Notes:** the "12 relics" are the 6 Hold relics plus the 6 Delve relics, and "40 skills" is 4 skills at level 10. Minimal gets its Act VI stand from the real stand code, so some hunters level a little; chapters read are 0 only on a state that had none (new game). No policy issues `descent.start`; no report changes.
+- **No old test edited, no constant, target or fixture touched. `rulesVersion` 5.**
