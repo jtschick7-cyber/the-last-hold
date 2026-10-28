@@ -17,6 +17,7 @@ import v9Owner from '../saves/fixtures/v9-owner.json';
 import v10Played from '../saves/fixtures/v10-played.json';
 import v11Played from '../saves/fixtures/v11-played.json';
 import v12Played from '../saves/fixtures/v12-played.json';
+import v13Played from '../saves/fixtures/v13-played.json';
 import { h, render } from 'preact';
 import { adoptGame, dispatch, startGame } from '../../src/ui/app/runtime';
 import { HoldGrid } from '../../src/ui/widgets/HoldGrid';
@@ -64,6 +65,7 @@ type Bench = {
   rememberingMigration: number;
   layoutMigration: number;
   vigilMigration: number;
+  descentMigration: number;
   holdGrid: number;
   arrangeSheet: number;
 };
@@ -174,7 +176,8 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
           learned: { mightAndHealth: 0.2, taken: 0.05 },
           delveRelics: [],
           knowledge: {},
-          stageTiers: [5, 6, 7],
+          // The calibrated values (D577).
+          stageTiers: [7, 8, 9],
           unlitBaseHealth: 4500,
           alchemy: 0,
         },
@@ -194,6 +197,8 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
     layoutMigration: best(() => loadEnvelope(structuredClone(v11Played))),
     // Plan KV.2 (GDD §6.5, D547): the v12 → v13 migration of a played v12 save, on the load path.
     vigilMigration: best(() => loadEnvelope(structuredClone(v12Played))),
+    // Plan TD.10 (GDD §6.5, D562): the v13 → v14 migration of a played v13 save, on the load path.
+    descentMigration: best(() => loadEnvelope(structuredClone(v13Played))),
     holdGrid: best(mount(() => h(HoldGrid, {}))),
     arrangeSheet: best(mount(() => h(ArrangeHoldSheet, {}))),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),

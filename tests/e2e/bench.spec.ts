@@ -27,6 +27,8 @@ const BUDGET = {
   layoutMigration: 100,
   // v1.3 (D547).
   vigilMigration: 100,
+  // v1.4 (D562): the v13 → v14 migration.
+  descentMigration: 100,
   holdGrid: 16,
   arrangeSheet: 50,
 };
@@ -48,6 +50,7 @@ type Bench = {
   rememberingMigration: number;
   layoutMigration: number;
   vigilMigration: number;
+  descentMigration: number;
   holdGrid: number;
   arrangeSheet: number;
 };
@@ -78,6 +81,7 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
       `Arrange Hold sheet ${ms.arrangeSheet.toFixed(1)} ms`,
   );
   console.log(`v12 → v13 migration (played save): ${ms.vigilMigration.toFixed(1)} ms`);
+  console.log(`v13 → v14 migration (played save): ${ms.descentMigration.toFixed(1)} ms`);
   console.log(`Descent preview (100 practice runs): ${ms.descentPreview.toFixed(0)} ms`);
   console.log(
     `hunt odds ${ms.huntOdds.toFixed(0)} ms, hunt Suggest ${ms.huntSuggest.toFixed(0)} ms`,
@@ -100,6 +104,7 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     ['the v10 → v11 migration', ms.rememberingMigration, BUDGET.rememberingMigration],
     ['the v11 → v12 migration', ms.layoutMigration, BUDGET.layoutMigration],
     ['the v12 → v13 migration', ms.vigilMigration, BUDGET.vigilMigration],
+    ['the v13 → v14 migration', ms.descentMigration, BUDGET.descentMigration],
     ['the Hold grid render', ms.holdGrid, BUDGET.holdGrid],
     ['the Arrange Hold sheet open', ms.arrangeSheet, BUDGET.arrangeSheet],
   ] as const) {
