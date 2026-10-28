@@ -3,6 +3,7 @@ import { computeOdds } from '../../src/core/contracts/odds';
 import { suggestParty } from '../../src/core/contracts/suggest';
 import { computeHuntOdds, suggestHuntParty } from '../../src/core/systems/hunt-odds';
 import { previewBoss, suggestBossParty } from '../../src/core/systems/boss-odds';
+import { previewDescent } from '../../src/core/systems/descent-odds';
 import { previewStand } from '../../src/core/stand/preview';
 import { snap } from '../combat/helpers';
 import { ORDER_IDS } from '../../src/content/orders';
@@ -16,6 +17,7 @@ import v9Owner from '../saves/fixtures/v9-owner.json';
 import v10Played from '../saves/fixtures/v10-played.json';
 import v11Played from '../saves/fixtures/v11-played.json';
 import v12Played from '../saves/fixtures/v12-played.json';
+import v13Played from '../saves/fixtures/v13-played.json';
 import { h, render } from 'preact';
 import { adoptGame, dispatch, startGame } from '../../src/ui/app/runtime';
 import { HoldGrid } from '../../src/ui/widgets/HoldGrid';
@@ -51,6 +53,7 @@ type Bench = {
   oddsUnknown: number;
   suggestUnknown: number;
   stand: number;
+  descentPreview: number;
   bossPreview: number;
   bossSuggest: number;
   huntOdds: number;
@@ -62,6 +65,7 @@ type Bench = {
   rememberingMigration: number;
   layoutMigration: number;
   vigilMigration: number;
+  descentMigration: number;
   holdGrid: number;
   arrangeSheet: number;
 };
@@ -158,6 +162,28 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
         trophiesPerDay: 20,
       }),
     ),
+    // Plan TD.4c (GDD §6.5, D565): the Descent preview, 100 three-stage practice runs with all 14
+    // hunters marching (the longest runs, as the reserve steps in).
+    descentPreview: best(() =>
+      previewDescent({
+        gameSeed: 'bench',
+        attempt: 1,
+        run: {
+          seed: 'bench:descent:1',
+          order: HUNTER_IDS.slice(0, 14).map((id) => snap(id, { level: 10 })),
+          prep: { oils: {}, potions: { [HUNTER_IDS[0] ?? 'halvar']: 'mending-draught' } },
+          bombs: { 'fire-pot': 4, saltburst: 2 },
+          learned: { mightAndHealth: 0.2, taken: 0.05 },
+          delveRelics: [],
+          knowledge: {},
+          // The calibrated values (D577).
+          stageTiers: [7, 8, 9],
+          unlitBaseHealth: 4500,
+          alchemy: 0,
+        },
+        samples: 100,
+      }),
+    ),
     // Plan T10.19 (GDD §6.5, D445): the Orders' card, an Order sheet, the standing of all four after
     // a command, and the v9 → v10 migration of the owner's save, on a game with every Order open.
     ordersCard: best(() => ordersCardView(orders, orders.time)),
@@ -171,6 +197,8 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
     layoutMigration: best(() => loadEnvelope(structuredClone(v11Played))),
     // Plan KV.2 (GDD §6.5, D547): the v12 → v13 migration of a played v12 save, on the load path.
     vigilMigration: best(() => loadEnvelope(structuredClone(v12Played))),
+    // Plan TD.10 (GDD §6.5, D562): the v13 → v14 migration of a played v13 save, on the load path.
+    descentMigration: best(() => loadEnvelope(structuredClone(v13Played))),
     holdGrid: best(mount(() => h(HoldGrid, {}))),
     arrangeSheet: best(mount(() => h(ArrangeHoldSheet, {}))),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),

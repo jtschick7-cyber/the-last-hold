@@ -78,6 +78,19 @@ export type Command =
   | { type: 'layout.setShowGhosts'; showGhosts: boolean }
   /** GDD §5.9.10: the Rising Vigil switch (technical design §21.3). */
   | { type: 'vigil.set'; on: boolean }
+  /** GDD §5.15.10: the Descent, fought at once (v1.4). `order` is the marching order, front line first. */
+  | {
+      type: 'descent.start';
+      order: HunterId[];
+      /** One oil and one potion per hunter, from the stores; bombs are thrown automatically. */
+      prep?: Pick<Preparation, 'oils' | 'potions'>;
+    }
+  /** Technical design §15 (M5): all 14 hunters at the top, the lore and relics full, stores stocked; sets debugUsed. */
+  | { type: 'debug.prepareEndgameRoster' }
+  /** Technical design §15 (M5): real Descents until one is won; sets debugUsed. */
+  /** GDD §9.24 (S9): the player has seen the latest Descent's result sheet. */
+  | { type: 'descent.markRead' }
+  | { type: 'debug.descentWin' }
   /** Plan KV.4 (D544 (7)): sets the count of stands fought On; sets debugUsed. */
   | { type: 'debug.vigilSetStands'; stands: number }
   /** GDD §5.9.3: the Last Stand, then the Long Night. Final: there is no undo. */

@@ -2,10 +2,10 @@ import type { FamilyId } from '../../content/damage';
 import { guardians, type GuardianId } from '../../content/delves/guardians';
 import { bosses, type BossId } from '../../content/great-beasts';
 import { quarries, type QuarryId } from '../../content/hunts';
-import { monsters } from '../../content/monsters';
+import { monsters, unlit } from '../../content/monsters';
 import { num } from '../balance-access';
 import type { DamageType } from '../../content/damage';
-import type { EventInstance, FightAbility, FightMonster } from './types';
+import type { EventInstance, FightAbility, FightMonster, UnlitInstance } from './types';
 
 // GDD §8.3: what a fight needs to know about a species, whether it's one of the 16 contract
 // species or a Deep guardian (D252). Guardians are Delve-only and fight alone.
@@ -28,6 +28,8 @@ export interface SpeciesDef {
 
 export const isGuardian = (m: FightMonster): m is Extract<FightMonster, { guardian: GuardianId }> =>
   'guardian' in m;
+
+export const isUnlit = (m: FightMonster): m is UnlitInstance => 'unlit' in m;
 
 export const isEvent = (m: FightMonster): m is EventInstance => 'event' in m;
 
@@ -52,6 +54,7 @@ export const speciesOf = (m: FightMonster): SpeciesDef => {
       abilities: c.abilities,
     };
   }
+  if (isUnlit(m)) return { ...unlit, health: m.baseHealth, baseTier: unlit.baseTier };
   if (isGuardian(m)) {
     const g = guardians[m.guardian];
     return { ...g, baseTier: g.baseTier };

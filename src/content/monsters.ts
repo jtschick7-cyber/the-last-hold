@@ -4,6 +4,10 @@ import type { IngredientId } from './ingredients';
 import { CURSED_IDS, cursed, type CursedAbility } from './cursed';
 import type { GuardianAbility } from './delves/guardians';
 
+// The Unlit (v1.4, D560) is defined in unlit.ts and is deliberately not a MonsterId (descentOnly).
+export { unlit } from './unlit';
+export type { UnlitAbility, UnlitDef } from './unlit';
+
 // GDD §8.3: the 12 monsters, identified for free in v0.2. Stats are at the
 // monster's base tier; each tier above it scales Health and Might by
 // monster.statGrowth and Armor by monster.armorGrowth (GDD §7.4). Speed doesn't

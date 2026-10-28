@@ -1,6 +1,7 @@
 // Technical design §5.2 (v11, D452, D461, D466): everything the ending keeps. The gate, the card's
 // form and the Order cards are derived from the rest of the state, never stored.
-export const ENDING_IDS = ['remember', 'vigil'] as const;
+// v14 (D562): 'descent' is the third ending, recorded only by a won Descent (never by a choice).
+export const ENDING_IDS = ['remember', 'vigil', 'descent'] as const;
 export type EndingId = (typeof ENDING_IDS)[number];
 
 export interface EndingRecord {

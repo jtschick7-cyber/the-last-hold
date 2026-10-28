@@ -19,6 +19,11 @@ import {
   type HuntSuggestInput,
   type HuntSuggestion,
 } from '../../core/systems/hunt-odds';
+import {
+  previewDescent,
+  type DescentPreview,
+  type DescentPreviewInput,
+} from '../../core/systems/descent-odds';
 import { previewStand, type StandPreview, type StandPreviewInput } from '../../core/stand/preview';
 
 // Technical design §10.1: odds and Suggest go to a worker, debounced, with stale
@@ -212,4 +217,42 @@ export const requestHuntSuggest = async (
     if (r.kind === 'huntSuggest') return r.result;
   }
   return suggestHuntParty(input);
+};
+
+export const lastDescentPreviewMs = signal<number | null>(null);
+
+export interface DescentPreviewAnswer {
+  preview: DescentPreview;
+  /** True when the main thread answered with fewer practice runs. */
+  quick: boolean;
+}
+
+let descentTicket = 0;
+
+/**
+ * GDD §6.5, technical design §22.4: the Descent preview, in the worker (100 practice runs). Only the
+ * newest request counts: an older one that finishes late resolves to null, so a slow answer for a
+ * party the player has already changed never lands on the screen.
+ */
+export const requestDescentPreview = async (
+  input: DescentPreviewInput,
+): Promise<DescentPreviewAnswer | null> => {
+  const mine = ++descentTicket;
+  const reply = send({ kind: 'descentPreview', input });
+  if (reply) {
+    const r = await reply;
+    if (r.kind === 'descentPreview') {
+      if (mine !== descentTicket) return null;
+      lastDescentPreviewMs.value = r.ms;
+      return { preview: r.result, quick: false };
+    }
+    if (mine !== descentTicket) return null;
+  }
+  // Without a worker, give a newer request the chance to supersede this one before the slow part runs.
+  await Promise.resolve();
+  if (mine !== descentTicket) return null;
+  const started = performance.now();
+  const preview = previewDescent({ ...input, samples: num('laststand.policySamples') });
+  lastDescentPreviewMs.value = performance.now() - started;
+  return mine === descentTicket ? { preview, quick: true } : null;
 };

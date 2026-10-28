@@ -115,6 +115,13 @@ export const HOLD_LOOKS = ['frost', 'lamp'] as const;
 export type HoldLook = (typeof HOLD_LOOKS)[number];
 /** The ending's two looks of the hold scene (v0.11, D457): the frost, then the lamp. */
 export const holdLookId = (l: HoldLook, age: AgeId): string => `scene.look.${l}.${age}`;
+// v1.4 (plan TD.5, D565): The Unlit and the Descent's three stage banners, drawn in code by
+// tools/draw-descent.ts. The Unlit is not a MonsterId (descentOnly), so its ids are named here.
+export const DESCENT_GENERATOR = 'tools/gen-descent.ts';
+export const UNLIT_PORTRAIT_ID = 'portrait.monster.unlit';
+export const UNLIT_SPRITE_ID = 'sprite.monster.unlit';
+export const descentSceneId = (stage: 1 | 2 | 3): string => `scene.descent.stage-${stage}`;
+export const DESCENT_STAGE_NAMES = ['The Crack', 'The Sealed Stair', 'Below the Seal'] as const;
 // v1.1 (plan TL.5a, D504): the Hold's 8 × 8 grid. 32 px tiles; the two border strips are 256 × 16.
 export const GRID_GENERATOR = 'tools/gen-layout-grid.ts';
 export const groundTileId = (l: string): string => `grid.ground.${l}`;
@@ -406,6 +413,32 @@ export const assets: readonly AssetEntry[] = [
       `sprites/guardian-${g}.png`,
       'tools/gen-sprites.ts',
       'sprite',
+    ),
+  ),
+  // v1.4 (D565): The Unlit's strip and the Descent's banners.
+  generated(
+    UNLIT_SPRITE_ID,
+    [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+    'The Unlit, battle sprite',
+    'sprites/monster-unlit.png',
+    DESCENT_GENERATOR,
+    'sprite',
+  ),
+  generated(
+    UNLIT_PORTRAIT_ID,
+    [64, 64],
+    'The Unlit',
+    'portraits/monster-unlit.png',
+    DESCENT_GENERATOR,
+  ),
+  ...([1, 2, 3] as const).map((n) =>
+    generated(
+      descentSceneId(n),
+      [160, 64],
+      `The Descent, stage ${n}: ${DESCENT_STAGE_NAMES[n - 1]}`,
+      `scenes/descent-stage-${n}.png`,
+      DESCENT_GENERATOR,
+      'scene',
     ),
   ),
   ...PATRON_IDS.map((p) =>

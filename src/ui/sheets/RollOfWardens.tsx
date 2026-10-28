@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
 import { ages } from '../../content/ages';
+import { DESCENT_STRINGS } from '../../content/descent-text';
 import { VIGIL_ROLL, vigilLine } from '../../content/vigil-text';
 import { rollMarkText } from '../../content/text/remembering';
 import { relics } from '../../content/relics';
@@ -59,6 +60,20 @@ const VigilMark = ({ level }: { level: number }) => (
   </span>
 );
 
+// GDD §9.24: a small descending-stair mark drawn in code (no picture file), with the line beside it.
+const DescentMark = () => (
+  <span class={styles.small} data-testid="descent-roll">
+    {' '}
+    <svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true">
+      <rect x="1" y="1" width="4" height="2" fill="currentColor" />
+      <rect x="3" y="5" width="4" height="2" fill="currentColor" />
+      <rect x="5" y="9" width="4" height="2" fill="currentColor" />
+      <rect x="9" y="11" width="2" height="2" fill="var(--c-ember)" />
+    </svg>{' '}
+    <em>{DESCENT_STRINGS.roll}</em>
+  </span>
+);
+
 const WardenRow = ({ l }: { l: WardenLine }) => {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(l.named ? l.name : '');
@@ -68,6 +83,7 @@ const WardenRow = ({ l }: { l: WardenLine }) => {
       <strong class={l.named ? undefined : styles.dim}>{l.name}</strong>
       {l.readAloud && <ReadAloudMark />}
       {l.vigilLevel >= 1 && <VigilMark level={l.vigilLevel} />}
+      {l.ledDescent && <DescentMark />}
       <br />
       <span class={`${styles.small} ${styles.dim}`}>{lineText(l)}</span>
       {editing ? (

@@ -1,8 +1,11 @@
+import { DESCENT_STRINGS, DESCENT_VIEW_RESULT } from '../../content/descent-text';
 import { rememberingCard } from '../../content/text/remembering';
 import { rememberingCardView } from '../../core/story/remembering-view';
 import { dispatch, game, version } from '../app/runtime';
 import { openArchiveSection } from '../screens/ArchiveScreen';
 import { playEnding } from './ReadingScene';
+import { openDescentPlayback } from '../sheets/DescentPlayback';
+import { openDescentSheet } from '../sheets/DescentSheet';
 import { openVigilScene } from './VigilScene';
 import styles from '../styles/ui.module.css';
 
@@ -49,6 +52,11 @@ export const RememberingCard = () => {
               {c.open.remember.name}
             </button>
             <p class={styles.small}>{c.open.remember.text}</p>
+            {v.descentAvailable && (
+              <button type="button" class={styles.btn} onClick={openDescentSheet}>
+                {DESCENT_STRINGS.button}
+              </button>
+            )}
             <button
               type="button"
               class={styles.btn}
@@ -74,15 +82,71 @@ export const RememberingCard = () => {
           >
             {c.afterVigil.remember}
           </button>
+          {v.descentAvailable && (
+            <button type="button" class={styles.btn} onClick={openDescentSheet}>
+              {DESCENT_STRINGS.button}
+            </button>
+          )}
         </>
       )}
       {v.form === 'afterRemember' && (
         <>
           <p>{c.afterRemember.line}</p>
-          <button type="button" class={styles.btn} onClick={playEnding}>
-            {c.afterRemember.again}
-          </button>
+          {v.descentWon && <p>{DESCENT_STRINGS.scattered}</p>}
+          <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+            <button type="button" class={styles.btn} onClick={playEnding}>
+              {c.afterRemember.again}
+            </button>
+            {v.descentAvailable && (
+              <button type="button" class={styles.btn} onClick={openDescentSheet}>
+                {v.descentWon ? DESCENT_STRINGS.again : DESCENT_STRINGS.button}
+              </button>
+            )}
+          </div>
         </>
+      )}
+      {v.form === 'afterDescent' && (
+        <>
+          <p>{DESCENT_STRINGS.scattered}</p>
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            {v.descentAvailable && (
+              <button type="button" class={styles.btn} onClick={openDescentSheet}>
+                {DESCENT_STRINGS.again}
+              </button>
+            )}
+            <button
+              type="button"
+              class={styles.btnPrimary}
+              onClick={() => {
+                if (dispatch({ type: 'remembering.choose', ending: 'remember' }).ok) playEnding();
+              }}
+            >
+              {c.afterVigil.remember}
+            </button>
+            {!v.vigilChosen && (
+              <button
+                type="button"
+                class={styles.btn}
+                onClick={() => {
+                  if (dispatch({ type: 'remembering.choose', ending: 'vigil' }).ok)
+                    openVigilScene();
+                }}
+              >
+                {c.open.vigil.name}
+              </button>
+            )}
+          </div>
+        </>
+      )}
+      {v.descentUnread && (
+        <button
+          type="button"
+          class={styles.btnPrimary}
+          data-testid="descent-view-result"
+          onClick={() => openDescentPlayback(true)}
+        >
+          {DESCENT_VIEW_RESULT}
+        </button>
       )}
     </section>
   );

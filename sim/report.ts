@@ -300,6 +300,17 @@ export const orderLines = (runs: readonly RunResult[]): string[] =>
       );
     });
 
+/** Reported only (TD.8b): the Descent probe's practice-run wins per roster at the shipped values, or nothing. */
+const descentLine = (d: NonNullable<RunResult['vigil']>['descent'] | undefined): string => {
+  const c = (p: 'minimal' | 'maxed' | 'maxed-zeroed' | 'hamlet'): string => {
+    const x = d?.cells[p][0]?.[0];
+    return x ? `${p} ${x.wins}/${x.samples}` : `${p} -`;
+  };
+  return d
+    ? `; Descent probe wins ${c('minimal')}, ${c('maxed')}, ${c('maxed-zeroed')}, ${c('hamlet')}`
+    : '';
+};
+
 /** Reported only (GDD §6.2 v1.3): what the Vigilant made with Rising Vigil On; the curve is in `npm run sim:vigil`. */
 export const vigilLines = (runs: readonly RunResult[]): string[] =>
   runs
@@ -311,7 +322,7 @@ export const vigilLines = (runs: readonly RunResult[]): string[] =>
         .join('; ');
       return (
         `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: debugUsed ${v.debugUsed} (the gate is opened with a declared debug shortcut, Q58); ` +
-        `gate ${v.gateOpened ? `c${v.gateOpened.cycle}` : 'never'}; ${stands || 'no stand with the switch On'}; probe ${v.probe ? 'run' : 'not run'}`
+        `gate ${v.gateOpened ? `c${v.gateOpened.cycle}` : 'never'}; ${stands || 'no stand with the switch On'}; probe ${v.probe ? 'run' : 'not run'}${descentLine(v.descent)}`
       );
     });
 

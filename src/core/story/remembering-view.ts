@@ -7,6 +7,8 @@ import {
   rememberingShelfEntries,
   type RememberingScene,
 } from '../../content/text/remembering';
+import { DESCENT_STRINGS } from '../../content/descent-text';
+import { descentResidentLines } from '../../content/story/descent';
 import { endingWarm, type EndingCard } from '../../content/text/remembering-ending';
 import { afterEndingLines } from '../../content/text/remembering';
 import { CONTRACT_SPECIES } from '../../content/remembering';
@@ -15,6 +17,8 @@ import { monsters } from '../../content/monsters';
 import { villages } from '../../content/villages';
 import { levelOf } from '../investigation/knowledge';
 import type { GameState } from '../state/game-state';
+import { descentResultUnread } from '../systems/descent-playback';
+import { descentAvailable } from '../systems/descent-record';
 import { actVIStandApplied, namesFound, rememberingGate, speciesStudied } from './remembering';
 
 // GDD §5.15.2 (D450, D461, D466): what the Hold screen's card, Pechko's near-scene and the ready line
@@ -36,7 +40,13 @@ export const rememberingReadyNote = (state: GameState): string | null => {
     : null;
 };
 
-export type RememberingForm = 'notOpen' | 'open' | 'afterVigil' | 'afterRemember';
+export type RememberingForm =
+  | 'notOpen'
+  | 'open'
+  | 'afterVigil'
+  | 'afterRemember'
+  /** v1.4 (GDD §9.24, S3): the Descent is won and Remember Them is not chosen. */
+  | 'afterDescent';
 
 export interface RememberingCardView {
   readonly form: RememberingForm;
@@ -47,6 +57,14 @@ export interface RememberingCardView {
   readonly namesFound: number;
   readonly speciesKnown: number;
   readonly speciesTotal: number;
+  /** v1.4: the gate is open and the hold is at Bastion, so The Descent can be fought now (S6). */
+  readonly descentAvailable: boolean;
+  /** v1.4: `'descent'` is recorded. */
+  readonly descentWon: boolean;
+  /** Keep the Vigil was chosen (so its button is not offered again). */
+  readonly vigilChosen: boolean;
+  /** v1.4 (S9): an attempt's result has not been seen yet, so the card offers "View Descent result". */
+  readonly descentUnread: boolean;
 }
 
 /**
@@ -60,13 +78,17 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
   const known = speciesStudied(state);
   const total = CONTRACT_SPECIES.length;
   const names = namesFound(state);
-  const form: RememberingForm = r.endings.some((e) => e.ending === 'remember')
+  const has = (e: 'remember' | 'vigil' | 'descent'): boolean =>
+    r.endings.some((x) => x.ending === e);
+  const form: RememberingForm = has('remember')
     ? 'afterRemember'
-    : r.endings.some((e) => e.ending === 'vigil')
-      ? 'afterVigil'
-      : rememberingGate(state)
-        ? 'open'
-        : 'notOpen';
+    : has('descent')
+      ? 'afterDescent'
+      : has('vigil')
+        ? 'afterVigil'
+        : rememberingGate(state)
+          ? 'open'
+          : 'notOpen';
   const met = CONTRACT_SPECIES.filter((m) => levelOf(state, m) >= 2 && levelOf(state, m) < 3);
   return {
     form,
@@ -79,12 +101,17 @@ export const rememberingCardView = (state: GameState): RememberingCardView | nul
     namesFound: names,
     speciesKnown: known,
     speciesTotal: total,
+    descentAvailable: descentAvailable(state),
+    descentWon: has('descent'),
+    vigilChosen: has('vigil'),
+    descentUnread: descentResultUnread(state),
   };
 };
 
 export interface RememberingShelfEntry {
-  readonly id: 'reading' | 'later';
+  readonly id: 'reading' | 'later' | 'descent';
   readonly title: string;
+  /** Empty for The Descent: GDD §9.24 gives the shelf entry a title only. */
   readonly blurb: string;
 }
 
@@ -98,6 +125,10 @@ export const rememberingShelf = (state: GameState): RememberingShelfEntry[] => {
   return [
     ...(chosen('remember') ? [{ id: 'reading' as const, ...rememberingShelfEntries.reading }] : []),
     ...(chosen('vigil') ? [{ id: 'later' as const, ...rememberingShelfEntries.later }] : []),
+    // v1.4 (GDD §9.24): once The Descent is won; the shelf's text is the string table's `The Descent`.
+    ...(state.remembering.endings.some((e) => e.ending === 'descent')
+      ? [{ id: 'descent' as const, title: DESCENT_STRINGS.button, blurb: '' }]
+      : []),
   ];
 };
 
@@ -125,16 +156,23 @@ export const readingFrames = (): ReadingFrame[] =>
 export const rimeAfterEnding = (state: GameState): EndingCard | null =>
   state.remembering.endings.some((e) => e.ending === 'remember') ? endingWarm : null;
 
-/** One resident line after Remember Them; `r` in [0, 1) picks it. Null until the ending is recorded. */
+/**
+ * One resident line once an ending is recorded; `r` in [0, 1) picks it. After Remember Them the eight
+ * lines of lore §34.7; after The Descent the three of §34.11; with both, one pool of all eleven
+ * (GDD §5.15.10). Null until either ending is recorded.
+ */
 export const afterEndingLine = (
   state: GameState,
   r: number,
-): (typeof afterEndingLines)[number] | null =>
-  state.remembering.endings.some((e) => e.ending === 'remember')
-    ? (afterEndingLines[
-        Math.min(afterEndingLines.length - 1, Math.floor(r * afterEndingLines.length))
-      ] ?? null)
-    : null;
+): (typeof afterEndingLines)[number] | null => {
+  const has = (e: 'remember' | 'descent'): boolean =>
+    state.remembering.endings.some((x) => x.ending === e);
+  const pool: readonly (typeof afterEndingLines)[number][] = [
+    ...(has('remember') ? afterEndingLines : []),
+    ...(has('descent') ? descentResidentLines : []),
+  ];
+  return pool[Math.min(pool.length - 1, Math.floor(r * pool.length))] ?? null;
+};
 
 export type HoldLookState = 'plain' | 'frost' | 'lamp';
 

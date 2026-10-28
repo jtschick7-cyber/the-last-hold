@@ -219,18 +219,18 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Options:** (a) pick from the candidates (recommended); (b) "none of these" for a slot, then Claude Code offers a second round of about 5 from the same packs; (c) allow one CC0 clip from another site for that slot, each source separately approved (D524 (1)).
 - **Recommendation:** (a). Plan about 15 minutes of listening.
 - **Blocks:** SF.9 (converting and shipping). SF.5–SF.8 do not wait for it.
-- **Answer (owner):** *(pending)*
+- **Answer (owner):** (a), 2026-10-23 (SF.5): Build 2, Launch 10, Place 13, Win 18, Lose 21, Fanfare 28, Nightfall 31 (`docs/flesh-out/v1.2/sound-marks.md`). Closed in the v1.4 sweep (D557).
 
 ### Q54 — Will the picked sounds fit under 600 KB with the new code? *(opened 2026-10-23; resolved in SF.9)*
 - **Context:** v1.1 measured 582,081 bytes (568 KB). The row is 614,400 bytes, so 32,319 bytes (about 31.6 KB) are left for the sound files **and** the new sound code (estimated 3–6 KB gzipped; not measured). The sound files are capped at 30 KB (D523).
 - **Question (asked only if the picks do not fit):** SF.9 measures the build without sounds, computes the budget (`614,400 − that − 1,024`, at most 30 KB) and converts the picks. If they do not fit: (a) use fewer or shorter sounds (recommended); (b) pick shorter candidates for the longest slots; (c) propose a new measured size row for a later decision (not in v1.2). **The row is never changed silently.**
-- **Status:** **Open until SF.9.** Claude Code writes the numbers in the progress entry.
+- **Status:** **Resolved 2026-10-23 (SF.9):** the seven sounds total 29,150 bytes and the production build measured 610,463 bytes gzipped at SF.9 (610,508 bytes at SF.12), inside the 614,400-byte row. Closed in the v1.4 sweep (D557).
 
 ### Q55 — Does Safari on your iPhone decode and play the files? *(opened 2026-10-23; answered at the playtest)*
 - **Context:** Web Audio on iPhone needs a tap to start, follows the silent switch, and can stop after a call or a lock (D522 (3)). Headless tests cannot prove the real phone's behaviour. CI's WebKit may not decode MP3 (SF.10 says so if it cannot).
 - **Question:** at the playtest, do all seven sounds play on your iPhone (live volume, silent switch respected, resume after leaving the app)?
 - **Options:** (a) yes, all good; (b) one or more fail: Claude Code is told which and what happened, and the fix is a follow-up task (for example another file format for that device) with the owner's yes.
-- **Status:** **Open until the playtest.**
+- **Status:** **Answered (a), 2026-10-23 (D530, D531):** after the ambient audio-session fix (D529), all seven sounds played on the owner's iPhone and respected the silent switch. Closed in the v1.4 sweep (D557).
 
 ### Q56 — The container may have no audio converter *(opened 2026-10-23; may block SF.4, which converts the audition candidates)*
 - **Context:** the files are converted to mono MP3 while authoring (D522 (2)). Claude Code's container may lack a converter (such as ffmpeg). The audition candidates must be converted to MP3 at SF.4 (the packs ship as OGG, which an iPhone may not play), so the question comes up there, not later.
@@ -245,7 +245,7 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Question:** is that the feel you want, or should each level be the **same percentage** harder than the one before (compounding, `intPow(1 + s, level)`, which loses about one wave at every level)?
 - **Options:** (a) keep steady additive steps, as chosen (recommended until the numbers are in); (b) compounding steps. There is no "decide after the playtest": switching after any vigil stand has been recorded in a save changes how those stands replay, which is a combat math change (a `rulesVersion` bump or a formula id on the record).
 - **Recommendation:** (a) for now. KV.8 measures waves held and Embers for every level on the simulator probe, for both steps, at two Threat points, and reports the curve; you answer after seeing the numbers and before KV.9. Switching to (b) at that point changes one formula and one constant (it needs a new decisions row).
-- **Blocks:** KV.9. **Answer (owner):** *(pending; the curve is in `docs/flesh-out/v1.3/vigil-curve.md`, reported by KV.8)*
+- **Blocks:** KV.9. **Answer (owner):** (a) steady additive steps, 2026-10-24 (D554, after the KV.8 curve in `docs/flesh-out/v1.3/vigil-curve.md`). Closed in the v1.4 sweep (D557).
 
 ### Q58 — The simulated Vigilant opens the gate with a debug shortcut *(opened 2026-10-24; answered at the docs commit, D551)*
 - **Context:** the simulated Standard player never makes the ending choosable (Q45, D469): it does not look for the contract species it lacks. So the new player, the Vigilant, cannot play to the gate honestly. To test the vigil mechanics at all, it plays like Standard to Act VI's stand and then calls the debug command `debug.remembering.openGate()` once (D462), which marks the run as `debugUsed`. The report says so.
@@ -254,3 +254,23 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Options:** (a) accept both (recommended); (b) keep the probe in the fast set regardless and move something else out (a different tradeoff, needs a new row); (c) write a second simulated player that really studies every species to reach the gate (a bigger shard, likely over the 4-minute stop-and-ask).
 - **Recommendation:** (a).
 - **Answer (owner):** (a), accepted with the yes at D551 on 2026-10-24.
+
+## v1.4 questions *(from the v1.4 flesh-out, 2026-10-25; updated 2026-10-27)*
+
+### Q59 — Calibrated values for `descent.stageTiers` and `descent.unlitBaseHealth` *(opened 2026-10-25; answered after TD.8b reports the Descent probe, before TD.9)*
+- **Context:** `descent.stageTiers` (sketch `[5, 6, 7]`) and `descent.unlitBaseHealth` (sketch `4,500` at base tier 5 in `balance.ts`, read by `monsters.ts`) start as clearly marked placeholders (GDD §7.14, §8.3, D560, D564). In TD.8b, the on-demand parameter calibration tool (`npm run sim:descent -- ...`, S8) runs the Descent probe across the 5 Monday seeds (100 practice runs per seed). A shared builder (`sim/descent-roster.ts` / `core/debug`, M5, M10) constructs two explicit reference profiles: (a) *minimal gate-open* (16 species Studied, 0 Mastered, 0 chapters, natural roster/relics); and (b) *maxed endgame* (all 14 hunters owned at Master Wright level 10, 5 stars, 5 talents, Wright gear, 16/16 Mastered species, 36/36 recipe properties, 40/40 skills, 16/16 Order chapters, 12 relics, matching consumables). It measures win rate, median stages cleared, median hunters downed (with 10th–90th range), and Stage 3 remaining Health across a grid of stage tiers and Unlit base Health values, plus comparisons with `What the Hold Learned` zeroed and an unprepared Hamlet starter party (M9). Also confirms gating at Bastion rank in the current cycle (S6) and free, instant retries on defeat with consumables spent (S7).
+- **Question:** after reading the TD.8b calibration table in `docs/flesh-out/v1.4/descent-calibration.md`, do you approve the proposed calibrated values for `descent.stageTiers` and `descent.unlitBaseHealth`, and the two simulator rows:
+  - **Row A (`descent-victory`):** gate-open full roster wins with win rate between **50% and 85%** (median of the 5 Monday seeds) and median hunters downed strictly between **2 and 8** across the 3 stages (*"a costly, heroic victory"*);
+  - **Row B (`descent-learned-matters`):** party with `What the Hold Learned` bonus achieves win rate **≥ 25 percentage points higher** (or ≥ 2 fewer hunters downed) than the identical party with the learned bonus zeroed, and an unprepared Hamlet starter party loses in Stage 1?
+- **Options:** (a) approve the proposed calibrated values and rows A and B (recommended once TD.8b shows they land in the 50%–85% win rate and 2–8 downed band on the chosen profile); (b) pick a harder or easier point from the TD.8b grid; (c) adjust the `descent.learned.*` tunable steps too.
+- **Recommendation:** (a).
+- **Blocks:** TD.9 (setting the calibrated constants and committing rows A and B to `sim/targets.ts`).
+- **Partly answered (owner, 2026-10-28):** Row A judges the **maxed endgame** roster; the minimal gate-open roster is reported only. Still open: the constants themselves and the two rows' final wording (below).
+- **TD.8b proposal (for the owner's yes or no):** `descent.stageTiers` **[7, 8, 9]** and `descent.unlitBaseHealth` **4,500**. Maxed roster: wins 82%, median 6 hunters downed (inside both Row A bands); learned bonus zeroed: 0% (Row B, far above 25 points); Hamlet starter: 0 stages cleared (loses in Stage 1). Caveat: 82% is close to the 85% ceiling, and the minimal roster wins 0% there. A finer sweep around this point is available if you want more margin.
+- **Answer (owner):** *(pending for the constants and rows)*
+
+### Q60 — The approved wording of the Descent story texts is not in the repo *(opened 2026-10-28; blocks the story-text part of TD.3 and `lore-secrets.md` §34.11)*
+- **Context:** the plan asks TD.1 to put the approved texts D-01 to D-07 and the three post-Descent resident lines (Pechko, Brana, Ilse) into `lore-secrets.md` §34.11, word for word. The v1.4 flesh-out folder has no lore file (no `OUT-3`, which v0.11 had). The only wording in it is one-line descriptions of each card in `OUT-2a-gdd-changes.md` (for example D-01 "Pechko at the Bastion stair with the thirty-nine faded ribbons") and the first few words of each resident line, cut off with "...". CLAUDE.md says to invent none, so I did not write §34.11. Everything else in TD.1 is applied.
+- **Options:** (a) **Recommended:** you upload the missing lore file (the full approved texts) to `docs/flesh-out/v1.4/OUT-3-lore-secrets-descent.md` on `milestone/v1.4`; I apply it as §34.11 in a small docs commit and tick the rest. (b) You paste the seven texts and three lines into this thread. (c) I draft the texts from the one-line descriptions, in the style of §34, for you to approve word by word before they count as canon (slower, and it is new writing, not the approved text).
+- **Blocks:** the story-text part of TD.3 (`src/content/story/descent.ts` and its tests); `lore-secrets.md` §34.11. Everything else in TD.3 and TD.4 onward does not wait for it.
+- **Answer (owner):** the owner pasted the approved wording of D-01 to D-07 and the three resident lines on 2026-10-28 (option b). It is now `lore-secrets.md` §34.11, unchanged (D570). **Answered, closed.**

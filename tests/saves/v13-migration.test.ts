@@ -40,7 +40,7 @@ const OLD = ['v12-owner.json', 'v12.json', 'v12-played.json'];
 
 describe('the v12 → v13 migration', () => {
   it('is schema 13, and rules version stays 5', () => {
-    expect(SCHEMA_VERSION).toBe(13);
+    expect(SCHEMA_VERSION).toBe(14); // D566 (1): was 13 before v1.4
     expect(RULES_VERSION).toBe(5);
     expect(readFixture('v12-owner.json').schemaVersion).toBe(12);
     expect(readFixture('v13.json').schemaVersion).toBe(13);
@@ -51,7 +51,7 @@ describe('the v12 → v13 migration', () => {
     (f) => {
       const loaded = loadFull(readFixture(f));
       expect(loaded.warnings).toEqual([]);
-      expect(loaded.state.meta.schemaVersion).toBe(13);
+      expect(loaded.state.meta.schemaVersion).toBe(14); // D566 (1): was 13 before v1.4
       expect(loaded.state.vigil).toEqual({ on: false, stands: 0 });
       expect(JSON.stringify(loaded.state)).not.toContain('vigilLevel');
       expect(roundTrip(loaded.state)).toEqual(loaded.state);
@@ -102,8 +102,8 @@ describe('the v12 → v13 migration', () => {
     }
   });
 
-  it('the current code refuses a save from a newer version (14)', () => {
-    const env = { ...readFixture('v13.json'), schemaVersion: 14 };
+  it('the current code refuses a save from a newer version (15)', () => {
+    const env = { ...readFixture('v13.json'), schemaVersion: 15 }; // D566 (1): was 14 before v1.4
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 
@@ -195,7 +195,7 @@ describe('v13-played.json (made in KV.4 with the real commands)', () => {
   it('loads with no warnings, validates and round-trips', () => {
     const r = loaded();
     expect(r.warnings).toEqual([]);
-    expect(r.state.meta.schemaVersion).toBe(13);
+    expect(r.state.meta.schemaVersion).toBe(14); // D566 (1): was 13 before v1.4
     expect(roundTrip(r.state)).toEqual(r.state);
   });
 

@@ -40,6 +40,14 @@ export const loadFixture = async (
     delete save.state.story.peakLevels.herdis;
     for (const it of save.state.items) if (it.where?.hunter === 'herdis') it.where = null;
   }
+  // v1.4 (D566 (4)): v14-played:marks gives the Roll all three marks: the lamp (cycle 1), Rising Vigil
+  // level 2 (cycle 2) and The Descent (cycle 3, the fixture's own win).
+  if (variant === 'marks') {
+    const st = save.state;
+    st.remembering.nearSeen = true;
+    st.remembering.endings.push({ ending: 'remember', at: 1, cycle: 1 });
+    st.cycles[1].stand.vigilLevel = 2;
+  }
   await page.goto('./?debug');
   await begin(page, 'Mira');
   await tab(page, 'More').click();
@@ -237,6 +245,69 @@ export const FLOWS: readonly Flow[] = [
       await visit('roll-vigil', 'Roll of Wardens (with Rising Vigil marks)', [
         /Roll of Wardens/i,
         /Rising Vigil, level 3\./,
+      ]);
+    },
+  },
+  {
+    id: 'descent',
+    fixture: 'v14-played',
+    mutates: true,
+    how: 'fixture v14-played (The Descent won), Hold, The Remembering card, Fight the Descent again, the sheet and What the hold learned',
+    run: async (page, visit) => {
+      await dismiss(page);
+      await tabTo(page, 'Hold');
+      const card = page.getByRole('region', { name: 'The Remembering' });
+      await card.scrollIntoViewIfNeeded();
+      await visit('descent-card', 'The Remembering card (Descent won)', [
+        /The Unlit was scattered in the Deep\./,
+      ]);
+      await card.getByRole('button', { name: 'Fight the Descent again' }).click();
+      await page
+        .getByTestId('descent-preview')
+        .getByText(/Win chance/)
+        .waitFor();
+      await visit('descent-sheet', 'The Descent sheet', [/Three stages in the Deep/, /Win chance/]);
+      await page.getByRole('button', { name: 'Show what the hold learned' }).click();
+      await visit('descent-learned', 'What the hold learned (breakdown)', [/Mastered species/]);
+      await dismiss(page);
+      // The saved attempt is unread: the card offers its result sheet, then a stage log.
+      await tabTo(page, 'Hold');
+      await card.scrollIntoViewIfNeeded();
+      await page.getByTestId('descent-view-result').click();
+      await visit('descent-result', 'The Descent result sheet', [
+        /Victory — The Unlit is scattered\./,
+      ]);
+      await page.getByTestId('descent-log-1').click();
+      await visit('descent-log', 'The Descent stage log', [/t\d+/]);
+      await dismiss(page);
+      // A new attempt: the first story card, then a stage's playback with the banner over the arena.
+      await tabTo(page, 'Hold');
+      await card.scrollIntoViewIfNeeded();
+      await card.getByRole('button', { name: 'Fight the Descent again' }).click();
+      await page
+        .getByTestId('descent-preview')
+        .getByText(/Win chance/)
+        .waitFor();
+      await page.getByTestId('descent-start').click();
+      await visit('descent-card', 'The Descent story card', [/Pechko doesn't stand/]);
+      await page.getByRole('button', { name: 'Continue' }).click();
+      await page.getByRole('button', { name: 'Continue' }).click();
+      await visit('descent-stage-playback', 'The Descent stage playback', [/Stage 1: The Crack/]);
+    },
+  },
+  {
+    id: 'roll-marks',
+    fixture: 'v14-played:marks',
+    mutates: true,
+    how: 'fixture v14-played with the lamp, Rising Vigil and the Descent marks (a test-only edit), Hold, Rank ▸',
+    run: async (page, visit) => {
+      await dismiss(page);
+      await tabTo(page, 'Hold');
+      await btn(page, /^Rank/).click();
+      await visit('roll-marks', 'Roll of Wardens (all three marks)', [
+        /Read the roll aloud\./,
+        /Rising Vigil, level 2\./,
+        /Led the Descent\./,
       ]);
     },
   },

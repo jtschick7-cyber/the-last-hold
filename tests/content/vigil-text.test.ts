@@ -16,7 +16,7 @@ import { embersMultiplier } from '../../src/core/systems/vigil';
 
 const gdd = readFileSync(new URL('../../docs/gdd.md', import.meta.url), 'utf8');
 const start = gdd.indexOf('### 9.23 Rising Vigil');
-const section = gdd.slice(start, gdd.indexOf('\n## 10.', start));
+const section = gdd.slice(start, gdd.indexOf('\n### ', start + 1)); // up to the next section (9.24 follows it from v1.4)
 const table = section.slice(section.indexOf('| String | Where it shows |'));
 
 describe('Rising Vigil strings', () => {

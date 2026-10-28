@@ -1328,4 +1328,23 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'generic',
     note: 'Ending scene, shelf entry or Rime heading title (OUT-6, OUT-3): a plain phrase, checked as a group; none is a product or game name I know of.',
   })),
+  // v1.4 flesh-out (OUT-6, 2026-10-25, D560, confirmed at D568): the third ending's names. Searched against GDD §2.3.
+  {
+    name: 'The Descent',
+    checked: '2026-10-25',
+    result: 'generic',
+    note: 'Everyday English word, in lore §6. A minor fast-travel signpost in The Witcher 3 has the same name; not a signature term (like "The Hearth", D116, and "Rising Vigil", D545).',
+  },
+  ...['The Crack', 'The Sealed Stair', 'Below the Seal'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-25',
+    result: 'generic',
+    note: "Stage title (D560): plain phrase from the game's own words; no collision in the influences.",
+  })),
+  ...['First Cold', 'Heavy Dark'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-25',
+    result: 'clear',
+    note: "The Unlit's ability name (D560): two plain words; no match in the influences.",
+  })),
 ];

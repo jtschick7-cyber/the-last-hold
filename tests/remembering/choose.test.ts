@@ -70,7 +70,7 @@ describe('choosing an ending (refusals)', () => {
 
   it('refuses a made-up ending', () => {
     const s = ready();
-    expect(reasonOf(s, { type: 'remembering.choose', ending: 'descent' as never })).toMatch(
+    expect(reasonOf(s, { type: 'remembering.choose', ending: 'banner' as never })).toMatch(
       /No such ending/,
     );
   });

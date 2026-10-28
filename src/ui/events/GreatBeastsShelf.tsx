@@ -1,4 +1,5 @@
 import { greatBeastsShelf, type ShelfEntry } from '../../core/systems/events-results';
+import { unlitShelfEntry } from '../../core/systems/descent-playback';
 import { game } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import styles from '../styles/ui.module.css';
@@ -7,7 +8,9 @@ import { Sprite } from '../widgets/Sprite';
 // GDD §5.12.8, §9.17: the optional Great Beasts shelf in the Bestiary. An entry per boss and quarry,
 // Identified on the first fight (its stats, resistances, abilities and "What it was" line), with no
 // Studied or Mastered levels. It appears once events have opened; before that there is nothing on it.
-const Entry = ({ e }: { e: ShelfEntry }) => (
+type Shown = Omit<ShelfEntry, 'id' | 'kind' | 'identified'>;
+
+const Entry = ({ e }: { e: Shown }) => (
   <div>
     <div class={styles.row}>
       <Sprite id={e.portraitId} scale={2} />
@@ -32,12 +35,15 @@ const Entry = ({ e }: { e: ShelfEntry }) => (
 
 export const GreatBeastsShelf = () => {
   const s = game();
-  if (!s.events.opened) return null;
+  const unlit = unlitShelfEntry(s);
+  if (!s.events.opened && !unlit) return null;
   const shelf = greatBeastsShelf(s);
   return (
     <section class={styles.card} aria-label="Great Beasts">
       <h2 class={styles.cardTitle}>Great Beasts</h2>
-      {shelf.emptyLine && <p class={`${styles.small} ${styles.dim}`}>{shelf.emptyLine}</p>}
+      {shelf.emptyLine && !unlit && (
+        <p class={`${styles.small} ${styles.dim}`}>{shelf.emptyLine}</p>
+      )}
       <ul class={styles.tileGrid}>
         {shelf.entries.map((e) => (
           <li key={e.id}>
@@ -53,6 +59,19 @@ export const GreatBeastsShelf = () => {
             </button>
           </li>
         ))}
+        {unlit && (
+          <li key="unlit">
+            <button
+              type="button"
+              class={styles.tile}
+              aria-label={unlit.name}
+              onClick={() => openSheet(unlit.name, () => <Entry e={unlit} />)}
+            >
+              <Sprite id={unlit.portraitId} />
+              <span class={styles.small}>{unlit.name}</span>
+            </button>
+          </li>
+        )}
       </ul>
     </section>
   );

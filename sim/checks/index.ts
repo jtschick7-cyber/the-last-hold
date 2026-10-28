@@ -53,6 +53,7 @@ import {
 } from './v010';
 import { rememberingReachableCheck } from './v011';
 import { vigilEmbersLevelCheck, vigilLevelRisesCheck, vigilNeverMoreWavesCheck } from './v13';
+import { descentLearnedMattersCheck, descentVictoryCheck } from './v14';
 import type { Check } from './types';
 
 export type { Check, CheckResult } from './types';
@@ -127,4 +128,7 @@ export const CHECKS: readonly Check[] = [
   vigilLevelRisesCheck,
   vigilNeverMoreWavesCheck,
   vigilEmbersLevelCheck,
+  // v1.4 (D577)
+  descentVictoryCheck,
+  descentLearnedMattersCheck,
 ];

@@ -381,6 +381,21 @@ export const balance = {
     strengthPerLevel: tunable(0.32),
     embersPerLevel: tunable(0.22),
   },
+  // ---- GDD §7.14 The Descent (v1.4, D557-D568) ----
+  descent: {
+    previewSamples: locked(100), // plan §0.6: 100 three-stage practice runs in the odds worker
+    learned: {
+      perMasteredSpecies: tunable(0.01), // +1% Might and Health per Mastered species (up to +16%)
+      perProperty: tunable(0.0025), // +0.25% per recipe property (up to +9%)
+      perSkillLevel: tunable(0.005), // +0.5% per warden skill level (up to +20%)
+      perOrderChapter: tunable(0.005), // +0.5% per Order chapter read (up to +8%)
+      takenPerRelic: tunable(0.01), // -1% damage taken per owned Hold or Delve relic (up to -12%)
+    },
+    // Calibrated on the Descent probe and approved by the owner (Q59, D577): the maxed roster wins 82%
+    // with a median of 6 hunters downed; with the learned bonus zeroed it wins 0%.
+    stageTiers: tunable([7, 8, 9]),
+    unlitBaseHealth: tunable(4500), // base tier 5; see above
+  },
 } as const;
 
 export type Balance = typeof balance;
