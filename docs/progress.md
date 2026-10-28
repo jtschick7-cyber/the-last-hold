@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.9 (calibrated constants, simulator rows A and B). Before it: TD.8b, TD.8a. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** your look at the Descent screens and strings on the preview (still owed); then TD.10 (budgets, benchmarks, size, old-test list) and TD.11 (wrap-up).
+- **Last task:** TD.10 (benchmarks, size, old-test list). Before it: TD.9, TD.8b. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** TD.11 (wrap-up, five e2e shards, offline reload, pull request). Owner's look at the Descent screens: done, all good (2026-10-28).
 - **Open questions:** Q59 is answered (D577). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -149,3 +149,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Commit 2 (rows):** `descent-victory` (maxed roster wins 50–85%, median 2–8 hunters downed) and `descent-learned-matters` (at least 25 points over the zeroed bonus; Hamlet loses in Stage 1 on every seed) in `sim/targets.ts`, judged in `sim/checks/v14.ts`; `CURRENT_MILESTONE` is `v1.4`. I read "2 to 8" as inclusive (the question text said "strictly between"; the measured median is 6 either way).
 - **Measured (full `sim:check`, 466 s):** 60 of 60 rows pass (58 old + 2 new); 192 of 192 moments same as the v1.3 baseline. Row A: median 81% wins (seeds 80–88%; one seed is above 85%, the median is what is judged), median 6 downed. Row B: 81 points over the zeroed bonus; Hamlet clears no stage. `npm run check` green.
 - **Left:** `sim:accept` only at milestone end. TD.10 and TD.11 next, after your look at the Descent screens.
+
+## 2026-10-28 — v1.4 TD.10: budgets, benchmarks, size and the old-test list
+- **Bench (this container, 4x throttle):** Descent preview (100 practice runs, 14 hunters, the calibrated values) **327 ms** against 1,500; v13 to v14 migration (played save) **7.7 ms** against 100. `bench.spec.ts` and `bench-page.ts` gain the migration row; the Descent bench input now uses tiers [7, 8, 9].
+- **A bench row fails here, and also on `main`:** odds 237 to 258 ms against a 240 ms limit, Suggest up to 963 ms. On a clean `main` checkout the same test fails the same way (odds 249 ms), so this is the slower container, not the branch (D557). CI on its faster runner is the judge.
+- **Size (SF.9 method, sum of per-file gzip -9 of `dist`):** **457,443 bytes**; 156,957 under 614,400.
+- **Save growth:** new test `tests/descent/save-growth.test.ts`: both records full, 14 hunters, within 14 KB (D576). Passes.
+- **`npm run check`: 131 s here (tests 81 s), over the 120 s fail line.** The TD.7c commit measured 117 s on the same container today (it was 88 s earlier in the day), so most of it is the container; the branch adds about 14 s (3,742 tests against 3,716). Needs your call, see below.
+- **Old-test edits since `main` (all within D566 or reported earlier; nothing loosened):** schema 13 to 14 and "newer" 14 to 15 (`v12-migration`, `v13-migration`); `descent` swapped for an invalid ending name `banner` (`choose`, `v11-migration`; D566 (3)); `v13-owner`, `v14`, `v14-played` added to `opening.test.ts` (D566 (2)); v14 assets skipped in `contact-sheet.test.ts` (D566 (6)); `names.ts` (D566 (6)); `polish-screens.ts` (D566 (4)); `vigil-text.test.ts` ends its section cut at the next heading (not on the list; you approved it at TD.1).
