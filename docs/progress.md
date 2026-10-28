@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
 - **Milestone:** v1.4 "The Descent" (D557–D569), in progress. v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** TD.7a (The Remembering card and the Descent sheet). Before it: TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** TD.5 (art; TD.7b needs it) or TD.8a (simulator probe).
+- **Last task:** TD.5 (the five Descent pictures and the contact sheet). Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
+- **Next:** the owner's Keep/Redraw marks on the sheet (`docs/flesh-out/v1.4/art-marks.md`), then TD.6 (only if any Redraw) and TD.7b. TD.8a (simulator probe) can run meanwhile.
 - **Open questions:** Q59 (calibration, asked after TD.8b). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
 
 Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -93,3 +93,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **Checks:** `npm run check` green (3,692 tests, 82 s; one cold run was 90 s). Golden fights unchanged; `rulesVersion` 5; no old test edited.
 - **Readings to confirm:** (1) no stage banners yet, because the art is TD.5; text only. (2) After Start the sheet just closes: playback, story cards and the result sheet are TD.7b. (3) Two labels not in the §9.24 table: the **Suggest** button and "(quick estimate)" when no worker runs. (4) The Descent button on the open form has no description line.
 - **Not done / later:** playback, result sheet, sounds, Roll mark, Library replay (TD.7b/c).
+
+## 2026-10-28 — v1.4 TD.5: the Descent's five pictures and the contact sheet
+- **Drawn in code** (`tools/draw-descent.ts`, written by `tools/gen-descent.ts`, 32-colour palette): The Unlit's 64 px portrait and 32 px battle strip (hooded cold, rime crown, hem of threads, one small warm spark), and three 160 × 64 banners: The Crack, The Sealed Stair, Below the Seal. No lettering; the last banner's rime only suggests writing.
+- **Manifest:** five rows in `assets.ts`. Files follow the repo's naming (`portraits/monster-unlit.png`, `sprites/monster-unlit.png`, `scenes/descent-stage-N.png`), not the `monsters/` folders the technical design sketches; please say if you want those.
+- **Contact sheet (shown in the conversation):** `docs/flesh-out/v1.4/contact-sheets/descent.png`, numbered 1 to 5 on its own (`contact-sheet.ts --descent-sheets`), on both backgrounds; empty marks table in `docs/flesh-out/v1.4/art-marks.md`. 1 portrait, 2 battle sprite, 3 to 5 the banners.
+- **Tests:** 9 new in `tests/tools/descent-art.test.ts` (each file equals its generator, size, palette, five different frames, own numbering). v1.0 and v1.1 hash tests pass unchanged; credits regenerated.
+- **Old test edited (D566 (6)):** `contact-sheet.test.ts`: its two "every generated row" filters also skip the v1.4 pictures, so the v1.0 numbers 1–156 stay put. Nothing loosened.
+- **Size (SF.9 method):** 451,041 bytes (includes TD.4c and TD.7a code); 163,359 under 614,400.
+- **Waiting on you:** Keep or Redraw for pictures 1 to 5. Hashes are frozen in `art-src/v1.4-hashes.json` at TD.6 once all five are approved.

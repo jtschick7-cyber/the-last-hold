@@ -112,3 +112,5 @@ console.log('wrote public/contact-sheet.html');
 if (process.argv.includes('--sheets')) await import('./contact-sheet-numbered');
 // v1.1 (plan TL.5c): add --layout-sheets for the Hold grid's numbered sheets (tools/contact-sheet-layout.ts).
 if (process.argv.includes('--layout-sheets')) await import('./contact-sheet-layout');
+// v1.4 (plan TD.5): add --descent-sheets for The Unlit and the Descent's banners (tools/contact-sheet-descent.ts).
+if (process.argv.includes('--descent-sheets')) await import('./contact-sheet-descent');

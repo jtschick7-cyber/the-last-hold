@@ -7,6 +7,7 @@ import { assets } from '../../src/content/assets';
 import {
   currentHashes,
   isV11Asset,
+  isV14Asset,
   numberedAssets,
   redrawIds,
   sheetPlan,
@@ -15,7 +16,9 @@ import {
 const read = (p: string): string => readFileSync(new URL(p, import.meta.url), 'utf8');
 
 describe('numbered contact sheets', () => {
-  const generated = assets.filter((a) => a.source === 'generated' && !isV11Asset(a.id)); // D507 (4)
+  const generated = assets.filter(
+    (a) => a.source === 'generated' && !isV11Asset(a.id) && !isV14Asset(a.id),
+  ); // D507 (4), D566 (6)
 
   it('number every generated row once, in id order', () => {
     expect(numberedAssets.length).toBe(generated.length);
@@ -43,8 +46,8 @@ describe('Keep pictures are byte-identical to v0.11', () => {
 
   it('has a recorded hash for every manifest file', () => {
     for (const a of assets)
-      if (a.source !== 'placeholder' && !isV11Asset(a.id))
-        expect(recorded[a.id], a.id).toBeDefined(); // D507 (4)
+      if (a.source !== 'placeholder' && !isV11Asset(a.id) && !isV14Asset(a.id))
+        expect(recorded[a.id], a.id).toBeDefined(); // D507 (4), D566 (6)
   });
 
   it('matches the recorded hash for every picture not marked Redraw', () => {

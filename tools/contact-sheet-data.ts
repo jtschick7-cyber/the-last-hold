@@ -15,9 +15,30 @@ export interface NumberedAsset {
 /** v1.1 pictures (the Hold's grid) are numbered on their own sheet at TL.5c, so the v1.0 numbers never move (D507 (4)). */
 export const isV11Asset = (id: string): boolean => id.startsWith('grid.');
 
+/** v1.4 pictures (The Unlit and the Descent's banners) are numbered on their own sheet at TD.5, so neither earlier sequence moves (D566 (6)). */
+export const isV14Asset = (id: string): boolean =>
+  id === 'portrait.monster.unlit' ||
+  id === 'sprite.monster.unlit' ||
+  id.startsWith('scene.descent.');
+
+/** The v1.4 sheet's own sequence 1..5, in the order the owner marks them (portrait, battle sprite, banners). */
+export const v14Numbered: readonly NumberedAsset[] = [
+  'portrait.monster.unlit',
+  'sprite.monster.unlit',
+  'scene.descent.stage-1',
+  'scene.descent.stage-2',
+  'scene.descent.stage-3',
+].map((id, i) => {
+  const asset = assets.find((a): a is GeneratedAsset => a.source === 'generated' && a.id === id);
+  if (!asset) throw new Error(`no generated row for ${id}`);
+  return { n: i + 1, asset };
+});
+
 /** Numbered 1..N in plain id order; adding a row later never renumbers the ones before it in id order. */
 export const numberedAssets: readonly NumberedAsset[] = assets
-  .filter((a): a is GeneratedAsset => a.source === 'generated' && !isV11Asset(a.id))
+  .filter(
+    (a): a is GeneratedAsset => a.source === 'generated' && !isV11Asset(a.id) && !isV14Asset(a.id),
+  )
   .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
   .map((asset, i) => ({ n: i + 1, asset }));
 
