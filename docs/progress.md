@@ -203,3 +203,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Size:** 464,227 bytes gzipped by a quick sum of `dist` (467,553 by the earlier count; row 614,400).
 - **Plan:** TB.15 ticked; section 0.7 gets the v1.5 actual (19 entries against 18 to 22); status "in progress, waiting for the playtest".
 - **Waiting on you:** the iPhone playtest, then "playtest passed"; then `sim:accept`, merge, tag.
+
+## 2026-10-29 — v1.5 milestone end
+- **The owner said the playtest passed.**
+- **`sim:accept`** (373 s here): the baseline moves to v1.5; it adds the Tactician rows and the Orderer's first Long Night (101.5 h).
+- **Left:** the owner exports their save, then the merge; the owner tags `v1.5.0` by hand.
+
