@@ -307,5 +307,5 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Options:** (a) yes, as written (recommended: every measured number is far inside its budget); (b) tighten a budget; (c) change a row.
 - **Recommendation:** (a).
 - **Blocks:** nothing now; TB.15 drops "proposed" from the rows.
-- **Answer (owner):** *(pending)*
+- **Answer (owner):** (a), yes as written, 2026-10-29 (D599).
 
