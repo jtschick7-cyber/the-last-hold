@@ -18,8 +18,11 @@ import v10Played from '../saves/fixtures/v10-played.json';
 import v11Played from '../saves/fixtures/v11-played.json';
 import v12Played from '../saves/fixtures/v12-played.json';
 import v13Played from '../saves/fixtures/v13-played.json';
+import v14Played from '../saves/fixtures/v14-played.json';
 import { h, render } from 'preact';
-import { adoptGame, dispatch, startGame } from '../../src/ui/app/runtime';
+import { laneView, suggestLayout } from '../../src/core/systems/breach';
+import { adoptGame, dispatch, game, startGame } from '../../src/ui/app/runtime';
+import { LanesStrip } from '../../src/ui/widgets/LanesStrip';
 import { HoldGrid } from '../../src/ui/widgets/HoldGrid';
 import { ArrangeHoldSheet } from '../../src/ui/sheets/ArrangeHoldSheet';
 
@@ -68,6 +71,9 @@ type Bench = {
   descentMigration: number;
   holdGrid: number;
   arrangeSheet: number;
+  lanesStrip: number;
+  suggestLayout: number;
+  breachMigration: number;
 };
 
 // Plan TL.10 (D506): the layout rows mount the real components for a played save with all 40
@@ -215,6 +221,13 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
     descentMigration: best(() => loadEnvelope(structuredClone(v13Played))),
     holdGrid: best(mount(() => h(HoldGrid, {}))),
     arrangeSheet: best(mount(() => h(ArrangeHoldSheet, {}))),
+    // Plan TB.14 (GDD §6.5, D590): the Lanes strip's render (the view is built in `core`), Suggest layout
+    // (the fixed rule in `core`, on the main thread) and the v14 → v15 migration of a played v14 save.
+    lanesStrip: best(
+      mount(() => h(LanesStrip, { view: laneView(game()), light: true }) as ReturnType<typeof h>),
+    ),
+    suggestLayout: best(() => suggestLayout(game())),
+    breachMigration: best(() => loadEnvelope(structuredClone(v14Played))),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),
     bossSuggest: best(() =>
       suggestBossParty({

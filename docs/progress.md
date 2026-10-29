@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.13 (constants set, v6 goldens recorded, rows A to C added; Q63 answered). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
-- **Next:** TB.14 (budgets, sweeps, size, the old-test list). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
+- **Last task:** TB.14 (budgets, sweeps, size, old-test list). Before it: TB.13 (constants, goldens, rows A to C). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
+- **Next:** TB.15 (wrap-up; the owner's playtest). Open: Q64 (the four performance rows). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -182,3 +182,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Old-test edits:** one, you approved: in `breach.test.ts`, "does not count a tower in the Tray" now builds its comparison table with the live `volleyScale` instead of the old 1. Nothing loosened.
 - **Numbers:** `npm run check` green, 118 s here (warn 90, fail 120; slow machine, CI is the judge).
 - **Owner task:** say yes to each of the three commits.
+
+## 2026-10-29 — v1.5 TB.14: budgets, sweeps, size, the old-test list
+- **Owner said yes to all three TB.13 commits.**
+- **Bench rows added** (`bench.spec.ts`, `bench-page.ts`; 4× slowed CPU, best of three): Lanes strip render **1.2 ms** (budget 16), Suggest layout **3.0 ms** (budget 20), v14 → v15 migration of a played save **16.7 ms** (budget 100). The lane table on one stand record is under 400 bytes (unit test since TB.2). Last Stand preview with lanes 753 ms (budget 1 s).
+- **Bench in this container:** the whole file still fails at an old row ("Suggest", 836 ms against 600): contract odds and Suggest are unchanged code, and the hand-off says it fails the same way on `69157f7`; CI is the judge. The three new rows print well inside budget.
+- **Sweeps (local chromium, throwaway config, 10.8 min):** tap targets, widths (320 to 1300), Text sizes including Largest at 320, motion and contrast, with the Arrange Hold and Last Stand strip flows already in `polish-screens.ts`: **78 of 78 pass**; no baseline changed.
+- **Size:** production build **467,553 bytes** gzipped (row 614,400; 146,847 under; 467,258 at TB.9).
+- **Old-test list (D593):** checked against `git diff` from `69157f7`: every modified existing test file is listed in an earlier entry (schema numbers, fixtures, lint reader, polish flows, version line Q62, `stand-story` pin, `shards.test.ts`, `breach.test.ts`). Nothing loosened. The only edits this task: the bench files.
+- **Q64:** the four §6.5 rows, with these numbers, for you to approve (recommend yes as written). Rows stay "proposed" until you answer.
+- **Numbers:** `npm run check` green, 112 s here (warn 90, fail 120; slow machine; CI is the judge).

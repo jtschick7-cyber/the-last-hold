@@ -31,6 +31,10 @@ const BUDGET = {
   descentMigration: 100,
   holdGrid: 16,
   arrangeSheet: 50,
+  // v1.5 (D590): the Lanes strip, Suggest layout and the v14 → v15 migration.
+  lanesStrip: 16,
+  suggestLayout: 20,
+  breachMigration: 100,
 };
 type Bench = {
   odds: number;
@@ -53,6 +57,9 @@ type Bench = {
   descentMigration: number;
   holdGrid: number;
   arrangeSheet: number;
+  lanesStrip: number;
+  suggestLayout: number;
+  breachMigration: number;
 };
 
 test('odds, Suggest and the stand preview stay within 2× their budget on a throttled CPU', async ({
@@ -81,6 +88,10 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
       `Arrange Hold sheet ${ms.arrangeSheet.toFixed(1)} ms`,
   );
   console.log(`v12 → v13 migration (played save): ${ms.vigilMigration.toFixed(1)} ms`);
+  console.log(
+    `Lanes strip render ${ms.lanesStrip.toFixed(1)} ms, Suggest layout ${ms.suggestLayout.toFixed(1)} ms, ` +
+      `v14 → v15 migration (played save) ${ms.breachMigration.toFixed(1)} ms`,
+  );
   console.log(`v13 → v14 migration (played save): ${ms.descentMigration.toFixed(1)} ms`);
   console.log(`Descent preview (100 practice runs): ${ms.descentPreview.toFixed(0)} ms`);
   console.log(
@@ -107,6 +118,9 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     ['the v13 → v14 migration', ms.descentMigration, BUDGET.descentMigration],
     ['the Hold grid render', ms.holdGrid, BUDGET.holdGrid],
     ['the Arrange Hold sheet open', ms.arrangeSheet, BUDGET.arrangeSheet],
+    ['the Lanes strip render', ms.lanesStrip, BUDGET.lanesStrip],
+    ['Suggest layout', ms.suggestLayout, BUDGET.suggestLayout],
+    ['the v14 → v15 migration', ms.breachMigration, BUDGET.breachMigration],
   ] as const) {
     if (took > budget) {
       test.info().annotations.push({

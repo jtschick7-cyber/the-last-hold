@@ -300,3 +300,12 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **TB.12 result (2026-10-29):** the table is `docs/flesh-out/v1.5/breach-calibration.md`. Row A passes (Auto-arrange holds 15 to 17 waves, within 0.15 of today). **Rows B and C cannot pass with any breach tunable:** at the first stand the Tactician is level with Auto-arrange (never 1 wave more), and the bad layout loses at most 1.5 waves (never 2), because the whole defense is worth only about 2 waves at that stand. The only proposed value change is `breach.volleyScale` 1 → 3 (restores today's average volley).
 - **New options for rows B and C:** (a) **Keep row A; change B to "the Tactician holds at least as many waves as Auto-arrange" and C to "the bad layout holds at least 1 wave fewer at the max level point"** (recommended: both pass today with the measured numbers, and they still catch a Suggest rule that is worse than Auto-arrange or a layout that stops mattering); (b) keep B and C as written and make defenses count for more (needs a change to an approved value such as `walls.takenPerLevel`, which moves every old stand row and the saved baseline); (c) drop B and C and keep row A only.
 - **Answer (owner):** (a) for rows B and C, and yes to `volleyScale` 3, 2026-10-29 (D598).
+
+### Q64 — Approve the four v1.5 performance rows (GDD §6.5) *(opened 2026-10-29, at TB.14; D445 route)*
+- **Context:** the four rows are marked "proposed" in GDD §6.5. Measured here on a 4× slowed CPU (best of three): Lanes strip render 1.2 ms (budget 16 ms); Suggest layout 3.0 ms (budget 20 ms); v14 → v15 migration of a played save 16.7 ms (budget 100 ms); the lane table on one stand record is under 400 bytes (a unit test; budget 0.4 KB). The Last Stand preview with the lane table: 753 ms (budget 1 s, unchanged). Production build 467,553 bytes gzipped (row 614,400).
+- **Question:** make the four rows final as written?
+- **Options:** (a) yes, as written (recommended: every measured number is far inside its budget); (b) tighten a budget; (c) change a row.
+- **Recommendation:** (a).
+- **Blocks:** nothing now; TB.15 drops "proposed" from the rows.
+- **Answer (owner):** *(pending)*
+
