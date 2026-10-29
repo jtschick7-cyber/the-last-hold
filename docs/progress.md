@@ -6,7 +6,7 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.15 (wrap-up: checks, simulator, e2e, build, pull request). Before it: TB.14, TB.13 (constants, goldens, rows A to C). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
+- **Last task:** v1.5 merged and tagged (TB.15 done). Two CI times logged as Q65. Before it: TB.14, TB.13 (constants, goldens, rows A to C). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
 - **Next:** the owner's iPhone playtest, then "playtest passed"; only then `sim:accept`, merge, tag `v1.5.0` (export your save just before the merge). Q64 answered yes (D599). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
@@ -209,3 +209,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **`sim:accept`** (373 s here): the baseline moves to v1.5; it adds the Tactician rows and the Orderer's first Long Night (101.5 h).
 - **Left:** the owner exports their save, then the merge; the owner tags `v1.5.0` by hand.
 
+
+## 2026-10-29 — v1.5 after the merge: CI times
+- **Merged:** pull request 26 is merged into `main` (`c6cc249`); the owner tagged `v1.5.0`. CI on that commit is green and the deploy succeeded.
+- **Two times worth watching:** e2e shard 3 of 5 took 7 min 44 s as a whole job (6 min 41 s of tests), under the 8-minute ceiling but over the plan's 7:30 stop-and-ask line if the whole job counts. `npm run check` took 1 min 53 s on CI (warn 90 s, fail 120 s).
+- **Not changed:** no shard was moved and no line was raised. Logged as Q65 for the v1.6 flesh-out to settle.
+- **Other jobs:** shards 1, 2, 4, 5 took 2:00 to 3:44; the simulator workflow 3 min 14 s in all.
