@@ -7,7 +7,7 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
 - **Last task:** TB.9 (the Start Tray line, the log header check, the whole-table string check). Before it: TB.8b to TB.1.
-- **Next:** TB.10 (played v15 save fixture; needs TB.6). Owner task now: read the Breach strings as built and say yes.
+- **Next:** TB.10 (played v15 save fixture; needs TB.6). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -130,3 +130,4 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Old-test edits:** none.
 - **Numbers:** `npm run check` green, 89 s here (warn 90, fail 120). Size 467,258 bytes (row 614,400).
 - **Owner task:** read the Breach strings as built (GDD §9.25 table) and say yes.
+- **Owner said yes (2026-10-29)** to the Breach strings as built; the TB.9 owner task is closed.
