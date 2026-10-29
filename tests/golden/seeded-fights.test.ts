@@ -121,6 +121,6 @@ describe('seeded golden fights (locked)', () => {
   // added Delve groups and version 5 the use-skills and item lines; these contract fights, recorded
   // under version 1, reproduce unchanged.
   it('these goldens were recorded under rules version 1; versions 2 to 5 keep their contract fights', () => {
-    expect(RULES_VERSION).toBe(5);
+    expect(RULES_VERSION).toBe(6);
   });
 });

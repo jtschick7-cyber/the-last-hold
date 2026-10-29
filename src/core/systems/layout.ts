@@ -14,8 +14,9 @@ import type { GameState } from '../state/game-state';
 import { clearingBounds, pieceDef } from './layout-catalog';
 
 // GDD §5.1.5 and technical design §19.3 (D500–D502, plan TL.2): what each piece of the Hold's layout
-// is, derived from the saved blueprint and the buildings. Pure, and read only by the Hold screen:
-// no production rate, cost, Threat rate or fight calculation reads any of this (CLAUDE.md).
+// is, derived from the saved blueprint and the buildings. Pure, and read only by the Hold screen and,
+// from v1.5, the Breach module (systems/breach.ts, which freezes the front-row defenses into the
+// stand's lane table): no production rate, cost, Threat rate or fight calculation reads it (CLAUDE.md).
 
 export type PieceStatus = 'locked' | 'active' | 'dormant-ring' | 'tray';
 

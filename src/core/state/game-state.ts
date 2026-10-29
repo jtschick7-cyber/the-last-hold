@@ -25,6 +25,7 @@ import type { DescentState } from './descent-state';
 import type { RememberingState } from './remembering-state';
 import type { ItemState } from './item-state';
 import type { StoryState } from './story-state';
+import type { LaneTable } from './lane-table';
 import type { InjuryKind } from '../contracts/injury';
 
 // Technical design §5.2. v1 was the hold only (plan T1.9); v2 adds hunters,
@@ -37,8 +38,8 @@ import type { InjuryKind } from '../contracts/injury';
 // T6.3, D218); v7 adds Delves and per-act family counts (plan T7.1, T7.5); v8 adds items,
 // Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317); v9 adds events (tokens,
 // rests, the boss visit, hunt points) and each cycle's stand pool (plan T9.1, D382); v10 adds the
-// Orders (plan T10.1); v11 adds the ending's block (plan T11.1, D452); v12 the layout (D502); v13 Rising Vigil (D543); v14 the Descent (D562). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 14;
+// Orders (plan T10.1); v11 adds the ending's block (plan T11.1, D452); v12 the layout (D502); v13 Rising Vigil (D543); v14 the Descent (D562); v15 the stand's lane table (D585). Times are epoch milliseconds.
+export const SCHEMA_VERSION = 15;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {
@@ -244,6 +245,8 @@ export interface StandRecord {
   pool?: 'dross';
   /** v13 (D543): the Rising Vigil level it was fought at (GDD §5.9.10); absent means 0. An integer of 1 or more when present. */
   vigilLevel?: number;
+  /** v15 (D585): the lane table frozen when Start was pressed (GDD §5.9.11); present means a version 6 stand, absent means version 5. */
+  lanes?: LaneTable;
   /** The result sheet has been seen. */
   seen: boolean;
 }

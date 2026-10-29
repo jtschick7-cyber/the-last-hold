@@ -1,3 +1,4 @@
+import { debugBreachFreeze } from './debug-breach';
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
 import { debugGrantLoot, debugReadyRanks } from './debug-depth';
@@ -73,6 +74,7 @@ import { autoPlaceUnlocked, unlockedPieces } from '../systems/layout-place';
 import {
   layoutAutoArrange,
   layoutClear,
+  layoutSetDefenses,
   layoutPlace,
   layoutSetShowGhosts,
   layoutUnplace,
@@ -139,6 +141,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return layoutAutoArrange(state);
     case 'layout.clear':
       return layoutClear(state);
+    case 'layout.setDefenses':
+      return layoutSetDefenses(state, cmd.moves);
     case 'layout.setShowGhosts':
       return layoutSetShowGhosts(state, cmd.showGhosts);
     case 'contract.launch':
@@ -174,7 +178,12 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
     case 'settings.set':
       return setSettings(state, cmd.patch);
     case 'stand.make':
-      return makeStand(state, cmd.party, cmd.prep ?? { oils: {}, potions: {} });
+      return makeStand(
+        state,
+        cmd.party,
+        cmd.prep ?? { oils: {}, potions: {} },
+        cmd.noLanes === true,
+      );
     case 'stand.seen':
       return markStandSeen(state);
     case 'upgrade.buy':
@@ -257,6 +266,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return debugLayoutClear(state);
     case 'debug.layoutFillBastion':
       return debugLayoutFillBastion(state);
+    case 'debug.breach.freeze':
+      return debugBreachFreeze(state);
     case 'debug.unlockAge':
       return unlockAge(state, cmd.age);
     case 'debug.addArvid':

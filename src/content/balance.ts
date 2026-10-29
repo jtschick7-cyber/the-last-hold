@@ -376,10 +376,11 @@ export const balance = {
   },
   // ---- GDD §7.13 Rising Vigil (v1.3, D538–D551, D554) ----
   // Measured in KV.9 on the Vigilant's probe (docs/flesh-out/v1.3/vigil-curve.md): s loses about 3 waves
-  // by level 3, e keeps the Embers at levels 1 to 3 level with level 0 (D546 (1)).
+  // by level 3, e keeps the Embers at levels 1 to 3 level with level 0 (D546 (1)). Retuned from 0.32 and
+  // 0.22 after the Breach moved the stand results (TB.11a, D596; owner said yes): same waves lost per level.
   vigil: {
-    strengthPerLevel: tunable(0.32),
-    embersPerLevel: tunable(0.22),
+    strengthPerLevel: tunable(0.28),
+    embersPerLevel: tunable(0.26),
   },
   // ---- GDD §7.14 The Descent (v1.4, D557-D568) ----
   descent: {
@@ -395,6 +396,19 @@ export const balance = {
     // with a median of 6 hunters downed; with the learned bonus zeroed it wins 0%.
     stageTiers: tunable([7, 8, 9]),
     unlitBaseHealth: tunable(4500), // base tier 5; see above
+  },
+  // GDD §7.15 (v1.5, D581-D583). Only lanes and frontRows are locked. The tunables were confirmed by the
+  // owner from the TB.12 calibration table (Q63, D598); volleyScale was moved 1 -> 3 (D598).
+  breach: {
+    lanes: locked(8), // the 8 columns of the Fell Breach
+    frontRows: locked(3), // rows 0 to 2 count
+    coverOwn: tunable(0.5), // coverOwn + 2 x coverNeighbour = 1
+    coverNeighbour: tunable(0.25),
+    depthStep: tunable(0.25), // wall cut per extra piece in a column
+    depthMax: tunable(2), // extra pieces that count, a whole number
+    towerReach: tunable([1, 0.5, 0.25]), // own column, 1 away, 2 away; multiples of 0.25
+    volleyScale: tunable(3), // restores today's average volley (TB.12 table, D598); in hundredths
+    suggestWaves: tunable(12), // waves the Suggest rule and the strip's dots look at
   },
 } as const;
 

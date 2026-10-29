@@ -76,15 +76,18 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 - **Every player action is a `Command` through `apply()`. Time passes only through `advance()`.** The UI, the simulator, and the debug panel all use these.
 - **Never seat an Order automatically; only the player's commands change `orders.seats`.**
 - The UI never computes game rules.
-- In v1.1, `state.layout` is decorative only: no production rate, cost, Threat rate or fight calculation reads it (`rulesVersion` stays 5).
-- Write no player-facing strings for the layout beyond the table in GDD §9.21; if a screen needs one, ask.
-- Sound is UI-only: nothing in `src/core/` imports or reads the sound module or the `sound` setting (`rulesVersion` stays 5, save schema stays 12).
+- From v1.5 only Walls and Watchtower pieces on the grid in the front rows matter in combat, and only through the lane table frozen on the stand's record. Only `src/core/systems/breach.ts` (with the layout modules and the UI) may read `state.layout`; the stand fight, combat, economy, contracts and advance code never do, and nothing in `src/ui/` computes the lane numbers (the UI may read the layout to draw the grid).
+- A stand's lane table is saved on its record and is what makes it a version 6 stand; a wave log is rebuilt from the saved table, never the live layout; a record without a table replays under the version 5 rules.
+- Nothing in the Last Stand (Start, the preview, a load, the migration) places, moves or trays a piece. v1.1's auto-placement of newly unlocked pieces (purchase, Rank-up, new cycle) is unchanged. Otherwise only the player's own taps change the layout (Auto-arrange, and Use this layout if the owner has said yes to Q61).
+- Write no player-facing strings for the Breach beyond the table in GDD §9.25; if a screen needs one, ask.
+- Write no player-facing strings for the layout beyond the tables in GDD §9.21 and §9.25; if a screen needs one, ask.
+- Sound is UI-only: nothing in `src/core/` imports or reads the sound module or the `sound` setting.
 - Sound is never the only signal, nothing plays while the app is hidden, and a sound that cannot play now is skipped, never queued.
 - Write no player-facing strings for sound beyond the table in GDD §9.22; if a screen needs one, ask.
 - Rising Vigil level 0 takes the old stand path bit for bit: nothing outside the stand code reads `vigil`, and nothing in `src/ui/` computes the vigil factor.
 - A stand's vigil level is saved on its record; a wave list, a log or a preview is always rebuilt with the saved level, never the switch's current state.
 - Write no player-facing strings for Rising Vigil beyond the table in GDD §9.23; if a screen needs one, ask.
-- The Descent runs on its own isolated fight path: nothing in contracts, Delves, events or the Last Stand reads `state.descent`, and nothing in `src/ui/` computes the `What the Hold Learned` bonus (`rulesVersion` stays 5, D561).
+- The Descent runs on its own isolated fight path: nothing in contracts, Delves, events or the Last Stand reads `state.descent`, and nothing in `src/ui/` computes the `What the Hold Learned` bonus (the Descent's fight path is isolated, D561).
 - Write the Descent story texts D-01 to D-07 and the three post-Descent resident lines word for word from `lore-secrets.md` §34.11, and write no player-facing strings for the Descent beyond GDD §9.24; if a screen needs one, ask (D560, D563).
 
 **Content and balance**

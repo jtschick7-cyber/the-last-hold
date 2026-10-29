@@ -64,6 +64,11 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
         </strong>
       </p>
       <OlderRules stand={stand} replay={result} />
+      {w.breach && (
+        <p class={styles.small} data-testid="wave-log-header">
+          {w.breach.header}
+        </p>
+      )}
       <ul class={styles.list} style={{ fontSize: '0.875rem' }}>
         {w.fight.log.map((l, i) => (
           <li key={i} class={styles.divider} style={{ padding: 'var(--space-1) 0' }}>

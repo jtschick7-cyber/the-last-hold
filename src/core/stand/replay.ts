@@ -16,6 +16,8 @@ export const standInputOf = (record: StandRecord, log = true): StandInput => ({
   alchemy: record.alchemy,
   ...(record.pool ? { pool: record.pool } : {}),
   ...(record.vigilLevel ? { vigilLevel: record.vigilLevel } : {}),
+  // The saved table is what makes it a version 6 stand; a record without one replays as version 5 (D584).
+  ...(record.lanes ? { lanes: record.lanes } : {}),
   log,
 });
 

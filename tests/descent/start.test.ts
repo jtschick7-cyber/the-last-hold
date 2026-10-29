@@ -232,7 +232,7 @@ describe('the frozen record and the log rebuild (M3)', () => {
 
   it('freezes knowledge, the learned bonus, relics and the constants it fought with', () => {
     const rec = won().descent.last as NonNullable<GameState['descent']['last']>;
-    expect(rec.rulesVersion).toBe(5);
+    expect(rec.rulesVersion).toBe(6);
     expect(rec.stageTiers).toHaveLength(3);
     expect(rec.unlitBaseHealth).toBeGreaterThan(0);
     expect(Object.keys(rec.bestiaryKnowledge).sort()).toEqual(

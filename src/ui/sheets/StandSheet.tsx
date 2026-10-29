@@ -7,8 +7,9 @@ import { formatNumber, formatRate } from '../../core/format';
 import { bombStock, previewInputFor } from '../../core/stand/from-state';
 import { vigilLevelFor, vigilView } from '../../core/systems/vigil';
 import { suggestSix } from '../../core/stand/suggest';
-import { standPoolOf } from '../../core/stand/pool';
-import { creatureOf, DROSS_TIDE, standSeed, waveList } from '../../core/stand/waves';
+import { creatureOf, DROSS_TIDE } from '../../core/stand/waves';
+import { laneView, standWaves } from '../../core/systems/breach';
+import { BREACH_TEXT } from '../../content/breach-text';
 import type { GameState, Preparation } from '../../core/state/game-state';
 import { requestStandPreview, type StandAnswer } from '../app/odds-client';
 import { dispatch, game, version } from '../app/runtime';
@@ -25,7 +26,9 @@ import {
 } from '../../content/vigil-text';
 import { bandThresholdsLine } from '../../content/story/scenes';
 import { standDelveLine } from '../../core/delves/view-run';
+import { LanesStrip } from '../widgets/LanesStrip';
 import { Num } from '../widgets/Num';
+import { openArrangeHold } from './ArrangeHoldSheet';
 import { LongNightView } from './LongNightSheets';
 
 // GDD §9.13 (D107, D109, D115): the Last Stand screen. The wave list (the first 12;
@@ -43,7 +46,7 @@ const WaveList = ({ s }: { s: GameState }) => (
     class={styles.small}
     style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 var(--space-3)' }}
   >
-    {waveList(standSeed(s), SHOWN_WAVES, standPoolOf(s)).map((w) => (
+    {standWaves(s, SHOWN_WAVES).map((w) => (
       <div key={w.n}>
         <span class={styles.dim}>{w.n}.</span>{' '}
         {/* The Dross-Tide can never be investigated, so it is named at once (GDD §5.9.3, D363). */}
@@ -51,6 +54,14 @@ const WaveList = ({ s }: { s: GameState }) => (
           ? creatureOf(w.monster).name
           : '?'}{' '}
         <span class={styles.dim}>(tier {w.tier})</span>
+        {w.lane !== null && (
+          <>
+            {' '}
+            <span class={styles.dim} data-testid="wave-lane">
+              {BREACH_TEXT.lane(w.lane + 1)}
+            </span>
+          </>
+        )}
       </div>
     ))}
   </div>
@@ -161,6 +172,11 @@ const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => (
         {vigilLine(VIGIL_CONFIRM, vigilLevelFor(game()))}
       </p>
     )}
+    {laneView(game()).shown && laneView(game()).trayDefenses > 0 && (
+      <p class={styles.small} data-testid="tray-line">
+        {BREACH_TEXT.trayLine(laneView(game()).trayDefenses)}
+      </p>
+    )}
     {standDelveLine(game()) && <p class={styles.small}>{standDelveLine(game())}</p>}
     <p class={`${styles.small} ${styles.dim}`}>This can't be undone.</p>
     <button
@@ -179,12 +195,22 @@ const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => (
   </div>
 );
 
+// The Arrange Hold sheet opens over this screen and hides it, so the party and kit chosen so far
+// wait here and are taken back when the screen is drawn again (read once, then cleared).
+let kept: { party: HunterId[]; kit: Kit } | null = null;
+const takeKept = (): { party: HunterId[]; kit: Kit } | null => {
+  const k = kept;
+  kept = null;
+  return k;
+};
+
 export const StandView = () => {
   void version.value;
   const s = game();
   const problem = standProblem(s);
-  const [party, setParty] = useState<HunterId[]>(() => suggestSix(s));
-  const [kit, setKit] = useState<Kit>({ oils: {}, potions: {} });
+  const [back] = useState(takeKept);
+  const [party, setParty] = useState<HunterId[]>(() => back?.party ?? suggestSix(s));
+  const [kit, setKit] = useState<Kit>(() => back?.kit ?? { oils: {}, potions: {} });
   const [answer, setAnswer] = useState<StandAnswer | null>(null);
   const max = num('laststand.partyMax');
   const kitFor = (p: HunterId[]): Kit => ({
@@ -196,13 +222,16 @@ export const StandView = () => {
   const chosenKit = kitFor(party);
   // GDD §9.23: the preview is worked out again when the Rising Vigil switch flips, so the level the
   // stand would have is part of the key (read from the core, never computed here).
-  const key = `${party.join(',')}|${JSON.stringify(chosenKit)}|${s.threat.toFixed(2)}|${vigilLevelFor(s)}`;
+  // The lane table the layout gives now is part of the key, so moving a piece works the preview out
+  // again (technical design §23.5). It is read from the request the core builds, never computed here.
+  const request = party.length > 0 ? previewInputFor(s, party, chosenKit) : null;
+  const key = `${party.join(',')}|${JSON.stringify(chosenKit)}|${s.threat.toFixed(2)}|${vigilLevelFor(s)}|${JSON.stringify(request?.stand.lanes ?? null)}`;
   useEffect(() => {
     if (party.length === 0) return;
     let live = true;
     setAnswer(null);
-    void requestStandPreview(previewInputFor(s, party, chosenKit)).then((a) => {
-      if (live) setAnswer(a);
+    void requestStandPreview(request ?? previewInputFor(s, party, chosenKit)).then((a) => {
+      if (live && a) setAnswer(a);
     });
     return () => {
       live = false;
@@ -217,11 +246,27 @@ export const StandView = () => {
   const toggle = (id: HunterId): void =>
     setParty(party.includes(id) ? party.filter((h) => h !== id) : [...party, id].slice(0, max));
   const p = answer?.preview;
+  const lanes = laneView(s);
   return (
     <div>
       <p>The dark is at the walls. Choose who goes up; they fight one wave at a time.</p>
       <h3 class={styles.cardTitle}>Waves</h3>
       <WaveList s={s} />
+      {/* GDD §9.25: the same Lanes strip, read-only (no lit tiles), and the way to the Arrange Hold sheet. */}
+      <LanesStrip view={lanes} light={false} />
+      {lanes.shown && (
+        <button
+          type="button"
+          class={styles.btn}
+          data-testid="stand-arrange-hold"
+          onClick={() => {
+            kept = { party, kit: chosenKit };
+            openArrangeHold();
+          }}
+        >
+          {BREACH_TEXT.arrangeHold}
+        </button>
+      )}
       <h3 class={styles.cardTitle}>
         On the walls ({party.length}/{max})
       </h3>

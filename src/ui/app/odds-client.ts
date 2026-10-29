@@ -132,20 +132,34 @@ export interface StandAnswer {
   quick: boolean;
 }
 
-/** GDD §5.9.3, §6.5: the Last Stand preview, in the worker (100 practice stands). */
-export const requestStandPreview = async (input: StandPreviewInput): Promise<StandAnswer> => {
+let standTicket = 0;
+
+/**
+ * GDD §5.9.3, §6.5: the Last Stand preview, in the worker (100 practice stands). Only the newest request
+ * counts (technical design §23.5): an older one that finishes late resolves to null, so an answer for a
+ * layout the player has already changed never lands on the screen.
+ */
+export const requestStandPreview = async (
+  input: StandPreviewInput,
+): Promise<StandAnswer | null> => {
+  const mine = ++standTicket;
   const reply = send({ kind: 'stand', input });
   if (reply) {
     const r = await reply;
     if (r.kind === 'stand') {
+      if (mine !== standTicket) return null;
       lastStandMs.value = r.ms;
       return { preview: r.result, quick: false };
     }
+    if (mine !== standTicket) return null;
   }
+  // Without a worker, give a newer request the chance to supersede this one before the slow part runs.
+  await Promise.resolve();
+  if (mine !== standTicket) return null;
   const started = performance.now();
   const preview = previewStand({ ...input, samples: num('laststand.policySamples') });
   lastStandMs.value = performance.now() - started;
-  return { preview, quick: true };
+  return mine === standTicket ? { preview, quick: true } : null;
 };
 
 export const lastBossPreviewMs = signal<number | null>(null);

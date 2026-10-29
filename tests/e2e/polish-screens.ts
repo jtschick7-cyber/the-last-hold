@@ -749,6 +749,27 @@ export const FLOWS: readonly Flow[] = [
       }
     },
   },
+  // Plan TB.8a (GDD §9.25, D593 (d)): the Arrange Hold sheet at Bastion, with the Lanes strip.
+  plain(
+    'arrange-hold-lanes',
+    'Arrange Hold (Bastion, Lanes strip)',
+    'Hold, Layout ▸ (Bastion)',
+    [/Fell Breach/, /Lanes/, /Tap a lane to see what covers it\./],
+    (p) => btn(p, /^Layout/).click(),
+    'v11',
+  ),
+  // Plan TB.8b (GDD §9.25, D593 (d)): the Last Stand screen at Bastion, with the Lanes strip and the Arrange Hold button.
+  plain(
+    'last-stand-lanes',
+    'Last Stand screen (Bastion, Lanes strip)',
+    'Hold, Rank ▸, Make the Last Stand (Bastion)',
+    [/Lanes/, /Tap a lane to see what covers it\./, /Arrange Hold/],
+    async (p) => {
+      await btn(p, /^Rank/).click();
+      await btn(p, 'Make the Last Stand').click();
+    },
+    'v11',
+  ),
 ];
 
 /**

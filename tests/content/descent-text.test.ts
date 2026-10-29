@@ -17,7 +17,8 @@ const start = lore.indexOf('### 34.11 The Descent');
 const sec = lore.slice(start);
 const gdd = read('gdd.md');
 const g0 = gdd.indexOf('### 9.24 The Descent');
-const g924 = gdd.slice(g0, gdd.indexOf('\n## 10.', g0));
+// Ends at §9.25 (v1.5 added it after §9.24), so the Breach table is not read as Descent strings.
+const g924 = gdd.slice(g0, gdd.indexOf('\n### 9.25', g0));
 
 /** The paragraphs of one card as the lore file has them: block-quote lines, split on the blank `>` lines. */
 const loreCard = (id: string): string[] => {

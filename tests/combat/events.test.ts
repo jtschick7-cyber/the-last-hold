@@ -35,8 +35,8 @@ const tank = (
 const actorLines = (r: FightResult, actor: string) => r.log.filter((e) => e.actor === actor);
 
 describe('a Great Beast in a fight', () => {
-  it('enters with the pool as its Health, and the rules version stays 5', () => {
-    expect(RULES_VERSION).toBe(5);
+  it('enters with the pool as its Health, and the rules version is 6 (the lane table picks the stand rules)', () => {
+    expect(RULES_VERSION).toBe(6);
     const r = run([tank('halvar', 7)], event('barrow-king', { healthOverride: 9000 }));
     expect(r.monsters[0]?.maxHealth).toBe(9000);
   });

@@ -1347,4 +1347,17 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'clear',
     note: "The Unlit's ability name (D560): two plain words; no match in the influences.",
   })),
+  // v1.5 flesh-out (OUT-6, 2026-10-28, D593): plain words only, no new proper noun. Web-searched at TB.1 against GDD §2.3.
+  ...['Lanes', 'Cover', 'Reach', 'Stacked', 'tactician'].map((name): CheckedName => ({
+    name,
+    checked: '2026-10-28',
+    result: 'generic',
+    note: 'Plain word (Breach strip, breakdown, simulator id). Searched 2026-10-28: lanes and cover are common genre words (Plants vs. Zombies lanes, other games\' wall cover); no named mechanic or product of this name in the influences. "tactician" is an internal simulator id, never shown.',
+  })),
+  {
+    name: 'The Breach',
+    checked: '2026-10-28',
+    result: 'generic',
+    note: 'Plan name only, not shown to the player (OUT-6). Searched 2026-10-28: "Into the Breach" (Subset Games) and For Honor\'s Breach mode exist; neither is among the GDD §2.3 influences and the plan name is not player-facing.',
+  },
 ];

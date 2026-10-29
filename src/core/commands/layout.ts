@@ -1,4 +1,5 @@
 import { HOLD_PIECE_IDS, type HoldPieceId } from '../../content/hold-layout';
+import { setDefenses } from '../systems/breach';
 import type { GameState } from '../state/game-state';
 import { getPieceStatus } from '../systems/layout';
 import { autoArrange, dropPiece, placePiece, placeRefusal } from '../systems/layout-place';
@@ -47,4 +48,13 @@ export const layoutSetShowGhosts = (state: GameState, show: unknown): ApplyResul
   if (typeof show !== 'boolean') return refuse('layout: ghosts setting must be on or off');
   state.layout.showGhosts = show;
   return ok;
+};
+
+/**
+ * Technical design §23.3 (D587, Q61 yes): applies a Suggest layout list in one step. Atomic: the rules
+ * are in the Breach module (it alone knows the front rows) and a refused list changes nothing.
+ */
+export const layoutSetDefenses = (state: GameState, moves: unknown): ApplyResult => {
+  const why = setDefenses(state, moves);
+  return why ? refuse(why) : ok;
 };

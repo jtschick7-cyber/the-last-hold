@@ -33,13 +33,24 @@ export const standProblem = (state: GameState): string | null => {
   return null;
 };
 
+let noTableStartAllowed = false;
+/**
+ * The test-only start option (D593 (f)) is refused unless this is switched on, which only tests do: no
+ * screen and no normal build ever does.
+ */
+export const allowNoTableStart = (on: boolean): void => {
+  noTableStartAllowed = on;
+};
+
 export const makeStand = (
   state: GameState,
   party: readonly HunterId[],
   prep: Pick<Preparation, 'oils' | 'potions'>,
+  noLanes = false,
 ): ApplyResult => {
   const problem = standProblem(state);
   if (problem) return refuse(problem);
+  if (noLanes && !noTableStartAllowed) return refuse('That start option is for tests only.');
   if (!Array.isArray(party as unknown) || party.length === 0)
     return refuse('Choose at least one hunter.');
   if (party.length > num('laststand.partyMax'))
@@ -64,7 +75,9 @@ export const makeStand = (
   while (state.running.length > 0) applyCompletion(state);
   // 2. The stand.
   spendPrep(state, full);
-  const input = standInputFor(state, party, full);
+  // The table is frozen here, once, in the step that fixes the stand's other inputs (D584).
+  if (noLanes) state.meta.debugUsed = true;
+  const input = standInputFor(state, party, full, noLanes);
   const result = runStand(input);
   noteWavesHeld(state, result.wavesHeld); // Command (GDD §5.8.6)
   // 3. Conversion: Embers and relics.
@@ -103,6 +116,7 @@ export const makeStand = (
     alchemy: input.alchemy ?? 0, // frozen with the stand (D206)
     ...(input.pool === 'dross' ? { pool: 'dross' as const } : {}),
     ...(input.vigilLevel ? { vigilLevel: input.vigilLevel } : {}),
+    ...(input.lanes ? { lanes: input.lanes } : {}),
     seen: false,
   };
   const record = state.cycles[state.cycles.length - 1];

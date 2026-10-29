@@ -1,6 +1,6 @@
 # The Last Hold — Game Design Document
 
-**Status (v1.1 flesh-out 2026-10-22):** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑. v1.1 adds the Hold layout grid (§5.1.5, §9.21), the post-v1.0 roadmap (D498–D508), and accessibility/settings updates (§9.20).
+**Status (v1.1 flesh-out 2026-10-22):** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑. v1.1 adds the Hold layout grid (§5.1.5, §9.21), the post-v1.0 roadmap (D498–D508), and accessibility/settings updates (§9.20). v1.5 adds the Breach: lanes, cover and the front zone for Walls and Watchtowers in the Last Stand (§5.9.11, §7.15, §9.25; D579–D595).
 **Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something. The judgment-call lists at the end of each section are a historical record of when each call was added; where a list and a section body disagree, the body (with its revision trail and `decisions.md`) is authoritative.
 **Related docs:** `setting-primer.md` (spoiler-free; readable from v0.1), `lore-secrets.md` (the full truth; **kept outside the repo until v0.5**, D36), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
@@ -167,6 +167,7 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | v1.2 | Sounds of the Frontier: seven short sound effects for the big moments, off by default (§9.22) |
 | v1.3 | Keep the Vigil: Rising Vigil, an optional On / Off switch on the Last Stand screen that makes stands harder, one step more each time, once the Remembering gate is open (§5.9.10, §9.23) |
 | v1.4 | The Descent: the third ending, a three-stage all-hands relay into the Deep using what the hold learned across every cycle, once the Remembering gate is open and the hold reaches Bastion (§5.15.10, §9.24) |
+| v1.5 | The Breach: each Last Stand wave comes down one of 8 lanes; where Walls and Watchtowers stand in the three rows nearest the Fell Breach decides how well they work in that lane (§5.9.11, §9.25) |
 
 ---
 
@@ -472,7 +473,7 @@ In v0.1–v0.3, the Keep is the end of content. The Rank screen shows the next R
 
 The Hold sits on an **8 × 8 grid** (`x = 0..7` west to east, `y = 0..7` north to south). Along the north edge (above row `0`) lies **the Fell Breach**, where the dark comes down from the fells in the Last Stand. Along the south edge (below row `7`) lies **the Lowland Gate**, where the road comes up from the villages.
 
-- **Decorative in v1.1, ready for v1.5.** In v1.1, where buildings sit on the grid is purely visual: it changes no production rate, cost, Threat rate or fight calculation (`rulesVersion` stays 5). The 8 × 8 coordinate layout format and piece IDs are saved in a fixed schema (`state.layout`, schema 12) so that **v1.5 ("The Breach")** can give wall, watchtower and building positions a tactical role in the Last Stand without migrating `HoldLayoutState` (stand records will store an optional layout snapshot) (D499, D500).
+- **Decorative in v1.1; tactical for defenses from v1.5 (D499, D500, D580, D581).** In v1.1 where buildings sit on the grid was purely visual. **From v1.5, where the Walls and Watchtower pieces sit decides how well they work in the Last Stand** (§5.9.11); where every other building sits is still purely visual and changes no production rate, cost, Threat rate or fight calculation. The 8 × 8 coordinate layout format and piece IDs are unchanged: `HoldLayoutState` is **not** migrated (D585). The Last Stand reads the layout once, when Start is pressed, and keeps a small lane table on the stand's record (§5.9.11, technical design §23). **Nothing in the Last Stand (Start, the preview, a load, the migration) places, moves or trays a piece** (D587); v1.1's auto-placement of newly unlocked pieces (on purchase, on Rank-up and at a new cycle, rules 3 to 6 above) is unchanged. Otherwise only the player's own taps change the layout, including Auto-arrange, which rearranges every building and not only defenses.
 - **Rank clearings (D500, M1).** Ranking up clears more of old Stanholm's ground inside the 8 × 8 grid; tiles outside the current Rank's clearing show dark pine forest and ruined foundation stones and cannot hold active pieces:
   - **Hamlet (`4 × 4`, 16 tiles):** columns `2–5`, rows `2–5`.
   - **Keep (`6 × 6`, 36 tiles):** columns `1–6`, rows `1–6`.
@@ -948,8 +949,8 @@ From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat
 
 | Building | Level cap | In the Last Stand |
 |---|---|---|
-| **Walls** | 10 in Citadel, 15 in Bastion | The party takes 2% less damage per level (taken%, so the 75% cap applies) |
-| **Watchtower** | 10 / 15 | At tick 1 of each wave, a volley of 20 × level Steel damage that ignores Armor, like a bomb (no oil, trait or knowledge bonus) |
+| **Walls** | 10 in Citadel, 15 in Bastion | The party takes 2% less damage per level (taken%, so the 75% cap applies), **scaled by how well the wave's lane is covered (cover, §5.9.11)**; with full cover in a lane it is exactly 2% per level |
+| **Watchtower** | 10 / 15 | At tick 1 of each wave, a volley of 20 × level Steel damage that ignores Armor, like a bomb (no oil, trait or knowledge bonus). **From v1.5 the volley is shared among the towers you have placed in the front rows, and each tower's share reaches the wave's lane by distance (§5.9.11).** |
 
 #### 5.9.3 The Last Stand *(D107)*
 
@@ -959,12 +960,13 @@ From Citadel, two level buildings guard the walls (§8.1). Both also slow Threat
   - Each wave's species is picked from those whose tier range includes the wave's tier (above tier 5: those that reach tier 5).
   - **From Act VI (D363),** a stand's species pool also includes **the Dross-Tide**, at any tier. Which pool a stand uses is fixed when its wave list is first fixed, at the moment Bastion is reached: `standPool` is `dross` if **Act VI has begun in the save at that moment** (Act VI's own cycle and every cycle after it, including the story-less ones; owner, D386), otherwise `base` (the species of §8.3.1 only). **No wave of the Dross-Tide is guaranteed:** a `dross` stand may roll none. It is saved on the cycle record, so **a stand made earlier, and every golden or recorded stand, keeps its old pool and replays line for line** (`rulesVersion` stays 5). A `dross` stand's wave list **shows the Dross-Tide by name** (it can never be investigated), and its stand kills **count nowhere**: no bestiary entry, no knowledge level, no drop (§5.10.7). Its Health in a stand is the ordinary tier-scaled Health, without the Delve guardian multiplier (D363, D369).
   - Threat makes every wave stronger (§5.9.1).
+  - **From v1.5 every wave comes down one lane of the Fell Breach** (8 lanes, fixed with the wave list by the stand seed, shown in the wave list from the moment Bastion is reached, even for "?" species), and the layout of the Walls and Watchtower decides how well they work in that lane (§5.9.11). The species of each wave do not change.
   - **From v1.3, once the Remembering gate is open (D539),** the player may switch on **Rising Vigil**, which makes every wave stronger by a further step per level (§5.9.10). With the switch Off, nothing here changes.
 - **The party:** up to **6** active hunters *(locked)*. A suggested six fills the slots: the highest levels, with at least one Vanguard and one Mender; any can be swapped. Injured hunters can join (recovery timers are ignored). Contracts still running finish on the spot with their real result before the stand begins (§5.9.7).
 - **Preparation:** one oil and one potion per hunter for the whole stand, chosen with the contract pickers. Bombs are thrown automatically from the stores, up to 2 per wave (`prep.bombSlots`): bombs the wave's species is weak to first, then one Saltburst, then one Poppy Smoke (v0.6). The stores reset after the Long Night anyway.
 - **The fight:** one wave at a time, using the contract fight rules (§5.5), with these differences:
   - Hunters keep their Health between waves. Before each new wave, every standing hunter recovers 20% of max Health. Downed hunters stay down for the rest of the stand.
-  - The Watchtower's volley and the bombs land at tick 1; Walls (and the Iron Shutter relic) reduce damage taken.
+  - The Watchtower's volley and the bombs land at tick 1; Walls (by the wave's lane from v1.5, §5.9.11) and the Iron Shutter relic reduce damage taken.
   - Location traits (Fen-born, Fell-born, Lantern-bearer) don't apply: the hold isn't a contract location. Family traits, oils and Studied or Mastered bonuses do.
   - A potion fires once in the whole stand, on its usual condition.
 - **The end:** when every hunter is down, or a wave isn't won within the 400-tick limit, the walls fall. **Waves held** is the number of waves won, and from v0.5 it gives the stand its **band** (Broken, Held or Triumphant, §5.14.8). The stand causes **no injuries and no deaths**.
@@ -1056,7 +1058,7 @@ An optional switch for a player who has finished the story and wants harder stan
   waveFactor = 1 + 0.0061 × Threat + s × L            (Health and Might of every wave; 0.0061 is threat.waveStrengthPerPoint)
   ```
 
-  `s` is `vigil.strengthPerLevel` (§7.13, tunable). **The wave list, the tiers, Armor, the Watchtower, Walls, bombs, the party and the 400-tick limit do not change.** The step is the same at every level (steady, additive). **Target (owner): about one wave fewer held per level, measured on the simulated Vigilant's gate-open stand** (the Standard player never opens the gate, so it cannot be the reference). The value of `s` is 0.32 (D554): measured on the simulator probe (KV.8, KV.9) by the rule in §6.2, the owner answered Q57 (a), additive, and approves the value. The Threat part and the level part add; they do not multiply each other.
+  `s` is `vigil.strengthPerLevel` (§7.13, tunable). **The wave list, the tiers, Armor, the Watchtower, Walls, bombs, the party and the 400-tick limit do not change.** The step is the same at every level (steady, additive). **Target (owner): about one wave fewer held per level, measured on the simulated Vigilant's gate-open stand** (the Standard player never opens the gate, so it cannot be the reference). The value of `s` is 0.28 (D554, retuned from 0.32 by D596 after the Breach moved the stand results): measured on the simulator probe (KV.8, KV.9) by the rule in §6.2, the owner answered Q57 (a), additive, and approves the value. The Threat part and the level part add; they do not multiply each other.
 - **What a level does to the Embers (D541).**
 
   ```
@@ -1070,6 +1072,37 @@ An optional switch for a player who has finished the story and wants harder stan
 - **What it never touches (D539).** Contracts, Delves, events, Threat rates, the band thresholds (Broken ≤ 11, Held 12–14, Triumphant ≥ 15), the relic milestones (`relics.waveMilestones`), Orders standing sources, trust and the Remembering's records. A Triumphant stand at any level counts for trust and Orders standing as a Triumphant stand does today (D549 (7)).
 - **Honest limits.** (1) A steady additive step means each new level costs fewer waves than the one before (the waves held fall more slowly as the level climbs, though the strength never stops rising); a compounding step is the alternative (Q57, answered before KV.9). (2) Embers have a finite use: warden upgrades have maximum levels and stars stop at 5, so once those are bought, extra Embers buy nothing. Rising Vigil is a challenge, not a reward track (D541). (3) Fewer waves held means fewer Triumphant stands (15 or more). A Triumphant stand is worth 10 contracts of trust for every village (§5.14.8) and `orders.triumphantChunk` of standing for every Order (§5.13.2), so a player whose trust or Orders are not full is slowed by a high level (D549 (10)). (4) Command skill XP is earned per wave held, so fewer waves means less of it. (5) The vigil term does not grow with Threat, so it matters less the later in the cycle the stand is fought. (6) Fixed-damage sources (the Watchtower's volley, bombs) get relatively weaker, and the Dross-Tide's hit-everyone effect relatively stronger. (7) Each stand fought On adds about 16 bytes to the save, for ever, since there is no cap. (8) If the pinned contract-species list ever changes (D461) the gate could close; the row then hides with the switch still On, which is harmless (level 0).
 - **The simulator (D546).** A probe runs a throwaway stand at levels 0 to N; one player, the Vigilant, plays three endless cycles (§6.1, §6.2). Every other player never touches the switch, so their reports do not change.
+
+#### 5.9.11 The Breach: lanes and the front zone *(v1.5; D579–D595)*
+
+From v1.5 the Hold's layout (§5.1.5) decides how well **Walls and Watchtowers** work in the Last Stand. Nothing else in the layout matters in combat (D586). Every number below has a breakdown built by the function that builds the number (§5.0, technical design §23).
+
+- **Lanes (D580).** The Fell Breach has **8 lanes**, the 8 columns `x = 0..7`, shown 1 to 8 from west to east. **Each wave comes down one lane.** The lane of wave n is fixed by the cycle's stand seed with its own dice stream (`${gameSeed}:stand:${cycle}:lane:${n}`, technical design §7.2; n is counted the way the stand's species picks count waves), so **the species of each wave are exactly what they were** and the lane list is fixed at the same moment as the wave list, when Bastion is reached. The stand screen shows each wave's lane from then on, even for "?" species. Which lane a wave takes is the one thing the player cannot change; where the defenses stand is the player's.
+- **The front zone and counted pieces (D581).** A wall or watchtower piece **counts** only if it is `active` (§5.1.5) and its tile is in rows `0..2` (`breach.frontRows` = 3, the three rows nearest the Fell Breach). A piece in the Tray, a locked piece, a dormant piece outside the clearing, or a piece in rows 3 to 7 gives nothing. **Nothing is ever placed for the player** (D587): the Last Stand reads the layout as the player left it. Auto-arrange (a button the player taps) puts every building, not only the defenses, on the v1.1 canonical layout (§5.1.5) and is the baseline.
+- **Cover of lane c (D581).** `cover(c) = coverOwn × [column c holds a counted piece] + coverNeighbour × [column c−1 holds a counted piece] + coverNeighbour × [column c+1 holds a counted piece]`. **The ruined edge counts as walled:** for column 0 the missing west neighbour and for column 7 the missing east neighbour count as present. With the starting values, own column plus one neighbour is 75% and all three is 100%. A tower counts as a piece here exactly as a wall does.
+- **Depth (D581, added at the flesh-out).** Each extra counted piece in the same column adds `breach.depthStep` to that lane's wall cut, up to `breach.depthMax` extra pieces, and only where the column has a piece: `extra(c) = min(depthMax, counted pieces in column c − 1)`, 0 for an empty column. So a second and third piece in a column are worth something, and the grid is never solved by one wall per column.
+- **What the Walls do in lane c (D581).**
+
+  ```
+  wallCut(c) = walls.takenPerLevel × Walls level × cover(c) × (1 + depthStep × extra(c))
+  ```
+
+  It goes into the party's `taken%` bucket with the other taken% items, so the 75% cap (`combat.takenCap`) holds. With full cover and no depth it is exactly today's 2% per level.
+- **What the Watchtowers do in lane c (D582).** Today's total volley (`watchtower.volleyPerLevel` × Watchtower level) is **shared among the counted towers**, the towers you have placed in the front rows. A counted tower's share for lane c is `towerReach[d]`, where d is the distance in columns from its column to c: full (1) in its own column, half (0.5) one column away, a quarter (0.25) two away, nothing beyond.
+
+  ```
+  volley(c) = floor( volleyPerLevel × Watchtower level × volleyScale × Σ over counted towers of towerReach[d] ÷ number of counted towers )
+  ```
+
+  The volley is **0 when no tower counts** (and at Watchtower level 0). It is worked in whole numbers so hand-worked tables and the code agree: reach in quarters, the scale in hundredths, multiplied first, divided once, rounded down (technical design §23.2). It is Steel damage at tick 1 that ignores Armor and takes the species' Steel resistance, after the potions and before the bombs, as today (D120). A tower in the Tray gives nothing and does not dilute the others. Because the divisor is the placed towers, an upgrade at Watchtower level 8 or 15 never makes a lane weaker; the cost is that one well-placed tower already gives the full volley in its own lane, so extra placed towers spread the cover and never add damage to one lane.
+- **Freezing (D584, D585, D591).** The preview and the Lanes strip follow the layout live. **When Start is pressed** the core builds the **lane table** from the layout (for each of the 8 lanes: the number of counted pieces in its column, the columns of the counted towers, the `breach.*` numbers used) and saves it with the stand's inputs; the table is what makes the stand a version 6 stand. It adds about 200 bytes per cycle, for ever. Any later rebuild of a wave log uses the saved table, never the layout as it is then. Starting stays final.
+- **Old stands (D584).** A stand recorded before v1.5 has no lane table: it replays under the version 5 rules, line for line. A stand started below Bastion (the arrival stand) has no lanes and takes the version 5 path too. A v6 stand whose Walls and Watchtower levels are 0 equals the v5 stand for the same inputs, and so does one with Watchtower level 0, no depth and full cover in every lane. No contract, Delve, event, boss, hunt or Descent fight reads any of this.
+- **What ignores layout (D586).** The Descent, contracts, Delves, events, bosses, hunts, Rising Vigil's level steps, the Embers formula and the Threat rate (which still slows by Walls and Watchtower **level**, §5.9.1). Layout changes only how many waves a stand holds, **and what follows from the waves follows from layout too:** the Embers paid, the relic milestones, the band (Held, Triumphant), trust, Orders standing, Command XP and the residents' lines. The Long Night keeps the layout as now (D502).
+- **Existing players (D587).** Every save already holds the canonical layout from the v12 migration, so it starts with every unlocked defense on the grid and counts. A changed layout counts as it stands. **Auto-arrange** is the one-tap fix, and it rearranges every building, not only defenses (a decorative layout is wiped); **Use this layout** (only if Q61 is yes) moves only defenses. The Lanes strip shows the cover before Start. The Start confirmation says how many defenses are in the Tray and give nothing; it never places them.
+- **Honest limits.** (1) Wall segments unlock slowly (4 at Walls level 1, then one more at levels 3, 5, 7, 9, 11, 13 and 15, 11 in all), so a Bastion stand with a low Walls level cannot cover every lane whatever the layout; the baseline shift (D589) is reported, not hidden. (2) The numbers are tunable placeholders until the owner approves the calibration table (§6.2, D583). (3) Suggest layout is a fast fixed rule, not a search: it can be beaten by a thoughtful layout, which is intended. (4) Economy buildings on front-row tiles can be moved off them, so a player can make room for a third piece in a column; Suggest uses only free tiles and never moves another building. (5) Suggest weighs cover and tower reach equally: a fixed design choice, not tuned.
+- **Suggest layout (D588, D590).** A button on the Arrange Hold sheet, shown from Bastion on and never disabled there. It reads the lanes of the first `breach.suggestWaves` waves, counts how many waves come down each lane, and builds a layout one piece at a time: at each step it adds the one wall or tower piece, on one free front-row tile that holds no other building, that raises the weighted total of `cover × (1 + depthStep × extra)` plus tower reach the most (ties: the smaller row, then the smaller column), until every owned defense is placed; if the Auto-arrange defense positions score higher, it returns those instead, so it never scores below Auto-arrange. **It shows the result and its preview and places nothing by itself.** Whether the player may apply it with one tap is Q61 (asked in the first message of the build thread; the button is built only if yes). The simulated Tactician (§6.1) uses the same rule.
+- **Debug.** `debug.breach.freeze` (a core command, marks `debugUsed`) shows the lane table a stand would freeze now (technical design §15). Tests use real seeds with known lanes.
+- **Deferred, not cut (with reasons).** The inner ward and buildings taking damage (buildings take no damage, D108, so there is nothing to protect without a new rule); per-wave monster traits tied to lanes (a new rule set); any story text. See §10.
 
 ### 5.10 Delves *(v0.7; ⚑ v0.7 flesh-out, D244–D272)*
 
@@ -1635,6 +1668,7 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 | **Eventer** (`eventer`, *from v0.9*, D367) | Same as Standard | None. At each check-in, it spends banked tokens (below) | The v0.9 event rows only. **Monday seeds only.** |
 | **Orderer** (`orderer`, *from v0.10*, D417) | Same as Standard | One 20-min Delve session at 15:00 on weekends, plus Wednesday at 19:00, once Delves are open | The v0.10 Orders rows only. **Monday seeds only.** |
 | **Vigilant** (`vigilant`, *from v1.3*, D546) | Same as Standard | None. After Act VI's stand it opens the gate with `debug.remembering.openGate()` (a declared shortcut: Standard never opens the gate, Q45) and switches Rising Vigil On | The v1.3 Rising Vigil rows only. **Monday seeds only.** |
+| **Tactician** (`tactician`, *from v1.5*, D589) | Same as Standard | None. Before each stand it applies the Suggest layout rule (§5.9.11) with `layout.place` commands and issues no other layout command | The v1.5 Breach rows only. **Monday seeds only.** |
 | **Light** | 07:00, 12:30, 21:00 every day | None | "Still works for a busy week" checks |
 | **Heavy** | Every 2 h from 07:00 to 23:00 | One per day *(no Delves)* | "Can't be rushed too fast" checks |
 | **Opening** *(⚑ revision A10)* | Acts every 10 s for the first 15 min of a fresh game, using the default job priority and greedy best-payback buys; then switches to Standard | — | Opening targets (first Cottage, first Mine) |
@@ -1677,6 +1711,7 @@ The balance simulator plays the game with scripted **policies**. Pacing targets 
 - **Orders** *(Orderer only, v0.10, D417)*: plays like Standard on the Monday seeds only, **and runs Delves as the Delver does once they are open,** and is the only player that seats an Order. It taps 'Seat it' at an opening when a seat is free. At each new warden it seats the Orders ranked by chapters playable now, then chapters unread, then list order (Moot, Grey Wives, Bell-Watchers, Quenchers). It takes the third seat the moment it opens, never uses the mid-cycle swap, reads every chapter when it is playable, and plays until every chapter has played, up to the 42-day cap. Every other player never seats an Order, so their baselines do not change (D417).
 
 - **Vigil** *(Vigilant only, v1.3, D546; v1.4 Descent probe, D564)*: plays like Standard on the Monday seeds only until Act VI's stand has been applied, then calls `debug.remembering.openGate()` once (which marks `debugUsed`; the report says so), switches Rising Vigil On with `vigil.set` before each stand, and plays **3 endless cycles** (levels 1, 2 and 3). It is the only player that issues `vigil.set`; every other player's baseline does not change. Its shard is `vigil` (technical design §13). **From v1.4 (D564),** the `vigil` shard also runs the **Descent probe** (100 practice runs per Monday seed on a clone of the gate-open state with a prepared endgame roster) without changing any player's run or baseline; on-demand parameter sweeps run via `npm run sim:descent -- ...` (S8).
+- **Breach** *(v1.5, D589)*: every policy except the Tactician calls `layout.autoArrange` at every Bastion check-in before the stand-timing preview and again right before Start, and issues no other layout command, so **Auto-arrange is the baseline layout**. The Tactician (Monday seeds only, its own shard `breach`) plays like Standard and at the same moments builds the Suggest layout for that cycle's lanes: `layout.unplace` for every defense, then `layout.place` in Suggest's order. It exercises the whole command path on a real 3-cycle run and is reported only; no row judges it. A probe in the `breach` shard runs the preview's 100 practice stands (`laststand.previewSamples`, the same seeds) on a clone of Standard's state at its first stand check-in, once with the Auto-arrange layout, once with the Tactician's and once with a deliberately bad layout (every defense lifted to the Tray, then the tiles (0,0), (0,1), (0,2), (1,0), (1,1), (1,2) filled in that order, towers first and then walls in catalog order, skipping tiles that hold another building; the rest stay in the Tray), and reports waves held for each beside the same state under the version 5 rules. **Every moment up to a player's first version 6 stand equals the v1.4 baseline; everything after it moves** (waves held change Embers, Hearth upgrades, cycle length, relics, band, trust, Orders standing and Command XP). The baselines are re-recorded once at TB.11, every row re-judged and the moved moments listed (the v0.9 T9.12 pattern). Calibration sweeps run on demand with `npm run sim:breach -- ...` (the v1.3 KV.9 and v1.4 TD.8b pattern).
 
 ### 6.2 Targets
 
@@ -1733,8 +1768,11 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | The vigil level rises by exactly 1 per On stand *(D546 A)* | Over the Vigilant's 3 real endless cycles the saved levels are 1, 2, 3 and `stands` is 3 (Vigilant, every Monday seed) | v1.3 |
 | More vigil never holds more waves *(D546 B)* | On the probe, per Monday seed, the median waves held over the preview's 100 practice stands (`laststand.previewSamples`, the same seeds at every level) at level L+1 are never more than at level L, for L from 0 to 10. The probe state is a clone of the Vigilant at the check-in where it would start its first endless stand (Bastion, Standard's stand-timing rule). Judged only in `sim.yml` unless CI `npm run check` stays at 90 s or less on 3 runs with it in | v1.3 |
 | Embers at levels 1 to 3 stay level with level 0 *(D546 C, D554)* | On the probe, at the stand's own Threat, the median total Embers (waves part plus trophies) at each of levels 1 to 3 are within **5%** of level 0 (median of the 5 Monday seeds; measured 1.5%, 0.3% and 2.1% off at the chosen values; fixed before the final judging run). Twice that Threat is reported, not judged (9.8% off at its worst). | v1.3 |
-| *Proposed:* The Descent is winnable and costly at the gate *(D564 A)* | On the Descent probe (inside the `vigil` shard, `sim.yml` only; a clone of the gate-open state with a full endgame roster, 100 practice runs per Monday seed), the win rate is between **50% and 85%** (median of the 5 Monday seeds), and the median hunters downed across the 3 stages is between **2 and 8** (inclusive, *"a costly, heroic victory"*) | v1.4 |
-| *Proposed:* What the hold learned matters in the Descent *(D564 B)* | On the Descent probe (same 100 practice seeds per Monday seed), the party with its `What the Hold Learned` bonus achieves a win rate **≥ 25 percentage points higher** (or ≥ 2 fewer hunters downed) than the identical party with the learned bonus zeroed, and an unprepared Hamlet starter party loses in Stage 1 | v1.4 |
+| The Descent is winnable and costly at the gate *(D564 A, decided D577)* | On the Descent probe (inside the `vigil` shard, `sim.yml` only; a clone of the gate-open state with a full endgame roster, 100 practice runs per Monday seed), the win rate is between **50% and 85%** (median of the 5 Monday seeds), and the median hunters downed across the 3 stages is between **2 and 8** (inclusive, *"a costly, heroic victory"*) | v1.4 |
+| What the hold learned matters in the Descent *(D564 B, decided D577)* | On the Descent probe (same 100 practice seeds per Monday seed), the party with its `What the Hold Learned` bonus achieves a win rate **≥ 25 percentage points higher** (or ≥ 2 fewer hunters downed) than the identical party with the learned bonus zeroed, and an unprepared Hamlet starter party loses in Stage 1 | v1.4 |
+| Auto-arrange holds as many waves as before *(D589 A, D598)* | On the Breach probe (inside the `breach` shard, `sim.yml` only), the Auto-arrange layout holds **12 or more waves** (median of the 5 Monday seeds, Standard's first stand) and within **1 wave** of the same state under the version 5 rules | v1.5 |
+| A thoughtful layout is never worse than Auto-arrange *(D589 B, reworded D598)* | On the same probe and seeds, the Tactician's layout holds **at least as many waves** as Auto-arrange (median of the 5 Monday seeds) | v1.5 |
+| A bad layout costs waves *(D589 C, reworded D598)* | On the same probe and seeds, at the max level point (Walls 15, Watchtower 15), the deliberately bad layout holds **at least 1 wave fewer** than Auto-arrange (median of the 5 Monday seeds) | v1.5 |
 
 *A fourth idea, "a stand with the switch Off equals a level 0 stand", is true by construction and is a unit test (technical design §21.8), not a row (D546 (5)).*
 
@@ -1810,7 +1848,11 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Descent preview** *(v1.4, D565)* | ≤ 1.5 s on a mid-range phone | 100 three-stage practice runs (`descent.previewSamples`), in the odds worker |
 | **v13 → v14 migration** *(v1.4, D565)* | ≤ 100 ms | A played v13 save, on the load path (the throttled benchmark) |
 | **Descent save growth** *(v1.4, D565, D576)* | ≤ 14 KB raw (about 1.5 KB compressed) | The whole `descent` block with full 14-hunter `firstWin` and `last` populated (checked by a unit test, not the throttled benchmark; measured in TD.4b: about 6.0 KB per record, about 12.1 KB for two) |
-| **Download size** *(v1.0, D494)* | ≤ 600 KB | The production build, every file compressed with gzip (v0.11: 500 KB; v1.0: 506 KB; v1.1: 568 KB, measured as 582,081 bytes; **v1.2 (D523): the row stays; the sounds are capped at 30 KB and the whole build must still measure 600 KB or less; measured 610,508 bytes**; **v1.3 (D547): the row stays; 3,892 bytes are left for the vigil code (a rough guess of 2–4 KB gzipped, not measured); if the build is over 614,400 bytes, stop and ask, never change the row**; **D553: the build packs every picture as an indexed PNG without changing a pixel — leaving `icons/` unpacked so `sw.js` never lists duplicate hashes — and the live build no longer carries the contact sheet, measuring 449,810 bytes in the container after the icon fix (room about 164 KB); v1.4 (D565): the 600 KB row stays, and v1.4's code, texts and 5 packed PNGs fit well inside it**). Measured at the milestone end; not a test in `npm run check` |
+| **Lanes strip render** *(v1.5, D590, D599)* | ≤ 16 ms (one frame) | The 8-box strip, from the view built in `core` |
+| **Suggest layout** *(v1.5, D590, D599)* | ≤ 20 ms | The fixed rule in `core`, on the throttled profile (not run in the worker) |
+| **v14 → v15 migration** *(v1.5, D590, D599)* | ≤ 100 ms | A played v14 save, on the load path (the throttled benchmark) |
+| **Lane table save growth** *(v1.5, D590, D599)* | ≤ 0.4 KB per stand record | The lane table on one stand record, with 3 towers (checked by a unit test, not the throttled benchmark); the Last Stand preview budget (≤ 1 s) is unchanged and now includes the lanes |
+| **Download size** *(v1.0, D494)* | ≤ 600 KB | The production build, every file compressed with gzip (v0.11: 500 KB; v1.0: 506 KB; v1.1: 568 KB, measured as 582,081 bytes; **v1.2 (D523): the row stays; the sounds are capped at 30 KB and the whole build must still measure 600 KB or less; measured 610,508 bytes**; **v1.3 (D547): the row stays; 3,892 bytes are left for the vigil code (a rough guess of 2–4 KB gzipped, not measured); if the build is over 614,400 bytes, stop and ask, never change the row**; **D553: the build packs every picture as an indexed PNG without changing a pixel — leaving `icons/` unpacked so `sw.js` never lists duplicate hashes — and the live build no longer carries the contact sheet, measuring 449,810 bytes in the container after the icon fix (room about 164 KB); v1.4 (D565): the 600 KB row stays, and v1.4's code, texts and 5 packed PNGs fit well inside it; measured 457,443 bytes at the v1.4 milestone end, about 157 KB under the row**). Measured at the milestone end; not a test in `npm run check` |
 | **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
 | **Simulator: the Vigilant shard** *(v1.3, D546)* | ≤ 5 min per CI job *(D320)*; stop and ask if it would pass 4 min | The `vigil` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
@@ -1912,8 +1954,8 @@ Every constant here is tunable unless marked locked.
 | Threat rate | per hour by Rank, × (1 − slow); slow = 2% per level of Walls or Watchtower | `threat.ratePerHour` = { hamlet 0, keep 0.5, citadel 1, bastion 1 } *(D138)*, `threat.defenseSlowPerLevel` = 0.02 | 5.9.1 |
 | Threat from contracts | +f × tier on a failure; −c × tier on a success; never below 0 | `threat.failedPerTier` = 3, `threat.completedPerTier` = 0.76 *(D138)* | 5.9.1 |
 | Wave strength from Threat (and, from v1.3, Rising Vigil) | Health and Might × (1 + w × Threat + s × L), L = the stand's Rising Vigil level (0 unless the switch was On, §5.9.10, §7.13) | `threat.waveStrengthPerPoint` = 0.0061 *(D138)* | 5.9.3 |
-| Walls | party taken% −x per level in the stand (75% cap, `combat.takenCap`) | `walls.takenPerLevel` = 0.02 | 5.9.2 |
-| Watchtower | at tick 1 of each wave, v × level Steel damage, ignores Armor | `watchtower.volleyPerLevel` = 20 | 5.9.2 |
+| Walls | party taken% −x per level in the stand, × the wave's lane cover and depth (75% cap, `combat.takenCap`); with full cover and no depth, −x per level (v1.5, §7.15) | `walls.takenPerLevel` = 0.02 | 5.9.2, 5.9.11 |
+| Watchtower | at tick 1 of each wave, v × level × volleyScale Steel damage, shared among the placed towers and reaching the wave's lane by distance, ignores Armor (v1.5, §7.15) | `watchtower.volleyPerLevel` = 20 | 5.9.2, 5.9.11 |
 | Defense costs | level building, `base × 1.75^(L−1)` | Walls 20,000 wood + 10,000 iron; Watchtower 15,000 wood + 8,000 iron + 100 silver (content, D44) | 5.9.2 |
 | Waves | wave n at tier `t₁ + floor((n − 1) / k)`; past tier 5 the §7.4 tier scaling continues | `laststand.firstTier` = 2, `laststand.wavesPerTier` = 2 | 5.9.3 |
 | Stand party | up to N active hunters | `laststand.partyMax` = 6 **(locked)** | 5.9.3 |
@@ -2077,8 +2119,8 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
-| Wave strength per vigil level | Health and Might × (1 + w × Threat + s × L), w = `threat.waveStrengthPerPoint` (§7.6) | `vigil.strengthPerLevel` = 0.32 *(D554; about 3 waves fewer held by level 3 on the Vigilant's gate-open stand)* | 5.9.10 |
-| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = 0.22 *(D554; Embers at levels 1 to 3 within about 1% of level 0 at the stand's own Threat)* | 5.9.10 |
+| Wave strength per vigil level | Health and Might × (1 + w × Threat + s × L), w = `threat.waveStrengthPerPoint` (§7.6) | `vigil.strengthPerLevel` = 0.28 *(D554, retuned from 0.32 by D596; about 3 waves fewer held by level 3 on the Vigilant's gate-open stand)* | 5.9.10 |
+| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = 0.26 *(D554, retuned from 0.22 by D596; Embers at levels 1 to 3 within about 1% of level 0 at the stand's own Threat)* | 5.9.10 |
 | The level | L = stands already fought with the switch On + 1, for an On stand; 0 for an Off stand | — (no cap) | 5.9.10 |
 
 ### 7.14 The Descent *(v1.4, D557–D568)*
@@ -2094,6 +2136,22 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 | The Unlit's base Health | base Health at base tier 5 before tier scaling (and × 0.90 when the Salt Ring is owned; sits in `balance.ts`, read by `monsters.ts`) | `descent.unlitBaseHealth` = 4500 *(D577)* | 5.15.10, 8.3 |
 | Between stages | standing hunters recover `laststand.recoverBetween` (0.20) of max Health (+ 0.10 with Rift Lantern) | — (reuses `laststand.recoverBetween`, §7.6) | 5.15.10 |
 | Descent preview | 100 three-stage practice runs in the odds worker | `descent.previewSamples` = 100 **(locked)** | 5.15.10, 6.5 |
+
+### 7.15 The Breach *(v1.5, D579–D595)*
+
+`breach.lanes` and `breach.frontRows` are **locked** (plan §0.6). Every other constant here is **tunable**, confirmed by the owner from the TB.12 calibration table (Q63, D598, `docs/flesh-out/v1.5/breach-calibration.md`); only `breach.volleyScale` moved, from its first value 1 to **3**, which brings a well-placed tower's average volley back to today's. A tunable moved by more than 2× needs its own row (D598 is it). A unit test checks `coverOwn + 2 × coverNeighbour = 1`. `towerReach` stays in multiples of 0.25 and `volleyScale` in hundredths, so the volley can be worked in whole numbers (§5.9.11).
+
+| Formula | Expression | Constants | § |
+|---|---|---|---|
+| Lanes | wave n takes lane `floor(roll × lanes)`, one roll from `${gameSeed}:stand:${cycle}:lane:${n}` | `breach.lanes` = 8 **(locked)** | 5.9.11 |
+| Front zone | a counted piece is `active` with row `y` < frontRows | `breach.frontRows` = 3 **(locked)** | 5.9.11 |
+| Cover | `coverOwn` for a piece in the column plus `coverNeighbour` for each neighbouring column with a piece (the ruined edge counts as walled) | `breach.coverOwn` = 0.5, `breach.coverNeighbour` = 0.25 | 5.9.11 |
+| Depth | `extra = min(depthMax, counted pieces in the column − 1)`; the wall cut × (1 + depthStep × extra) | `breach.depthStep` = 0.25, `breach.depthMax` = 2 | 5.9.11 |
+| Wall cut in a lane | the Walls constant of §7.6 × Walls level × cover × (1 + depthStep × extra), in taken% (75% cap) | none new (the Walls constant is in §7.6) | 5.9.2, 5.9.11 |
+| Tower reach | a counted tower's share for a lane d columns away | `breach.towerReach` = [1, 0.5, 0.25] (own column, 1 away, 2 away; nothing beyond) | 5.9.11 |
+| Volley in a lane | floor(the volley per level of §7.6 × Watchtower level × volleyScale × Σ reach ÷ counted towers); 0 when no tower counts; whole-number arithmetic | `breach.volleyScale` = 3 | 5.9.2, 5.9.11 |
+| Suggest layout and the Lanes strip | the lanes of the first N waves (tuning N changes the strip's dots too) | `breach.suggestWaves` = 12 | 5.9.11, 9.25 |
+
 
 
 ---
@@ -2115,8 +2173,8 @@ The v0.1 buildings are in the table in §5.1.2. Added in v0.2–v0.4 (Keep unles
 | Hunter's Lodge | Level (max 3) | 800 wood, 400 iron, 200 silver | 1 investigation slot per level | v0.3 |
 | Alchemist's Hut | Level (max 5) | 700 wood, 300 iron, 150 silver | Brews consumables; 1 brew at a time per level | v0.3 |
 | Herb Garden | Count | 300 wood, 100 food | +1 yarrow, mugwort and juniper every 10 min | v0.3 |
-| Walls | Level (max 10 in Citadel, 15 in Bastion) | 20,000 wood, 10,000 iron | In the Last Stand, the party takes 2% less damage per level; each level slows Threat by 2% | v0.4 (Citadel) |
-| Watchtower | Level (max 10 / 15) | 15,000 wood, 8,000 iron, 100 silver | At the start of each wave, a volley of 20 × level Steel damage that ignores Armor; each level slows Threat by 2% | v0.4 (Citadel) |
+| Walls | Level (max 10 in Citadel, 15 in Bastion) | 20,000 wood, 10,000 iron | In the Last Stand, the party takes 2% less damage per level, scaled by the wave's lane cover (§5.9.11); each level slows Threat by 2% | v0.4 (Citadel) |
+| Watchtower | Level (max 10 / 15) | 15,000 wood, 8,000 iron, 100 silver | At the start of each wave, a volley of 20 × level Steel damage that ignores Armor, shared among the placed towers and reaching the wave's lane by distance (§5.9.11); each level slows Threat by 2% | v0.4 (Citadel) |
 
 ### 8.2 Villages (contract givers)
 
@@ -2979,6 +3037,7 @@ The Hut opens from its building row on the Hold screen.
 | v1.2 | Sounds of the Frontier: no new screen. One Sound row (On / Off, default Off) in Settings; seven short sounds for 15 moments; a Play sound row in the debug panel (§9.22) |
 | v1.3 | Keep the Vigil: no new screen. One Rising Vigil row (On / Off) on the Last Stand screen once the Remembering gate is open, two extra lines in the stand preview, one in the confirmation and one in the result, and a mark and a line on the Roll of Wardens (§5.9.10, §9.23) |
 | v1.4 | The Descent: The Descent button on The Remembering card once the gate is open and the hold reaches Bastion, the Descent sheet (marching order for up to 14 hunters, What the Hold Learned breakdown, preparation, 3-stage preview), 3-stage playback and story cards D-01 to D-07, result sheet, Roll of Wardens mark, and "The Descent" on the Library's Remembering shelf (§5.15.10, §9.24) |
+| v1.5 | The Breach: no new screen. A Lanes strip (with a text-list alternative) on the Arrange Hold sheet and on the Last Stand screen, a lane tag on each wave in the wave list, a lane breakdown sheet, a Suggest layout button, one line in the Start confirmation and a header line in stand wave logs (§5.9.11, §9.25) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -3016,7 +3075,7 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 
 - **Threat meter** (Hold screen, from the Keep): the value and "+X per hour now". Long-press for the breakdown: the Rank's rate, what defenses take off, contracts completed and failed.
 - **Rank screen** (Hearth Hall): Citadel and Bastion Rank-ups with requirements and costs; the restoration sheet without an inscription (v0.5 adds them); **The Hearth** (Embers on hand, the warden upgrades, the relics you own); from Bastion, **Make the Last Stand**; from v0.6, **What the ember remembers**: the four warden skills (§5.8.6).
-- **Last Stand screen:** the wave list (the first 12; "?" for species not yet Identified); six slots with the suggested six; one oil and one potion per hunter; bombs shown as "thrown automatically from stores"; the preview (expected waves with a range; Embers now with the breakdown and per day of the cycle; Threat by tomorrow; Embers tomorrow, labeled as an estimate); **Start**, with a confirmation that says the Long Night follows. **From v1.3,** once the Remembering gate is open, a **Rising Vigil** row sits above Start (§9.23).
+- **Last Stand screen:** the wave list (the first 12; "?" for species not yet Identified); six slots with the suggested six; one oil and one potion per hunter; bombs shown as "thrown automatically from stores"; the preview (expected waves with a range; Embers now with the breakdown and per day of the cycle; Threat by tomorrow; Embers tomorrow, labeled as an estimate); **Start**, with a confirmation that says the Long Night follows. **From v1.3,** once the Remembering gate is open, a **Rising Vigil** row sits above Start (§9.23). **From v1.5** each wave in the wave list carries its lane (*Lane {n}*), a **Lanes** strip with its text-list alternative sits above the party slots, and Start's confirmation adds the Tray line (§9.25).
 - **The Long Night sheets**, in order (§5.9.7): the stand's result, with a link to each wave's log; the closing line; The Hearth; the new-warden sheet with the choice of 3 active hunters.
 - **Arrival sheet** (old saves only, §5.9.8).
 
@@ -3325,6 +3384,48 @@ v1.3 adds **no new screen**. It adds one row to the Last Stand screen (§9.13) a
 - **Layout and checks.** No new tap, sheet or animation in any routine flow; **a routine check-in stays at 15 taps or fewer.** Every button and slot in the Descent sheet is at least 44 × 44 px at 320 and 360 px and at every Text size; no sideways scroll at 320 px at Largest; contrast passes in both themes. The Remembering card (with The Descent button), the Descent sheet and the Roll of Wardens are in `polish-screens.ts` (D566).
 - **Debug.** `debug.prepareEndgameRoster()` builds a strong endgame state (14 hunters at level 10 with gear, recipes 36/36, skills 40/40, chapters 16/16, relics, consumables). `debug.descent.win()` (a core command, marks `debugUsed`) opens the gate, prepares the endgame roster if needed, and runs real attempts until an honest victory occurs so the post-Descent state, Roll mark and Library replay can be inspected and rebuilt line for line.
 
+### 9.25 The Breach *(v1.5, D579–D595)*
+
+v1.5 adds **no new screen**. It adds a Lanes strip to two screens that already exist (the Arrange Hold sheet, §9.21, and the Last Stand screen, §9.13), a lane tag on each wave, and a few lines to sheets that already exist. It changes nothing for the Hold's other buildings.
+
+- **The Lanes strip (D588).** Shown **from Bastion on and not before** (no lanes exist before it; nothing appears and no string is needed). Above the 8 × 8 grid on the Arrange Hold sheet, and above the party slots on the Last Stand screen: **8 labelled boxes** (*Lane 1* to *Lane 8*, west to east) in **two rows of four below 600 px wide and one row of eight above it**, each showing the lane's cover as a percentage and a **dot for each of the next `breach.suggestWaves` waves** that come down that lane (tuning that constant changes the dots). Boxes grow taller at Largest text rather than scrolling. **Tap a lane** and a breakdown sheet opens (the Cover lines, the Stacked line, the Walls and volley results). On the Arrange Hold sheet the pieces that cover that lane are also lit on the grid, with an outline and a corner mark (never colour alone) and no pulse under reduced motion. The strip updates as pieces move. **On the Last Stand screen the strip is a read-only view** (the breakdown shows numbers only, since there is no grid there), and the **Arrange Hold** button under it opens the sheet to act on what the strip says; the preview recomputes whenever a piece moves.
+- **The text alternative (D588).** A **Strip / List** switch shows the same information as eight text lines (*Lane 3: cover 75%, tower reach 50%, waves 2 and 7*). Nothing is drag-only: the grid keeps v1.1's tap-select and tap-swap.
+- **Suggest layout (D588).** On the Arrange Hold sheet only. It shows the suggested arrangement as lit target tiles (outline and corner mark) and its preview line. It **places nothing**. A separate **Use this layout** button exists only if the owner answers Q61 yes; it would apply the suggestion in one tap, on the player's tap only.
+- **In the wave list.** Each wave shows its lane (*Lane {n}*) from the moment Bastion is reached, even for "?" species.
+- **In the Start confirmation.** If any unlocked wall or tower is in the Tray, the confirmation that says the Long Night follows adds the Tray line. Nothing is placed.
+- **In a stand wave log.** A header line, *Lane {n} · cover {p}%*, for stands fought from v1.5. An older stand's log has none.
+- **Player-facing strings (29 strings in 23 rows, word for word; no others; each is listed for the owner's approval):**
+
+  | String | Where it shows |
+  |---|---|
+  | `Lanes` | Heading of the Lanes strip and of the text list |
+  | `Lane {n}` | Strip box label (n = 1 to 8, west to east); tag on each wave in the wave list; title of the lane breakdown sheet |
+  | `{p}% cover` | Line in each strip box |
+  | `Strip` / `List` | Buttons that switch the Lanes view |
+  | `Tap a lane to see what covers it.` | Hint under the strip |
+  | `Lane {n}: cover {p}%, tower reach {r}%, waves {w}` | One line per lane in the text list |
+  | `{a}` / `{a} and {b}` / `{a}, {b} and {c}` (and so on, *and* before the last) / `none in the first {k}` | The forms {w} takes: the waves (their numbers) that come down the lane |
+  | `Only walls and towers in the three rows nearest the Fell Breach count.` | Help line under the Lanes strip |
+  | `No walls or towers on the front rows yet. Only the ruined edge gives cover.` | Empty state, when no piece counts (the edge lanes still show their 25% cover) |
+  | `Own column: +{p}%` | Line in the lane breakdown sheet |
+  | `West neighbour: +{p}%` / `East neighbour: +{p}%` | Line in the lane breakdown sheet |
+  | `Ruined edge counts as wall: +{p}%` | Line in the lane breakdown sheet, for column 1 (west) or column 8 (east) |
+  | `Cover: {p}%` | Total line in the lane breakdown sheet |
+  | `Stacked pieces: +{p}% on the wall cut` | Line in the lane breakdown sheet, when a column holds more than one counted piece |
+  | `Walls: −{t}% damage taken in this lane` | Result line in the lane breakdown sheet and the Walls line of a stand fight's breakdown, built by the same function |
+  | `Tower in column {x}: {p}% of its share` | One line per counted tower in the lane breakdown sheet |
+  | `Watchtower volley in this lane: {v}` | Result line in the lane breakdown sheet |
+  | `Suggest layout` | Button on the Arrange Hold sheet (shown from Bastion on, never disabled there, so no disabled string is needed) |
+  | `Suggested: about {n} waves (now about {m}).` | Line under the suggested layout, from the preview |
+  | `Use this layout` | Button; **only if the owner answers Q61 yes**, otherwise not built |
+  | `{n} defenses are in the Tray and give nothing.` / `1 defense is in the Tray and gives nothing.` | Line in the Start confirmation, when at least one unlocked wall or tower is in the Tray |
+  | `Lane {n} · cover {p}%` | Header line of a stand wave log (new stands only) |
+  | `Arrange Hold` | Button under the Lanes strip on the Last Stand screen; opens the Arrange Hold sheet |
+
+- **Layout and checks.** No new tap, sheet, confirmation or animation in any routine flow; **a routine check-in stays at 15 taps or fewer** (the strip is part of two screens the player already opens, and Start has no extra tap). Every lane box, switch button, Suggest button and the Arrange Hold button is a tappable thing of at least 44 × 44 px at 320, 360, 375 and 390 px and at every Text size, and the page never scrolls sideways at 320 px at Largest (the sweeps also run at 375 and 390 px). Contrast passes in both themes (§9.20). The Last Stand screen and the Arrange Hold sheet, both with the strip, are added to the screen list the sweeps read (D593).
+- **Debug.** `debug.breach.freeze` (a core command, marks `debugUsed`; technical design §15).
+- **Deferred, not cut (with reasons).** The inner ward and buildings taking damage (no damage to buildings, D108); per-wave monster traits tied to lanes (a new rule set); story text (the owner supplies it if wanted); a dedicated Lanes sheet (the strip and the breakdown sheet are enough); a sound for the Breach (not one of the 15 moments, §9.22).
+
 ---
 
 ## 10. Out of Scope
@@ -3352,7 +3453,9 @@ v1.3 adds **no new screen**. It adds one row to the Last Stand screen (§9.13) a
 | Records screen; CSV/JSON export of history and logs | Declined in the GDD review (G9) | Reports keeps recent logs; the Roll of Wardens (v0.5) keeps per-cycle history in-world |
 | The Descent (a third ending) | Deferred (D448, D477); scheduled as v1.4 (D499); **fleshed out 2026-10-25 as a three-stage all-hands relay in the Deep (D557–D568, §5.15.10, §9.24)** | Milestone v1.4 "The Descent" |
 | Rising difficulty for Keep the Vigil (an endless mode) | Deferred (D453, D477); scheduled as v1.3 (D499); **fleshed out 2026-10-24 as Rising Vigil, an optional switch on the stand screen (D538–D551, §5.9.10, §9.23)** | Milestone v1.3 "Keep the Vigil" |
-| Tactical building placement in the Last Stand ("The Breach") | Split from decorative placement (D499, D500) | Milestone v1.5 "The Breach", reusing v1.1's saved 8 × 8 layout format without another save migration, with its own flesh-out |
+| Tactical building placement in the Last Stand ("The Breach") | Split from decorative placement (D499, D500); **fleshed out 2026-10-28 as lanes, cover and the front zone for Walls and Watchtowers only (D579–D595, §5.9.11, §9.25)** | Milestone v1.5 "The Breach" |
+| An inner ward (protection for key buildings) and buildings taking damage | Buildings take no damage (D108); protecting them needs a new damage rule (D580) | Not planned |
+| Per-wave monster traits tied to lanes | A new rule set with its own balance (D580) | Not planned |
 | Screen-reader labels and keyboard focus | Considered for v1.0 and left out (D489) | Not planned; a later accessibility pass if wanted |
 | Orders giving silver or fight bonuses; events adding standing; a seat cost; a fifth Order | Not planned (D418) | — |
 
@@ -3527,3 +3630,14 @@ Each one is also marked **[JC]** where it appears.
 5. **Isolated Descent fight path so `rulesVersion` stays 5**, and **save schema 14** with a migration, real-save fixture, frozen bestiary knowledge on `DescentRecord`, and round-trip test (D561, D562).
 6. **Five generated pixel-art pictures gated by a numbered contact sheet,** fitting inside the existing 600 KB (614,400-byte) download row and protected by `art-src/v1.4-hashes.json` (D565).
 7. **Hard rule on failing tests:** no failing test may ever be called a container or runner problem unless first shown to fail on `main` before the branch's changes, plus a milestone-end production offline-reload and `sw.js` duplicate-hash check (D557).
+
+## Judgment calls added in the v1.5 flesh-out (D579–D595)
+
+1. **Only defenses (Walls and Watchtowers) get a combat meaning from position;** the inner ward and buildings taking damage are deferred (D580).
+2. **Each Last Stand wave comes down one of 8 lanes** from its own dice stream, so species picks do not change; lanes show in the wave list from Bastion (D580).
+3. **Cover, depth and tower reach** (own column 50% plus 25% per neighbour with the ruined edge counted; +25% per extra piece in a column up to two; towers share today's volley by distance 1, 0.5, 0.25) with only pieces on the grid in the three rows nearest the Fell Breach counted, and **nothing ever placed for the player** (D581, D582, D587).
+4. **Gentle, and calibrated:** a careless layout loses a wave or two and a good one holds as many as Auto-arrange or more; every `breach.*` number except the lane count and front rows is a tunable the owner approved from the TB.12 table (D583, D598).
+5. **`rulesVersion` 5 → 6 on a dual path, save schema 14 → 15,** `HoldLayoutState` unchanged, a derived lane table frozen on the stand record when Start is pressed; old stands replay under version 5 line for line; new version 6 goldens are owner-approved additions (D584, D585, D591, D592).
+6. **The Descent, contracts, Delves, events, bosses, hunts, Rising Vigil's level steps, the Embers formula and the Threat rate ignore layout** (D586).
+7. **A tap-based Lanes strip with a text-list alternative and a Suggest layout button that places nothing,** and a Tactician simulator player with three Proposed rows; the baseline moves once (D588, D589).
+8. **Performance and size** proposals are measured, then approved by the owner (D590).

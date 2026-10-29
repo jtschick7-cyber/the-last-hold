@@ -35,9 +35,9 @@ const roundTrip = (s: GameState): GameState =>
 const EMPTY = { nearSeen: false, readyNoted: false, endings: [] };
 
 describe('the v10 → v11 migration', () => {
-  it('is schema 11 or later, and rules version stays 5', () => {
+  it('is schema 11 or later, and rules version is 6 from v1.5', () => {
     expect(SCHEMA_VERSION).toBeGreaterThanOrEqual(11);
-    expect(RULES_VERSION).toBe(5);
+    expect(RULES_VERSION).toBe(6);
     for (const f of ['v10.json', 'v10-played.json']) {
       expect(readFixture(f).schemaVersion, f).toBe(10);
       expect(readFixture(f).rulesVersion, f).toBe(5);

@@ -51,6 +51,20 @@ export interface PlayOptions {
     before: GameState,
     stand: Extract<Command, { type: 'stand.make' }>,
   ) => void;
+  /**
+   * The Tactician's first stand at Bastion (D589 (3)): called with a copy of the state just before the
+   * stand command (its hold already arranged), and the command.
+   */
+  readonly onFirstBreachStand?: (
+    before: GameState,
+    stand: Extract<Command, { type: 'stand.make' }>,
+  ) => void;
+  /** The Tactician's every stand at Bastion (the calibration), with its number from 0. */
+  readonly onBreachStand?: (
+    before: GameState,
+    stand: Extract<Command, { type: 'stand.make' }>,
+    index: number,
+  ) => void;
   /** Carried between check-ins (the stand rule); a fresh one if absent. */
   readonly memory?: PolicyMemory;
 }
@@ -59,6 +73,8 @@ export interface PlayOptions {
 export const play = (state: GameState, opts: PlayOptions): void => {
   let at = state.time;
   const memory = opts.memory ?? freshMemory();
+  if (opts.policy === 'tactician') memory.tactician = true;
+  let breachStands = 0;
   while (at <= opts.until) {
     const peasantsBefore = state.peasants.total;
     const away = catchUpNow(state, at);
@@ -117,6 +133,16 @@ export const play = (state: GameState, opts: PlayOptions): void => {
         vigilView(state).level > 0
       )
         opts.onFirstVigilStand?.(structuredClone(state), cmd);
+      if (
+        opts.policy === 'tactician' &&
+        cmd.type === 'stand.make' &&
+        state.cycle.age === 'bastion'
+      ) {
+        const before = structuredClone(state);
+        if (breachStands === 0) opts.onFirstBreachStand?.(before, cmd);
+        opts.onBreachStand?.(before, cmd, breachStands);
+        breachStands += 1;
+      }
       const result = apply(state, cmd, at);
       // The decision was made on a copy of this exact state, so it can't fail.
       if (!result.ok) throw new Error(`Policy command refused: ${result.reason}`);

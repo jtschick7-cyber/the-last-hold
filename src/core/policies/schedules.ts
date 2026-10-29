@@ -11,6 +11,7 @@ export const POLICY_IDS = [
   'eventer',
   'orderer',
   'vigilant',
+  'tactician',
 ] as const;
 export type PolicyId = (typeof POLICY_IDS)[number];
 
@@ -77,7 +78,8 @@ export const nextCheckIn = (policy: PolicyId, after: number, startedAt: number):
       policy === 'delver' ||
       policy === 'eventer' ||
       policy === 'orderer' ||
-      policy === 'vigilant') &&
+      policy === 'vigilant' ||
+      policy === 'tactician') &&
     after < startedAt + OPENING_LENGTH
   ) {
     const steps = Math.floor((after - startedAt) / OPENING_STEP) + 1;

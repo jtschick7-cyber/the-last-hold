@@ -75,6 +75,7 @@ export type Command =
   | { type: 'layout.unplace'; pieceId: HoldPieceId }
   | { type: 'layout.autoArrange' }
   | { type: 'layout.clear' }
+  | { type: 'layout.setDefenses'; moves: { pieceId: HoldPieceId; x: number; y: number }[] }
   | { type: 'layout.setShowGhosts'; showGhosts: boolean }
   /** GDD §5.9.10: the Rising Vigil switch (technical design §21.3). */
   | { type: 'vigil.set'; on: boolean }
@@ -99,6 +100,8 @@ export type Command =
       party: HunterId[];
       /** One oil and one potion per hunter, from the stores; bombs are thrown automatically. */
       prep?: Pick<Preparation, 'oils' | 'potions'>;
+      /** Tests only (D593 (f)): freeze no lane table. Refused unless a test switches it on; marks debugUsed. */
+      noLanes?: boolean;
     }
   /** The stand's result sheet has been read. */
   | { type: 'stand.seen' }
@@ -199,7 +202,8 @@ export type Command =
   /** Plan TL.4: layout debug tools (set debugUsed). */
   | { type: 'debug.layoutAutoArrange' }
   | { type: 'debug.layoutClear' }
-  | { type: 'debug.layoutFillBastion' };
+  | { type: 'debug.layoutFillBastion' }
+  | { type: 'debug.breach.freeze' };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };
 

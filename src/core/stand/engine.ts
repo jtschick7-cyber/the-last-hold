@@ -7,8 +7,11 @@ import { num } from '../balance-access';
 import { runFight, type FightResult, type HunterSnapshot } from '../combat';
 import { roundHalfUp } from '../combat/build';
 import { seeded } from '../rng';
+import type { Explained } from '../breakdown/breakdown';
 import type { Preparation } from '../state/game-state';
+import type { LaneTable } from '../state/lane-table';
 import { DROSS_TIDE, waveAt, type StandPool, type Wave } from './waves';
+import { laneOf, logHeader, volley as laneVolley, wallCut } from '../systems/breach';
 import { waveFactor } from '../systems/vigil';
 
 // GDD §5.9.3 (D107, D115): the Last Stand runs one wave at a time through the
@@ -42,6 +45,11 @@ export interface StandInput {
   readonly pool?: StandPool;
   /** Rising Vigil level the stand is fought at (v13, GDD §5.9.10); absent means 0, as every stand before v1.3. */
   readonly vigilLevel?: number;
+  /**
+   * The lane table frozen at Start (v15, technical design §23.4). Present: a version 6 stand, where each
+   * wave's lane gives its wall cut and volley. Absent: the version 5 path, bit for bit.
+   */
+  readonly lanes?: LaneTable;
 }
 
 export interface WaveOutcome {
@@ -50,6 +58,14 @@ export interface WaveOutcome {
   readonly startHealth: Readonly<Partial<Record<string, number>>>;
   readonly bombs: readonly ConsumableId[];
   readonly fight: FightResult;
+  /** A version 6 stand only: the wave's lane and the wall cut and volley it took, with their breakdowns (GDD §9.25). */
+  readonly breach?: {
+    readonly lane: number;
+    /** The log's header line, `Lane {n} · cover {p}%` (GDD §9.25). */
+    readonly header: string;
+    readonly wallCut: Explained;
+    readonly volley: Explained;
+  };
 }
 
 export interface StandResult {
@@ -63,12 +79,18 @@ export interface StandResult {
 const MAX_WAVES = 1_000;
 
 /** taken% from the Walls' levels and the relics that fight in the stand (combat.takenCap applies). */
-export const standTaken = (defenses: StandInput['defenses'], owned: readonly RelicId[]): number => {
+export const standTaken = (
+  defenses: StandInput['defenses'],
+  owned: readonly RelicId[],
+  /** A version 6 wave: the Walls' cut in the wave's lane, in place of the flat level × per-level. */
+  wallsCut?: number,
+): number => {
   let sum = 0;
   for (const id of BUILDING_IDS) {
     for (const e of buildings[id].effects) {
       if (e.kind === 'standTaken' && (id === 'walls' || id === 'watchtower'))
-        sum += defenses[id] * num(e.perLevelKey);
+        sum +=
+          id === 'walls' && wallsCut !== undefined ? wallsCut : defenses[id] * num(e.perLevelKey);
     }
   }
   for (const r of owned) {
@@ -139,8 +161,8 @@ export const runStand = (input: StandInput): StandResult => {
   const down = new Set<string>();
   const potionUsed = new Set<string>();
   const strength = waveFactor(input.threat, input.vigilLevel ?? 0).value;
-  const partyTaken = standTaken(input.defenses, input.relics);
-  const volley = standVolley(input.defenses);
+  const flatTaken = standTaken(input.defenses, input.relics);
+  const flatVolley = standVolley(input.defenses);
   const recover = num('laststand.recoverBetween');
   const waves: WaveOutcome[] = [];
   let wavesHeld = 0;
@@ -149,6 +171,18 @@ export const runStand = (input: StandInput): StandResult => {
     const party = input.party.filter((h) => !down.has(h.id));
     if (party.length === 0) break;
     const wave = waveAt(input.seed, n, input.pool);
+    // Version 6 (D584): the wave's lane gives its wall cut and volley from the frozen table, never the hold's grid.
+    const lane = input.lanes ? laneOf(input.seed, n) : undefined;
+    const cut =
+      input.lanes && lane !== undefined
+        ? wallCut(input.lanes, input.defenses.walls, lane)
+        : undefined;
+    const shot =
+      input.lanes && lane !== undefined
+        ? laneVolley(input.lanes, input.defenses.watchtower, lane)
+        : undefined;
+    const partyTaken = cut ? standTaken(input.defenses, input.relics, cut.value) : flatTaken;
+    const volley = shot ? shot.value : flatVolley;
     const bombs = waveBombs(wave.monster, stock);
     const potions = Object.fromEntries(
       Object.entries(input.prep.potions).filter(([id]) => !potionUsed.has(id)),
@@ -172,7 +206,22 @@ export const runStand = (input: StandInput): StandResult => {
       stand: { health, monsterStrength: strength, partyTaken, volley },
       alchemy: input.alchemy,
     });
-    waves.push({ wave, startHealth: { ...health }, bombs, fight });
+    waves.push({
+      wave,
+      startHealth: { ...health },
+      bombs,
+      fight,
+      ...(cut && shot && lane !== undefined
+        ? {
+            breach: {
+              lane,
+              header: logHeader(input.lanes as LaneTable, lane),
+              wallCut: cut,
+              volley: shot,
+            },
+          }
+        : {}),
+    });
     for (const id of fight.potionsUsed) potionUsed.add(id);
     if (fight.result !== 'win') {
       endedBy = fight.endedBy === 'retreat' ? 'retreat' : 'party-down';

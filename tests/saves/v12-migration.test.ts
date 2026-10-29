@@ -39,9 +39,9 @@ const withLayout = (layout: unknown): Env => {
 };
 
 describe('the v11 → v12 migration', () => {
-  it('is schema 12, and rules version stays 5', () => {
-    expect(SCHEMA_VERSION).toBe(14); // D566 (1): was 13 before v1.4
-    expect(RULES_VERSION).toBe(5);
+  it('is schema 12, and rules version is 6 from v1.5', () => {
+    expect(SCHEMA_VERSION).toBe(15); // D593 (a): was 14 before v1.5
+    expect(RULES_VERSION).toBe(6);
     expect(readFixture('v11-owner.json').schemaVersion).toBe(11);
     expect(readFixture('v12.json').schemaVersion).toBe(12);
   });
@@ -51,7 +51,7 @@ describe('the v11 → v12 migration', () => {
     (f) => {
       const loaded = loadFull(readFixture(f));
       expect(loaded.warnings).toEqual([]);
-      expect(loaded.state.meta.schemaVersion).toBe(14); // D566 (1): was 13 before v1.4
+      expect(loaded.state.meta.schemaVersion).toBe(15); // D593 (a): was 14 before v1.5
       expect(Object.keys(loaded.state.layout.placed)).toHaveLength(40);
       expect(roundTrip(loaded.state)).toEqual(loaded.state);
     },
@@ -109,8 +109,8 @@ describe('the v11 → v12 migration', () => {
     }
   });
 
-  it('a save from a newer version (15) is refused with the usual message', () => {
-    const env = { ...readFixture('v12.json'), schemaVersion: 15 }; // D566 (1): was 14 before v1.4
+  it('a save from a newer version (16) is refused with the usual message', () => {
+    const env = { ...readFixture('v12.json'), schemaVersion: 16 }; // D593 (a): was 15 before v1.5
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 

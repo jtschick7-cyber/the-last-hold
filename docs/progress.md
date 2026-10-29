@@ -4,159 +4,13 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.4` (from `main` at the PR 24 merge). The Claude session branch for this thread is `claude/dreamy-cerf-sg227v`.
-- **Milestone:** v1.4 "The Descent" (D557–D578), complete (D578). v1.3 is merged, tagged `v1.3.0` and accepted (D556).
-- **Last task:** v1.4 milestone end (playtest passed, `sim:accept`, merge). Before it: TD.10, TD.9. Before it: TD.7c, TD.7b, TD.6, TD.5, TD.7a. Before it: TD.7a, TD.4c, TD.4b, TD.4a, TD.3, TD.2, TD.1.
-- **Next:** the owner tags `v1.4.0` by hand. Then v1.5 "The Breach" needs a flesh-out session first (plan §0.4).
-- **Open questions:** Q59 is answered (D577). Q60 is answered (D570). Q53–Q55 and Q57 are closed. Size: 449,810 bytes at v1.3, about 164 KB under the 614,400 row.
+- **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
+- **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
+- **Last task:** TB.15 (wrap-up: checks, simulator, e2e, build, pull request). Before it: TB.14, TB.13 (constants, goldens, rows A to C). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
+- **Next:** the owner's iPhone playtest, then "playtest passed"; only then `sim:accept`, merge, tag `v1.5.0` (export your save just before the merge). Q64 answered yes (D599). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
+- **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
-Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
-
-## 2026-10-24 — v1.3 KV.11 wrap-up and the pull request
-- **Checks (this container):** `npm run check` green (94.7 s at KV.10). `sim:check`: 60 runs, 407 s, every enforced row passes (rows A to C included), **176 of 176 moments same** as the baseline; the Vigilant's 16 moments are new. The ✗ lines are Saturday runs, reported only.
-- **e2e, 4 shards (local chromium build):** 141 s, 403 s, 172 s, 121 s; 143 tests pass, 2 fail. Shard 2 is over 5 minutes here (CI's limit is 8, D552; CI is the judge). The two failures are the known offline-reload tests in `smoke.spec.ts` (this container's browser build, with and without my changes).
-- **Production build opens real saves:** new `tests/e2e/vigil-open.spec.ts`: your v12 save (`v12-owner.json`) with the gate closed (no vigil row) and then open (row there), and the played v13 save (row and status line). Passes.
-- **Size:** 438,916 bytes (KV.10; build unchanged since). Schema 13, `rulesVersion` 5, golden fights and recorded stands replay (in `check`). No placeholder constant.
-- **Docs:** plan KV.11 ticked, v1.3 `Status: in progress`, §0.7 actuals added (v1.2 final 16, v1.3 12 entries).
-- **Not done, waiting on you:** the playtest, then `sim:accept`, merge, tag. **Please export your save from the game just before the merge.**
-
-## 2026-10-24 — v1.3 milestone end
-- **The owner said the playtest passed** (Remember Them path included).
-- **Done:** `npm run sim:accept` (6 min 49 s here): the baseline moves to v1.3; the only differences are the milestone and the new Vigilant moments. Plan `Status: complete`, D556.
-- **Left:** merge PR 21 and tag `v1.3.0`, after the owner confirms they exported their save.
-
-## 2026-10-24 — v1.3 fix: offline reload broken by the picture packing (D553)
-- **What was wrong:** CI shard 3 failed the two offline-reload tests in `smoke.spec.ts` on every push since D553. I had called them "known, this container's browser" in KV.10 and KV.11; **that was wrong**. I checked: they pass on the commit before D553 and fail after it.
-- **Cause:** packing the pictures also repacked the five app icons. The PWA plugin lists the icons twice (once with the original's hash, once with the packed file's), and Workbox refuses an install with two different hashes for one file, so nothing was kept for offline use. This would have shipped.
-- **Fix:** `vite.config.ts` leaves the `icons/` files unpacked (D553 otherwise unchanged). `sw.js` now has one hash per file. All 7 smoke tests pass here, including the two. **Size: 449,810 bytes** (was 438,916; the icons are back to full size), still far under 614,400.
-- **Test changed (my own D553 test, same milestone):** `tests/tools/png-pack.test.ts` now skips the top-level `icons/` folder in the "every picture is packed" loop, and gains a check that `sw.js` never lists one file with two different hashes (the check that would have caught this). Nothing else loosened.
-- **Left:** CI to confirm on the new push, then merge. The earlier `sim:accept` is not affected (no game rule changed).
-
-## 2026-10-28 — v1.4 TD.1: docs commit (flesh-out applied)
-- **Step 0:** `v1.3.0` tagged, v1.3 merged, D553 fix on `main`. CI on `main` was red: `ubuntu-latest` became 26.04 and Playwright 1.56.1 cannot install browsers there. Fixed by PR 23 (browser jobs on `ubuntu-24.04`). Then shard 2 of 4 hit the 8-minute limit (passed on a re-run, about 7 min 21 s), so PR 24 made it 5 shards (slowest job 5 min 6 s). Owner said yes to both (D569). The five-shard run on `main` after the merge (run 604) is green: slowest job 5 min 15 s.
-- **Owner gate:** owner said yes (D568); D557–D567 `Decided`. "Four shards" became "five" in the flesh-out files first.
-- **Finds:** 47 find/replace pairs checked by machine, each exactly once (GDD 23, plan 7, questions 5, technical design 12; the files say 21 and 11, a miscount). Applied.
-- **Sweep:** `Proposed` from D519 up: only D529 and D535, both covered by D557. Nothing else to ask.
-- **Also applied:** D557–D569 in `decisions.md`; `descent.*` keys in `balance.ts` (stageTiers and unlitBaseHealth are marked placeholders); six names in `names.ts`; three `CLAUDE.md` rules; `progress.md` archived (was 108 KB).
-- **Not done:** `lore-secrets.md` §34.11 (last §34 subsection is §34.10): the approved wording of D-01 to D-07 and the 3 resident lines is not in the repo. Q60 asks; TD.3 is `[?]` for that part only.
-- **Test edits (owner said yes, 2026-10-28):** `tests/content/vigil-text.test.ts` now ends its §9.23 cut at the next `###` heading (not on D566's list; §9.24 follows §9.23 now; nothing loosened). `tests/orders/opening.test.ts` lists `v13-owner.json` (D566 (2)). Your save `v13-owner.json` is in; reformatted with Prettier only, data hash identical.
-- **Waiting on you:** Q60 (the approved Descent wording). TD.2 can start.
-
-## 2026-10-28 — v1.4 TD.2: save schema 14
-- **Done (tests first, 30 new tests in `tests/saves/v14-migration.test.ts`):** schema 13 → 14; `state.descent` (types in `state/descent-state.ts`); `save/migration-v14.ts` adds only the empty block; `save/validate-descent.ts`; `'descent'` is a third ending id (any order, one of each; `remembering.choose` refuses it); the Long Night keeps the block (a test). `v14.json` is your v1.3 save migrated, not played (`scripts/make-v14-fixtures.ts`). `v13-owner.json` loads, validates and round-trips with every other fixture; golden fights and recorded stands replay; schema 15 is refused.
-- **Size (SF.9 method, sum of per-file gzip -9 of `dist`):** 441,322 bytes, +988 for TD.2 (440,334 before); 173,078 under 614,400.
-- **Ids:** the technical design names two stage monsters `unlit-breath` and `forgotten`; the repo's ids are `unlits-breath` and `the-forgotten`. I used the repo's. TD.4 should read them the same way.
-- **Old-test edits (D566):** (1) schema 13 → 14 and newer-version guard 14 → 15 in `v12-migration` and `v13-migration` tests; (2) `v14.json` in `opening.test.ts`'s list. **My reading of (3), please say if wrong:** `choose.test.ts` and `v11-migration.test.ts` used `'descent'` as their made-up ending; it is real now, so both use `'banner'` (assertions unchanged).
-- **Not done / later:** `v14-played.json` (TD.4b); the non-coupling lint entry and command lists (D566 (5), (7)) come with the code that needs them.
-
-## 2026-10-28 — v1.4 Q60 answered (docs only)
-- The owner pasted the approved wording of D-01 to D-07 and the three resident lines. Written word for word as `lore-secrets.md` §34.11 (the end of §34 and of the file), D570. Q60 closed; TD.3 is no longer `[?]`.
-
-## 2026-10-28 — v1.4 TD.3: The Unlit, story texts, strings, the learned bonus
-- **Done (tests first):** `src/content/unlit.ts` (stats, resistances, First Cold, Heavy Dark with Chill, Great Beasts lines, `descentOnly: true`; Health reads `descent.unlitBaseHealth`); `story/descent.ts` (D-01 to D-07 and the 3 resident lines, word for word from §34.11); `descent-text.ts` (the 26 GDD §9.24 strings); `core/systems/descent.ts` `learnedBonus(state)`: Might, Health and damage taken, with the breakdown tree from the same function and the active Delve relics (Whorl, Nail, Lantern, Salt Ring).
-- **Tests:** `descent-text` (cards and lines equal the lore file paragraph by paragraph; forbidden words, digits, the forty names, allowed people; strings equal the GDD table both ways), `unlit`, `descent/learned-bonus` (9 states added up by hand), `descent/unlit-no-leak` (guardian draws, floor groups, candidates, stand waves and the Forgotten's count hash-identical to before). Names, §7 keys and every golden fight and recorded stand pass unchanged; `rulesVersion` 5.
-- **Old tests edited:** none.
-- **Decision to confirm, D571 (Proposed):** The Unlit sits beside the species lists (not in `MONSTER_IDS`), re-exported from `monsters.ts`; this is what keeps it out of every draw. Its abilities have their own types, so no combat code changed.
-- **Please check:** percents print with up to two decimals (GDD §9.24 gives no rounding rule). The headline "+m%" is the learned sum only; Spindle Whorl, Cold Iron Nail, Rift Lantern and Salt Ring are listed under "Active Delve relics:" and applied by the fight in TD.4a, so they are not counted twice.
-- **Placeholders:** `descent.stageTiers` and `descent.unlitBaseHealth` stay placeholders until TD.9. Names were already in `names.ts` (TD.1); nothing new needed.
-- **Not done / later:** the Unlit's art (TD.5), the engine (TD.4a), the UI (TD.7).
-
-## 2026-10-28 — v1.4 TD.4a: the Descent fight engine and The Unlit's abilities
-- **Done (tests first, 24 new tests in `tests/descent/descent-fight.test.ts`):** `runDescent` in `core/systems/descent-fight.ts`: three stages, front line of 6, reserve of 8, step-ins between stages (slot order, full Health) and mid-stage (up to 6 at once, meter 0, start-of-fight potions and meter traits on entry), 20% recovery (30% with the Rift Lantern), learned bonus and Delve relics applied, Salt Ring on Deep monsters, automatic bombs (up to 2 per stage), potions and "once" skills across all 3 stages, 400-tick limit. Stage seeds `${seed}:stage:n`.
-- **The Unlit:** First Cold (3% Frost, 15 meter) and Heavy Dark (every 3rd action, sweep, Chill) work in a normal fight; Saltburst cancels the first trigger and blocks 3 actions; Smoke-Lunged halves First Cold; the Crook clears Chill (the old rule reads the same fields).
-- **Ordinary fight code touched only by exports and extractions** (`runTicks`, `startPotion`, `throwBomb`, `resolveEnds` exported; the `unlit` instance in `species.ts`). `npm run check` green (3,649 tests, 85 s): every golden fight and recorded stand replays; `rulesVersion` 5. No old test edited.
-- **Decisions to confirm:** D572 records your yes to D571. D573 (Proposed) lists six small readings: when First Cold fires, who Heavy Dark chills, which monster each bomb hits, potions used once, the sign of the frozen cut, the extractions.
-- **Not done / later:** the command, the frozen record and `rebuildDescentLogs` (TD.4b); preview (TD.4c); the debug roster (TD.4b).
-
-## 2026-10-28 — v1.4 TD.4b: the Descent command, the frozen record, the debug path
-- **Done (tests first, 22 new tests in `tests/descent/start.test.ts`, 5 in `tests/lint/descent-coupling.test.ts`):** `descent.start` through `apply()`; refused when the gate is closed, below Bastion, empty, duplicate, unowned, over 14, on a contract or in a Delve, or the stores cannot pay. A win records `'descent'` once, sets `firstWin`, `last`, `unlitMet`; nothing else in the hold moves (compared whole). A loss spends what was thrown, records `last`, and retries at once.
-- **Record and rebuild:** every combat input is frozen on the record; `rebuildDescentLogs(record)` re-runs the 3 stages with logs and agrees line for line, and a test wipes levels, gear, relics and the bestiary first.
-- **Debug:** `debug.prepareEndgameRoster` (14 hunters Master-Wright, 5 stars, 5 talents, Wright gear, 16/16 Mastered, 36/36 properties, 40/40 skills, 16/16 chapters, 12 relics, stocked stores; idempotent) and `debug.descentWin` (real stand if needed, gate, Bastion, real attempts). `v14-played.json` made by `scripts/make-v14-fixtures.ts`; it won on attempt 1 with 0 hunters downed, so the placeholder constants are far too easy (TD.9 calibrates).
-- **Save growth (M4):** one record about 6.0 KB (1.4 KB gzipped); `descent` with two records about 12.1 KB (1.5 KB gzipped); above the 4 KB sketch, so D575 (Proposed) asks you to approve a GDD §6.5 row. **Size:** 446,693 bytes (+5,371 since TD.2), 167,707 under 614,400.
-- **Old tests edited (D566):** (2) `opening.test.ts` lists `v14-played.json` among the played saves; (5) new non-coupling test (`descent-coupling`); (7) no existing test lists every command, so nothing to add. My own TD.2 test `v14-migration` now also replays `v14-played.json`'s golden fights. Nothing loosened. `npm run check` green (3,675 tests).
-- **Not done / later:** Suggest, preview worker, benchmark (TD.4c); the `unreadResult` clearing command comes with the UI (TD.7b).
-
-## 2026-10-28 — v1.4 TD.4c: Suggest marching order, the preview worker, the benchmark
-- **Done (tests first, 9 new tests in `tests/descent/preview.test.ts`):** `suggestDescentOrder(state)` (`descent-order.ts`): everyone who can march; the best Vanguard and best Mender take front places, the other front places go to the highest levels (ties in roster order), the rest wait in the reserve by level. The debug path now uses it instead of its own copy.
-- **Preview:** `previewDescent` (`descent-odds.ts`) runs `descent.previewSamples` (100) real engine runs on seeds `gameSeed:descentodds:attempt:i` (stages `…:stage:1|2|3`), never the real attempt's seed. The seed does not depend on party or prep, so compared orders share dice. Returns win chance with margin, median stages cleared and outcome, hunters downed (median, 10th to 90th), and a Why? tree. A test recomputes all of it from 100 direct engine runs and gets the same numbers.
-- **Worker and client:** worker kind `descentPreview` (the existing message shape is `{ id, kind, input }`, so I followed it rather than `type`/`requestId`; same meaning). `requestDescentPreview` drops stale requests (older answers resolve to nothing); with no worker it runs 20 runs as a "quick estimate".
-- **Benchmark:** `Descent preview` in `bench.spec.ts` and `bench-page.ts`, budget 1,500 ms (fails at 2x). Measured 340 ms at 4x slowdown, 14 hunters. The placeholder constants make fights easy, so TD.10 measures again.
-- **Checks:** `npm run check` green (3,684 tests, 78 s). Golden fights and recorded stands replay; `rulesVersion` 5. No old test edited. The lint READERS list needs no new file: none of the new core files reads `state.descent`.
-- **Container note:** `npm ci` was needed here, and the bench browser had to be pointed at `/opt/pw-browsers/chromium` with a throwaway config (not committed).
-- **Not done / later:** the preview's screen (TD.7), the Descent's art (TD.5).
-
-## 2026-10-28 — v1.4 TD.7a: The Remembering card and the Descent sheet
-- **Card (GDD §9.24, S3, S6):** new form `afterDescent`; The Descent / Fight the Descent again show only when the gate is open and the hold is at Bastion. Forms for nothing chosen, vigil, remember, descent, descent + vigil and descent + remember are tested in `tests/descent/view.test.ts` and, in the browser, `tests/e2e/descent-sheet.spec.ts`. The facts (`descentAvailable`, `descentWon`, `vigilChosen`) come from the core view.
-- **Sheet:** `DescentSheet.tsx`: subtitle, three stage lines, the learned line with ⓘ / long-press (five contributors, then Active Delve relics), Suggest, front 6 and reserve with tap-to-swap, Unavailable hunters with reasons, oil/potion pickers, the bombs note, the worker preview (three lines) and Start. Core side: `descent-view.ts` (`descentSheetView`, `descentPreviewLines`); the UI computes nothing.
-- **Tests:** 8 unit, 8 Playwright at 320 px at Largest (card forms; stages; swap and Suggest; preview from the worker; no sideways scroll; tap sizes; breakdown). New screen flow `descent` in `polish-screens.ts` (tap, text-size and contrast sweeps pass for it).
-- **Debug:** two buttons added (Prepare endgame roster, Win the Descent).
-- **Checks:** `npm run check` green (3,692 tests, 82 s; one cold run was 90 s). Golden fights unchanged; `rulesVersion` 5; no old test edited.
-- **Readings to confirm:** (1) no stage banners yet, because the art is TD.5; text only. (2) After Start the sheet just closes: playback, story cards and the result sheet are TD.7b. (3) Two labels not in the §9.24 table: the **Suggest** button and "(quick estimate)" when no worker runs. (4) The Descent button on the open form has no description line.
-- **Not done / later:** playback, result sheet, sounds, Roll mark, Library replay (TD.7b/c).
-
-## 2026-10-28 — v1.4 TD.5: the Descent's five pictures and the contact sheet
-- **Drawn in code** (`tools/draw-descent.ts`, written by `tools/gen-descent.ts`, 32-colour palette): The Unlit's 64 px portrait and 32 px battle strip (hooded cold, rime crown, hem of threads, one small warm spark), and three 160 × 64 banners: The Crack, The Sealed Stair, Below the Seal. No lettering; the last banner's rime only suggests writing.
-- **Manifest:** five rows in `assets.ts`. Files follow the repo's naming (`portraits/monster-unlit.png`, `sprites/monster-unlit.png`, `scenes/descent-stage-N.png`), not the `monsters/` folders the technical design sketches; please say if you want those.
-- **Contact sheet (shown in the conversation):** `docs/flesh-out/v1.4/contact-sheets/descent.png`, numbered 1 to 5 on its own (`contact-sheet.ts --descent-sheets`), on both backgrounds; empty marks table in `docs/flesh-out/v1.4/art-marks.md`. 1 portrait, 2 battle sprite, 3 to 5 the banners.
-- **Tests:** 9 new in `tests/tools/descent-art.test.ts` (each file equals its generator, size, palette, five different frames, own numbering). v1.0 and v1.1 hash tests pass unchanged; credits regenerated.
-- **Old test edited (D566 (6)):** `contact-sheet.test.ts`: its two "every generated row" filters also skip the v1.4 pictures, so the v1.0 numbers 1–156 stay put. Nothing loosened.
-- **Size (SF.9 method):** 451,041 bytes (includes TD.4c and TD.7a code); 163,359 under 614,400.
-- **Waiting on you:** Keep or Redraw for pictures 1 to 5. Hashes are frozen in `art-src/v1.4-hashes.json` at TD.6 once all five are approved.
-
-## 2026-10-28 — v1.4 TD.6 draft: the five pictures redrawn
-- **Marks (your notes, written to `art-marks.md`):** all five Redraw. Done as written: void-dark hood and dripping frost threads (1); five drawn frames, not made from one base: idle 2 bob and tendril shift, lunge with the upper body 3 px left and a longer arm with a cyan tip, a solid flat downed cloak on the bottom edge with broken crown shards (2); rock to the top with a soft dither, frost only within 15 px of the crack, jagged diagonal micro-cracks both sides (3); a dark-iron anvil with horn, waist and base, and eight spokes, a notched rim and a hub on the seal (4); twelve different 3 × 5 runes with a dark-cyan halo and a vertical shadow gradient (5).
-- **Sheet (shown in the conversation):** `docs/flesh-out/v1.4/before-after/descent.png`; the old pictures are kept in `art-src/previous-v1.4/`. New tool `tools/before-after-descent.ts`.
-- **Checks:** `npm run check` green (3,700 tests). Existing art tests (file equals generator, palette, size) pass on the new pictures. v1.0 and v1.1 hashes unchanged.
-- **Not done, on purpose:** `art-src/v1.4-hashes.json` and its test wait for your approval of this sheet (CLAUDE.md: redrawn art ships only after approval).
-
-## 2026-10-28 — v1.4 TD.6 closed, TD.7b: playback, story cards, sound cues, result sheet
-- **TD.6:** you approved the art; `art-src/v1.4-hashes.json` (five hashes) is frozen with a test in `descent-art.test.ts`.
-- **Playback (tests first, 9 new unit tests in `tests/descent/playback.test.ts`):** `descent-playback.ts` rebuilds the three stages from the saved record alone and shapes them for the screen: cards D-01 to D-06 around the stages (D-07 on a loss), the stage heading, banner, the log lines, who is on the field after each step (a mid-stage step-in replaces the front line), and the result heading and summary. The sheet (`DescentPlayback.tsx`) reuses the Delve's playback view (Skip, Log, Continue) with the stage banner above the arena. Cards word for word from the lore file.
-- **Sound (UI only):** Stage 1 and 2 cleared play `win`, Stage 3 `fanfare`, a loss `lose`, cards and logs silent. I used the existing play-by-id call, so the 15 moments and their test are untouched.
-- **Result sheet:** heading, summary, and a log button for each stage reached. Reaching it marks the result as seen (new command `descent.markRead`). Closing early leaves it unread: the card shows **View Descent result**, which opens the result sheet directly (also after a reload).
-- **Tests (Playwright, 360 px):** a full win with every card and the cues `win, win, fanfare`; a loss (hunters at level 1, no gear) with D-07, `Driven back at Stage 2.` and `win, lose`; a playback closed early, a reload, and the card's button. Polish sweeps (tap size, text size, contrast) pass on the new screens, added to the `descent` flow.
-- **Small changes to my own earlier code:** the stage run now also lists everyone who fought and the mid-stage step-in ticks (additive; every golden fight and recorded stand replays; `rulesVersion` 5); the Delve playback view takes optional banner, outcome and opening-line props (the Delve's own look is unchanged). `descent-playback.ts` joins the lint list of files allowed to read `state.descent`. No old test edited.
-- **Readings to confirm:** (1) the banner sits above the arena, not behind the sprites, so names and bars keep their contrast; (2) "View Descent result" is the plain text GDD §9.24 names and is kept outside the string table; (3) with the placeholder constants even level-1 hunters win from the played fixture, so the loss test strips gear and ranks.
-- **Size (SF.9 method):** 453,208 bytes; 161,192 under 614,400. `npm run check` 88 s, 3,710 tests.
-
-## 2026-10-28 — v1.4 TD.7c: Roll mark, Library replay, resident lines, The Unlit on the shelf
-- **Roll of Wardens:** the warden in office when The Descent was first won gets a small stair mark drawn in code (inline SVG) and *"Led the Descent."* Read from the saved ending's cycle, so nothing new reads `state.descent`.
-- **Library:** the Remembering shelf gains **The Descent** (title only: GDD §9.24 gives no blurb). It replays D-01 to D-06, then offers the three stage logs, all rebuilt from `descent.firstWin`; a later attempt never changes it, and it is not an attempt.
-- **Resident lines:** one pool per ending: the eight after Remember Them, the three of lore §34.11 after the Descent, all eleven after both (still one line a session). The ordinary lines keep their own triggers, which is how the pools rotate.
-- **Great Beasts shelf:** The Unlit appears once Stage 3 has been reached (`unlitMet`), with stats, weaknesses, resistances, abilities, "What it was" and its notebook line.
-- **Tests:** 6 new unit tests (`tests/descent/shelves.test.ts`), 3 Playwright (`descent-shelves.spec.ts`: Roll mark, Library replay with logs, Unlit entry). New polish screen `roll-marks` (fixture `v14-played:marks`: lamp, Rising Vigil level 2 and Descent marks together); tap-size, text-size and contrast sweeps pass for it and the earlier Descent screens. `npm run check` green (3,716 tests, 88 s). Golden fights replay; `rulesVersion` 5; no old test edited.
-- **Readings to confirm:** (1) the Library entry has no blurb; (2) the Unlit entry reuses the notes already written in `unlit.ts` (TD.3); (3) the shelf shows the Unlit even if the Events card has not opened.
-- **Owner task now (plan):** look at the Descent sheet, playback and strings on the preview and say yes, or what to change.
-
-## 2026-10-28 — v1.4 TD.8a: the endgame roster builder
-- **Scope reading:** the plan's TD.8a is the roster builder (`sim/descent-roster.ts`); the probe itself is TD.8b. I built the former only.
-- **Built:** `buildEndgameRoster(state, profile)`. Both profiles open the gate and take the hold to Bastion (same steps as `debug.descentWin`). *Maxed* calls the core `prepareEndgameRoster`, the same function as the debug button, so they cannot drift. *Minimal* sets all 16 species to exactly Studied (none Mastered) and leaves hunters, skills, Orders and relics as the run left them.
-- **Tests (10, `sim/descent-roster.test.ts`):** both profiles deterministic, idempotent, valid after a save round-trip, able to start a Descent; minimal and maxed match their specs (14 hunters at Master Wright, 5 stars, 5 talents, 36 properties, 4 skills x 10 levels = 40, 4 Orders x 4 chapters = 16, 6 + 6 relics).
-- **Notes:** the "12 relics" are the 6 Hold relics plus the 6 Delve relics, and "40 skills" is 4 skills at level 10. Minimal gets its Act VI stand from the real stand code, so some hunters level a little; chapters read are 0 only on a state that had none (new game). No policy issues `descent.start`; no report changes.
-- **No old test edited, no constant, target or fixture touched. `rulesVersion` 5.**
-
-## 2026-10-28 — v1.4 TD.8b: the Descent probe and calibration command
-- **Probe:** `sim/descent-probe.ts`. In the Vigilant's run, at its first Rising Vigil stand (gate open, Bastion), a copy of the hold fights the preview's 100 practice runs (same dice for every roster and value) for five rosters: minimal gate-open, maxed, each with the learned bonus zeroed, and the Hamlet starter party. Values are set on the fight's input, never on the constants. Reported only (a line in the report); no row yet.
-- **`npm run sim:descent`** (`-- --tiers "5,6,7;7,8,9" --health 4500,9000 --out f.md`): 4 tier sets x 5 Health values on the 5 Monday seeds, 122 s. Table committed: `docs/flesh-out/v1.4/descent-calibration.md`.
-- **Checks here:** `npm run check` green (3,732 tests). Vigil shard 105 s (limit 240 s). Full `sim:check` 524 s: 58 of 58 rows pass, **192 of 192 moments same** as the v1.3 baseline. No old test, target, fixture or constant touched; `rulesVersion` 5.
-- **What the table shows (for Q59):** the cliff is narrow. At tiers 5/6/7 the maxed roster wins 100% up to Unlit Health 7500; at 7/8/9 with 4500 it wins 82% (median 6 downed, zeroed bonus 0%, Hamlet 0%). The minimal gate-open roster almost never wins once tiers pass 5/6/7 (43% at 5/6/7 with 4500, 0% beyond).
-- **Two things to settle in Q59:** (1) Row A says "gate-open full roster", but minimal and maxed differ by a wide margin; which one the 50–85% band judges is the owner's call. (2) Losses at tiers 5 to 6 end with 0 hunters downed (time runs out on The Unlit), so "2 to 8 downed" only holds in the harder cells, where wins also drop.
-- **Left:** Q59 to the owner; TD.9 sets the constants and rows after the answer.
-
-## 2026-10-28 — v1.4 TD.9: calibrated constants and rows A and B
-- **Owner said:** Row A judges the maxed roster, and approved stage tiers [7, 8, 9] with Unlit base Health 4,500 and both rows (Q59 (a), D577, Decided).
-- **Commit 1 (constants):** `balance.ts`, GDD §7.14 (placeholder notes gone), `unlit.ts` comment, D577. No placeholder constant remains. The recorded Descents in `v14-played.json` keep their own frozen tiers [5, 6, 7] and replay unchanged, so the fixture was not regenerated. No old test needed an edit.
-- **Commit 2 (rows):** `descent-victory` (maxed roster wins 50–85%, median 2–8 hunters downed) and `descent-learned-matters` (at least 25 points over the zeroed bonus; Hamlet loses in Stage 1 on every seed) in `sim/targets.ts`, judged in `sim/checks/v14.ts`; `CURRENT_MILESTONE` is `v1.4`. I read "2 to 8" as inclusive (the question text said "strictly between"; the measured median is 6 either way).
-- **Measured (full `sim:check`, 466 s):** 60 of 60 rows pass (58 old + 2 new); 192 of 192 moments same as the v1.3 baseline. Row A: median 81% wins (seeds 80–88%; one seed is above 85%, the median is what is judged), median 6 downed. Row B: 81 points over the zeroed bonus; Hamlet clears no stage. `npm run check` green.
-- **Left:** `sim:accept` only at milestone end. TD.10 and TD.11 next, after your look at the Descent screens.
-
-## 2026-10-28 — v1.4 TD.10: budgets, benchmarks, size and the old-test list
-- **Bench (this container, 4x throttle):** Descent preview (100 practice runs, 14 hunters, the calibrated values) **327 ms** against 1,500; v13 to v14 migration (played save) **7.7 ms** against 100. `bench.spec.ts` and `bench-page.ts` gain the migration row; the Descent bench input now uses tiers [7, 8, 9].
-- **A bench row fails here, and also on `main`:** odds 237 to 258 ms against a 240 ms limit, Suggest up to 963 ms. On a clean `main` checkout the same test fails the same way (odds 249 ms), so this is the slower container, not the branch (D557). CI on its faster runner is the judge.
-- **Size (SF.9 method, sum of per-file gzip -9 of `dist`):** **457,443 bytes**; 156,957 under 614,400.
-- **Save growth:** new test `tests/descent/save-growth.test.ts`: both records full, 14 hunters, within 14 KB (D576). Passes.
-- **`npm run check`: 131 s here (tests 81 s), over the 120 s fail line.** The TD.7c commit measured 117 s on the same container today (it was 88 s earlier in the day), so most of it is the container; the branch adds about 14 s (3,742 tests against 3,716). Needs your call, see below.
-- **Old-test edits since `main` (all within D566 or reported earlier; nothing loosened):** schema 13 to 14 and "newer" 14 to 15 (`v12-migration`, `v13-migration`); `descent` swapped for an invalid ending name `banner` (`choose`, `v11-migration`; D566 (3)); `v13-owner`, `v14`, `v14-played` added to `opening.test.ts` (D566 (2)); v14 assets skipped in `contact-sheet.test.ts` (D566 (6)); `names.ts` (D566 (6)); `polish-screens.ts` (D566 (4)); `vigil-text.test.ts` ends its section cut at the next heading (not on the list; you approved it at TD.1).
+Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
 ## 2026-10-28 — v1.4 TD.11: wrap-up and the pull request
 - **Open the real saves (new `descent-open.spec.ts`, 3 tests):** your v13 save and the same save after the v14 migration open with the gate closed (no Descent button anywhere), then with Act VI finished and the gate open the card offers The Descent and the sheet opens; the played v14 save opens and shows its Descent. No page errors. All pass.
@@ -171,3 +25,187 @@ Earlier entries are in [`docs/archive/progress-2026-10-11-to-15.md`](archive/pro
 - **`sim:accept`** (470 s here): the baseline moves to v1.4; the only differences are the milestone and the two new rows. Plan `Status: complete`, D578.
 - **Left:** the owner tags `v1.4.0` by hand after the merge.
 - **A CI flake, fixed:** on the last push, `descent-playback.spec.ts` (full win, loss) failed in one CI run and passed in the other run of the same commit. Cause: the sound player merges cues asked for within 150 ms (D521), and a fast runner skips stages quicker than a player. The test now waits 250 ms after each Skip; nothing else changed, and 9 of 9 runs pass here.
+
+## 2026-10-28 — v1.5 TB.1: docs commit (flesh-out applied)
+- **Preconditions all held:** tag `v1.4.0` is the v1.4 merge; `main` contains it; baseline last moved at D578; CI on `main` green; e2e shards 1:42 to 5:05 (each under 8 min); sim runs about 3.5 min. `milestone/v1.5` made from `main` and pushed.
+- **Owner gate:** Q61 yes, Q62 yes, D595 yes. D579–D595 added to `decisions.md` already `Decided` (no old row touched). Q61 and Q62 answers recorded in `questions.md`; Q59 closed.
+- **Applied:** OUT-2a (22 edits) to the GDD, OUT-9 (12) to the technical design, OUT-5, OUT-4a A–F to the plan; every Find matched exactly once. Nine `breach.*` keys added to `balance.ts` (lanes, frontRows locked; the rest tunable placeholders).
+- **CLAUDE.md:** replaced "In v1.1, `state.layout` is decorative only: … (`rulesVersion` stays 5)." with the four v1.5 rules; also edited "beyond the table in GDD §9.21" (now §9.21 and §9.25), "(`rulesVersion` stays 5, save schema stays 12)" (deleted) and "(`rulesVersion` stays 5, D561)" (now "the Descent's fight path is isolated, D561").
+- **Housekeeping:** TD.1 ticked; GDD §6.2 Descent rows no longer say "Proposed:" (D577); §6.5 download row gains v1.4's 457,443 bytes; §0.7 gains the v1.4 actual (18 entries) and the v1.5 sizing note.
+- **Sweep:** `| Proposed |` from D519 up found only D529, D535, D571, D573, D575, all covered by D579. No other.
+- **Names:** searched the web 2026-10-28; no collision (lanes, cover, reach, stacked, tactician, The Breach are generic or plan-only). Dated in `names.ts`.
+- **One extra old-test edit (you approved):** `descent-text.test.ts` now stops reading the GDD at §9.25 instead of §10, so the Breach strings are not read as Descent strings. Same checks, nothing loosened.
+- **Numbers:** `npm run check` green, 88.5 s here. This container had no `node_modules` at first; `npm ci` fixed the format check (a stale prettier, not a repo problem).
+
+## 2026-10-28 — v1.5 TB.2: save schema 15, the migration and your real v14 save
+- **Your save:** `v14-owner.json` is your real v1.4 save (schema 14, cycle 2, Bastion, 40 placed pieces). `v15.json` is that save migrated, not played (`scripts/make-v15-fixtures.ts`). Your layout comes through unchanged.
+- **Schema 14 → 15:** the number moves and nothing else. No old stand gets a lane table, so every recorded stand still replays under the version 5 rules. `rulesVersion` stays 5 until TB.5.
+- **Lane table:** the stand record can now hold an optional table (`lanes`). A bad table refuses the load; an unknown field is dropped with a warning. The shape sizes equal the locked lane and front-row counts (a test keeps them equal).
+- **Tests (first):** new `v15-migration.test.ts`: all fixtures load, round-trip, keep layout and fights; 27 malformed-table cases refuse; a 3-tower table is under 0.4 KB; newer-version guard refuses 16; step under 100 ms.
+- **Old-test edits (D593):** (a) schema numbers 14 → 15 and "newer" 15 → 16 in `v12-`, `v13-` and `v14-migration.test.ts` (numbers only); (b) `v14-owner.json` and `v15.json` added to the fixture list in `opening.test.ts` (`saves.test.ts` picks fixtures up by itself). Nothing loosened.
+- **Numbers:** `npm run check` green, 93.2 s here (warn at 90, fail at 120). Size 452,544 bytes (per-file gzip -9 of `dist`, my own sum; v1.4 measured 457,443 by its own run, so the two may differ a little in method).
+- **Deferred:** `v15-played.json` (TB.10); the benchmark row for the migration (TB.14).
+
+## 2026-10-28 — v1.5 TB.3: the lane, cover, depth and volley maths
+- **Built, not yet in any fight:** new `src/core/systems/breach.ts`: the lane of a wave, the counted pieces (active walls and towers in rows 0 to 2), the lane table a stand will freeze, cover (own 50% plus 25% a neighbour, ruined edge counts), depth, the wall cut, the shared volley, each with its breakdown from the same function, and the strip's view. The wave number is counted from 1, as the species picks count.
+- **Strings:** `src/content/breach-text.ts` holds the nine §9.25 breakdown lines, word for word (a test checks them against the GDD). No other string.
+- **Constants:** the nine `breach.*` keys were already in `balance.ts` (TB.1); each is read in one file under `src/core` (a test enforces it). Placeholders stay placeholders until TB.13.
+- **One detail for you to know:** the lint allows only 0, 1, 2 and 100 as plain numbers there, so the volley is worked with reach and scale in hundredths, not quarters. It gives exactly the same whole numbers as the quarters order in the design (both sides scale by 25).
+- **Tests first:** 60-odd new tests: worked lane lists, species picks unchanged, every one of the 256 column patterns for cover, 2% per level with full cover, worked volley tables (1, 2, 3 towers, floor, scale and reach changes, Tray tower dilutes nothing, an upgrade never lowers a lane), the 25 breakdown lines, the view and its memo. Planted reads of the layout from stand, combat, economy, contracts and advance code fail; nothing in `src/ui` may import a formula.
+- **Old-test edit (D593 c):** `systems/breach.ts` added to the allowed readers in `tests/layout/layout.test.ts`. A stale comment in `layout.ts` was updated.
+- **Numbers:** `npm run check` green, 94.8 s here (warn at 90, fail at 120; CI is the judge). Every golden fight and recorded stand still replays (they are in `check`).
+- **Not done:** nothing is wired into combat or the wave list (TB.4, TB.5); no UI.
+
+## 2026-10-28 — v1.5 TB.4: lanes in the wave list
+- **Built:** a new core function (`standWaves` in `breach.ts`) gives each wave of the stand list its lane from `laneOf` of the stand seed; below Bastion the lane is empty. The stand screen's wave list now reads it and shows "Lane {n}" (1 to 8) after the tier, "?" species too. Species and tiers come from the same list as before.
+- **Not touched:** the layout is never read (the lane depends on the seed alone); no fight, preview or save changes; no new strings (the tag is the §9.25 line already in `breach-text.ts`).
+- **Tests first:** new `tests/breach/wave-lanes.test.ts` (same lanes on every call, unchanged after any layout change, species and tiers equal to v1.4's list for four seeds, no lane at Hamlet, Keep or Citadel). New `tests/e2e/wave-lanes.spec.ts` (phone): the first 12 waves each show "Lane 1" to "Lane 8" including a "?" wave; on a Keep save no lane text appears. Both pass here in chromium (the container's browser needed a throwaway config; nothing committed for that).
+- **Weak spot:** the "before Bastion" browser check does not open the stand screen (it opens only at Bastion); the unit test covers the gating.
+- **Old-test edits:** none. The layout lint tests stay green.
+- **Numbers:** `npm run check` green, 80 s here (warn at 90, fail at 120; CI is the judge).
+- **Not done:** TB.5 onward.
+
+## 2026-10-28 — v1.5 TB.5: the stand fight reads the lane table; rules version 6
+- **Built:** the stand fight takes the optional lane table. Absent: the old path, unchanged. Present: each wave's lane (from the stand seed) gives its wall cut (in the taken% bucket, under the 75% cap) and its volley (replacing the flat one). Each wave of such a stand also carries the lane's Walls and volley breakdowns (cover and depth lines from the same function). A record with a table rebuilds with it; one without replays as version 5. Nothing makes a table yet (Start does at TB.6), so no real stand changes.
+- **Rules version is now 6.** Replay was already by result, so records stamped 5 or 6 replay either way.
+- **Tests first** (`tests/stand/lanes-fight.test.ts`): the two equality tests with version 5, an empty table differs as the rules say, per-wave lane numbers, breakdown lines, rebuild from a record, the 75% cap counted on a deep-wall fixture. New `layout-isolation.test.ts`: the same five days of contracts with the layout cleared or not give identical states. Every golden fight and recorded stand still replay line for line.
+- **Old-test edits (you approved, number and wording only):** the golden test's version line 5 → 6 (Q62), and the same number in `events`, `use-skills`, the Descent start test, and the v9, v11, v12, v13, v14, v15 migration tests (titles that said "stays 5" now say 6).
+- **Numbers:** `npm run check` green, 82 s here (warn 90, fail 120).
+- **Weak spots:** the cap test works the sums by hand rather than running a full fight under the cap; the isolation test covers contracts and time, while events, Delves, bosses, hunts and the Descent are kept off the layout by the lint.
+- **Not done:** TB.6 onward. Size was not measured (due at TB.6).
+
+## 2026-10-28 — v1.5 TB.6: Start freezes the lane table
+- **Built:** from Bastion, Start saves the lane table on the stand's record in the step that fixes its other inputs (that makes it a version 6 stand). The layout is read only by `breach.ts`, called from the stand input builder, so `stand.ts` never reads it and no split was needed. A stand made below Bastion (the v0.4 arrival) saves none and takes the version 5 path. The preview uses the table the layout gives now.
+- **Log header:** a version 6 wave log opens with "Lane {n} · cover {p}%" (the GDD §9.25 string, added to `breach-text.ts`; checked against the GDD in the new tests). Older stands show none.
+- **Test-only start option:** a start flag that freezes no table. It is refused unless a test switches it on (no screen does) and it marks the save as debug-used.
+- **Tests first** (`tests/stand/freeze.test.ts`, 9): the saved table equals the layout's; the layout is identical before and after Start; a second Start is refused and the first table stays; the preview changes nothing; below Bastion no table; logs rebuild identical after the layout is cleared and after `balance.breach` is changed; a record without a table rebuilds as version 5; the header; the option is refused unless switched on. All golden fights and recorded stands still replay line for line.
+- **Old-test edit (D593 f):** one test, `stand-story.test.ts` "a Triumphant stand records the steps" (it needs exactly 20 waves held, which a stand with no walls placed no longer reaches), is pinned to the version 5 path with its assertions unchanged. Its version 6 counterpart is new: a table stand records the steps its band brought. Only this one test changed result; the rest of the suite passed as it was.
+- **Numbers:** `npm run check` green, 80 s here (warn 90, fail 120). Size 458,266 bytes (614,400 row; 452,544 at TB.2).
+- **Heads-up:** simulator stands now fight version 6 with whatever layout the policy has, so `sim:check` will differ from the v1.4 baseline until TB.11a re-records it. I did not run the full `sim:check`; the fast set in `npm run check` passes.
+- **Not done:** TB.7a onward; no browser test for the log header line yet.
+
+## 2026-10-28 — v1.5 TB.7a: the preview and the worker carry the lanes
+- **Mostly already true from TB.6:** the preview request is built by the same function as the real stand's input, so it carries the lane table the layout gives now and the real stand's seed. Practice stands draw species and dice from their own seeds and, because the lane of wave n comes from the real seed, take the real stand's lanes. No worker or protocol change was needed: it computes each lane on demand.
+- **New here:** (1) the Last Stand preview request now drops stale answers (an older request that finishes after a newer one gets nothing back, as the Descent preview does); (2) the stand screen's refresh key includes the lane table, read from the core's request, so moving a piece works the preview out again.
+- **Tests first** (`tests/stand/preview-lanes.test.ts`, 6): the request carries the table and seed and no layout; with the Auto-arrange layout the preview equals 100 practice stands run by hand (median, 10th and 90th); lifting the defenses changes the preview; with every defense in the Tray the table counts nothing and the preview is no better; same seeds give the same preview; a stale request gets null.
+- **Old-test edits:** none.
+- **Timing:** unthrottled, 100 practice stands of six level-8-or-so hunters with full defenses take 252 ms with a table and 172 ms without (the stands last longer). I did not change the bench page (its input has no table, and editing it is not on the pre-approved list), so CI's throttled bench still measures the old path; the 4× throttle puts this about at the 1 s budget, inside the 2× ceiling the bench enforces.
+- **Numbers:** `npm run check` green, 83 s here (warn 90, fail 120); no size measurement due (TB.8a).
+- **Not done:** the bench measuring the table path (asks for your yes to extend `bench-page.ts`); no browser test for the preview refreshing on a piece move (the Arrange Hold sheet and the strip come in TB.8a/8b).
+
+## 2026-10-28 — v1.5 TB.7b: Suggest layout (and the benchmark table you approved)
+- **Built:** the one fixed rule, in core: it reads the lanes of the first `breach.suggestWaves` waves, counts waves per lane, and adds the defenses one at a time to free front-row tiles (no other building; ties: smaller row, then column), scoring cover with depth plus tower reach. A tower that would only lower the score waits for the end. It returns the list of moves and the scores, and changes nothing. The placement step is a small pure file (`breach-suggest.ts`); `breach.ts` reads the layout and gathers the inputs.
+- **Auto-arrange comparison, one detail to know:** it compares with Auto-arrange's defense positions that stand on tiles Suggest may use, and returns those if higher. Auto-arrange also clears other buildings off the front rows, which Suggest never does, so a full Auto-arrange can still beat Suggest on a crowded front row. Where nothing is in the way (an empty or canonical hold, the two named fixtures), it is at least Auto-arrange's whole score, tested.
+- **Tests first** (`tests/breach/suggest.test.ts`, 39): deterministic, no state change, only walls and towers, free front-row tiles, none twice, never past what is owned, on the `even` and `west-heavy` lists in four holds (empty, canonical, crowded, low levels); two hand-worked cases; the score equals an independent rebuild from the layout; the quick cover helper equals the breakdown builder on all 256 patterns. One worked expectation of mine was wrong and I corrected it from the sums (towers also give cover, so the third tower sits beside the stack).
+- **Speed:** 0.6 ms unthrottled (budget 20 ms throttled).
+- **Benchmark table (you said yes):** `bench-page.ts` now gives the stand preview a three-tower lane table. Throttled here: Last Stand preview 624 ms (budget 1 s, limit 2 s). The bench test as a whole fails in this container on the row "Suggest with 3 candidates and preparation" (about 594 to 637 ms against a 600 ms limit); it fails the same way on the v1.4 merge commit `69157f7` (637 and 624 ms), so it is this container's speed, not a change of mine. CI is the judge.
+- **Old-test edits:** none beyond the bench page.
+- **Not done:** the button and strip (TB.8a, TB.8b); the `layout.setDefenses` command (end of TB.8b, Q61).
+- **Numbers:** `npm run check` green, 87 s here (warn 90, fail 120; 3,896 tests).
+
+## 2026-10-28 — v1.5 TB.8a: the Lanes strip on Arrange Hold
+- **Built:** from Bastion on, the Arrange Hold sheet shows the Lanes strip above the grid: eight boxes (Lane n, cover %, a dot per upcoming wave of the first 12), two rows of four below 600 px and one row of eight above. A Strip / List switch gives eight text lines. A tap on a lane (box or line) opens its breakdown sheet (Walls line with its cover and stacked lines, then the volley with each tower), and on return the pieces that cover the lane are lit on the grid with a dashed outline and a corner mark, no animation. Hint, help and empty-state lines are in. Nothing appears before Bastion.
+- **Where the numbers come from:** only `laneView`, which now also says whether the strip shows (Bastion) and how many waves it looks at. The screen computes nothing.
+- **Strings:** the strip, list, hint, help and empty-state strings and the forms of the waves list were added to `breach-text.ts` word for word, with a test against the GDD table. TB.9 checks the whole table.
+- **Tests first:** `tests/e2e/lanes-strip.spec.ts` (14, phone): eight boxes with the right text and 12 dots; Clear to tray changes the strip to the empty state with 25% on the two edge lanes; a tap opens "Lane 4" and lights pieces (dashed, corner mark, no animation); the list equals the strip; no strip at Citadel; at 320, 360, 375 and 390 px, at match and Largest text, every control is at least 44 px, two rows of four, no sideways scroll; one row of eight at 900 px. Plus the string test and `lane-view-shown.test.ts`. All pass here in chromium.
+- **Old-test edit (D593 d):** one flow, the Bastion Arrange Hold with the strip, appended to `polish-screens.ts`. Tap-target, contrast, Text size, motion and widths sweeps: 73 of 73 pass here (9.4 min, chromium). No baseline changed.
+- **Numbers:** `npm run check` green, 81 s here (warn 90, fail 120). Size 459,884 bytes (614,400 row; 458,266 at TB.6).
+- **Behaviour to know:** the lit lane is kept in memory so it survives the breakdown sheet closing; each visit from the Hold starts with nothing lit. The existing sheet already dropped a selected piece when another sheet opened over it.
+- **Not done:** the strip on the Last Stand screen, the Arrange Hold button there, Suggest and Use this layout (TB.8b); the Start Tray line and the full string check (TB.9). No contrast check of the lit-piece marks was possible beyond the sweep.
+
+## 2026-10-29 — v1.5 TB.8b: the strip on the Last Stand screen, Suggest layout, Use this layout
+- **Last Stand screen:** the same Lanes strip, read only (a tap opens the numbers-only breakdown; nothing is lit), sits above the party slots, with the Arrange Hold button under it. The party and kit you chose wait while the sheet is open and are back when you return.
+- **Arrange Hold sheet:** the Suggest layout button (from Bastion on, never disabled) shows the suggested spots as outlined tiles with a corner mark and the line "Suggested: about {n} waves (now about {m})." from two practice runs (now, and with the suggested table). It places nothing. The suggestion disappears if the hold changes after it.
+- **Use this layout (Q61 yes):** new command `layout.setDefenses`, atomic: only walls and towers; front-row defenses not in the list go to the Tray; refuses the whole list (nothing changes) if a target is not a free front-row tile, a piece is not an unlocked wall or tower, or a piece or tile is listed twice. Its rules sit in `breach.ts` (the one file that reads the front rows); the command only calls them.
+- **Tests first:** `tests/layout/set-defenses.test.ts` (13) and `tests/e2e/lanes-stand.spec.ts` (12, phone): strip equals the sheet's; party kept; Suggest places nothing and its line matches; a later move hides it; Use applies it in one tap and no other piece moves; 44 px and no sideways scroll at 320/360/375/390, both text sizes.
+- **Old-test edits (D593 d):** one flow (Last Stand with the strip) appended to `polish-screens.ts`. D593 (e): no test listed every command, so none changed. Tap, contrast, motion, Text size, widths sweeps: 73 of 73; 38 neighbouring e2e pass. No baseline changed.
+- **Numbers:** `npm run check` green but 92 s here (81 at TB.8a; warn 90, fail 120; CI is the judge). Size **467,137 bytes** (459,884 at TB.8a; row 614,400).
+- **Not done / for TB.9:** the Start Tray line and the full string check. The Suggest line is left out when there is no hunter to preview with. One-autosave of Use this layout rests on its being one command (not separately measured).
+
+## 2026-10-29 — v1.5 TB.9: the Start Tray line, the log header and the string check
+- **Start confirmation:** if any unlocked wall or tower is in the Tray it adds "{n} defenses are in the Tray and give nothing." (or the "1 defense" form). With none it says nothing extra. It places nothing. The count comes from the core's lane view (new field), not from the screen.
+- **Wave-log header:** it was already built at TB.5 (shown only when a wave carries a lane); this task added the browser proof. A stand started at Bastion shows "Lane {n} · cover {p}%" on its wave log. An older log has none: proved in core (`freeze`, `lanes-fight` tests) not in the browser, since no fixture offers an old stand log at Bastion; TB.10's v15 fixtures could add it.
+- **String check (new `breach-text-all.test.ts`, 3):** the GDD table has 23 rows and 29 strings; every string in the code is in the table; every table string is in the code; nothing else.
+- **Browser:** 2 new tests in `lanes-stand.spec.ts` (Tray line with defenses and with none, nothing placed; the log header). Passed. The Last Stand strip passed the five sweeps at TB.8b (73 of 73); I did not re-run them for the one added line.
+- **Old-test edits:** none.
+- **Numbers:** `npm run check` green, 89 s here (warn 90, fail 120). Size 467,258 bytes (row 614,400).
+- **Owner task:** read the Breach strings as built (GDD §9.25 table) and say yes.
+- **Owner said yes (2026-10-29)** to the Breach strings as built; the TB.9 owner task is closed.
+
+## 2026-10-29 — v1.5 TB.10: the debug command and the played save
+- **`debug.breach.freeze`:** a core command through `apply`; it marks `debugUsed` and changes nothing else. The debug panel gets a "Show the lane table" button that runs it and prints the table a stand started now would freeze (a core function builds the text; below Bastion it says "No lanes before Bastion."). There is no command that sets lanes (a test reads the command list). Debug commands are reached only from the panel. The button label and the line are debug-panel text, not game strings; say if you want them changed.
+- **`v15-played.json`** (new `scripts/make-v15-played-fixture.ts`, real commands only, from `v15.json`): four stands from Bastion with a spread of holds: canonical; a few defenses placed on the front row with everything else in the Tray (`layout.place`); canonical with a wall and a tower in the Tray (`layout.unplace`); the suggestion applied (`layout.setDefenses`). Then the freeze read once. It also holds your older stand, which has no table.
+- **Tests first:** `debug-freeze.test.ts` (4), `v15-played.test.ts` (3: the four tables differ, the Tray stand counts fewer pieces, every stand log rebuilds line for line with its header only when it has a table). This also proves an old stand's log has no header (the TB.9 gap, in core). The save round-trip runs it too.
+- **Old-test edits (D593 b, e):** `v15-played.json` added to the Orders-opening list; `debug.breach.freeze` added to the debug "sets debugUsed" list. Nothing loosened.
+- **Numbers:** `npm run check` green, 93 s here (warn 90, fail 120; 81 at TB.8a; CI is the judge). No size measurement due.
+
+## 2026-10-29 — v1.5 TB.11a (not finished): players auto-arrange; one old row fails; waiting on you
+- **Built:** every simulated player now calls Auto-arrange at every Bastion check-in before the stand-timing preview, and again right before Start (one helper in `breach.ts`; no other layout command). The report now says how many moments equal the baseline and lists each that moved (`baselineShift`, 3 tests).
+- **Full `sim:check` (369 s here), baseline NOT re-recorded:** **189 of 192 moments are the same.** Moved, all stand timings and all earlier: light/sat best-last-stand 108.0 h → 99.5 h; delver/mon best-last-stand 99.0 h → 96.0 h; orderer/mon first-long-night 101.5 h → 99.0 h (the stand-timing preview now sees the lanes, so a stand is chosen at an earlier check-in). Every other moment before a first stand is untouched.
+- **One old row fails: `vigil-embers-level`** (Embers at Rising Vigil levels 1 to 3 within 5% of level 0): ratios 0.947, 0.830, 0.930, largest gap 17% (the stand's Threat). Every other row passes. `sim:accept` refuses while a row fails, so the baseline stays at v1.4.
+- **A tunable fixes it** (probe, scratch only): `vigil.strengthPerLevel` 0.32 → 0.28 and `vigil.embersPerLevel` 0.22 → 0.26 give ratios 0.99, 1.00, 0.99. Waves lost per level stay 1, 2, 3 (same as now). But 0.32 is a value you approved (Q57, D554, GDD §7.13), so I stopped and asked you (plan box step 12) instead of changing it.
+- **Old-test edits:** none. **Numbers:** `npm run check` green, 94 s here (warn 90, fail 120; CI is the judge).
+- **CI:** until this row is settled, the `sim` job on this branch fails on that one row.
+
+## 2026-10-29 — v1.5 TB.11a (finished): Rising Vigil retuned, baseline re-recorded
+- **You said yes to "Retune now".** `vigil.strengthPerLevel` 0.32 → 0.28 and `vigil.embersPerLevel` 0.22 → 0.26 (D596, `Proposed`; GDD §7.13 text and table updated). Waves lost per level stay 1, 2, 3.
+- **Full `sim:check` (377 s here): every row passes**, including `vigil-embers-level`. Other CI jobs not run here; the full run is far under their 5-minute budget in CI terms.
+- **Baseline re-recorded once (`sim:accept`):** rules version 5 → 6; the only changes are the three moments that moved: light/sat best-last-stand 108.0 → 99.5 h, delver/mon best-last-stand 99.0 → 96.0 h, orderer/mon first-long-night 101.5 → 99.0 h. **189 of 192 moments are the same as v1.4.** No stand's own moment moved later; all earlier moments are untouched.
+- **Old-test edits:** none. **Numbers:** `npm run check` green but 95 s here (81 at TB.8a; warn 90, fail 120; CI is the judge; I did not find what grew).
+- **Watch:** the Vigil values may need one more nudge at TB.13 when the Breach constants stop being placeholders.
+
+## 2026-10-29 — v1.5 TB.11b: the Tactician, the probe and the `breach` shard
+- **The Tactician** (id `tactician`, never shown; Monday seeds only; plays like Standard for 3 cycles). At the same moments as Auto-arrange it lifts every defense it owns to the Tray, then places them in the order Suggest layout lists. All of it goes through the one helper in `breach.ts` (no policy file names a layout command; a test reads them). Every other player still sends only Auto-arrange.
+- **The `breach` shard** (5 runs) is added to `sim.yml`. It plays in **43 s here** (limit 240 s, CI budget 300 s). A single 3-cycle run takes about 9 s (limit 60 s).
+- **The probe** takes a copy at the Tactician's first stand at Bastion and fights the preview's 100 practice stands for Auto-arrange, the Tactician's layout, the bad layout of D589 and the same state under the version 5 rules. Reported only; rows A to C are not added (TB.13). With the placeholder constants the four waves-held numbers are still about the same; that is what TB.12 will show.
+- **Small difference from the plan:** the Tactician's moves live in `src/core/policies` and `breach.ts` (where Standard's already do), not in a new `sim/policies` folder; the probe is `sim/breach-probe.ts`.
+- **Old-test edit (you approved):** `shards.test.ts` lists `breach` among the single-purpose shards left out of the fair-share check. Nothing loosened.
+- **Baseline:** not touched. The new `tactician/mon` group shows as "new" in the report and is ignored by the 192-moment count.
+- **Numbers:** `npm run check` green, 130 s here. The machine was slower today: the same check on the tip without my changes took 118 s and failed one unrelated 5-second test timeout (`contracts/flow`). My new test file adds about 12 s; its full 3-cycle run is left to the shard so the check stays lean. CI is the judge.
+- **Not done on purpose:** rows A to C (TB.13, after you approve); the calibration command and report (TB.12).
+
+## 2026-10-29 — v1.5 TB.12: the calibration command and report (waiting on Q63)
+- **D596 is Decided** (owner said so; new row D597, the old row untouched).
+- **`npm run sim:breach`** (new, not in `npm run check`; 9 min here for the full table, `--quick` skips the one-at-a-time sweeps) writes `docs/flesh-out/v1.5/breach-calibration.md`: the Tactician's first stand on the 5 Monday seeds, 100 practice stands per setup, at Walls/Watchtower 1/1, 8/8 and 15/15, for Auto-arrange, the Tactician, the bad layout and today's rules; bands, relics, how often the 75% cap binds (0.0%), the low-Walls line, one tower against three, economy buildings moved off the front, the third stand, and every tunable one at a time (means as well as medians).
+- **Result:** the whole defense is worth about 2 waves at the first stand. Row A passes. **Rows B and C cannot pass with any Breach tunable** (best layout never beats Auto-arrange by 1; the bad layout loses at most 1.5, not 2). Options in Q63; I recommend changing B to "at least as many waves as Auto-arrange" and C to "at least 1 fewer at the max point".
+- **Proposed value:** `breach.volleyScale` 1 → 3 only (restores today's average volley; a 3× move, so TB.13 adds a Proposed row). Full `sim:check` with it (495 s here): all 60 rows pass, 191 of 192 moments the same; the Orderer's first Long Night moves 99.0 h → 101.5 h. The Rising Vigil rows pass. `balance.ts` was put back; nothing was changed.
+- **Small core change:** the Tactician hook in `play.ts` now also reports each stand with its number (`onBreachStand`), for the third-stand rows; the old hook is unchanged.
+- **Old-test edits:** none. **Moments before a first version 6 stand:** unchanged. **`breach` shard:** unchanged (43 s).
+- **Numbers:** `npm run check` green, 119 s here (warn 90, fail 120; the machine is slow today, see TB.11b). CI is the judge.
+- **Stopped for you:** read the table and answer Q63. Rows A to C are not in `sim/targets.ts`.
+
+## 2026-10-29 — v1.5 TB.13: constants set, v6 goldens, rows A to C
+- **Owner answers (Q63, D598):** rows B and C reworded (option a) and `volleyScale` 3. B: the Tactician holds at least as many waves as Auto-arrange. C: at Walls 15 and Watchtower 15 the bad layout holds at least 1 fewer. A is unchanged.
+- **Commit 1:** `balance.ts` has no placeholders left (only `volleyScale` 1 → 3 changed); GDD §7.15, §5.9.11, §6.2 and technical design updated; D598 (Decided); Q63 closed.
+- **Commit 2:** `tests/golden/stands-v6/`: five stands (Auto-arrange, Suggest, bad layout, no towers, edges-only) from your migrated v14 save, 6 to 20 waves each, replayed line for line, and unchanged when `breach.*` is tuned. Made by `scripts/make-stands-v6-goldens.ts`. They are additions; nothing existing was rewritten.
+- **Commit 3:** rows A to C in `sim/targets.ts`, checks in `sim/checks/v015.ts` (+ tests), the probe also measures the max-level point for row C, `CURRENT_MILESTONE` v1.5. Full `sim:check` (461 s here): **63 of 63 rows pass** (60 old + 3), 191 of 192 moments the same as the baseline; the Orderer's first Long Night moves 99.0 h → 101.5 h (from `volleyScale` 3). The baseline is not re-recorded yet (milestone end).
+- **Old-test edits:** one, you approved: in `breach.test.ts`, "does not count a tower in the Tray" now builds its comparison table with the live `volleyScale` instead of the old 1. Nothing loosened.
+- **Numbers:** `npm run check` green, 118 s here (warn 90, fail 120; slow machine, CI is the judge).
+- **Owner task:** say yes to each of the three commits.
+
+## 2026-10-29 — v1.5 TB.14: budgets, sweeps, size, the old-test list
+- **Owner said yes to all three TB.13 commits.**
+- **Bench rows added** (`bench.spec.ts`, `bench-page.ts`; 4× slowed CPU, best of three): Lanes strip render **1.2 ms** (budget 16), Suggest layout **3.0 ms** (budget 20), v14 → v15 migration of a played save **16.7 ms** (budget 100). The lane table on one stand record is under 400 bytes (unit test since TB.2). Last Stand preview with lanes 753 ms (budget 1 s).
+- **Bench in this container:** the whole file still fails at an old row ("Suggest", 836 ms against 600): contract odds and Suggest are unchanged code, and the hand-off says it fails the same way on `69157f7`; CI is the judge. The three new rows print well inside budget.
+- **Sweeps (local chromium, throwaway config, 10.8 min):** tap targets, widths (320 to 1300), Text sizes including Largest at 320, motion and contrast, with the Arrange Hold and Last Stand strip flows already in `polish-screens.ts`: **78 of 78 pass**; no baseline changed.
+- **Size:** production build **467,553 bytes** gzipped (row 614,400; 146,847 under; 467,258 at TB.9).
+- **Old-test list (D593):** checked against `git diff` from `69157f7`: every modified existing test file is listed in an earlier entry (schema numbers, fixtures, lint reader, polish flows, version line Q62, `stand-story` pin, `shards.test.ts`, `breach.test.ts`). Nothing loosened. The only edits this task: the bench files.
+- **Q64:** the four §6.5 rows, with these numbers, for you to approve (recommend yes as written). Rows stay "proposed" until you answer.
+- **Numbers:** `npm run check` green, 112 s here (warn 90, fail 120; slow machine; CI is the judge).
+- **Q64 answered yes** (2026-10-29, D599): the four §6.5 rows are final; "proposed" removed in GDD §6.5.
+
+## 2026-10-29 — v1.5 TB.15: wrap-up and the pull request
+- **`npm run check`:** green, 254 files, 3,954 tests, 90 s here (CI is the judge).
+- **Full `sim:check` (365 s here):** 63 of 63 rows pass (60 old + A to C); 191 of 192 moments equal the v1.4 baseline; the only mover is the Orderer's first Long Night (99.0 h to 101.5 h). Baseline **not** re-recorded.
+- **e2e, five shards (local chromium):** 1:49, 1:51, 6:33, 3:09, 2:03 (slowest under 8 min); 199 tests; all pass but the WebKit determinism run (no WebKit here; the chromium run passes; CI judges).
+- **New test:** `breach-open.spec.ts` (3 tests): the production build opens `v14-owner`, `v15` and `v15-played`, the Lanes strip shows eight lanes, no page errors. Pass. No old test edited.
+- **Offline:** the offline-reload smoke tests pass; the `sw.js` duplicate-hash test is in `npm run check` (green).
+- **Size:** 464,227 bytes gzipped by a quick sum of `dist` (467,553 by the earlier count; row 614,400).
+- **Plan:** TB.15 ticked; section 0.7 gets the v1.5 actual (19 entries against 18 to 22); status "in progress, waiting for the playtest".
+- **Waiting on you:** the iPhone playtest, then "playtest passed"; then `sim:accept`, merge, tag.
+
+## 2026-10-29 — v1.5 milestone end
+- **The owner said the playtest passed.**
+- **`sim:accept`** (373 s here): the baseline moves to v1.5; it adds the Tactician rows and the Orderer's first Long Night (101.5 h).
+- **Left:** the owner exports their save, then the merge; the owner tags `v1.5.0` by hand.
+

@@ -1,4 +1,5 @@
 import { AGE_IDS, type AgeId } from '../../content/ages';
+import { laneTableFrom } from './validate-stand-lanes';
 import { vigilLevelFrom } from './validate-vigil';
 import { CONSUMABLE_IDS } from '../../content/consumables';
 import { MONSTER_IDS } from '../../content/monsters';
@@ -76,6 +77,7 @@ const stand = (v: unknown, where: string, warnings: string[]): StandRecord => {
     arrival: bool(o.arrival, `${where}.arrival`),
     ...(o.pool === undefined ? {} : { pool: oneOf(o.pool, ['dross'] as const, `${where}.pool`) }),
     ...vigilLevelFrom(o.vigilLevel, `${where}.vigilLevel`),
+    ...(o.lanes === undefined ? {} : { lanes: laneTableFrom(o.lanes, `${where}.lanes`, warnings) }),
     // D183: stands saved before this field existed brought no recorded steps.
     trustSteps:
       o.trustSteps === undefined
