@@ -1,3 +1,4 @@
+import { debugBreachFreeze } from './debug-breach';
 import { debugStartActThree, startActThree } from './act3';
 import { debugStartAct, startActOnLoad } from './act-start';
 import { debugGrantLoot, debugReadyRanks } from './debug-depth';
@@ -265,6 +266,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return debugLayoutClear(state);
     case 'debug.layoutFillBastion':
       return debugLayoutFillBastion(state);
+    case 'debug.breach.freeze':
+      return debugBreachFreeze(state);
     case 'debug.unlockAge':
       return unlockAge(state, cmd.age);
     case 'debug.addArvid':

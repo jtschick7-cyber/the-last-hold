@@ -57,6 +57,7 @@ describe('a save on load opens exactly the Orders it is past', () => {
       'v14-owner.json', // D593 (b): the owner's real v14 save joins the list
       'v14-played.json', // D566 (2): a genuine Descent win, made in TD.4b
       'v14.json', // D566 (2): the owner's v13 save after the v14 migration
+      'v15-played.json', // D593 (b): four stands from Bastion, made in TB.10
       'v15.json', // D593 (b): that save after the v15 migration
     ]);
   });

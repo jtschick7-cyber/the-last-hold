@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import { ORDER_IDS, ORDER_NAMES, type OrderId } from '../../content/orders';
 import { RESOURCE_IDS } from '../../content/resources';
 import type { Command } from '../../core/commands';
+import { describeFreeze } from '../../core/systems/breach';
 import { snapshotOf } from '../../core/systems/hunters';
 import { lastOddsMs, lastSuggestMs, requestOdds, requestSuggest } from '../app/odds-client';
 import { dispatch, game, lastCatchUpMs, setLastExportAge, version } from '../app/runtime';
@@ -179,6 +180,16 @@ export const DebugSheet = () => {
         </button>
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.layoutClear' })}>
           Clear layout
+        </button>
+        <button
+          type="button"
+          class={styles.btn}
+          onClick={() => {
+            const r = dispatch({ type: 'debug.breach.freeze' });
+            setNote(r.ok ? describeFreeze(game()) : r.reason);
+          }}
+        >
+          Show the lane table
         </button>
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.addToken' })}>
           +1 attempt token

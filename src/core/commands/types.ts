@@ -202,7 +202,8 @@ export type Command =
   /** Plan TL.4: layout debug tools (set debugUsed). */
   | { type: 'debug.layoutAutoArrange' }
   | { type: 'debug.layoutClear' }
-  | { type: 'debug.layoutFillBastion' };
+  | { type: 'debug.layoutFillBastion' }
+  | { type: 'debug.breach.freeze' };
 
 export type ApplyResult = { ok: true } | { ok: false; reason: string };
 

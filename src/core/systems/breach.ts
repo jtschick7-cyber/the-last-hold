@@ -458,3 +458,10 @@ export const laneTableAfter = (
     return null;
   return laneTableFor(copy);
 };
+
+/** The debug panel's line for `debug.breach.freeze`: the table a stand started now would freeze. Saves nothing. */
+export const describeFreeze = (state: GameState): string => {
+  if (state.cycle.age !== 'bastion') return 'No lanes before Bastion.';
+  const table = laneTableFor(state);
+  return `Counted pieces per lane ${JSON.stringify(table.pieces)}; towers in columns ${JSON.stringify(table.towerCols)}.`;
+};

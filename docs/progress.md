@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.9 (the Start Tray line, the log header check, the whole-table string check). Before it: TB.8b to TB.1.
-- **Next:** TB.10 (played v15 save fixture; needs TB.6). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
+- **Last task:** TB.10 (the debug command and the played v15 save). Before it: TB.9 to TB.1.
+- **Next:** TB.11a (the simulator's re-record; needs TB.5 and TB.7a). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -131,3 +131,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Numbers:** `npm run check` green, 89 s here (warn 90, fail 120). Size 467,258 bytes (row 614,400).
 - **Owner task:** read the Breach strings as built (GDD §9.25 table) and say yes.
 - **Owner said yes (2026-10-29)** to the Breach strings as built; the TB.9 owner task is closed.
+
+## 2026-10-29 — v1.5 TB.10: the debug command and the played save
+- **`debug.breach.freeze`:** a core command through `apply`; it marks `debugUsed` and changes nothing else. The debug panel gets a "Show the lane table" button that runs it and prints the table a stand started now would freeze (a core function builds the text; below Bastion it says "No lanes before Bastion."). There is no command that sets lanes (a test reads the command list). Debug commands are reached only from the panel. The button label and the line are debug-panel text, not game strings; say if you want them changed.
+- **`v15-played.json`** (new `scripts/make-v15-played-fixture.ts`, real commands only, from `v15.json`): four stands from Bastion with a spread of holds: canonical; a few defenses placed on the front row with everything else in the Tray (`layout.place`); canonical with a wall and a tower in the Tray (`layout.unplace`); the suggestion applied (`layout.setDefenses`). Then the freeze read once. It also holds your older stand, which has no table.
+- **Tests first:** `debug-freeze.test.ts` (4), `v15-played.test.ts` (3: the four tables differ, the Tray stand counts fewer pieces, every stand log rebuilds line for line with its header only when it has a table). This also proves an old stand's log has no header (the TB.9 gap, in core). The save round-trip runs it too.
+- **Old-test edits (D593 b, e):** `v15-played.json` added to the Orders-opening list; `debug.breach.freeze` added to the debug "sets debugUsed" list. Nothing loosened.
+- **Numbers:** `npm run check` green, 93 s here (warn 90, fail 120; 81 at TB.8a; CI is the judge). No size measurement due.

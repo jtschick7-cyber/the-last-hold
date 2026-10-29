@@ -45,6 +45,7 @@ describe('debug commands (technical design §15)', () => {
     { type: 'debug.unlockAge', age: 'hamlet' },
     { type: 'debug.grantLoot' },
     { type: 'debug.readyRanks' },
+    { type: 'debug.breach.freeze' }, // D593 (e)
   ])('$type sets debugUsed', (cmd) => {
     const s = createNewGame('d', T0);
     apply(s, cmd, T0);
