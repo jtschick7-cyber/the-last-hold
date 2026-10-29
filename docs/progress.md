@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.11b (the Tactician, the probe, the `breach` shard). Before it: TB.11a (baseline re-recorded once at rules version 6; Rising Vigil retuned, D596) to TB.1.
-- **Next:** TB.12 (calibration command and report; Q63 opens after it). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
+- **Last task:** TB.12 (calibration command and report; waiting on the owner's Q63). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
+- **Next:** TB.13 (needs Q63: the constants, rows A to C, v6 stand goldens). Rows B and C cannot pass as written; options are in Q63. Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -163,3 +163,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Baseline:** not touched. The new `tactician/mon` group shows as "new" in the report and is ignored by the 192-moment count.
 - **Numbers:** `npm run check` green, 130 s here. The machine was slower today: the same check on the tip without my changes took 118 s and failed one unrelated 5-second test timeout (`contracts/flow`). My new test file adds about 12 s; its full 3-cycle run is left to the shard so the check stays lean. CI is the judge.
 - **Not done on purpose:** rows A to C (TB.13, after you approve); the calibration command and report (TB.12).
+
+## 2026-10-29 — v1.5 TB.12: the calibration command and report (waiting on Q63)
+- **D596 is Decided** (owner said so; new row D597, the old row untouched).
+- **`npm run sim:breach`** (new, not in `npm run check`; 9 min here for the full table, `--quick` skips the one-at-a-time sweeps) writes `docs/flesh-out/v1.5/breach-calibration.md`: the Tactician's first stand on the 5 Monday seeds, 100 practice stands per setup, at Walls/Watchtower 1/1, 8/8 and 15/15, for Auto-arrange, the Tactician, the bad layout and today's rules; bands, relics, how often the 75% cap binds (0.0%), the low-Walls line, one tower against three, economy buildings moved off the front, the third stand, and every tunable one at a time (means as well as medians).
+- **Result:** the whole defense is worth about 2 waves at the first stand. Row A passes. **Rows B and C cannot pass with any Breach tunable** (best layout never beats Auto-arrange by 1; the bad layout loses at most 1.5, not 2). Options in Q63; I recommend changing B to "at least as many waves as Auto-arrange" and C to "at least 1 fewer at the max point".
+- **Proposed value:** `breach.volleyScale` 1 → 3 only (restores today's average volley; a 3× move, so TB.13 adds a Proposed row). Full `sim:check` with it (495 s here): all 60 rows pass, 191 of 192 moments the same; the Orderer's first Long Night moves 99.0 h → 101.5 h. The Rising Vigil rows pass. `balance.ts` was put back; nothing was changed.
+- **Small core change:** the Tactician hook in `play.ts` now also reports each stand with its number (`onBreachStand`), for the third-stand rows; the old hook is unchanged.
+- **Old-test edits:** none. **Moments before a first version 6 stand:** unchanged. **`breach` shard:** unchanged (43 s).
+- **Numbers:** `npm run check` green, 119 s here (warn 90, fail 120; the machine is slow today, see TB.11b). CI is the judge.
+- **Stopped for you:** read the table and answer Q63. Rows A to C are not in `sim/targets.ts`.

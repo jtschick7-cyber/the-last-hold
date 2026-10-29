@@ -77,6 +77,22 @@ export const badLayoutCommands = (state: GameState): Command[] => {
   return [...lift, ...put];
 };
 
+/** A copy of `before` with the hold arranged the way a variant does it (`v5` arranges like Auto-arrange). */
+export const arrangedState = (before: GameState, variant: BreachVariant): GameState => {
+  const copy = structuredClone(before);
+  const cmds: Command[] =
+    variant === 'tactician'
+      ? tacticianCommands(copy)
+      : variant === 'bad'
+        ? badLayoutCommands(copy)
+        : [{ type: 'layout.autoArrange' }];
+  for (const cmd of cmds) {
+    const r = apply(copy, cmd, copy.time);
+    if (!r.ok && variant !== 'bad') throw new Error(`Breach probe command refused: ${r.reason}`);
+  }
+  return copy;
+};
+
 type StandCommand = Extract<Command, { type: 'stand.make' }>;
 
 export const probeBreach = (
@@ -85,6 +101,7 @@ export const probeBreach = (
   samples: number = num('laststand.previewSamples'),
 ): BreachProbe => {
   const prep = stand.prep ?? { oils: {}, potions: {} };
+  const arranged = (variant: BreachVariant): GameState => arrangedState(before, variant);
   const point = (variant: BreachVariant, state: GameState, v5: boolean): BreachPoint => {
     const input = previewInputFor(state, stand.party, prep, samples);
     // The version 5 rules: the same stand input without its lane table.
@@ -101,20 +118,6 @@ export const probeBreach = (
       pieces: table?.pieces ?? [],
       towerCols: table?.towerCols ?? [],
     };
-  };
-  const arranged = (variant: BreachVariant): GameState => {
-    const copy = structuredClone(before);
-    const cmds: Command[] =
-      variant === 'tactician'
-        ? tacticianCommands(copy)
-        : variant === 'bad'
-          ? badLayoutCommands(copy)
-          : [{ type: 'layout.autoArrange' }];
-    for (const cmd of cmds) {
-      const r = apply(copy, cmd, copy.time);
-      if (!r.ok && variant !== 'bad') throw new Error(`Breach probe command refused: ${r.reason}`);
-    }
-    return copy;
   };
   return {
     samples,
