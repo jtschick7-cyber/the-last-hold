@@ -2,6 +2,7 @@ import { BREACH_TEXT } from '../../content/breach-text';
 import { PIECES, type HoldPieceId } from '../../content/hold-layout';
 import { constantAt, num } from '../balance-access';
 import type { Breakdown, Explained } from '../breakdown/breakdown';
+import type { Command } from '../commands/types';
 import { seeded } from '../rng';
 import { standPoolOf } from '../stand/pool';
 import { standSeed, waveList, type Wave } from '../stand/waves';
@@ -465,3 +466,10 @@ export const describeFreeze = (state: GameState): string => {
   const table = laneTableFor(state);
   return `Counted pieces per lane ${JSON.stringify(table.pieces)}; towers in columns ${JSON.stringify(table.towerCols)}.`;
 };
+
+/**
+ * GDD §6.1 (D589): the simulated players' one arrangement command, sent through whatever `act` they
+ * use. It lives here because only this module (with the layout modules) may name the layout in core.
+ */
+export const arrangeHold = (act: (cmd: Command) => boolean): boolean =>
+  act({ type: 'layout.autoArrange' });

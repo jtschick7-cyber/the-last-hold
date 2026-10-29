@@ -5,6 +5,7 @@ import { num } from '../balance-access';
 import type { Command } from '../commands';
 import { standProblem } from '../commands/stand';
 import { upgradeCost } from '../long-night/hearth';
+import { arrangeHold } from '../systems/breach';
 import { previewInputFor } from '../stand/from-state';
 import { previewStand } from '../stand/preview';
 import { suggestSix } from '../stand/suggest';
@@ -120,12 +121,17 @@ export const standMove = (s: GameState, act: Act, memory: PolicyMemory): boolean
   }
   const party = suggestSix(s);
   if (party.length === 0) return false;
+  // GDD §6.1 (D589): every player arranges the hold with Auto-arrange at every Bastion check-in, before
+  // the stand-timing preview, so the preview and the stand use one arrangement. It is the only arranging command.
+  if (!arrangeHold(act)) return false;
   const kit = standKit(s, party);
   const preview = previewStand(previewInputFor(s, party, kit, num('laststand.policySamples')));
   const perDay = preview.embersPerDay;
   const last = memory.lastPerDay;
   memory.lastPerDay = perDay;
   if (last === null || perDay >= last) return false;
+  // And again right before Start (a repeat changes nothing).
+  if (!arrangeHold(act)) return false;
   if (!act({ type: 'stand.make', party, prep: kit })) return false;
   memory.standPreview = { median: preview.median, p10: preview.p10, p90: preview.p90 };
   return true;

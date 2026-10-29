@@ -65,6 +65,28 @@ const delta = (now: number | null, was: number | null | undefined): string => {
   return `${d > 0 ? '+' : '−'}${hoursText(Math.abs(d))}`;
 };
 
+/**
+ * D589 (5): how many moments equal the accepted baseline, and each that moved. The one-time move of
+ * v1.5 (the first version 6 stand) is reported here, never hidden.
+ */
+export const baselineShift = (
+  previous: Baseline,
+  groups: Baseline['groups'],
+): { same: number; total: number; moved: string[] } => {
+  let same = 0;
+  let total = 0;
+  const moved: string[] = [];
+  for (const [k, ms] of Object.entries(groups))
+    for (const m of MOMENTS) {
+      const was = previous.groups[k]?.[m];
+      if (was === undefined) continue;
+      total += 1;
+      if (ms[m] === was) same += 1;
+      else moved.push(`${k} ${m}: ${cell(was)} → ${cell(ms[m])}`);
+    }
+  return { same, total, moved };
+};
+
 const verdict = (pass: boolean | null, pending?: string): string =>
   pass === null ? '– not judged' : pass ? '✓ pass' : pending ? `✗ pending ${pending}` : '✗ FAIL';
 
@@ -392,6 +414,9 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
       `Baseline: milestone ${previous.milestone}, rulesVersion ${previous.rulesVersion}.`,
       '',
     );
+    const shift = baselineShift(previous, report.baseline.groups);
+    out.push(`${shift.same} of ${shift.total} moments are the same as the baseline.`, '');
+    if (shift.moved.length > 0) out.push('Moved:', '', ...shift.moved.map((x) => `- ${x}`), '');
     out.push('| Run | Moment | Baseline | Now | Change |', '|---|---|---|---|---|');
     for (const [k, ms] of Object.entries(report.baseline.groups)) {
       for (const m of MOMENTS) {

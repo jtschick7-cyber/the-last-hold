@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.10 (the debug command and the played v15 save). Before it: TB.9 to TB.1.
-- **Next:** TB.11a (the simulator's re-record; needs TB.5 and TB.7a). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
+- **Last task:** TB.10 (the debug command and the played v15 save). TB.11a is half done and waiting on an owner answer (one old row fails).
+- **Next:** finish TB.11a (needs your answer on the Rising Vigil Embers row), then TB.11b. Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -138,3 +138,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Tests first:** `debug-freeze.test.ts` (4), `v15-played.test.ts` (3: the four tables differ, the Tray stand counts fewer pieces, every stand log rebuilds line for line with its header only when it has a table). This also proves an old stand's log has no header (the TB.9 gap, in core). The save round-trip runs it too.
 - **Old-test edits (D593 b, e):** `v15-played.json` added to the Orders-opening list; `debug.breach.freeze` added to the debug "sets debugUsed" list. Nothing loosened.
 - **Numbers:** `npm run check` green, 93 s here (warn 90, fail 120; 81 at TB.8a; CI is the judge). No size measurement due.
+
+## 2026-10-29 — v1.5 TB.11a (not finished): players auto-arrange; one old row fails; waiting on you
+- **Built:** every simulated player now calls Auto-arrange at every Bastion check-in before the stand-timing preview, and again right before Start (one helper in `breach.ts`; no other layout command). The report now says how many moments equal the baseline and lists each that moved (`baselineShift`, 3 tests).
+- **Full `sim:check` (369 s here), baseline NOT re-recorded:** **189 of 192 moments are the same.** Moved, all stand timings and all earlier: light/sat best-last-stand 108.0 h → 99.5 h; delver/mon best-last-stand 99.0 h → 96.0 h; orderer/mon first-long-night 101.5 h → 99.0 h (the stand-timing preview now sees the lanes, so a stand is chosen at an earlier check-in). Every other moment before a first stand is untouched.
+- **One old row fails: `vigil-embers-level`** (Embers at Rising Vigil levels 1 to 3 within 5% of level 0): ratios 0.947, 0.830, 0.930, largest gap 17% (the stand's Threat). Every other row passes. `sim:accept` refuses while a row fails, so the baseline stays at v1.4.
+- **A tunable fixes it** (probe, scratch only): `vigil.strengthPerLevel` 0.32 → 0.28 and `vigil.embersPerLevel` 0.22 → 0.26 give ratios 0.99, 1.00, 0.99. Waves lost per level stay 1, 2, 3 (same as now). But 0.32 is a value you approved (Q57, D554, GDD §7.13), so I stopped and asked you (plan box step 12) instead of changing it.
+- **Old-test edits:** none. **Numbers:** `npm run check` green, 94 s here (warn 90, fail 120; CI is the judge).
+- **CI:** until this row is settled, the `sim` job on this branch fails on that one row.
