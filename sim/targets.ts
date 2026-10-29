@@ -19,6 +19,7 @@ export const MILESTONES = [
   'v0.11',
   'v1.3',
   'v1.4',
+  'v1.5',
 ] as const;
 export type Milestone = (typeof MILESTONES)[number];
 
@@ -388,7 +389,40 @@ export const TIME_TARGETS: readonly TimeTarget[] = [
     bounds: [],
     enforcedFrom: 'v1.4',
   },
+  // v1.5 (GDD §6.2, D589, D598; the three rows approved by the owner, B and C as reworded). The Breach,
+  // judged on the Tactician's Monday probe (its first stand at Bastion, 100 practice stands per layout),
+  // in `sim.yml` only; the numbers are in BREACH below.
+  {
+    id: 'breach-auto-holds',
+    text: 'Auto-arrange holds as many waves as before: 12 or more, and within 1 wave of the same state under the version 5 rules (probe, median of the 5 Monday seeds)',
+    bounds: [],
+    enforcedFrom: 'v1.5',
+  },
+  {
+    id: 'breach-tactician-not-worse',
+    text: "A thoughtful layout is never worse than Auto-arrange: the Tactician's layout holds at least as many waves (probe, median of the 5 Monday seeds)",
+    bounds: [],
+    enforcedFrom: 'v1.5',
+  },
+  {
+    id: 'breach-bad-costs',
+    text: 'A bad layout costs waves: at Walls 15 and Watchtower 15 it holds at least 1 wave fewer than Auto-arrange (probe, median of the 5 Monday seeds)',
+    bounds: [],
+    enforcedFrom: 'v1.5',
+  },
 ];
+
+/** The Breach's rows (v1.5, D589, D598). Waves are the median of the preview's practice stands, then of the 5 Monday seeds. */
+export const BREACH = {
+  /** Row A: Auto-arrange holds at least this many waves... */
+  autoMinWaves: 12,
+  /** ...and no more than this many fewer than the same state under the version 5 rules. */
+  autoWithinV5: 1,
+  /** Row B: the Tactician holds at least Auto-arrange's waves plus this. */
+  tacticianExtra: 0,
+  /** Row C: the bad layout holds at least this many waves fewer than Auto-arrange, at the max level point. */
+  badCosts: 1,
+} as const;
 
 /**
  * The Descent's two rows (v1.4, D577). Win rates are of the preview's practice runs, the median of the

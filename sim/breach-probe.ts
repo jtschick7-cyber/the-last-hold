@@ -33,6 +33,8 @@ export interface BreachPoint {
 
 export interface BreachProbe {
   readonly samples: number;
+  /** Auto-arrange and the bad layout again with Walls 15 and Watchtower 15 set on the copy (row C, D598). */
+  readonly max: { readonly auto: BreachPoint; readonly bad: BreachPoint };
   /** The Tactician's own stand at this check-in: hours into the run and the cycle. */
   readonly points: readonly BreachPoint[];
 }
@@ -95,6 +97,9 @@ export const arrangedState = (before: GameState, variant: BreachVariant): GameSt
 
 type StandCommand = Extract<Command, { type: 'stand.make' }>;
 
+/** The level point of row C (D598): Walls and Watchtower both at their top level in Bastion. */
+const MAX_LEVEL = 15;
+
 export const probeBreach = (
   before: GameState,
   stand: StandCommand,
@@ -102,6 +107,9 @@ export const probeBreach = (
 ): BreachProbe => {
   const prep = stand.prep ?? { oils: {}, potions: {} };
   const arranged = (variant: BreachVariant): GameState => arrangedState(before, variant);
+  const atMax = structuredClone(before);
+  atMax.buildings.walls = MAX_LEVEL;
+  atMax.buildings.watchtower = MAX_LEVEL;
   const point = (variant: BreachVariant, state: GameState, v5: boolean): BreachPoint => {
     const input = previewInputFor(state, stand.party, prep, samples);
     // The version 5 rules: the same stand input without its lane table.
@@ -121,6 +129,10 @@ export const probeBreach = (
   };
   return {
     samples,
+    max: {
+      auto: point('auto', arrangedState(atMax, 'auto'), false),
+      bad: point('bad', arrangedState(atMax, 'bad'), false),
+    },
     points: [
       point('auto', arranged('auto'), false),
       point('tactician', arranged('tactician'), false),
