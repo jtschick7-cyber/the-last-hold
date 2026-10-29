@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.14 (budgets, sweeps, size, old-test list). Before it: TB.13 (constants, goldens, rows A to C). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
-- **Next:** TB.15 (wrap-up; the owner's playtest). Q64 answered yes (D599). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
+- **Last task:** TB.15 (wrap-up: checks, simulator, e2e, build, pull request). Before it: TB.14, TB.13 (constants, goldens, rows A to C). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
+- **Next:** the owner's iPhone playtest, then "playtest passed"; only then `sim:accept`, merge, tag `v1.5.0` (export your save just before the merge). Q64 answered yes (D599). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -193,3 +193,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Q64:** the four §6.5 rows, with these numbers, for you to approve (recommend yes as written). Rows stay "proposed" until you answer.
 - **Numbers:** `npm run check` green, 112 s here (warn 90, fail 120; slow machine; CI is the judge).
 - **Q64 answered yes** (2026-10-29, D599): the four §6.5 rows are final; "proposed" removed in GDD §6.5.
+
+## 2026-10-29 — v1.5 TB.15: wrap-up and the pull request
+- **`npm run check`:** green, 254 files, 3,954 tests, 90 s here (CI is the judge).
+- **Full `sim:check` (365 s here):** 63 of 63 rows pass (60 old + A to C); 191 of 192 moments equal the v1.4 baseline; the only mover is the Orderer's first Long Night (99.0 h to 101.5 h). Baseline **not** re-recorded.
+- **e2e, five shards (local chromium):** 1:49, 1:51, 6:33, 3:09, 2:03 (slowest under 8 min); 199 tests; all pass but the WebKit determinism run (no WebKit here; the chromium run passes; CI judges).
+- **New test:** `breach-open.spec.ts` (3 tests): the production build opens `v14-owner`, `v15` and `v15-played`, the Lanes strip shows eight lanes, no page errors. Pass. No old test edited.
+- **Offline:** the offline-reload smoke tests pass; the `sw.js` duplicate-hash test is in `npm run check` (green).
+- **Size:** 464,227 bytes gzipped by a quick sum of `dist` (467,553 by the earlier count; row 614,400).
+- **Plan:** TB.15 ticked; section 0.7 gets the v1.5 actual (19 entries against 18 to 22); status "in progress, waiting for the playtest".
+- **Waiting on you:** the iPhone playtest, then "playtest passed"; then `sim:accept`, merge, tag.
