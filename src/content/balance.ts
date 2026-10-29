@@ -376,10 +376,11 @@ export const balance = {
   },
   // ---- GDD §7.13 Rising Vigil (v1.3, D538–D551, D554) ----
   // Measured in KV.9 on the Vigilant's probe (docs/flesh-out/v1.3/vigil-curve.md): s loses about 3 waves
-  // by level 3, e keeps the Embers at levels 1 to 3 level with level 0 (D546 (1)).
+  // by level 3, e keeps the Embers at levels 1 to 3 level with level 0 (D546 (1)). Retuned from 0.32 and
+  // 0.22 after the Breach moved the stand results (TB.11a, D596; owner said yes): same waves lost per level.
   vigil: {
-    strengthPerLevel: tunable(0.32),
-    embersPerLevel: tunable(0.22),
+    strengthPerLevel: tunable(0.28),
+    embersPerLevel: tunable(0.26),
   },
   // ---- GDD §7.14 The Descent (v1.4, D557-D568) ----
   descent: {

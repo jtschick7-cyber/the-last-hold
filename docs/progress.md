@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.10 (the debug command and the played v15 save). TB.11a is half done and waiting on an owner answer (one old row fails).
-- **Next:** finish TB.11a (needs your answer on the Rising Vigil Embers row), then TB.11b. Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
+- **Last task:** TB.11a (players auto-arrange; baseline re-recorded once at rules version 6; Rising Vigil retuned, D596). Before it: TB.10 to TB.1.
+- **Next:** TB.11b (the Tactician, the probe and the `breach` shard; needs TB.7b and TB.11a). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -146,3 +146,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **A tunable fixes it** (probe, scratch only): `vigil.strengthPerLevel` 0.32 → 0.28 and `vigil.embersPerLevel` 0.22 → 0.26 give ratios 0.99, 1.00, 0.99. Waves lost per level stay 1, 2, 3 (same as now). But 0.32 is a value you approved (Q57, D554, GDD §7.13), so I stopped and asked you (plan box step 12) instead of changing it.
 - **Old-test edits:** none. **Numbers:** `npm run check` green, 94 s here (warn 90, fail 120; CI is the judge).
 - **CI:** until this row is settled, the `sim` job on this branch fails on that one row.
+
+## 2026-10-29 — v1.5 TB.11a (finished): Rising Vigil retuned, baseline re-recorded
+- **You said yes to "Retune now".** `vigil.strengthPerLevel` 0.32 → 0.28 and `vigil.embersPerLevel` 0.22 → 0.26 (D596, `Proposed`; GDD §7.13 text and table updated). Waves lost per level stay 1, 2, 3.
+- **Full `sim:check` (377 s here): every row passes**, including `vigil-embers-level`. Other CI jobs not run here; the full run is far under their 5-minute budget in CI terms.
+- **Baseline re-recorded once (`sim:accept`):** rules version 5 → 6; the only changes are the three moments that moved: light/sat best-last-stand 108.0 → 99.5 h, delver/mon best-last-stand 99.0 → 96.0 h, orderer/mon first-long-night 101.5 → 99.0 h. **189 of 192 moments are the same as v1.4.** No stand's own moment moved later; all earlier moments are untouched.
+- **Old-test edits:** none. **Numbers:** `npm run check` green but 95 s here (81 at TB.8a; warn 90, fail 120; CI is the judge; I did not find what grew).
+- **Watch:** the Vigil values may need one more nudge at TB.13 when the Breach constants stop being placeholders.

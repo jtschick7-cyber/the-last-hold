@@ -1,6 +1,6 @@
 {
   "milestone": "v1.4",
-  "rulesVersion": 5,
+  "rulesVersion": 6,
   "groups": {
     "opening/mon": {
       "first-cottage": 0,
@@ -106,7 +106,7 @@
       "first-studied": 70.5,
       "citadel": 70,
       "bastion": 99.5,
-      "best-last-stand": 108,
+      "best-last-stand": 99.5,
       "first-long-night": 118,
       "first-ruin": 61
     },
@@ -160,7 +160,7 @@
       "first-studied": 30,
       "citadel": 48,
       "bastion": 96,
-      "best-last-stand": 99,
+      "best-last-stand": 96,
       "first-long-night": 101.5,
       "first-ruin": 28
     },
@@ -197,7 +197,7 @@
       "citadel": 48,
       "bastion": 86,
       "best-last-stand": 96,
-      "first-long-night": 101.5,
+      "first-long-night": 99,
       "first-ruin": 28
     },
     "vigilant/mon": {
