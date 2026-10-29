@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.11a (players auto-arrange; baseline re-recorded once at rules version 6; Rising Vigil retuned, D596). Before it: TB.10 to TB.1.
-- **Next:** TB.11b (the Tactician, the probe and the `breach` shard; needs TB.7b and TB.11a). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
+- **Last task:** TB.11b (the Tactician, the probe, the `breach` shard). Before it: TB.11a (baseline re-recorded once at rules version 6; Rising Vigil retuned, D596) to TB.1.
+- **Next:** TB.12 (calibration command and report; Q63 opens after it). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -153,3 +153,13 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Baseline re-recorded once (`sim:accept`):** rules version 5 → 6; the only changes are the three moments that moved: light/sat best-last-stand 108.0 → 99.5 h, delver/mon best-last-stand 99.0 → 96.0 h, orderer/mon first-long-night 101.5 → 99.0 h. **189 of 192 moments are the same as v1.4.** No stand's own moment moved later; all earlier moments are untouched.
 - **Old-test edits:** none. **Numbers:** `npm run check` green but 95 s here (81 at TB.8a; warn 90, fail 120; CI is the judge; I did not find what grew).
 - **Watch:** the Vigil values may need one more nudge at TB.13 when the Breach constants stop being placeholders.
+
+## 2026-10-29 — v1.5 TB.11b: the Tactician, the probe and the `breach` shard
+- **The Tactician** (id `tactician`, never shown; Monday seeds only; plays like Standard for 3 cycles). At the same moments as Auto-arrange it lifts every defense it owns to the Tray, then places them in the order Suggest layout lists. All of it goes through the one helper in `breach.ts` (no policy file names a layout command; a test reads them). Every other player still sends only Auto-arrange.
+- **The `breach` shard** (5 runs) is added to `sim.yml`. It plays in **43 s here** (limit 240 s, CI budget 300 s). A single 3-cycle run takes about 9 s (limit 60 s).
+- **The probe** takes a copy at the Tactician's first stand at Bastion and fights the preview's 100 practice stands for Auto-arrange, the Tactician's layout, the bad layout of D589 and the same state under the version 5 rules. Reported only; rows A to C are not added (TB.13). With the placeholder constants the four waves-held numbers are still about the same; that is what TB.12 will show.
+- **Small difference from the plan:** the Tactician's moves live in `src/core/policies` and `breach.ts` (where Standard's already do), not in a new `sim/policies` folder; the probe is `sim/breach-probe.ts`.
+- **Old-test edit (you approved):** `shards.test.ts` lists `breach` among the single-purpose shards left out of the fair-share check. Nothing loosened.
+- **Baseline:** not touched. The new `tactician/mon` group shows as "new" in the report and is ignored by the 192-moment count.
+- **Numbers:** `npm run check` green, 130 s here. The machine was slower today: the same check on the tip without my changes took 118 s and failed one unrelated 5-second test timeout (`contracts/flow`). My new test file adds about 12 s; its full 3-cycle run is left to the shard so the check stays lean. CI is the judge.
+- **Not done on purpose:** rows A to C (TB.13, after you approve); the calibration command and report (TB.12).

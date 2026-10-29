@@ -10,6 +10,7 @@ import {
   type DescentGrid,
   type DescentProbe,
 } from './descent-probe';
+import { probeBreach, type BreachProbe } from './breach-probe';
 import { probeVigil, shippedGrid, type ProbeGrid, type VigilProbe } from './vigil-probe';
 import { bandFor } from '../src/core/story/band';
 import { num } from '../src/core/balance-access';
@@ -395,6 +396,21 @@ export interface VigilRecord {
   readonly descent: DescentProbe | null;
 }
 
+/** One stand the Tactician made (GDD §6.1, D589). */
+export interface BreachStand {
+  readonly cycle: number;
+  readonly waves: number;
+  readonly embers: number;
+  readonly band: string;
+}
+
+/** What the Tactician did over a run (GDD §6.1 v1.5, D589; plan TB.11b); reported only, no row judges it. */
+export interface BreachRecord {
+  readonly stands: readonly BreachStand[];
+  /** The probe at the first stand at Bastion; null if no such stand happened. */
+  readonly probe: BreachProbe | null;
+}
+
 export interface RunResult {
   readonly spec: RunSpec;
   /** Hours from the start to each GDD §6.2 moment, or null if never reached. */
@@ -428,6 +444,8 @@ export interface RunResult {
   readonly ending?: EndingRecord;
   /** v1.3 (D546): only the Vigilant's runs hold this; absent in older shard files. */
   readonly vigil?: VigilRecord;
+  /** v1.5 (D589): only the Tactician's runs hold this; absent in older shard files. */
+  readonly breach?: BreachRecord;
 }
 
 const largest = (value: unknown): number => {
@@ -504,6 +522,7 @@ export const runOne = (spec: RunSpec): RunResult => {
   let ending: { hours: number; cycle: number } | null = null;
   let gateOpened: { hours: number; cycle: number } | null = null;
   let probe: VigilProbe | null = null;
+  let breachProbe: BreachProbe | null = null;
   let descent: DescentProbe | null = null;
   let namesAndStand: { hours: number; cycle: number } | null = null;
   const eventsSeen = {
@@ -619,6 +638,9 @@ export const runOne = (spec: RunSpec): RunResult => {
         num('descent.previewSamples'),
         spec.descentProbe ?? shippedDescentGrid(),
       );
+    },
+    onFirstBreachStand: (before, stand) => {
+      breachProbe = probeBreach(before, stand, num('laststand.previewSamples'));
     },
     stop: (st) =>
       (spec.stopAt !== undefined && spec.stopAt.every((m) => moments[m] !== null)) ||
@@ -784,7 +806,8 @@ export const runOne = (spec: RunSpec): RunResult => {
             spec.policy === 'delver' ||
             spec.policy === 'eventer' ||
             spec.policy === 'orderer' ||
-            spec.policy === 'vigilant') &&
+            spec.policy === 'vigilant' ||
+            spec.policy === 'tactician') &&
           rec.at <= start + OPENING_LENGTH,
         cycle: prevCycle,
       });
@@ -885,6 +908,25 @@ export const runOne = (spec: RunSpec): RunResult => {
             probe,
             descent,
           } satisfies VigilRecord,
+        }
+      : {}),
+    ...(spec.policy === 'tactician'
+      ? {
+          breach: {
+            stands: state.cycles.flatMap((c) =>
+              c.stand && c.stand.lanes
+                ? [
+                    {
+                      cycle: c.number,
+                      waves: c.stand.wavesHeld,
+                      embers: c.stand.embers.total,
+                      band: bandFor(c.stand.wavesHeld),
+                    },
+                  ]
+                : [],
+            ),
+            probe: breachProbe,
+          } satisfies BreachRecord,
         }
       : {}),
     discovery: { hutHours, firstNewBrewHours, cycles: discoveryCycles },

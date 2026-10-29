@@ -468,8 +468,28 @@ export const describeFreeze = (state: GameState): string => {
 };
 
 /**
- * GDD §6.1 (D589): the simulated players' one arrangement command, sent through whatever `act` they
- * use. It lives here because only this module (with the layout modules) may name the layout in core.
+ * GDD §6.1 (D589): the commands the Tactician sends to arrange the hold with the Suggest rule:
+ * `layout.unplace` for every placed defense it owns, then `layout.place` in Suggest's order.
  */
-export const arrangeHold = (act: (cmd: Command) => boolean): boolean =>
-  act({ type: 'layout.autoArrange' });
+export const tacticianCommands = (state: GameState): Command[] => {
+  const lift = PIECES.filter(
+    (p) => isDefense(p.id) && isPieceUnlocked(state, p.id) && state.layout.placed[p.id],
+  ).map((p): Command => ({ type: 'layout.unplace', pieceId: p.id }));
+  const put = suggestLayout(state).moves.map((m): Command => ({
+    type: 'layout.place',
+    pieceId: m.pieceId,
+    x: m.x,
+    y: m.y,
+  }));
+  return [...lift, ...put];
+};
+
+/**
+ * GDD §6.1 (D589): the simulated players' one arrangement, sent through whatever `act` they use. It
+ * lives here because only this module (with the layout modules) may name the layout in core. Every
+ * player sends Auto-arrange; the Tactician passes the state it is playing and sends the Suggest rule.
+ */
+export const arrangeHold = (act: (cmd: Command) => boolean, tactician?: GameState): boolean =>
+  tactician
+    ? tacticianCommands(tactician).every((cmd) => act(cmd))
+    : act({ type: 'layout.autoArrange' });

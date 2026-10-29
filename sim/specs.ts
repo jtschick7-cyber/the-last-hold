@@ -18,14 +18,15 @@ export interface SpecOptions {
 
 export const buildSpecs = (o: SpecOptions): RunSpec[] =>
   o.policies.flatMap((policy) =>
-    // D272: the Delver runs the Monday seeds only; so do the Eventer (GDD §6.1, D367), the Orderer (D417) and the Vigilant (D546).
+    // D272: the Delver runs the Monday seeds only; so do the Eventer (GDD §6.1, D367), the Orderer (D417), the Vigilant (D546) and the Tactician (D589).
     o.starts
       .filter(
         (start) =>
           (policy !== 'delver' &&
             policy !== 'eventer' &&
             policy !== 'orderer' &&
-            policy !== 'vigilant') ||
+            policy !== 'vigilant' &&
+            policy !== 'tactician') ||
           start === 'mon',
       )
       .flatMap((start) =>
@@ -41,12 +42,13 @@ export const buildSpecs = (o: SpecOptions): RunSpec[] =>
             policy === 'delver' ||
             policy === 'eventer' ||
             policy === 'orderer' ||
-            policy === 'vigilant')
+            policy === 'vigilant' ||
+            policy === 'tactician')
             ? {
                 minCycles: OVERFLOW_CYCLES,
                 maxDays: 42,
-                // D271: the Idle-only row compares the Monday runs until each has all content.
-                ...(start === 'mon' ? { untilContent: true } : {}),
+                // D271: the Idle-only row compares the Monday runs until each has all content. The Tactician (D589) plays its 3 cycles and stops.
+                ...(start === 'mon' && policy !== 'tactician' ? { untilContent: true } : {}),
               }
             : {}),
         })),

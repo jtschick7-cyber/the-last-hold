@@ -348,6 +348,19 @@ export const vigilLines = (runs: readonly RunResult[]): string[] =>
       );
     });
 
+/** Reported only (GDD §6.1 v1.5, D589): the Tactician's stands and the probe's waves held for each layout; no row judges it. */
+export const breachLines = (runs: readonly RunResult[]): string[] =>
+  runs
+    .filter((r) => r.breach !== undefined)
+    .map((r) => {
+      const b = r.breach as NonNullable<RunResult['breach']>;
+      const stands = b.stands.map((s) => `c${s.cycle}: ${s.waves} waves (${s.band})`).join('; ');
+      const probe = b.probe
+        ? b.probe.points.map((p) => `${p.variant} ${p.median} (${p.p10}–${p.p90})`).join(', ')
+        : 'not run';
+      return `- ${r.spec.policy} ${r.spec.start} ${r.spec.seed}: ${stands || 'no stand with lanes'}; probe waves held (median, p10–p90): ${probe}`;
+    });
+
 export const markdown = (report: Report, previous: Baseline | null): string => {
   const out: string[] = [
     `# Simulator report: ${report.name}`,
@@ -380,6 +393,7 @@ export const markdown = (report: Report, previous: Baseline | null): string => {
   out.push('', '## Events (reported only; the Eventer)', '', ...eventLines(report.runs));
   out.push('', '## Orders (reported only; the Orderer)', '', ...orderLines(report.runs));
   out.push('', '## Rising Vigil (reported only; the Vigilant)', '', ...vigilLines(report.runs));
+  out.push('', '## The Breach (reported only; the Tactician)', '', ...breachLines(report.runs));
   out.push('', '## The Remembering (reported only; Standard)', '', ...endingLines(report.runs));
   out.push(
     '',
