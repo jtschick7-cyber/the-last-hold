@@ -336,7 +336,10 @@ describe('the shared volley (D582, technical design §23.2)', () => {
     const withTrayTower = hold({ 'watchtower-1': { x: 3, y: 1 } }); // watchtower-2 and -3 stay in the Tray
     expect(laneTableFor(one).towerCols).toEqual([3]);
     expect(lanes(laneTableFor(withTrayTower), 15)).toEqual(
-      lanes(table([0, 0, 0, 1, 0, 0, 0, 0], [3]), 15),
+      lanes(
+        table([0, 0, 0, 1, 0, 0, 0, 0], [3], { volleyScale: balance.breach.volleyScale.value }),
+        15,
+      ),
     );
   });
 

@@ -1770,9 +1770,9 @@ Times are elapsed real time from a fresh start under the Standard policy unless 
 | Embers at levels 1 to 3 stay level with level 0 *(D546 C, D554)* | On the probe, at the stand's own Threat, the median total Embers (waves part plus trophies) at each of levels 1 to 3 are within **5%** of level 0 (median of the 5 Monday seeds; measured 1.5%, 0.3% and 2.1% off at the chosen values; fixed before the final judging run). Twice that Threat is reported, not judged (9.8% off at its worst). | v1.3 |
 | The Descent is winnable and costly at the gate *(D564 A, decided D577)* | On the Descent probe (inside the `vigil` shard, `sim.yml` only; a clone of the gate-open state with a full endgame roster, 100 practice runs per Monday seed), the win rate is between **50% and 85%** (median of the 5 Monday seeds), and the median hunters downed across the 3 stages is between **2 and 8** (inclusive, *"a costly, heroic victory"*) | v1.4 |
 | What the hold learned matters in the Descent *(D564 B, decided D577)* | On the Descent probe (same 100 practice seeds per Monday seed), the party with its `What the Hold Learned` bonus achieves a win rate **≥ 25 percentage points higher** (or ≥ 2 fewer hunters downed) than the identical party with the learned bonus zeroed, and an unprepared Hamlet starter party loses in Stage 1 | v1.4 |
-| *Proposed:* Auto-arrange holds as many waves as before *(D589 A)* | On the Breach probe (inside the `breach` shard, `sim.yml` only), the Auto-arrange layout holds **12 or more waves** (median of the 5 Monday seeds, Standard's first stand) and within **1 wave** of the same state under the version 5 rules | v1.5 |
-| *Proposed:* A thoughtful layout beats Auto-arrange *(D589 B)* | On the same probe and seeds, the Tactician's layout holds **at least 1 wave more** than Auto-arrange (median of the 5 Monday seeds) | v1.5 |
-| *Proposed:* A bad layout costs waves *(D589 C)* | On the same probe and seeds, the deliberately bad layout holds **at least 2 waves fewer** than Auto-arrange (median of the 5 Monday seeds) | v1.5 |
+| Auto-arrange holds as many waves as before *(D589 A, D598)* | On the Breach probe (inside the `breach` shard, `sim.yml` only), the Auto-arrange layout holds **12 or more waves** (median of the 5 Monday seeds, Standard's first stand) and within **1 wave** of the same state under the version 5 rules | v1.5 |
+| A thoughtful layout is never worse than Auto-arrange *(D589 B, reworded D598)* | On the same probe and seeds, the Tactician's layout holds **at least as many waves** as Auto-arrange (median of the 5 Monday seeds) | v1.5 |
+| A bad layout costs waves *(D589 C, reworded D598)* | On the same probe and seeds, at the max level point (Walls 15, Watchtower 15), the deliberately bad layout holds **at least 1 wave fewer** than Auto-arrange (median of the 5 Monday seeds) | v1.5 |
 
 *A fourth idea, "a stand with the switch Off equals a level 0 stand", is true by construction and is a unit test (technical design §21.8), not a row (D546 (5)).*
 
@@ -2139,18 +2139,18 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 
 ### 7.15 The Breach *(v1.5, D579–D595)*
 
-`breach.lanes` and `breach.frontRows` are **locked** (plan §0.6). Every other constant here is **tunable** and starts as a **marked placeholder** (`coverOwn`, `coverNeighbour`, `depthStep`, `depthMax`, `towerReach`, `volleyScale` and `suggestWaves` alike): a value to be confirmed or replaced at TB.12 and TB.13, after the owner approves the calibration table (Q63, D583). `breach.volleyScale` is a pure placeholder: at 1 an average tower is weaker than today's, so expect it to rise. A tunable moved by more than 2× needs its own Proposed row (plan §0.6). A unit test checks `coverOwn + 2 × coverNeighbour = 1`. `towerReach` stays in multiples of 0.25 and `volleyScale` in hundredths, so the volley can be worked in whole numbers (§5.9.11).
+`breach.lanes` and `breach.frontRows` are **locked** (plan §0.6). Every other constant here is **tunable**, confirmed by the owner from the TB.12 calibration table (Q63, D598, `docs/flesh-out/v1.5/breach-calibration.md`); only `breach.volleyScale` moved, from its first value 1 to **3**, which brings a well-placed tower's average volley back to today's. A tunable moved by more than 2× needs its own row (D598 is it). A unit test checks `coverOwn + 2 × coverNeighbour = 1`. `towerReach` stays in multiples of 0.25 and `volleyScale` in hundredths, so the volley can be worked in whole numbers (§5.9.11).
 
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Lanes | wave n takes lane `floor(roll × lanes)`, one roll from `${gameSeed}:stand:${cycle}:lane:${n}` | `breach.lanes` = 8 **(locked)** | 5.9.11 |
 | Front zone | a counted piece is `active` with row `y` < frontRows | `breach.frontRows` = 3 **(locked)** | 5.9.11 |
-| Cover | `coverOwn` for a piece in the column plus `coverNeighbour` for each neighbouring column with a piece (the ruined edge counts as walled) | `breach.coverOwn` = 0.5 *(placeholder)*, `breach.coverNeighbour` = 0.25 *(placeholder)* | 5.9.11 |
-| Depth | `extra = min(depthMax, counted pieces in the column − 1)`; the wall cut × (1 + depthStep × extra) | `breach.depthStep` = 0.25 *(placeholder)*, `breach.depthMax` = 2 *(placeholder)* | 5.9.11 |
+| Cover | `coverOwn` for a piece in the column plus `coverNeighbour` for each neighbouring column with a piece (the ruined edge counts as walled) | `breach.coverOwn` = 0.5, `breach.coverNeighbour` = 0.25 | 5.9.11 |
+| Depth | `extra = min(depthMax, counted pieces in the column − 1)`; the wall cut × (1 + depthStep × extra) | `breach.depthStep` = 0.25, `breach.depthMax` = 2 | 5.9.11 |
 | Wall cut in a lane | the Walls constant of §7.6 × Walls level × cover × (1 + depthStep × extra), in taken% (75% cap) | none new (the Walls constant is in §7.6) | 5.9.2, 5.9.11 |
-| Tower reach | a counted tower's share for a lane d columns away | `breach.towerReach` = [1, 0.5, 0.25] *(placeholder)* (own column, 1 away, 2 away; nothing beyond) | 5.9.11 |
-| Volley in a lane | floor(the volley per level of §7.6 × Watchtower level × volleyScale × Σ reach ÷ counted towers); 0 when no tower counts; whole-number arithmetic | `breach.volleyScale` = 1 *(placeholder)* | 5.9.2, 5.9.11 |
-| Suggest layout and the Lanes strip | the lanes of the first N waves (tuning N changes the strip's dots too) | `breach.suggestWaves` = 12 *(placeholder)* | 5.9.11, 9.25 |
+| Tower reach | a counted tower's share for a lane d columns away | `breach.towerReach` = [1, 0.5, 0.25] (own column, 1 away, 2 away; nothing beyond) | 5.9.11 |
+| Volley in a lane | floor(the volley per level of §7.6 × Watchtower level × volleyScale × Σ reach ÷ counted towers); 0 when no tower counts; whole-number arithmetic | `breach.volleyScale` = 3 | 5.9.2, 5.9.11 |
+| Suggest layout and the Lanes strip | the lanes of the first N waves (tuning N changes the strip's dots too) | `breach.suggestWaves` = 12 | 5.9.11, 9.25 |
 
 
 
@@ -3636,7 +3636,7 @@ Each one is also marked **[JC]** where it appears.
 1. **Only defenses (Walls and Watchtowers) get a combat meaning from position;** the inner ward and buildings taking damage are deferred (D580).
 2. **Each Last Stand wave comes down one of 8 lanes** from its own dice stream, so species picks do not change; lanes show in the wave list from Bastion (D580).
 3. **Cover, depth and tower reach** (own column 50% plus 25% per neighbour with the ruined edge counted; +25% per extra piece in a column up to two; towers share today's volley by distance 1, 0.5, 0.25) with only pieces on the grid in the three rows nearest the Fell Breach counted, and **nothing ever placed for the player** (D581, D582, D587).
-4. **Gentle at first, calibrated later:** a careless layout loses a wave or two and a good one gains a wave or two; every `breach.*` number except the lane count and front rows is a tunable placeholder until the owner approves a table (D583).
+4. **Gentle, and calibrated:** a careless layout loses a wave or two and a good one holds as many as Auto-arrange or more; every `breach.*` number except the lane count and front rows is a tunable the owner approved from the TB.12 table (D583, D598).
 5. **`rulesVersion` 5 → 6 on a dual path, save schema 14 → 15,** `HoldLayoutState` unchanged, a derived lane table frozen on the stand record when Start is pressed; old stands replay under version 5 line for line; new version 6 goldens are owner-approved additions (D584, D585, D591, D592).
 6. **The Descent, contracts, Delves, events, bosses, hunts, Rising Vigil's level steps, the Embers formula and the Threat rate ignore layout** (D586).
 7. **A tap-based Lanes strip with a text-list alternative and a Suggest layout button that places nothing,** and a Tactician simulator player with three Proposed rows; the baseline moves once (D588, D589).

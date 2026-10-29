@@ -1439,7 +1439,7 @@ See §13.4 ("The Breach"). Rows A–C are GDD §6.2 (Proposed, measured at TB.12
 
 - **Auto-arrange could be optimal for everyone.** The lane list differs each cycle, towers share one volley, and depth rewards stacking, so the best layout changes; row B (the Tactician beats Auto-arrange) is the check, and if it fails with no reasonable tunable, stop and write it to `docs/questions.md`.
 - **Wall segments unlock slowly** (4 at Walls level 1, 11 at level 15), so low-level Citadel stands are weaker than today whatever the layout. Reported, not hidden (GDD §5.9.11).
-- **The placeholder `volleyScale` of 1 makes an average tower weaker than today's,** so the first measured table is expected to show stands at or below the old results until calibration.
+- **`volleyScale` was 1 at first, which made an average tower weaker than today's;** the owner approved 3 from the TB.12 table (D598).
 - **Phone use.** The strip must be readable and tappable at 320 px at Largest; the text list is the fallback and the page never scrolls sideways.
 - **Test timing.** `npm run check` was already at the 120 s fail line in the container at v1.4 (117 to 131 s; CI, the judge, ran 88 s), and v1.5 adds large tables of tests. It is measured at TB.3 and TB.5 as well as TB.14; the probe, the calibration sweeps and any test that runs many practice stands stay out of `npm run check` (they run in `sim.yml`); if a CI `check` run passes 120 s, stop and ask. The e2e shards (5 since D569, each under 8 minutes, stop and ask at 7 min 30 s) are re-measured at TB.14.
 - **Volley with fewer towers placed.** Because the divisor is the placed towers, one well-placed tower gives the full volley in its own lane and extra placed towers never add damage to one lane (D582); calibration reports it.
