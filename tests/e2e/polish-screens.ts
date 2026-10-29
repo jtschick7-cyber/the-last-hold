@@ -758,6 +758,18 @@ export const FLOWS: readonly Flow[] = [
     (p) => btn(p, /^Layout/).click(),
     'v11',
   ),
+  // Plan TB.8b (GDD §9.25, D593 (d)): the Last Stand screen at Bastion, with the Lanes strip and the Arrange Hold button.
+  plain(
+    'last-stand-lanes',
+    'Last Stand screen (Bastion, Lanes strip)',
+    'Hold, Rank ▸, Make the Last Stand (Bastion)',
+    [/Lanes/, /Tap a lane to see what covers it\./, /Arrange Hold/],
+    async (p) => {
+      await btn(p, /^Rank/).click();
+      await btn(p, 'Make the Last Stand').click();
+    },
+    'v11',
+  ),
 ];
 
 /**

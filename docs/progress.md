@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.8a (the Lanes strip on Arrange Hold). Before it: TB.7b to TB.1.
-- **Next:** TB.8b (the strip on the Last Stand screen, the Arrange Hold button, Suggest button and Use this layout; needs TB.7b and TB.8a). TB.9 can follow TB.8a.
+- **Last task:** TB.8b (the strip on the Last Stand screen, Arrange Hold button, Suggest layout, Use this layout). Before it: TB.8a to TB.1.
+- **Next:** TB.9 (the Start Tray line, the lane tag check and the full string check; needs TB.8a).
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -112,3 +112,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Numbers:** `npm run check` green, 81 s here (warn 90, fail 120). Size 459,884 bytes (614,400 row; 458,266 at TB.6).
 - **Behaviour to know:** the lit lane is kept in memory so it survives the breakdown sheet closing; each visit from the Hold starts with nothing lit. The existing sheet already dropped a selected piece when another sheet opened over it.
 - **Not done:** the strip on the Last Stand screen, the Arrange Hold button there, Suggest and Use this layout (TB.8b); the Start Tray line and the full string check (TB.9). No contrast check of the lit-piece marks was possible beyond the sweep.
+
+## 2026-10-29 — v1.5 TB.8b: the strip on the Last Stand screen, Suggest layout, Use this layout
+- **Last Stand screen:** the same Lanes strip, read only (a tap opens the numbers-only breakdown; nothing is lit), sits above the party slots, with the Arrange Hold button under it. The party and kit you chose wait while the sheet is open and are back when you return.
+- **Arrange Hold sheet:** the Suggest layout button (from Bastion on, never disabled) shows the suggested spots as outlined tiles with a corner mark and the line "Suggested: about {n} waves (now about {m})." from two practice runs (now, and with the suggested table). It places nothing. The suggestion disappears if the hold changes after it.
+- **Use this layout (Q61 yes):** new command `layout.setDefenses`, atomic: only walls and towers; front-row defenses not in the list go to the Tray; refuses the whole list (nothing changes) if a target is not a free front-row tile, a piece is not an unlocked wall or tower, or a piece or tile is listed twice. Its rules sit in `breach.ts` (the one file that reads the front rows); the command only calls them.
+- **Tests first:** `tests/layout/set-defenses.test.ts` (13) and `tests/e2e/lanes-stand.spec.ts` (12, phone): strip equals the sheet's; party kept; Suggest places nothing and its line matches; a later move hides it; Use applies it in one tap and no other piece moves; 44 px and no sideways scroll at 320/360/375/390, both text sizes.
+- **Old-test edits (D593 d):** one flow (Last Stand with the strip) appended to `polish-screens.ts`. D593 (e): no test listed every command, so none changed. Tap, contrast, motion, Text size, widths sweeps: 73 of 73; 38 neighbouring e2e pass. No baseline changed.
+- **Numbers:** `npm run check` green but 92 s here (81 at TB.8a; warn 90, fail 120; CI is the judge). Size **467,137 bytes** (459,884 at TB.8a; row 614,400).
+- **Not done / for TB.9:** the Start Tray line and the full string check. The Suggest line is left out when there is no hunter to preview with. One-autosave of Use this layout rests on its being one command (not separately measured).

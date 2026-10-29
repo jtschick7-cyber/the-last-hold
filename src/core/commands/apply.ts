@@ -73,6 +73,7 @@ import { autoPlaceUnlocked, unlockedPieces } from '../systems/layout-place';
 import {
   layoutAutoArrange,
   layoutClear,
+  layoutSetDefenses,
   layoutPlace,
   layoutSetShowGhosts,
   layoutUnplace,
@@ -139,6 +140,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return layoutAutoArrange(state);
     case 'layout.clear':
       return layoutClear(state);
+    case 'layout.setDefenses':
+      return layoutSetDefenses(state, cmd.moves);
     case 'layout.setShowGhosts':
       return layoutSetShowGhosts(state, cmd.showGhosts);
     case 'contract.launch':

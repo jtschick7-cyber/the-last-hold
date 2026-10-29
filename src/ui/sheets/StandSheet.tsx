@@ -8,7 +8,7 @@ import { bombStock, previewInputFor } from '../../core/stand/from-state';
 import { vigilLevelFor, vigilView } from '../../core/systems/vigil';
 import { suggestSix } from '../../core/stand/suggest';
 import { creatureOf, DROSS_TIDE } from '../../core/stand/waves';
-import { standWaves } from '../../core/systems/breach';
+import { laneView, standWaves } from '../../core/systems/breach';
 import { BREACH_TEXT } from '../../content/breach-text';
 import type { GameState, Preparation } from '../../core/state/game-state';
 import { requestStandPreview, type StandAnswer } from '../app/odds-client';
@@ -26,7 +26,9 @@ import {
 } from '../../content/vigil-text';
 import { bandThresholdsLine } from '../../content/story/scenes';
 import { standDelveLine } from '../../core/delves/view-run';
+import { LanesStrip } from '../widgets/LanesStrip';
 import { Num } from '../widgets/Num';
+import { openArrangeHold } from './ArrangeHoldSheet';
 import { LongNightView } from './LongNightSheets';
 
 // GDD §9.13 (D107, D109, D115): the Last Stand screen. The wave list (the first 12;
@@ -188,12 +190,22 @@ const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => (
   </div>
 );
 
+// The Arrange Hold sheet opens over this screen and hides it, so the party and kit chosen so far
+// wait here and are taken back when the screen is drawn again (read once, then cleared).
+let kept: { party: HunterId[]; kit: Kit } | null = null;
+const takeKept = (): { party: HunterId[]; kit: Kit } | null => {
+  const k = kept;
+  kept = null;
+  return k;
+};
+
 export const StandView = () => {
   void version.value;
   const s = game();
   const problem = standProblem(s);
-  const [party, setParty] = useState<HunterId[]>(() => suggestSix(s));
-  const [kit, setKit] = useState<Kit>({ oils: {}, potions: {} });
+  const [back] = useState(takeKept);
+  const [party, setParty] = useState<HunterId[]>(() => back?.party ?? suggestSix(s));
+  const [kit, setKit] = useState<Kit>(() => back?.kit ?? { oils: {}, potions: {} });
   const [answer, setAnswer] = useState<StandAnswer | null>(null);
   const max = num('laststand.partyMax');
   const kitFor = (p: HunterId[]): Kit => ({
@@ -229,11 +241,27 @@ export const StandView = () => {
   const toggle = (id: HunterId): void =>
     setParty(party.includes(id) ? party.filter((h) => h !== id) : [...party, id].slice(0, max));
   const p = answer?.preview;
+  const lanes = laneView(s);
   return (
     <div>
       <p>The dark is at the walls. Choose who goes up; they fight one wave at a time.</p>
       <h3 class={styles.cardTitle}>Waves</h3>
       <WaveList s={s} />
+      {/* GDD §9.25: the same Lanes strip, read-only (no lit tiles), and the way to the Arrange Hold sheet. */}
+      <LanesStrip view={lanes} light={false} />
+      {lanes.shown && (
+        <button
+          type="button"
+          class={styles.btn}
+          data-testid="stand-arrange-hold"
+          onClick={() => {
+            kept = { party, kit: chosenKit };
+            openArrangeHold();
+          }}
+        >
+          {BREACH_TEXT.arrangeHold}
+        </button>
+      )}
       <h3 class={styles.cardTitle}>
         On the walls ({party.length}/{max})
       </h3>

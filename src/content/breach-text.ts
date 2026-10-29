@@ -27,6 +27,15 @@ export const BREACH_TEXT = {
   help: 'Only walls and towers in the three rows nearest the Fell Breach count.',
   /** Empty state, when no piece counts. */
   empty: 'No walls or towers on the front rows yet. Only the ruined edge gives cover.',
+  /** Button on the Arrange Hold sheet (from Bastion on, never disabled). */
+  suggest: 'Suggest layout',
+  /** Line under the suggested layout, from the preview. */
+  suggested: (n: number | string, m: number | string) =>
+    `Suggested: about ${n} waves (now about ${m}).`,
+  /** Button; exists because the owner answered Q61 yes. */
+  useThis: 'Use this layout',
+  /** Button under the Lanes strip on the Last Stand screen; opens the Arrange Hold sheet. */
+  arrangeHold: 'Arrange Hold',
   /** The header line of a stand wave log (new stands only). */
   logHeader: (n: number | string, p: number | string) => `Lane ${n} · cover ${p}%`,
 } as const;

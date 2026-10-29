@@ -373,3 +373,83 @@ export const suggestLayoutFor = (state: GameState, lanes: readonly number[]): La
 /** Suggest layout from the stand's own lanes: the first `breach.suggestWaves` waves (GDD §5.9.11). */
 export const suggestLayout = (state: GameState): LayoutSuggestion =>
   suggestLayoutFor(state, lanesFor(standSeed(state), num('breach.suggestWaves')));
+
+const known = (id: unknown): id is HoldPieceId =>
+  typeof id === 'string' && PIECES.some((p) => p.id === id);
+
+/**
+ * Applies a Suggest layout list in one step (technical design §23.3, the command `layout.setDefenses`).
+ * Atomic: it checks everything first and returns the reason, with nothing changed, when any move is
+ * refused. It touches only walls and towers: unlocked front-row defenses that are not in the list go
+ * to the Tray, then each listed defense takes its target; defenses behind the front rows stay.
+ */
+export const setDefenses = (state: GameState, moves: unknown): string | null => {
+  if (!Array.isArray(moves)) return 'layout: the moves must be a list';
+  const rows = num('breach.frontRows');
+  const lanes = num('breach.lanes');
+  const bounds = clearingBounds(state.cycle.age);
+  const listed = new Set<string>();
+  const targets = new Set<string>();
+  for (const m of moves as { pieceId: unknown; x: unknown; y: unknown }[]) {
+    if (!m || !known(m.pieceId) || !isDefense(m.pieceId))
+      return 'layout: only walls and towers can be set';
+    if (!isPieceUnlocked(state, m.pieceId)) return 'layout: piece is locked';
+    if (listed.has(m.pieceId)) return 'layout: a piece is listed twice';
+    const { x, y } = m;
+    if (
+      typeof x !== 'number' ||
+      typeof y !== 'number' ||
+      !Number.isInteger(x) ||
+      !Number.isInteger(y) ||
+      y < 0 ||
+      y >= rows ||
+      x < 0 ||
+      x >= lanes ||
+      !inClearing(bounds, { x, y })
+    )
+      return 'layout: a target is not a front-row tile';
+    if (targets.has(`${x},${y}`)) return 'layout: two pieces on one tile';
+    listed.add(m.pieceId);
+    targets.add(`${x},${y}`);
+  }
+  // A target must hold no other building (a blueprint holds its tile).
+  for (const def of PIECES) {
+    const at = state.layout.placed[def.id];
+    if (!at || isDefense(def.id)) continue;
+    if (footprint(def, at).some((t) => targets.has(`${t.x},${t.y}`)))
+      return 'layout: a target is held by another building';
+  }
+  // The other pieces keep their order and their spots.
+  const placed: Record<string, { x: number; y: number }> = {};
+  for (const [id, at] of Object.entries(state.layout.placed)) {
+    // Built front-row defenses leave for the Tray; a locked blueprint is only moved off a target.
+    const lifted =
+      isDefense(id) &&
+      !listed.has(id) &&
+      ((at.y < rows && isPieceUnlocked(state, id as HoldPieceId)) ||
+        targets.has(`${at.x},${at.y}`));
+    if (!lifted) placed[id] = at;
+  }
+  for (const m of moves as LayoutMove[]) placed[m.pieceId] = { x: m.x, y: m.y };
+  state.layout.placed = placed as GameState['layout']['placed'];
+  return null;
+};
+
+/**
+ * The lane table the hold would give if a Suggest layout list were applied (GDD §9.25: the line under
+ * the suggestion). Works on a copy; changes nothing. Returns null when the list would be refused.
+ */
+export const laneTableAfter = (
+  state: GameState,
+  moves: readonly LayoutMove[],
+): LaneTable | null => {
+  const copy = { ...state, layout: structuredClone(state.layout) } as GameState;
+  if (
+    setDefenses(
+      copy,
+      moves.map((m) => ({ ...m })),
+    )
+  )
+    return null;
+  return laneTableFor(copy);
+};

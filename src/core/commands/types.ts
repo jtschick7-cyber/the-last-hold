@@ -75,6 +75,7 @@ export type Command =
   | { type: 'layout.unplace'; pieceId: HoldPieceId }
   | { type: 'layout.autoArrange' }
   | { type: 'layout.clear' }
+  | { type: 'layout.setDefenses'; moves: { pieceId: HoldPieceId; x: number; y: number }[] }
   | { type: 'layout.setShowGhosts'; showGhosts: boolean }
   /** GDD §5.9.10: the Rising Vigil switch (technical design §21.3). */
   | { type: 'vigil.set'; on: boolean }
