@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
 - **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** TB.8b (the strip on the Last Stand screen, Arrange Hold button, Suggest layout, Use this layout). Before it: TB.8a to TB.1.
-- **Next:** TB.9 (the Start Tray line, the lane tag check and the full string check; needs TB.8a).
+- **Last task:** TB.9 (the Start Tray line, the log header check, the whole-table string check). Before it: TB.8b to TB.1.
+- **Next:** TB.10 (played v15 save fixture; needs TB.6). Owner task now: read the Breach strings as built and say yes.
 - **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -121,3 +121,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Old-test edits (D593 d):** one flow (Last Stand with the strip) appended to `polish-screens.ts`. D593 (e): no test listed every command, so none changed. Tap, contrast, motion, Text size, widths sweeps: 73 of 73; 38 neighbouring e2e pass. No baseline changed.
 - **Numbers:** `npm run check` green but 92 s here (81 at TB.8a; warn 90, fail 120; CI is the judge). Size **467,137 bytes** (459,884 at TB.8a; row 614,400).
 - **Not done / for TB.9:** the Start Tray line and the full string check. The Suggest line is left out when there is no hunter to preview with. One-autosave of Use this layout rests on its being one command (not separately measured).
+
+## 2026-10-29 — v1.5 TB.9: the Start Tray line, the log header and the string check
+- **Start confirmation:** if any unlocked wall or tower is in the Tray it adds "{n} defenses are in the Tray and give nothing." (or the "1 defense" form). With none it says nothing extra. It places nothing. The count comes from the core's lane view (new field), not from the screen.
+- **Wave-log header:** it was already built at TB.5 (shown only when a wave carries a lane); this task added the browser proof. A stand started at Bastion shows "Lane {n} · cover {p}%" on its wave log. An older log has none: proved in core (`freeze`, `lanes-fight` tests) not in the browser, since no fixture offers an old stand log at Bastion; TB.10's v15 fixtures could add it.
+- **String check (new `breach-text-all.test.ts`, 3):** the GDD table has 23 rows and 29 strings; every string in the code is in the table; every table string is in the code; nothing else.
+- **Browser:** 2 new tests in `lanes-stand.spec.ts` (Tray line with defenses and with none, nothing placed; the log header). Passed. The Last Stand strip passed the five sweeps at TB.8b (73 of 73); I did not re-run them for the one added line.
+- **Old-test edits:** none.
+- **Numbers:** `npm run check` green, 89 s here (warn 90, fail 120). Size 467,258 bytes (row 614,400).
+- **Owner task:** read the Breach strings as built (GDD §9.25 table) and say yes.

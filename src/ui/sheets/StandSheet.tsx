@@ -172,6 +172,11 @@ const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => (
         {vigilLine(VIGIL_CONFIRM, vigilLevelFor(game()))}
       </p>
     )}
+    {laneView(game()).shown && laneView(game()).trayDefenses > 0 && (
+      <p class={styles.small} data-testid="tray-line">
+        {BREACH_TEXT.trayLine(laneView(game()).trayDefenses)}
+      </p>
+    )}
     {standDelveLine(game()) && <p class={styles.small}>{standDelveLine(game())}</p>}
     <p class={`${styles.small} ${styles.dim}`}>This can't be undone.</p>
     <button

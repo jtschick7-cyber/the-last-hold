@@ -236,6 +236,8 @@ export interface LaneView {
   readonly lanes: readonly LaneInfo[];
   /** No piece counts: only the ruined edge gives cover. */
   readonly none: boolean;
+  /** Unlocked walls and towers waiting in the Tray, which give nothing (the Start confirmation's line). */
+  readonly trayDefenses: number;
 }
 
 const build = (state: GameState): LaneView => {
@@ -267,6 +269,9 @@ const build = (state: GameState): LaneView => {
     waveCount: num('breach.suggestWaves'),
     lanes,
     none: counted.length === 0,
+    trayDefenses: PIECES.filter(
+      (p) => isDefense(p.id) && isPieceUnlocked(state, p.id) && !state.layout.placed[p.id],
+    ).length,
   };
 };
 

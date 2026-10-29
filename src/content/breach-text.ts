@@ -36,6 +36,11 @@ export const BREACH_TEXT = {
   useThis: 'Use this layout',
   /** Button under the Lanes strip on the Last Stand screen; opens the Arrange Hold sheet. */
   arrangeHold: 'Arrange Hold',
+  /** Line in the Start confirmation, when at least one unlocked wall or tower is in the Tray. */
+  trayLine: (n: number) =>
+    n === 1
+      ? '1 defense is in the Tray and gives nothing.'
+      : `${n} defenses are in the Tray and give nothing.`,
   /** The header line of a stand wave log (new stands only). */
   logHeader: (n: number | string, p: number | string) => `Lane ${n} · cover ${p}%`,
 } as const;

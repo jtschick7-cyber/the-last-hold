@@ -181,3 +181,51 @@ for (const width of [320, 360, 375, 390]) {
     });
   }
 }
+
+test('the Start confirmation counts defenses in the Tray, places none, and says nothing with none', async ({
+  page,
+}) => {
+  await openStand(page);
+  await openSheet(page);
+  const sheet = page.getByRole('dialog', { name: 'Arrange Hold' });
+  await sheet.getByRole('button', { name: 'Auto-arrange' }).click();
+  expect((await tray(page)).filter(isDefense)).toEqual([]);
+  await sheet.getByRole('button', { name: 'Close' }).click();
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await expect(page.getByText('The Long Night follows')).toBeVisible();
+  await expect(page.getByTestId('tray-line')).toHaveCount(0);
+  await page
+    .getByRole('dialog', { name: 'Start the Last Stand?' })
+    .getByRole('button', { name: 'Close' })
+    .click();
+  // Now put every building in the Tray.
+  await openSheet(page);
+  await clearToTray(page);
+  const inTray = (await tray(page)).filter(isDefense).length;
+  expect(inTray).toBeGreaterThan(1);
+  const trayBefore = await tray(page);
+  await sheet.getByRole('button', { name: 'Close' }).click();
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await expect(page.getByTestId('tray-line')).toHaveText(
+    `${inTray} defenses are in the Tray and give nothing.`,
+  );
+  await page
+    .getByRole('dialog', { name: 'Start the Last Stand?' })
+    .getByRole('button', { name: 'Close' })
+    .click();
+  // Nothing was placed by looking at the confirmation.
+  await openSheet(page);
+  expect(await tray(page)).toEqual(trayBefore);
+  await dismiss(page);
+});
+
+test('a stand fought from Bastion has its lane header on every wave log', async ({ page }) => {
+  await openStand(page);
+  await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 30_000 });
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await page.getByRole('button', { name: 'Go up to the walls' }).click();
+  const night = page.getByRole('dialog', { name: 'The Long Night' });
+  await expect(night.getByText(/The walls held|walls fell/).first()).toBeVisible();
+  await night.getByRole('button', { name: '1', exact: true }).click();
+  await expect(page.getByTestId('wave-log-header')).toHaveText(/^Lane [1-8] · cover \d+%$/);
+});
