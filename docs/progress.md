@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.5` (from `main` at `69157f7`, which holds the v1.4 merge). The Claude session branch for this thread is `claude/serene-johnson-vq5dt0`.
-- **Milestone:** v1.5 "The Breach" (D579–D595), in progress. v1.4 is merged, tagged `v1.4.0` and accepted (D578).
-- **Last task:** v1.5 merged and tagged (TB.15 done). Two CI times logged as Q65. Before it: TB.14, TB.13 (constants, goldens, rows A to C). Before it: TB.11b, TB.11a (baseline re-recorded once at rules version 6; D596 now Decided, D597) to TB.1.
-- **Next:** the owner's iPhone playtest, then "playtest passed"; only then `sim:accept`, merge, tag `v1.5.0` (export your save just before the merge). Q64 answered yes (D599). Owner task done: the owner said yes to the Breach strings as built (2026-10-29).
-- **Open questions:** Q61 and Q62 answered yes (D595). Q63 opens after TB.12. Size: 452,544 bytes at TB.2 (457,443 at v1.4; about 162 KB under the row).
+- **Branch:** `milestone/v1.6` (from `main` at `517b0c0`).
+- **Milestone:** v1.6 "AI Pixel Art & Atmosphere" (D600, D601), in progress. v1.5 is merged and tagged `v1.5.0`.
+- **Last task:** Atmosphere & Game Feel polish (Hold ground harmony, Threat sky backdrop, CSS juice, Watch Stand confrontation lineup) completed and verified (D601).
+- **Next:** Scene banners pixel art pass (4 Orders banners, 3 Descent stage banners) when image generator quota replenishes (~17:43 UTC / 1:43 PM EDT).
+- **Open questions:** None.
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -215,3 +215,26 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Two times worth watching:** e2e shard 3 of 5 took 7 min 44 s as a whole job (6 min 41 s of tests), under the 8-minute ceiling but over the plan's 7:30 stop-and-ask line if the whole job counts. `npm run check` took 1 min 53 s on CI (warn 90 s, fail 120 s).
 - **Not changed:** no shard was moved and no line was raised. Logged as Q65 for the v1.6 flesh-out to settle.
 - **Other jobs:** shards 1, 2, 4, 5 took 2:00 to 3:44; the simulator workflow 3 min 14 s in all.
+
+## 2026-10-31 — v1.6: Option B portrait redraw implementation
+- **Owner approval:** The owner officially approved the entire set of 37 pixel art portraits (14 hunters, 16 bestiary species, 6 event creatures, 1 The Unlit) framed in Option B (chamfered 2 px stone/iron plaques, transparent clipped corners, corner rivets, and dithered dusk-to-hearth backdrops) with second-pass cleanups on Stanko (#09) and Draugr (#19).
+- **Art committed:** All 37 approved 64 × 64 PNGs committed to `public/assets/portraits/` (total file size drops from 69.8 KB to 37.0 KB, saving 32.8 KB). Previous procedural portraits backed up to `art-src/previous-v1.6/portraits/`.
+- **Hashes frozen:** All 37 SHA-256 hashes recorded and frozen in `art-src/v1.6-portrait-hashes.json`.
+- **Tests:** `tests/tools/portraits.test.ts` (41 tests) asserts that each portrait matches its approved hash, is 64 × 64, has transparent clipped corners per Option B, and stays strictly in the 32-color Zughy palette. Pre-authorised regression test updates in `tests/tools/contact-sheet.test.ts`, `tests/tools/layout-grid-art.test.ts`, and `tests/tools/descent-art.test.ts` (`isV16Asset` definition in `tools/contact-sheet-data.ts`).
+- **Verification:** `npm run check` is 100% green in ~21 s (typecheck, lint, format:check, vitest [254 test files, 3,955 tests], and sim:check fast set).
+
+## 2026-10-31 — v1.6: Atmosphere & Game Feel Polish (Option 1)
+- **Hold ground harmony:** Remapped the 4 hold scenes (`scenes/hold-{hamlet,keep,citadel,bastion}.png`) from Kenney's bright lime `#b6d53c` (2,400+ pixels per scene) and bright yellow-orange sand `#eea160` (500+ pixels) to weathered moss green `#397b44`, pine shadow `#3c5956`, forest grass `#71aa34`, and loam path `#bf7958`, harmonizing directly with `HoldGrid` (`ground-grass.png`). Previous scenes backed up to `art-src/previous-v1.6/scenes/`. Pre-authorised update in `tools/contact-sheet-data.ts` (`isV16Asset` includes `scene.hold.*`).
+- **Threat sky mood:** Added `.holdSky` container in `HoldScreen.tsx` with dynamic sky backdrop driven by `threatTier(threat)` (calm, warning, elevated, dire). Unit tests in `tests/threat/threat.test.ts` verify all 4 tiers across all thresholds.
+- **CSS micro-feedback juice:** Added crisp 180 ms active ember press (`.btnPrimary:active`), candlelight breathe animation on Hold lamps and wall lanterns (`candleBreathe`), and reward tally pop on contract results (`.rewardTally`). All motion strictly gated behind `@media (prefers-reduced-motion: no-preference)` with `:root:not([data-motion='on'])` (verified by `tests/lint/motion.test.ts`).
+- **Watch Stand confrontation:** Added facing battle sprites (defenders vs oncoming wave beast) to `WaveLogView` in `LongNightSheets.tsx`.
+- **Verification:** `npm run check` passes 100% in ~22 s (typecheck, lint, format, 254 test files / 3,956 tests, sim:check fast set). D601 recorded.
+
+## 2026-10-31 — v1.6: Scene Banners Implementation (4 Orders & 3 Descent Stages)
+- **Owner approval:** The owner officially approved the redrawn 5:2 (`160 × 64 px`) scene banners for all 4 Orders (`moot`, `greyWives`, `bellWatchers`, `quenchers`) and all 3 Descent stages (`descent-stage-1`, `descent-stage-2`, `descent-stage-3`).
+- **Art committed:** All 7 banners deployed to `public/assets/scenes/orders/` and `public/assets/scenes/`. Total file size across all 7 banners is 9.1 KB. Previous procedural banners backed up to `art-src/previous-v1.6/scenes/orders/` and `art-src/previous-v1.6/scenes/descent/`.
+- **Hashes frozen:** All 7 SHA-256 hashes recorded and frozen in `art-src/v1.6-banner-hashes.json`. Descent hashes updated in `art-src/v1.4-hashes.json`. Extended `isV16Asset` in `tools/contact-sheet-data.ts` to include `scene.order.*` and `scene.descent.*`.
+- **Tests:** `tests/tools/orders-art.test.ts` and `tests/tools/descent-art.test.ts` verify 160 × 64 dimensions, 100% Zughy-32 palette compliance, non-blank pixel count, and exact SHA-256 hash freezing.
+- **Verification:** `npm run check` passes 100% in ~22 s (typecheck, lint, format, 254 test files / 3,963 tests, sim:check fast set). D602 recorded.
+
+

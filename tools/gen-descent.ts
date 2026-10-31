@@ -2,12 +2,7 @@
 // stage banners of the Descent. The drawing lives in draw-descent.ts so tests can redraw and compare.
 // Run: npx vite-node tools/gen-descent.ts
 import { mkdirSync, writeFileSync } from 'node:fs';
-import {
-  DESCENT_SCENE_H,
-  drawDescentScene,
-  drawUnlitPortrait,
-  drawUnlitFrames,
-} from './draw-descent';
+import { drawUnlitFrames } from './draw-descent';
 import { stripPng } from './sprite-frames';
 
 const root = new URL('../public/assets/', import.meta.url);
@@ -18,7 +13,5 @@ const write = (file: string, png: Buffer): void => {
   console.log(`public/assets/${file}`);
 };
 
-write('portraits/monster-unlit.png', drawUnlitPortrait().toPng());
+// The Unlit's portrait (v1.6 D600) and Descent stage banners (v1.6 D602) are frozen pixel art assets.
 write('sprites/monster-unlit.png', stripPng(drawUnlitFrames()));
-for (const n of [1, 2, 3] as const)
-  write(`scenes/descent-stage-${n}.png`, drawDescentScene(n).toPng(DESCENT_SCENE_H));

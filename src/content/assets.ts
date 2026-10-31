@@ -269,24 +269,24 @@ export const assets: readonly AssetEntry[] = [
       'tools/gen-portraits.ts',
     ),
   ),
-  // v0.9 (T9.16): drawn in code like the monsters (tools/draw-creatures.ts).
+  // v0.9 (T9.16), v1.6 (D596): verified by tools/gen-portraits.ts.
   ...EVENT_CREATURE_IDS.map((c) =>
     generated(
       eventCreaturePortraitId(c),
       [64, 64],
       eventCreatureName(c),
       `portraits/creature-${c}.png`,
-      'tools/gen-sprites.ts',
+      'tools/gen-portraits.ts',
     ),
   ),
-  // The Cursed (v0.5) are drawn too (plan T5.13, tools/draw-cursed.ts).
+  // The Cursed (v0.5), v1.6 (D596): verified by tools/gen-portraits.ts.
   ...MONSTER_IDS.map((m) =>
     generated(
       monsterPortraitId(m),
       [64, 64],
       monsters[m].name,
       `portraits/monster-${m}.png`,
-      'tools/gen-monsters.ts',
+      'tools/gen-portraits.ts',
     ),
   ),
   // v0.4 (plan T4.12): Embers, Threat and the relics, from the 1-Bit Pack.
@@ -429,7 +429,7 @@ export const assets: readonly AssetEntry[] = [
     [64, 64],
     'The Unlit',
     'portraits/monster-unlit.png',
-    DESCENT_GENERATOR,
+    'tools/gen-portraits.ts',
   ),
   ...([1, 2, 3] as const).map((n) =>
     generated(

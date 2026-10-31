@@ -21,6 +21,13 @@ export const isV14Asset = (id: string): boolean =>
   id === 'sprite.monster.unlit' ||
   id.startsWith('scene.descent.');
 
+/** v1.6 pictures (portraits, hold scenes, order banners, descent stages, D596, D600, D601, D602). */
+export const isV16Asset = (id: string): boolean =>
+  id.startsWith('portrait.') ||
+  id.startsWith('scene.hold.') ||
+  id.startsWith('scene.order.') ||
+  id.startsWith('scene.descent.');
+
 /** The v1.4 sheet's own sequence 1..5, in the order the owner marks them (portrait, battle sprite, banners). */
 export const v14Numbered: readonly NumberedAsset[] = [
   'portrait.monster.unlit',
