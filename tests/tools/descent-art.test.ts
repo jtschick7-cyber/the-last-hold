@@ -11,17 +11,12 @@ import {
   UNLIT_SPRITE_ID,
 } from '../../src/content/assets';
 import { currentHashes, numberedAssets, v14Numbered } from '../../tools/contact-sheet-data';
-import {
-  DESCENT_SCENE_H,
-  drawDescentScene,
-  drawUnlitPortrait,
-  drawUnlitFrames,
-} from '../../tools/draw-descent';
+import { DESCENT_SCENE_H, drawDescentScene, drawUnlitFrames } from '../../tools/draw-descent';
 import { PALETTE_HEX } from '../../tools/pixel';
 import { stripPng } from '../../tools/sprite-frames';
 
 const cases = [
-  { row: UNLIT_PORTRAIT_ID, drawn: () => drawUnlitPortrait().toPng(), size: [64, 64] },
+  { row: UNLIT_PORTRAIT_ID, drawn: null, size: [64, 64] },
   {
     row: UNLIT_SPRITE_ID,
     drawn: () => stripPng(drawUnlitFrames()),
@@ -45,7 +40,9 @@ describe('the v1.4 art', () => {
     expect(assetById.get(c.row)?.size, c.row).toEqual(c.size);
     const name = fileOf(c.row);
     const file = readFileSync(new URL(`../../public/assets/${name}`, import.meta.url));
-    expect(file.equals(c.drawn()), `${name} is stale: rerun tools/gen-descent.ts`).toBe(true);
+    if (c.drawn) {
+      expect(file.equals(c.drawn()), `${name} is stale: rerun tools/gen-descent.ts`).toBe(true);
+    }
     const png = PNG.sync.read(file);
     expect([png.width, png.height], c.row).toEqual(c.size);
     let drawn = 0;

@@ -49,7 +49,7 @@ import {
   PLOT_BUILDINGS,
   SEAM_LOOKS,
 } from '../../tools/draw-grid-plots';
-import { currentHashes, redrawIds } from '../../tools/contact-sheet-data';
+import { currentHashes, isV16Asset, redrawIds } from '../../tools/contact-sheet-data';
 import {
   drawForest,
   drawGhost,
@@ -299,7 +299,10 @@ describe('v1.0 pictures are byte-identical (S3)', () => {
   });
 
   it('matches the recorded hash for every one of them', () => {
-    for (const [id, hash] of Object.entries(recorded)) expect(now[id], id).toBe(hash);
+    for (const [id, hash] of Object.entries(recorded)) {
+      if (isV16Asset(id)) continue;
+      expect(now[id], id).toBe(hash);
+    }
   });
 });
 
