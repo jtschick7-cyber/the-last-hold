@@ -11,7 +11,7 @@ import {
   UNLIT_SPRITE_ID,
 } from '../../src/content/assets';
 import { currentHashes, numberedAssets, v14Numbered } from '../../tools/contact-sheet-data';
-import { DESCENT_SCENE_H, drawDescentScene, drawUnlitFrames } from '../../tools/draw-descent';
+import { drawDescentScene, drawUnlitFrames } from '../../tools/draw-descent';
 import { PALETTE_HEX } from '../../tools/pixel';
 import { stripPng } from '../../tools/sprite-frames';
 
@@ -24,7 +24,7 @@ const cases = [
   },
   ...([1, 2, 3] as const).map((n) => ({
     row: descentSceneId(n),
-    drawn: () => drawDescentScene(n).toPng(DESCENT_SCENE_H),
+    drawn: null,
     size: [160, 64],
   })),
 ];
@@ -88,5 +88,16 @@ describe('the approved v1.4 pictures are frozen (S12)', () => {
   it('matches the recorded hash for every one of them', () => {
     const now = currentHashes();
     for (const [id, hash] of Object.entries(recorded)) expect(now[id], id).toBe(hash);
+  });
+});
+
+describe('the approved v1.6 descent banners are frozen (D602)', () => {
+  const bannerHashes = JSON.parse(
+    readFileSync(new URL('../../art-src/v1.6-banner-hashes.json', import.meta.url), 'utf8'),
+  ) as Record<string, string>;
+
+  it.each([1, 2, 3] as const)('matches approved hash for Descent stage %s', (stage) => {
+    const now = currentHashes();
+    expect(now[descentSceneId(stage)]).toBe(bannerHashes[`descent-stage-${stage}.png`]);
   });
 });

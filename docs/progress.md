@@ -230,3 +230,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Watch Stand confrontation:** Added facing battle sprites (defenders vs oncoming wave beast) to `WaveLogView` in `LongNightSheets.tsx`.
 - **Verification:** `npm run check` passes 100% in ~22 s (typecheck, lint, format, 254 test files / 3,956 tests, sim:check fast set). D601 recorded.
 
+## 2026-10-31 — v1.6: Scene Banners Implementation (4 Orders & 3 Descent Stages)
+- **Owner approval:** The owner officially approved the redrawn 5:2 (`160 × 64 px`) scene banners for all 4 Orders (`moot`, `greyWives`, `bellWatchers`, `quenchers`) and all 3 Descent stages (`descent-stage-1`, `descent-stage-2`, `descent-stage-3`).
+- **Art committed:** All 7 banners deployed to `public/assets/scenes/orders/` and `public/assets/scenes/`. Total file size across all 7 banners is 9.1 KB. Previous procedural banners backed up to `art-src/previous-v1.6/scenes/orders/` and `art-src/previous-v1.6/scenes/descent/`.
+- **Hashes frozen:** All 7 SHA-256 hashes recorded and frozen in `art-src/v1.6-banner-hashes.json`. Descent hashes updated in `art-src/v1.4-hashes.json`. Extended `isV16Asset` in `tools/contact-sheet-data.ts` to include `scene.order.*` and `scene.descent.*`.
+- **Tests:** `tests/tools/orders-art.test.ts` and `tests/tools/descent-art.test.ts` verify 160 × 64 dimensions, 100% Zughy-32 palette compliance, non-blank pixel count, and exact SHA-256 hash freezing.
+- **Verification:** `npm run check` passes 100% in ~22 s (typecheck, lint, format, 254 test files / 3,963 tests, sim:check fast set). D602 recorded.
+
+
