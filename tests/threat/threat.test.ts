@@ -109,4 +109,16 @@ describe('Threat (plan T4.5)', () => {
     expect(s.threat).toBeCloseTo(4.75);
     expect(s.cycles[0]?.contractThreat).toEqual({ added: 0, removed: 0.76 });
   });
+
+  it('threatTier reflects the four sky tiers: calm, warning, elevated, dire', async () => {
+    const { threatTier } = await import('../../src/ui/screens/HoldScreen');
+    expect(threatTier(0)).toBe('calm');
+    expect(threatTier(14.9)).toBe('calm');
+    expect(threatTier(15)).toBe('warning');
+    expect(threatTier(39.9)).toBe('warning');
+    expect(threatTier(40)).toBe('elevated');
+    expect(threatTier(74.9)).toBe('elevated');
+    expect(threatTier(75)).toBe('dire');
+    expect(threatTier(120)).toBe('dire');
+  });
 });

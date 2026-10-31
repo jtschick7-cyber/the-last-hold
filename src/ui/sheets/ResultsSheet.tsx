@@ -40,7 +40,7 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
         </div>
       </div>
       {r.success ? (
-        <div class={styles.cost}>
+        <div class={`${styles.cost} ${styles.rewardTally}`}>
           <span>
             +{formatNumber(r.bounty)} <ResourceIcon r="silver" />
           </span>

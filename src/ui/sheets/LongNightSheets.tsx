@@ -22,7 +22,18 @@ import { actClosingNote, longNightTestament } from '../../core/story/documents';
 import styles from '../styles/ui.module.css';
 import { Num } from '../widgets/Num';
 import { Sprite } from '../widgets/Sprite';
-import { EMBERS_ICON, relicIconId } from '../../content/assets';
+import { BattleSprite } from '../widgets/BattleSprite';
+import {
+  EMBERS_ICON,
+  eventCreaturePortraitId,
+  eventCreatureSpriteId,
+  hunterPortraitId,
+  hunterSpriteId,
+  monsterPortraitId,
+  monsterSpriteId,
+  relicIconId,
+} from '../../content/assets';
+import { bosses } from '../../content/great-beasts';
 import { HearthView } from './HearthView';
 
 // GDD §5.9.7 and §9.13 (D110, D115): the Long Night sheets, in order: the stand's
@@ -55,14 +66,47 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
   const result = useMemo(() => replayStand(stand), [stand.seed, stand.at]);
   const w = result.waves[n - 1];
   if (!w) return <p>No log for this wave.</p>;
+  const m = w.wave.monster;
+  const isBoss = m in bosses;
+  const monsterSprite = isBoss ? eventCreatureSpriteId(m as never) : monsterSpriteId(m as never);
+  const monsterPortrait = isBoss
+    ? eventCreaturePortraitId(m as never)
+    : monsterPortraitId(m as never);
+  const monsterName = creatureOf(m).name;
   return (
     <div>
       <p class={w.fight.result === 'win' ? styles.good : styles.warn}>
         <strong>
-          Wave {n}: {creatureOf(w.wave.monster).name}, tier {w.wave.tier} ·{' '}
+          Wave {n}: {monsterName}, tier {w.wave.tier} ·{' '}
           {w.fight.result === 'win' ? 'held' : 'the walls fell'} at tick {w.fight.ticks}
         </strong>
       </p>
+      <div
+        class={styles.standConfrontation}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: 'var(--space-2)',
+          background: 'var(--c-bg)',
+          borderRadius: '0.375rem',
+          margin: 'var(--space-2) 0',
+        }}
+      >
+        <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
+          {stand.party.map((p) => (
+            <BattleSprite
+              key={p.id}
+              id={hunterSpriteId(p.id)}
+              portraitId={hunterPortraitId(p.id)}
+              label={hunters[p.id].name}
+            />
+          ))}
+        </div>
+        <div style={{ transform: 'scaleX(-1)' }}>
+          <BattleSprite id={monsterSprite} portraitId={monsterPortrait} label={monsterName} />
+        </div>
+      </div>
       <OlderRules stand={stand} replay={result} />
       {w.breach && (
         <p class={styles.small} data-testid="wave-log-header">

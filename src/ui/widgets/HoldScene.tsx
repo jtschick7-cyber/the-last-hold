@@ -25,13 +25,21 @@ export const HoldScene = ({ age }: { age: AgeId }) => {
     >
       <Sprite id={holdSceneId(age)} fill />
       {COSMETIC_IDS.filter((c) => bought.includes(c)).map((c) => (
-        <span key={c} style={{ position: 'absolute', left: 0, top: 0, width: '100%' }}>
+        <span
+          key={c}
+          data-cosmetic={c}
+          style={{ position: 'absolute', left: 0, top: 0, width: '100%' }}
+        >
           <Sprite id={cosmeticId(c, age)} fill />
         </span>
       ))}
       {/* GDD §5.15.6: the frost, then the lamp; on top of the cosmetics so the lamp is never hidden. */}
       {look !== 'plain' && (
-        <span style={{ position: 'absolute', left: 0, top: 0, width: '100%' }}>
+        <span
+          data-lamp={look === 'lamp' ? 'hearth' : undefined}
+          data-frost={look === 'frost' ? 'hold' : undefined}
+          style={{ position: 'absolute', left: 0, top: 0, width: '100%' }}
+        >
           <Sprite id={holdLookId(look, age)} fill />
         </span>
       )}

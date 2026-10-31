@@ -20,6 +20,13 @@ import { now } from '../../platform/clock';
 import { OrdersCard } from '../orders/OrdersCard';
 import { RememberingCard } from '../remembering/RememberingCard';
 
+export const threatTier = (threat: number): 'calm' | 'warning' | 'elevated' | 'dire' => {
+  if (threat >= 75) return 'dire';
+  if (threat >= 40) return 'elevated';
+  if (threat >= 15) return 'warning';
+  return 'calm';
+};
+
 // GDD §9.2: the hold header (pixel hold scene, via the asset manifest), the
 // peasants panel, and the build list.
 export const HoldScreen = () => {
@@ -32,7 +39,7 @@ export const HoldScreen = () => {
   return (
     <div>
       <header class={styles.card}>
-        <div style={{ textAlign: 'center' }}>
+        <div class={styles.holdSky} data-threat={threatTier(s.threat)}>
           {appSettings.value.holdView === 'grid' ? <HoldGrid /> : <HoldScene age={s.cycle.age} />}
         </div>
         <div class={styles.row}>

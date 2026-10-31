@@ -21,8 +21,9 @@ export const isV14Asset = (id: string): boolean =>
   id === 'sprite.monster.unlit' ||
   id.startsWith('scene.descent.');
 
-/** v1.6 pictures (all 37 portraits redrawn with approved Option B framing, D596). */
-export const isV16Asset = (id: string): boolean => id.startsWith('portrait.');
+/** v1.6 pictures (portraits and recolored hold scenes harmonized to frontier palette, D596, D600). */
+export const isV16Asset = (id: string): boolean =>
+  id.startsWith('portrait.') || id.startsWith('scene.hold.');
 
 /** The v1.4 sheet's own sequence 1..5, in the order the owner marks them (portrait, battle sprite, banners). */
 export const v14Numbered: readonly NumberedAsset[] = [

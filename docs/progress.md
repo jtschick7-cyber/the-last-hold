@@ -5,10 +5,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v1.6` (from `main` at `517b0c0`).
-- **Milestone:** v1.6 "AI Pixel Art & Atmosphere" (D600), in progress. v1.5 is merged and tagged `v1.5.0`.
-- **Last task:** Option B portrait redraw implementation for all 37 portraits (D600). Approved by owner.
-- **Next:** Scene banners pixel art pass, Hold grass & Threat atmosphere, and CSS juice feedback.
-- **Open questions:** None for portraits.
+- **Milestone:** v1.6 "AI Pixel Art & Atmosphere" (D600, D601), in progress. v1.5 is merged and tagged `v1.5.0`.
+- **Last task:** Atmosphere & Game Feel polish (Hold ground harmony, Threat sky backdrop, CSS juice, Watch Stand confrontation lineup) completed and verified (D601).
+- **Next:** Scene banners pixel art pass (4 Orders banners, 3 Descent stage banners) when image generator quota replenishes (~17:43 UTC / 1:43 PM EDT).
+- **Open questions:** None.
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -222,3 +222,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Hashes frozen:** All 37 SHA-256 hashes recorded and frozen in `art-src/v1.6-portrait-hashes.json`.
 - **Tests:** `tests/tools/portraits.test.ts` (41 tests) asserts that each portrait matches its approved hash, is 64 × 64, has transparent clipped corners per Option B, and stays strictly in the 32-color Zughy palette. Pre-authorised regression test updates in `tests/tools/contact-sheet.test.ts`, `tests/tools/layout-grid-art.test.ts`, and `tests/tools/descent-art.test.ts` (`isV16Asset` definition in `tools/contact-sheet-data.ts`).
 - **Verification:** `npm run check` is 100% green in ~21 s (typecheck, lint, format:check, vitest [254 test files, 3,955 tests], and sim:check fast set).
+
+## 2026-10-31 — v1.6: Atmosphere & Game Feel Polish (Option 1)
+- **Hold ground harmony:** Remapped the 4 hold scenes (`scenes/hold-{hamlet,keep,citadel,bastion}.png`) from Kenney's bright lime `#b6d53c` (2,400+ pixels per scene) and bright yellow-orange sand `#eea160` (500+ pixels) to weathered moss green `#397b44`, pine shadow `#3c5956`, forest grass `#71aa34`, and loam path `#bf7958`, harmonizing directly with `HoldGrid` (`ground-grass.png`). Previous scenes backed up to `art-src/previous-v1.6/scenes/`. Pre-authorised update in `tools/contact-sheet-data.ts` (`isV16Asset` includes `scene.hold.*`).
+- **Threat sky mood:** Added `.holdSky` container in `HoldScreen.tsx` with dynamic sky backdrop driven by `threatTier(threat)` (calm, warning, elevated, dire). Unit tests in `tests/threat/threat.test.ts` verify all 4 tiers across all thresholds.
+- **CSS micro-feedback juice:** Added crisp 180 ms active ember press (`.btnPrimary:active`), candlelight breathe animation on Hold lamps and wall lanterns (`candleBreathe`), and reward tally pop on contract results (`.rewardTally`). All motion strictly gated behind `@media (prefers-reduced-motion: no-preference)` with `:root:not([data-motion='on'])` (verified by `tests/lint/motion.test.ts`).
+- **Watch Stand confrontation:** Added facing battle sprites (defenders vs oncoming wave beast) to `WaveLogView` in `LongNightSheets.tsx`.
+- **Verification:** `npm run check` passes 100% in ~22 s (typecheck, lint, format, 254 test files / 3,956 tests, sim:check fast set). D601 recorded.
+
