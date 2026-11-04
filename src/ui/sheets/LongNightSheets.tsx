@@ -103,7 +103,7 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
             />
           ))}
         </div>
-        <div style={{ transform: 'scaleX(-1)' }}>
+        <div data-testid="wave-log-monster" style={{ display: 'flex' }}>
           <BattleSprite id={monsterSprite} portraitId={monsterPortrait} label={monsterName} />
         </div>
       </div>

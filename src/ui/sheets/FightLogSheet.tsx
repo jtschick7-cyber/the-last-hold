@@ -1,8 +1,7 @@
 import { useState } from 'preact/hooks';
 import { monsters } from '../../content/monsters';
-import { runFight } from '../../core/combat';
 import { speciesOf } from '../../core/combat/species';
-import { seeded } from '../../core/rng';
+import { replayFight } from '../../core/contracts/playback';
 import { fightReplayDiffers, OLDER_RULES_NOTE } from '../../core/replay-check';
 import type { FightRef } from '../../core/state/game-state';
 import styles from '../styles/ui.module.css';
@@ -11,16 +10,6 @@ import styles from '../styles/ui.module.css';
 // expands each line to the rolls it used, each with a plain label from the combat code. "Seed" shows the fight seed and a replay
 // that re-runs the fight to prove the log matches (D10). Logs are never stored:
 // they are regenerated from the seed (technical design §5.3).
-const replay = (ref: FightRef) =>
-  runFight({
-    party: ref.party,
-    monster: ref.monster,
-    location: ref.location,
-    rolls: seeded(ref.seed),
-    prep: ref.prep,
-    alchemy: ref.alchemy,
-  });
-
 const COLLAPSE_EVERY = 50;
 
 export const FightLogView = ({ fight }: { fight: FightRef }) => {
@@ -28,7 +17,7 @@ export const FightLogView = ({ fight }: { fight: FightRef }) => {
   const [seed, setSeed] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [check, setCheck] = useState<string | null>(null);
-  const first = replay(fight);
+  const first = replayFight(fight);
   const lines = first.log;
   const older = fightReplayDiffers(fight, first);
   const name =
@@ -90,7 +79,7 @@ export const FightLogView = ({ fight }: { fight: FightRef }) => {
             type="button"
             class={styles.btn}
             onClick={() => {
-              const again = replay(fight);
+              const again = replayFight(fight);
               const same =
                 again.log.length === lines.length &&
                 again.log.every((l, i) => l.text === lines[i]?.text);

@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.7` (branched from `main` at `7b06a92`, post-`v1.6.0`).
 - **Milestone:** v1.7 "Steel & Hearth" (`D604`–`D613`), **in progress**.
-- **Last task:** `VB.2` — Sprite Batch 1 (10 hunters: Arvid, Bjarna, Gest Tall-Torch, Halvar, Ostap, Radek, Ragnhild Eye-Taker, Sigrun, Stanko, Zora, incl. D490 animations for Gest & Ragnhild) staged in `art-src/v1.7-staging/` and **all 10 approved (Keep)** on Contact Sheet 1.
-- **Next:** `VB.3` — Contract `Watch fight ▸`, Arena step polish, and wave-log facing fix (approved Batch 1 strips deploy in `VB.4`).
+- **Last task:** `VB.3` — Contract `Watch fight ▸`, Arena step polish (floating callouts, 3 px hit recoil, Wright-skill & ability rim-glows), and wave-log monster facing & inline-box visibility fix.
+- **Next:** `VB.4` — Sprite Batch 2 (4 remaining hunters incl. Radmila + 6 Woodland/Beast/Water monsters) and deploy approved Batch 1 strips.
 - **Open questions:** None.
 
 Earlier entries are in [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -47,3 +47,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-28-to-31.md`](archive/pro
 - **Contact Sheet 1 & tests:** Added deterministic `pngjs` contact-sheet generator `tools/contact-sheet-v17.ts`, `docs/flesh-out/v1.7/contact-sheets/contact-sheet-1.png` (`#01`–`#10`, all 5 frames at 2× beside 64 px v1.6 portraits on dark `#302c2e` and light `#cfc6b8`), `docs/flesh-out/v1.7/art-marks.md`, and `tests/tools/sprites-v17.test.ts` (12 tests verifying dimensions, alpha, Zughy-32 compliance, pairwise pose distinctness, and D490 animations).
 - **Skipped / deferred:** None (`public/assets/sprites/` held untouched per `VB.2`; approved Batch 1 strips deploy in `VB.4`).
 - **Verification & next:** `npm run check` green in ≤ 90 s. Next task: `VB.3` (Contract `Watch fight ▸`, Arena step polish, and wave-log facing fix).
+
+
+## 2026-11-04 — v1.7 VB.3: Contract Watch fight ▸, Arena step polish & wave-log facing fix
+- **Read-only contract playback (`D606`):** Added pure `findFight`, `replayFight`, and `contractPlayback(state, ref)` in `src/core/contracts/playback.ts` (`{Monster} · T{tier}`, `OLDER_RULES_NOTE` when `fightReplayDiffers`, zero state mutation) and `ContractPlaybackSheet` (`src/ui/sheets/ContractPlayback.tsx`), wired to **`Watch fight ▸`** beside **`Fight log ▸`** on `ResultsSheet` (`Skip`, `Log`, `Done`, silent finish obeying `D522`). Shared `replayFight` with `FightLogSheet.tsx`.
+- **Zero-math Arena step feedback (`D607`, `D610`):** Extended `playbackSteps` in `src/core/delves/view.ts` to derive callouts (`-{n}`, `★ -{n}`, `+{n}`, `MISS`) directly from `LogEntry` without UI math. Wired floating step callouts, 3 px hit recoil, warm ember Wright-skill rim-glow (`#f47e1b` / `#f4b41b`), and cold frost/violet ability rim-glow (`#8aebf1` / `#8e478c`) across `PlaybackView.tsx`, `Arena.tsx`, and `BattleSprite.tsx` behind `@media (prefers-reduced-motion: no-preference)` and `:root:not([data-motion='on'])`.
+- **Wave-log monster facing & inline-box fix (`D608`):** Removed the duplicate `scaleX(-1)` wrapper around the wave monster in `LongNightSheets.tsx` so left-facing monster strips face the defenders, and added `display: inline-block` to `.box` in `BattleSprite.module.css` (plus `display: flex` on the wave-log wrapper) after Playwright caught the `<span>` collapsing to `0 × 0 px` inside a plain `<div>`.
+- **Skipped / deferred:** None (`polish-screens.ts` sweep hookup and Arena step benchmark remain scheduled for `VB.10` per `D611`/`D612`).
+- **Verification & next:** Unit tests (`tests/contracts/playback.test.ts`), `tests/lint/motion.test.ts`, Playwright phone suite (`tests/e2e/contract-watch.spec.ts` — 4/4 green across callouts/glows/silent finish, `320 px` Largest text + Light theme tap/contrast + 7-tap routine check-in, Reduce Motion stillness, and wave-log facing), and `npm run check` all green in ≤ 90 s. Next: `VB.4`.

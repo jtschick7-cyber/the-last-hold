@@ -1,5 +1,6 @@
 /* GDD §9.12 (D265): a battle sprite is a strip of 32 px frames, shown at 2×. */
 .box {
+  display: inline-block;
   position: relative;
   width: 64px;
   height: 64px;
@@ -23,11 +24,52 @@
   image-rendering: pixelated;
 }
 
-/* The two idle frames take turns, behind the reduced-motion gate (GDD §9.20): the phone does not
-   ask to reduce and the switch is not on. Otherwise the sprite stays on its first frame. */
+/* The two idle frames take turns, and v1.7 step feedback (3 px hit recoil, warm ember Wright-skill
+   rim-glow, cold frost/violet ability rim-glow; D607) runs strictly behind the reduced-motion gate
+   (GDD §9.20): the phone does not ask to reduce and the switch is not on. */
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion='on']) .idle {
     animation: breathe 1.2s steps(1) infinite;
+  }
+
+  :root:not([data-motion='on']) .recoilA {
+    animation: hitRecoilA 0.22s ease-out;
+  }
+
+  :root:not([data-motion='on']) .recoilB {
+    animation: hitRecoilB 0.22s ease-out;
+  }
+
+  :root:not([data-motion='on']) .glowSkillA {
+    border-radius: 0.25rem;
+    box-shadow:
+      0 0 0 2px #f47e1b,
+      0 0 6px #f4b41b;
+    animation: rimSkillA 0.32s ease-out;
+  }
+
+  :root:not([data-motion='on']) .glowSkillB {
+    border-radius: 0.25rem;
+    box-shadow:
+      0 0 0 2px #f47e1b,
+      0 0 6px #f4b41b;
+    animation: rimSkillB 0.32s ease-out;
+  }
+
+  :root:not([data-motion='on']) .glowAbilityA {
+    border-radius: 0.25rem;
+    box-shadow:
+      0 0 0 2px #8aebf1,
+      0 0 6px #8e478c;
+    animation: rimAbilityA 0.32s ease-out;
+  }
+
+  :root:not([data-motion='on']) .glowAbilityB {
+    border-radius: 0.25rem;
+    box-shadow:
+      0 0 0 2px #8aebf1,
+      0 0 6px #8e478c;
+    animation: rimAbilityB 0.32s ease-out;
   }
 }
 
@@ -38,5 +80,97 @@
 
   50% {
     transform: translateX(-64px);
+  }
+}
+
+@keyframes hitRecoilA {
+  0% {
+    transform: translateX(0);
+  }
+
+  30% {
+    transform: translateX(3px);
+  }
+
+  65% {
+    transform: translateX(-3px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes hitRecoilB {
+  0% {
+    transform: translateX(0);
+  }
+
+  30% {
+    transform: translateX(3px);
+  }
+
+  65% {
+    transform: translateX(-3px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes rimSkillA {
+  0% {
+    box-shadow:
+      0 0 0 2px #f4b41b,
+      0 0 12px #f47e1b;
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 2px #f47e1b,
+      0 0 6px #f4b41b;
+  }
+}
+
+@keyframes rimSkillB {
+  0% {
+    box-shadow:
+      0 0 0 2px #f4b41b,
+      0 0 12px #f47e1b;
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 2px #f47e1b,
+      0 0 6px #f4b41b;
+  }
+}
+
+@keyframes rimAbilityA {
+  0% {
+    box-shadow:
+      0 0 0 2px #dff6f5,
+      0 0 12px #8e478c;
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 2px #8aebf1,
+      0 0 6px #8e478c;
+  }
+}
+
+@keyframes rimAbilityB {
+  0% {
+    box-shadow:
+      0 0 0 2px #dff6f5,
+      0 0 12px #8e478c;
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 2px #8aebf1,
+      0 0 6px #8e478c;
   }
 }

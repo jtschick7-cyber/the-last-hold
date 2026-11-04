@@ -2,6 +2,7 @@ import { hunters } from '../../content/hunters';
 import { monsterPortraitId, RIBBON_ICON } from '../../content/assets';
 import { ingredients, type IngredientId } from '../../content/ingredients';
 import { monsters } from '../../content/monsters';
+import { findFight } from '../../core/contracts/playback';
 import { formatDuration, formatNumber } from '../../core/format';
 import type { ContractResult } from '../../core/state/game-state';
 import { foundLines } from '../../core/story/found-lines';
@@ -11,6 +12,7 @@ import { placeName } from '../app/contract-text';
 import styles from '../styles/ui.module.css';
 import { ResourceIcon } from '../widgets/ResourceIcon';
 import { Sprite } from '../widgets/Sprite';
+import { openContractPlayback } from './ContractPlayback';
 import { FightLogView } from './FightLogSheet';
 import { ReadyLine } from '../remembering/ReadyLine';
 
@@ -25,7 +27,7 @@ const INJURY: Record<string, string> = {
 // summary (GDD §5.4.3). The rewards were applied when each timer ended.
 export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
   void version.value;
-  const fight = game().log.recentFights.find((f) => f.contractId === r.contractId);
+  const fight = findFight(game(), r.contractId);
   return (
     <li class={styles.divider} style={{ padding: 'var(--space-2) 0' }}>
       <div class={styles.row}>
@@ -87,13 +89,18 @@ export const ResultLine = ({ r, now }: { r: ContractResult; now: number }) => {
         </div>
       ))}
       {fight && (
-        <button
-          type="button"
-          class={styles.btn}
-          onClick={() => openSheet('Fight log', () => <FightLogView fight={fight} />)}
-        >
-          Fight log ▸
-        </button>
+        <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+          <button type="button" class={styles.btn} onClick={() => openContractPlayback(fight)}>
+            Watch fight ▸
+          </button>
+          <button
+            type="button"
+            class={styles.btn}
+            onClick={() => openSheet('Fight log', () => <FightLogView fight={fight} />)}
+          >
+            Fight log ▸
+          </button>
+        </div>
       )}
     </li>
   );

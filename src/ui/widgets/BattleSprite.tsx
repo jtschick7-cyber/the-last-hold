@@ -13,19 +13,46 @@ const BASE = `${import.meta.env.BASE_URL}assets/`;
 const SCALE = 2;
 const FRAME_PX = 32 * SCALE;
 
+export type SpriteGlow = 'skill' | 'ability';
+
 export interface BattleSpriteProps {
   id: string;
   portraitId?: string | null;
   frame?: SpriteFrameName | 'idling';
   label: string;
+  recoil?: boolean;
+  glow?: SpriteGlow | null;
+  stepKey?: number;
 }
 
-export const BattleSprite = ({ id, portraitId, frame = 'idling', label }: BattleSpriteProps) => {
+export const BattleSprite = ({
+  id,
+  portraitId,
+  frame = 'idling',
+  label,
+  recoil = false,
+  glow = null,
+  stepKey = 0,
+}: BattleSpriteProps) => {
   const entry = assetById.get(id);
   const [broken, setBroken] = useState(false);
+  const still = reducedMotion();
+  const odd = Math.abs(stepKey) % 2 === 1;
+  const fx = [
+    css.box,
+    !still && recoil ? (odd ? css.recoilB : css.recoilA) : '',
+    !still && glow === 'skill' ? (odd ? css.glowSkillB : css.glowSkillA) : '',
+    !still && glow === 'ability' ? (odd ? css.glowAbilityB : css.glowAbilityA) : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const dataAttrs = {
+    ...(!still && recoil ? { 'data-recoil': 'true' } : {}),
+    ...(!still && glow ? { 'data-glow': glow } : {}),
+  };
   if (!entry || entry.source === 'placeholder' || broken) {
     return (
-      <span class={css.box} role="img" aria-label={label}>
+      <span class={fx} role="img" aria-label={label} {...dataAttrs}>
         {portraitId && assetById.get(portraitId)?.source === 'generated' ? (
           <Sprite id={portraitId} />
         ) : (
@@ -34,11 +61,10 @@ export const BattleSprite = ({ id, portraitId, frame = 'idling', label }: Battle
       </span>
     );
   }
-  const still = reducedMotion();
   const shown = still ? 'idling' : frame;
   const index = shown === 'idling' ? 0 : SPRITE_FRAME_NAMES.indexOf(shown);
   return (
-    <span class={css.box} role="img" aria-label={label}>
+    <span class={fx} role="img" aria-label={label} {...dataAttrs}>
       <img
         class={`${css.strip} ${shown === 'idling' ? css.idle : ''}`}
         src={BASE + entry.file}
