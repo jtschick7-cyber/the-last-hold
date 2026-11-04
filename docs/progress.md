@@ -6,8 +6,8 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 - **Branch:** `milestone/v1.7` (branched from `main` at `7b06a92`, post-`v1.6.0`).
 - **Milestone:** v1.7 "Steel & Hearth" (`D604`–`D613`), **in progress**.
-- **Last task:** `VB.1` — Docs commit, preconditions, branch, GDD §2.3 name check (*Steel & Hearth*), and v1.5/v1.6 plan & progress archive housekeeping.
-- **Next:** `VB.2` — Sprite Batch 1 (10 hunters: Arvid, Bjarna, Gest Tall-Torch, Halvar, Ostap, Radek, Ragnhild Eye-Taker, Sigrun, Stanko, Zora) with Contact Sheet 1 for owner review.
+- **Last task:** `VB.2` — Sprite Batch 1 (10 hunters: Arvid, Bjarna, Gest Tall-Torch, Halvar, Ostap, Radek, Ragnhild Eye-Taker, Sigrun, Stanko, Zora, incl. D490 animations for Gest & Ragnhild) staged in `art-src/v1.7-staging/` and **all 10 approved (Keep)** on Contact Sheet 1.
+- **Next:** `VB.3` — Contract `Watch fight ▸`, Arena step polish, and wave-log facing fix (approved Batch 1 strips deploy in `VB.4`).
 - **Open questions:** None.
 
 Earlier entries are in [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -40,3 +40,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-28-to-31.md`](archive/pro
 - **`CLAUDE.md` lines updated:** Replaced `"- Sound is UI-only: nothing in \`src/core/\` imports or reads the sound module or the \`sound\` setting."` and `"- Write no player-facing strings for sound beyond the table in GDD §9.22; if a screen needs one, ask."` to cover both `sound` and `ambience`, GDD §9.4/§9.15 strings, and Remembering/Descent silence (D609, D610).
 - **Archive & verification:** Moved older progress entries (`v1.4 TD.11` to `v1.6 portraits`) to `docs/archive/progress-2026-10-28-to-31.md` (reducing `progress.md` from 44 KB to ~6 KB). `npm run check` green (~22 s).
 - **Next:** `VB.2` — Sprite Batch 1 (10 hunters, incl. Gest & Ragnhild) and Contact Sheet 1.
+
+## 2026-11-04 — v1.7 VB.2: Sprite Batch 1 staged & Contact Sheet 1
+- **Batch 1 staged & approved (`art-src/v1.7-staging/`, `public/assets/sprites/` untouched until `VB.4`):** Authored and losslessly packed 10 `160 × 32 px` 5-frame (`idle`, `idle2`, `lunge`, `hit`, `downed`) battle sprite strips (8.5 KB total, 778–978 B each) facing right in 100% Zughy-32 palette with transparent backgrounds and `y = 30` ground-line silhouettes matching v1.6 portraits for **Arvid**, **Bjarna**, **Gest Tall-Torch**, **Halvar**, **Ostap**, **Radek**, **Ragnhild Eye-Taker**, **Sigrun**, **Stanko**, and **Zora**. Owner approved `#01`–`#05`, `#07`, `#08`, and `#10` on round 1, requested sharper edges/silhouettes on `#06` (**Radek**) and `#09` (**Stanko**), and approved `#06` and `#09` on round 2 (all 10 marked **Keep** in `docs/flesh-out/v1.7/art-marks.md`).
+- **Bespoke D490 animations (Batch 1 half of D490):** Added Gest Tall-Torch's leaping flame + warm coat/face glow in `idle2` and sweeping fire plume + sparks in `lunge`, and Ragnhild the Eye-Taker's cold cyan bone-needle glint in `idle2` and piercing frost-needle thrust in `lunge`; every other hunter also carries a weapon-specific `lunge` flourish.
+- **Contact Sheet 1 & tests:** Added deterministic `pngjs` contact-sheet generator `tools/contact-sheet-v17.ts`, `docs/flesh-out/v1.7/contact-sheets/contact-sheet-1.png` (`#01`–`#10`, all 5 frames at 2× beside 64 px v1.6 portraits on dark `#302c2e` and light `#cfc6b8`), `docs/flesh-out/v1.7/art-marks.md`, and `tests/tools/sprites-v17.test.ts` (12 tests verifying dimensions, alpha, Zughy-32 compliance, pairwise pose distinctness, and D490 animations).
+- **Skipped / deferred:** None (`public/assets/sprites/` held untouched per `VB.2`; approved Batch 1 strips deploy in `VB.4`).
+- **Verification & next:** `npm run check` green in ≤ 90 s. Next task: `VB.3` (Contract `Watch fight ▸`, Arena step polish, and wave-log facing fix).
