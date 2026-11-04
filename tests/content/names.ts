@@ -1360,4 +1360,17 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'generic',
     note: 'Plan name only, not shown to the player (OUT-6). Searched 2026-10-28: "Into the Breach" (Subset Games) and For Honor\'s Breach mode exist; neither is among the GDD §2.3 influences and the plan name is not player-facing.',
   },
+  // v1.7 flesh-out & VB.1 (2026-11-04, D610): plain English UI words only; draft plan subtitle "Blades & Hearthfire" replaced with "Steel & Hearth" after catching Skyrim's Hearthfire DLC and Blades faction.
+  ...['Ambience', 'Watch fight', 'MISS'].map((name): CheckedName => ({
+    name,
+    checked: '2026-11-04',
+    result: 'generic',
+    note: 'Plain everyday UI word (Settings label, Contract result button, Arena callout; D610). Searched 2026-11-04: no collision in any GDD §2.3 influence.',
+  })),
+  {
+    name: 'Steel & Hearth',
+    checked: '2026-11-04',
+    result: 'clear',
+    note: 'Plan subtitle only, not shown to the player (D610). Searched 2026-11-04 against GDD §2.3 influences: replaces draft "Blades & Hearthfire" (Skyrim Hearthfire DLC / The Blades); zero match in any influence.',
+  },
 ];

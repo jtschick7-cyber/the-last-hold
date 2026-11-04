@@ -81,9 +81,10 @@ Keep it short and plain: **about 1.5 KB at most** (roughly 10 bullets). Put the 
 - Nothing in the Last Stand (Start, the preview, a load, the migration) places, moves or trays a piece. v1.1's auto-placement of newly unlocked pieces (purchase, Rank-up, new cycle) is unchanged. Otherwise only the player's own taps change the layout (Auto-arrange, and Use this layout if the owner has said yes to Q61).
 - Write no player-facing strings for the Breach beyond the table in GDD §9.25; if a screen needs one, ask.
 - Write no player-facing strings for the layout beyond the tables in GDD §9.21 and §9.25; if a screen needs one, ask.
-- Sound is UI-only: nothing in `src/core/` imports or reads the sound module or the `sound` setting.
+- Sound and ambience are UI-only: nothing in `src/core/` imports or reads the sound or ambience modules, the `sound` setting, or the `ambience` setting (D609).
 - Sound is never the only signal, nothing plays while the app is hidden, and a sound that cannot play now is skipped, never queued.
-- Write no player-facing strings for sound beyond the table in GDD §9.22; if a screen needs one, ask.
+- Procedural ambience fades to complete silence whenever The Remembering reading (R-01 to R-11) or The Descent story cards (D-01 to D-07) are on screen, stops immediately when hidden, and respects the phone's silent switch (D609).
+- Write no player-facing strings for sound or ambience beyond the table in GDD §9.22, or for Contract fight playback and Arena callouts beyond GDD §9.4 and §9.15; if a screen needs one, ask (D610).
 - Rising Vigil level 0 takes the old stand path bit for bit: nothing outside the stand code reads `vigil`, and nothing in `src/ui/` computes the vigil factor.
 - A stand's vigil level is saved on its record; a wave list, a log or a preview is always rebuilt with the saved level, never the switch's current state.
 - Write no player-facing strings for Rising Vigil beyond the table in GDD §9.23; if a screen needs one, ask.
