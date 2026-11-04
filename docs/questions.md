@@ -312,9 +312,10 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 
 ## After v1.5 *(opened 2026-10-29; for the v1.6 flesh-out to settle first)*
 
-### Q65 — Two CI times are close to their limits *(opened 2026-10-29, after the v1.5 merge)*
+### Q65 — Two CI times are close to their limits *(opened 2026-10-29, after the v1.5 merge; answered and closed 2026-11-04)*
 - **Context:** CI on the v1.5 merge commit (`c6cc249`) passed, and the deploy succeeded. Two times are close to their limits: (1) **e2e shard 3 of 5** took **7 min 44 s** as a whole job (6 min 41 s of that is the tests). The ceiling is 8 minutes (D552), and the plan's stop-and-ask line is 7 min 30 s. It holds the long contrast, motion and tap-size sweeps. The plan does not say whether the 7:30 line counts the whole job or only the test step. (2) **`npm run check`** took **1 min 53 s** on CI against a 90 s warning and a 120 s fail line (112 to 118 s in the build container). The other four e2e shards took 2:00 to 3:44. The simulator workflow took 3 min 14 s in total.
 - **Question:** what should the v1.6 flesh-out do before these reach the limits?
 - **Options:** (a) **Rebalance the shards** so shard 3 loses a long sweep to a lighter shard, and set out in D552's terms which time the 7:30 line counts (recommended). (b) Add a sixth shard. (c) Leave as is and raise the warning lines. (d) Other.
 - **Recommendation:** (a) for the shards. For `check`, find what is slow in it before raising any line; do not raise it silently.
 - **Blocks:** nothing now.
+- **Answer (owner):** (b), 2026-11-04 (D603): `.github/workflows/ci.yml` now runs 6 parallel e2e shards (`matrix.shard: [1, 2, 3, 4, 5, 6]`, `--shard=${{ matrix.shard }}/6`), which separates `polish-contrast.spec.ts` (shard 3 of 6, 35 tests) from `polish-motion.spec.ts` and `polish-tap-targets.spec.ts` (shard 4 of 6, 33 tests) and splits `polish-text-size.spec.ts` across shards 4 and 5 (34 tests in shard 5). No test files are edited and no limits are loosened: the 8-minute job ceiling (D552) and 7 min 30 s warning line (counting the whole job, as D552 states) remain intact, as do the 90 s warning and 120 s fail thresholds for `npm run check`. **Answered, closed.**

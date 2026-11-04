@@ -38,20 +38,21 @@ jobs:
         env:
           LH_CHANNEL: preview
 
-  # D533: the browser tests run in five parallel shards (D537: tests are spread one by one; each worker
-  # still checks its own sweep findings strictly). Nothing about which tests run
+  # D533, D569, D603: the browser tests run in six parallel shards (D537: tests are spread one by one;
+  # each worker still checks its own sweep findings strictly). Nothing about which tests run
   # or how they pass changes.
-  # Five, not four: with four, shard 2 held the long contrast, motion and tap sweeps and ran 5 min 47 s of
-  # tests, so a slow browser install pushed it past the 8-minute limit (D552). The limit does not change.
+  # Six, not five: with five, shard 3 held both the contrast and tap-target sweeps and ran 6 min 41 s of
+  # tests (7 min 44 s whole job), past the 7 min 30 s warning line and near the 8-minute ceiling (D552, Q65).
+  # With six, contrast (shard 3) and tap targets (shard 4) sit in separate shards. The limit does not change.
   e2e-shards:
-    name: e2e shard ${{ matrix.shard }} of 5
+    name: e2e shard ${{ matrix.shard }} of 6
     runs-on: ubuntu-24.04
     # D552: a shard may run up to 8 minutes (D320's 5 minutes still holds for every other job).
     timeout-minutes: 8
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5]
+        shard: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -77,9 +78,9 @@ jobs:
             sleep 5
           done
           exit 1
-      - run: npm run e2e -- --shard=${{ matrix.shard }}/5 --fully-parallel
+      - run: npm run e2e -- --shard=${{ matrix.shard }}/6 --fully-parallel
 
-  # The one name a branch rule can wait for: green only when all five shards are green.
+  # The one name a branch rule can wait for: green only when all six shards are green.
   e2e:
     needs: e2e-shards
     if: always()

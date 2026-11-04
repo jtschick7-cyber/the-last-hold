@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.6` (from `main` at `517b0c0`).
-- **Milestone:** v1.6 "AI Pixel Art & Atmosphere" (D600, D601), in progress. v1.5 is merged and tagged `v1.5.0`.
-- **Last task:** Atmosphere & Game Feel polish (Hold ground harmony, Threat sky backdrop, CSS juice, Watch Stand confrontation lineup) completed and verified (D601).
-- **Next:** Scene banners pixel art pass (4 Orders banners, 3 Descent stage banners) when image generator quota replenishes (~17:43 UTC / 1:43 PM EDT).
-- **Open questions:** None.
+- **Branch:** `main` (clean at `v1.6.0`, commit `9743f84`).
+- **Milestone:** v1.6 "AI Pixel Art & Atmosphere" (D600–D602), **complete**, merged (PR #28), and tagged `v1.6.0`.
+- **Last task:** Post-v1.6 housekeeping: updated current state header and resolved Q65 by moving CI e2e to 6 parallel shards (`ci.yml`, D603) so `polish-contrast.spec.ts` and `polish-tap-targets.spec.ts` run in separate shards without loosening any time limits.
+- **Next:** Milestone v1.7 flesh-out session (`docs/implementation-plan.md` §0.4).
+- **Open questions:** None (Q65 resolved and closed in D603).
 
 Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -236,5 +236,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-24-to-28.md`](archive/pro
 - **Hashes frozen:** All 7 SHA-256 hashes recorded and frozen in `art-src/v1.6-banner-hashes.json`. Descent hashes updated in `art-src/v1.4-hashes.json`. Extended `isV16Asset` in `tools/contact-sheet-data.ts` to include `scene.order.*` and `scene.descent.*`.
 - **Tests:** `tests/tools/orders-art.test.ts` and `tests/tools/descent-art.test.ts` verify 160 × 64 dimensions, 100% Zughy-32 palette compliance, non-blank pixel count, and exact SHA-256 hash freezing.
 - **Verification:** `npm run check` passes 100% in ~22 s (typecheck, lint, format, 254 test files / 3,963 tests, sim:check fast set). D602 recorded.
+
+## 2026-11-04 — Post-v1.6 housekeeping & Q65 resolution (D603)
+- **Milestone v1.6 merged and tagged:** PR #28 merged into `main` (`9743f84`) and tagged `v1.6.0`. Updated the "Current state" header at the top of `docs/progress.md` to reflect `main` clean at `v1.6.0` with v1.6 complete.
+- **Q65 resolved (D603, option b):** Increased CI Playwright e2e shards in `.github/workflows/ci.yml` from 5 to 6 (`matrix.shard: [1, 2, 3, 4, 5, 6]`, `--shard=${{ matrix.shard }}/6`). With 6 shards (33–35 tests per shard), `polish-contrast.spec.ts` runs in shard 3 of 6, `polish-motion.spec.ts` and `polish-tap-targets.spec.ts` run in shard 4 of 6, and `polish-text-size.spec.ts` splits across shards 4 and 5, preventing a single shard from carrying both the contrast and tap-target sweeps.
+- **No test edits or limit changes:** Zero test files touched; the 8-minute job ceiling (`timeout-minutes: 8`, D552), 7 min 30 s whole-job warning line, and `npm run check` thresholds (90 s warn, 120 s fail, D512) are unchanged. Closed Q65 in `docs/questions.md`.
+- **Verification:** `npm run check` is 100% green (~26 s locally: typecheck, lint, format:check, 254 test files / 3,963 tests, and `sim:check --fast`).
+- **Next:** Milestone v1.7 flesh-out session (`docs/implementation-plan.md` §0.4).
 
 
