@@ -3,8 +3,8 @@
 // The shape sizes below are the save format's, and equal the locked `breach.lanes` and
 // `breach.frontRows` (a test keeps them equal), so a table can be checked without reading balance.
 export const LANE_COUNT = 8;
-/** At most one counted piece per front-row tile: `breach.frontRows` (3) tiles in a column. */
-export const MAX_PIECES_PER_COLUMN = 3;
+/** At most one counted piece per front-row tile: `breach.frontRows` (5) tiles in a column. */
+export const MAX_PIECES_PER_COLUMN = 5;
 export const MAX_TOWER_COLUMNS = 3;
 
 /** The `breach.*` numbers in force at Start, so later tuning never changes an old replay. */

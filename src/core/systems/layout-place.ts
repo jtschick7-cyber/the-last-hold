@@ -1,10 +1,12 @@
 import {
   CANONICAL_LAYOUT,
   DEFENSE_TILE_ORDER,
-  GRID_SIZE,
-  HALL_ANCHOR,
+  GRID_COLS,
+  GRID_ROWS,
+  HALL_DEFAULT,
   HOLD_CENTER,
   PIECES,
+  hallAnchorBounds,
   type GridCoord,
   type HoldPieceId,
 } from '../../content/hold-layout';
@@ -43,8 +45,8 @@ const tileOrder = (state: GameState, id: HoldPieceId): GridCoord[] => {
   // The defense rows are kept for defenses (the owner, 2026-10-23): other pieces never take them by themselves.
   const defenseRows = new Set(DEFENSE_TILE_ORDER.map(key));
   const tiles: GridCoord[] = [];
-  for (let y = 0; y < GRID_SIZE; y++)
-    for (let x = 0; x < GRID_SIZE; x++)
+  for (let y = 0; y < GRID_ROWS; y++)
+    for (let x = 0; x < GRID_COLS; x++)
       if (inClearing(bounds, { x, y }) && !defenseRows.has(key({ x, y }))) tiles.push({ x, y });
   const dist = (t: GridCoord): number =>
     Math.abs(t.x - HOLD_CENTER.x) + Math.abs(t.y - HOLD_CENTER.y);
@@ -62,6 +64,17 @@ export const unlockedPieces = (state: GameState): Set<HoldPieceId> =>
  * coordinate is placed (a new game, a new cycle, a Rank-up).
  */
 export const autoPlaceUnlocked = (state: GameState, already?: ReadonlySet<HoldPieceId>): void => {
+  const bounds = clearingBounds(state.cycle.age);
+  const hallDef = pieceDef('hearth-hall');
+  const hallAt = state.layout.placed['hearth-hall'];
+  if (!hallAt || !footprint(hallDef, hallAt).every((t) => inClearing(bounds, t))) {
+    const hb = hallAnchorBounds(bounds);
+    const clamp = (n: number, lo: number, hi: number): number => Math.max(lo, Math.min(hi, n));
+    const target = hallAt
+      ? { x: clamp(hallAt.x, hb.minX, hb.maxX), y: clamp(hallAt.y, hb.minY, hb.maxY) }
+      : { ...HALL_DEFAULT };
+    moveHall(state, target);
+  }
   const taken = covered(state);
   for (const def of PIECES) {
     if (def.w !== 1 || def.h !== 1) continue; // the Hearth Hall is always placed (the guard sees to it)
@@ -112,10 +125,6 @@ export const placeRefusal = (
   if (!Number.isInteger(x) || !Number.isInteger(y)) return 'layout: tile must be whole numbers';
   const at = { x: x as number, y: y as number };
   if (!isPieceUnlocked(state, id)) return 'layout: piece is locked';
-  if (id === 'hearth-hall') {
-    const inRange = (n: number): boolean => n >= HALL_ANCHOR.min && n <= HALL_ANCHOR.max;
-    if (!inRange(at.x) || !inRange(at.y)) return 'layout: hall anchor out of range';
-  }
   const bounds = clearingBounds(state.cycle.age);
   if (!footprint(def, at).every((t) => inClearing(bounds, t))) return 'layout: tile is not cleared';
   const hall = state.layout.placed['hearth-hall'];
@@ -156,9 +165,12 @@ const moveHall = (state: GameState, to: GridCoord): void => {
     return p.id !== 'hearth-hall' && at && inNew.has(key(at));
   });
   state.layout.placed['hearth-hall'] = { ...to };
+  const bounds = clearingBounds(state.cycle.age);
   displaced.forEach((p, i) => {
     const spot = vacated[i];
-    if (spot && !taken.has(key(spot))) state.layout.placed[p.id] = { ...spot };
+    const spotClosed = spot ? !inClearing(bounds, spot) : true;
+    if (spot && !taken.has(key(spot)) && !(isPieceUnlocked(state, p.id) && spotClosed))
+      state.layout.placed[p.id] = { ...spot };
     else dropPiece(state, p.id);
   });
 };

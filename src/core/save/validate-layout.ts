@@ -4,7 +4,7 @@ import {
   type HoldLayoutState,
   type HoldPieceId,
 } from '../state/layout-state';
-import { GRID_SIZE, HALL_ANCHOR, HALL_DEFAULT } from '../../content/hold-layout';
+import { GRID_COLS, GRID_ROWS, HALL_ANCHOR, HALL_DEFAULT } from '../../content/hold-layout';
 import { pieceDef } from '../systems/layout-catalog';
 import { bool, obj } from './guards';
 
@@ -18,17 +18,17 @@ const isCoord = (v: unknown): v is GridCoord => {
     Number.isInteger(c.x) &&
     Number.isInteger(c.y) &&
     (c.x as number) >= 0 &&
-    (c.x as number) < GRID_SIZE &&
+    (c.x as number) < GRID_COLS &&
     (c.y as number) >= 0 &&
-    (c.y as number) < GRID_SIZE
+    (c.y as number) < GRID_ROWS
   );
 };
 
 const inHallRange = (c: GridCoord): boolean =>
-  c.x >= HALL_ANCHOR.min &&
-  c.x <= HALL_ANCHOR.max &&
-  c.y >= HALL_ANCHOR.min &&
-  c.y <= HALL_ANCHOR.max;
+  c.x >= HALL_ANCHOR.minX &&
+  c.x <= HALL_ANCHOR.maxX &&
+  c.y >= HALL_ANCHOR.minY &&
+  c.y <= HALL_ANCHOR.maxY;
 
 export const layoutFrom = (v: unknown, warnings: string[]): HoldLayoutState => {
   const o = obj(v, 'layout');

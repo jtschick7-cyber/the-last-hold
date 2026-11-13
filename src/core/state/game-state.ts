@@ -39,7 +39,7 @@ import type { InjuryKind } from '../contracts/injury';
 // Legendaries, hunter ranks, stars, talents and keepsakes (plan T8.5, D317); v9 adds events (tokens,
 // rests, the boss visit, hunt points) and each cycle's stand pool (plan T9.1, D382); v10 adds the
 // Orders (plan T10.1); v11 adds the ending's block (plan T11.1, D452); v12 the layout (D502); v13 Rising Vigil (D543); v14 the Descent (D562); v15 the stand's lane table (D585). Times are epoch milliseconds.
-export const SCHEMA_VERSION = 15;
+export const SCHEMA_VERSION = 16;
 
 /** One owned hunter (GDD §5.3). Derived values (stats, status) come from selectors. */
 export interface HunterState {

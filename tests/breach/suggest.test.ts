@@ -2,6 +2,7 @@
 // core: deterministic, moves only walls and towers, uses only free front-row tiles, never exceeds the
 // pieces owned, changes no state, and never scores below Auto-arrange.
 import { describe, expect, it } from 'vitest';
+import { balance } from '../../src/content/balance';
 import { CANONICAL_LAYOUT, PIECES, type HoldPieceId } from '../../src/content/hold-layout';
 import { apply } from '../../src/core/commands/apply';
 import type { GameState } from '../../src/core/state/game-state';
@@ -33,7 +34,7 @@ const empty = (walls: number, towers: number): GameState => {
   s.cycle.age = 'bastion';
   s.buildings.walls = walls;
   s.buildings.watchtower = towers;
-  s.layout.placed = { 'hearth-hall': { x: 3, y: 3 } } as GameState['layout']['placed'];
+  s.layout.placed = { 'hearth-hall': { x: 3, y: 6 } } as GameState['layout']['placed'];
   return s;
 };
 const canonical = (walls = 15, towers = 15): GameState => {
@@ -47,9 +48,10 @@ const crowded = (): GameState => {
   const others = PIECES.filter(
     (p) => !isDefense(p.id) && p.id !== 'hearth-hall' && p.w === 1 && p.h === 1,
   );
-  const placed: Record<string, { x: number; y: number }> = { 'hearth-hall': { x: 3, y: 3 } };
+  const placed: Record<string, { x: number; y: number }> = { 'hearth-hall': { x: 3, y: 6 } };
   const tiles: { x: number; y: number }[] = [];
-  for (let y = 0; y < 3; y++) for (let x = 2; x < 6; x++) tiles.push({ x, y });
+  for (let y = 0; y < balance.breach.frontRows.value; y++)
+    for (let x = 2; x < 6; x++) tiles.push({ x, y });
   others.slice(0, tiles.length).forEach((p, i) => {
     placed[p.id] = tiles[i] as { x: number; y: number };
   });
@@ -149,7 +151,7 @@ describe.each(Object.entries(FIXTURES))('on the %s lane list', (_name, lanes) =>
       for (const m of out.moves) {
         expect(isDefense(m.pieceId)).toBe(true);
         expect(owned.has(m.pieceId)).toBe(true);
-        expect(m.y).toBeLessThan(3);
+        expect(m.y).toBeLessThan(balance.breach.frontRows.value);
         expect(taken.has(`${m.x},${m.y}`)).toBe(false);
         expect(used.has(m.pieceId)).toBe(false);
         used.add(m.pieceId);

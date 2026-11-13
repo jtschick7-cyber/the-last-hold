@@ -397,11 +397,11 @@ export const balance = {
     stageTiers: tunable([7, 8, 9]),
     unlitBaseHealth: tunable(4500), // base tier 5; see above
   },
-  // GDD §7.15 (v1.5, D581-D583). Only lanes and frontRows are locked. The tunables were confirmed by the
-  // owner from the TB.12 calibration table (Q63, D598); volleyScale was moved 1 -> 3 (D598).
+  // GDD §7.15 (v1.5, D581-D583; v1.8 D618). Only lanes and frontRows are locked. The tunables were confirmed by the
+  // owner from the TB.12 calibration table (Q63, D598); volleyScale moved 1 -> 3 (D598); frontRows moved 3 -> 5 (D618).
   breach: {
     lanes: locked(8), // the 8 columns of the Fell Breach
-    frontRows: locked(3), // rows 0 to 2 count
+    frontRows: locked(5), // rows 0 to 4 count (D618)
     coverOwn: tunable(0.5), // coverOwn + 2 x coverNeighbour = 1
     coverNeighbour: tunable(0.25),
     depthStep: tunable(0.25), // wall cut per extra piece in a column

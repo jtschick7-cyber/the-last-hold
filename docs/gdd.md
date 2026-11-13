@@ -2163,7 +2163,7 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Lanes | wave n takes lane `floor(roll × lanes)`, one roll from `${gameSeed}:stand:${cycle}:lane:${n}` | `breach.lanes` = 8 **(locked)** | 5.9.11 |
-| Front zone | a counted piece is `active` with row `y` < frontRows | `breach.frontRows` = 3 **(locked)** | 5.9.11 |
+| Front zone | a counted piece is `active` with row `y` < frontRows | `breach.frontRows` = 5 **(locked)** | 5.9.11 |
 | Cover | `coverOwn` for a piece in the column plus `coverNeighbour` for each neighbouring column with a piece (the ruined edge counts as walled) | `breach.coverOwn` = 0.5, `breach.coverNeighbour` = 0.25 | 5.9.11 |
 | Depth | `extra = min(depthMax, counted pieces in the column − 1)`; the wall cut × (1 + depthStep × extra) | `breach.depthStep` = 0.25, `breach.depthMax` = 2 | 5.9.11 |
 | Wall cut in a lane | the Walls constant of §7.6 × Walls level × cover × (1 + depthStep × extra), in taken% (75% cap) | none new (the Walls constant is in §7.6) | 5.9.2, 5.9.11 |

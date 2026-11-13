@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `main` (ready for local branch `milestone/v1.8`, branched from `v1.7.0` `d299dbf`).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D624`), **in progress** (`T18.1` complete).
-- **Last task:** `T18.1` — `v1.8` docs commit (flesh-out summary, `D617`–`D624`, GDD/TD/Plan/`CLAUDE.md` updates, §2.3 name check).
-- **Next:** `T18.2` (`8 × 12` grid geometry, expanded Age clearings, `breach.frontRows` `3 → 5`, `SCHEMA_VERSION` `15 → 16` inner-ward shift migration + real `v15` save fixture if exported).
-- **Open questions:** None (`v15` owner save export optional/helpful before `T18.2`).
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.1` committed at `8deade5`).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D624`), **in progress** (`T18.2` complete).
+- **Last task:** `T18.2` — `8 × 12` portrait Hold Grid geometry, expanded Age clearings, `breach.frontRows` `3 → 5`, and `SCHEMA_VERSION` `15 → 16` inner-ward shift migration (`v15-owner.json` + `v16` fixtures).
+- **Next:** `T18.3` (`layout-tactics.ts` AoE adjacency, North-Reach `Warded` flood, `Breakdown` / `threat.ts` wiring & allowlist update).
+- **Open questions:** None.
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -70,3 +70,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **Docs & §2.3 name check:** Created `docs/flesh-out/v1.8/v1.8-summary.md`; updated `docs/gdd.md` (`§3`, `§5.1.5`, `§5.9.11`, `§5.12.12` closing `D490`, `§6.5`, `§9.11`, `§9.12`, `§9.21`, `§9.26`, `§10`, judgment calls), `docs/technical-design.md` (`§25`), `docs/implementation-plan.md` (`v1.8` `T18.1`–`T18.14`, `12–15` sessions, `§0.7`), and `CLAUDE.md` (`layout-tactics.ts` allowlist & dual `rulesVersion 7` guard). Web-checked `Ward & Rampart`, all `6` Courtyard Marks (*Fjord-Bone Standard*, *Barrow Brazier*, *River-Reed Basin*, *Stoneback Cairn*, *Kettle-Barrow Wreath*, *Watch-Fire Sconce*), `Hold Look`, `Courtyard Marks`, `Warded`, `Screened Volley`, and `Sector Support` against §2.3 influences (all clear) and dated them in `tests/content/names.ts`.
 - **Note on git branch:** Sandbox blocked `.git/refs/` locking for `git checkout -b milestone/v1.8`; docs changes sit cleanly on working tree awaiting local branch/commit approval or direct `T18.2` pickup.
 - **Verification & next:** Ran `npm run check` (`≤ 90 s` green). Next task: **`T18.2`** (`8 × 12` grid geometry, Age clearings, `breach.frontRows` `3 → 5`, schema `15 → 16` migration & `v15` save fixture).
+
+## 2026-11-13 — v1.8 T18.2: 8 × 12 geometry, frontRows 5 & v15 → v16 migration
+- **Grid & clearing expansion (`hold-layout.ts`, `layout-place.ts`, `validate-layout.ts`):** Expanded Hold Grid to `8 × 12` portrait (`GRID_COLS = 8`, `GRID_ROWS = 12`) with Age clearings `6×6` (`1..6,4..9`), `8×8` (`0..7,3..10`), `8×10` (`0..7,1..10`), and `8×12` (`0..7,0..11`). Enabled flexible `hearth-hall` anchor bounds (`hallAnchorBounds`) within the active clearing (`HALL_DEFAULT = { x: 3, y: 6 }`, `HOLD_CENTER = { x: 3.5, y: 6.5 }`), updated `CANONICAL_LAYOUT` (`y = 0..2` defenses north, inner ward shifted `+3` south to `y = 5..9`), and ensured `autoPlaceUnlocked` clamps stranded `hearth-hall` cleanly after Long Night reset.
+- **`frontRows` `3 → 5` (`D618`, `balance.ts`, `lane-table.ts`, `gdd.md §7.15`, `implementation-plan.md §0.6`):** Updated `breach.frontRows` and `MAX_PIECES_PER_COLUMN` to `5` across code and locked doc tables (`T18.2` checked).
+- **`SCHEMA_VERSION` `15 → 16` (`migration-v12.ts`, `migration-v16.ts`, `migrations.ts`):** Froze historical `V12_CANONICAL_LAYOUT` inside `migration-v12.ts` so `v1..v11` saves do not double-shift; implemented `v15ToV16` keeping `y = 0..2` front defenses north while shifting inner ward `+3` rows south with deterministic nearest-free-tile collision resolution.
+- **Fixtures & tests (`tests/saves/`, `tests/layout/`, `tests/breach/`, `tests/lint/`, `tests/orders/`):** Added decoded owner fixture `v15-owner.json` (`cycle 5` bastion), generated `v16.json` & `v16-played.json`, added `tests/saves/v16-migration.test.ts`, and updated affected layout/breach/migration tests (`D624 (a)/(c)`).
+- **Next:** `T18.3` — Pure tactical analyzer (`layout-tactics.ts`), AoE adjacency links & North-Reach `Warded` flood.

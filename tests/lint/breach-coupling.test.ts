@@ -26,6 +26,7 @@ const READERS = new Set([
   'src/core/commands/types.ts',
   'src/core/long-night/reset.ts',
   'src/core/save/migration-v12.ts',
+  'src/core/save/migration-v16.ts',
   'src/core/save/validate-layout.ts',
   'src/core/save/validate.ts',
   'src/core/state/game-state.ts',

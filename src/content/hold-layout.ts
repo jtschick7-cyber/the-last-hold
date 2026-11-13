@@ -1,11 +1,11 @@
 import type { AgeId } from './ages';
 import type { BuildingId } from './buildings';
 
-// GDD §5.1.5 and technical design §19.2 (D500, D501, D503): the data of the Hold's layout. The
-// 8 × 8 grid, every piece with its size and what unlocks it, the clearing each Rank opens, the
-// Hearth Hall's anchor range, and the canonical Auto-arrange layout. Decorative in v1.1: nothing
-// here changes a rate, a cost, a Threat figure or a fight.
-export const GRID_SIZE = 8;
+// GDD §5.1.5 and technical design §19.2, §25.1 (D500, D501, D503, D618): the data of the Hold's layout. The
+// 8 × 12 portrait grid, every piece with its size and what unlocks it, the clearing each Rank opens, the
+// Hearth Hall's flexible anchor range, and the canonical Auto-arrange layout.
+export const GRID_COLS = 8;
+export const GRID_ROWS = 12;
 
 export const HOLD_PIECE_IDS = [
   'hearth-hall',
@@ -52,9 +52,9 @@ export const HOLD_PIECE_IDS = [
 export type HoldPieceId = (typeof HOLD_PIECE_IDS)[number];
 
 export interface GridCoord {
-  /** Integer 0..7 (2..4 for the 2 × 2 Hearth Hall's top-left anchor). */
+  /** Integer 0..7 (0..6 for the 2 × 2 Hearth Hall's top-left anchor). */
   x: number;
-  /** Integer 0..7 (2..4 for the 2 × 2 Hearth Hall's top-left anchor). */
+  /** Integer 0..11 (0..10 for the 2 × 2 Hearth Hall's top-left anchor). */
   y: number;
 }
 
@@ -147,46 +147,57 @@ export interface ClearingBounds {
   readonly maxY: number;
 }
 
-/** D500: the open ground each Rank clears inside the 8 × 8 grid. */
+/** D500, D618: the open ground each Rank clears inside the 8 × 12 portrait grid. */
 export const CLEARING_BOUNDS: Readonly<Record<AgeId, ClearingBounds>> = {
-  hamlet: { minX: 2, maxX: 5, minY: 2, maxY: 5 },
-  keep: { minX: 1, maxX: 6, minY: 1, maxY: 6 },
-  citadel: { minX: 0, maxX: 7, minY: 1, maxY: 6 },
-  bastion: { minX: 0, maxX: 7, minY: 0, maxY: 7 },
+  hamlet: { minX: 1, maxX: 6, minY: 4, maxY: 9 },
+  keep: { minX: 0, maxX: 7, minY: 3, maxY: 10 },
+  citadel: { minX: 0, maxX: 7, minY: 1, maxY: 10 },
+  bastion: { minX: 0, maxX: 7, minY: 0, maxY: 11 },
 };
 
-/** D501 (M4): the Hearth Hall's top-left anchor stays here, always inside the Hamlet clearing. */
-export const HALL_ANCHOR = { min: 2, max: 4 } as const;
-export const HALL_DEFAULT: GridCoord = { x: 3, y: 3 };
+/** D501, D618: the 2 × 2 Hearth Hall fits inside active clearing bounds across the 8 × 12 grid. */
+export const HALL_ANCHOR = {
+  minX: 0,
+  maxX: GRID_COLS - 2,
+  minY: 0,
+  maxY: GRID_ROWS - 2,
+} as const;
+export const hallAnchorBounds = (bounds: ClearingBounds): ClearingBounds => ({
+  minX: bounds.minX,
+  maxX: bounds.maxX - 1,
+  minY: bounds.minY,
+  maxY: bounds.maxY - 1,
+});
+export const HALL_DEFAULT: GridCoord = { x: 3, y: 6 };
 
-/** GDD §5.1.5 "Canonical Auto-arrange layout" (D503, M1). */
+/** GDD §5.1.5 "Canonical Auto-arrange layout" (D503, D618): front defenses north, inner ward shifted south. */
 export const CANONICAL_LAYOUT: Readonly<Record<HoldPieceId, GridCoord>> = {
-  'hearth-hall': { x: 3, y: 3 },
-  'silver-seam-2': { x: 2, y: 2 },
-  smithy: { x: 3, y: 2 },
-  'silver-seam-1': { x: 4, y: 2 },
-  'mine-1': { x: 5, y: 2 },
-  mill: { x: 2, y: 3 },
-  sawpit: { x: 5, y: 3 },
-  'farm-1': { x: 2, y: 4 },
-  'woodcutter-1': { x: 5, y: 4 },
-  'cottage-1': { x: 2, y: 5 },
-  'cottage-2': { x: 3, y: 5 },
-  'farm-2': { x: 4, y: 5 },
-  'woodcutter-2': { x: 5, y: 5 },
-  alchemist: { x: 1, y: 2 },
-  'herb-garden-1': { x: 1, y: 3 },
-  'herb-garden-2': { x: 1, y: 4 },
-  'herb-garden-3': { x: 1, y: 5 },
-  'mine-2': { x: 6, y: 2 },
-  'mine-3': { x: 6, y: 3 },
-  lodge: { x: 6, y: 4 },
-  barracks: { x: 6, y: 5 },
-  'trophy-hall': { x: 1, y: 6 },
-  'bell-tower': { x: 2, y: 6 },
-  'cottage-3': { x: 3, y: 6 },
-  'farm-3': { x: 4, y: 6 },
-  'woodcutter-3': { x: 5, y: 6 },
+  'hearth-hall': { x: 3, y: 6 },
+  'silver-seam-2': { x: 2, y: 5 },
+  smithy: { x: 3, y: 5 },
+  'silver-seam-1': { x: 4, y: 5 },
+  'mine-1': { x: 5, y: 5 },
+  mill: { x: 2, y: 6 },
+  sawpit: { x: 5, y: 6 },
+  'farm-1': { x: 2, y: 7 },
+  'woodcutter-1': { x: 5, y: 7 },
+  'cottage-1': { x: 2, y: 8 },
+  'cottage-2': { x: 3, y: 8 },
+  'farm-2': { x: 4, y: 8 },
+  'woodcutter-2': { x: 5, y: 8 },
+  alchemist: { x: 1, y: 5 },
+  'herb-garden-1': { x: 1, y: 6 },
+  'herb-garden-2': { x: 1, y: 7 },
+  'herb-garden-3': { x: 1, y: 8 },
+  'mine-2': { x: 6, y: 5 },
+  'mine-3': { x: 6, y: 6 },
+  lodge: { x: 6, y: 7 },
+  barracks: { x: 6, y: 8 },
+  'trophy-hall': { x: 1, y: 9 },
+  'bell-tower': { x: 2, y: 9 },
+  'cottage-3': { x: 3, y: 9 },
+  'farm-3': { x: 4, y: 9 },
+  'woodcutter-3': { x: 5, y: 9 },
   'wall-1': { x: 0, y: 1 },
   'wall-2': { x: 1, y: 1 },
   'watchtower-1': { x: 2, y: 1 },
@@ -207,12 +218,12 @@ export const CANONICAL_LAYOUT: Readonly<Record<HoldPieceId, GridCoord>> = {
 export const CONNECTION_BITS = { n: 1, e: 2, s: 4, w: 8 } as const;
 
 /** GDD §5.1.5 auto-placement (S6): other pieces take the free tile nearest this point, then lowest y, then lowest x. */
-export const HOLD_CENTER = { x: 3.5, y: 3.5 } as const;
+export const HOLD_CENTER = { x: 3.5, y: 6.5 } as const;
 
 /** GDD §5.1.5 auto-placement (S6): defenses take row 1 west to east, then the row 2 wings, then row 0. */
 export const DEFENSE_TILE_ORDER: readonly GridCoord[] = [
-  ...Array.from({ length: GRID_SIZE }, (_, x) => ({ x, y: 1 })),
+  ...Array.from({ length: GRID_COLS }, (_, x) => ({ x, y: 1 })),
   { x: 0, y: 2 },
-  { x: GRID_SIZE - 1, y: 2 },
-  ...Array.from({ length: GRID_SIZE }, (_, x) => ({ x, y: 0 })),
+  { x: GRID_COLS - 1, y: 2 },
+  ...Array.from({ length: GRID_COLS }, (_, x) => ({ x, y: 0 })),
 ];

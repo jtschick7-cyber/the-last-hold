@@ -65,9 +65,9 @@ describe('the four states (M2)', () => {
     }
   });
 
-  it('give 13, 32, 36 and 40 active pieces at Hamlet, Keep, Citadel and Bastion (canonical layout)', () => {
-    expect(AGE_IDS.map((a) => statusCounts(full(a)).active)).toEqual([13, 32, 36, 40]);
-    expect(AGE_IDS.map((a) => statusCounts(full(a))['dormant-ring'])).toEqual([27, 8, 4, 0]);
+  it('give 26, 26, 36 and 40 active pieces at Hamlet, Keep, Citadel and Bastion (canonical layout)', () => {
+    expect(AGE_IDS.map((a) => statusCounts(full(a)).active)).toEqual([26, 26, 36, 40]);
+    expect(AGE_IDS.map((a) => statusCounts(full(a))['dormant-ring'])).toEqual([14, 14, 4, 0]);
   });
 
   it('keep every Citadel defense active at Citadel and the row-0 ones dormant until Bastion (M1)', () => {
@@ -107,9 +107,9 @@ describe('the four states (M2)', () => {
 
   it('counts a 2 × 2 piece out of the clearing if any of its tiles is outside', () => {
     const s = full('hamlet');
-    s.layout.placed['hearth-hall'] = { x: 5, y: 5 }; // would cover (6,6): outside Hamlet
+    s.layout.placed['hearth-hall'] = { x: 6, y: 6 }; // would cover x=7: outside Hamlet (1..6, 4..9)
     expect(getPieceStatus(s, 'hearth-hall')).toBe('dormant-ring');
-    expect(footprint(pieceDef('hearth-hall'), { x: 5, y: 5 })).toHaveLength(4);
+    expect(footprint(pieceDef('hearth-hall'), { x: 6, y: 6 })).toHaveLength(4);
   });
 });
 
@@ -188,7 +188,7 @@ describe('the grid view', () => {
   it('never lists a dormant-ring piece in the tray (it does not count toward the badge)', () => {
     const v = buildHoldGridView(full('hamlet'));
     expect(v.tray).toEqual([]);
-    expect(v.ghosts).toHaveLength(27);
+    expect(v.ghosts).toHaveLength(14);
   });
 
   it('a new game: the hall and the starting Farm and Camp on the grid, nothing in the tray', () => {
@@ -256,6 +256,7 @@ describe('the layout is read by no rule (S11)', () => {
     'commands/types.ts',
     'long-night/reset.ts',
     'save/migration-v12.ts',
+    'save/migration-v16.ts',
     'save/validate-layout.ts',
     'save/validate.ts',
     'state/game-state.ts',

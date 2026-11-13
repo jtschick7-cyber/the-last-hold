@@ -117,15 +117,15 @@ describe('the lane of a wave (D580, technical design §7.2)', () => {
   });
 });
 
-describe('the pieces that count (D581)', () => {
-  it('counts only active walls and towers in rows 0 to 2', () => {
+describe('the pieces that count (D581, D618)', () => {
+  it('counts only active walls and towers in rows 0 to 4', () => {
     const s = hold({
       'wall-1': { x: 0, y: 0 },
       'wall-2': { x: 0, y: 1 },
       'wall-3': { x: 3, y: 2 },
-      'watchtower-1': { x: 3, y: 1 },
-      'watchtower-2': { x: 7, y: 2 },
-      'wall-4': { x: 5, y: 3 }, // row 3: no
+      'watchtower-1': { x: 3, y: 4 },
+      'watchtower-2': { x: 7, y: 3 },
+      'wall-4': { x: 5, y: 5 }, // row 5: outside frontRows (0..4)
       'wall-6': { x: 6, y: 0 },
       // wall-5 and watchtower-3 are in the Tray: no
     });
@@ -139,16 +139,16 @@ describe('the pieces that count (D581)', () => {
     expect(t.towerCols).toEqual([3, 7]);
   });
 
-  it('gives nothing for a locked piece, a piece in a dormant ring, or a piece in rows 3 to 7', () => {
+  it('gives nothing for a locked piece, a piece in a dormant ring, or a piece in rows 5 to 11', () => {
     const locked = hold({ 'wall-1': { x: 0, y: 0 }, 'wall-9': { x: 1, y: 0 } });
     locked.buildings.walls = 1; // wall-9 needs more
     expect(laneTableFor(locked).pieces).toEqual([1, 0, 0, 0, 0, 0, 0, 0]);
 
-    const hamlet = hold({ 'wall-1': { x: 3, y: 2 }, 'wall-2': { x: 3, y: 1 } });
-    hamlet.cycle.age = 'hamlet'; // the clearing is columns 2 to 5, rows 2 to 5
+    const hamlet = hold({ 'wall-1': { x: 3, y: 4 }, 'wall-2': { x: 3, y: 1 } });
+    hamlet.cycle.age = 'hamlet'; // clearing is columns 1 to 6, rows 4 to 9; y=4 counts as front row & in clearing
     expect(laneTableFor(hamlet).pieces).toEqual([0, 0, 0, 1, 0, 0, 0, 0]);
 
-    const deep = hold({ 'wall-1': { x: 3, y: 3 }, 'wall-2': { x: 4, y: 7 } });
+    const deep = hold({ 'wall-1': { x: 3, y: 5 }, 'wall-2': { x: 4, y: 11 } });
     expect(laneTableFor(deep).pieces).toEqual([0, 0, 0, 0, 0, 0, 0, 0]);
   });
 

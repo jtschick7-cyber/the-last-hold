@@ -9,6 +9,7 @@ import { v10ToV11 } from './migration-v11';
 import { v11ToV12 } from './migration-v12';
 import { v12ToV13 } from './migration-v13';
 import { v14ToV15 } from './migration-v15';
+import { v15ToV16 } from './migration-v16';
 import { v13ToV14 } from './migration-v14';
 
 // Technical design §9.4: migrations[n] upgrades a version-n state to n + 1.
@@ -257,6 +258,7 @@ export const migrations: Readonly<Record<number, Migration>> = {
   12: v12ToV13,
   13: v13ToV14,
   14: v14ToV15,
+  15: v15ToV16,
 };
 
 export const NEWER_VERSION = 'This save is from a newer version of the game.';
