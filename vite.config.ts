@@ -168,8 +168,11 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // SF.10: the seven sounds (assets/audio/*.mp3) are cached for offline play; the preview's
-        // audition candidates are listening copies and are not (D524 (2)).
+        // SF.10: the sounds (assets/audio/*.mp3) are cached for offline play; the preview's audition
+        // candidates are listening copies and are not (D524 (2)). Only Vite's 8-char content-hashed
+        // JS/CSS bundles are immutable; unhashed public/assets/** images and audio must keep MD5
+        // revisions so SW updates replace changed sprites/sounds instead of serving stale caches.
+        dontCacheBustURLsMatching: /-[0-9A-Za-z_-]{8}\.(js|css)$/,
         globPatterns: ['**/*.{js,css,html,png,svg,woff2,webmanifest,mp3}'],
         globIgnores: ['audition/**'],
         navigateFallback: 'index.html',

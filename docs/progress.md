@@ -5,9 +5,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 ## Current state (update every session)
 
 - **Branch:** `milestone/v1.7` (branched from `main` at `7b06a92`, post-`v1.6.0`).
-- **Milestone:** v1.7 "Steel & Hearth" (`D604`–`D613`), **in progress**.
-- **Last task:** `VB.11` — Simulator, 6-shard e2e, offline smoke, PR and playtest hand-off.
-- **Next:** Owner review & approval to commit/push `milestone/v1.7`, open PR to `main`, and run iPhone playtest (`"playtest passed"` before merge/tag `v1.7.0`).
+- **Milestone:** v1.7 "Steel & Hearth" (`D604`–`D615`), **in progress** (PR #29 open; playtest fixes staged locally).
+- **Last task:** `VB.11` (playtest fix) — SW precache hashing & `WaveLogView` defender wrapping.
+- **Next:** Owner approval to commit/push fixes to `milestone/v1.7` (updating PR #29 and `/preview/`), then confirm `"playtest passed"` on iPhone before merge/tag `v1.7.0`.
 - **Open questions:** None.
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -55,3 +55,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **6-shard Playwright e2e (`224/224`):** Shards `1/6` `38 (52.2s)`, `2/6` `38 (46.5s)`, `3/6` `38 (1.6m)`, `4/6` `39 (3.0m)`, `5/6` `34 (1.2m)` (incl. all `7` `smoke.spec.ts` offline reload + cached MP3 checks), `6/6` `37 (1.1m)` (incl. `[webkit]` determinism); all shards under `7m 30s`.
 - **Size, check & plan wrap-up:** `dist/` `gzip -9` sum across `320` files = **511,970 B** (**102,430 B** headroom under `614,400` B; `10` MP3s `37,564` B gz). Pre-doc-edit `npm run check` green in `55.7 s` (`257` files, `4,071` tests); ticked `VB.11` and recorded `11` actual entries in `docs/implementation-plan.md` `§0.7`.
 - **Next:** Owner gate — awaiting approval to commit/push `milestone/v1.7`, open PR to `main`, and run iPhone playtest (`"playtest passed"` before merge/tag `v1.7.0`).
+
+## 2026-11-13 — v1.7 VB.11 (playtest fix): SW precache hashing & WaveLogView wrapping
+- **Playtest findings (PR #29 / `/preview/`):** Live `/preview/` served the new `Watch fight ▸` button and unflipped clipped strips cleanly in a fresh WebKit context, while the iPhone screenshots showed stale pre-`VB.3` cached JS/CSS mixed with newly downloaded v1.7 PNG strips (`Draugr` unclipped and flipped sideways; missing `Watch fight ▸` button). Inspection of `v14-played.json` (6 Stand defenders) also revealed a real overflow in `WaveLogView` where 6 defenders pushed the 6th hunter and monster past the 390 px confrontation box.
+- **Fixes (`vite.config.ts`, `src/platform/service-worker.ts`, `src/ui/sheets/LongNightSheets.tsx`):** Narrowed `dontCacheBustURLsMatching` to Vite's 8-char hashed JS/CSS bundles (`/-[0-9A-Za-z_-]{8}\.(js|css)$/`) so all unhashed `public/assets/**` sprites, portraits, scenes, and MP3s keep MD5 precache revisions (`3` null-revision chunks, `320` hashed entries in `sw.js`); passed `updateViaCache: 'none'` when registering `sw.js` to bypass HTTP `max-age=600`; added `flexWrap: 'wrap'` + `minWidth: 0` on `wave-log-defenders` and `flex: 'none'` on `wave-log-monster` in `WaveLogView`.
+- **Verification & next:** Local WebKit check at `390×844` and `320×568` on `v14-played.json` confirmed 7 sprites wrap cleanly inside `.standConfrontation` (`0` overlaps, `0` outside, `0` horizontal scroll); `contract-watch`, `smoke`, and `polish-widths` e2e specs passed `13/13` (`40.6 s`); `npm run check` passed cleanly after all edits. Waiting on owner approval to commit and push to `milestone/v1.7`.

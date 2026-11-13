@@ -87,13 +87,17 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          gap: 'var(--space-2)',
           padding: 'var(--space-2)',
           background: 'var(--c-bg)',
           borderRadius: '0.375rem',
           margin: 'var(--space-2) 0',
         }}
       >
-        <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
+        <div
+          data-testid="wave-log-defenders"
+          style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-1)', minWidth: 0 }}
+        >
           {stand.party.map((p) => (
             <BattleSprite
               key={p.id}
@@ -103,7 +107,7 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
             />
           ))}
         </div>
-        <div data-testid="wave-log-monster" style={{ display: 'flex' }}>
+        <div data-testid="wave-log-monster" style={{ display: 'flex', flex: 'none' }}>
           <BattleSprite id={monsterSprite} portraitId={monsterPortrait} label={monsterName} />
         </div>
       </div>

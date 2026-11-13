@@ -28,7 +28,7 @@ export const registerServiceWorker = (onUpdateReady: (update: UpdateHandle) => v
 
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register(`${base}sw.js`, { scope: base })
+      .register(`${base}sw.js`, { scope: base, updateViaCache: 'none' })
       .then((reg) => {
         // A waiting worker with a live controller means a new version is ready.
         if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
