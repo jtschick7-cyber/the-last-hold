@@ -28,6 +28,7 @@ import {
   withFirstSeen,
   writeAppSettings,
   DEFAULT_APP_SETTINGS,
+  type AmbienceSetting,
   type AppSettings,
   type SoundSetting,
   type HoldView,
@@ -37,7 +38,7 @@ import { afterExport, snoozedFor, withExportAge } from '../../platform/backup-re
 import { levelUpLines, noticeChanges, type Watched } from './lines';
 import { skillLevels } from '../../core/skills/skills';
 import type { BuildingId } from '../../content/buildings';
-import { applySoundSetting, playMoment } from './sound';
+import { applyAmbienceSetting, applySoundSetting, playMoment } from './sound';
 import { momentForCommand, momentsForLiveTick } from './sound-cues';
 
 // Technical design §6.3 and §10: one mutable game state, plus a `version` signal
@@ -85,7 +86,7 @@ let state: GameState | null = null;
 /** Live time passing: remembers what experiments showed, so the Hut can say so. */
 const advanceLive = (s: GameState, t: number, sounds = false): void => {
   const log = advance(s, t);
-  // GDD §9.22: a contract that finishes in the live tick is heard; a catch-up on return is not.
+  // GDD §9.22: a contract or alchemy discovery that finishes in the live tick is heard; catch-up on return is not.
   if (sounds) for (const m of momentsForLiveTick(log)) playMoment(m);
   const lines = log.events.flatMap((e) =>
     e.type === 'experiment' ? experimentLines((id) => consumables[id].name, e) : [],
@@ -116,6 +117,10 @@ export const setHoldView = (holdView: HoldView): void =>
 export const setSound = (sound: SoundSetting): void => {
   changeAppSettings({ ...appSettings.value, sound });
   applySoundSetting(sound === 'on'); // inside the tap, so the phone lets audio start
+};
+export const setAmbience = (ambience: AmbienceSetting): void => {
+  changeAppSettings({ ...appSettings.value, ambience });
+  applyAmbienceSetting(ambience === 'on'); // inside the tap, so the phone lets audio start
 };
 export const setBackupReminder = (backupReminder: boolean): void =>
   changeAppSettings({ ...appSettings.value, backupReminder });
@@ -235,6 +240,7 @@ export const startGame = async (): Promise<void> => {
   const seen = withFirstSeen(readAppSettings(channelStorage), now());
   changeAppSettings(seen);
   applySoundSetting(seen.sound === 'on'); // the audio starts paused; the first tap resumes it
+  applyAmbienceSetting(seen.ambience === 'on');
   installTipDue.value = !isInstalledApp() && channelStorage.get('installTipSeen') === null;
   const errors = diagnostics();
   if (errors) captureErrors(errors, () => currentScreen.value);

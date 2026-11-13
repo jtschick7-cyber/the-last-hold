@@ -2,6 +2,7 @@ import type { Settings } from '../../core/state/game-state';
 import {
   HOLD_VIEWS,
   TEXT_SIZES,
+  type AmbienceSetting,
   type HoldView,
   type SoundSetting,
   type TextSize,
@@ -10,13 +11,22 @@ import {
   appSettings,
   dispatch,
   game,
+  setAmbience,
   setBackupReminder,
   setHoldView,
   setSound,
   setTextSize,
   version,
 } from '../app/runtime';
-import { SOUND_BUTTONS, SOUND_HELP, SOUND_LABEL } from '../../content/sound-text';
+import {
+  SETTING_AMBIENCE_HELP,
+  SETTING_AMBIENCE_LABEL,
+  SETTING_AMBIENCE_OFF,
+  SETTING_AMBIENCE_ON,
+  SOUND_BUTTONS,
+  SOUND_HELP,
+  SOUND_LABEL,
+} from '../../content/sound-text';
 import styles from '../styles/ui.module.css';
 
 // GDD §9.10: theme, best-buy hint, rates per minute or hour, reduce motion.
@@ -143,6 +153,39 @@ const SoundChoice = () => {
   );
 };
 
+// GDD §9.22 (D609, D610): procedural frontier ambience, independent of Sound.
+const AmbienceChoice = () => {
+  const current = appSettings.value.ambience;
+  return (
+    <div class={styles.divider}>
+      <div class={styles.row} style={{ flexWrap: 'wrap' }}>
+        <span class={styles.grow} style={{ flexBasis: '7rem' }}>
+          {SETTING_AMBIENCE_LABEL}
+        </span>
+        <div class={styles.segmented} role="group" aria-label={SETTING_AMBIENCE_LABEL}>
+          {(
+            [
+              ['on', SETTING_AMBIENCE_ON],
+              ['off', SETTING_AMBIENCE_OFF],
+            ] as [AmbienceSetting, string][]
+          ).map(([value, text]) => (
+            <button
+              type="button"
+              key={value}
+              class={current === value ? styles.segmentOn : styles.segment}
+              aria-pressed={current === value}
+              onClick={() => setAmbience(value)}
+            >
+              {text}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p class={`${styles.small} ${styles.dim}`}>{SETTING_AMBIENCE_HELP}</p>
+    </div>
+  );
+};
+
 const BackupReminderChoice = () => {
   const on = appSettings.value.backupReminder;
   return (
@@ -212,6 +255,7 @@ export const SettingsSheet = () => {
       <TextSizeChoice />
       <HoldViewChoice />
       <SoundChoice />
+      <AmbienceChoice />
       <BackupReminderChoice />
     </div>
   );

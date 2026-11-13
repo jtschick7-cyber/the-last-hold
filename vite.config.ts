@@ -13,7 +13,7 @@ import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { candidateAudioFile, renderAuditionPage } from './tools/audition-page';
 import { packPng } from './tools/png-pack';
-import { parseSoundMarks } from './tools/sound-marks';
+import { loadSoundMarks } from './tools/sound-marks';
 
 // Technical design §11.3: the build channel decides the base path, the PWA's
 // name and scope, and (in src/platform/storage.ts) the storage namespace.
@@ -70,9 +70,7 @@ const auditionPage = {
     const to = new URL('audition/', new URL(`file://${options.dir}/`));
     mkdirSync(to, { recursive: true });
     const sizes: Record<number, number> = {};
-    const marks = parseSoundMarks(
-      readFileSync(new URL('./docs/flesh-out/v1.2/sound-marks.md', import.meta.url), 'utf8'),
-    );
+    const marks = loadSoundMarks(new URL('./', import.meta.url));
     for (const c of marks.candidates) {
       const file = candidateAudioFile(c.n);
       copyFileSync(new URL(file, from), new URL(file, to));
@@ -170,8 +168,11 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // SF.10: the seven sounds (assets/audio/*.mp3) are cached for offline play; the preview's
-        // audition candidates are listening copies and are not (D524 (2)).
+        // SF.10: the sounds (assets/audio/*.mp3) are cached for offline play; the preview's audition
+        // candidates are listening copies and are not (D524 (2)). Only Vite's 8-char content-hashed
+        // JS/CSS bundles are immutable; unhashed public/assets/** images and audio must keep MD5
+        // revisions so SW updates replace changed sprites/sounds instead of serving stale caches.
+        dontCacheBustURLsMatching: /-[0-9A-Za-z_-]{8}\.(js|css)$/,
         globPatterns: ['**/*.{js,css,html,png,svg,woff2,webmanifest,mp3}'],
         globIgnores: ['audition/**'],
         navigateFallback: 'index.html',

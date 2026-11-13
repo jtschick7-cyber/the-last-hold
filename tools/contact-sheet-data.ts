@@ -28,6 +28,52 @@ export const isV16Asset = (id: string): boolean =>
   id.startsWith('scene.order.') ||
   id.startsWith('scene.descent.');
 
+/** v1.7 battle sprite strips deployed to public/assets/sprites/ after owner contact-sheet approval (D605, D611). */
+export const DEPLOYED_V17_SPRITE_IDS: ReadonlySet<string> = new Set<string>([
+  'sprite.creature.barrow-king',
+  'sprite.creature.likho-one-eyed',
+  'sprite.creature.lindworm-of-velk-fjord',
+  'sprite.creature.mara-of-kettle-barrow',
+  'sprite.creature.mother-of-the-river',
+  'sprite.creature.stoneback-fell-troll',
+  'sprite.guardian.dross-tide',
+  'sprite.guardian.the-forgotten',
+  'sprite.guardian.unlits-breath',
+  'sprite.hunter.arvid',
+  'sprite.hunter.bjarna',
+  'sprite.hunter.gest-tall-torch',
+  'sprite.hunter.halvar',
+  'sprite.hunter.herdis',
+  'sprite.hunter.ostap',
+  'sprite.hunter.radek',
+  'sprite.hunter.radmila-of-the-reeds',
+  'sprite.hunter.ragnhild-eye-taker',
+  'sprite.hunter.sigrun',
+  'sprite.hunter.stanko',
+  'sprite.hunter.toma',
+  'sprite.hunter.vesna',
+  'sprite.hunter.zora',
+  'sprite.monster.anvil-wight',
+  'sprite.monster.bies',
+  'sprite.monster.draugr',
+  'sprite.monster.gloam-moths',
+  'sprite.monster.huldra',
+  'sprite.monster.kikimora',
+  'sprite.monster.leshy',
+  'sprite.monster.nix',
+  'sprite.monster.poludnitsa',
+  'sprite.monster.ribbonshade',
+  'sprite.monster.rimewrought',
+  'sprite.monster.rusalka',
+  'sprite.monster.strzyga',
+  'sprite.monster.unlit',
+  'sprite.monster.upyr',
+  'sprite.monster.vodyanoy',
+  'sprite.monster.wolf',
+]);
+
+export const isV17Asset = (id: string): boolean => DEPLOYED_V17_SPRITE_IDS.has(id);
+
 /** The v1.4 sheet's own sequence 1..5, in the order the owner marks them (portrait, battle sprite, banners). */
 export const v14Numbered: readonly NumberedAsset[] = [
   'portrait.monster.unlit',

@@ -1,5 +1,5 @@
-// SF.4 (D524 (2)): the sound audition. The map in sound-marks.md, the converted candidates and the
-// page agree; and neither the candidates nor the page reach the live build.
+// SF.4 / VB.5 (D524 (2), D608): the sound audition. The maps in v1.2 & v1.7 sound-marks.md, the
+// converted candidates and the page agree; and neither the candidates nor the page reach the live build.
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -11,26 +11,26 @@ import {
   renderAuditionPage,
   SOUND_CAP_BYTES,
 } from '../../tools/audition-page';
-import { parseSoundMarks, SOUND_IDS } from '../../tools/sound-marks';
+import { loadSoundMarks, SOUND_IDS, V17_SOUND_IDS } from '../../tools/sound-marks';
 
 const root = new URL('../../', import.meta.url);
-const marks = parseSoundMarks(
-  readFileSync(new URL('docs/flesh-out/v1.2/sound-marks.md', root), 'utf8'),
-);
+const marks = loadSoundMarks(root);
 const audition = new URL('art-src/audition/', root);
 const sizeOf = (n: number): number => statSync(new URL(candidateAudioFile(n), audition)).size;
 
 describe('the audition map', () => {
-  it('lists about five candidates for each of the seven sounds, numbered 1 to N in order', () => {
+  it('lists 4–6 unique candidates for each of the ten sounds, numbered 1 to N in order', () => {
     expect(marks.candidates.map((c) => c.n)).toEqual(marks.candidates.map((_, i) => i + 1));
     for (const slot of SOUND_IDS) {
       const n = marks.candidates.filter((c) => c.slot === slot).length;
       expect(n, slot).toBeGreaterThanOrEqual(4);
       expect(n, slot).toBeLessThanOrEqual(6);
     }
+    const sources = marks.candidates.map((c) => `${c.pack}:${c.file}`);
+    expect(new Set(sources).size).toBe(sources.length);
   });
 
-  it('uses the length limits of D524 (2)', () => {
+  it('uses the length limits of D524 (2) and D608', () => {
     const limit = {
       build: 0.4,
       launch: 0.4,
@@ -39,6 +39,9 @@ describe('the audition map', () => {
       lose: 0.8,
       fanfare: 1.2,
       nightfall: 1.2,
+      brace: 0.6,
+      discover: 0.8,
+      strike: 0.4,
     };
     for (const c of marks.candidates) expect(c.maxSeconds, `${c.n}`).toBe(limit[c.slot]);
   });
@@ -73,14 +76,20 @@ describe('the audition page', () => {
   const sizes = Object.fromEntries(marks.candidates.map((c) => [c.n, sizeOf(c.n)]));
   const html = renderAuditionPage(marks, sizes);
 
-  it('has one play button per candidate, in the map order, grouped by sound', () => {
+  it('has one play button per candidate, in the map order, grouped by sound, with v1.7 jump links', () => {
     const files = [...html.matchAll(/data-file="audition\/(\d+\.mp3)"/g)].map((m) => m[1]);
     expect(files).toEqual(marks.candidates.map((c) => candidateAudioFile(c.n)));
     for (const slot of SOUND_IDS) expect(html).toContain(`data-slot="${slot}"`);
+    for (const slot of V17_SOUND_IDS) expect(html).toContain(`href="#slot-${slot}"`);
+    for (const slot of SOUND_IDS) {
+      const picked = marks.picks[slot];
+      expect(picked, slot).not.toBeNull();
+      expect(html).toContain(`name="${slot}" value="${picked}" checked`);
+    }
   });
 
-  it('shows the cap the owner is picking against', () => {
-    expect(SOUND_CAP_BYTES).toBe(30 * 1024);
+  it('shows the 45 KB cap the owner is picking against (D608)', () => {
+    expect(SOUND_CAP_BYTES).toBe(45 * 1024);
     expect(html).toContain(`var cap=${SOUND_CAP_BYTES}`);
   });
 });

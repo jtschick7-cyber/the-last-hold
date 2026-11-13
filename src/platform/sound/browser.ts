@@ -35,6 +35,8 @@ const fakeEngine = (hook: SoundTestHook): Engine => ({
   },
 });
 
+const STRIKE_GAIN = 0.4; // D608: repeated watched hit ticks stay low underneath other cues
+
 const webAudioEngine = (): Engine | null => {
   const Ctor = window.AudioContext ?? window.webkitAudioContext;
   if (!Ctor) return null;
@@ -44,10 +46,17 @@ const webAudioEngine = (): Engine | null => {
     state: () => ctx.state as ContextState, // iOS adds 'interrupted', which the DOM types lack
     resume: () => ctx.resume(),
     decode: (bytes) => ctx.decodeAudioData(bytes),
-    play: (_id, buffer) => {
+    play: (id, buffer) => {
       const source = ctx.createBufferSource();
       source.buffer = buffer as AudioBuffer;
-      source.connect(ctx.destination);
+      if (id === 'strike') {
+        const gain = ctx.createGain();
+        gain.gain.value = STRIKE_GAIN;
+        source.connect(gain);
+        gain.connect(ctx.destination);
+      } else {
+        source.connect(ctx.destination);
+      }
       source.start();
     },
   };

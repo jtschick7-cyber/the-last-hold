@@ -1,5 +1,7 @@
 import type { Page } from '@playwright/test';
 import type { SoundTestHook } from '../../src/platform/sound/browser';
+import type { AmbienceMood, AmbienceTestHook } from '../../src/platform/sound/ambience';
+import type { ContextState } from '../../src/platform/sound/player';
 import type { SoundId } from '../../src/platform/sound/moments';
 import { loadEnvelope, makeEnvelope } from '../../src/core/save';
 import type { GameState } from '../../src/core/state/game-state';
@@ -49,6 +51,70 @@ export const soundOn = async (page: Page): Promise<void> => {
   await tab(page, 'More').click();
   await page.getByRole('button', { name: /^Settings/ }).click();
   await page.getByRole('group', { name: 'Sound' }).getByRole('button', { name: 'On' }).click();
+  await page.getByRole('button', { name: 'Close' }).first().click();
+};
+
+/** Installs the recording fake procedural ambience engine before the app starts (D609). */
+export const installAmbienceHook = async (page: Page): Promise<void> => {
+  await page.addInitScript(() => {
+    (window as unknown as { __lastholdAmbienceTest: AmbienceTestHook }).__lastholdAmbienceTest = {
+      state: 'suspended',
+      created: 0,
+      suspends: 0,
+      moods: [],
+    };
+  });
+};
+
+export const ambienceMoods = (page: Page): Promise<AmbienceMood[]> =>
+  page.evaluate(
+    () =>
+      (window as unknown as { __lastholdAmbienceTest?: AmbienceTestHook }).__lastholdAmbienceTest
+        ?.moods ?? [],
+  );
+
+export const ambienceCreated = (page: Page): Promise<number> =>
+  page.evaluate(
+    () =>
+      (window as unknown as { __lastholdAmbienceTest?: AmbienceTestHook }).__lastholdAmbienceTest
+        ?.created ?? 0,
+  );
+
+export const ambienceSuspends = (page: Page): Promise<number> =>
+  page.evaluate(
+    () =>
+      (window as unknown as { __lastholdAmbienceTest?: AmbienceTestHook }).__lastholdAmbienceTest
+        ?.suspends ?? 0,
+  );
+
+export const setAmbienceAudioState = (
+  page: Page,
+  state: ContextState,
+  resumable = true,
+): Promise<void> =>
+  page.evaluate(
+    ([s, r]) => {
+      const hook = (window as unknown as { __lastholdAmbienceTest: AmbienceTestHook })
+        .__lastholdAmbienceTest;
+      hook.state = s as ContextState;
+      hook.resumable = r as boolean;
+    },
+    [state, resumable] as const,
+  );
+
+/** More ▸ Settings ▸ Ambience [On]: the tap that starts procedural ambience. */
+export const ambienceOn = async (page: Page): Promise<void> => {
+  await tab(page, 'More').click();
+  await page.getByRole('button', { name: /^Settings/ }).click();
+  await page.getByRole('group', { name: 'Ambience' }).getByRole('button', { name: 'On' }).click();
+  await page.getByRole('button', { name: 'Close' }).first().click();
+};
+
+/** More ▸ Settings ▸ Ambience [Off]: turns off procedural ambience. */
+export const ambienceOff = async (page: Page): Promise<void> => {
+  await tab(page, 'More').click();
+  await page.getByRole('button', { name: /^Settings/ }).click();
+  await page.getByRole('group', { name: 'Ambience' }).getByRole('button', { name: 'Off' }).click();
   await page.getByRole('button', { name: 'Close' }).first().click();
 };
 

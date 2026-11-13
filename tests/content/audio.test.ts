@@ -39,7 +39,7 @@ describe('audio list', () => {
     }
   });
 
-  it('all sounds together are at most 30 KB (D523)', () => {
+  it('all sounds together are at most 45 KB (D523, D608)', () => {
     const total = audio.reduce((n, a) => n + statSync(ASSETS + a.file).size, 0);
     expect(total).toBeLessThanOrEqual(AUDIO_BYTES_CAP);
   });

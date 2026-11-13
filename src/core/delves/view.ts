@@ -8,7 +8,7 @@ import { monsters, type MonsterId } from '../../content/monsters';
 import { RIFT_QUIET_LINE } from '../../content/delves/rift-text';
 import { sixthDoorLine } from '../../content/story/act5';
 import { runFight } from '../combat';
-import type { FightResult } from '../combat/types';
+import type { FightResult, LogEntry } from '../combat/types';
 import type { Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
 import { entryProblem, baseTierFor, delvesOpen, runRank, suggestedParty } from './access';
@@ -115,6 +115,15 @@ export interface FloorCombatant {
   readonly start: number;
 }
 
+export type CalloutTone = 'hit' | 'crit' | 'heal' | 'miss';
+
+/** Floating target callout read directly from a combat LogEntry with zero UI math (v1.7, D607, D610). */
+export interface PlaybackCallout {
+  readonly target: string;
+  readonly tone: CalloutTone;
+  readonly text: string;
+}
+
 /** One line of the playback: who acted, who was hit, and every bar's share of Health after it. */
 export interface PlaybackStep {
   readonly tick: number;
@@ -122,6 +131,8 @@ export interface PlaybackStep {
   readonly kind: string;
   readonly actor: string | null;
   readonly target: string | null;
+  readonly amount?: number;
+  readonly callout?: PlaybackCallout;
   readonly bars: Readonly<Record<string, number>>;
   /** Who is on the field after this line, when the fight has step-ins (the Descent); absent means everyone. */
   readonly present?: readonly string[];
@@ -142,9 +153,25 @@ export interface FloorPlayback {
   readonly log: readonly { readonly tick: number; readonly text: string }[];
 }
 
+const calloutOf = (e: LogEntry, target: string | null): PlaybackCallout | undefined => {
+  if (!target) return undefined;
+  if (e.kind === 'miss') return { target, tone: 'miss', text: 'MISS' };
+  if (e.kind === 'crit' && e.amount !== undefined)
+    return { target, tone: 'crit', text: `★ -${e.amount}` };
+  if (
+    (e.kind === 'hit' || e.kind === 'sub-hit' || e.kind === 'ability') &&
+    e.amount !== undefined
+  ) {
+    return { target, tone: 'hit', text: `-${e.amount}` };
+  }
+  if (e.kind === 'heal' && e.amount !== undefined)
+    return { target, tone: 'heal', text: `+${e.amount}` };
+  return undefined;
+};
+
 /**
  * The steps and the end bars of a played fight: who acted, who was hit, and every bar's share of its
- * max Health after each line. Shared by a Delve floor and by event fights (GDD §9.15, §9.17).
+ * max Health after each line. Shared by a Delve floor, event fights, the Descent, and Contract Watch fight (GDD §9.4, §9.15, §9.17).
  */
 export const playbackSteps = (
   r: Pick<FightResult, 'log' | 'hunters' | 'monsters'>,
@@ -163,12 +190,16 @@ export const playbackSteps = (
       const max = maxOf.get(e.target);
       if (max) bars[e.target] = Math.max(0, Math.min(1, e.targetHealth / max));
     }
+    const target = e.target !== undefined && maxOf.has(e.target) ? e.target : null;
+    const callout = calloutOf(e, target);
     steps.push({
       tick: e.tick,
       text: e.text,
       kind: e.kind,
       actor: maxOf.has(e.actor) ? e.actor : null,
-      target: e.target !== undefined && maxOf.has(e.target) ? e.target : null,
+      target,
+      ...(e.amount !== undefined ? { amount: e.amount } : {}),
+      ...(callout ? { callout } : {}),
       bars: { ...bars },
     });
   }

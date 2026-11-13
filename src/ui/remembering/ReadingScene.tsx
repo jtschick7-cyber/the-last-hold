@@ -5,6 +5,7 @@ import { endingSequence, type EndingStep } from '../../core/story/ending-sequenc
 import { readingFrames } from '../../core/story/remembering-view';
 import { game } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
+import { useAmbienceMood } from '../app/sound';
 import styles from '../styles/ui.module.css';
 import { createReadingPlayer } from './timing';
 
@@ -12,6 +13,7 @@ import { createReadingPlayer } from './timing';
 // next at once, Skip jumps to the end. With reduced motion the names change without fading (CSS);
 // the speed is the same.
 const ReadingView = ({ onDone }: { onDone: () => void }) => {
+  useAmbienceMood('silent');
   const frames = useMemo(readingFrames, []);
   const [i, setI] = useState(0);
   const player = useRef<ReturnType<typeof createReadingPlayer> | null>(null);
@@ -66,21 +68,24 @@ const ReadingView = ({ onDone }: { onDone: () => void }) => {
 };
 
 /** One card of the ending: its paragraphs, then Continue to the next step. */
-const CardView = ({ step, onDone }: { step: CardStep; onDone: () => void }) => (
-  <div>
-    {step.card.paragraphs.map((p) => (
-      <p key={p}>{p}</p>
-    ))}
-    {step.card.id === 'R-11' && (
-      <p class={styles.small}>
-        <em>Ilse: “{endingWarmNote}”</em>
-      </p>
-    )}
-    <button type="button" class={styles.btnPrimary} style={{ width: '100%' }} onClick={onDone}>
-      {readingControls.done}
-    </button>
-  </div>
-);
+const CardView = ({ step, onDone }: { step: CardStep; onDone: () => void }) => {
+  useAmbienceMood('silent');
+  return (
+    <div>
+      {step.card.paragraphs.map((p) => (
+        <p key={p}>{p}</p>
+      ))}
+      {step.card.id === 'R-11' && (
+        <p class={styles.small}>
+          <em>Ilse: “{endingWarmNote}”</em>
+        </p>
+      )}
+      <button type="button" class={styles.btnPrimary} style={{ width: '100%' }} onClick={onDone}>
+        {readingControls.done}
+      </button>
+    </div>
+  );
+};
 
 type CardStep = Extract<EndingStep, { kind: 'card' }>;
 
@@ -102,9 +107,9 @@ const playFrom = (steps: readonly EndingStep[], i: number): void => {
  */
 export const playEnding = (): void => playFrom(endingSequence(game()), 0);
 
-/** R-11 from the Rime shelf (lore §34.7): the rime and Ilse's note, nothing else. */
-export const openWarmRime = (): void =>
-  openSheet(endingWarm.title, () => (
+const WarmRimeView = () => {
+  useAmbienceMood('silent');
+  return (
     <div>
       <article class={styles.rime}>
         {endingWarm.paragraphs.map((p) => (
@@ -115,4 +120,8 @@ export const openWarmRime = (): void =>
         <em>{endingWarmNote}</em>
       </p>
     </div>
-  ));
+  );
+};
+
+/** R-11 from the Rime shelf (lore §34.7): the rime and Ilse's note, nothing else. */
+export const openWarmRime = (): void => openSheet(endingWarm.title, () => <WarmRimeView />);

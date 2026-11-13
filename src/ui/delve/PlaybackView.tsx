@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { SpriteFrameName } from '../../content/assets';
 import type { FloorPlayback } from '../../core/delves/view';
 import { openSheet } from '../app/sheets';
+import { playMoment } from '../app/sound';
+import { momentForStep } from '../app/sound-cues';
 import { motionInterval } from '../motion/registry';
 import styles from '../styles/ui.module.css';
+import type { SpriteGlow } from '../widgets/BattleSprite';
 import { Sprite } from '../widgets/Sprite';
 import { Arena } from './Arena';
 import css from './Delve.module.css';
@@ -65,6 +68,8 @@ export const PlaybackView = ({
   const [i, setI] = useState(-1);
   const finished = i >= last;
   const moved = useRef(false);
+  const skipped = useRef(false);
+  const prevI = useRef(-1);
 
   useEffect(() => {
     if (finished) return;
@@ -75,6 +80,14 @@ export const PlaybackView = ({
     return motionInterval(() => setI((x) => Math.min(last, x + 1)), ms);
   }, [finished, last, pb.steps.length]);
 
+  useEffect(() => {
+    if (i <= prevI.current) return;
+    prevI.current = i;
+    if (finished || skipped.current) return;
+    const moment = momentForStep(pb.steps[i]);
+    if (moment) playMoment(moment);
+  }, [finished, i, pb.steps]);
+
   // The caller's `onFinish` runs once the playback has reached its end (or was skipped to it).
   useEffect(() => {
     if (!finished || moved.current) return;
@@ -82,14 +95,17 @@ export const PlaybackView = ({
     onFinish?.();
   }, [finished]);
 
+  const startBars = Object.fromEntries(pb.combatants.map((c) => [c.id, c.start]));
   const step = i >= 0 ? pb.steps[i] : undefined;
-  const before = i > 0 ? pb.steps[i - 1]?.bars : undefined;
+  const before = i > 0 ? pb.steps[i - 1]?.bars : startBars;
   const bars: Record<string, number> = finished
     ? { ...pb.end }
     : step
       ? { ...step.bars }
-      : Object.fromEntries(pb.combatants.map((c) => [c.id, c.start]));
+      : startBars;
   const frames: Record<string, SpriteFrameName> = {};
+  const recoils: Record<string, boolean> = {};
+  const glows: Record<string, SpriteGlow> = {};
   if (step && !finished) {
     if (step.actor && ATTACKS.has(step.kind)) frames[step.actor] = 'lunge';
     if (
@@ -98,6 +114,16 @@ export const PlaybackView = ({
       (step.bars[step.target] ?? 1) < (before?.[step.target] ?? 1)
     )
       frames[step.target] = 'hit';
+    if (
+      step.target &&
+      (step.kind === 'hit' || step.kind === 'crit' || frames[step.target] === 'hit')
+    )
+      recoils[step.target] = true;
+    if (step.actor && step.kind === 'skill') {
+      const actorUnit = pb.combatants.find((c) => c.id === step.actor);
+      if (actorUnit?.side === 'hunter') glows[step.actor] = 'skill';
+    }
+    if (step.actor && step.kind === 'ability') glows[step.actor] = 'ability';
   }
 
   // A fight with step-ins lists who is on the field after each line; the others show everyone.
@@ -109,13 +135,28 @@ export const PlaybackView = ({
     <div>
       <h3 class={styles.cardTitle}>{pb.title}</h3>
       {banner && <Sprite id={banner} fill />}
-      <Arena combatants={shown} bars={bars} frames={frames} />
+      <Arena
+        combatants={shown}
+        bars={bars}
+        frames={frames}
+        callout={step && !finished ? (step.callout ?? null) : null}
+        recoils={recoils}
+        glows={glows}
+        stepKey={i}
+      />
       <p class={css.line} aria-live="polite">
         {finished ? closing && <strong>{closing}</strong> : (step?.text ?? opening)}
       </p>
       <div class={styles.row}>
         {!finished && (
-          <button type="button" class={styles.btn} onClick={() => setI(last)}>
+          <button
+            type="button"
+            class={styles.btn}
+            onClick={() => {
+              skipped.current = true;
+              setI(last);
+            }}
+          >
             Skip
           </button>
         )}

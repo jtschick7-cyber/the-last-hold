@@ -1,4 +1,4 @@
-// GDD §9.22 (D520): the seven sounds, the 15 moments that play them, and which sound wins when
+// GDD §9.22 (D520, D608): the ten sounds, the 19 moments that play them, and which sound wins when
 // several are due at once. Pure: no audio, no browser. Anything not listed here is silent.
 export const SOUND_IDS = [
   'build',
@@ -8,18 +8,24 @@ export const SOUND_IDS = [
   'lose',
   'fanfare',
   'nightfall',
+  'brace',
+  'discover',
+  'strike',
 ] as const;
 export type SoundId = (typeof SOUND_IDS)[number];
 
-/** Strongest first (D522 (10)): the one that plays when several are due inside the hold. */
+/** Strongest first (D522 (10), D608): the one that plays when several are due at once. */
 export const SOUND_ORDER: readonly SoundId[] = [
   'fanfare',
   'nightfall',
   'win',
   'lose',
+  'discover',
+  'brace',
   'build',
   'launch',
   'place',
+  'strike',
 ];
 
 export const MOMENT_SOUNDS = {
@@ -38,6 +44,10 @@ export const MOMENT_SOUNDS = {
   'legendary.unlocked': 'fanfare',
   'delve.guardianBeaten': 'fanfare',
   'longNight.arrives': 'nightfall',
+  'stand.brace': 'brace', // Last Stand commit (Start -> Confirm)
+  'arrange.useLayout': 'brace', // Arrange Hold -> Use this layout
+  'experiment.discovered': 'discover', // live-tick Alchemy experiment revealing >= 1 property
+  'combat.strike': 'strike', // watched Arena step hitting an enemy or hunter
 } as const satisfies Record<string, SoundId>;
 export type Moment = keyof typeof MOMENT_SOUNDS;
 

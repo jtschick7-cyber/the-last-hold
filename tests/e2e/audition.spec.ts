@@ -4,12 +4,13 @@ import { createServer, type Server } from 'node:http';
 import { tmpdir } from 'node:os';
 import { extname, join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import { parseSoundMarks } from '../../tools/sound-marks';
+import { loadSoundMarks } from '../../tools/sound-marks';
 import { candidateAudioFile } from '../../tools/audition-page';
 
-// SF.4 (D524 (2)): the audition page, in the preview build, at the phone viewport. Every button is at
-// least 44 × 44 px, every candidate decodes in Chromium, and the page matches sound-marks.md.
-const marks = parseSoundMarks(readFileSync('docs/flesh-out/v1.2/sound-marks.md', 'utf8'));
+// SF.4 / VB.5 (D524 (2), D608): the audition page, in the preview build, at the phone viewport.
+// Every interactive control is at least 44 × 44 px, every candidate decodes in Chromium, and the
+// page matches the v1.2 + v1.7 sound-marks maps.
+const marks = loadSoundMarks();
 const TYPES: Record<string, string> = {
   '.html': 'text/html',
   '.mp3': 'audio/mpeg',
@@ -60,7 +61,7 @@ test('the page lists the map, every button is 44 px, and every candidate decodes
       `audition/${candidateAudioFile(c.n)}`,
     );
 
-  for (const sel of ['button.play', 'label.pick']) {
+  for (const sel of ['button.play', 'label.pick', 'a.jump']) {
     const boxes = await page.locator(sel).evaluateAll((els) =>
       els.map((e) => {
         const r = e.getBoundingClientRect();
@@ -88,8 +89,15 @@ test('the page lists the map, every button is 44 px, and every candidate decodes
   expect(decoded).toHaveLength(marks.candidates.length);
   for (const n of decoded) expect(n).toBeGreaterThan(0);
 
-  // The running total follows the picks.
+  // Pre-selected v1.2 picks count against the 45 KB cap; checking v1.7 cues updates the running total.
+  await expect(page.locator('#total')).toContainText('of 45 KB allowed');
   await page.locator('section[data-slot="build"] input').first().check();
+  await page.locator('section[data-slot="brace"] input').first().check();
+  await page.locator('section[data-slot="discover"] input').first().check();
+  await page.locator('section[data-slot="strike"] input').first().check();
   await expect(page.locator('#total')).toContainText('Picked so far');
   await expect(page.locator('#picks')).toContainText('Build: 1');
+  await expect(page.locator('#picks')).toContainText('Stand brace: 36');
+  await expect(page.locator('#picks')).toContainText('Discovery: 40');
+  await expect(page.locator('#picks')).toContainText('Combat impact: 44');
 });

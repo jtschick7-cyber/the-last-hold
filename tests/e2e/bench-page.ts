@@ -20,11 +20,21 @@ import v12Played from '../saves/fixtures/v12-played.json';
 import v13Played from '../saves/fixtures/v13-played.json';
 import v14Played from '../saves/fixtures/v14-played.json';
 import { h, render } from 'preact';
+import {
+  hunterPortraitId,
+  hunterSpriteId,
+  monsterPortraitId,
+  monsterSpriteId,
+  type SpriteFrameName,
+} from '../../src/content/assets';
+import type { FloorCombatant, PlaybackCallout } from '../../src/core/delves/view';
 import { laneView, suggestLayout } from '../../src/core/systems/breach';
 import { adoptGame, dispatch, game, startGame } from '../../src/ui/app/runtime';
+import { Arena } from '../../src/ui/delve/Arena';
 import { LanesStrip } from '../../src/ui/widgets/LanesStrip';
 import { HoldGrid } from '../../src/ui/widgets/HoldGrid';
 import { ArrangeHoldSheet } from '../../src/ui/sheets/ArrangeHoldSheet';
+import type { SpriteGlow } from '../../src/ui/widgets/BattleSprite';
 
 // GDD §6.5: the live odds panel (500 fights) and Suggested party, timed in this
 // browser. Playwright slows the CPU 4× first, as a stand-in for a mid-range phone,
@@ -74,6 +84,7 @@ type Bench = {
   lanesStrip: number;
   suggestLayout: number;
   breachMigration: number;
+  arenaStep: number;
 };
 
 // Plan TL.10 (D506): the layout rows mount the real components for a played save with all 40
@@ -87,6 +98,86 @@ const box = document.createElement('div');
 const mount = (c: () => ReturnType<typeof h>) => () => {
   render(c(), box);
   render(null, box);
+};
+
+// Plan VB.10 (GDD §6.5, D612): advancing one watched Arena combat step with pose changes,
+// recoil/rim-glow, and a floating callout on an already-mounted Arena.
+const arenaStepBench = (): number => {
+  const combatants: FloorCombatant[] = [
+    ...(['halvar', 'zora', 'gest-tall-torch', 'radmila-of-the-reeds'] as const).map((id) => ({
+      id,
+      name: id,
+      side: 'hunter' as const,
+      spriteId: hunterSpriteId(id),
+      portraitId: hunterPortraitId(id),
+      start: 1,
+    })),
+    ...(['poludnitsa', 'rusalka'] as const).map((id, idx) => ({
+      id: `${id}-${idx}`,
+      name: id,
+      side: 'monster' as const,
+      spriteId: monsterSpriteId(id),
+      portraitId: monsterPortraitId(id),
+      start: 1,
+    })),
+  ];
+  const steps: {
+    bars: Record<string, number>;
+    frames: Record<string, SpriteFrameName>;
+    callout: PlaybackCallout;
+    recoils: Record<string, boolean>;
+    glows: Record<string, SpriteGlow>;
+  }[] = [
+    {
+      bars: {
+        halvar: 1,
+        zora: 1,
+        'gest-tall-torch': 1,
+        'radmila-of-the-reeds': 1,
+        'poludnitsa-0': 0.62,
+        'rusalka-1': 1,
+      },
+      frames: { zora: 'lunge', 'poludnitsa-0': 'hit' },
+      callout: { target: 'poludnitsa-0', tone: 'crit', text: '★ -32' },
+      recoils: { 'poludnitsa-0': true },
+      glows: { zora: 'skill' },
+    },
+    {
+      bars: {
+        halvar: 0.78,
+        zora: 1,
+        'gest-tall-torch': 1,
+        'radmila-of-the-reeds': 1,
+        'poludnitsa-0': 0.62,
+        'rusalka-1': 0.85,
+      },
+      frames: { 'poludnitsa-0': 'lunge', halvar: 'hit' },
+      callout: { target: 'halvar', tone: 'hit', text: '-19' },
+      recoils: { halvar: true },
+      glows: { 'poludnitsa-0': 'ability' },
+    },
+  ];
+  let stepKey = 0;
+  render(h(Arena, { combatants, bars: steps[0]?.bars ?? {}, frames: {}, stepKey }), box);
+  const ms = best(() => {
+    stepKey += 1;
+    const s = steps[stepKey % 2];
+    if (!s) return;
+    render(
+      h(Arena, {
+        combatants,
+        bars: s.bars,
+        frames: s.frames,
+        callout: s.callout,
+        recoils: s.recoils,
+        glows: s.glows,
+        stepKey,
+      }),
+      box,
+    );
+  });
+  render(null, box);
+  return ms;
 };
 
 (window as unknown as { __bench: () => Bench }).__bench = () => {
@@ -228,6 +319,7 @@ const mount = (c: () => ReturnType<typeof h>) => () => {
     ),
     suggestLayout: best(() => suggestLayout(game())),
     breachMigration: best(() => loadEnvelope(structuredClone(v14Played))),
+    arenaStep: arenaStepBench(),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),
     bossSuggest: best(() =>
       suggestBossParty({

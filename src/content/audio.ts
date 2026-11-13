@@ -1,4 +1,4 @@
-// Technical design §20.2, D520, D524: the seven sounds, one manifest row per file. CC0 only.
+// Technical design §20.2, D520, D524, D608: the ten sounds, one manifest row per file. CC0 only.
 // The ids repeat platform/sound's SOUND_IDS (content/ may not import platform/); a test keeps them equal.
 export const AUDIO_IDS = [
   'build',
@@ -8,6 +8,9 @@ export const AUDIO_IDS = [
   'lose',
   'fanfare',
   'nightfall',
+  'brace',
+  'discover',
+  'strike',
 ] as const;
 export type AudioId = (typeof AUDIO_IDS)[number];
 
@@ -98,7 +101,37 @@ export const audio: readonly AudioEntry[] = [
     credit: KENNEY,
     original: 'impactBell_heavy_000.ogg',
   },
+  {
+    id: 'brace',
+    file: 'audio/brace.mp3',
+    bytes: 3761,
+    pack: 'Impact Sounds',
+    url: 'https://kenney.nl/assets/impact-sounds',
+    license: 'CC0',
+    credit: KENNEY,
+    original: 'impactPlank_medium_000.ogg',
+  },
+  {
+    id: 'discover',
+    file: 'audio/discover.mp3',
+    bytes: 5015,
+    pack: 'Music Jingles',
+    url: 'https://kenney.nl/assets/music-jingles',
+    license: 'CC0',
+    credit: KENNEY,
+    original: 'jingles_PIZZI10.ogg',
+  },
+  {
+    id: 'strike',
+    file: 'audio/strike.mp3',
+    bytes: 2664,
+    pack: 'Impact Sounds',
+    url: 'https://kenney.nl/assets/impact-sounds',
+    license: 'CC0',
+    credit: KENNEY,
+    original: 'impactPunch_medium_001.ogg',
+  },
 ];
 
-/** D523: all sound files together, at most 30 KB (1 KB = 1,024 bytes). */
-export const AUDIO_BYTES_CAP = 30 * 1024;
+/** D523, D608: all sound files together, at most 45 KB (1 KB = 1,024 bytes). */
+export const AUDIO_BYTES_CAP = 45 * 1024;

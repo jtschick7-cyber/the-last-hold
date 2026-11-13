@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import type { SoundId } from '../../src/platform/sound/moments';
 import { begin, closeOrdersScenes, debugPress, onwardAll, tab } from './helpers';
-import { load, type Save } from './layout-helpers';
+import { base, fixture, load, type Save } from './layout-helpers';
 import {
   hold,
   installSoundHook,
@@ -33,7 +33,7 @@ test('Sound Off: nothing is requested and a buy is silent', async ({ page }) => 
   expect(requested).toEqual([]);
 });
 
-test('turning Sound On loads the seven files in that tap; a buy then plays Build once', async ({
+test('turning Sound On loads the ten files in that tap; a buy then plays Build once', async ({
   page,
 }) => {
   const requested = await installSoundHook(page);
@@ -41,9 +41,20 @@ test('turning Sound On loads the seven files in that tap; a buy then plays Build
   await begin(page);
   await debugPress(page, '+1K wood', '+1K food');
   await soundOn(page);
-  await expect.poll(() => requested.length).toBe(7);
+  await expect.poll(() => requested.length).toBe(10);
   expect(requested.map((p) => p.split('/').pop()).sort()).toEqual(
-    ['build', 'fanfare', 'launch', 'lose', 'nightfall', 'place', 'win'].map((n) => `${n}.mp3`),
+    [
+      'brace',
+      'build',
+      'discover',
+      'fanfare',
+      'launch',
+      'lose',
+      'nightfall',
+      'place',
+      'strike',
+      'win',
+    ].map((n) => `${n}.mp3`),
   );
   await tab(page, 'Hold').click();
   await page
@@ -97,7 +108,7 @@ test('a new building and a bulk buy each play Build once; a launch plays Launch;
   expect(await played(page)).toEqual(['build', 'build', 'launch']);
 });
 
-test('two moments inside the 150 ms hold play only the stronger; the debug row plays each of the seven without touching the save', async ({
+test('two moments inside the 150 ms hold play only the stronger; the debug row plays each of the ten without touching the save', async ({
   page,
 }) => {
   await installSoundHook(page);
@@ -107,11 +118,7 @@ test('two moments inside the 150 ms hold play only the stronger; the debug row p
   await tab(page, 'More').click();
   await page.getByRole('button', { name: /^Debug/ }).click();
   const play = (id: string) => page.locator(`[data-play-sound="${id}"]`);
-  for (const id of ['build', 'launch', 'place', 'win', 'lose', 'fanfare', 'nightfall']) {
-    await play(id).click();
-    await hold(page);
-  }
-  expect(await played(page)).toEqual([
+  const ids = [
     'build',
     'launch',
     'place',
@@ -119,15 +126,47 @@ test('two moments inside the 150 ms hold play only the stronger; the debug row p
     'lose',
     'fanfare',
     'nightfall',
-  ]);
-  // Two inside the hold: the stronger plays, once.
+    'brace',
+    'discover',
+    'strike',
+  ] as const;
+  const labels: Record<(typeof ids)[number], string> = {
+    build: 'Build',
+    launch: 'Launch',
+    place: 'Place',
+    win: 'Win',
+    lose: 'Lose',
+    fanfare: 'Fanfare',
+    nightfall: 'Nightfall',
+    brace: 'Stand brace',
+    discover: 'Discovery',
+    strike: 'Combat impact',
+  };
+  for (const id of ids) {
+    await expect(play(id)).toHaveText(labels[id]);
+    await play(id).click();
+    await hold(page);
+  }
+  expect(await played(page)).toEqual([...ids]);
+  // Two inside the hold: the stronger plays, once (fanfare > nightfall > win > lose > discover > brace > build > launch > place > strike).
   await page.evaluate(() => {
     document.querySelector<HTMLElement>('[data-play-sound="place"]')?.click();
     document.querySelector<HTMLElement>('[data-play-sound="win"]')?.click();
     document.querySelector<HTMLElement>('[data-play-sound="build"]')?.click();
   });
   await hold(page);
-  expect((await played(page)).slice(7)).toEqual(['win']);
+  await page.evaluate(() => {
+    document.querySelector<HTMLElement>('[data-play-sound="strike"]')?.click();
+    document.querySelector<HTMLElement>('[data-play-sound="place"]')?.click();
+  });
+  await hold(page);
+  await page.evaluate(() => {
+    document.querySelector<HTMLElement>('[data-play-sound="brace"]')?.click();
+    document.querySelector<HTMLElement>('[data-play-sound="discover"]')?.click();
+    document.querySelector<HTMLElement>('[data-play-sound="build"]')?.click();
+  });
+  await hold(page);
+  expect((await played(page)).slice(10)).toEqual(['win', 'place', 'discover']);
   // Playing a sound is not debug use.
   await page.getByText('Raw state').click();
   await expect(page.locator('pre')).toContainText('"debugUsed": false');
@@ -235,6 +274,26 @@ test('Arrange Hold: a completed move or swap plays Place; Move to tray, Clear to
   expect(await played(page)).toEqual(['place', 'place', 'place']);
 });
 
+test('Arrange Hold: Suggest layout is silent; Use this layout plays Brace once', async ({
+  page,
+}) => {
+  await installSoundHook(page);
+  await load(page, () => {}, fixture('v11') as Save);
+  await soundOn(page);
+  await tab(page, 'Hold').click();
+  await page.locator('[data-layout-button]').click();
+  const sheet = page.getByRole('dialog', { name: 'Arrange Hold' });
+  await sheet.getByRole('button', { name: 'Clear to tray…' }).click();
+  await sheet.getByRole('alertdialog').getByRole('button', { name: 'Clear to tray' }).click();
+  await sheet.getByTestId('suggest-layout').click();
+  await expect(page.getByTestId('suggest-line')).toBeVisible({ timeout: 30_000 });
+  await hold(page);
+  expect(await played(page)).toEqual([]);
+  await page.getByTestId('use-layout').click();
+  await hold(page);
+  expect(await played(page)).toEqual(['brace']);
+});
+
 for (const outcome of ['win', 'lose'] as const) {
   test(`a contract that finishes in the live tick plays ${outcome === 'win' ? 'Win' : 'Lose'} once`, async ({
     page,
@@ -323,8 +382,8 @@ const playDelve = async (page: Page, tookSound: () => Promise<SoundId[]>): Promi
       await sheet.getByRole('button', { name: 'Skip' }).click();
       const line = (await sheet.locator('[aria-live="polite"]').last().textContent()) ?? '';
       await hold(page);
-      const all = await tookSound();
-      expect(all.length, `one sound for this fight (${line})`).toBe(seen + 1);
+      const all = (await tookSound()).filter((s) => s !== 'strike');
+      expect(all.length, `one outcome sound for this fight (${line})`).toBe(seen + 1);
       seen = all.length;
       const sound = all[all.length - 1] as SoundId;
       expect(sound).toBe(
@@ -338,7 +397,7 @@ const playDelve = async (page: Page, tookSound: () => Promise<SoundId[]>): Promi
         .getByRole('button', { name: 'Close' })
         .click();
       await hold(page);
-      expect((await tookSound()).length).toBe(seen);
+      expect((await tookSound()).filter((s) => s !== 'strike').length).toBe(seen);
       // Closing the log re-opens the sheet on the next stage; if it did not, carry on from here.
       const next = sheet.getByRole('button', { name: 'Continue' });
       if (await next.isVisible()) await next.click();
@@ -458,17 +517,17 @@ for (const how of ['skip', 'close'] as const) {
     const play = page.getByRole('dialog').last();
     await expect(play.getByRole('button', { name: 'Skip' })).toBeVisible();
     await hold(page);
-    expect(await played(page)).toEqual([]); // not before the result is shown
+    expect((await played(page)).filter((s) => s !== 'strike')).toEqual([]); // not before the result is shown
     if (how === 'skip') {
       await play.getByRole('button', { name: 'Skip' }).click();
       await hold(page);
-      expect(await played(page)).toEqual(['fanfare']);
+      expect((await played(page)).filter((s) => s !== 'strike')).toEqual(['fanfare']);
       await play.getByRole('button', { name: 'See the result' }).click();
     } else {
       await play.getByRole('button', { name: 'Close' }).first().click();
     }
     await hold(page);
-    expect(await played(page)).toEqual(['fanfare']);
+    expect((await played(page)).filter((s) => s !== 'strike')).toEqual(['fanfare']);
   });
 }
 
@@ -507,7 +566,7 @@ test('a Legendary hunter unlocked plays Fanfare once, when the result is shown',
   expect(await played(page)).toEqual(['fanfare']);
 });
 
-test('the Long Night plays Nightfall once, when its sheet appears; the Last Stand before it and reopening it are silent', async ({
+test('the Long Night: Last Stand Start plays Brace, opening the Long Night plays Nightfall once, reopening is silent', async ({
   page,
 }) => {
   await installSoundHook(page);
@@ -523,21 +582,158 @@ test('the Long Night plays Nightfall once, when its sheet appears; the Last Stan
   await expect(page.getByText(/^Expected:/)).toBeVisible({ timeout: 15_000 });
   await page.getByRole('button', { name: 'Start', exact: true }).click();
   await hold(page);
-  expect(await played(page)).toEqual([]); // starting the stand is silent
+  expect(await played(page)).toEqual(['brace']);
   await page.getByRole('button', { name: 'Go up to the walls' }).click();
   const night = page.getByRole('dialog', { name: 'The Long Night' });
   await expect(night.getByText(/The walls held/)).toBeVisible();
   await hold(page);
-  expect(await played(page)).toEqual(['nightfall']);
+  expect(await played(page)).toEqual(['brace', 'nightfall']);
   // Its waves and pages are silent.
   await night.getByRole('button', { name: '1', exact: true }).click();
   await page.getByRole('dialog', { name: 'Wave 1' }).getByRole('button', { name: 'Close' }).click();
   await night.getByRole('button', { name: 'Next' }).click();
   await hold(page);
-  expect(await played(page)).toEqual(['nightfall']);
+  expect(await played(page)).toEqual(['brace', 'nightfall']);
   // Closed unread: the Hold's card brings it back, and that is silent.
   await night.getByRole('button', { name: 'Close' }).first().click();
   await page.getByRole('button', { name: /The Long Night: what happened/ }).click();
   await hold(page);
-  expect(await played(page)).toEqual(['nightfall']);
+  expect(await played(page)).toEqual(['brace', 'nightfall']);
+});
+
+const experimentSave = (revealing: boolean): { save: Save; at: number } => {
+  const save: Save = JSON.parse(JSON.stringify(base));
+  const s = save.state;
+  s.buildings.hut = Math.max(s.buildings.hut, 1);
+  s.book.properties.yarrow = revealing ? [0, 1] : [0, 1, 2];
+  s.book.properties.juniper = [0, 1];
+  s.book.tried = s.book.tried.filter(
+    (k: string) => k !== 'juniper+yarrow' && k !== 'yarrow+juniper',
+  );
+  s.queues.brewing.unshift({
+    kind: 'experiment',
+    a: 'yarrow',
+    b: 'juniper',
+    units: 2,
+    doneAt: s.time + 15 * 60_000,
+  });
+  return { save, at: save.savedAt };
+};
+
+test('Alchemy experiment: a live-tick discovery plays Discover once', async ({ page }) => {
+  const { save, at } = experimentSave(true);
+  await page.clock.install({ time: at });
+  await installSoundHook(page);
+  await load(page, () => {}, save);
+  await soundOn(page);
+  await tab(page, 'Hold').click();
+  expect(await played(page)).toEqual([]);
+  await page.clock.fastForward('00:20:00');
+  await expect.poll(() => played(page)).toEqual(['discover']);
+  await hold(page);
+  expect(await played(page)).toEqual(['discover']);
+});
+
+test('Alchemy experiment: a live experiment revealing 0 properties is silent', async ({ page }) => {
+  const { save, at } = experimentSave(false);
+  await page.clock.install({ time: at });
+  await installSoundHook(page);
+  await load(page, () => {}, save);
+  await soundOn(page);
+  await tab(page, 'Hold').click();
+  await page.clock.fastForward('00:20:00');
+  await hold(page);
+  expect(await played(page)).toEqual([]);
+});
+
+test('Alchemy experiment: the same discovering experiment caught up on return is silent', async ({
+  page,
+}) => {
+  const { save, at } = experimentSave(true);
+  await page.clock.install({ time: at });
+  await installSoundHook(page);
+  await load(page, () => {}, save);
+  await soundOn(page);
+  await page.clock.setSystemTime(at + 20 * 60_000);
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect(page.getByRole('dialog', { name: /While you were away/ })).toBeVisible();
+  await hold(page);
+  expect(await played(page)).toEqual([]);
+});
+
+const reachFight = async (page: Page): Promise<void> => {
+  const sheet = page.getByRole('dialog', { name: 'Delve' });
+  for (let i = 0; i < 40; i++) {
+    if (await sheet.getByRole('button', { name: 'Fight', exact: true }).isVisible()) return;
+    if (await sheet.getByRole('button', { name: 'Take this blessing' }).isVisible()) {
+      await sheet.locator('button[aria-pressed="false"]').first().click();
+      await sheet.getByRole('button', { name: 'Take this blessing' }).click();
+    } else if (await sheet.getByText(/Two doors/).isVisible()) {
+      await sheet.getByRole('button').filter({ hasText: 'Ahead:' }).first().click();
+    } else {
+      await page.waitForTimeout(150);
+    }
+  }
+  throw new Error('did not reach a Delve fight');
+};
+
+test('Combat strike: watched hits play Strike (even with Reduce Motion On); Sound Off and immediate Skip are silent', async ({
+  page,
+}) => {
+  const { save } = delveSave('strong');
+  await installSoundHook(page);
+
+  // Sound Off: watching a fight is silent.
+  await load(page, () => {}, save as unknown as Save);
+  await openDelve(page);
+  await reachFight(page);
+  const sheet = page.getByRole('dialog', { name: 'Delve' });
+  await sheet.getByRole('button', { name: 'Fight', exact: true }).click();
+  await page.waitForTimeout(1200);
+  expect(await played(page)).toEqual([]);
+
+  // Sound On + Reduce Motion Off: watched hit steps play Strike.
+  await sheet.getByRole('button', { name: 'Close' }).first().click();
+  await soundOn(page);
+  await tab(page, 'Hold').click();
+  await page
+    .getByRole('region', { name: 'The Rift' })
+    .getByRole('button', { name: /^Continue/ })
+    .click();
+  await reachFight(page);
+  await sheet.getByRole('button', { name: 'Fight', exact: true }).click();
+  await expect.poll(() => played(page), { timeout: 10_000 }).toContain('strike');
+
+  // Skip to end, advance to Floor 2, test immediate Skip silence, then test Reduce Motion On still plays Strike.
+  await sheet.getByRole('button', { name: 'Skip' }).click();
+  await hold(page);
+  await sheet.getByRole('button', { name: 'Continue' }).click();
+  await reachFight(page);
+  const beforeSkip = (await played(page)).length;
+  await sheet.getByRole('button', { name: 'Fight', exact: true }).click();
+  await sheet.getByRole('button', { name: 'Skip' }).click();
+  await hold(page);
+  expect((await played(page)).slice(beforeSkip)).toEqual(['win']);
+
+  await sheet.getByRole('button', { name: 'Continue' }).click();
+  await sheet.getByRole('button', { name: 'Close' }).first().click();
+  await tab(page, 'More').click();
+  await page.getByRole('button', { name: /^Settings/ }).click();
+  const settings = page.getByRole('dialog', { name: 'Settings' });
+  await settings
+    .getByRole('group', { name: 'Reduce motion' })
+    .getByRole('button', { name: 'On', exact: true })
+    .click();
+  await settings.getByRole('button', { name: 'Close' }).click();
+  await tab(page, 'Hold').click();
+  await page
+    .getByRole('region', { name: 'The Rift' })
+    .getByRole('button', { name: /^Continue/ })
+    .click();
+  await reachFight(page);
+  const beforeReduced = (await played(page)).length;
+  await sheet.getByRole('button', { name: 'Fight', exact: true }).click();
+  await expect
+    .poll(async () => (await played(page)).slice(beforeReduced), { timeout: 10_000 })
+    .toContain('strike');
 });

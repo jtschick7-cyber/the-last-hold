@@ -4,6 +4,12 @@
 // Run: npx vite-node tools/gen-sprites.ts
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { AGE_IDS } from '../src/content/ages';
+import {
+  eventCreatureSpriteId,
+  guardianSpriteId,
+  hunterSpriteId,
+  monsterSpriteId,
+} from '../src/content/assets';
 import { GUARDIAN_IDS } from '../src/content/delves/guardians';
 import { PATRON_IDS } from '../src/content/delves/patrons';
 import { DELVE_RELIC_IDS } from '../src/content/delves/relics';
@@ -25,6 +31,7 @@ import {
 } from './draw-icons16';
 import { drawOrderMark, drawOrdersIcon } from './draw-orders';
 import { ORDER_IDS } from '../src/content/orders';
+import { isV17Asset } from './contact-sheet-data';
 import { framesOf, stripPng } from './sprite-frames';
 import { drawHunterSprite } from './sprite-hunters';
 import { drawMonsterSprite } from './sprite-monsters';
@@ -38,14 +45,18 @@ const write = (file: string, png: Buffer): void => {
 };
 
 for (const h of HUNTER_IDS)
-  write(`sprites/hunter-${h}.png`, stripPng(framesOf(drawHunterSprite(h), 'right')));
+  if (!isV17Asset(hunterSpriteId(h)))
+    write(`sprites/hunter-${h}.png`, stripPng(framesOf(drawHunterSprite(h), 'right')));
 for (const m of MONSTER_IDS)
-  write(`sprites/monster-${m}.png`, stripPng(framesOf(drawMonsterSprite(m), 'left')));
+  if (!isV17Asset(monsterSpriteId(m)))
+    write(`sprites/monster-${m}.png`, stripPng(framesOf(drawMonsterSprite(m), 'left')));
 for (const g of GUARDIAN_IDS)
-  write(`sprites/guardian-${g}.png`, stripPng(framesOf(drawMonsterSprite(g), 'left')));
+  if (!isV17Asset(guardianSpriteId(g)))
+    write(`sprites/guardian-${g}.png`, stripPng(framesOf(drawMonsterSprite(g), 'left')));
 for (const p of PATRON_IDS) write(`icons/sigil-${p}.png`, drawSigil(p).toPng());
 for (const c of EVENT_CREATURE_IDS) {
-  write(`sprites/creature-${c}.png`, stripPng(framesOf(drawCreatureSprite(c), 'left')));
+  if (!isV17Asset(eventCreatureSpriteId(c)))
+    write(`sprites/creature-${c}.png`, stripPng(framesOf(drawCreatureSprite(c), 'left')));
   write(`portraits/creature-${c}.png`, drawCreaturePortrait(c).toPng());
 }
 write('icons/rime.png', drawRimeIcon().toPng());

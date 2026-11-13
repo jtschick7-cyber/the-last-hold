@@ -39,6 +39,7 @@ import {
   drawTokenIcon,
 } from '../../tools/draw-icons16';
 import { PALETTE_HEX } from '../../tools/pixel';
+import { isV17Asset } from '../../tools/contact-sheet-data';
 import { framesOf, stripPng } from '../../tools/sprite-frames';
 import { drawHunterSprite } from '../../tools/sprite-hunters';
 import { drawMonsterSprite } from '../../tools/sprite-monsters';
@@ -94,9 +95,11 @@ describe('the v0.7 art', () => {
     '$row matches its generator, is the manifest size and stays in the palette',
     (c) => {
       const name = fileOf(c.row);
-      expect(file(name).equals(c.drawn()), `${name} is stale: rerun tools/gen-sprites.ts`).toBe(
-        true,
-      );
+      if (!isV17Asset(c.row)) {
+        expect(file(name).equals(c.drawn()), `${name} is stale: rerun tools/gen-sprites.ts`).toBe(
+          true,
+        );
+      }
       const png = PNG.sync.read(file(name));
       expect([png.width, png.height], c.row).toEqual([...(assetById.get(c.row)?.size ?? [])]);
       for (let i = 0; i < png.data.length; i += 4) {

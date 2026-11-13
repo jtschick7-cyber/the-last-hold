@@ -10,7 +10,12 @@ import {
   UNLIT_PORTRAIT_ID,
   UNLIT_SPRITE_ID,
 } from '../../src/content/assets';
-import { currentHashes, numberedAssets, v14Numbered } from '../../tools/contact-sheet-data';
+import {
+  currentHashes,
+  isV17Asset,
+  numberedAssets,
+  v14Numbered,
+} from '../../tools/contact-sheet-data';
 import { drawDescentScene, drawUnlitFrames } from '../../tools/draw-descent';
 import { PALETTE_HEX } from '../../tools/pixel';
 import { stripPng } from '../../tools/sprite-frames';
@@ -40,7 +45,7 @@ describe('the v1.4 art', () => {
     expect(assetById.get(c.row)?.size, c.row).toEqual(c.size);
     const name = fileOf(c.row);
     const file = readFileSync(new URL(`../../public/assets/${name}`, import.meta.url));
-    if (c.drawn) {
+    if (c.drawn && !isV17Asset(c.row)) {
       expect(file.equals(c.drawn()), `${name} is stale: rerun tools/gen-descent.ts`).toBe(true);
     }
     const png = PNG.sync.read(file);

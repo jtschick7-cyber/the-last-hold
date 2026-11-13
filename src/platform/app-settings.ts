@@ -15,6 +15,10 @@ export type HoldView = (typeof HOLD_VIEWS)[number];
 export const SOUND_SETTINGS = ['off', 'on'] as const;
 export type SoundSetting = (typeof SOUND_SETTINGS)[number];
 
+/** GDD §9.22, technical design §24.3 (D609): procedural ambience, off by default, independent of Sound. */
+export const AMBIENCE_SETTINGS = ['off', 'on'] as const;
+export type AmbienceSetting = (typeof AMBIENCE_SETTINGS)[number];
+
 export interface AppSettings {
   textSize: TextSize;
   /** GDD §9.21: the Hold screen's header, the 8 × 8 grid or the v1.0 pixel scene. */
@@ -22,6 +26,8 @@ export interface AppSettings {
   backupReminder: boolean;
   /** GDD §9.22: the Sound switch. Never read by anything in `src/core/`. */
   sound: SoundSetting;
+  /** GDD §9.22 (D609): the Ambience switch. Never read by anything in `src/core/`. */
+  ambience: AmbienceSetting;
   /** Milliseconds since the epoch; null until recorded. */
   lastExportAt: number | null;
   snoozeUntil: number | null;
@@ -33,6 +39,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   holdView: 'grid',
   backupReminder: true,
   sound: 'off',
+  ambience: 'off',
   lastExportAt: null,
   snoozeUntil: null,
   firstSeenAt: null,
@@ -53,6 +60,7 @@ export const parseAppSettings = (text: string | null): AppSettings => {
   const size = TEXT_SIZES.find((t) => t === o.textSize);
   const view = HOLD_VIEWS.find((v) => v === o.holdView);
   const sound = SOUND_SETTINGS.find((v) => v === o.sound);
+  const ambience = AMBIENCE_SETTINGS.find((v) => v === o.ambience);
   return {
     textSize: size ?? DEFAULT_APP_SETTINGS.textSize,
     holdView: view ?? DEFAULT_APP_SETTINGS.holdView,
@@ -61,6 +69,7 @@ export const parseAppSettings = (text: string | null): AppSettings => {
         ? o.backupReminder
         : DEFAULT_APP_SETTINGS.backupReminder,
     sound: sound ?? DEFAULT_APP_SETTINGS.sound,
+    ambience: ambience ?? DEFAULT_APP_SETTINGS.ambience,
     lastExportAt: timestamp(o.lastExportAt),
     snoozeUntil: timestamp(o.snoozeUntil),
     firstSeenAt: timestamp(o.firstSeenAt),
@@ -85,12 +94,13 @@ export const writeAppSettings = (storage: ChannelStorage, settings: AppSettings)
   }
 };
 
-/** GDD §9.20, technical design §19.4: "Reset everything…" clears the three timestamps and keeps the choices (Sound too, GDD §9.22). */
+/** GDD §9.20, technical design §19.4: "Reset everything…" clears the three timestamps and keeps the choices (Sound and Ambience too, GDD §9.22). */
 export const afterReset = (s: AppSettings): AppSettings => ({
   textSize: s.textSize,
   holdView: s.holdView,
   backupReminder: s.backupReminder,
   sound: s.sound,
+  ambience: s.ambience,
   lastExportAt: null,
   snoozeUntil: null,
   firstSeenAt: null,
