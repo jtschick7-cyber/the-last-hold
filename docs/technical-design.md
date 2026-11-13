@@ -1476,3 +1476,36 @@ See §13.4 ("The Breach"). Rows A–C are GDD §6.2 (Proposed, measured at TB.12
 | Contract playback & Arena (`VB.3`) | Unit tests for `contractPlayback` (party, monster, log equality, `differs` flag, no state mutation); Playwright tests for `Watch fight ▸` (`Skip`, `Log`, `Done`, silent finish, floating callouts, Reduce Motion stillness, wave-log monster facing) |
 | Audio & Ambience (`VB.5`, `VB.7`, `VB.9`) | `app-settings` round-trip/reset/fallback for `ambience`; `sound-text` exact GDD §9.22 match; 19 moments → 10 sounds mapping and `strongest` order; `AUDIO_BYTES_CAP` ≤ 45 KB and `credits.md` sync; Playwright fake-engine tests for `brace`, `discover` (live vs silent catch-up), `strike` (watched vs skipped), and Ambience mood transitions + Remembering/Descent silence + hidden pause |
 | Sweeps, bench & simulator (`VB.10`, `VB.11`) | 44 × 44 px tap-target, 320–1300 px widths, 320 px Largest text, Reduce Motion, light/dark contrast, Arena step render ≤ 16 ms, gzipped `dist/` ≤ 614,400 bytes, all 6 e2e shards < 7 min 30 s, and 63/63 simulator rows + 192/192 baseline moments unchanged |
+
+## 25. Ward & Rampart: Expanded Tactical Hold, Presets, Hold Look & Grid Art (v1.8, D617–D624)
+
+**Save schema moves `15 → 16` (`T18.2`). `rulesVersion` moves `6 → 7` on a dual stand path (`T18.4`).** Pure tactical computation lives in one allowlisted analyzer module (`src/core/systems/layout-tactics.ts`), keeping combat, contracts, and the step engine strictly free of direct layout coupling.
+
+### 25.1 Grid geometry, clearings, migration (`15 → 16`) & Presets (`D618`, `D621`)
+
+- **Grid & clearings (`src/content/hold-layout.ts`):** `GRID_COLS = 8` (`0..7`), `GRID_ROWS = 12` (`0..11`). `CLEARING_BOUNDS`: `hamlet` `{ minX: 1, maxX: 6, minY: 4, maxY: 9 }` (`6 × 6`), `keep` `{ minX: 0, maxX: 7, minY: 3, maxY: 10 }` (`8 × 8`), `citadel` `{ minX: 0, maxX: 7, minY: 1, maxY: 10 }` (`8 × 10`), `bastion` `{ minX: 0, maxX: 7, minY: 0, maxY: 11 }` (`8 × 12`). `HALL_ANCHOR` generalizes to any `2 × 2` footprint inside active clearing bounds (`HALL_DEFAULT` at the inner courtyard `(3, 6)`).
+- **Schema `15 → 16` (`src/core/save/migration-v16.ts`):** Migrating `v15` (`8 × 8`) saves keeps active/placed north front-row (`y = 0..2`) walls and watchtowers at their north coordinates while shifting `hearth-hall` and inner non-front buildings cleanly southward (`+3` rows, clamped with deterministic nearest-free-tile collision fallback inside the Age's clearing) so zero placed pieces drop off-map or collide. Preserves `state.layout` invariants (`S11`).
+- **Layout Presets & 3-mode `Auto-Arrange`:** Extends `HoldLayoutState` with `presets: [PresetSlot | null, PresetSlot | null]`. Commands `layout.savePreset(slot)` and `layout.applyPreset(slot)` (blocked only while a Stand replay/resolution is mid-flight, zero side effects outside `state.layout`, verified by `tests/layout/commands.test.ts`). Upgrades `autoArrange` and `suggestLayout` to accept `'balanced' | 'economy' | 'fortress'` mode.
+
+### 25.2 Pure tactical analyzer & non-coupling boundary (`D619`, `D624`)
+
+- **Pure module (`src/core/systems/layout-tactics.ts`):** Reads `state.layout` + building levels/Age and returns pure deterministic scalar summaries (`HoldTacticsSummary`):
+  - **Adjacency multipliers (`≥ 1.0` floor):** Orthogonal N/E/S/W checks on `active` pieces (`farm` ↔ `mill`, `woodcutter` ↔ `sawpit`, `mine` / `silver-seam` ↔ `smithy`, `herb-garden` ↔ `alchemist`, `cottage` ↔ `hearth-hall` or `bell-tower` `3 × 3` Chebyshev radius `≤ 1`, `trophy-hall` ↔ `hearth-hall` / `barracks`), matching exact `Breakdown` line items.
+  - **North-Reach `Warded` flood (`O(8 × 12)` BFS):** Starts along top open tiles at `y = 0`, stepping orthogonally through non-blocked tiles; active `wall-*` and `watchtower-*` pieces block spread. Tiles unreached by north flood count as **Warded** (granting Threat rate slowdown when `hearth-hall` is Warded plus gentle inner-ward uplift on Warded economy plots, with zero penalties for exposed tiles and zero building damage per `D108`).
+  - **Rampart & Sector metrics:** Computes connected-wall flag/count per lane (`wallConnectionMask` > 0), `watchtower` **Screened Volley** eligibility (`active` in `y = 0..4` AND connected active `wall-*` at `(x, y - 1)`), and `barracks` / `lodge` **Sector Support** across `[x - 1, x, x + 1]`.
+- **Coupling guard (`tests/lint/breach-coupling.test.ts`, `tests/layout/layout.test.ts`):** `layout-tactics.ts` is added to the `READERS` allowlist; `production.ts`, `combat/fight.ts`, `stand/engine.ts`, `commands/contracts.ts`, and `sim/advance.ts` stay strictly banned from reading `state.layout` directly and receive pure scalar values or pre-frozen stand tables instead.
+
+### 25.3 Dual `rulesVersion` (`6 → 7`) & extended Stand table (`D620`)
+
+- **`src/core/rules-version.ts`:** Bumps `RULES_VERSION` to `7` at `T18.4`. Replays (`fight.ts`, `stand/engine.ts`) continue to branch cleanly on `record.rulesVersion`: stands without a lane table (`≤ 5`), Arrival stands (`5`), and `v6` stands replay byte-for-byte under their stored rules and tables.
+- **`v7` stand table (`src/core/systems/breach.ts` & `commands/stand.ts`):** Unlocks `breach.frontRows` `3 → 5` (`y = 0..4`). At **Start**, `rulesVersion = 7` freezes `breach.*` constants (`rampartBonus`, `screenedBonus`, `sectorBonus`) plus per-lane Screened Volley & Sector Support contributions onto the stand record, so later layout edits or tuning tweaks never alter recorded replays.
+
+### 25.4 Hold Look drawer & 6 permanent Event *Courtyard Marks* (`D622`)
+
+- **Permanent unlocks (`state.cosmetics`):** `COURTYARD_MARK_IDS = ['fjord-bone-standard', 'barrow-brazier', 'river-reed-basin', 'stoneback-cairn', 'kettle-barrow-wreath', 'watch-fire-sconce']` mapped 1:1 to first clear/kill of the `3` Great Beasts and `3` Legendary Hunts. Persists across Long Night resets (`reset.ts`, alongside `state.delve.shop.cosmetics`) with automatic idempotent backfill in `migration-v16.ts` and `load.ts`.
+- **Per-cosmetic visibility toggles:** Stores `hiddenCosmetics` (or explicit enabled set) so players can toggle individual Courtyard Marks **and** bought `COSMETIC_IDS` inside **Hold Look** (`layout.toggleCosmetic` command). `HoldGrid.tsx` (`256 × 384 px` native SVG/PNG composite) and `HoldScene.tsx` read active views cleanly without UI rule math.
+
+### 25.5 Hybrid Zughy-32 Grid Art & verification (`D623`, `D624`)
+
+- **Pipeline:** Authors crisp Zughy-32 base tiles (`hearth-hall` `64 × 64 px`, `8` buildings, `5` plots/seams, `watchtower`, core `wall` kit, ground tiles, `6` Courtyard Marks) across 3 contact-sheet batches (`T18.8`–`T18.10`, `≤ 12` subjects per batch per `D475`), derives 16-mask walls and clearing borders deterministically, backs up replaced assets to `art-src/previous-v1.8/grid/`, freezes hashes in `art-src/v1.8-grid-hashes.json`, guards deployed IDs with `isV18Asset`, and updates `D615`'s packed-PNG ceiling cleanly inside `≤ 614,400 B` gzipped (`T18.11`).
+- **Pre-authorised test edits:** Strictly scoped to `D624 (a)–(g)` (schema/rules pinning for legacy fixtures, `READERS` allowlist addition of `layout-tactics.ts`, `isV18Asset` & PNG cap bump, `breach-text-all.test.ts` `\n### 9.26` boundary, and `polish-screens.ts` additions keeping all 6 CI e2e shards under `7 min 30 s`).
