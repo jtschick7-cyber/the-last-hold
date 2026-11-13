@@ -4,6 +4,7 @@ import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { constantAt, num } from '../balance-access';
 import type { Breakdown, Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
+import { tacticalThreatFactor } from '../systems/layout-tactics';
 import { MS_PER_HOUR } from '../time';
 
 // GDD §5.9.1 (D108): Threat rises every hour by the Rank's rate, slowed by the
@@ -34,17 +35,24 @@ export const threatRate = (state: GameState): Explained => {
     }
   }
   slow = Math.min(1, slow);
-  // GDD §5.13.5: the Quenchers' factor slows the hourly rate only, never Threat from failed contracts.
-  const value = counts(state) ? rankRate * (1 - slow) * perkFactor(state, 'quenchers') : 0;
+  const warded = tacticalThreatFactor(state);
+  const wardedMultiplier = warded ? warded.value : 1;
+  // GDD §5.13.5, §7.16: Warded Hearth Hall and Quenchers slow hourly Threat only, never failed contracts.
+  const value = counts(state)
+    ? rankRate * (1 - slow) * wardedMultiplier * perkFactor(state, 'quenchers')
+    : 0;
   return {
     value,
     breakdown: {
       label: 'Threat per hour',
       value,
-      formula: counts(state) ? `${rankRate} × (1 − ${slow})` : 'counts after your first Long Night',
+      formula: counts(state)
+        ? `${rankRate} × (1 − ${slow})${warded ? ` × ${warded.value}` : ''}`
+        : 'counts after your first Long Night',
       children: [
         { label: `${ages[age].name} rate`, value: rankRate, key: 'threat.ratePerHour' },
         { label: 'Defenses slow it', value: -slow, children: defenses },
+        ...(warded ? [warded.breakdown] : []),
         ...perkLines(state, 'quenchers'),
       ],
     },

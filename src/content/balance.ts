@@ -410,6 +410,19 @@ export const balance = {
     volleyScale: tunable(3), // restores today's average volley (TB.12 table, D598); in hundredths
     suggestWaves: tunable(12), // waves the Suggest rule and the strip's dots look at
   },
+  layout: {
+    // GDD §7.16 (v1.8, D619, D625): placeholder tactical multipliers calibrated in T18.12
+    // (halved from 0.05/0.03/0.10 to 0.025/0.015/0.05 so sim:check stays green until T18.12).
+    adjFood: tunable(0.025),
+    adjWood: tunable(0.025),
+    adjIron: tunable(0.025),
+    adjSilver: tunable(0.025),
+    adjBrew: tunable(0.025),
+    adjCottage: tunable(0.015),
+    adjTrophy: tunable(0.025),
+    wardedThreatCut: tunable(0.05),
+    wardedBonus: tunable(0.025),
+  },
 } as const;
 
 export type Balance = typeof balance;

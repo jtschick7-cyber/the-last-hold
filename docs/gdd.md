@@ -2171,7 +2171,21 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 | Volley in a lane | floor(the volley per level of §7.6 × Watchtower level × volleyScale × Σ reach ÷ counted towers); 0 when no tower counts; whole-number arithmetic | `breach.volleyScale` = 3 | 5.9.2, 5.9.11 |
 | Suggest layout and the Lanes strip | the lanes of the first N waves (tuning N changes the strip's dots too) | `breach.suggestWaves` = 12 | 5.9.11, 9.25 |
 
+### 7.16 Hold layout & tactics *(v1.8, D619, D625; placeholders until T18.12)*
 
+Every constant below is **tunable** (placeholder values wired in `T18.3` and calibrated against 5-seed runs in `T18.12`). All modifiers obey a **`1.0×` floor** (zero negative penalties on unlinked or open layouts) and inspect cleanly in resource / Threat `Breakdown`.
+
+| Rule | Expression | Constants | § |
+|---|---|---|---|
+| Food district link | +`adjFood` per active `farm-1..3` orthogonally touching active `mill` | `layout.adjFood` = 0.025 | 5.1.5 |
+| Wood district link | +`adjWood` per active `woodcutter-1..3` orthogonally touching active `sawpit` | `layout.adjWood` = 0.025 | 5.1.5 |
+| Iron district link | +`adjIron` per active `mine-1..3` orthogonally touching active `smithy` | `layout.adjIron` = 0.025 | 5.1.5 |
+| Silver district link | +`adjSilver` per active `silver-seam-1..2` orthogonally touching active `smithy` (post-bucket Silver tactical uplift; `D30` untouched) | `layout.adjSilver` = 0.025 | 5.1.5 |
+| Alchemist herb link | `brewMs` and `experimentMs` multiply by `(1 − linkedGardens × adjBrew)` for active `herb-garden-1..3` orthogonally touching active `alchemist` | `layout.adjBrew` = 0.025 | 5.1.5, 5.7 |
+| Hearth / Bell warmth | +`adjCottage` per active `cottage-1..3` (counted once) orthogonally touching active `hearth-hall` or within active `bell-tower`'s `3 × 3` ring (`max(\|dx\|, \|dy\|) ≤ 1`), to non-silver production | `layout.adjCottage` = 0.015 | 5.1.5 |
+| Martial Hall trophy link | +`adjTrophy` to non-silver production when active `trophy-hall` orthogonally touches active `hearth-hall` or active `barracks` (`1×`) | `layout.adjTrophy` = 0.025 | 5.1.5 |
+| Warded Hearth Hall | North-Reach `O(8 × 12)` BFS from open `y = 0` tiles blocked by active `wall-*` / `watchtower-*`; Threat per hour multiplies by `(1 − wardedThreatCut)` when all `4` tiles of `hearth-hall` are unreached | `layout.wardedThreatCut` = 0.05 | 5.1.5, 5.9.1 |
+| Warded inner-ward plots | +`wardedBonus` per active Warded economy plot (`farm-1..3` → Food, `woodcutter-1..3` → Wood, `mine-1..3` → Iron, `silver-seam-1..2` → Silver) | `layout.wardedBonus` = 0.025 | 5.1.5 |
 
 ---
 

@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.1` committed at `8deade5`).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D624`), **in progress** (`T18.2` complete).
-- **Last task:** `T18.2` — `8 × 12` portrait Hold Grid geometry, expanded Age clearings, `breach.frontRows` `3 → 5`, and `SCHEMA_VERSION` `15 → 16` inner-ward shift migration (`v15-owner.json` + `v16` fixtures).
-- **Next:** `T18.3` (`layout-tactics.ts` AoE adjacency, North-Reach `Warded` flood, `Breakdown` / `threat.ts` wiring & allowlist update).
-- **Open questions:** None.
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.2` committed at `b851987`).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D626`), **in progress** (`T18.3` complete).
+- **Last task:** `T18.3` — Pure tactical analyzer (`layout-tactics.ts`), AoE adjacency links, North-Reach `Warded` flood, `§7.16` placeholder tunables, and `Breakdown` / `threat.ts` / `brewing.ts` wiring.
+- **Next:** `T18.4` — Dual `rulesVersion` (`6 → 7`), `Screened Volley`, Sector Support, `2` Presets & 3-mode `Auto-Arrange`.
+- **Open questions:** `D625`–`D626` logged `Proposed` (`Q67`–`Q71` owner `(a)` answers recorded).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -77,3 +77,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **`SCHEMA_VERSION` `15 → 16` (`migration-v12.ts`, `migration-v16.ts`, `migrations.ts`):** Froze historical `V12_CANONICAL_LAYOUT` inside `migration-v12.ts` so `v1..v11` saves do not double-shift; implemented `v15ToV16` keeping `y = 0..2` front defenses north while shifting inner ward `+3` rows south with deterministic nearest-free-tile collision resolution.
 - **Fixtures & tests (`tests/saves/`, `tests/layout/`, `tests/breach/`, `tests/lint/`, `tests/orders/`):** Added decoded owner fixture `v15-owner.json` (`cycle 5` bastion), generated `v16.json` & `v16-played.json`, added `tests/saves/v16-migration.test.ts`, and updated affected layout/breach/migration tests (`D624 (a)/(c)`).
 - **Next:** `T18.3` — Pure tactical analyzer (`layout-tactics.ts`), AoE adjacency links & North-Reach `Warded` flood.
+
+## 2026-11-13 — v1.8 T18.3: Pure tactical analyzer (`layout-tactics.ts`), AoE adjacency & `Warded` flood
+- **Tunable constants (`balance.ts`, `gdd.md §7.16`, `questions.md`, `decisions.md`):** Recorded owner `Q67`–`Q71` `(a)` answers, logged `D625`–`D626` (`Proposed`), and added the `9` `layout.*` placeholders (`adjFood`/`adjWood`/`adjIron`/`adjSilver`/`adjBrew`/`adjTrophy`/`wardedBonus = 0.025`, `adjCottage = 0.015`, `wardedThreatCut = 0.05` — halved from `0.05/0.03/0.1` so `sim:check --fast` `bastion` stays at `86 h` inside `48..96 h` until `T18.12` calibration).
+- **Pure tactical engine (`src/core/systems/layout-tactics.ts`):** Implemented `evaluateHoldTactics` + scalar `Breakdown` accessors (`tacticalProductionFactor`, `tacticalThreatFactor`, `tacticalBrewCut`) with `1.0×` baseline floor, active-only gating, orthogonal AoE district links, deduplicated Hearth/Bell cottage warmth, `1×` Trophy Hall links, and `O(8 × 12)` North-Reach `Warded` BFS across unblocked `y = 0` tiles.
+- **Economy, Threat & Alchemy wiring (`production.ts`, `threat.ts`, `brewing.ts`):** Hooked post-bucket tactical factors into `productionRate` (preserving `D30` `SILVER_BUCKETS`), `wardedThreatCut` into `threatRate`, and `adjBrew` into `brewMs`/`experimentMs` with exact `Breakdown` parity.
+- **Coupling & tests (`tests/layout/tactics.test.ts`, `tests/lint/breach-coupling.test.ts`, `tests/layout/layout.test.ts`, `tests/stand/layout-isolation.test.ts`):** Added `layout-tactics.ts` to `READERS`/`ALLOWED`, scoped the coupling guard per `Q67 (a)`/`D624 (d)` while keeping direct layout reads and non-consumer `BANNED` files blocked, updated `layout-isolation.test.ts` per `Q71 (a)` to keep contracts/fights/Delves/events/logs identical while verifying the `1.0×` resource/Threat floor, and added 12 unit tests covering links, `Warded` flood edge cases, Silver isolation, `Breakdown` parity, and `< 5 ms` speed.
+- **Verification:** `npm run check` passed cleanly (`≤ 90 s`; typecheck, lint, format:check, 259 test files / 4,109 tests, fast sim).
+- **Next:** `T18.4` — Dual `rulesVersion` (`6 → 7`), `Screened Volley`, Sector Support, `2` Presets & 3-mode `Auto-Arrange`.

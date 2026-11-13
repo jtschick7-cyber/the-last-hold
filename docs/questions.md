@@ -329,3 +329,54 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
 - **Recommendation:** (a).
 - **Blocks:** the green `npm run check` that closes `VB.8` (and, because the failing test is already live with Batch 3 deployed, any later task's check until it is answered).
 - **Answer (owner):** (a), 2026-11-10: replace the 50 % ratio with an absolute cap on the packed total. The value is set at the VB.8 deploy (measured after Batch 4 plus about 5 % headroom) and logged as a decisions row.
+
+
+## v1.8 questions *(opened 2026-11-13)*
+
+### Q67 — How may `production.ts` and `threat.ts` consume scalar modifiers from `layout-tactics.ts` under the `READERS` / `BANNED` coupling guard? *(blocks `T18.3`)*
+- **What I found:** `tests/lint/breach-coupling.test.ts` and `tests/layout/layout.test.ts` match every non-`READERS` file in `src/core/` against `/\blayout\b|hold-layout|layout-state|layout-catalog|state\.layout/i`. Because `-` is a word boundary, importing scalar helpers from `src/core/systems/layout-tactics.ts` inside `production.ts` or `threat.ts` triggers `\blayout\b`. At the same time, every caller (`sim/advance.ts` — which is itself one of the `5` `BANNED` modules — `settle-event.ts`, `RatesSheet.tsx`, `ThreatMeter.tsx`, `economy.test.ts`, `threat.test.ts`) calls `productionRate(state, r)` and `threatRate(state)` with `state` alone, and `TD §4.1` forbids storing derived scalars on `state`. `D624 (d)` only pre-authorises adding `layout-tactics.ts` to `READERS`, so changing the test regex needs owner approval.
+- **Options:**
+  - **(a) Recommended:** Update the regex in `breach-coupling.test.ts` and `layout.test.ts` to ban direct layout reads (`state.layout`, `hold-layout`, `layout-state`, `layout-catalog`, `systems/layout['"]`) while allowing `production.ts`, `threat.ts`, and `alchemy/brewing.ts` to import pure scalar getters from `layout-tactics.ts` (keeping `layout-tactics.ts` + `breach.ts` as the only readers of `state.layout`, and keeping all `5` `BANNED` modules failing on `state.layout` reads).
+  - **(b)** Require callers to pass tactical scalars into `productionRate` / `threatRate` manually (still leaves `sim/advance.ts` unable to import `layout-tactics.ts` unless `advance.ts` is exempted too).
+  - **(c)** Cache derived tactical scalars in a non-layout state block updated on `apply()` (breaks unit tests that mutate `s.buildings` / `s.layout` directly without `apply()` and stores derived data on `GameState`).
+- **Recommendation:** **(a)**.
+- **Answer (owner):** (a), 2026-11-13: update the regex in `breach-coupling.test.ts` and `layout.test.ts` to ban direct layout reads while allowing `production.ts`, `threat.ts`, and `alchemy/brewing.ts` to import pure scalar getters from `layout-tactics.ts`, keeping the `5` `BANNED` modules failing on `state.layout` reads.
+
+### Q68 — How do tactical production multipliers interact with `D30` (`SILVER_BUCKETS`) and the `§5.0` modifier buckets? *(blocks `T18.3`)*
+- **What I found:** `GDD §5.0` lists `7` buckets (`building`, `age`, `trophy`, `knowledge`, `ember`, `relic`, `event`), and `src/content/buckets.ts` (`D30` / `G1`) restricts Silver to `SILVER_BUCKETS = ['relic', 'event']` (`economy.test.ts:90`). Yet `GDD §5.1.5` and `D619` specify `silver-seam-1..2` beside `smithy` (`layout.adjSilver`) and `layout.wardedBonus` on Warded economy plots. Placing `adjSilver` in `building` would cause `applyBuckets(..., SILVER_BUCKETS)` to drop it.
+- **Options:**
+  - **(a) Recommended:** Apply district adjacency and Warded uplift as a separate named post-bucket tactical factor in `productionRate` (just like Orders perks in `GDD §5.0` / `§7.12` add no bucket), so `BUCKET_IDS` and `SILVER_BUCKETS` stay intact and Silver receives only `adjSilver` + Warded Silver Seam uplift (never `building`/`age`/etc. or non-silver bonuses).
+  - **(b)** Add an 8th `'tactical'` bucket to `BUCKET_IDS` and include it in `SILVER_BUCKETS = ['relic', 'event', 'tactical']`.
+  - **(c)** Keep Silver unchanged (`SILVER_BUCKETS = ['relic', 'event']` excludes `adjSilver`, making `adjSilver` apply elsewhere or unused).
+- **Recommendation:** **(a)**.
+- **Answer (owner):** (a), 2026-11-13: apply district adjacency and Warded uplift as a separate named post-bucket tactical factor in `productionRate`, leaving `BUCKET_IDS` and `SILVER_BUCKETS` intact while letting `adjSilver` + Warded Silver Seams lift Silver.
+
+### Q69 — Exact target formulas for `layout.adjCottage`, `layout.adjBrew`, and `layout.adjTrophy` *(blocks `T18.3`)*
+- **What we found:** `GDD §5.1.5`, `TD §25.2`, and `v1.8-summary.md` specify these `3` adjacency pairs and key names, but not their exact formulas (which are locked once written, `CLAUDE.md` line 95):
+  - `adjCottage`: `cottage-1..3` beside `hearth-hall` or in `bell-tower` `3 × 3` ring (*"Hearth/Bell warmth"*). `economy.test.ts` checks `housing(s)` (`3 + 2/cottage`).
+  - `adjBrew`: `herb-garden-1..3` beside `alchemist` (*"deterministic herb/brew uplift"*). `tests/alchemy/alchemy.test.ts` checks `herbGarden.interval` (`10 min` integer herbs) and `brewMs` (`hut()` places Hut ≥ 1).
+  - `adjTrophy`: `trophy-hall` beside `hearth-hall` or `barracks`. `tests/contracts/flow.test.ts:508` uses `keepRich()` + `build.buy` (`trophy-hall`) — which triggers `autoPlaceUnlocked` — and asserts `productionRate(40 trophies) / productionRate(0 trophies) === 1.2` (`0.5% × 40`).
+- **Options:**
+  - **(a) Recommended:** `adjCottage` = `+adjCottage` per warm cottage (counted once per cottage `0..3`) to non-silver production (`food`, `wood`, `iron`), keeping `housing()` integer; `adjBrew` = brew & experiment time cut (`× (1 − min(cap, linkedGardens × adjBrew))`, matching Copper Still / Grey Wives, `10 min` Herb Garden interval unchanged); `adjTrophy` = flat `+adjTrophy` to non-silver production (`food`, `wood`, `iron`) when `trophy-hall` touches `hearth-hall` or `barracks` (`1×` link bonus, leaving the `0.5%` trophy scaling unchanged so `flow.test.ts` holds).
+  - **(b)** `adjCottage` grants integer/floor bonus housing beds; `adjBrew` speeds both `brewMs` and `herbGarden.interval`; `adjTrophy` multiplies `trophyHall.perTrophy`.
+  - **(c)** Other formula combination specified by owner.
+- **Recommendation:** **(a)**.
+- **Answer (owner):** (a), 2026-11-13: `adjCottage` adds per warm cottage (`0..3`) to non-silver production; `adjBrew` cuts brew and experiment time multiplicatively (`× (1 − cut)`); `adjTrophy` adds flat `+adjTrophy` to non-silver production when linked to Hearth Hall or Barracks.
+
+### Q70 — North-Reach `Warded` flood details, `wardedThreatCut` / `wardedBonus` formulas, and temporary `§7.16` placeholder values *(blocks `T18.3`)*
+- **What I found:** `TD §25.2` specifies `O(8 × 12)` BFS from open `y = 0` tiles blocked orthogonally by active `wall-*`/`watchtower-*` pieces, slowing Threat when `hearth-hall` is Warded (`layout.wardedThreatCut`) and lifting Warded economy plots (`layout.wardedBonus`), with placeholder constants in `GDD §7.16` + `balance.ts` until `T18.12` calibration.
+- **Options:**
+  - **(a) Recommended:** Flood across all `8 × 12` tiles starting from unblocked `y = 0` (`hearth-hall` is Warded iff all `4` of its `2 × 2` tiles are unreached); `wardedThreatCut` multiplies hourly Threat as `rankRate × (1 − defenseSlow) × (1 − wardedThreatCut) × perkFactor`; `wardedBonus` adds `+wardedBonus` per active Warded plot of that resource (`farm-1..3` for Food, `woodcutter-1..3` for Wood, `mine-1..3` for Iron, `silver-seam-1..2` for Silver); initial `§7.16` placeholders (`tunable` until `T18.12`): `adjFood/Wood/Iron/Silver/Brew/Trophy/wardedBonus = 0.05`, `adjCottage = 0.03`, `wardedThreatCut = 0.10`.
+  - **(b)** Add `wardedThreatCut` additively inside `defenses slow` (capped at `1`) and apply `wardedBonus` once across all resources when `hearth-hall` is Warded.
+  - **(c)** Other constants or Warded flood boundary (e.g., flood only inside active `CLEARING_BOUNDS`, with out-of-clearing tiles treated as blocked or open).
+- **Recommendation:** **(a)**.
+- **Answer (owner):** (a), 2026-11-13: full `8 × 12` BFS from unblocked `y = 0` (`hearth-hall` Warded iff all `4` tiles unreached), multiplicative `wardedThreatCut = 0.10`, per-Warded-plot `wardedBonus = 0.05`, `adjCottage = 0.03`, remaining `adj* = 0.05` placeholders until `T18.12`.
+
+### Q71 — Updating pre-v1.8 `tests/stand/layout-isolation.test.ts` (not listed in `D624`) *(blocks `T18.3` green `npm run check`)*
+- **What I found:** `tests/stand/layout-isolation.test.ts` (`Plan TB.5`, v1.5 rule 1: *"the layout moves nothing outside the Last Stand"*) loads `v15.json`, runs 5 days of contracts with and without `layout.clear`, strips `plain.layout`, and asserts `expect(cleared).toEqual(kept)`. All `258` other test files (`4,108` tests), `typecheck`, `lint`, and `format:check` pass, while `layout-isolation.test.ts` now fails **only** on `resources.{food, wood, iron, silver}` (`21.14M` vs `19.64M` food, etc.) because `T18.3` (`D619`, `D625`) intentionally wires Hold tactical income and Threat bonuses into `productionRate` and `threatRate`. Every non-economy, non-threat field (contracts, fights, Delves, events, hunters, items, logs) remained bit-for-bit identical. `D624 (a)–(g)` did not explicitly list `tests/stand/layout-isolation.test.ts` among pre-authorised test edits.
+- **Options:**
+  - **(a) Recommended:** Update `tests/stand/layout-isolation.test.ts` to exempt `resources` and `threat` from `toEqual` (`D619` relaxes v1.5's economy/Threat ban while preserving non-economy isolation) AND add explicit `1.0×` floor assertions verifying `cleared.resources <= kept.resources` for each resource and `cleared.threat >= kept.threat`, plus note the `TB.5` relaxation in `D625` / `D626`.
+  - **(b)** Compare `layout.clear` against an explicitly unlinked/un-warded Bastion layout inside `tests/stand/layout-isolation.test.ts` so full-state `toEqual` (including `resources` and `threat`) stays equal at `1.0×`, plus a linked check covering contracts/logs/delves equality.
+  - **(c)** Leave `tests/stand/layout-isolation.test.ts` unchanged (impossible while `T18.3` connects tactical income to `productionRate`).
+- **Recommendation:** **(a)**.
+- **Answer (owner):** (a), 2026-11-13: update `tests/stand/layout-isolation.test.ts` to omit `resources` and `threat` from strict `toEqual` while asserting `cleared.resources <= kept.resources` and `cleared.threat >= kept.threat` (`1.0×` floor) alongside bit-identical contracts, fights, Delves, events, and logs.

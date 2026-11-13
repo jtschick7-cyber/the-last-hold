@@ -9,6 +9,7 @@ import { num } from '../balance-access';
 import type { BrewJob, GameState, KettleJob } from '../state/game-state';
 import { MS_PER_SECOND } from '../time';
 import { brewCut } from '../long-night/bonuses';
+import { tacticalBrewCut } from '../systems/layout-tactics';
 
 // GDD §5.7: the Alchemist's Hut brews consumables from reagents. A brew takes 10
 // minutes, one at a time per Hut level; the rest of the queue waits. The recipe is paid
@@ -27,13 +28,16 @@ export const brewSlots = (state: GameState): number => {
 export const kettlesBusy = (state: GameState): number =>
   state.queues.brewing.filter((j) => j.doneAt !== null).length;
 
-/** One brew's time, less the Copper Still (GDD §8.10). */
+/** One brew's time, less Copper Still (GDD §8.10) and Alchemist herb-link tactics (GDD §5.1.5). */
 export const brewMs = (state: GameState): number =>
-  num('brew.time') * MS_PER_SECOND * (1 - brewCut(state).value);
+  num('brew.time') * MS_PER_SECOND * (1 - brewCut(state).value) * (1 - tacticalBrewCut(state));
 
-/** One experiment's time, less the Copper Still like a brew (GDD §5.8.3). */
+/** One experiment's time, less Copper Still (GDD §5.8.3) and Alchemist herb-link tactics (GDD §5.1.5). */
 export const experimentMs = (state: GameState): number =>
-  num('experiment.time') * MS_PER_SECOND * (1 - brewCut(state).value);
+  num('experiment.time') *
+  MS_PER_SECOND *
+  (1 - brewCut(state).value) *
+  (1 - tacticalBrewCut(state));
 
 // GDD §5.13.5: the Grey Wives' cut is fixed when the job is queued (`orderCut`), so a seat change
 // never alters a brew already queued; the Copper Still is read when the kettle starts, as before.

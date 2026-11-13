@@ -265,7 +265,13 @@ describe('the layout is read by no rule (S11)', () => {
     'systems/breach.ts', // D593 (c): the one new reader, for the lane table
     'systems/layout-catalog.ts',
     'systems/layout-place.ts',
+    'systems/layout-tactics.ts', // D619 / D624 (d): pure scalar analyzer
     'systems/layout.ts',
+  ]);
+  const TACTICS_CONSUMERS = new Set([
+    'systems/production.ts',
+    'threat/threat.ts',
+    'alchemy/brewing.ts',
   ]);
   const walk = (dir: string): string[] =>
     readdirSync(dir).flatMap((f) => {
@@ -282,11 +288,15 @@ describe('the layout is read by no rule (S11)', () => {
     const offenders = walk(root)
       .map((p) => relative(root, p))
       .filter((f) => !ALLOWED.has(f))
-      .filter((f) =>
-        /\blayout\b|hold-layout|layout-state|layout-catalog|state\.layout/i.test(
-          readFileSync(join(root, f), 'utf8'),
-        ),
-      );
+      .filter((f) => {
+        const text = readFileSync(join(root, f), 'utf8');
+        if (
+          /\blayout\b(?!-tactics)|hold-layout|layout-state|layout-catalog|state\.layout/i.test(text)
+        ) {
+          return true;
+        }
+        return /layout-tactics/.test(text) && !TACTICS_CONSUMERS.has(f);
+      });
     expect(offenders).toEqual([]);
   });
 
