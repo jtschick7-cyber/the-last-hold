@@ -19,10 +19,10 @@ The Last Hold is an original game. Every image, font and sound is CC0 (public do
 
 ## Sound packs (CC0)
 
-- **Impact Sounds** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/impact-sounds. 2 sounds.
+- **Impact Sounds** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/impact-sounds. 4 sounds.
 - **RPG Audio** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/rpg-audio. 1 sound.
 - **Interface Sounds** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/interface-sounds. 2 sounds.
-- **Music Jingles** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/music-jingles. 2 sounds.
+- **Music Jingles** by Kenney (www.kenney.nl) (CC0): https://kenney.nl/assets/music-jingles. 3 sounds.
 
 ## Made for the game
 

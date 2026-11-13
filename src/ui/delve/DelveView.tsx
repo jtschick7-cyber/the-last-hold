@@ -7,7 +7,7 @@ import { BreakdownView } from '../sheets/BreakdownView';
 import styles from '../styles/ui.module.css';
 import { Arena } from './Arena';
 import css from './Delve.module.css';
-import { playMoment } from '../app/sound';
+import { playMoment, useAmbienceMood } from '../app/sound';
 import { momentForFloor } from '../app/sound-cues';
 import { PlaybackView } from './PlaybackView';
 import { ResultView } from './ResultView';
@@ -123,6 +123,7 @@ const Footer = () => (
 
 export const DelveView = () => {
   void version.value;
+  useAmbienceMood('watch');
   const s = game();
   const [played, setPlayed] = useState<FloorPlayback | null>(null);
   if (played)

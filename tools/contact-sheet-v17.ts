@@ -1,11 +1,22 @@
 // v1.7 (plan VB.2, VB.4, VB.6, VB.8; D605): numbered Keep/Redraw contact sheets for the 40 battle
 // sprite strips in 4 batches of 10. Rendered deterministically with pngjs (nearest-neighbor 2×
 // frames beside 1× 64 px v1.6 portraits on both dark #302c2e and light #cfc6b8 theme backgrounds).
-// Run: npx vite-node tools/contact-sheet-v17.ts -- --batch 1
+// Run: npx vite-node tools/contact-sheet-v17.ts -- --batch 1|2|3|4
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { PNG } from 'pngjs';
-import { hunterSpriteId, SPRITE_FRAME_NAMES, SPRITE_PX } from '../src/content/assets';
+import {
+  assetById,
+  eventCreatureSpriteId,
+  guardianSpriteId,
+  hunterSpriteId,
+  monsterSpriteId,
+  SPRITE_FRAME_NAMES,
+  SPRITE_PX,
+} from '../src/content/assets';
+import { GUARDIAN_IDS } from '../src/content/delves/guardians';
 import { hunters, type HunterId } from '../src/content/hunters';
+import { EVENT_CREATURE_IDS } from '../src/content/hunts';
+import { monsters, type MonsterId } from '../src/content/monsters';
 import { packPng } from './png-pack';
 
 export interface V17SheetItem {
@@ -14,7 +25,10 @@ export interface V17SheetItem {
   readonly stagingFile: string;
   readonly portraitFile: string;
   readonly title: string;
+  readonly facing: 'left' | 'right';
   readonly note?: string;
+  /** `previous-strip` (VB.8): no v1.6 portrait exists, so `portraitFile` is a strip in art-src/previous-v1.7/sprites/. */
+  readonly refKind?: 'portrait' | 'previous-strip';
 }
 
 const BATCH_1_HUNTERS: readonly HunterId[] = [
@@ -30,9 +44,43 @@ const BATCH_1_HUNTERS: readonly HunterId[] = [
   'zora',
 ];
 
+const BATCH_2_HUNTERS: readonly HunterId[] = ['herdis', 'radmila-of-the-reeds', 'toma', 'vesna'];
+
+const BATCH_2_MONSTERS: readonly MonsterId[] = [
+  'wolf',
+  'bies',
+  'leshy',
+  'huldra',
+  'nix',
+  'vodyanoy',
+];
+
+const BATCH_3_MONSTERS: readonly MonsterId[] = [
+  'rusalka',
+  'poludnitsa',
+  'kikimora',
+  'gloam-moths',
+  'upyr',
+  'strzyga',
+  'draugr',
+  'ribbonshade',
+  'anvil-wight',
+  'rimewrought',
+];
+
+const BATCH_4_CREATURES: readonly (typeof EVENT_CREATURE_IDS)[number][] = [
+  'lindworm-of-velk-fjord',
+  'barrow-king',
+  'mother-of-the-river',
+  'stoneback-fell-troll',
+  'mara-of-kettle-barrow',
+  'likho-one-eyed',
+];
+
 const BESPOKE_NOTE: Partial<Record<HunterId, string>> = {
   'gest-tall-torch': 'D490 TORCH IDLE2+LUNGE',
   'ragnhild-eye-taker': 'D490 NEEDLE IDLE2+LUNGE',
+  'radmila-of-the-reeds': 'D490 WARD IDLE2+LUNGE',
 };
 
 export const v17Batch1Items: readonly V17SheetItem[] = BATCH_1_HUNTERS.map((id, idx) => ({
@@ -41,8 +89,74 @@ export const v17Batch1Items: readonly V17SheetItem[] = BATCH_1_HUNTERS.map((id, 
   stagingFile: `hunter-${id}.png`,
   portraitFile: `portraits/${id}.png`,
   title: hunters[id].name,
+  facing: 'right',
   ...(BESPOKE_NOTE[id] ? { note: BESPOKE_NOTE[id] } : {}),
 }));
+
+export const v17Batch2Items: readonly V17SheetItem[] = [
+  ...BATCH_2_HUNTERS.map((id, idx): V17SheetItem => ({
+    n: 11 + idx,
+    spriteId: hunterSpriteId(id),
+    stagingFile: `hunter-${id}.png`,
+    portraitFile: `portraits/${id}.png`,
+    title: hunters[id].name,
+    facing: 'right',
+    ...(BESPOKE_NOTE[id] ? { note: BESPOKE_NOTE[id] } : {}),
+  })),
+  ...BATCH_2_MONSTERS.map((id, idx): V17SheetItem => ({
+    n: 15 + idx,
+    spriteId: monsterSpriteId(id),
+    stagingFile: `monster-${id}.png`,
+    portraitFile: `portraits/monster-${id}.png`,
+    title: monsters[id].name,
+    facing: 'left',
+  })),
+];
+
+export const v17Batch3Items: readonly V17SheetItem[] = BATCH_3_MONSTERS.map(
+  (id, idx): V17SheetItem => ({
+    n: 21 + idx,
+    spriteId: monsterSpriteId(id),
+    stagingFile: `monster-${id}.png`,
+    portraitFile: `portraits/monster-${id}.png`,
+    title: monsters[id].name,
+    facing: 'left',
+  }),
+);
+
+const spriteTitle = (spriteId: string): string =>
+  (assetById.get(spriteId)?.label ?? spriteId).replace(/, battle sprite$/, '');
+
+const NO_PORTRAIT_NOTE = 'NO V1.6 PORTRAIT - OLD STRIP SHOWN';
+
+export const v17Batch4Items: readonly V17SheetItem[] = [
+  ...BATCH_4_CREATURES.map((id, idx): V17SheetItem => ({
+    n: 31 + idx,
+    spriteId: eventCreatureSpriteId(id),
+    stagingFile: `creature-${id}.png`,
+    portraitFile: `portraits/creature-${id}.png`,
+    title: spriteTitle(eventCreatureSpriteId(id)),
+    facing: 'left',
+  })),
+  ...GUARDIAN_IDS.map((id, idx): V17SheetItem => ({
+    n: 37 + idx,
+    spriteId: guardianSpriteId(id),
+    stagingFile: `guardian-${id}.png`,
+    portraitFile: `guardian-${id}.png`,
+    title: spriteTitle(guardianSpriteId(id)),
+    facing: 'left',
+    note: NO_PORTRAIT_NOTE,
+    refKind: 'previous-strip',
+  })),
+  {
+    n: 40,
+    spriteId: 'sprite.monster.unlit',
+    stagingFile: 'monster-unlit.png',
+    portraitFile: 'portraits/monster-unlit.png',
+    title: spriteTitle('sprite.monster.unlit'),
+    facing: 'left',
+  },
+];
 
 // Compact 5×7 uppercase/digit/symbol bitmap glyphs (5 bits per row, 7 rows).
 const GLYPHS: Readonly<Record<string, readonly number[]>> = {
@@ -86,6 +200,7 @@ const GLYPHS: Readonly<Record<string, readonly number[]>> = {
   '-': [0, 0, 0, 31, 0, 0, 0],
   '+': [0, 4, 4, 31, 4, 4, 0],
   '.': [0, 0, 0, 0, 0, 4, 4],
+  "'": [4, 4, 8, 0, 0, 0, 0],
   ':': [0, 4, 4, 0, 4, 4, 0],
   '(': [2, 4, 8, 8, 8, 4, 2],
   ')': [8, 4, 2, 2, 2, 4, 8],
@@ -172,11 +287,36 @@ const blitPng = (
   }
 };
 
-export const renderV17ContactSheet = (batchNum: 1, items: readonly V17SheetItem[]): string => {
+const BATCH_HEADERS: Readonly<
+  Record<1 | 2 | 3 | 4, { readonly banner: string; readonly section: string }>
+> = {
+  1: {
+    banner: 'V1.7 CONTACT SHEET 1 - SPRITE BATCH 1: 10 HUNTERS (#01-#10)',
+    section: '## Batch 1 — 10 Hunters (`VB.2`)',
+  },
+  2: {
+    banner: 'V1.7 CONTACT SHEET 2 - SPRITE BATCH 2: 4 HUNTERS + 6 MONSTERS (#11-#20)',
+    section: '## Batch 2 — 4 Hunters + 6 Woodland/Beast/Water Monsters (`VB.4`)',
+  },
+  3: {
+    banner: 'V1.7 CONTACT SHEET 3 - SPRITE BATCH 3: 10 CONTRACT MONSTERS (#21-#30)',
+    section: '## Batch 3 — 10 Remaining Contract Monsters (`VB.6`)',
+  },
+  4: {
+    banner: 'V1.7 CONTACT SHEET 4 - BATCH 4: CREATURES, GUARDIANS, UNLIT (#31-#40)',
+    section: '## Batch 4 — 6 Event Creatures, 3 Deep Guardians & The Unlit (`VB.8`)',
+  },
+};
+
+export const renderV17ContactSheet = (
+  batchNum: 1 | 2 | 3 | 4,
+  items: readonly V17SheetItem[],
+): string => {
   const outDir = new URL('../docs/flesh-out/v1.7/contact-sheets/', import.meta.url);
   mkdirSync(outDir, { recursive: true });
   const stagingRoot = new URL('../art-src/v1.7-staging/', import.meta.url);
   const assetsRoot = new URL('../public/assets/', import.meta.url);
+  const previousSprites = new URL('../art-src/previous-v1.7/sprites/', import.meta.url);
 
   // Panel geometry: [64px portrait] + 14px + 5 × ([64px frame] + 6px) = 434px wide, 88px tall
   const PANEL_W = 438;
@@ -189,14 +329,7 @@ export const renderV17ContactSheet = (batchNum: 1, items: readonly V17SheetItem[
 
   const sheet = new PNG({ width: W, height: H });
   fillRect(sheet, 0, 0, W, H, '302c2e');
-  drawText(
-    sheet,
-    12,
-    10,
-    `V1.7 CONTACT SHEET ${batchNum} - SPRITE BATCH 1: 10 HUNTERS (#01-#10)`,
-    'f4cca1',
-    2,
-  );
+  drawText(sheet, 12, 10, BATCH_HEADERS[batchNum].banner, 'f4cca1', 2);
   drawText(
     sheet,
     12,
@@ -221,14 +354,18 @@ export const renderV17ContactSheet = (batchNum: 1, items: readonly V17SheetItem[
       drawText(sheet, tx + 12, ry + 11, item.note, 'f4b41b', 1);
     }
 
-    const portrait = PNG.sync.read(readFileSync(new URL(item.portraitFile, assetsRoot)));
+    const isPrev = item.refKind === 'previous-strip';
+    const portrait = PNG.sync.read(
+      readFileSync(new URL(item.portraitFile, isPrev ? previousSprites : assetsRoot)),
+    );
     const strip = PNG.sync.read(readFileSync(new URL(item.stagingFile, stagingRoot)));
 
     const drawPanel = (px0: number, bgHex: string, labelHex: string, themeTag: string): void => {
       const py0 = ry + 24;
       fillRect(sheet, px0, py0, PANEL_W, PANEL_H, bgHex);
-      blitPng(sheet, portrait, 0, 0, 64, 64, px0 + 8, py0 + 6, 1);
-      drawText(sheet, px0 + 10, py0 + 74, `V1.6 ${themeTag}`, labelHex, 1);
+      if (isPrev) blitPng(sheet, portrait, 0, 0, SPRITE_PX, SPRITE_PX, px0 + 8, py0 + 6, 2);
+      else blitPng(sheet, portrait, 0, 0, 64, 64, px0 + 8, py0 + 6, 1);
+      drawText(sheet, px0 + 10, py0 + 74, `${isPrev ? 'PREV' : 'V1.6'} ${themeTag}`, labelHex, 1);
       // Divider
       fillRect(sheet, px0 + 78, py0 + 6, 1, 66, labelHex);
 
@@ -249,6 +386,15 @@ export const renderV17ContactSheet = (batchNum: 1, items: readonly V17SheetItem[
   writeFileSync(outPath, packedSheet);
 
   const marksUrl = new URL('../docs/flesh-out/v1.7/art-marks.md', import.meta.url);
+  const sectionHeading = BATCH_HEADERS[batchNum].section;
+  const tableLines = [
+    sectionHeading,
+    '',
+    '| n | id | name | mark | notes |',
+    '|---|---|---|---|---|',
+    ...items.map((x) => `| ${x.n} | \`${x.spriteId}\` | ${x.title} | | ${x.note ?? ''} |`),
+    '',
+  ];
   if (!existsSync(marksUrl)) {
     writeFileSync(
       marksUrl,
@@ -257,14 +403,14 @@ export const renderV17ContactSheet = (batchNum: 1, items: readonly V17SheetItem[
         '',
         'Reviewed in 4 batches of 10 (`VB.2`, `VB.4`, `VB.6`, `VB.8`, D605). The owner marks each row **Keep** (Approve) or **Redraw**; staged strips ship to `public/assets/sprites/` only after approval.',
         '',
-        '## Batch 1 — 10 Hunters (`VB.2`)',
-        '',
-        '| n | id | name | mark | notes |',
-        '|---|---|---|---|---|',
-        ...items.map((x) => `| ${x.n} | \`${x.spriteId}\` | ${x.title} | | ${x.note ?? ''} |`),
-        '',
+        ...tableLines,
       ].join('\n'),
     );
+  } else {
+    const existing = readFileSync(marksUrl, 'utf8');
+    if (!existing.includes(sectionHeading)) {
+      writeFileSync(marksUrl, `${existing.trimEnd()}\n\n${tableLines.join('\n')}`);
+    }
   }
   return outPath;
 };
@@ -272,16 +418,24 @@ export const renderV17ContactSheet = (batchNum: 1, items: readonly V17SheetItem[
 if (process.argv.includes('--batch')) {
   const idx = process.argv.indexOf('--batch');
   const b = Number(process.argv[idx + 1] ?? '1');
-  if (b === 1) {
+  if (b === 1 || b === 2 || b === 3 || b === 4) {
+    const batchItems =
+      b === 1
+        ? v17Batch1Items
+        : b === 2
+          ? v17Batch2Items
+          : b === 3
+            ? v17Batch3Items
+            : v17Batch4Items;
     // Also pack staged strips losslessly before rendering
     const stagingDir = new URL('../art-src/v1.7-staging/', import.meta.url);
-    for (const item of v17Batch1Items) {
+    for (const item of batchItems) {
       const fUrl = new URL(item.stagingFile, stagingDir);
       const raw = readFileSync(fUrl);
       const packed = packPng(raw);
       if (packed) writeFileSync(fUrl, packed);
     }
-    const written = renderV17ContactSheet(1, v17Batch1Items);
+    const written = renderV17ContactSheet(b, batchItems);
     console.log(`wrote ${written}`);
   }
 }

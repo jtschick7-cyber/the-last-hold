@@ -1,4 +1,4 @@
-// GDD §9.22 (D520): the 15 moments, the seven sounds, and the strongest-wins order.
+// GDD §9.22 (D520, D608): the 19 moments, the ten sounds, and the strongest-wins order.
 import { describe, expect, it } from 'vitest';
 import {
   MOMENT_SOUNDS,
@@ -10,7 +10,7 @@ import {
   type SoundId,
 } from './moments';
 
-describe('the 15 moments', () => {
+describe('the 19 moments', () => {
   it('are exactly the ones GDD §9.22 lists, each with its sound', () => {
     const expected: Record<Moment, SoundId> = {
       'hold.buy': 'build',
@@ -28,28 +28,35 @@ describe('the 15 moments', () => {
       'legendary.unlocked': 'fanfare',
       'delve.guardianBeaten': 'fanfare',
       'longNight.arrives': 'nightfall',
+      'stand.brace': 'brace',
+      'arrange.useLayout': 'brace',
+      'experiment.discovered': 'discover',
+      'combat.strike': 'strike',
     };
-    expect(Object.keys(MOMENT_SOUNDS)).toHaveLength(15);
+    expect(Object.keys(MOMENT_SOUNDS)).toHaveLength(19);
     expect({ ...MOMENT_SOUNDS }).toEqual(expected);
     for (const m of Object.keys(expected) as Moment[]) expect(soundFor(m)).toBe(expected[m]);
   });
 
-  it('use every one of the seven sounds, and only those', () => {
+  it('use every one of the ten sounds, and only those', () => {
     expect(new Set(Object.values(MOMENT_SOUNDS))).toEqual(new Set(SOUND_IDS));
-    expect(SOUND_IDS).toHaveLength(7);
+    expect(SOUND_IDS).toHaveLength(10);
   });
 });
 
 describe('strongest', () => {
-  it('orders fanfare, nightfall, win, lose, build, launch, place', () => {
+  it('orders fanfare, nightfall, win, lose, discover, brace, build, launch, place, strike', () => {
     expect(SOUND_ORDER).toEqual([
       'fanfare',
       'nightfall',
       'win',
       'lose',
+      'discover',
+      'brace',
       'build',
       'launch',
       'place',
+      'strike',
     ]);
   });
 

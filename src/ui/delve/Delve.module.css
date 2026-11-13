@@ -130,8 +130,12 @@
   background: var(--c-warn);
 }
 
-.down {
+.down > :not(.name) {
   opacity: 0.7;
+}
+
+.down .name {
+  color: var(--c-text-dim);
 }
 
 .line {

@@ -103,7 +103,8 @@ describe('every picture the game ships', () => {
       after += out ? out.length : src.length;
       if (out) expect(pixels(out).equals(pixels(src)), f).toBe(true);
     }
-    expect(after).toBeLessThan(before * 0.5); // about 300 KB down to about 120 KB (measured)
+    expect(after).toBeLessThan(before);
+    expect(after).toBeLessThan(142_000); // v1.7 VB.8 (Q66, D615): absolute cap after 40 pre-packed sprite strips (measured 133,751 B + ~6% headroom)
   });
 });
 

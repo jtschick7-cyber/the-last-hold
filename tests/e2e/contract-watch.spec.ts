@@ -278,9 +278,11 @@ test('Watch fight ▸ plays callouts, recoil, and glows, supports Log/Skip/Done,
   await expect(pbDlg).toHaveCount(0);
   await expect(resultsDlg).toBeVisible();
 
-  // D522 / D606: watching, skipping, and finishing a contract replay fires zero extra sound cues.
+  // D522 / D606 / D608: watched hits/crits play strike; skipping or finishing a replay fires no outcome cue.
   await hold(page);
-  expect(await played(page)).toEqual(beforeSound);
+  const watchCues = (await played(page)).slice(beforeSound.length);
+  expect(watchCues.length).toBeGreaterThan(0);
+  expect(watchCues.every((c) => c === 'strike')).toBe(true);
 
   // Second kept fight (`watch-older`) displays OLDER_RULES_NOTE when replayed.
   await resultsDlg

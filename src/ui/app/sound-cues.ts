@@ -4,7 +4,7 @@
 import type { Command } from '../../core/commands';
 import type { AdvanceLog } from '../../core/sim/advance';
 import type { BuildingId } from '../../content/buildings';
-import type { FloorPlayback } from '../../core/delves/view';
+import type { FloorPlayback, PlaybackStep } from '../../core/delves/view';
 import type { EventResult } from '../../core/state/events-state';
 import type { Moment } from '../../platform/sound/moments';
 
@@ -19,12 +19,14 @@ export const momentForCommand = (cmd: Command, owned: (b: BuildingId) => number)
       return 'contract.launch';
     case 'layout.place': // a completed move or swap in Arrange Hold
       return 'arrange.place';
+    case 'layout.setDefenses': // Use this layout in Arrange Hold
+      return 'arrange.useLayout';
     case 'age.up':
       return 'hold.rankUp';
     case 'hunter.rankUp':
       return 'hunter.rankUp';
     // The Last Stand's sheet opens the moment this succeeds: that sheet is the Long Night arriving.
-    // Starting the stand and its result are not sounded; reopening the sheet later is not either.
+    // Reopening the sheet later is silent; pressing Start inside it plays 'stand.brace' instead.
     case 'stand.make':
       return 'longNight.arrives';
     default:
@@ -32,13 +34,17 @@ export const momentForCommand = (cmd: Command, owned: (b: BuildingId) => number)
   }
 };
 
-/** Contracts that finished in a live tick (never a catch-up): one moment each. */
+/** Live-tick events (never catch-up) that play a cue: contract results and alchemy discoveries. */
 export const momentsForLiveTick = (log: AdvanceLog): Moment[] =>
-  log.events.flatMap((e) =>
-    e.type === 'contract'
-      ? [e.result.success ? ('contract.won' as const) : ('contract.lost' as const)]
-      : [],
-  );
+  log.events.flatMap<Moment>((e) => {
+    if (e.type === 'contract') return [e.result.success ? 'contract.won' : 'contract.lost'];
+    if (e.type === 'experiment' && e.revealed.length > 0) return ['experiment.discovered'];
+    return [];
+  });
+
+/** Watched Arena step (not Skip or already-finished closing frame) hitting a hunter or foe. */
+export const momentForStep = (step: Pick<PlaybackStep, 'kind'> | undefined): Moment | null =>
+  step && (step.kind === 'hit' || step.kind === 'crit') ? 'combat.strike' : null;
 
 /**
  * The one sound for a boss or hunt attempt (GDD §9.22): a Great Beast milestone, its kill, or a

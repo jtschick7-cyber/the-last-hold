@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { SpriteFrameName } from '../../content/assets';
 import type { FloorPlayback } from '../../core/delves/view';
 import { openSheet } from '../app/sheets';
+import { playMoment } from '../app/sound';
+import { momentForStep } from '../app/sound-cues';
 import { motionInterval } from '../motion/registry';
 import styles from '../styles/ui.module.css';
 import type { SpriteGlow } from '../widgets/BattleSprite';
@@ -66,6 +68,8 @@ export const PlaybackView = ({
   const [i, setI] = useState(-1);
   const finished = i >= last;
   const moved = useRef(false);
+  const skipped = useRef(false);
+  const prevI = useRef(-1);
 
   useEffect(() => {
     if (finished) return;
@@ -75,6 +79,14 @@ export const PlaybackView = ({
     );
     return motionInterval(() => setI((x) => Math.min(last, x + 1)), ms);
   }, [finished, last, pb.steps.length]);
+
+  useEffect(() => {
+    if (i <= prevI.current) return;
+    prevI.current = i;
+    if (finished || skipped.current) return;
+    const moment = momentForStep(pb.steps[i]);
+    if (moment) playMoment(moment);
+  }, [finished, i, pb.steps]);
 
   // The caller's `onFinish` runs once the playback has reached its end (or was skipped to it).
   useEffect(() => {
@@ -137,7 +149,14 @@ export const PlaybackView = ({
       </p>
       <div class={styles.row}>
         {!finished && (
-          <button type="button" class={styles.btn} onClick={() => setI(last)}>
+          <button
+            type="button"
+            class={styles.btn}
+            onClick={() => {
+              skipped.current = true;
+              setI(last);
+            }}
+          >
             Skip
           </button>
         )}

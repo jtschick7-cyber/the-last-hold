@@ -4,7 +4,7 @@ import type { DescentStagePlayback } from '../../core/systems/descent-playback';
 import { descentReplayView, lastDescentView } from '../../core/systems/descent-playback';
 import { dispatch, game } from '../app/runtime';
 import { openSheet } from '../app/sheets';
-import { playSoundById } from '../app/sound';
+import { playSoundById, useAmbienceMood } from '../app/sound';
 import { PlaybackLog, PlaybackView } from '../delve/PlaybackView';
 import styles from '../styles/ui.module.css';
 
@@ -51,6 +51,8 @@ const Flow = ({ view, progress }: { view: Last; progress: { at: number } }) => {
   const beats = view.playback.beats;
   const [i, setI] = useState(progress.at);
   const beat = beats[i];
+  // GDD §9.22 (D609): story cards D-01 to D-07 fade to complete silence; stage fights use Night Watch.
+  useAmbienceMood(!beat ? null : beat.kind === 'card' ? 'silent' : 'watch');
   const next = (): void => {
     progress.at = i + 1;
     setI(i + 1);
@@ -96,6 +98,7 @@ type Replay = NonNullable<ReturnType<typeof descentReplayView>>;
 const ReplayView = ({ view, progress }: { view: Replay; progress: { at: number } }) => {
   const [i, setI] = useState(progress.at);
   const card = view.cards[i];
+  useAmbienceMood(card ? 'silent' : null);
   if (card)
     return (
       <div data-testid={`descent-replay-${card.id}`}>

@@ -366,6 +366,7 @@ export const ArrangeHoldSheet = () => {
             class={styles.btnPrimary}
             data-testid="use-layout"
             onClick={() => {
+              // GDD §9.22: `layout.setDefenses` plays 'arrange.useLayout' ('brace') via dispatch.
               if (
                 dispatch({ type: 'layout.setDefenses', moves: sug.moves.map((m) => ({ ...m })) }).ok
               ) {

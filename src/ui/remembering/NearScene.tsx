@@ -1,11 +1,13 @@
 import { rememberingNearScene } from '../../core/story/remembering-view';
 import { dispatch, game } from '../app/runtime';
 import { closeSheet, openSheet } from '../app/sheets';
+import { useAmbienceMood } from '../app/sound';
 import styles from '../styles/ui.module.css';
 
 // GDD §5.15.2 (D450, D461 (4)): Pechko's near-scene. It counts as seen only when it is closed with
 // Continue; closing it with the ✕ leaves it waiting.
 const NearView = () => {
+  useAmbienceMood('silent');
   const scene = rememberingNearScene(game());
   if (!scene) return <p>Nothing here.</p>;
   return (

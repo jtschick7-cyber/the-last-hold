@@ -14,6 +14,7 @@ import type { GameState, Preparation } from '../../core/state/game-state';
 import { requestStandPreview, type StandAnswer } from '../app/odds-client';
 import { dispatch, game, version } from '../app/runtime';
 import { closeAllSheets, openSheet } from '../app/sheets';
+import { playMoment, useAmbienceMood } from '../app/sound';
 import styles from '../styles/ui.module.css';
 import {
   VIGIL_BUTTONS,
@@ -160,40 +161,43 @@ const VigilRow = () => {
   );
 };
 
-const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => (
-  <div>
-    <p>
-      Start the Last Stand? <strong>The Long Night follows</strong>: the hold starts over from a
-      hamlet. Your hunters (with part of their levels), the bestiary, Embers, relics and warden
-      upgrades are kept.
-    </p>
-    {vigilLevelFor(game()) > 0 && (
-      <p class={styles.small} data-testid="vigil-confirm">
-        {vigilLine(VIGIL_CONFIRM, vigilLevelFor(game()))}
+const Confirm = ({ party, kit }: { party: HunterId[]; kit: Kit }) => {
+  useAmbienceMood('watch');
+  return (
+    <div>
+      <p>
+        Start the Last Stand? <strong>The Long Night follows</strong>: the hold starts over from a
+        hamlet. Your hunters (with part of their levels), the bestiary, Embers, relics and warden
+        upgrades are kept.
       </p>
-    )}
-    {laneView(game()).shown && laneView(game()).trayDefenses > 0 && (
-      <p class={styles.small} data-testid="tray-line">
-        {BREACH_TEXT.trayLine(laneView(game()).trayDefenses)}
-      </p>
-    )}
-    {standDelveLine(game()) && <p class={styles.small}>{standDelveLine(game())}</p>}
-    <p class={`${styles.small} ${styles.dim}`}>This can't be undone.</p>
-    <button
-      type="button"
-      class={styles.btnPrimary}
-      style={{ width: '100%' }}
-      onClick={() => {
-        if (dispatch({ type: 'stand.make', party, prep: kit }).ok) {
-          closeAllSheets();
-          openSheet('The Long Night', () => <LongNightView />);
-        }
-      }}
-    >
-      Go up to the walls
-    </button>
-  </div>
-);
+      {vigilLevelFor(game()) > 0 && (
+        <p class={styles.small} data-testid="vigil-confirm">
+          {vigilLine(VIGIL_CONFIRM, vigilLevelFor(game()))}
+        </p>
+      )}
+      {laneView(game()).shown && laneView(game()).trayDefenses > 0 && (
+        <p class={styles.small} data-testid="tray-line">
+          {BREACH_TEXT.trayLine(laneView(game()).trayDefenses)}
+        </p>
+      )}
+      {standDelveLine(game()) && <p class={styles.small}>{standDelveLine(game())}</p>}
+      <p class={`${styles.small} ${styles.dim}`}>This can't be undone.</p>
+      <button
+        type="button"
+        class={styles.btnPrimary}
+        style={{ width: '100%' }}
+        onClick={() => {
+          if (dispatch({ type: 'stand.make', party, prep: kit }).ok) {
+            closeAllSheets();
+            openSheet('The Long Night', () => <LongNightView />);
+          }
+        }}
+      >
+        Go up to the walls
+      </button>
+    </div>
+  );
+};
 
 // The Arrange Hold sheet opens over this screen and hides it, so the party and kit chosen so far
 // wait here and are taken back when the screen is drawn again (read once, then cleared).
@@ -206,6 +210,7 @@ const takeKept = (): { party: HunterId[]; kit: Kit } | null => {
 
 export const StandView = () => {
   void version.value;
+  useAmbienceMood('watch');
   const s = game();
   const problem = standProblem(s);
   const [back] = useState(takeKept);
@@ -351,9 +356,10 @@ export const StandView = () => {
         class={styles.btnPrimary}
         style={{ width: '100%' }}
         disabled={party.length === 0}
-        onClick={() =>
-          openSheet('Start the Last Stand?', () => <Confirm party={party} kit={chosenKit} />)
-        }
+        onClick={() => {
+          playMoment('stand.brace');
+          openSheet('Start the Last Stand?', () => <Confirm party={party} kit={chosenKit} />);
+        }}
       >
         Start
       </button>

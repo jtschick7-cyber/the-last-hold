@@ -35,6 +35,8 @@ const BUDGET = {
   lanesStrip: 16,
   suggestLayout: 20,
   breachMigration: 100,
+  // v1.7 (D612): advancing one watched Arena combat step with its pose change and floating callout.
+  arenaStep: 16,
 };
 type Bench = {
   odds: number;
@@ -60,6 +62,7 @@ type Bench = {
   lanesStrip: number;
   suggestLayout: number;
   breachMigration: number;
+  arenaStep: number;
 };
 
 test('odds, Suggest and the stand preview stay within 2× their budget on a throttled CPU', async ({
@@ -97,6 +100,7 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
   console.log(
     `hunt odds ${ms.huntOdds.toFixed(0)} ms, hunt Suggest ${ms.huntSuggest.toFixed(0)} ms`,
   );
+  console.log(`Arena step render: ${ms.arenaStep.toFixed(2)} ms`);
   for (const [name, took, budget] of [
     ['odds', ms.odds, BUDGET.odds],
     ['Suggest', ms.suggest4, BUDGET.suggest],
@@ -121,6 +125,7 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     ['the Lanes strip render', ms.lanesStrip, BUDGET.lanesStrip],
     ['Suggest layout', ms.suggestLayout, BUDGET.suggestLayout],
     ['the v14 → v15 migration', ms.breachMigration, BUDGET.breachMigration],
+    ['the Arena step render', ms.arenaStep, BUDGET.arenaStep],
   ] as const) {
     if (took > budget) {
       test.info().annotations.push({

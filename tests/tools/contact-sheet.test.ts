@@ -9,6 +9,7 @@ import {
   isV11Asset,
   isV14Asset,
   isV16Asset,
+  isV17Asset,
   numberedAssets,
   redrawIds,
   sheetPlan,
@@ -53,7 +54,8 @@ describe('Keep pictures are byte-identical to v0.11', () => {
 
   it('matches the recorded hash for every picture not marked Redraw', () => {
     for (const [id, hash] of Object.entries(recorded)) {
-      if (redraw.has(id) || id.startsWith('app-icon:') || isV16Asset(id)) continue;
+      if (redraw.has(id) || id.startsWith('app-icon:') || isV16Asset(id) || isV17Asset(id))
+        continue;
       expect(now[id], id).toBe(hash);
     }
   });

@@ -13,7 +13,7 @@ import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { candidateAudioFile, renderAuditionPage } from './tools/audition-page';
 import { packPng } from './tools/png-pack';
-import { parseSoundMarks } from './tools/sound-marks';
+import { loadSoundMarks } from './tools/sound-marks';
 
 // Technical design §11.3: the build channel decides the base path, the PWA's
 // name and scope, and (in src/platform/storage.ts) the storage namespace.
@@ -70,9 +70,7 @@ const auditionPage = {
     const to = new URL('audition/', new URL(`file://${options.dir}/`));
     mkdirSync(to, { recursive: true });
     const sizes: Record<number, number> = {};
-    const marks = parseSoundMarks(
-      readFileSync(new URL('./docs/flesh-out/v1.2/sound-marks.md', import.meta.url), 'utf8'),
-    );
+    const marks = loadSoundMarks(new URL('./', import.meta.url));
     for (const c of marks.candidates) {
       const file = candidateAudioFile(c.n);
       copyFileSync(new URL(file, from), new URL(file, to));

@@ -457,7 +457,7 @@ export const FLOWS: readonly Flow[] = [
     'more-settings',
     'More (Settings)',
     'More, Settings',
-    [/Theme|Reduce/i, /^Sound/m, /silent switch/i],
+    [/Theme|Reduce/i, /^Sound/m, /^Ambience/m, /Silent during the Remembering/i, /silent switch/i],
     (p) => more(p, 'Settings'),
   ),
   plain('more-about', 'More (About & Credits)', 'More, About & Credits', [/./], (p) =>
@@ -770,6 +770,40 @@ export const FLOWS: readonly Flow[] = [
     },
     'v11',
   ),
+  // Plan VB.10 (D606, D611): Contract Watch fight ▸ from Collect results and its Arena playback.
+  {
+    id: 'contract-watch',
+    fixture: READ,
+    mutates: true,
+    how: 'fixture v11 (uncollected Poludnitsa · T2 result), Contracts tab, Collect, Watch fight ▸, Skip, Done',
+    run: async (page, visit) => {
+      await tabTo(page, 'Contracts');
+      await btn(page, 'Collect').click();
+      await page.waitForTimeout(450);
+      await visit('contract-results', 'Contracts (finished, Watch fight ▸)', [
+        /Watch fight ▸/,
+        /Fight log ▸/,
+      ]);
+      await top(page).getByRole('button', { name: 'Watch fight ▸' }).first().click();
+      await top(page)
+        .getByTestId('arena-callout')
+        .first()
+        .waitFor({ timeout: 5000 })
+        .catch(() => {});
+      await visit('contract-watch-playback', 'Contracts (Watch fight ▸ playback)', [
+        /Poludnitsa · T2/,
+        /Log/,
+      ]);
+      const skip = top(page).getByRole('button', { name: 'Skip' });
+      if (await skip.isVisible().catch(() => false)) await skip.click();
+      await visit('contract-watch-done', 'Contracts (Watch fight ▸ finished)', [
+        /Poludnitsa · T2/,
+        /Done/,
+        /Log/,
+      ]);
+      await top(page).getByRole('button', { name: 'Done' }).click();
+    },
+  },
 ];
 
 /**

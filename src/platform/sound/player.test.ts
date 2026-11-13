@@ -89,14 +89,14 @@ describe('Sound Off', () => {
 });
 
 describe('turning Sound On', () => {
-  it('creates the audio, resumes it in the same tap and loads all seven files once', async () => {
+  it('creates the audio, resumes it in the same tap and loads all ten files once', async () => {
     const t = setup();
     t.player.setEnabled(true);
     await t.settle();
     expect(t.log.created).toBe(1);
     expect(t.log.resumes).toBe(1);
     expect([...t.log.fetched].sort()).toEqual([...SOUND_IDS].sort());
-    expect(t.log.decoded).toBe(7);
+    expect(t.log.decoded).toBe(10);
     t.player.setEnabled(false);
     t.player.setEnabled(true);
     expect(t.log.created).toBe(1); // one context for the session

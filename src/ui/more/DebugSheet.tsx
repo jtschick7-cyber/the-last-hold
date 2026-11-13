@@ -7,10 +7,23 @@ import { snapshotOf } from '../../core/systems/hunters';
 import { lastOddsMs, lastSuggestMs, requestOdds, requestSuggest } from '../app/odds-client';
 import { dispatch, game, lastCatchUpMs, setLastExportAge, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
-import { playSoundById } from '../app/sound';
-import { SOUND_IDS } from '../../platform/sound/moments';
+import { ambiencePreview, playSoundById, setAmbiencePreview } from '../app/sound';
+import { SOUND_IDS, type SoundId } from '../../platform/sound/moments';
 import { DocumentReader } from '../screens/ArchiveScreen';
 import styles from '../styles/ui.module.css';
+
+const SOUND_LABELS: Record<SoundId, string> = {
+  build: 'Build',
+  launch: 'Launch',
+  place: 'Place',
+  win: 'Win',
+  lose: 'Lose',
+  fanfare: 'Fanfare',
+  nightfall: 'Nightfall',
+  brace: 'Stand brace',
+  discover: 'Discovery',
+  strike: 'Combat impact',
+};
 
 // GDD §9.10 / technical design §15: every action here is a debug.* command.
 // Using any of them marks the save (About shows it); nothing else changes.
@@ -442,8 +455,8 @@ export const DebugSheet = () => {
         Play sound
       </h3>
       <p class={styles.small}>
-        Plays one of the seven, only while Sound is On. A UI-only action: it writes nothing and is
-        not marked as debug use (technical design §15, D522 (6)).
+        Plays one of the ten, only while Sound is On. A UI-only action: it writes nothing and is not
+        marked as debug use (technical design §15, D522 (6)).
       </p>
       <div class={styles.row} style={{ flexWrap: 'wrap' }}>
         {SOUND_IDS.map((id) => (
@@ -455,7 +468,40 @@ export const DebugSheet = () => {
             data-play-sound={id}
             onClick={() => playSoundById(id)}
           >
-            {id.charAt(0).toUpperCase() + id.slice(1)}
+            {SOUND_LABELS[id]}
+          </button>
+        ))}
+      </div>
+      <h3 class={styles.cardTitle} style={{ marginTop: 'var(--space-3)' }}>
+        Ambience mood preview
+      </h3>
+      <p class={styles.small}>
+        Previews a mood while Ambience is On (Auto follows the open screen). A UI-only action: it
+        writes nothing and is not marked as debug use (D609).
+      </p>
+      <div
+        class={styles.row}
+        style={{ flexWrap: 'wrap' }}
+        role="group"
+        aria-label="Ambience mood preview"
+      >
+        {(
+          [
+            [null, 'Auto'],
+            ['hearth', 'Hearth & Wind'],
+            ['watch', 'Night Watch'],
+            ['silent', 'Silent'],
+          ] as const
+        ).map(([mood, label]) => (
+          <button
+            type="button"
+            key={mood ?? 'auto'}
+            class={ambiencePreview.value === mood ? styles.segmentOn : styles.btn}
+            aria-pressed={ambiencePreview.value === mood}
+            data-preview-ambience={mood ?? 'auto'}
+            onClick={() => setAmbiencePreview(mood)}
+          >
+            {label}
           </button>
         ))}
       </div>

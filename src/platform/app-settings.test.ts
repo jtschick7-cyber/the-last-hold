@@ -20,6 +20,7 @@ const chosen: AppSettings = {
   holdView: 'scene',
   backupReminder: false,
   sound: 'on',
+  ambience: 'on',
   lastExportAt: 1_000,
   snoozeUntil: 2_000,
   firstSeenAt: 500,
@@ -32,6 +33,7 @@ describe('app settings key', () => {
       holdView: 'grid',
       backupReminder: true,
       sound: 'off',
+      ambience: 'off',
       lastExportAt: null,
       snoozeUntil: null,
       firstSeenAt: null,
@@ -83,12 +85,13 @@ describe('app settings key', () => {
     expect(writeAppSettings(createChannelStorage('live', backend), chosen)).toBe(false);
   });
 
-  it('Reset everything keeps textSize, holdView, backupReminder and sound and clears the three times', () => {
+  it('Reset everything keeps textSize, holdView, backupReminder, sound and ambience and clears the three times', () => {
     expect(afterReset(chosen)).toEqual({
       textSize: 'largest',
       holdView: 'scene',
       backupReminder: false,
       sound: 'on',
+      ambience: 'on',
       lastExportAt: null,
       snoozeUntil: null,
       firstSeenAt: null,
@@ -121,6 +124,32 @@ describe('app settings key', () => {
     expect(writeAppSettings(storage, { ...DEFAULT_APP_SETTINGS, sound: 'off' })).toBe(false);
     backend.failWrites = false;
     expect(readAppSettings(storage).sound).toBe('on'); // the stored value did not change
+  });
+
+  // D609, GDD §9.22, technical design §24.3: the Ambience switch, independent of Sound.
+  it('ambience: Off by default; a missing or broken value falls back to Off; on and off are kept', () => {
+    expect(DEFAULT_APP_SETTINGS.ambience).toBe('off');
+    expect(parseAppSettings(null).ambience).toBe('off');
+    expect(parseAppSettings(JSON.stringify({ sound: 'on' })).ambience).toBe('off');
+    for (const junk of ['loud', 1, true, null, ['on'], 'ON'])
+      expect(parseAppSettings(JSON.stringify({ ambience: junk })).ambience).toBe('off');
+    expect(parseAppSettings(JSON.stringify({ ambience: 'on' })).ambience).toBe('on');
+    expect(parseAppSettings(JSON.stringify({ ambience: 'off' })).ambience).toBe('off');
+  });
+
+  it('ambience and sound are independent of each other', () => {
+    const a = parseAppSettings(JSON.stringify({ sound: 'off', ambience: 'on' }));
+    expect([a.sound, a.ambience]).toEqual(['off', 'on']);
+    const b = parseAppSettings(JSON.stringify({ sound: 'on', ambience: 'off' }));
+    expect([b.sound, b.ambience]).toEqual(['on', 'off']);
+  });
+
+  it('ambience round-trips through storage and survives Reset everything', () => {
+    const storage = createChannelStorage('live', memoryBackend());
+    writeAppSettings(storage, { ...DEFAULT_APP_SETTINGS, ambience: 'on' });
+    expect(readAppSettings(storage).ambience).toBe('on');
+    expect(afterReset(readAppSettings(storage)).ambience).toBe('on');
+    expect(afterReset(DEFAULT_APP_SETTINGS).ambience).toBe('off');
   });
 
   it('firstSeenAt is set once and never moved', () => {

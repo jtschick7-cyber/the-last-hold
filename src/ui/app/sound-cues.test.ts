@@ -7,6 +7,7 @@ import {
   momentForAttempt,
   momentForCommand,
   momentForFloor,
+  momentForStep,
   momentsForLiveTick,
 } from './sound-cues';
 
@@ -25,9 +26,10 @@ describe('momentForCommand', () => {
     expect(momentForCommand(up, none)).toBe('hold.newBuilding');
   });
 
-  it('a launch, a placed piece, the Hold Rank-up and a hunter rank-up', () => {
+  it('a launch, placed or applied defenses, the Hold Rank-up and a hunter rank-up', () => {
     expect(momentForCommand(cmd({ type: 'contract.launch' }), none)).toBe('contract.launch');
     expect(momentForCommand(cmd({ type: 'layout.place' }), none)).toBe('arrange.place');
+    expect(momentForCommand(cmd({ type: 'layout.setDefenses' }), none)).toBe('arrange.useLayout');
     expect(momentForCommand(cmd({ type: 'age.up' }), none)).toBe('hold.rankUp');
     expect(momentForCommand(cmd({ type: 'stand.make' }), none)).toBe('longNight.arrives');
     expect(momentForCommand(cmd({ type: 'hunter.rankUp', hunter: 'x' }), none)).toBe(
@@ -68,11 +70,22 @@ describe('momentsForLiveTick', () => {
   const done = (success: boolean) =>
     ({ type: 'contract', at: 1, result: { success } }) as AdvanceLog['events'][number];
 
-  it('is one moment per finished contract: won or lost', () => {
-    expect(momentsForLiveTick(log([done(true), done(false)]))).toEqual([
-      'contract.won',
-      'contract.lost',
-    ]);
+  const exp = (revealed: { ingredient: string; index: number }[]) =>
+    ({
+      type: 'experiment',
+      at: 1,
+      a: 'ashleaf',
+      b: 'moorroot',
+      revealed,
+      discovered: [],
+    }) as unknown as AdvanceLog['events'][number];
+
+  it('is one moment per finished contract or revealing experiment', () => {
+    expect(
+      momentsForLiveTick(
+        log([done(true), done(false), exp([{ ingredient: 'ashleaf', index: 0 }]), exp([])]),
+      ),
+    ).toEqual(['contract.won', 'contract.lost', 'experiment.discovered']);
   });
 
   it('ignores everything else that happens in a tick', () => {
@@ -119,5 +132,16 @@ describe('momentForFloor', () => {
     expect(momentForFloor({ result: 'win', guardian: true })).toBe('delve.guardianBeaten');
     expect(momentForFloor({ result: 'loss', guardian: false })).toBe('delve.runLost');
     expect(momentForFloor({ result: 'loss', guardian: true })).toBe('delve.runLost');
+  });
+});
+
+describe('momentForStep', () => {
+  it('fires combat.strike only on hit and crit steps', () => {
+    expect(momentForStep({ kind: 'hit' })).toBe('combat.strike');
+    expect(momentForStep({ kind: 'crit' })).toBe('combat.strike');
+    for (const kind of ['miss', 'sub-hit', 'ability', 'heal', 'skill', 'end'] as const) {
+      expect(momentForStep({ kind }), kind).toBeNull();
+    }
+    expect(momentForStep(undefined)).toBeNull();
   });
 });
