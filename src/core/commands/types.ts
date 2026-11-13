@@ -16,6 +16,7 @@ import type { PolicyId } from '../policies/schedules';
 import type { Preparation, Settings } from '../state/game-state';
 import type { UpgradeId } from '../../content/warden-upgrades';
 import type { HoldPieceId } from '../../content/hold-layout';
+import type { HoldCosmeticId } from '../state/cosmetics-state';
 import type { LayoutArrangeMode, LayoutPresetSlot } from '../state/layout-state';
 
 // Technical design §4.3: every player action is a plain JSON Command, applied
@@ -78,6 +79,7 @@ export type Command =
   | { type: 'layout.clear' }
   | { type: 'layout.setDefenses'; moves: { pieceId: HoldPieceId; x: number; y: number }[] }
   | { type: 'layout.setShowGhosts'; showGhosts: boolean }
+  | { type: 'layout.toggleCosmetic'; id: HoldCosmeticId; visible?: boolean }
   | { type: 'layout.savePreset'; slot: LayoutPresetSlot }
   | { type: 'layout.applyPreset'; slot: LayoutPresetSlot }
   /** GDD §5.9.10: the Rising Vigil switch (technical design §21.3). */

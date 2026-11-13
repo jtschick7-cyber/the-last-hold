@@ -79,6 +79,7 @@ import {
   layoutPlace,
   layoutSavePreset,
   layoutSetShowGhosts,
+  layoutToggleCosmetic,
   layoutUnplace,
 } from './layout';
 import { chooseEnding, noteReady, seeNear } from './remembering';
@@ -147,6 +148,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return layoutSetDefenses(state, cmd.moves);
     case 'layout.setShowGhosts':
       return layoutSetShowGhosts(state, cmd.showGhosts);
+    case 'layout.toggleCosmetic':
+      return layoutToggleCosmetic(state, cmd.id, cmd.visible);
     case 'layout.savePreset':
       return layoutSavePreset(state, cmd.slot);
     case 'layout.applyPreset':

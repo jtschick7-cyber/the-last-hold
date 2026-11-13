@@ -1,5 +1,5 @@
 import type { AgeId } from '../../content/ages';
-import type { CosmeticId } from '../../content/delves/shop';
+import type { CourtyardMarkId } from '../../content/courtyard-marks';
 import {
   CONNECTION_BITS,
   HOLD_PIECE_IDS,
@@ -11,7 +11,17 @@ import {
 } from '../../content/hold-layout';
 import { holdLook, type HoldLookState } from '../story/remembering-view';
 import type { GameState } from '../state/game-state';
+import {
+  holdLookView,
+  isCosmeticVisible,
+  visibleCourtyardMarks,
+  visibleShopCosmetics,
+  type HoldLookEntry,
+  type HoldLookView,
+} from './cosmetics';
 import { clearingBounds, pieceDef } from './layout-catalog';
+
+export { holdLookView, visibleShopCosmetics, type HoldLookEntry, type HoldLookView };
 
 // GDD §5.1.5 and technical design §19.3 (D500–D502, plan TL.2): what each piece of the Hold's layout
 // is, derived from the saved blueprint and the buildings. Pure, and read only by the Hold screen and,
@@ -107,13 +117,12 @@ export interface HoldGridView {
   tray: HoldPieceId[];
   look: HoldLookState;
   cosmetics: HoldCosmetics;
+  courtyardMarks: CourtyardMarkId[];
   showGhosts: boolean;
   /** Pieces standing on the grid now, and every piece there can be. */
   activeCount: number;
   pieceCount: number;
 }
-
-const bought = (state: GameState, c: CosmeticId): boolean => state.delve.shop.cosmetics.includes(c);
 
 const build = (state: GameState): HoldGridView => {
   const active: ActivePiece[] = [];
@@ -148,11 +157,12 @@ const build = (state: GameState): HoldGridView => {
     tray,
     look: holdLook(state),
     cosmetics: {
-      door: bought(state, 'carved-hearth-hall-door'),
-      banners: bought(state, 'gatehouse-banners'),
-      bell: bought(state, 'watchtower-bell') ? (hasTower ? 'tower' : 'border') : null,
-      lanterns: bought(state, 'wall-lanterns') ? (hasWall ? 'walls' : 'border') : null,
+      door: isCosmeticVisible(state, 'carved-hearth-hall-door'),
+      banners: isCosmeticVisible(state, 'gatehouse-banners'),
+      bell: isCosmeticVisible(state, 'watchtower-bell') ? (hasTower ? 'tower' : 'border') : null,
+      lanterns: isCosmeticVisible(state, 'wall-lanterns') ? (hasWall ? 'walls' : 'border') : null,
     },
+    courtyardMarks: visibleCourtyardMarks(state),
     showGhosts: state.layout.showGhosts,
     activeCount: active.length,
     pieceCount: HOLD_PIECE_IDS.length,
@@ -165,6 +175,7 @@ const signature = (state: GameState): string =>
     state.cycle.age,
     holdLook(state),
     state.delve.shop.cosmetics.join(),
+    JSON.stringify(state.cosmetics),
     state.layout.showGhosts,
     JSON.stringify(state.layout.placed),
     PIECES.map((p) => state.buildings[p.building]).join(),

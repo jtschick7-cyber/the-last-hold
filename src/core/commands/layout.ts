@@ -1,6 +1,7 @@
 import { HOLD_PIECE_IDS, type HoldPieceId } from '../../content/hold-layout';
 import { setDefenses } from '../systems/breach';
 import type { GameState } from '../state/game-state';
+import { toggleCosmetic } from '../systems/cosmetics';
 import { getPieceStatus } from '../systems/layout';
 import {
   applyPresetSlot,
@@ -70,6 +71,19 @@ export const layoutSetShowGhosts = (state: GameState, show: unknown): ApplyResul
   if (typeof show !== 'boolean') return refuse('layout: ghosts setting must be on or off');
   state.layout.showGhosts = show;
   return ok;
+};
+
+export const layoutToggleCosmetic = (
+  state: GameState,
+  id: unknown,
+  visible?: unknown,
+): ApplyResult => {
+  if (typeof id !== 'string') return refuse('layout: cosmetic id must be a string');
+  if (visible !== undefined && typeof visible !== 'boolean') {
+    return refuse('layout: cosmetic visibility must be on or off');
+  }
+  const res = toggleCosmetic(state, id, visible);
+  return res.ok ? ok : refuse(res.reason);
 };
 
 /**

@@ -27,6 +27,7 @@ import {
 } from './events';
 import { gainXp, snapshotOf } from './hunters';
 import { lootKey, pickRarity, rollLines, takeLoot, type RarityWeights } from './loot';
+import { unlockBossMark } from './cosmetics';
 
 // GDD §5.12.4–§5.12.5 (plan T9.6, D358–D361, D387): a boss attempt is worked out at once from its
 // seed. The Great Beast's Health is the pool still standing, so what the party dealt is what the
@@ -208,6 +209,7 @@ export const makeAttempt = (
   ev.attempts = attempt;
   ev.last = { kind: 'boss', attempt, at: state.time, boss: report };
   if (killed) {
+    unlockBossMark(state, bossId);
     // The next boss arrives at once (GDD §5.12.4); the tier is fixed again at its first attempt.
     ev.boss = { visit: ev.boss.visit + 1, tier: null, pool: null, paid: 0, attempts: 0 };
   } else {

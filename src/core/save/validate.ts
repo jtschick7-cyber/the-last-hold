@@ -39,6 +39,8 @@ import { longNightFrom } from './validate-long-night';
 import { eventsFrom } from './validate-events';
 import { ordersFrom } from './validate-orders';
 import { layoutFrom } from './validate-layout';
+import { cosmeticsFrom } from './validate-cosmetics';
+import { backfillCosmetics } from '../systems/cosmetics';
 import { reconcileVigil, vigilFrom } from './validate-vigil';
 import { descentFrom } from './validate-descent';
 import { reconcileEndings, rememberingFrom } from './validate-remembering';
@@ -412,6 +414,7 @@ const check = (raw: unknown, warnings: string[], notes: string[]): GameState => 
     orders: ordersFrom(s.orders, warnings, notes),
     remembering: rememberingFrom(s.remembering, cycleNumber, warnings),
     layout: layoutFrom(s.layout, warnings),
+    cosmetics: cosmeticsFrom(s.cosmetics, warnings),
     vigil: vigilFrom(s.vigil, warnings),
     descent: descentFrom(s.descent, warnings),
     ...itemsFrom(s, owned, warnings),
@@ -424,8 +427,10 @@ export const validateState = (raw: unknown): Result<Validated> => {
   const warnings: string[] = [];
   const notes: string[] = [];
   try {
+    const state = reconcileVigil(reconcileEndings(check(raw, warnings, notes), warnings), warnings);
+    backfillCosmetics(state);
     return success({
-      state: reconcileVigil(reconcileEndings(check(raw, warnings, notes), warnings), warnings),
+      state,
       warnings,
       notes,
     });

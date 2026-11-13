@@ -1,4 +1,5 @@
 import { AGE_IDS, type AgeId } from '../../content/ages';
+import type { HuntId } from '../../content/hunts';
 import {
   GRID_COLS,
   GRID_ROWS,
@@ -7,7 +8,9 @@ import {
   hallAnchorBounds,
   type ClearingBounds,
 } from '../../content/hold-layout';
+import type { CosmeticsState } from '../state/cosmetics-state';
 import type { GridCoord, HoldLayoutState, HoldPieceId } from '../state/layout-state';
+import { backfillCosmetics } from '../systems/cosmetics';
 import { clearingBounds, pieceDef } from '../systems/layout-catalog';
 import { footprint } from '../systems/layout';
 import type { Migration } from './migrations';
@@ -102,8 +105,22 @@ const shiftLayout = (state: HoldLayoutState, bounds: ClearingBounds): HoldLayout
   };
 };
 
+const migrateCosmetics = (next: Record<string, unknown>): CosmeticsState => {
+  const raw = next.cosmetics as Partial<CosmeticsState> | undefined;
+  const cosmetics: CosmeticsState = {
+    marks: raw?.marks && typeof raw.marks === 'object' ? { ...raw.marks } : {},
+    hidden: Array.isArray(raw?.hidden) ? [...raw.hidden] : [],
+  };
+  const ev = next.events as
+    | { boss?: { visit?: number }; hunts?: Partial<Record<HuntId, { unlocked?: boolean }>> }
+    | undefined;
+  backfillCosmetics({ cosmetics, events: ev });
+  return cosmetics;
+};
+
 export const v15ToV16: Migration = (state) => {
   const next = structuredClone(state);
+  const cosmetics = migrateCosmetics(next);
   const cycle = next.cycle as { age?: unknown } | undefined;
   const age = AGE_IDS.includes(cycle?.age as AgeId) ? (cycle?.age as AgeId) : 'hamlet';
   const rawLayout = next.layout as Partial<HoldLayoutState> | undefined;
@@ -113,7 +130,7 @@ export const v15ToV16: Migration = (state) => {
     !rawLayout.placed ||
     typeof rawLayout.placed !== 'object'
   )
-    return next;
+    return { ...next, cosmetics };
   const layout: HoldLayoutState = {
     placed: rawLayout.placed,
     showGhosts: Boolean(rawLayout.showGhosts),
@@ -121,6 +138,7 @@ export const v15ToV16: Migration = (state) => {
   };
   return {
     ...next,
+    cosmetics,
     layout: shiftLayout(layout, clearingBounds(age)),
   };
 };

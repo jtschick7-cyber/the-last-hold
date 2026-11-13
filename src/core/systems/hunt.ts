@@ -24,6 +24,7 @@ import {
 } from './events';
 import { effectiveTraits, gainXp, levelCap, rosterCap, snapshotOf } from './hunters';
 import { equipItem, makeItem } from './items';
+import { unlockHuntMark } from './cosmetics';
 
 // GDD §5.12.6–§5.12.7 (plan T9.8, D362, D386, D387): a Legendary Hunt attempt. One fight against the
 // quarry at the track's tier, one token, the 24 h rest. A win pays more points than a loss; points
@@ -189,6 +190,7 @@ export const makeHuntAttempt = (
   let arrival: HuntReport['arrival'];
   if (unlocked) {
     record.unlocked = true;
+    unlockHuntMark(state, huntId);
     arrival = arriveLegendary(state, huntId);
   }
 

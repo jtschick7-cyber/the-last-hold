@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.4` complete on `milestone/v1.8`).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.4` complete).
-- **Last task:** `T18.4` — Dual `rulesVersion` (`6 → 7`), `Screened Volley`, Sector Support, `2` compact `presets`, and 3-mode `autoArrange` / `suggestLayout`.
-- **Next:** `T18.5` — Permanent `6` Event *Courtyard Marks* (`D490`) & *Hold Look* toggle state.
-- **Open questions:** None (`D625`–`D627` remain `Proposed` pending owner sign-off).
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.5` complete on `milestone/v1.8`).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.5` complete).
+- **Last task:** `T18.5` — Permanent `6` Event *Courtyard Marks* (`D490`), `state.cosmetics`, load/migration backfill, and `layout.toggleCosmetic` + *Hold Look* selectors; `D625`–`D627` marked `Decided`.
+- **Next:** `T18.6` — `8 × 12` `HoldGrid`, `Arrange Hold` tactical overlays & Preset/Mode controls.
+- **Open questions:** None (`D617`–`D627` all `Decided`).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -97,3 +97,11 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **Compact presets & 3-mode Arrange/Suggest (`layout-state.ts`, `layout-catalog.ts`, `layout-place.ts`, `hold-layout.ts`, `commands/`, `migration-v16.ts`, `validate-layout.ts`):** Kept `SCHEMA_VERSION = 16` (`presets: [null, null]` default on old `v16` loads with 0 warnings) with length-40 `[x, y] | null` tuple slots so 40 pieces + 2 full presets fit inside `GDD §6.5`'s `≤ 2,048 B` ceiling (`save-size.test.ts`); wired `layout.savePreset` / `layout.applyPreset` (`applyPreset` clamps `hearth-hall`, keeps outer `dormant-ring` blueprints, and auto-places unlocked newcomers) and 3-mode `autoArrange` / `suggestLayout` (`balanced`, `economy`, `fortress`).
 - **Tests & verification (`tests/breach/v7-breach.test.ts`, `tests/layout/presets-and-modes.test.ts`, `tests/lint/breach-coupling.test.ts`):** Added `v7` formula/freeze/replay immutability, `v16` compatibility, preset round-trip, save-size, and 3-mode Arrange/Suggest (`< 20 ms`) tests; verified `npm run check` (`≤ 90 s`; `261` test files / `4,127` tests + `sim:check --fast` green).
 - **Next:** `T18.5` — Permanent `6` Event *Courtyard Marks* (`D490`) & *Hold Look* toggle state.
+
+## 2026-11-13 — v1.8 T18.5: Permanent 6 Event Courtyard Marks, Hold Look toggles & D625–D627 acceptance
+- **Owner sign-off (`docs/decisions.md`):** Marked `D625`–`D627` as `Decided` (`T18.1`–`T18.4` decisions complete).
+- **Courtyard Marks content & state (`src/content/courtyard-marks.ts`, `src/core/state/cosmetics-state.ts`, `game-state.ts`, `new-game.ts`):** Defined `COURTYARD_MARK_IDS` (`fjord-bone-standard`, `barrow-brazier`, `river-reed-basin`, `stoneback-cairn`, `kettle-barrow-wreath`, `watch-fire-sconce`) mapped 1:1 to first kills of the `3` Great Beasts and first clears of the `3` Legendary Hunts, stored alongside per-item hidden shop `COSMETIC_IDS` in `state.cosmetics` (`≤ 307 B` / `0.3 KB`, surviving `resetForNewCycle`).
+- **Unlock hooks, backfill & validation (`systems/cosmetics.ts`, `boss.ts`, `hunt.ts`, `migration-v16.ts`, `validate-cosmetics.ts`, `validate.ts`):** Triggered permanent mark unlocks on Great Beast kills and Legendary Hunt unlocks (ignoring partial progress), added idempotent backfill in both `v15ToV16` and `validateState` while preserving explicit `false` visibility toggles and emitting `0` warnings on legacy `v1..v16` fixtures.
+- **Commands & selectors (`commands/types.ts`, `apply.ts`, `layout.ts`, `systems/layout.ts`):** Wired `layout.toggleCosmetic` across all `HoldCosmeticId` items, added `courtyardMarks` and visibility-filtered `cosmetics` (plus memo invalidation) to `HoldGridView`, and exported `holdLookView` and `visibleShopCosmetics` without weakening `S11`/`breach-coupling`/`layout-isolation`.
+- **Tests & verification (`tests/layout/courtyard-marks.test.ts`):** Added unit tests covering definitions, kill/hunt unlock triggers, Long Night survival, load/migration backfill, toggle independence, save size (`≤ 307 B`), and validation; `npm run check` passed cleanly (`≤ 90 s`).
+- **Next:** `T18.6` — `8 × 12` `HoldGrid`, `Arrange Hold` tactical overlays & Preset/Mode controls.
