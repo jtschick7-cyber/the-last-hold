@@ -23,8 +23,9 @@ test('plain: no cosmetics, frost or lamp; pieces and the border strips show', as
   await expect(g).toHaveAttribute('data-bell', 'none');
   await expect(g.locator('[data-piece="hearth-hall"]')).toHaveCount(1);
   await expect(g.locator('[data-strip]')).toHaveCount(2);
-  await expect(g.locator('[data-tile]')).toHaveCount(64);
-  await expect(g.locator('[data-ground="outside"]')).toHaveCount(16); // Citadel: 8 × 6 of 64
+  await expect(g.locator('[data-tile]')).toHaveCount(96);
+  await expect(g.locator('[data-ground="outside"]')).toHaveCount(16); // Citadel: 8 × 10 of 96
+  await expect(g.locator('[data-tile="7,11"]')).toHaveCount(1);
   await expect(g.locator('[data-frost], [data-lamp], [data-cosmetic]')).toHaveCount(0);
   await expect(g).toContainText('▲ The Fell Breach');
   await expect(g).toContainText('▼ Lowland Gate');
@@ -123,14 +124,19 @@ test('Hold view: Classic scene shows the pixel scene with its cosmetics, and the
   );
 });
 
-test('the grid fits at 320 px with no sideways scroll', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 640 });
+test('the grid fits at 320, 360 and 390 px with portrait 8 × 12 proportions and no sideways scroll', async ({
+  page,
+}) => {
   await load(page, () => {});
-  const { scroll, inner } = await page.evaluate(() => ({
-    scroll: document.documentElement.scrollWidth,
-    inner: window.innerWidth,
-  }));
-  expect(scroll).toBeLessThanOrEqual(inner);
-  const box = await grid(page).boundingBox();
-  expect(box?.width ?? 0).toBeLessThanOrEqual(320);
+  for (const width of [320, 360, 390]) {
+    await page.setViewportSize({ width, height: 740 });
+    const { scroll, inner } = await page.evaluate(() => ({
+      scroll: document.documentElement.scrollWidth,
+      inner: window.innerWidth,
+    }));
+    expect(scroll).toBeLessThanOrEqual(inner);
+    const box = await grid(page).boundingBox();
+    expect(box?.width ?? 0).toBeLessThanOrEqual(width);
+    expect(box?.height ?? 0).toBeGreaterThan((box?.width ?? 0) * 1.4);
+  }
 });

@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.5` complete on `milestone/v1.8`).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.5` complete).
-- **Last task:** `T18.5` — Permanent `6` Event *Courtyard Marks* (`D490`), `state.cosmetics`, load/migration backfill, and `layout.toggleCosmetic` + *Hold Look* selectors; `D625`–`D627` marked `Decided`.
-- **Next:** `T18.6` — `8 × 12` `HoldGrid`, `Arrange Hold` tactical overlays & Preset/Mode controls.
-- **Open questions:** None (`D617`–`D627` all `Decided`).
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.6` complete on `milestone/v1.8`).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.6` complete).
+- **Last task:** `T18.6` — `8 × 12` `HoldGrid`, `Arrange Hold` tactical overlays, colorblind-safe AoE/ward/screened marks, 2-slot Preset bar, and *Balanced / Economy / Fortress* selector (`Q76`–`Q78` answered `(a)`).
+- **Next:** `T18.7` — Reconciliation & milestone sign-off.
+- **Open questions:** None (`Q76`–`Q78` answered by owner).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -105,3 +105,18 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **Commands & selectors (`commands/types.ts`, `apply.ts`, `layout.ts`, `systems/layout.ts`):** Wired `layout.toggleCosmetic` across all `HoldCosmeticId` items, added `courtyardMarks` and visibility-filtered `cosmetics` (plus memo invalidation) to `HoldGridView`, and exported `holdLookView` and `visibleShopCosmetics` without weakening `S11`/`breach-coupling`/`layout-isolation`.
 - **Tests & verification (`tests/layout/courtyard-marks.test.ts`):** Added unit tests covering definitions, kill/hunt unlock triggers, Long Night survival, load/migration backfill, toggle independence, save size (`≤ 307 B`), and validation; `npm run check` passed cleanly (`≤ 90 s`).
 - **Next:** `T18.6` — `8 × 12` `HoldGrid`, `Arrange Hold` tactical overlays & Preset/Mode controls.
+
+### 2026-11-13 — `T18.6 [?]` Blocked on `Q76`–`Q78` (`8 × 12` `HoldGrid` / `Arrange Hold` UI)
+- **Context / blockers identified:** Audited `HoldGrid.tsx`, `ArrangeHoldSheet.tsx`, layout selectors (`layout-tactics.ts`, `layout-place.ts`, `breach.ts`), `GDD §9.21` / `§9.25`, `Sheet.module.css`, and Playwright specs (`hold-grid.spec.ts`, `arrange-hold.spec.ts`, `lanes-strip.spec.ts`). No code modified; three open owner decisions block clean `T18.6` implementation without silent defaults:
+  - `Q76`: Preset bar (`Slot 1` / `Slot 2`, `Save` / `Apply`, `Empty` / `{n} placed`) and `Balanced` / `Economy` / `Fortress` selector copy & non-destructive tap semantics (`GDD §9.21` vs `CLAUDE.md` string lock).
+  - `Q77`: Tactical overlay scope (`ArrangeHoldSheet` always-on shape+luminance cues + approved status/tag wording vs `HoldGrid` clean card header) and Reduce Motion compliance.
+  - `Q78`: Updating pre-v1.8 Playwright `8 × 8` / `8×6` / `(3, 3)` pins in `tests/e2e/hold-grid.spec.ts` and `tests/e2e/arrange-hold.spec.ts` alongside `D624`, plus negative horizontal margin on `[data-internal-scroll="true"]` for `360–390 px` zero-scroll fit with `44 × 44 px` tile targets.
+- **Files updated:** `docs/questions.md` (`Q76`–`Q78` added with options + recommendations), `docs/implementation-plan.md` (`T18.6` marked `[?]`), `docs/progress.md`.
+- **Next:** Await owner answers on `Q76`–`Q78`, then implement `T18.6`.
+
+## 2026-11-13 — v1.8 T18.6: 8 × 12 HoldGrid, Arrange Hold tactical overlays & Preset/Mode controls
+- **Owner answers (`docs/questions.md`):** Recorded `Q76 (a)`, `Q77 (a)`, `Q78 (a)` resolving Preset/Mode copy & tap semantics, tactical overlay scope, and `8 × 12` Playwright test updates / scroller margin.
+- **`8 × 12` `HoldGrid` (`src/ui/widgets/HoldGrid.tsx`):** Updated internal scale to `256 × 384 px` (`GRID_COLS = 8`, `GRID_ROWS = 12`, `96` cells, `H = 416` with `16 px` north/south strips, `▼ Lowland Gate` at `STRIP + GRID_H`), keeping the card header free of tactical badges.
+- **`Arrange Hold` tactical UI, Presets & Modes (`src/ui/sheets/arrange-tactics.ts`, `ArrangeHoldOverlays.tsx`, `ArrangeHoldControls.tsx`, `ArrangeHoldSheet.tsx`):** Expanded board to `8 × 12` at `44 × 44 px` per tile (`352 × 528 px`) with `marginInline: calc(-1 * var(--space-3))` on `[data-internal-scroll="true"]` for `360–390 px` zero horizontal scroll while keeping internal scrolling on `320 px`; added static (`animationName: 'none'`), `pointerEvents: 'none'` shape + luminance overlays (`[data-ward-layer]`, `[data-hall-ward]`, `[data-adj-links]`, `[data-adj-badge]`, `[data-screened-tower]`), `[data-tactics-bar]` / `[data-selected-tactics]` status summaries, segmented `Balanced` / `Economy` / `Fortress` `Layout mode`, and 2-slot `Presets` bar (`Slot 1` / `Slot 2`, `Save` / `Apply`).
+- **Tests (`tests/layout/arrange-ui-helpers.test.ts`, `tests/e2e/hold-grid.spec.ts`, `tests/e2e/arrange-hold.spec.ts`):** Added unit tests for UI adjacency/status helpers, updated pre-v1.8 `8 × 8` pins (`96` tiles, `8×10 open`, shifted Citadel Hall), and verified `hold-grid.spec.ts` + `arrange-hold.spec.ts` (`15 passed`), `lanes-strip` / `lanes-stand` / `breach-open` / `sound` / `smoke` (`62 passed`), and `bench` / `polish-widths` / `polish-text-size` / `polish-motion` / `remembering-layout` (`33 passed`; `Hold grid render 8.0 ms`, `Arrange Hold sheet 16.9 ms`, `0` overflow/contrast/motion findings).
+- **Next:** `T18.7` — Reconciliation & milestone sign-off.

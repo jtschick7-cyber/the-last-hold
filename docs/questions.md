@@ -427,3 +427,37 @@ No open questions at the end of the v1.1 flesh-out. Any question Claude Code hit
   - **(c)** Other per-mode placement rules specified by owner.
 - **Recommendation:** **(a)**.
 - **Answer (owner):** (a), 2026-11-13: optional `mode` defaulting to `'balanced'` (`CANONICAL_LAYOUT` parity); `'economy'` and `'fortress'` deterministic constructive placers in `autoArrange`; defense-only `setDefenses` contract preserved in `suggestLayout` with mode-tuned objectives.
+
+---
+
+### Q76 — T18.6 Preset bar & 3-mode selector copy and tap semantics (`GDD §9.21` / `CLAUDE.md` line 82)
+- **Context:** `D621` defines `Slot 1` / `Slot 2` and `Balanced` / `Economy` / `Fortress`, and `T18.6` builds the 2-slot Preset bar and mode selector in `src/ui/sheets/ArrangeHoldSheet.tsx`. However, `CLAUDE.md` forbids introducing player-facing Layout strings beyond `GDD §9.21` / `§9.25` / `§9.26` / `v1.8-summary.md` without approval, and `GDD §9.21` update is scheduled in `T18.7`. Exact button wording, empty-slot behavior, overwrite behavior, and mode-tap behavior also need confirmation.
+- **Options:**
+  - **(a)** Approve the exact inline strings and non-destructive UX for `T18.6` (with `GDD §9.21` formally reconciled in `T18.7`):
+    - **Preset bar** (section label `Presets`; `≥ 44 × 44 px` controls): two rows/groups `Slot 1` and `Slot 2`, showing `Empty` when `presets[i] === null` or saved piece count (`{n} placed`) when populated, with `Save` (1-tap save/overwrite into `presets[i]`) and `Apply` (disabled when empty; applies `presets[i]` via `layout.applyPreset`).
+    - **Mode selector** (`Layout mode` or segmented group without extra prose): 3-option segmented selector `Balanced` / `Economy` / `Fortress` (`aria-pressed`, defaulting to `Balanced`), which selects the priority mode passed to both `Auto-arrange` and `Suggest layout` without immediately resetting the yard when tapping a mode pill.
+  - **(b)** Have tapping `Balanced` / `Economy` / `Fortress` immediately run `layout.autoArrange` (destructive 1-tap rearrange), use `Load` instead of `Apply`, or require a second confirm tap before overwriting a saved Preset slot.
+  - **(c)** Pause `T18.6` UI copy completely until `T18.7` updates `GDD §9.21` first.
+- **Recommendation:** **(a)** (safe non-destructive mode selection, clean 1-tap `Save` / `Apply`, minimal labels aligned with `D621`).
+
+---
+
+### Q77 — T18.6 Tactical overlay scope, colorblind-safe cues, and status copy (`HoldGrid` vs `ArrangeHoldSheet`)
+- **Context:** `T18.6` requires "colorblind-safe AoE adjacency links/badges, `Warded`/`Exposed` perimeter shading, `Screened` tower mark" in `ArrangeHoldSheet.tsx` (Reduce Motion compliant), while keeping `HoldGrid.tsx` at `256 × 384 px` non-interactive card scale. `GDD §5.1.5` defines `Warded` / `Exposed` / `Screened`, while `GDD §9.21` does not yet list overlay status strings.
+- **Options:**
+  - **(a)** Keep `HoldGrid.tsx` (`HoldScreen` card header) visually clean without tactical/AoE editor badges (showing only the `8 × 12` yard, placed structures, gates, Hearth Hall / Breach / Lanes edge, and active Cosmetics), and render always-on non-interactive (`pointerEvents: 'none'`) colorblind-safe overlays inside `ArrangeHoldSheet`: distinct SVG link/shape markers + high-contrast badges for `AdjacencyLink` pairs, hatched/bordered perimeter band for `Warded` vs `Exposed` Hearth Hall status, shield/chevron mark on `Screened` watchtowers (all static under Reduce Motion), plus a concise tactical status line using approved terms (`Warded` / `Exposed`, `{links} linked`, `{screened} Screened`) and active synergy note in the selected-piece banner.
+  - **(b)** Also add an `Overlays: On/Off` toggle in `ArrangeHoldSheet` and/or show `Warded` / `Screened` / AoE badges on the compact `HoldScreen` `HoldGrid` card.
+- **Recommendation:** **(a)** (`HoldGrid` stays uncluttered at `256 × 384 px`; `ArrangeHoldSheet` gets legible shape+luminance cues with minimal chrome).
+
+---
+
+### Q78 — Updating pre-v1.8 Playwright `8 × 8` / `8×6` / `(3, 3)` pins & `360 px` internal-scroll width math
+- **Context:** Two Playwright specs outside `D624 (a)–(g)` assert pre-v1.8 `8 × 8` values that will break when `HoldGrid` and `ArrangeHoldSheet` move to `8 × 12`:
+  1. `tests/e2e/hold-grid.spec.ts:26` expects `64` `[data-tile]` cells (`8 × 12` has `96`).
+  2. `tests/e2e/arrange-hold.spec.ts` expects `/^Citadel · 8×6 open/` (`D618` Citadel is `8×10 open`), `64` `[data-tile]` cells (`96`), and clicks `(3, 3)` expecting `hearth-hall` (`v15ToV16` shifts `v12-played`'s `hearth-hall` to `(3, 6)`).
+  Additionally, at `360 px` viewport, `.sheet` (`1 px` border) + `.body` (`padding: 0 var(--space-3)` = `16 px` each side) leaves `326 px < 352 px` (`8 × 44 px`), which forces horizontal scroll inside `[data-internal-scroll]` even at `360 px`. Giving the grid scroller `marginInline: calc(-1 * var(--space-3))` makes its inner width `358 px >= 352 px` (zero horizontal scroll at `360–390 px`, including `Largest` text size) while preserving `≥ 44 × 44 px` tile targets and internal scroll at `320 px`.
+- **Options:**
+  - **(a)** Approve updating those pre-v1.8 pins in `tests/e2e/hold-grid.spec.ts` and `tests/e2e/arrange-hold.spec.ts` (`96` tiles, `8×10 open`, `(3, 6)` on `v12-played`) alongside `D624`, and permit `marginInline: calc(-1 * var(--space-3))` on `[data-internal-scroll="true"]` in `ArrangeHoldSheet` so `360–390 px` has zero horizontal scroll while keeping `44 × 44 px` tiles.
+  - **(b)** Shrink mobile tile size below `44 px` at `360 px` (Note: violates `T18.6` / `CLAUDE.md` `≥ 44 × 44 px` tap target rule).
+- **Recommendation:** **(a)** (preserves `≥ 44 × 44 px` tap targets, achieves zero scroll at `360–390 px`, and aligns existing E2E assertions with `D618`).
+- **Answer (owner):** `Q76` (a), `Q77` (a), `Q78` (a), 2026-11-13: approved Preset bar (`Presets`, `Slot 1`/`Slot 2`, `Empty`/`{n} placed`, 1-tap `Save`/`Apply`), non-destructive `Balanced`/`Economy`/`Fortress` mode selector, always-on colorblind-safe overlays + status copy in `ArrangeHoldSheet` (clean `HoldGrid`), updated `8 × 12` Playwright pins, and `marginInline: calc(-1 * var(--space-3))` for `360–390 px` zero-scroll fit.
