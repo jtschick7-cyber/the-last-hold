@@ -42,7 +42,7 @@ const OLD = ['v15.json', 'v15-owner.json', 'v15-played.json'];
 describe('the v15 → v16 migration', () => {
   it('is schema 16, keeps rules version 6, and syncs frontRows with lane table max', () => {
     expect(SCHEMA_VERSION).toBe(16);
-    expect(RULES_VERSION).toBe(6);
+    expect(RULES_VERSION).toBe(7);
     expect(balance.breach.frontRows.value).toBe(5);
     expect(balance.breach.frontRows.locked).toBe(true);
     expect(MAX_PIECES_PER_COLUMN).toBe(5);

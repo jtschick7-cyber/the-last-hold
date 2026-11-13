@@ -42,7 +42,7 @@ const withLayout = (layout: unknown): Env => {
 describe('the v11 → v12 migration', () => {
   it('is schema 12, and rules version is 6 from v1.5', () => {
     expect(SCHEMA_VERSION).toBe(16); // D624 (a): was 15 before v1.8
-    expect(RULES_VERSION).toBe(6);
+    expect(RULES_VERSION).toBe(7);
     expect(readFixture('v11-owner.json').schemaVersion).toBe(11);
     expect(readFixture('v12.json').schemaVersion).toBe(12);
   });
@@ -131,6 +131,7 @@ describe('a new game and the Long Night (D502)', () => {
         'woodcutter-1': { x: 4, y: 5 },
       },
       showGhosts: true,
+      presets: [null, null],
     });
   });
 

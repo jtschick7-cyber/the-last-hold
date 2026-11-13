@@ -2170,6 +2170,9 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 | Tower reach | a counted tower's share for a lane d columns away | `breach.towerReach` = [1, 0.5, 0.25] (own column, 1 away, 2 away; nothing beyond) | 5.9.11 |
 | Volley in a lane | floor(the volley per level of §7.6 × Watchtower level × volleyScale × Σ reach ÷ counted towers); 0 when no tower counts; whole-number arithmetic | `breach.volleyScale` = 3 | 5.9.2, 5.9.11 |
 | Suggest layout and the Lanes strip | the lanes of the first N waves (tuning N changes the strip's dots too) | `breach.suggestWaves` = 12 | 5.9.11, 9.25 |
+| Connected Ramparts *(v1.8, D620, placeholder until T18.12)* | `(cover + extra) × (1 + rampartBonus)` when lane `c` holds ≥ 1 active connected front `wall-*` (`wallConnectionMask > 0`) in `y = 0..4` | `breach.rampartBonus` = 0.15 | 5.9.11 |
+| Screened Volley *(v1.8, D620, placeholder until T18.12)* | counted front `watchtower-*` (`y = 0..4`) with an active connected `wall-*` directly north (`y - 1`, `wallConnectionMask > 0`) scales its reach weight × `(1 + screenedBonus)` in whole-number arithmetic | `breach.screenedBonus` = 0.25 | 5.9.11 |
+| Sector Support *(v1.8, D620, placeholder until T18.12)* | `sector = 0..2` distinct active `barracks` / `lodge` covering `x ± 1`: `volley × (1 + sector × sectorBonus)` and `partyTaken × (1 − sector × sectorBonus)` | `breach.sectorBonus` = 0.05 | 5.9.11 |
 
 ### 7.16 Hold layout & tactics *(v1.8, D619, D625; placeholders until T18.12)*
 

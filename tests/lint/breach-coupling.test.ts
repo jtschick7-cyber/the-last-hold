@@ -157,6 +157,9 @@ describe('each breach.* key is read in one file under src/core', () => {
     'suggestWaves',
     'lanes',
     'frontRows',
+    'rampartBonus',
+    'screenedBonus',
+    'sectorBonus',
   ];
   it.each(KEYS)('breach.%s', (key) => {
     const readers = core

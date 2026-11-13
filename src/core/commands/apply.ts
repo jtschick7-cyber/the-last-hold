@@ -72,10 +72,12 @@ import {
 import { openOrders } from '../systems/orders-open';
 import { autoPlaceUnlocked, unlockedPieces } from '../systems/layout-place';
 import {
+  layoutApplyPreset,
   layoutAutoArrange,
   layoutClear,
   layoutSetDefenses,
   layoutPlace,
+  layoutSavePreset,
   layoutSetShowGhosts,
   layoutUnplace,
 } from './layout';
@@ -138,13 +140,17 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
     case 'layout.unplace':
       return layoutUnplace(state, cmd.pieceId);
     case 'layout.autoArrange':
-      return layoutAutoArrange(state);
+      return layoutAutoArrange(state, cmd.mode);
     case 'layout.clear':
       return layoutClear(state);
     case 'layout.setDefenses':
       return layoutSetDefenses(state, cmd.moves);
     case 'layout.setShowGhosts':
       return layoutSetShowGhosts(state, cmd.showGhosts);
+    case 'layout.savePreset':
+      return layoutSavePreset(state, cmd.slot);
+    case 'layout.applyPreset':
+      return layoutApplyPreset(state, cmd.slot);
     case 'contract.launch':
       return launch(state, cmd.contract, cmd.party, cmd.confirmReckless === true, cmd.prep);
     case 'contract.decline':

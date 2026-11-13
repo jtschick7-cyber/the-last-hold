@@ -409,6 +409,9 @@ export const balance = {
     towerReach: tunable([1, 0.5, 0.25]), // own column, 1 away, 2 away; multiples of 0.25
     volleyScale: tunable(3), // restores today's average volley (TB.12 table, D598); in hundredths
     suggestWaves: tunable(12), // waves the Suggest rule and the strip's dots look at
+    rampartBonus: tunable(0.15), // connected north wall rampart cover boost (v1.8, D620, T18.12 placeholder)
+    screenedBonus: tunable(0.25), // watchtower screened-volley reach boost (v1.8, D620, T18.12 placeholder)
+    sectorBonus: tunable(0.05), // barracks / lodge per-support sector boost (v1.8, D620, T18.12 placeholder)
   },
   layout: {
     // GDD §7.16 (v1.8, D619, D625): placeholder tactical multipliers calibrated in T18.12

@@ -98,6 +98,7 @@ const shiftLayout = (state: HoldLayoutState, bounds: ClearingBounds): HoldLayout
   return {
     showGhosts: state.showGhosts,
     placed: placed as HoldLayoutState['placed'],
+    presets: state.presets ?? [null, null],
   };
 };
 
@@ -116,6 +117,7 @@ export const v15ToV16: Migration = (state) => {
   const layout: HoldLayoutState = {
     placed: rawLayout.placed,
     showGhosts: Boolean(rawLayout.showGhosts),
+    presets: rawLayout.presets ?? [null, null],
   };
   return {
     ...next,

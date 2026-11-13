@@ -163,6 +163,9 @@ describe('the pieces that count (D581, D618)', () => {
       depthMax: balance.breach.depthMax.value,
       towerReach: balance.breach.towerReach.value,
       volleyScale: balance.breach.volleyScale.value,
+      rampartBonus: balance.breach.rampartBonus.value,
+      screenedBonus: balance.breach.screenedBonus.value,
+      sectorBonus: balance.breach.sectorBonus.value,
     });
     expect(t.k.towerReach).not.toBe(balance.breach.towerReach.value); // a copy, never the live array
   });

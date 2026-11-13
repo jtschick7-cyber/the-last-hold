@@ -81,7 +81,7 @@ const block = (patch: Record<string, unknown>) => ({ ...EMPTY, ...patch });
 describe('the v13 → v14 migration', () => {
   it('is schema 14, and rules version is 6 from v1.5', () => {
     expect(SCHEMA_VERSION).toBe(16); // D624 (a): was 15 before v1.8
-    expect(RULES_VERSION).toBe(6);
+    expect(RULES_VERSION).toBe(7);
     expect(readFixture('v13-owner.json').schemaVersion).toBe(13);
     expect(readFixture('v14.json').schemaVersion).toBe(14);
   });

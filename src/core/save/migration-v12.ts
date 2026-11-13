@@ -4,7 +4,7 @@ import type { Migration } from './migrations';
 // v11 → v12 (plan TL.1, D502, technical design §19.2): the Hold's layout blueprint at the time
 // v12 shipped on the original 8 × 8 grid. Keeping v12's frozen coordinates here ensures v1..v11
 // saves pass once through the v15 → v16 inner-ward shift without double-shifting.
-const V12_CANONICAL_LAYOUT: HoldLayoutState = {
+const V12_CANONICAL_LAYOUT: Omit<HoldLayoutState, 'presets'> = {
   showGhosts: true,
   placed: {
     'hearth-hall': { x: 3, y: 3 },

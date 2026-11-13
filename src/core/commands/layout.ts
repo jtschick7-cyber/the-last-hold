@@ -2,7 +2,16 @@ import { HOLD_PIECE_IDS, type HoldPieceId } from '../../content/hold-layout';
 import { setDefenses } from '../systems/breach';
 import type { GameState } from '../state/game-state';
 import { getPieceStatus } from '../systems/layout';
-import { autoArrange, dropPiece, placePiece, placeRefusal } from '../systems/layout-place';
+import {
+  applyPresetSlot,
+  autoArrange,
+  dropPiece,
+  isArrangeMode,
+  isPresetSlot,
+  placePiece,
+  placeRefusal,
+  savePresetSlot,
+} from '../systems/layout-place';
 import { ok, refuse, type ApplyResult } from './types';
 
 // Technical design §19.3 (D502): the Hold's layout commands. Decorative in v1.1: they change only
@@ -32,9 +41,22 @@ export const layoutUnplace = (state: GameState, id: HoldPieceId): ApplyResult =>
   return ok;
 };
 
-export const layoutAutoArrange = (state: GameState): ApplyResult => {
-  autoArrange(state);
+export const layoutAutoArrange = (state: GameState, mode: unknown = 'balanced'): ApplyResult => {
+  if (!isArrangeMode(mode)) return refuse('layout: unknown arrange mode');
+  autoArrange(state, mode);
   return ok;
+};
+
+export const layoutSavePreset = (state: GameState, slot: unknown): ApplyResult => {
+  if (!isPresetSlot(slot)) return refuse('layout: invalid preset slot');
+  savePresetSlot(state, slot);
+  return ok;
+};
+
+export const layoutApplyPreset = (state: GameState, slot: unknown): ApplyResult => {
+  if (!isPresetSlot(slot)) return refuse('layout: invalid preset slot');
+  const why = applyPresetSlot(state, slot);
+  return why ? refuse(why) : ok;
 };
 
 /** Everything but the Hearth Hall leaves the blueprint: built pieces wait in the tray. */

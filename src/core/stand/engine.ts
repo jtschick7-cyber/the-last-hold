@@ -11,8 +11,9 @@ import type { Explained } from '../breakdown/breakdown';
 import type { Preparation } from '../state/game-state';
 import type { LaneTable } from '../state/lane-table';
 import { DROSS_TIDE, waveAt, type StandPool, type Wave } from './waves';
-import { laneOf, logHeader, volley as laneVolley, wallCut } from '../systems/breach';
+import { laneOf, logHeader, sectorCut, volley as laneVolley, wallCut } from '../systems/breach';
 import { waveFactor } from '../systems/vigil';
+import { RULES_VERSION } from '../rules-version';
 
 // GDD §5.9.3 (D107, D115): the Last Stand runs one wave at a time through the
 // contract fight engine, with these differences: Health carries over and standing
@@ -46,10 +47,12 @@ export interface StandInput {
   /** Rising Vigil level the stand is fought at (v13, GDD §5.9.10); absent means 0, as every stand before v1.3. */
   readonly vigilLevel?: number;
   /**
-   * The lane table frozen at Start (v15, technical design §23.4). Present: a version 6 stand, where each
-   * wave's lane gives its wall cut and volley. Absent: the version 5 path, bit for bit.
+   * The lane table frozen at Start (v15, technical design §23.4; extended v18, §25.3). Present: a
+   * version 6/7 stand, where each wave's lane gives its wall cut and volley. Absent: version 5.
    */
   readonly lanes?: LaneTable;
+  /** Rules version in force for this stand (5, 6, or 7; defaults to current `RULES_VERSION`). */
+  readonly rulesVersion?: number;
 }
 
 export interface WaveOutcome {
@@ -181,7 +184,10 @@ export const runStand = (input: StandInput): StandResult => {
       input.lanes && lane !== undefined
         ? laneVolley(input.lanes, input.defenses.watchtower, lane)
         : undefined;
-    const partyTaken = cut ? standTaken(input.defenses, input.relics, cut.value) : flatTaken;
+    const baseTaken = cut ? standTaken(input.defenses, input.relics, cut.value) : flatTaken;
+    const isV7 = (input.rulesVersion ?? RULES_VERSION) >= 7;
+    const sector = isV7 && input.lanes && lane !== undefined ? sectorCut(input.lanes, lane) : 0;
+    const partyTaken = sector > 0 ? baseTaken + Math.max(0, 1 - baseTaken) * sector : baseTaken;
     const volley = shot ? shot.value : flatVolley;
     const bombs = waveBombs(wave.monster, stock);
     const potions = Object.fromEntries(

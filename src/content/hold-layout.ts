@@ -227,3 +227,24 @@ export const DEFENSE_TILE_ORDER: readonly GridCoord[] = [
   { x: GRID_COLS - 1, y: 2 },
   ...Array.from({ length: GRID_COLS }, (_, x) => ({ x, y: 0 })),
 ];
+
+/** Scoring weights for suggestLayout's Warded-hearth and Warded-plot preferences. */
+export const WARD_SUGGEST_WEIGHTS = {
+  hearthWarded: 100_000,
+  wardedPlot: 2_000,
+  unreachedClear: 10,
+} as const;
+
+/** Column preference orders and row bands used by Auto-arrange modes (`economy` and `fortress`). */
+export const ARRANGE_PATTERNS = {
+  frontRowMaxY: 4,
+  supportStartY: 5,
+  centerToEdgeCols: [2, 3, 4, 5, 1, 6, 0, 7] as readonly number[],
+  edgeToCenterCols: [0, 7, 1, 6, 2, 5, 3, 4] as readonly number[],
+  westToEastCols: [0, 1, 2, 3, 4, 5, 6, 7] as readonly number[],
+  towerScreenCols: [1, 4, 6, 2, 5, 3, 0, 7] as readonly number[],
+  supportPrefCols: [
+    ['barracks', [2, 3, 1, 4, 5, 0, 6, 7] as readonly number[]],
+    ['lodge', [5, 4, 3, 6, 2, 1, 7, 0] as readonly number[]],
+  ] as const,
+} as const;

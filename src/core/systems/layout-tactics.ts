@@ -7,6 +7,7 @@ import {
   type GridCoord,
   type HoldPieceId,
 } from '../../content/hold-layout';
+import { MAX_PIECES_PER_COLUMN } from '../state/lane-table';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
 import { num } from '../balance-access';
 import type { Breakdown, Explained } from '../breakdown/breakdown';
@@ -45,6 +46,10 @@ export interface HoldTacticsSummary {
   readonly wardedPlots: Readonly<Record<ResourceId, readonly HoldPieceId[]>>;
   /** Active wall-* segments that orthogonally touch >= 1 other active defense piece. */
   readonly connectedWalls: ReadonlySet<HoldPieceId>;
+  /** Active front-zone (y = 0..4) watchtowers standing directly south (y - 1) of a connected wall. */
+  readonly screenedTowers: ReadonlySet<HoldPieceId>;
+  /** Per-column (0..7) count of distinct active support types (`barracks`, `lodge`) across x +/- 1. */
+  readonly sectorSupport: readonly number[];
   readonly wardedThreatCut: number;
   readonly brewCut: number;
   readonly productionBonus: Readonly<Record<ResourceId, number>>;
@@ -151,6 +156,8 @@ interface HoldGeometry {
   readonly wardedPieces: ReadonlySet<HoldPieceId>;
   readonly wardedPlots: Readonly<Record<ResourceId, readonly HoldPieceId[]>>;
   readonly connectedWalls: ReadonlySet<HoldPieceId>;
+  readonly screenedTowers: ReadonlySet<HoldPieceId>;
+  readonly sectorSupport: readonly number[];
 }
 
 const computeNorthReach = (blocked: readonly boolean[]): boolean[] => {
@@ -261,10 +268,26 @@ const computeGeometry = (state: GameState): HoldGeometry => {
     silver: [],
   };
   const connectedWalls = new Set<HoldPieceId>();
+  const connectedWallTiles = new Set<string>();
+  const screenedTowers = new Set<HoldPieceId>();
+  const sectorSupport = new Array<number>(GRID_COLS).fill(0);
+  const sectorMask = new Array<number>(GRID_COLS).fill(0);
 
   for (const def of PIECES) {
     const tiles = activeTiles.get(def.id);
     if (!tiles) continue;
+    if (def.id === 'barracks' || def.id === 'lodge') {
+      const bit = def.id === 'barracks' ? 1 : 2;
+      for (const tile of tiles) {
+        for (let dx = -1; dx <= 1; dx += 1) {
+          const cx = tile.x + dx;
+          if (cx >= 0 && cx < GRID_COLS && ((sectorMask[cx] ?? 0) & bit) === 0) {
+            sectorMask[cx] = (sectorMask[cx] ?? 0) | bit;
+            sectorSupport[cx] = (sectorSupport[cx] ?? 0) + 1;
+          }
+        }
+      }
+    }
     if (isDefensePiece(def.id)) {
       if (
         def.id.startsWith('wall-') &&
@@ -272,6 +295,7 @@ const computeGeometry = (state: GameState): HoldGeometry => {
         wallConnectionMask(defenses, tiles[0].x, tiles[0].y) !== 0
       ) {
         connectedWalls.add(def.id);
+        connectedWallTiles.add(coordKey(tiles[0].x, tiles[0].y));
       }
       continue;
     }
@@ -280,6 +304,19 @@ const computeGeometry = (state: GameState): HoldGeometry => {
     wardedPieces.add(def.id);
     const plotResource = PLOT_RESOURCE[def.building];
     if (plotResource) wardedPlots[plotResource].push(def.id);
+  }
+
+  for (const def of PIECES) {
+    if (!def.id.startsWith('watchtower-')) continue;
+    const t = activeTiles.get(def.id)?.[0];
+    if (
+      t &&
+      t.y > 0 &&
+      t.y < MAX_PIECES_PER_COLUMN &&
+      connectedWallTiles.has(coordKey(t.x, t.y - 1))
+    ) {
+      screenedTowers.add(def.id);
+    }
   }
 
   const hearthWarded = wardedPieces.has('hearth-hall');
@@ -291,6 +328,8 @@ const computeGeometry = (state: GameState): HoldGeometry => {
     wardedPieces,
     wardedPlots,
     connectedWalls,
+    screenedTowers,
+    sectorSupport,
   };
 };
 
@@ -383,6 +422,8 @@ export const evaluateHoldTactics = (state: GameState): HoldTacticsSummary => {
     wardedPieces: geom.wardedPieces,
     wardedPlots: geom.wardedPlots,
     connectedWalls: geom.connectedWalls,
+    screenedTowers: geom.screenedTowers,
+    sectorSupport: geom.sectorSupport,
     wardedThreatCut: geom.hearthWarded ? num('layout.wardedThreatCut') : 0,
     brewCut: Math.min(1, Math.max(0, geom.byKind.brew.length * num('layout.adjBrew'))),
     productionBonus,

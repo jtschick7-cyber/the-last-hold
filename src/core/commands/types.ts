@@ -16,6 +16,7 @@ import type { PolicyId } from '../policies/schedules';
 import type { Preparation, Settings } from '../state/game-state';
 import type { UpgradeId } from '../../content/warden-upgrades';
 import type { HoldPieceId } from '../../content/hold-layout';
+import type { LayoutArrangeMode, LayoutPresetSlot } from '../state/layout-state';
 
 // Technical design §4.3: every player action is a plain JSON Command, applied
 // through apply(). The UI, the simulator and the debug panel all use these.
@@ -70,13 +71,15 @@ export type Command =
   | { type: 'roster.set'; hunter: HunterId; active: boolean }
   | { type: 'gear.upgrade'; hunter: HunterId; slot: GearSlot }
   | { type: 'settings.set'; patch: Partial<Settings> }
-  /** Technical design §19.3: moves a piece of the Hold's layout (decorative in v1.1). */
+  /** Technical design §19.3 & §25.1: moves a piece of the Hold's layout or manages presets/modes. */
   | { type: 'layout.place'; pieceId: HoldPieceId; x: number; y: number }
   | { type: 'layout.unplace'; pieceId: HoldPieceId }
-  | { type: 'layout.autoArrange' }
+  | { type: 'layout.autoArrange'; mode?: LayoutArrangeMode }
   | { type: 'layout.clear' }
   | { type: 'layout.setDefenses'; moves: { pieceId: HoldPieceId; x: number; y: number }[] }
   | { type: 'layout.setShowGhosts'; showGhosts: boolean }
+  | { type: 'layout.savePreset'; slot: LayoutPresetSlot }
+  | { type: 'layout.applyPreset'; slot: LayoutPresetSlot }
   /** GDD §5.9.10: the Rising Vigil switch (technical design §21.3). */
   | { type: 'vigil.set'; on: boolean }
   /** GDD §5.15.10: the Descent, fought at once (v1.4). `order` is the marching order, front line first. */

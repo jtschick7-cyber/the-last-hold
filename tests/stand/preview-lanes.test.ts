@@ -38,7 +38,14 @@ describe('the preview request', () => {
     const text = JSON.stringify(input);
     expect(text).not.toContain('"placed"');
     expect(text).not.toContain('"tray"');
-    expect(Object.keys(input.stand.lanes ?? {}).sort()).toEqual(['k', 'pieces', 'towerCols']);
+    expect(Object.keys(input.stand.lanes ?? {}).sort()).toEqual([
+      'k',
+      'pieces',
+      'rampartCols',
+      'screened',
+      'sectorCols',
+      'towerCols',
+    ]);
   });
 });
 
