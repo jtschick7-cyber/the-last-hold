@@ -9,6 +9,7 @@ import {
 } from '../../content/hold-layout';
 import { MAX_PIECES_PER_COLUMN } from '../state/lane-table';
 import { RESOURCE_IDS, type ResourceId } from '../../content/resources';
+import { V18_TEXT } from '../../content/v18-text';
 import { num } from '../balance-access';
 import type { Breakdown, Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
@@ -60,7 +61,7 @@ interface DistrictSpec {
   readonly building: BuildingId;
   readonly hubId: HoldPieceId;
   readonly key: BalanceKey;
-  readonly label: string;
+  readonly linksLabel: (count: number) => string;
   readonly resource?: ResourceId;
 }
 
@@ -70,7 +71,7 @@ const DISTRICT_SPECS: readonly DistrictSpec[] = [
     building: 'farm',
     hubId: 'mill',
     key: 'layout.adjFood',
-    label: 'Mill',
+    linksLabel: V18_TEXT.millLinks,
     resource: 'food',
   },
   {
@@ -78,7 +79,7 @@ const DISTRICT_SPECS: readonly DistrictSpec[] = [
     building: 'woodcutters-camp',
     hubId: 'sawpit',
     key: 'layout.adjWood',
-    label: 'Sawpit',
+    linksLabel: V18_TEXT.sawpitLinks,
     resource: 'wood',
   },
   {
@@ -86,7 +87,7 @@ const DISTRICT_SPECS: readonly DistrictSpec[] = [
     building: 'mine',
     hubId: 'smithy',
     key: 'layout.adjIron',
-    label: 'Smithy',
+    linksLabel: V18_TEXT.smithyLinks,
     resource: 'iron',
   },
   {
@@ -94,7 +95,7 @@ const DISTRICT_SPECS: readonly DistrictSpec[] = [
     building: 'silver-seam',
     hubId: 'smithy',
     key: 'layout.adjSilver',
-    label: 'Smithy',
+    linksLabel: V18_TEXT.smithyLinks,
     resource: 'silver',
   },
   {
@@ -102,7 +103,7 @@ const DISTRICT_SPECS: readonly DistrictSpec[] = [
     building: 'herb-garden',
     hubId: 'alchemist',
     key: 'layout.adjBrew',
-    label: 'Alchemist',
+    linksLabel: V18_TEXT.alchemistLinks,
   },
 ];
 
@@ -358,7 +359,7 @@ const productionLines = (geom: HoldGeometry, resource: ResourceId): Breakdown[] 
     if (count > 0) {
       const per = num(spec.key);
       lines.push({
-        label: `${spec.label} links (${count})`,
+        label: spec.linksLabel(count),
         value: count * per,
         formula: `${count} × ${per}`,
         key: spec.key,
@@ -370,7 +371,7 @@ const productionLines = (geom: HoldGeometry, resource: ResourceId): Breakdown[] 
       const per = num('layout.adjCottage');
       const count = geom.warmCottages.length;
       lines.push({
-        label: `Warm Cottages (${count})`,
+        label: V18_TEXT.warmCottages(count),
         value: count * per,
         formula: `${count} × ${per}`,
         key: 'layout.adjCottage',
@@ -379,7 +380,7 @@ const productionLines = (geom: HoldGeometry, resource: ResourceId): Breakdown[] 
     if (geom.trophyLinked) {
       const val = num('layout.adjTrophy');
       lines.push({
-        label: 'Trophy Hall link',
+        label: V18_TEXT.trophyLink,
         value: val,
         formula: `1 × ${val}`,
         key: 'layout.adjTrophy',
@@ -390,7 +391,7 @@ const productionLines = (geom: HoldGeometry, resource: ResourceId): Breakdown[] 
   if (wardedCount > 0) {
     const per = num('layout.wardedBonus');
     lines.push({
-      label: `Warded plots (${wardedCount})`,
+      label: V18_TEXT.wardedPlots(wardedCount),
       value: wardedCount * per,
       formula: `${wardedCount} × ${per}`,
       key: 'layout.wardedBonus',
@@ -443,7 +444,7 @@ export const tacticalProductionFactor = (
   return {
     value,
     breakdown: {
-      label: 'Hold tactics',
+      label: V18_TEXT.holdTactics,
       value,
       formula: '1 + Σ tactics',
       children: lines,
@@ -461,7 +462,7 @@ export const tacticalThreatFactor = (state: GameState): Explained | null => {
   return {
     value,
     breakdown: {
-      label: 'Warded Hearth Hall',
+      label: V18_TEXT.wardedHearthHall,
       value,
       formula: `1 − ${cut}`,
       key: 'layout.wardedThreatCut',
@@ -473,4 +474,31 @@ export const tacticalThreatFactor = (state: GameState): Explained | null => {
 export const tacticalBrewCut = (state: GameState): number => {
   const geom = memoGeometry(state);
   return Math.min(1, Math.max(0, geom.byKind.brew.length * num('layout.adjBrew')));
+};
+
+/** Multiplicative brew/experiment time factor from Alchemist + Herb Garden links, or null at 1.0x. */
+export const tacticalBrewFactor = (state: GameState): Explained | null => {
+  const geom = memoGeometry(state);
+  const count = geom.byKind.brew.length;
+  if (count === 0) return null;
+  const per = num('layout.adjBrew');
+  const cut = Math.min(1, Math.max(0, count * per));
+  if (cut <= 0) return null;
+  const value = 1 - cut;
+  return {
+    value,
+    breakdown: {
+      label: V18_TEXT.holdTactics,
+      value,
+      formula: `1 − ${cut}`,
+      children: [
+        {
+          label: V18_TEXT.alchemistLinks(count),
+          value: cut,
+          formula: `${count} × ${per}`,
+          key: 'layout.adjBrew',
+        },
+      ],
+    },
+  };
 };

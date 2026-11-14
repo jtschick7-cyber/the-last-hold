@@ -1,4 +1,5 @@
 import { ages } from '../../content/ages';
+import { V18_TEXT } from '../../content/v18-text';
 import { appSettings, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { useEffect } from 'preact/hooks';
@@ -10,6 +11,7 @@ import { PeasantsPanel } from './PeasantsPanel';
 import { HoldScene } from '../widgets/HoldScene';
 import { HoldGrid } from '../widgets/HoldGrid';
 import { openArrangeHold } from '../sheets/ArrangeHoldSheet';
+import { openHoldLook } from '../sheets/HoldLookSheet';
 import { buildHoldGridView } from '../../core/systems/layout';
 import { ThreatMeter } from '../widgets/ThreatMeter';
 import { LongNightView, lastStand } from '../sheets/LongNightSheets';
@@ -42,10 +44,11 @@ export const HoldScreen = () => {
         <div class={styles.holdSky} data-threat={threatTier(s.threat)}>
           {appSettings.value.holdView === 'grid' ? <HoldGrid /> : <HoldScene age={s.cycle.age} />}
         </div>
-        <div class={styles.row}>
+        <div class={styles.row} style={{ flexWrap: 'wrap', gap: 'var(--space-1)' }}>
           <h1
             class={`${styles.grow} ${styles.cardTitle}`}
             style={{
+              flex: '1 1 11rem',
               fontSize: 'calc(1.6rem * var(--text-undo))',
               color: 'var(--c-ember)',
               textTransform: 'none',
@@ -68,6 +71,14 @@ export const HoldScreen = () => {
             onClick={openArrangeHold}
           >
             {tray > 0 ? `Layout (${tray}) ▸` : 'Layout ▸'}
+          </button>
+          <button
+            type="button"
+            class={styles.btn}
+            data-hold-look-button="hold"
+            onClick={openHoldLook}
+          >
+            {V18_TEXT.holdLookButton}
           </button>
         </div>
         <ThreatMeter />

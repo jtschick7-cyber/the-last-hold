@@ -10,7 +10,8 @@ import { replayStand } from '../../src/core/stand/replay';
 import type { GameState, StandRecord } from '../../src/core/state/game-state';
 import { noPreparation } from '../../src/core/state/game-state';
 import { createNewGame } from '../../src/core/state/new-game';
-import { laneTableFor, volley, wallCut } from '../../src/core/systems/breach';
+import { V18_TEXT } from '../../src/content/v18-text';
+import { laneTableFor, laneView, volley, wallCut } from '../../src/core/systems/breach';
 import { evaluateHoldTactics } from '../../src/core/systems/layout-tactics';
 
 const NOW = 1_700_000_000_000;
@@ -357,5 +358,57 @@ describe('v7 Breach rules (rulesVersion 7)', () => {
     expect(arrReplay.waves.map((w) => w.fight.result)).toEqual(
       arrAsV5.waves.map((w) => w.fight.result),
     );
+  });
+
+  it('exposes nested Screened watchtower breakdown, v7 LaneView fields, and WaveOutcome.breach v7 lines', () => {
+    const s = bastionState('v7-breakdowns');
+    s.buildings.barracks = 1;
+    s.buildings['hunters-lodge'] = 1;
+    expect(apply(s, { type: 'layout.place', pieceId: 'wall-1', x: 2, y: 1 }, NOW).ok).toBe(true);
+    expect(apply(s, { type: 'layout.place', pieceId: 'wall-2', x: 3, y: 1 }, NOW).ok).toBe(true);
+    expect(apply(s, { type: 'layout.place', pieceId: 'watchtower-1', x: 2, y: 2 }, NOW).ok).toBe(
+      true,
+    );
+    expect(apply(s, { type: 'layout.place', pieceId: 'barracks', x: 2, y: 5 }, NOW).ok).toBe(true);
+    expect(apply(s, { type: 'layout.place', pieceId: 'lodge', x: 2, y: 6 }, NOW).ok).toBe(true);
+
+    const table = laneTableFor(s);
+    const v = volley(table, s.buildings.watchtower, 2);
+    const towerChild = v.breakdown.children?.find((c) => c.key === 'breach.screenedBonus');
+    expect(towerChild?.children).toEqual([
+      { label: V18_TEXT.screenedBonus(25), value: 0.25, key: 'breach.screenedBonus' },
+    ]);
+    expect(v.breakdown.children?.some((c) => c.label === V18_TEXT.sectorSupport(10))).toBe(true);
+    const wc = wallCut(table, s.buildings.walls, 2);
+    expect(wc.breakdown.children?.some((c) => c.label === V18_TEXT.connectedRampart(15))).toBe(
+      true,
+    );
+
+    const lv = laneView(s);
+    expect(lv.screenedCount).toBe(1);
+    expect(lv.lanes[2]).toMatchObject({
+      rampartPercent: 15,
+      screenedTowers: 1,
+      sectorPercent: 10,
+    });
+
+    const v7Stand = runStand({
+      ...standInputFor(s, s.roster.active, noPreparation()),
+      rulesVersion: 7,
+      log: true,
+    });
+    const waveInLane2 = v7Stand.waves.find((w) => w.breach?.lane === 2);
+    if (waveInLane2?.breach) {
+      expect(
+        waveInLane2.breach.wallCut.breakdown.children?.some(
+          (c) => c.label === V18_TEXT.connectedRampart(15),
+        ),
+      ).toBe(true);
+      expect(
+        waveInLane2.breach.volley.breakdown.children?.some(
+          (c) => c.label === V18_TEXT.sectorSupport(10),
+        ),
+      ).toBe(true);
+    }
   });
 });

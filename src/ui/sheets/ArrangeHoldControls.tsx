@@ -1,4 +1,5 @@
 import { BREACH_TEXT } from '../../content/breach-text';
+import { ARRANGE_TEXT, V18_TEXT } from '../../content/v18-text';
 import type {
   LayoutArrangeMode,
   LayoutPresetSlot,
@@ -14,17 +15,18 @@ interface ControlsProps {
   readonly onAutoArrange: () => void;
   readonly onRequestClear: () => void;
   readonly onSuggest: () => void;
+  readonly onOpenHoldLook: () => void;
   readonly onSavePreset: (slot: LayoutPresetSlot) => void;
   readonly onApplyPreset: (slot: LayoutPresetSlot) => void;
 }
 
 const MODES: readonly (readonly [LayoutArrangeMode, string])[] = [
-  ['balanced', 'Balanced'],
-  ['economy', 'Economy'],
-  ['fortress', 'Fortress'],
+  ['balanced', ARRANGE_TEXT.modeBalanced],
+  ['economy', ARRANGE_TEXT.modeEconomy],
+  ['fortress', ARRANGE_TEXT.modeFortress],
 ];
 
-/** Mode selector, Arrange/Clear/Suggest action buttons, and 2-slot Preset bar for Arrange Hold. */
+/** Mode selector, Arrange/Clear/Suggest/Hold Look buttons, and 2-slot Preset bar for Arrange Hold. */
 export const ArrangeHoldControls = ({
   mode,
   presets,
@@ -33,6 +35,7 @@ export const ArrangeHoldControls = ({
   onAutoArrange,
   onRequestClear,
   onSuggest,
+  onOpenHoldLook,
   onSavePreset,
   onApplyPreset,
 }: ControlsProps) => (
@@ -41,7 +44,7 @@ export const ArrangeHoldControls = ({
       <div
         class={styles.segmentedWrap}
         role="group"
-        aria-label="Layout mode"
+        aria-label={ARRANGE_TEXT.layoutMode}
         style={{ marginBottom: 'var(--space-2)' }}
       >
         {MODES.map(([value, label]) => (
@@ -69,6 +72,14 @@ export const ArrangeHoldControls = ({
             {BREACH_TEXT.suggest}
           </button>
         )}
+        <button
+          type="button"
+          class={styles.btn}
+          data-hold-look-button="arrange"
+          onClick={onOpenHoldLook}
+        >
+          {V18_TEXT.holdLookButton}
+        </button>
       </div>
     </div>
 
@@ -76,10 +87,10 @@ export const ArrangeHoldControls = ({
       class={styles.divider}
       data-presets-bar="true"
       role="region"
-      aria-label="Presets"
+      aria-label={ARRANGE_TEXT.presets}
       style={{ paddingTop: 'var(--space-2)' }}
     >
-      <h3 class={styles.cardTitle}>Presets</h3>
+      <h3 class={styles.cardTitle}>{ARRANGE_TEXT.presets}</h3>
       {([0, 1] as const).map((slotIdx) => {
         const preset = presets[slotIdx];
         const savedCount = preset ? preset.filter((c) => c !== null).length : 0;
@@ -92,9 +103,9 @@ export const ArrangeHoldControls = ({
             style={{ flexWrap: 'wrap', marginBottom: 'var(--space-1)' }}
           >
             <span class={styles.grow} style={{ flex: '1 1 7rem' }}>
-              <strong>Slot {slotNum}</strong>{' '}
+              <strong>{ARRANGE_TEXT.slot(slotNum)}</strong>{' '}
               <span class={styles.small} data-preset-status={slotNum}>
-                {preset ? `${savedCount} placed` : 'Empty'}
+                {preset ? ARRANGE_TEXT.placedCount(savedCount) : ARRANGE_TEXT.empty}
               </span>
             </span>
             <button
@@ -104,7 +115,7 @@ export const ArrangeHoldControls = ({
               aria-label={`Save Slot ${slotNum}`}
               onClick={() => onSavePreset(slotIdx)}
             >
-              Save
+              {ARRANGE_TEXT.save}
             </button>
             <button
               type="button"
@@ -114,7 +125,7 @@ export const ArrangeHoldControls = ({
               disabled={!preset}
               onClick={() => onApplyPreset(slotIdx)}
             >
-              Apply
+              {ARRANGE_TEXT.apply}
             </button>
           </div>
         );

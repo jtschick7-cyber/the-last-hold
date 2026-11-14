@@ -1,5 +1,6 @@
 import { signal } from '@preact/signals';
 import { useEffect, useState } from 'preact/hooks';
+import { ARRANGE_TEXT } from '../../content/v18-text';
 import { BREACH_TEXT } from '../../content/breach-text';
 import { ages } from '../../content/ages';
 import { buildings } from '../../content/buildings';
@@ -26,6 +27,7 @@ import { LanesStrip, litLane } from '../widgets/LanesStrip';
 import { Sprite } from '../widgets/Sprite';
 import { ArrangeHoldControls } from './ArrangeHoldControls';
 import { ArrangeHoldOverlays } from './ArrangeHoldOverlays';
+import { openHoldLook } from './HoldLookSheet';
 import {
   CELL,
   cellBox,
@@ -240,9 +242,9 @@ export const ArrangeHoldSheet = () => {
       >
         Hearth Hall:{' '}
         <strong class={tactics.hearthWarded ? styles.good : styles.warn}>
-          {tactics.hearthWarded ? 'Warded' : 'Exposed'}
+          {tactics.hearthWarded ? ARRANGE_TEXT.warded : ARRANGE_TEXT.exposed}
         </strong>{' '}
-        · {tactics.links.length} linked · {tactics.screenedTowers.size} Screened
+        · {ARRANGE_TEXT.linked(tactics.links.length)} · {tactics.screenedTowers.size} Screened
       </p>
       <div class={styles.divider} data-info-bar="true" aria-live="polite">
         {note ? (
@@ -323,6 +325,7 @@ export const ArrangeHoldSheet = () => {
             line: null,
           };
         }}
+        onOpenHoldLook={openHoldLook}
         onSavePreset={(slot) => {
           setConfirming(false);
           send({ type: 'layout.savePreset', slot });

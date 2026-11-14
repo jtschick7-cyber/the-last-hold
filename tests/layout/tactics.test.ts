@@ -9,12 +9,19 @@ import { threatRate } from '../../src/core/threat/threat';
 import type { Breakdown } from '../../src/core/breakdown/breakdown';
 import type { GameState } from '../../src/core/state/game-state';
 import { num } from '../../src/core/balance-access';
-import { brewMs, experimentMs } from '../../src/core/alchemy/brewing';
+import {
+  brewDuration,
+  brewMs,
+  experimentDuration,
+  experimentMs,
+} from '../../src/core/alchemy/brewing';
+import { V18_TEXT } from '../../src/content/v18-text';
 import { syncGarden } from '../../src/core/alchemy/garden';
 import { housing } from '../../src/core/systems/housing';
 import {
   evaluateHoldTactics,
   tacticalBrewCut,
+  tacticalBrewFactor,
   tacticalProductionFactor,
   tacticalThreatFactor,
 } from '../../src/core/systems/layout-tactics';
@@ -430,6 +437,50 @@ describe('Breakdown parity & D624 budget', () => {
     const threat = threatRate(s);
     expect(threat.breakdown.value).toBe(threat.value);
     expect(keysIn(threat.breakdown)).toContain('layout.wardedThreatCut');
+    expect(threat.breakdown.children?.some((c) => c.label === V18_TEXT.wardedHearthHall)).toBe(
+      true,
+    );
+
+    const food = productionRate(s, 'food');
+    const holdNode = food.breakdown.children?.find((c) => c.label === V18_TEXT.holdTactics);
+    expect(holdNode?.children?.map((c) => c.label)).toEqual([
+      V18_TEXT.millLinks(1),
+      V18_TEXT.warmCottages(3),
+      V18_TEXT.wardedPlots(3),
+    ]);
+  });
+
+  it('tacticalBrewFactor, brewDuration, and experimentDuration preserve single-source breakdown parity', () => {
+    const s = bastionGame();
+    s.layout.placed = {
+      'hearth-hall': { x: 3, y: 6 },
+      alchemist: { x: 3, y: 8 },
+    };
+    expect(tacticalBrewFactor(s)).toBeNull();
+    const baseBrew = brewDuration(s);
+    const baseExp = experimentDuration(s);
+    expect(baseBrew.value).toBe(brewMs(s) / 1000);
+    expect(baseBrew.breakdown.value).toBe(baseBrew.value);
+    expect(baseBrew.breakdown.label).toBe(V18_TEXT.brewTime);
+    expect(baseExp.value).toBe(experimentMs(s) / 1000);
+    expect(baseExp.breakdown.value).toBe(baseExp.value);
+    expect(baseExp.breakdown.label).toBe(V18_TEXT.experimentTime);
+
+    s.layout.placed['herb-garden-1'] = { x: 4, y: 8 };
+    const factor = tacticalBrewFactor(s);
+    expect(factor?.value).toBeCloseTo(1 - num('layout.adjBrew'), 12);
+    expect(factor?.breakdown.label).toBe(V18_TEXT.holdTactics);
+    expect(factor?.breakdown.children?.map((c) => c.label)).toEqual([V18_TEXT.alchemistLinks(1)]);
+
+    const linkedBrew = brewDuration(s);
+    const linkedExp = experimentDuration(s);
+    expect(linkedBrew.value).toBeCloseTo(brewMs(s) / 1000, 12);
+    expect(linkedBrew.breakdown.value).toBe(linkedBrew.value);
+    expect(linkedExp.value).toBeCloseTo(experimentMs(s) / 1000, 12);
+    expect(linkedExp.breakdown.value).toBe(linkedExp.value);
+    expect(keysIn(linkedBrew.breakdown)).toContain('layout.adjBrew');
+    const brewHold = linkedBrew.breakdown.children?.find((c) => c.label === V18_TEXT.holdTactics);
+    expect(brewHold?.children?.map((c) => c.label)).toEqual([V18_TEXT.alchemistLinks(1)]);
   });
 
   it('evaluates North-Reach + links well within D624 <= 5 ms budget across varied layouts', () => {

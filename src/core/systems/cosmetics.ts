@@ -1,5 +1,5 @@
-import { BOSS_IDS, type BossId } from '../../content/great-beasts';
-import { HUNT_IDS, type HuntId } from '../../content/hunts';
+import { BOSS_IDS, bosses, type BossId } from '../../content/great-beasts';
+import { HUNT_IDS, hunts, quarries, type HuntId } from '../../content/hunts';
 import { COSMETIC_IDS, shopItems, type CosmeticId } from '../../content/delves/shop';
 import {
   COURTYARD_MARK_IDS,
@@ -104,6 +104,7 @@ export interface HoldLookEntry {
   id: HoldCosmeticId;
   kind: 'cosmetic' | 'mark';
   name: string;
+  source: string;
   unlocked: boolean;
   visible: boolean;
 }
@@ -119,12 +120,18 @@ export interface HoldLookView {
 const shopCosmeticName = (id: CosmeticId): string =>
   shopItems.find((item) => item.id === id)?.name ?? id;
 
+const courtyardMarkSource = (id: CourtyardMarkId): string => {
+  const src = courtyardMarkDef(id).source;
+  return src.kind === 'boss' ? bosses[src.bossId].name : quarries[hunts[src.huntId].quarry].name;
+};
+
 /** Projects the Hold Look drawer entries and visible cosmetic/mark lists from GameState. */
 export const holdLookView = (state: GameState): HoldLookView => {
   const shop: HoldLookEntry[] = COSMETIC_IDS.map((id) => ({
     id,
     kind: 'cosmetic',
     name: shopCosmeticName(id),
+    source: 'Riftglass shop',
     unlocked: isCosmeticOwned(state, id),
     visible: isCosmeticVisible(state, id),
   }));
@@ -132,6 +139,7 @@ export const holdLookView = (state: GameState): HoldLookView => {
     id,
     kind: 'mark',
     name: courtyardMarkDef(id).name,
+    source: courtyardMarkSource(id),
     unlocked: isCosmeticOwned(state, id),
     visible: isCosmeticVisible(state, id),
   }));

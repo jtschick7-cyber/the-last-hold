@@ -265,18 +265,25 @@ describe('Event Courtyard Marks & Hold Look toggles (T18.5)', () => {
     expect(look.marks.find((m) => m.id === 'fjord-bone-standard')).toMatchObject({
       unlocked: true,
       visible: false,
+      source: 'The Lindworm of Velk Fjord',
     });
     expect(look.marks.find((m) => m.id === 'barrow-brazier')).toMatchObject({
       unlocked: false,
       visible: false,
+      source: 'The Barrow-King',
+    });
+    expect(look.marks.find((m) => m.id === 'stoneback-cairn')).toMatchObject({
+      source: 'Stoneback the Fell Troll',
     });
     expect(look.shop.find((c) => c.id === 'wall-lanterns')).toMatchObject({
       unlocked: true,
       visible: false,
+      source: 'Riftglass shop',
     });
     expect(look.shop.find((c) => c.id === 'gatehouse-banners')).toMatchObject({
       unlocked: true,
       visible: true,
+      source: 'Riftglass shop',
     });
 
     // Toggle back on explicitly and verify save-size budget <= 0.3 KB (307 B) at max occupancy.

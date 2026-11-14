@@ -1,4 +1,5 @@
 import { BREACH_TEXT } from '../../content/breach-text';
+import { V18_TEXT } from '../../content/v18-text';
 import {
   GRID_COLS,
   GRID_ROWS,
@@ -267,7 +268,7 @@ export const wallCut = (table: LaneTable, wallsLevel: number, c: number): Explai
     });
   if (rampart > 0)
     children.push({
-      label: `Connected rampart (+${percent(rampart)}%)`,
+      label: V18_TEXT.connectedRampart(percent(rampart)),
       value: rampart,
       formula: `1 + ${rampart}`,
       key: 'breach.rampartBonus',
@@ -322,16 +323,30 @@ export const volley = (table: LaneTable, towerLevel: number, c: number): Explain
     }
   }
   const children: Breakdown[] = table.towerCols.map((col, i) => {
-    const mult = table.screened?.[i] ? (100 + screenPct) / 100 : 1;
+    const share = shares[i] ?? 0;
+    const isScreened = Boolean(table.screened?.[i]) && screenPct > 0;
+    const mult = isScreened ? (100 + screenPct) / 100 : 1;
     return {
-      label: BREACH_TEXT.tower(col + 1, shares[i] ?? 0),
-      value: ((shares[i] ?? 0) * mult) / 100,
-      key: table.screened?.[i] ? 'breach.screenedBonus' : 'breach.towerReach',
+      label: BREACH_TEXT.tower(col + 1, share),
+      value: (share * mult) / 100,
+      key: isScreened ? 'breach.screenedBonus' : 'breach.towerReach',
+      ...(isScreened
+        ? {
+            formula: `${share}% × (1 + ${table.k.screenedBonus ?? 0})`,
+            children: [
+              {
+                label: V18_TEXT.screenedBonus(screenPct),
+                value: table.k.screenedBonus ?? 0,
+                key: 'breach.screenedBonus',
+              },
+            ],
+          }
+        : {}),
     };
   });
   if (isV7 && sectorCount > 0 && sectorPct > 0) {
     children.push({
-      label: `Sector support (+${sectorCount * sectorPct}%)`,
+      label: V18_TEXT.sectorSupport(sectorCount * sectorPct),
       value: (sectorCount * sectorPct) / 100,
       formula: `${sectorCount} × ${table.k.sectorBonus}`,
       key: 'breach.sectorBonus',
@@ -364,6 +379,12 @@ export interface LaneInfo {
   readonly coverPieces: readonly HoldPieceId[];
   /** Counted towers whose volley reaches this lane. */
   readonly towerPieces: readonly HoldPieceId[];
+  /** v7 connected-rampart wall cut bonus percent in this lane (0 when inactive). */
+  readonly rampartPercent: number;
+  /** v7 count of Screened Watchtowers whose volley reaches this lane. */
+  readonly screenedTowers: number;
+  /** v7 Sector Support volley & cut bonus percent in this lane (0 when inactive). */
+  readonly sectorPercent: number;
 }
 
 export interface LaneView {
@@ -376,6 +397,8 @@ export interface LaneView {
   readonly none: boolean;
   /** Unlocked walls and towers waiting in the Tray, which give nothing (the Start confirmation's line). */
   readonly trayDefenses: number;
+  /** Total active Screened Watchtowers across the yard. */
+  readonly screenedCount: number;
 }
 
 const build = (state: GameState): LaneView => {
@@ -384,9 +407,16 @@ const build = (state: GameState): LaneView => {
   const seed = standSeed(state);
   const firstWaves = lanesFor(seed, num('breach.suggestWaves'));
   const towers = table.towerCols.length;
+  const rampartPct = percent(table.k.rampartBonus ?? 0);
+  const sectorPct = percent(table.k.sectorBonus ?? 0);
+  const screenedCount = (table.screened ?? []).filter(Boolean).length;
   const lanes = table.pieces.map((_, c): LaneInfo => {
     const covered = cover(table, c);
     const shares = table.towerCols.map((col) => reachShare(table, Math.abs(col - c)));
+    let screenedTowers = 0;
+    for (let i = 0; i < table.towerCols.length; i++) {
+      if (table.screened?.[i] && (shares[i] ?? 0) > 0) screenedTowers += 1;
+    }
     return {
       lane: c + 1,
       cover: covered,
@@ -400,6 +430,9 @@ const build = (state: GameState): LaneView => {
       towerPieces: counted
         .filter((p) => p.tower && reachShare(table, Math.abs(p.x - c)) > 0)
         .map((p) => p.id),
+      rampartPercent: table.rampartCols?.[c] ? rampartPct : 0,
+      screenedTowers,
+      sectorPercent: (table.sectorCols?.[c] ?? 0) * sectorPct,
     };
   });
   return {
@@ -410,6 +443,7 @@ const build = (state: GameState): LaneView => {
     trayDefenses: PIECES.filter(
       (p) => isDefense(p.id) && isPieceUnlocked(state, p.id) && !state.layout.placed[p.id],
     ).length,
+    screenedCount,
   };
 };
 

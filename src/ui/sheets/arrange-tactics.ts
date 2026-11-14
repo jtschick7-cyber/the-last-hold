@@ -1,3 +1,4 @@
+import { ARRANGE_TEXT } from '../../content/v18-text';
 import {
   GRID_COLS,
   GRID_ROWS,
@@ -56,10 +57,10 @@ export const selectedTacticsLine = (
   linkCount: number,
 ): string | null => {
   const tags: string[] = [];
-  if (tactics.wardedPieces.has(pieceId)) tags.push('Warded');
-  else if (pieceId === 'hearth-hall') tags.push('Exposed');
-  if (tactics.screenedTowers.has(pieceId)) tags.push('Screened');
-  if (linkCount > 0) tags.push(`${linkCount} linked`);
+  if (tactics.wardedPieces.has(pieceId)) tags.push(ARRANGE_TEXT.warded);
+  else if (pieceId === 'hearth-hall') tags.push(ARRANGE_TEXT.exposed);
+  if (tactics.screenedTowers.has(pieceId)) tags.push(ARRANGE_TEXT.screened);
+  if (linkCount > 0) tags.push(ARRANGE_TEXT.linked(linkCount));
   return tags.length > 0 ? tags.join(' · ') : null;
 };
 

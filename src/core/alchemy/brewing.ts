@@ -1,15 +1,17 @@
 import { BUILDING_IDS, buildings } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
 import type { IngredientId } from '../../content/ingredients';
+import { V18_TEXT } from '../../content/v18-text';
 import { perkCut } from '../systems/orders-perks';
 import { noteBrewFinished, noteExperimentFinished } from '../skills/hooks';
 import { ordersBrewFinished, ordersExperimentFinished } from '../systems/orders';
 import { finishExperiment, type ExperimentResult } from './book';
 import { num } from '../balance-access';
+import type { Breakdown, Explained } from '../breakdown/breakdown';
 import type { BrewJob, GameState, KettleJob } from '../state/game-state';
 import { MS_PER_SECOND } from '../time';
 import { brewCut } from '../long-night/bonuses';
-import { tacticalBrewCut } from '../systems/layout-tactics';
+import { tacticalBrewFactor } from '../systems/layout-tactics';
 
 // GDD §5.7: the Alchemist's Hut brews consumables from reagents. A brew takes 10
 // minutes, one at a time per Hut level; the rest of the queue waits. The recipe is paid
@@ -28,16 +30,40 @@ export const brewSlots = (state: GameState): number => {
 export const kettlesBusy = (state: GameState): number =>
   state.queues.brewing.filter((j) => j.doneAt !== null).length;
 
+const kettleDuration = (
+  state: GameState,
+  baseKey: 'brew.time' | 'experiment.time',
+  label: string,
+): Explained => {
+  const baseSec = num(baseKey);
+  const cut = brewCut(state);
+  const factor = tacticalBrewFactor(state);
+  const value = baseSec * (1 - cut.value) * (factor ? factor.value : 1);
+  const children: Breakdown[] = [{ label: V18_TEXT.baseTime, value: baseSec, key: baseKey }];
+  if (cut.value > 0) children.push(cut.breakdown);
+  if (factor) children.push(factor.breakdown);
+  const formula = [
+    `${baseSec}`,
+    ...(cut.value > 0 ? [`× (1 − ${cut.value})`] : []),
+    ...(factor ? [`× ${factor.value}`] : []),
+  ].join(' ');
+  return { value, breakdown: { label, value, formula, children } };
+};
+
+/** One brew's duration in seconds with its breakdown (Copper Still + Alchemist herb-link tactics). */
+export const brewDuration = (state: GameState): Explained =>
+  kettleDuration(state, 'brew.time', V18_TEXT.brewTime);
+
+/** One experiment's duration in seconds with its breakdown (Copper Still + Alchemist herb-link tactics). */
+export const experimentDuration = (state: GameState): Explained =>
+  kettleDuration(state, 'experiment.time', V18_TEXT.experimentTime);
+
 /** One brew's time, less Copper Still (GDD §8.10) and Alchemist herb-link tactics (GDD §5.1.5). */
-export const brewMs = (state: GameState): number =>
-  num('brew.time') * MS_PER_SECOND * (1 - brewCut(state).value) * (1 - tacticalBrewCut(state));
+export const brewMs = (state: GameState): number => brewDuration(state).value * MS_PER_SECOND;
 
 /** One experiment's time, less Copper Still (GDD §5.8.3) and Alchemist herb-link tactics (GDD §5.1.5). */
 export const experimentMs = (state: GameState): number =>
-  num('experiment.time') *
-  MS_PER_SECOND *
-  (1 - brewCut(state).value) *
-  (1 - tacticalBrewCut(state));
+  experimentDuration(state).value * MS_PER_SECOND;
 
 // GDD §5.13.5: the Grey Wives' cut is fixed when the job is queued (`orderCut`), so a seat change
 // never alters a brew already queued; the Copper Still is read when the kettle starts, as before.

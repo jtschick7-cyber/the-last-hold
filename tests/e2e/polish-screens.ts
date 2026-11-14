@@ -219,6 +219,14 @@ export const FLOWS: readonly Flow[] = [
     (p) => btn(p, /^Layout/).click(),
     'v12-played',
   ),
+  plain(
+    'hold-look',
+    'Hold Look',
+    'Hold, Hold Look ▸',
+    [/Courtyard Marks/, /Riftglass Shop/],
+    (p) => p.locator('[data-hold-look-button="hold"]').click(),
+    'v12-played',
+  ),
   plain('rates', 'rates sheet', 'the resource bar', [/per minute/i], (p) =>
     btn(p, /Food.*Wood/).click(),
   ),

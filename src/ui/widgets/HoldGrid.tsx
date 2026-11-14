@@ -18,6 +18,7 @@ import {
 import { GRID_COLS, GRID_ROWS } from '../../content/hold-layout';
 import { buildHoldGridView, inClearing, type ActivePiece } from '../../core/systems/layout';
 import { game } from '../app/runtime';
+import { CourtyardMarkAccents } from './CourtyardMarkAccents';
 import { Sprite } from './Sprite';
 
 // GDD §9.21 (T18.6): the Hold screen's 8 × 12 grid header. Purely visual and non-interactive; it
@@ -113,6 +114,7 @@ export const HoldGrid = () => {
       data-bell={c.bell ?? 'none'}
       data-lanterns={c.lanterns ?? 'none'}
       data-ghosts={v.ghosts.length}
+      data-courtyard-marks={v.courtyardMarks.join(',')}
       style={{
         position: 'relative',
         width: '100%',
@@ -197,6 +199,20 @@ export const HoldGrid = () => {
         ))}
       {v.look === 'lamp' && hall && (
         <Layer id={GRID_HALL_LAMP_ID} x={hall.x} y={hall.y} w={2} h={2} data-lamp="hall" />
+      )}
+      {v.courtyardMarks.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: pctY(STRIP),
+            height: pctY(GRID_H),
+            pointerEvents: 'none',
+          }}
+        >
+          <CourtyardMarkAccents marks={v.courtyardMarks} variant="grid" />
+        </div>
       )}
       <span
         style={{

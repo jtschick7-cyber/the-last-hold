@@ -3227,82 +3227,94 @@ v1.0 changes **no game number, formula or save field.** Everything below is pres
 - **The screen list** (used by the tap sweep, the Text size, contrast and layout checks): Hold (at Hamlet, Keep, Citadel and Bastion); the away sheet (with the reminder); the rates and breakdown sheets; the Rank screen (the Hearth, the Roll of Wardens, the Riftglass shop, "What the ember remembers"); Hunters (roster, candidates); the hunter sheet (talents, slots, alternate traits, letters), the slot picker, Stores and Salvage; Contracts (board, launch sheet, fight log); Bestiary and an entry; the Alchemist's Hut (the 12 × 3 Book grid, Experiment); the Archive (all four tabs, the document reader, the Names view, the Villages panel); the Last Stand screen, the Long Night sheets and the arrival sheet; a Delve (entry, floor playback, doors, blessing, guardian, result); Events (boss sheet and playback, hunt sheet and playback, the Great Beasts shelf, the Rime shelf); the Orders (card, sheets, the seat step, chapter and opening scenes); the Remembering (card in its four forms, Pechko's scene, the reading, the ending cards, the Library shelf); More (Reports, Hall of the Fallen, Save & Data, Settings, About & Credits, Diagnostics). The debug panel is excluded. In v1.1, Hold in Grid view and the Arrange Hold sheet (with a piece selected and with items in the Tray) are added to this list (D507). Claude Code records in the progress entry which fixture or debug command reaches each screen.
 - **Layout checks (Playwright, 320, 360, 900, 1300 px):** each of the above, at Match phone and at Largest, in both themes.
 
-### 9.21 The Hold's Layout screens *(v1.1, D500–D504; red-team M8, S5, S7, S8)*
+### 9.21 The Hold's Layout screens *(v1.1, D500–D504; v1.8, D618, D621; red-team M8, S5, S7, S8)*
 
 - **Hold screen header (Grid view, default):**
-  - Shows the **8 × 8 grid** (`256 × 256 px` native = `32 px` per tile, scaled smoothly to the card width, shrinking on a `320 px` screen just like the Classic scene in §9.20; D503, S5).
-  - Top border strip reads **▲ The Fell Breach**; bottom border strip reads **▼ Lowland Gate** (with the Gatehouse banners cosmetic if bought).
-  - The grid header is **purely visual and non-interactive** (no sub-44 px tap targets on header tiles). Only **[Layout ▸]** and **[Rank ▸]** are tappable buttons (both ≥ 44 × 44 px).
+  - Shows the **`8 × 12` portrait grid** (`256 × 384 px` native = `32 px` per tile, scaled smoothly to the card width, shrinking on a `320 px` screen just like the Classic scene in §9.20; D503, D618, S5).
+  - Top border strip reads **▲ The Fell Breach**; bottom border strip reads **▼ Lowland Gate** (with the Gatehouse banners cosmetic if bought and toggled Shown).
+  - The grid header is **purely visual and non-interactive** (no sub-44 px tap targets on header tiles). Only **[Rank ▸]**, **[Layout ▸]**, and **[Hold Look ▸]** (§9.26) are tappable buttons (all `≥ 44 × 44 px`).
   - Tiles outside the current Rank's clearing (§5.1.5) show dark pines and ruined wall stones.
-  - Active unlocked pieces render their current visual tier or density (§5.1.5), with the `2 × 2` Hearth Hall covering four tiles (showing the Carved Hearth Hall door cosmetic if bought, and the Act VI frost or post-Remembering window lamp). Dormant saved pieces render as faint stone foundation outlines when **Blueprint ghosts** is On.
-  - Cosmetic rendering across Ranks (S7): Carved Hearth Hall door and Gatehouse banners show at all Ranks; Watchtower bell and Wall lanterns show on border pillars at Hamlet/Keep, and on placed tower/wall segments once built.
-  - Below the grid: `Stanholm — [Rank]`, **[Layout ▸]** (at least `44 × 44 px`; shows badge `Layout (2) ▸` only if unlocked pieces are unplaced in the Tray; dormant-ring pieces never trigger badge), and **[Rank ▸]**.
-  - **Settings (`More ▸ Settings`):** **Hold view** (`Grid` / `Classic scene`, default `Grid`), stored in the external settings key (`lasthold:settings`, §9.20). Switching to `Classic scene` shows the v1.0 pixel hold scene with `[Layout ▸]` still available beside `[Rank ▸]`.
+  - Active unlocked pieces render their current visual tier or density (§5.1.5), with the `2 × 2` Hearth Hall covering four tiles (showing the Carved Hearth Hall door cosmetic if bought and Shown, and the Act VI frost or post-Remembering window lamp). Dormant saved pieces render as faint stone foundation outlines when **Blueprint ghosts** is On.
+  - Cosmetic & Courtyard Mark rendering across Ranks (S7, D622): Carved Hearth Hall door and Gatehouse banners show at all Ranks; Watchtower bell and Wall lanterns show on border pillars at Hamlet/Keep, and on placed tower/wall segments once built; unlocked Courtyard Marks (§9.26) render across the hold apron when toggled **Shown** in **Hold Look**.
+  - Below the grid: `Stanholm — [Rank]`, **[Rank ▸]**, **[Layout ▸]** (at least `44 × 44 px`; shows badge `Layout (2) ▸` only if unlocked pieces are unplaced in the Tray; dormant-ring pieces never trigger badge), and **[Hold Look ▸]** (at least `44 × 44 px`).
+  - **Settings (`More ▸ Settings`):** **Hold view** (`Grid` / `Classic scene`, default `Grid`), stored in the external settings key (`lasthold:settings`, §9.20). Switching to `Classic scene` shows the v1.0 pixel hold scene with visible Courtyard Marks and bought cosmetics (§9.26), and `[Layout ▸]` / `[Hold Look ▸]` still available beside `[Rank ▸]`.
 - **Arrange Hold sheet** (opens from **[Layout ▸]**):
 
 ```
 ┌──────────────────────────────────┐
 │ Arrange Hold                 [✕] │
-│ Bastion · 8×8 open · 24/40 placed│
+│ Bastion · 8×12 open · 24/40 placed│
 │ ▲ The Fell Breach                │
 │ ┌───┬───┬───┬───┬───┬───┬───┬───┐│
-│ │   │   │🧱 │🗼 │🧱 │   │   │   ││
-│ ├───┼───┼───┼───┼───┼───┼───┼───┤│
-│ │🧱 │🧱 │🗼 │🧱 │🧱 │🗼 │🧱 │🧱 ││
-│ ├───┼───┼───┼───┼───┼───┼───┼───┤│
-│ │🧱 │   │⚒️ │🏰 │🏰 │   │   │🧱 ││
-│ ├───┼───┼───┼───┼───┼───┼───┼───┤│
-│ │   │   │⚗️ │🏰 │🏰 │   │🏹 │   ││
+│ │   │🧱 │🗼 │🧱 │   │🗼 │🧱 │   ││
+│ │   │   │   │   │   │   │   │   ││  (rows 0..11 portrait yard;
+│ │   │   │⚔️ │🏰 │🏰 │   │   │   ││   Adjacency links, Warded band,
+│ │   │   │⚗️ │🏰 │🏰 │   │🏹 │   ││   & Screened tower marks)
 │ └───┴───┴───┴───┴───┴───┴───┴───┘│
 │ ▼ Lowland Gate                   │
+│ Hearth Hall: Warded · 4 linked · 2 Screened │
 ├──────────────────────────────────┤
 │ Selected: Smithy Lv9 (Tier II)   │
+│ Warded · 1 linked                │
 │ Tap an open tile to move or swap │
 │ [Move to tray]                   │
 ├──────────────────────────────────┤
 │ TRAY (unplaced: 2)               │
-│ [🏡 Cottage Plot 2 (Pair)] [🌿]  │
+│ [Cottage 2] [Herb Garden 1]      │
 ├──────────────────────────────────┤
+│ [Balanced] [Economy] [Fortress]  │
 │ [Auto-arrange] [Clear to tray…]  │
+│ [Suggest layout…] [Hold Look ▸]  │
+│ Presets                          │
+│ Slot 1  Empty     [Save] [Apply] │
+│ Slot 2  14 placed [Save] [Apply] │
 │ Blueprint ghosts: [On] [Off]     │
 └──────────────────────────────────┘
 ```
 
-- **Player-facing strings table (S8):**
+- **Player-facing strings table (S8; updated for v1.8 `D618`, `D621`):**
   | String | Where it shows | Purpose |
   |---|---|---|
   | `Arrange Hold` | Sheet title | Header |
   | `{Rank} · {w}×{h} open · {placed}/{total} placed` | Subtitle | Grid summary (`total` = 40, `placed` counts active pieces only) |
   | `▲ The Fell Breach` / `▼ Lowland Gate` | Border strips | Spatial orientation |
+  | `Hearth Hall: {status} · {n} linked · {n} Screened` | Tactical status bar | Live courtyard status (`status`: `Warded` or `Exposed`) |
+  | `Warded` / `Exposed` / `Screened` / `{n} linked` | Selected-piece tactics line & status tags | Active tactical state on the selected piece (`selectedTacticsLine`) |
   | `Tap an open tile to move or swap` | Info bar | Instruction when piece selected |
   | `Tap an active piece or tray item to select` | Info bar | Default instruction when nothing selected |
   | `Clears at {Rank}` | Info bar | Tapping a locked outer-ring tile |
   | `Selected: {Name} (Tier {N})` | Info bar | Selected building details |
-  | `[Move to tray]` | Info bar button | Moves selected 1 × 1 piece to tray |
+  | `Move to tray` | Info bar button | Moves selected 1 × 1 piece to tray |
   | `TRAY (unplaced: {n})` | Tray header | Tray count (`n` = pieces in tray only) |
-  | `[Auto-arrange]` | Footer button | Applies canonical fortress layout |
-  | `[Clear to tray…]` | Footer button | Opens confirmation dialog |
+  | `Layout mode` | Segmented group label | Accessible label for layout mode selector |
+  | `Balanced` / `Economy` / `Fortress` | Mode selector buttons | Chooses priority mode for Auto-arrange and Suggest layout (`Q76`) |
+  | `Auto-arrange` | Controls button | Applies the selected mode's arrangement |
+  | `Clear to tray…` | Controls button | Opens confirmation dialog |
   | `Move all placed buildings except the Hearth Hall to the tray? Dormant blueprint outlines will be cleared.` | Confirmation dialog | Warning before clearing grid |
-  | `Blueprint ghosts: [On] [Off]` | Footer toggle | Toggles foundation ghost outlines |
+  | `Clear to tray` / `Cancel` | Confirmation dialog buttons | Confirms or cancels clearing grid |
+  | `Presets` | Section heading | Two manual layout save slots (`D621`, `Q76`) |
+  | `Slot {n}` | Preset row label | Names slot 1 or 2 |
+  | `Empty` / `{n} placed` | Preset slot status | Shows empty state or saved building count |
+  | `Save` / `Apply` | Preset row buttons | One-tap save/overwrite or apply preset slot |
+  | `Blueprint ghosts:` / `On` / `Off` | Footer toggle | Toggles foundation ghost outlines |
 
 - **Interaction rules (tap-only, no drag required):**
   - Every grid cell in the Arrange Hold sheet and every item in the Tray is a button of **at least `44 × 44 px` at every Text size**.
-  - Selected tiles show a high-contrast highlight border (N9).
-  - **Tap an active piece** on the grid (or an item in the **Tray**) to select it. The info bar shows its name, level or count, visual tier, and (for `1 × 1` pieces on the grid) **[Move to tray]**.
+  - Selected tiles show a high-contrast highlight border (N9). Always-on colorblind-safe overlays inside `Arrange Hold` show AoE adjacency link lines & shapes, `Warded` perimeter shading, and `Screened` watchtower marks (all static under Reduce Motion).
+  - **Tap an active piece** on the grid (or an item in the **Tray**) to select it. The info bar shows its name, tier, active tactical tags (`Warded` / `Exposed`, `Screened`, `{n} linked`), and (for `1 × 1` pieces on the grid) **[Move to tray]**.
   - **Tap any tile inside the current Rank's clearing** while a piece is selected:
     - If the target tile is empty, the piece moves there.
     - If the target tile holds another `1 × 1` piece, the two pieces **swap** places (if the selected piece came from the Tray, the displaced piece goes to the Tray).
-    - If the `2 × 2` **Hearth Hall** is selected (`x = 2..4, y = 2..4`, M4), tapping the new top-left tile moves the Hearth Hall there and moves any `1 × 1` pieces in that `2 × 2` footprint into the vacated Hearth Hall tiles (or to the Tray if they overlapped).
+    - If the `2 × 2` **Hearth Hall** is selected, tapping the new top-left tile inside the clearing moves the Hearth Hall there and moves any `1 × 1` pieces in that `2 × 2` footprint into the vacated Hearth Hall tiles (or to the Tray if they overlapped).
   - Tapping a **locked outer-ring tile** shows *"Clears at Keep / Citadel / Bastion"* in the info bar and does not place the piece.
-  - **Auto-arrange** applies the canonical fortress layout (§5.1.5) in one tap.
+  - **Balanced / Economy / Fortress** selects the priority mode used by **Auto-arrange** and **Suggest layout…** without changing the grid when switching tabs; **[Hold Look ▸]** opens the Hold Look sheet (§9.26) stacked on top.
+  - **Auto-arrange** applies the selected mode's fortress/economy/balanced layout (§5.1.5) in one tap.
+  - **Presets (Slot 1 / Slot 2):** **Save** captures placed tiles into that slot in one tap; **Apply** restores that slot into the current Rank's clearing.
   - **Clear to tray…** asks for confirmation, then clears all `1 × 1` pieces to the Tray and clears dormant coordinates so the warden can lay out the hold from scratch.
   - **Blueprint ghosts (On / Off)** toggles `state.layout.showGhosts` (§5.1.5).
 - **320 px and Text size fit:**
-  - In the Arrange Hold sheet, when container width is `< 352 px` (such as the `320 px` check width, N3), the tile grid sits inside a self-contained horizontal scroll container (`data-internal-scroll="true"`, M7), so the page itself never scrolls horizontally (`scrollWidth ≤ innerWidth`) and every tile stays a full `44 × 44 px` tap target. On `≥ 352 px` containers, all 8 columns fit without scrolling.
+  - In the Arrange Hold sheet, when container width is `< 352 px` (such as the `320 px` check width, N3), the tile grid sits inside a self-contained horizontal scroll container (`data-internal-scroll="true"`, M7), so the page itself never scrolls horizontally (`scrollWidth ≤ innerWidth`) and every tile stays a full `44 × 44 px` tap target. At `360–390 px`, full-bleed sheet padding alignment lets all `8` columns (`352 px`) fit with zero horizontal scroll at every Text size.
   - Under reduced motion (§9.20), the grid header and the Arrange Hold sheet show still frames with no transitions or bobbing.
-- **⚑ v1.8 Portrait Grid, Tactical Overlays & Presets (`D618`, `D621`):**
-  - Hold screen grid header expands to **`8 × 12`** (`256 × 384 px` internal canvas, scaling smoothly to card width) while keeping zero sub-44 px interactive buttons on the header.
-  - Arrange Hold keeps `8` columns (`352 px`, zero horizontal scroll at `360–390 px`) across `12` north-to-south rows, shows non-color-only **Adjacency links** (`+X%` badge/connector), **Warded perimeter shading**, and **`Screened` tower marks**, adds a **2-slot Presets bar** (*Slot 1* / *Slot 2*) and **Auto-Arrange / Suggest priority toggle** (*Balanced* / *Economy* / *Fortress*), and adds a **[Hold Look ▸]** trigger (`≥ 44 × 44 px`). Exact UI string table moves from `docs/flesh-out/v1.8/v1.8-summary.md` into GDD during `T18.6`–`T18.7`.
 
 ### 9.22 Sounds of the Frontier *(v1.2, D519–D528; v1.7, D608–D610)*
 
@@ -3480,12 +3492,44 @@ v1.5 adds **no new screen**. It adds a Lanes strip to two screens that already e
 - **Debug.** `debug.breach.freeze` (a core command, marks `debugUsed`; technical design §15).
 - **Deferred, not cut (with reasons).** Permanent building damage and repair chores (buildings take no damage, D108); per-wave monster traits tied to lanes (a new rule set); story text (the owner supplies it if wanted); a dedicated Lanes sheet (the strip and the breakdown sheet are enough); a sound for the Breach (not one of the 15 moments, §9.22).
 
-### 9.26 Hold Look & Courtyard Marks *(v1.8, D622)*
+### 9.26 Hold Look, Courtyard Marks & v1.8 Breakdowns *(v1.8, D622, D625, Q79–Q82)*
 
-- **Hold Look drawer (`T18.7`):** Opened from the Hold layout controls / `Arrange Hold` (`≥ 44 × 44 px` button). Lets the warden toggle every owned cosmetic on or off individually without changing any combat or economy rule:
-  - **Riftglass Accents:** the four Delve shop cosmetics (`COSMETIC_IDS`: *Gatehouse Banners*, *Wall Lanterns*, *Carved Hearth Hall Door*, *Watchtower Bell*) once bought.
-  - **Courtyard Marks (`6` permanent Event Cosmetics, closes D490):** unlocked permanently across resets on first kill of each Great Beast or first clear of each Legendary Hunt (and backfilled on load for already-cleared events): **Fjord-Bone Standard** (*Lindworm of Velk Fjord*), **Barrow Brazier** (*Barrow-King*), **River-Reed Basin** (*Mother of the River*), **Stoneback Cairn** (*Stoneback Fell-Troll*), **Kettle-Barrow Wreath** (*Mara of Kettle Barrow*), and **Watch-Fire Sconce** (*Likho One-Eyed*).
-- **Strict string gate rule note:** During `T18.1`, this section stays prose/bullets (no markdown table rows below §9.25) so `tests/content/breach-text-all.test.ts` remains untouched until `T18.7` lands the exact `src/content/` UI string table alongside the sheet.
+- **Hold Look drawer/sheet (`T18.7`):** Opened from **[Hold Look ▸]** on the Hold screen or inside `Arrange Hold` (`≥ 44 × 44 px` button). Lets the warden toggle every owned cosmetic **Shown** or **Hidden** individually across both the `8 × 12` Grid and Classic scene without changing any combat or economy rule:
+  - **Courtyard Marks (`6` permanent Event Cosmetics, closes D490):** unlocked permanently across resets on first kill of each Great Beast or first clear of each Legendary Hunt (and backfilled on load for already-cleared events): **Fjord-Bone Standard** (*The Lindworm of Velk Fjord*), **Barrow Brazier** (*The Barrow-King*), **River-Reed Basin** (*The Mother of the River*), **Stoneback Cairn** (*Stoneback the Fell Troll*), **Kettle-Barrow Wreath** (*The Mara of Kettle Barrow*), and **Watch-Fire Sconce** (*Likho the One-Eyed*). Locked marks display with a static **Locked** badge and source hint (`Locked · {source}`).
+  - **Riftglass Shop (`4` Delve shop cosmetics, `COSMETIC_IDS`):** *Gatehouse Banners*, *Wall Lanterns*, *Carved Hearth Hall Door*, and *Watchtower Bell*; bought cosmetics toggle between **Shown** and **Hidden**, while unbought cosmetics show **Locked** (`Buy in the Riftglass shop (Rank ▸)`).
+- **Tactical Breakdowns & v7 Stand Logs (`D625`, `Q81`):** `Rates`, `Threat`, and `Hut` inspectable breakdowns expose single-source `Hold tactics` / `Warded Hearth Hall` modifiers with exact parity. In `Bastion`, `Lanes` / `Stand` indicators summarize `Rampart +{p}%`, `{n} Screened`, and `Sector +{p}%`, and `Wave log` renders `Defenses` breakdowns (including nested `Screened (+{p}%)` on screened watchtowers) while keeping legacy `v5`/`v6` wave logs untouched.
+- **Player-facing strings table (word for word; no others in `src/content/v18-text.ts` `V18_TEXT`):**
+
+  | String | Where it shows | Purpose |
+  |---|---|---|
+  | `Hold Look ▸` | Hold screen & `Arrange Hold` button | Opens the Hold Look sheet |
+  | `Hold Look` | Sheet title | Sheet header |
+  | `Show or hide earned Courtyard Marks and bought Hold accents across the Grid and Scene.` | `Hold Look` intro paragraph | Explains cosmetic visibility toggles |
+  | `Courtyard Marks` | `Hold Look` section heading | Groups the 6 permanent event cosmetics |
+  | `Riftglass Shop` | `Hold Look` section heading | Groups the 4 Delve shop cosmetics |
+  | `Earned · {source}` / `Locked · {source}` | Courtyard Mark row sub-line | Names the Great Beast or Legendary Hunt source |
+  | `Bought in Riftglass shop` / `Buy in the Riftglass shop (Rank ▸)` | Shop cosmetic row sub-line | Shows unlock status or points to Rank shop |
+  | `Shown` / `Hidden` | Cosmetic toggle button (`aria-pressed`) | Shows or hides the cosmetic on Grid and Scene |
+  | `Locked` | Static badge on unowned rows | Marks unowned cosmetics |
+  | `Hold tactics` | `Rates` & `Hut` breakdown parent node | Groups district adjacency and Warded bonuses |
+  | `Mill links ({n})` | Food production breakdown child | Active Farm links beside Mill |
+  | `Sawpit links ({n})` | Wood production breakdown child | Active Woodcutter links beside Sawpit |
+  | `Smithy links ({n})` | Iron & Silver breakdown child | Active Mine / Silver Seam links beside Smithy |
+  | `Alchemist links ({n})` | `Hut` brew & experiment breakdown child | Active Herb Garden links beside Alchemist's Hut |
+  | `Warm Cottages ({n})` | Food, Wood & Iron breakdown child | Active Cottages beside Hearth Hall or Bell Foundry |
+  | `Trophy Hall link` | Food, Wood & Iron breakdown child | Active Trophy Hall beside Hearth Hall or Barracks |
+  | `Warded plots ({n})` | Production breakdown child | Active production plots enclosed behind north defenses |
+  | `Warded Hearth Hall` | `Threat` breakdown factor | Hourly Threat slow factor when Hearth Hall is Warded |
+  | `Brew time` | `Hut` Brew tab timing label & breakdown root | Inspectable brew duration breakdown |
+  | `Experiment time` | `Hut` Experiment breakdown root | Inspectable experiment duration breakdown |
+  | `Base time` | `Hut` duration breakdown base child | Unmodified base brew or experiment seconds |
+  | `Connected rampart (+{p}%)` | Lane `wallCut` & Wave log breakdown | Wall rampart bonus when lane column wall is connected |
+  | `Screened (+{p}%)` | Screened watchtower nested breakdown | Volley bonus from wall directly north of watchtower |
+  | `Sector support (+{p}%)` | Lane `volley` & Wave log breakdown | Barracks / Lodge support bonus behind lane |
+  | `Rampart +{p}%` | `Lanes` / `Stand` tactical summary tag | Highlights rampart-connected lanes |
+  | `Sector +{p}%` | `Lanes` / `Stand` tactical summary tag | Highlights sector-supported lanes |
+  | `{n} Screened` | `Lanes` / `Stand` tactical summary tag | Shows count of Screened Watchtowers |
+  | `Defenses` | `Wave log` section heading | Groups wall-cut and volley breakdowns per wave |
 
 ---
 
