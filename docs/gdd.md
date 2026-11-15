@@ -2139,7 +2139,7 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Wave strength per vigil level | Health and Might × (1 + w × Threat + s × L), w = `threat.waveStrengthPerPoint` (§7.6) | `vigil.strengthPerLevel` = 0.28 *(D554, retuned from 0.32 by D596; about 3 waves fewer held by level 3 on the Vigilant's gate-open stand)* | 5.9.10 |
-| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = 0.26 *(D554, retuned from 0.22 by D596; Embers at levels 1 to 3 within about 1% of level 0 at the stand's own Threat)* | 5.9.10 |
+| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = 0.22 *(D554, retuned from 0.26 in v1.8 T18.13, Q86a; Embers at levels 1 to 3 within 3.7% of level 0 at the stand's own Threat)* | 5.9.10 |
 | The level | L = stands already fought with the switch On + 1, for an On stand; 0 for an Off stand | — (no cap) | 5.9.10 |
 
 ### 7.14 The Descent *(v1.4, D557–D568)*
@@ -2170,25 +2170,25 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 | Tower reach | a counted tower's share for a lane d columns away | `breach.towerReach` = [1, 0.5, 0.25] (own column, 1 away, 2 away; nothing beyond) | 5.9.11 |
 | Volley in a lane | floor(the volley per level of §7.6 × Watchtower level × volleyScale × Σ reach ÷ counted towers); 0 when no tower counts; whole-number arithmetic | `breach.volleyScale` = 3 | 5.9.2, 5.9.11 |
 | Suggest layout and the Lanes strip | the lanes of the first N waves (tuning N changes the strip's dots too) | `breach.suggestWaves` = 12 | 5.9.11, 9.25 |
-| Connected Ramparts *(v1.8, D620, placeholder until T18.12)* | `(cover + extra) × (1 + rampartBonus)` when lane `c` holds ≥ 1 active connected front `wall-*` (`wallConnectionMask > 0`) in `y = 0..4` | `breach.rampartBonus` = 0.15 | 5.9.11 |
-| Screened Volley *(v1.8, D620, placeholder until T18.12)* | counted front `watchtower-*` (`y = 0..4`) with an active connected `wall-*` directly north (`y - 1`, `wallConnectionMask > 0`) scales its reach weight × `(1 + screenedBonus)` in whole-number arithmetic | `breach.screenedBonus` = 0.25 | 5.9.11 |
-| Sector Support *(v1.8, D620, placeholder until T18.12)* | `sector = 0..2` distinct active `barracks` / `lodge` covering `x ± 1`: `volley × (1 + sector × sectorBonus)` and `partyTaken × (1 − sector × sectorBonus)` | `breach.sectorBonus` = 0.05 | 5.9.11 |
+| Connected Ramparts *(v1.8, D620, Q86a)* | `(cover + extra) × (1 + rampartBonus)` when lane `c` holds ≥ 1 active connected front `wall-*` (`wallConnectionMask > 0`) in `y = 0..4` | `breach.rampartBonus` = 0.15 | 5.9.11 |
+| Screened Volley *(v1.8, D620, Q86a)* | counted front `watchtower-*` (`y = 0..4`) with an active connected `wall-*` directly north (`y - 1`, `wallConnectionMask > 0`) scales its reach weight × `(1 + screenedBonus)` in whole-number arithmetic | `breach.screenedBonus` = 0.25 | 5.9.11 |
+| Sector Support *(v1.8, D620, Q86a)* | `sector = 0..2` distinct active `barracks` / `lodge` covering `x ± 1`: `volley × (1 + sector × sectorBonus)` and `partyTaken × (1 − sector × sectorBonus)` | `breach.sectorBonus` = 0.05 | 5.9.11 |
 
-### 7.16 Hold layout & tactics *(v1.8, D619, D625; placeholders until T18.12)*
+### 7.16 Hold layout & tactics *(v1.8, D619, D625, Q86a)*
 
-Every constant below is **tunable** (placeholder values wired in `T18.3` and calibrated against 5-seed runs in `T18.12`). All modifiers obey a **`1.0×` floor** (zero negative penalties on unlinked or open layouts) and inspect cleanly in resource / Threat `Breakdown`.
+Every constant below is **tunable** (wired in `T18.3` and calibrated in `T18.13` under `Q86 (a)`). All modifiers obey a **`1.0×` floor** (zero negative penalties on unlinked or open layouts) and inspect cleanly in resource / Threat `Breakdown`.
 
 | Rule | Expression | Constants | § |
 |---|---|---|---|
-| Food district link | +`adjFood` per active `farm-1..3` orthogonally touching active `mill` | `layout.adjFood` = 0.025 | 5.1.5 |
-| Wood district link | +`adjWood` per active `woodcutter-1..3` orthogonally touching active `sawpit` | `layout.adjWood` = 0.025 | 5.1.5 |
-| Iron district link | +`adjIron` per active `mine-1..3` orthogonally touching active `smithy` | `layout.adjIron` = 0.025 | 5.1.5 |
-| Silver district link | +`adjSilver` per active `silver-seam-1..2` orthogonally touching active `smithy` (post-bucket Silver tactical uplift; `D30` untouched) | `layout.adjSilver` = 0.025 | 5.1.5 |
-| Alchemist herb link | `brewMs` and `experimentMs` multiply by `(1 − linkedGardens × adjBrew)` for active `herb-garden-1..3` orthogonally touching active `alchemist` | `layout.adjBrew` = 0.025 | 5.1.5, 5.7 |
-| Hearth / Bell warmth | +`adjCottage` per active `cottage-1..3` (counted once) orthogonally touching active `hearth-hall` or within active `bell-tower`'s `3 × 3` ring (`max(\|dx\|, \|dy\|) ≤ 1`), to non-silver production | `layout.adjCottage` = 0.015 | 5.1.5 |
-| Martial Hall trophy link | +`adjTrophy` to non-silver production when active `trophy-hall` orthogonally touches active `hearth-hall` or active `barracks` (`1×`) | `layout.adjTrophy` = 0.025 | 5.1.5 |
-| Warded Hearth Hall | North-Reach `O(8 × 12)` BFS from open `y = 0` tiles blocked by active `wall-*` / `watchtower-*`; Threat per hour multiplies by `(1 − wardedThreatCut)` when all `4` tiles of `hearth-hall` are unreached | `layout.wardedThreatCut` = 0.05 | 5.1.5, 5.9.1 |
-| Warded inner-ward plots | +`wardedBonus` per active Warded economy plot (`farm-1..3` → Food, `woodcutter-1..3` → Wood, `mine-1..3` → Iron, `silver-seam-1..2` → Silver) | `layout.wardedBonus` = 0.025 | 5.1.5 |
+| Food district link | +`adjFood` per active `farm-1..3` orthogonally touching active `mill` | `layout.adjFood` = 0.02 | 5.1.5 |
+| Wood district link | +`adjWood` per active `woodcutter-1..3` orthogonally touching active `sawpit` | `layout.adjWood` = 0.02 | 5.1.5 |
+| Iron district link | +`adjIron` per active `mine-1..3` orthogonally touching active `smithy` | `layout.adjIron` = 0.02 | 5.1.5 |
+| Silver district link | +`adjSilver` per active `silver-seam-1..2` orthogonally touching active `smithy` (post-bucket Silver tactical uplift; `D30` untouched) | `layout.adjSilver` = 0.02 | 5.1.5 |
+| Alchemist herb link | `brewMs` and `experimentMs` multiply by `(1 − linkedGardens × adjBrew)` for active `herb-garden-1..3` orthogonally touching active `alchemist` | `layout.adjBrew` = 0.02 | 5.1.5, 5.7 |
+| Hearth / Bell warmth | +`adjCottage` per active `cottage-1..3` (counted once) orthogonally touching active `hearth-hall` or within active `bell-tower`'s `3 × 3` ring (`max(\|dx\|, \|dy\|) ≤ 1`), to non-silver production | `layout.adjCottage` = 0.01 | 5.1.5 |
+| Martial Hall trophy link | +`adjTrophy` to non-silver production when active `trophy-hall` orthogonally touches active `hearth-hall` or active `barracks` (`1×`) | `layout.adjTrophy` = 0.02 | 5.1.5 |
+| Warded Hearth Hall | North-Reach `O(8 × 12)` BFS from open `y = 0` tiles blocked by active `wall-*` / `watchtower-*`; Threat per hour multiplies by `(1 − wardedThreatCut)` when all `4` tiles of `hearth-hall` are unreached | `layout.wardedThreatCut` = 0.04 | 5.1.5, 5.9.1 |
+| Warded inner-ward plots | +`wardedBonus` per active Warded economy plot (`farm-1..3` → Food, `woodcutter-1..3` → Wood, `mine-1..3` → Iron, `silver-seam-1..2` → Silver) | `layout.wardedBonus` = 0.02 | 5.1.5 |
 
 ---
 

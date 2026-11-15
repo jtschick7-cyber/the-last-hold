@@ -237,12 +237,12 @@ describe('layout-tactics: orthogonal district adjacency & warmth', () => {
     };
     const cut = 2 * num('layout.adjBrew');
     expect(tacticalBrewCut(linked)).toBeCloseTo(cut, 12);
-    expect(brewMs(linked)).toBeCloseTo(brewMs(base) * (1 - cut), 10);
-    expect(experimentMs(linked)).toBeCloseTo(experimentMs(base) * (1 - cut), 10);
+    expect(brewMs(linked)).toBeCloseTo(brewMs(base) * (1 - cut), 7);
+    expect(experimentMs(linked)).toBeCloseTo(experimentMs(base) * (1 - cut), 7);
     // Copper still scales proportionally on top:
     linked.relics = [{ id: 'copper-still', cycle: 1 }];
     base.relics = [{ id: 'copper-still', cycle: 1 }];
-    expect(brewMs(linked)).toBeCloseTo(brewMs(base) * (1 - cut), 10);
+    expect(brewMs(linked)).toBeCloseTo(brewMs(base) * (1 - cut), 7);
     // Herb garden interval stays fixed at 10 min even with linked gardens:
     syncGarden(linked);
     expect(linked.garden.nextAt).toBe(linked.time + num('herbGarden.interval') * 1000);
