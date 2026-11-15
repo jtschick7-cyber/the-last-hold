@@ -98,7 +98,7 @@ const APPROVED_BATCH1_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pendin
   12: 'Keep',
 };
 
-const BATCH2_MARKS: Readonly<Record<number, string>> = {
+const BATCH2_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {
   13: 'Keep',
   14: 'Keep',
   15: 'Keep',
@@ -108,8 +108,8 @@ const BATCH2_MARKS: Readonly<Record<number, string>> = {
   19: 'Keep',
   20: 'Keep',
   21: 'Keep',
-  22: 'Pending (round 2 redraw: all tiers)',
-  23: 'Pending (D1-D2 Keep; D3 round 2 redraw)',
+  22: 'Keep',
+  23: 'Keep',
   24: 'Keep',
 };
 

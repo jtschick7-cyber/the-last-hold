@@ -32,6 +32,6 @@ Reviewed across 3 numbered batches (`T18.8`, `T18.9`, `T18.10`, `D623`, `D475`).
 | 19 | `grid.lodge` | SCOUT LODGE (TIERS 1-3) | Keep | `lodge-1.png`, `lodge-2.png`, `lodge-3.png` |
 | 20 | `grid.alchemist` | ALCHEMIST (TIERS 1-3) | Keep | `alchemist-1.png`, `alchemist-2.png`, `alchemist-3.png` |
 | 21 | `grid.cottage` | COTTAGE PLOTS (1-3) | Keep | `cottage-1.png`, `cottage-2.png`, `cottage-3.png` |
-| 22 | `grid.farm` | FARM PLOTS (1-3) | Pending (round 2 redraw: all tiers) | `farm-1.png`, `farm-2.png`, `farm-3.png` |
-| 23 | `grid.woodcutter` | WOODCUTTER PLOTS (1-3) | Pending (D1-D2 Keep; D3 round 2 redraw) | `woodcutter-1.png`, `woodcutter-2.png`, `woodcutter-3.png` |
+| 22 | `grid.farm` | FARM PLOTS (1-3) | Keep | `farm-1.png`, `farm-2.png`, `farm-3.png` |
+| 23 | `grid.woodcutter` | WOODCUTTER PLOTS (1-3) | Keep | `woodcutter-1.png`, `woodcutter-2.png`, `woodcutter-3.png` |
 | 24 | `grid.mine` | MINE PLOTS (1-3) | Keep | `mine-1.png`, `mine-2.png`, `mine-3.png` |

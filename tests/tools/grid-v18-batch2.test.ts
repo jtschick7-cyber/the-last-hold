@@ -204,10 +204,11 @@ describe('v1.8 Grid Art Batch 2 (T18.9, D623, D475)', () => {
     }
     expect(marks).toContain('| 1 | `grid.hearth-hall.hamlet`');
     expect(marks).toContain('| Keep |');
-    // Batch 2 rows #13..#24 present
+    // Batch 2 rows #13..#24 all marked Keep
     for (const s of BATCH2_SUBJECTS) {
-      expect(marks).toContain(`| ${s.num} | \`${s.id}\` |`);
+      expect(marks).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | Keep |`);
     }
+    expect(marks).not.toContain('Pending');
   });
 
   it('keeps public/assets/grid/ untouched (83 original files)', () => {

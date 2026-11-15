@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.9` staged).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.1`–`T18.8` complete; `T18.9` staged awaiting owner Keep/Redraw marks).
-- **Last task:** `T18.9` — Grid Art Batch 2 round 2 (`#13`–`#21`, `#24` & `woodcutter-1..2` marked **Keep**; `farm-1..3` & `woodcutter-3` redrawn and re-staged in `art-src/v1.8-staging/` alongside updated Dark & Light Contact Sheet 2).
-- **Next:** Awaiting owner **Keep / Redraw** confirmation on `#22` (`farm-1..3`) & `#23` (`woodcutter-3`), then `T18.10` — Grid Art Batch 3 (`herb-garden`, `silver-seam` & `6` Event *Courtyard Marks*).
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.9` complete).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.1`–`T18.9` complete).
+- **Last task:** `T18.9` — Grid Art Batch 2 (`#13`–`#24`: `8` level buildings & `4` primary plot archetypes, `34` PNGs) staged in `art-src/v1.8-staging/` and **all 12 approved (Keep)** across rounds 1–2 (`public/assets/grid/` untouched until `T18.11`).
+- **Next:** `T18.10` — Grid Art Batch 3 (`≤ 12` subjects): remaining plot variants (`herb-garden`, `silver-seam`) & `6` Event *Courtyard Marks*.
 - **Open questions:** None (`Q79`–`Q82` answered `(a)`).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -157,3 +157,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **Round 2 redraws (`tools/grid-v18-plots.ts`):** Rebuilt `farm-1..3` with chamfered dark-loam beds and nodding botanical wheat tufts (`drawLoamBed`/`drawWheatTuft`) across `farm-1` (tilled starter plot + hayfork & overflowing bushel), `farm-2` (conical thatched hayrick + hayfork + waving wheat rows + bound sheaf), and `farm-3` (threshing shed + hayrick + rising scarecrow + laden grain wheelcart); rebuilt `woodcutter-3` as an open-air sloped timber canopy shelter over horizontal logs beside a stepped cordwood rick and foreground stump + axe (dropping the solid chest & grid spots).
 - **Regeneration & verification:** Updated `BATCH2_MARKS` in `tools/contact-sheet-v18.ts`, regenerated Dark & Light Contact Sheet 2, confirmed `public/assets/grid/` (`83` files) untouched, and ran `npm run check` green (`≤ 90 s`).
 - **Next:** Stop for owner **Keep / Redraw** confirmation on `#22` (`farm-1..3`) and `#23` (`woodcutter-3`).
+
+## 2026-11-15 — v1.8 T18.9 (complete): All Batch 2 subjects (#13–#24) approved Keep on Contact Sheet 2
+- **Final Keep approval (`docs/flesh-out/v1.8/art-marks.md`, `tools/contact-sheet-v18.ts`):** Owner marked `#22` (`farm-1..3`) and `#23` (`woodcutter-3`) **Keep**, completing 12/12 **Keep** approval across Batch 2 (`#13`–`#24`, `34` packed PNGs staged in `art-src/v1.8-staging/`, `public/assets/grid/` untouched until `T18.11`).
+- **Tests & verification (`tests/tools/grid-v18-batch2.test.ts`):** Tightened Contact Sheet 2 assertions to verify every `#13`–`#24` row carries `| Keep |` with zero `Pending` entries remaining, checked off `T18.9` in `docs/implementation-plan.md`, and ran `npm run check` green (`≤ 90 s`).
+- **Next:** `T18.10` — Grid Art Batch 3 (`≤ 12` subjects): `herb-garden`, `silver-seam` & `6` Event *Courtyard Marks*.
