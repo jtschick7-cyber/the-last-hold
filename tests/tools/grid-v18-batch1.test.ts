@@ -233,9 +233,9 @@ describe('v1.8 Grid Art Batch 1 (T18.8, D623, D475)', () => {
     expect(batch1Section).not.toContain('| Pending |');
   });
 
-  it('leaves shipped public/assets/grid/ untouched (matches HEAD & non-redrawn v1.1 hashes)', () => {
-    const gridDir = resolve(ROOT, 'public', 'assets', 'grid');
-    expect(readdirSync(gridDir).filter((f) => f.endsWith('.png'))).toHaveLength(83);
+  it('preserves pre-v1.8 backups in art-src/previous-v1.8/grid/ (83 files matching non-redrawn v1.1 hashes) after T18.11 deployment', () => {
+    const backupDir = resolve(ROOT, 'art-src', 'previous-v1.8', 'grid');
+    expect(readdirSync(backupDir).filter((f) => f.endsWith('.png'))).toHaveLength(83);
 
     const hashes = JSON.parse(
       readFileSync(resolve(ROOT, 'art-src', 'v1.1-hashes.json'), 'utf8'),
@@ -246,13 +246,13 @@ describe('v1.8 Grid Art Batch 1 (T18.8, D623, D475)', () => {
     for (const [id, expected] of Object.entries(hashes)) {
       if (redrawn.has(id)) continue;
       const filename = `${id.replace(/^grid\./, '').replaceAll('.', '-')}.png`;
-      const actualBuf = readFileSync(resolve(gridDir, filename));
+      const actualBuf = readFileSync(resolve(backupDir, filename));
       const actualHash = createHash('sha256').update(actualBuf).digest('hex');
       expect(actualHash).toBe(expected);
     }
 
-    // Also verify git working tree has zero modifications to public/assets/grid/
-    const dirty = execFileSync('git', ['status', '--porcelain', '--', 'public/assets/grid'], {
+    // Verify public/assets/scenes/ remains untouched by v1.8 grid deployment.
+    const dirty = execFileSync('git', ['status', '--porcelain', '--', 'public/assets/scenes'], {
       cwd: ROOT,
       encoding: 'utf8',
     }).trim();

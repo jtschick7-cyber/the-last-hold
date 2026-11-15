@@ -213,10 +213,12 @@ describe('v1.8 Grid Art Batch 2 (T18.9, D623, D475)', () => {
     expect(batch2Section).not.toContain('Pending');
   });
 
-  it('keeps public/assets/grid/ untouched (83 original files)', () => {
+  it('preserves 83 original backups in art-src/previous-v1.8/grid/ and deploys 89 PNGs without touching scenes/', () => {
+    const backupDir = resolve(ROOT, 'art-src', 'previous-v1.8', 'grid');
     const gridDir = resolve(ROOT, 'public', 'assets', 'grid');
-    expect(readdirSync(gridDir).filter((f) => f.endsWith('.png'))).toHaveLength(83);
-    const dirty = execFileSync('git', ['status', '--porcelain', '--', 'public/assets/grid'], {
+    expect(readdirSync(backupDir).filter((f) => f.endsWith('.png'))).toHaveLength(83);
+    expect(readdirSync(gridDir).filter((f) => f.endsWith('.png'))).toHaveLength(89);
+    const dirty = execFileSync('git', ['status', '--porcelain', '--', 'public/assets/scenes'], {
       cwd: ROOT,
       encoding: 'utf8',
     }).trim();

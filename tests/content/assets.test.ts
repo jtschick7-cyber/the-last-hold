@@ -7,11 +7,13 @@ import {
   assetById,
   assets,
   buildingSpriteId,
+  courtyardMarkAssetId,
   holdSceneId,
   resourceIconId,
   SPRITE_FRAME_NAMES,
 } from '../../src/content/assets';
 import { BUILDING_IDS } from '../../src/content/buildings';
+import { COURTYARD_MARK_IDS } from '../../src/content/courtyard-marks';
 import { RESOURCE_IDS } from '../../src/content/resources';
 
 describe('asset manifest', () => {
@@ -20,6 +22,7 @@ describe('asset manifest', () => {
       ...RESOURCE_IDS.map(resourceIconId),
       ...BUILDING_IDS.map(buildingSpriteId),
       ...AGE_IDS.map(holdSceneId),
+      ...COURTYARD_MARK_IDS.map(courtyardMarkAssetId),
     ];
     for (const id of referenced) expect(assetById.has(id), id).toBe(true);
   });

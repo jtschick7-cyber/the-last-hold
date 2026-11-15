@@ -104,7 +104,7 @@ describe('every picture the game ships', () => {
       if (out) expect(pixels(out).equals(pixels(src)), f).toBe(true);
     }
     expect(after).toBeLessThan(before);
-    expect(after).toBeLessThan(142_000); // v1.7 VB.8 (Q66, D615): absolute cap after 40 pre-packed sprite strips (measured 133,751 B + ~6% headroom)
+    expect(after).toBeLessThan(142_000); // v1.8 T18.11 (D615, D623, D624): measured 138,688 B after 89 pre-packed grid/Courtyard Mark PNGs; D615 ceiling retained without relaxation
   });
 });
 

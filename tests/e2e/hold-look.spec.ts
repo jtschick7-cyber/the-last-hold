@@ -100,10 +100,24 @@ test('Courtyard Marks and Shop Cosmetics toggle individually across HoldGrid, Ho
     remembered,
   );
 
-  // Initially all 6 marks + 4 cosmetics visible on HoldGrid.
+  // Initially all 6 marks + 4 cosmetics visible on HoldGrid as 16x16 pixel PNGs.
   const grid = page.locator('[data-hold-grid]');
   await expect(grid).toBeVisible();
   await expect(grid.locator('[data-courtyard-mark]')).toHaveCount(COURTYARD_MARK_IDS.length);
+  for (const id of COURTYARD_MARK_IDS) {
+    const img = grid.locator(`[data-courtyard-mark="${id}"] img`);
+    await expect(img).toHaveCount(1);
+    expect(
+      await img.evaluate(
+        (el: HTMLImageElement, expectedId: string) =>
+          el.complete &&
+          el.naturalWidth === 16 &&
+          el.naturalHeight === 16 &&
+          el.src.includes(`courtyard-mark-${expectedId}.png`),
+        id,
+      ),
+    ).toBe(true);
+  }
   await expect(grid).toHaveAttribute('data-banners', 'true');
 
   // Toggle one mark & one shop cosmetic Hidden in Hold Look.
@@ -161,6 +175,18 @@ test('Courtyard Marks and Shop Cosmetics toggle individually across HoldGrid, Ho
   await page.reload();
   await clearScenes(page);
   await expect(scene.locator('[data-courtyard-mark="fjord-bone-standard"]')).toHaveCount(1);
+  await expect(scene.locator('[data-courtyard-mark="fjord-bone-standard"] img')).toHaveCount(1);
+  expect(
+    await scene
+      .locator('[data-courtyard-mark="fjord-bone-standard"] img')
+      .evaluate(
+        (el: HTMLImageElement) =>
+          el.complete &&
+          el.naturalWidth === 16 &&
+          el.naturalHeight === 16 &&
+          el.src.includes('courtyard-mark-fjord-bone-standard.png'),
+      ),
+  ).toBe(true);
   await expect(scene.locator('[data-cosmetic="gatehouse-banners"]')).toHaveCount(0);
 });
 

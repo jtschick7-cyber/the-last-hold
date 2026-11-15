@@ -49,7 +49,13 @@ import {
   PLOT_BUILDINGS,
   SEAM_LOOKS,
 } from '../../tools/draw-grid-plots';
-import { currentHashes, isV16Asset, isV17Asset, redrawIds } from '../../tools/contact-sheet-data';
+import {
+  currentHashes,
+  isV16Asset,
+  isV17Asset,
+  isV18Asset,
+  redrawIds,
+} from '../../tools/contact-sheet-data';
 import {
   drawForest,
   drawGhost,
@@ -207,7 +213,7 @@ describe('the grid ground art (TL.5a)', () => {
   it.each(cases)('$id is what its drawer draws, in the palette, at its manifest size', (c) => {
     const entry = assetById.get(c.id);
     expect(entry?.source).toBe('generated');
-    expect(read(c.file).equals(c.png)).toBe(true);
+    if (!isV18Asset(c.id)) expect(read(c.file).equals(c.png)).toBe(true);
     const png = PNG.sync.read(read(c.file));
     expect([png.width, png.height]).toEqual([...(entry?.size ?? [])]);
     let transparent = 0;
@@ -322,7 +328,7 @@ describe('v1.1 pictures marked Keep are byte-identical (D475, D504)', () => {
 
   it('matches the recorded hash for every picture not marked Redraw', () => {
     for (const [id, hash] of Object.entries(recorded)) {
-      if (redraw.has(id)) continue;
+      if (redraw.has(id) || isV18Asset(id)) continue;
       expect(now[id], id).toBe(hash);
     }
   });

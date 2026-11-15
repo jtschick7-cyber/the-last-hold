@@ -74,6 +74,104 @@ export const DEPLOYED_V17_SPRITE_IDS: ReadonlySet<string> = new Set<string>([
 
 export const isV17Asset = (id: string): boolean => DEPLOYED_V17_SPRITE_IDS.has(id);
 
+/** v1.8 grid tiles and Event Courtyard Marks deployed to public/assets/grid/ after owner approval (D623, Q85). */
+export const DEPLOYED_V18_GRID_IDS: ReadonlySet<string> = new Set<string>([
+  'courtyard-mark.barrow-brazier',
+  'courtyard-mark.fjord-bone-standard',
+  'courtyard-mark.kettle-barrow-wreath',
+  'courtyard-mark.river-reed-basin',
+  'courtyard-mark.stoneback-cairn',
+  'courtyard-mark.watch-fire-sconce',
+  'grid.alchemist.1',
+  'grid.alchemist.2',
+  'grid.alchemist.3',
+  'grid.barracks.1',
+  'grid.barracks.2',
+  'grid.barracks.3',
+  'grid.bell-tower.1',
+  'grid.bell-tower.2',
+  'grid.bell-tower.3',
+  'grid.cosmetic.banners',
+  'grid.cosmetic.bell-border',
+  'grid.cosmetic.bell-tower',
+  'grid.cosmetic.lanterns-border',
+  'grid.cosmetic.lanterns-wall',
+  'grid.cottage.1',
+  'grid.cottage.2',
+  'grid.cottage.3',
+  'grid.farm.1',
+  'grid.farm.2',
+  'grid.farm.3',
+  'grid.forest.1',
+  'grid.forest.2',
+  'grid.frost.wall',
+  'grid.ghost.dormant',
+  'grid.ghost.locked',
+  'grid.ground.earth',
+  'grid.ground.flags',
+  'grid.ground.grass',
+  'grid.hearth-hall.bastion',
+  'grid.hearth-hall.citadel',
+  'grid.hearth-hall.door',
+  'grid.hearth-hall.frost.bastion',
+  'grid.hearth-hall.frost.citadel',
+  'grid.hearth-hall.frost.hamlet',
+  'grid.hearth-hall.frost.keep',
+  'grid.hearth-hall.hamlet',
+  'grid.hearth-hall.keep',
+  'grid.hearth-hall.lamp',
+  'grid.herb-garden.1',
+  'grid.herb-garden.2',
+  'grid.herb-garden.3',
+  'grid.lodge.1',
+  'grid.lodge.2',
+  'grid.lodge.3',
+  'grid.mill.1',
+  'grid.mill.2',
+  'grid.mill.3',
+  'grid.mine.1',
+  'grid.mine.2',
+  'grid.mine.3',
+  'grid.ruin.1',
+  'grid.ruin.2',
+  'grid.sawpit.1',
+  'grid.sawpit.2',
+  'grid.sawpit.3',
+  'grid.silver-seam.1',
+  'grid.silver-seam.2',
+  'grid.smithy.1',
+  'grid.smithy.2',
+  'grid.smithy.3',
+  'grid.strip.north',
+  'grid.strip.south',
+  'grid.trophy-hall',
+  'grid.wall.0',
+  'grid.wall.1',
+  'grid.wall.2',
+  'grid.wall.3',
+  'grid.wall.4',
+  'grid.wall.5',
+  'grid.wall.6',
+  'grid.wall.7',
+  'grid.wall.8',
+  'grid.wall.9',
+  'grid.wall.10',
+  'grid.wall.11',
+  'grid.wall.12',
+  'grid.wall.13',
+  'grid.wall.14',
+  'grid.wall.15',
+  'grid.watchtower',
+  'grid.woodcutter.1',
+  'grid.woodcutter.2',
+  'grid.woodcutter.3',
+]);
+
+export const isV18Asset = (id: string): boolean => DEPLOYED_V18_GRID_IDS.has(id);
+
+/** Brand-new v1.8 manifest rows added outside v1.0/v1.1/v1.4 sequences so existing sheet numbers stay fixed. */
+export const isV18AddedAsset = (id: string): boolean => id.startsWith('courtyard-mark.');
+
 /** The v1.4 sheet's own sequence 1..5, in the order the owner marks them (portrait, battle sprite, banners). */
 export const v14Numbered: readonly NumberedAsset[] = [
   'portrait.monster.unlit',
@@ -90,7 +188,8 @@ export const v14Numbered: readonly NumberedAsset[] = [
 /** Numbered 1..N in plain id order; adding a row later never renumbers the ones before it in id order. */
 export const numberedAssets: readonly NumberedAsset[] = assets
   .filter(
-    (a): a is GeneratedAsset => a.source === 'generated' && !isV11Asset(a.id) && !isV14Asset(a.id),
+    (a): a is GeneratedAsset =>
+      a.source === 'generated' && !isV11Asset(a.id) && !isV14Asset(a.id) && !isV18AddedAsset(a.id),
   )
   .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
   .map((asset, i) => ({ n: i + 1, asset }));

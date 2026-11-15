@@ -288,14 +288,15 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
     expect(marks).not.toContain('Pending');
   });
 
-  it('keeps public/assets/grid/ (83 files) and public/assets/scenes/ untouched until T18.11', () => {
+  it('deploys all 89 grid/Courtyard Mark PNGs while backing up 83 prior files and leaving scenes/ untouched', () => {
+    const backupDir = resolve(ROOT, 'art-src', 'previous-v1.8', 'grid');
     const gridDir = resolve(ROOT, 'public', 'assets', 'grid');
-    expect(readdirSync(gridDir).filter((f) => f.endsWith('.png'))).toHaveLength(83);
-    const dirty = execFileSync(
-      'git',
-      ['status', '--porcelain', '--', 'public/assets/grid', 'public/assets/scenes'],
-      { cwd: ROOT, encoding: 'utf8' },
-    ).trim();
+    expect(readdirSync(backupDir).filter((f) => f.endsWith('.png'))).toHaveLength(83);
+    expect(readdirSync(gridDir).filter((f) => f.endsWith('.png'))).toHaveLength(89);
+    const dirty = execFileSync('git', ['status', '--porcelain', '--', 'public/assets/scenes'], {
+      cwd: ROOT,
+      encoding: 'utf8',
+    }).trim();
     expect(dirty).toBe('');
   });
 });

@@ -65,3 +65,26 @@ test('the four Archive tabs are inside the window', async ({ browser }) => {
   }
   await ctx.close();
 });
+
+test('the v1.8 Hold Grid, Arrange Hold (8 × 12), and Hold Look do not scroll sideways across 320–1300 px', async ({
+  browser,
+}) => {
+  test.setTimeout(120_000);
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, baseURL: BASE });
+  const page = await ctx.newPage();
+  tolerantClicks(page);
+  await loadFixture(page, 'v16-played');
+  for (const width of WIDTHS) {
+    await page.setViewportSize({ width, height: 740 });
+    await dismiss(page);
+    await tab(page, 'Hold').click();
+    await noSideways(page, `Hold Grid @${width}`);
+    await page.getByRole('button', { name: /^Layout/ }).click();
+    await noSideways(page, `Arrange Hold @${width}`);
+    await page.getByRole('button', { name: 'Close' }).last().click();
+    await page.locator('[data-hold-look-button="hold"]').click();
+    await noSideways(page, `Hold Look @${width}`);
+    await page.getByRole('button', { name: 'Close' }).last().click();
+  }
+  await ctx.close();
+});
