@@ -6,9 +6,10 @@ import { packPng } from './png-pack';
 import { writePackedPng } from './grid-v18-kit';
 import { BATCH1_SUBJECTS, type Batch1Subject } from './grid-v18-batch1';
 import { BATCH2_SUBJECTS } from './grid-v18-batch2';
+import { BATCH3_SUBJECTS } from './grid-v18-batch3';
 import { drawBitmapText, fillPngRect } from './grid-v18-font';
 
-export { BATCH1_SUBJECTS, BATCH2_SUBJECTS };
+export { BATCH1_SUBJECTS, BATCH2_SUBJECTS, BATCH3_SUBJECTS };
 
 const ROOT = resolve(import.meta.dirname, '..');
 export const STAGING_DIR = resolve(ROOT, 'art-src', 'v1.8-staging');
@@ -26,9 +27,15 @@ export const BATCH2_CONTACT_PATHS = {
   marks: MARKS_PATH,
 } as const;
 
+export const BATCH3_CONTACT_PATHS = {
+  dark: resolve(ROOT, 'docs', 'flesh-out', 'v1.8', 'contact-sheets', 'contact-sheet-3-dark.png'),
+  light: resolve(ROOT, 'docs', 'flesh-out', 'v1.8', 'contact-sheets', 'contact-sheet-3-light.png'),
+  marks: MARKS_PATH,
+} as const;
+
 function renderContactSheet(
   subjects: readonly Batch1Subject[],
-  sheetNumber: 1 | 2,
+  sheetNumber: 1 | 2 | 3,
   rangeLabel: string,
   ground: 'dark' | 'light',
 ): Buffer {
@@ -113,6 +120,17 @@ const BATCH2_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {
   24: 'Keep',
 };
 
+const BATCH3_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {
+  25: 'Pending',
+  26: 'Pending',
+  27: 'Pending',
+  28: 'Pending',
+  29: 'Pending',
+  30: 'Pending',
+  31: 'Pending',
+  32: 'Pending',
+};
+
 function formatMarkRows(
   subjects: readonly Batch1Subject[],
   marksMap: Readonly<Record<number, string>>,
@@ -143,6 +161,12 @@ function buildArtMarksMarkdown(): string {
     '|---|---|---|---|---|',
     formatMarkRows(BATCH2_SUBJECTS, BATCH2_MARKS),
     '',
+    '## Batch 3 - Remaining Plot Tiers & Event Courtyard Marks (`T18.10`, #25-#32)',
+    '',
+    '| n | id | name | mark | staged files |',
+    '|---|---|---|---|---|',
+    formatMarkRows(BATCH3_SUBJECTS, BATCH3_MARKS),
+    '',
   ].join('\n');
 }
 
@@ -155,34 +179,32 @@ function stageSubjects(subjects: readonly Batch1Subject[]): void {
   }
 }
 
+function writeBatchArtifacts(
+  subjects: readonly Batch1Subject[],
+  sheetNumber: 1 | 2 | 3,
+  rangeLabel: string,
+  paths: { readonly dark: string; readonly light: string; readonly marks: string },
+): void {
+  mkdirSync(resolve(paths.dark, '..'), { recursive: true });
+  stageSubjects(subjects);
+  writeFileSync(paths.dark, renderContactSheet(subjects, sheetNumber, rangeLabel, 'dark'));
+  writeFileSync(paths.light, renderContactSheet(subjects, sheetNumber, rangeLabel, 'light'));
+  writeFileSync(paths.marks, buildArtMarksMarkdown());
+}
+
 /** Stages packed Batch 1 PNGs, renders Dark/Light Contact Sheet 1, and writes art-marks.md. */
 export function writeBatch1Artifacts(): void {
-  mkdirSync(resolve(CONTACT_SHEET_PATHS.dark, '..'), { recursive: true });
-  stageSubjects(BATCH1_SUBJECTS);
-  writeFileSync(
-    CONTACT_SHEET_PATHS.dark,
-    renderContactSheet(BATCH1_SUBJECTS, 1, '#01-#12', 'dark'),
-  );
-  writeFileSync(
-    CONTACT_SHEET_PATHS.light,
-    renderContactSheet(BATCH1_SUBJECTS, 1, '#01-#12', 'light'),
-  );
-  writeFileSync(MARKS_PATH, buildArtMarksMarkdown());
+  writeBatchArtifacts(BATCH1_SUBJECTS, 1, '#01-#12', CONTACT_SHEET_PATHS);
 }
 
 /** Stages packed Batch 2 PNGs, renders Dark/Light Contact Sheet 2, and updates art-marks.md. */
 export function writeBatch2Artifacts(): void {
-  mkdirSync(resolve(BATCH2_CONTACT_PATHS.dark, '..'), { recursive: true });
-  stageSubjects(BATCH2_SUBJECTS);
-  writeFileSync(
-    BATCH2_CONTACT_PATHS.dark,
-    renderContactSheet(BATCH2_SUBJECTS, 2, '#13-#24', 'dark'),
-  );
-  writeFileSync(
-    BATCH2_CONTACT_PATHS.light,
-    renderContactSheet(BATCH2_SUBJECTS, 2, '#13-#24', 'light'),
-  );
-  writeFileSync(MARKS_PATH, buildArtMarksMarkdown());
+  writeBatchArtifacts(BATCH2_SUBJECTS, 2, '#13-#24', BATCH2_CONTACT_PATHS);
+}
+
+/** Stages packed Batch 3 PNGs, renders Dark/Light Contact Sheet 3, and updates art-marks.md. */
+export function writeBatch3Artifacts(): void {
+  writeBatchArtifacts(BATCH3_SUBJECTS, 3, '#25-#32', BATCH3_CONTACT_PATHS);
 }
 
 if (
@@ -201,11 +223,17 @@ if (
     console.log(
       `Staged v1.8 Batch 2 (${BATCH2_SUBJECTS.length} subjects) + Dark/Light Contact Sheet 2.`,
     );
+  } else if (mode === '3') {
+    writeBatch3Artifacts();
+    console.log(
+      `Staged v1.8 Batch 3 (${BATCH3_SUBJECTS.length} subjects) + Dark/Light Contact Sheet 3.`,
+    );
   } else {
     writeBatch1Artifacts();
     writeBatch2Artifacts();
+    writeBatch3Artifacts();
     console.log(
-      `Staged v1.8 Batches 1+2 (${BATCH1_SUBJECTS.length + BATCH2_SUBJECTS.length} subjects) + Dark/Light Contact Sheets.`,
+      `Staged v1.8 Batches 1+2+3 (${BATCH1_SUBJECTS.length + BATCH2_SUBJECTS.length + BATCH3_SUBJECTS.length} subjects) + Dark/Light Contact Sheets.`,
     );
   }
 }

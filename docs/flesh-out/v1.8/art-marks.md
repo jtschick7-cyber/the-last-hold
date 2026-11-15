@@ -35,3 +35,16 @@ Reviewed across 3 numbered batches (`T18.8`, `T18.9`, `T18.10`, `D623`, `D475`).
 | 22 | `grid.farm` | FARM PLOTS (1-3) | Keep | `farm-1.png`, `farm-2.png`, `farm-3.png` |
 | 23 | `grid.woodcutter` | WOODCUTTER PLOTS (1-3) | Keep | `woodcutter-1.png`, `woodcutter-2.png`, `woodcutter-3.png` |
 | 24 | `grid.mine` | MINE PLOTS (1-3) | Keep | `mine-1.png`, `mine-2.png`, `mine-3.png` |
+
+## Batch 3 - Remaining Plot Tiers & Event Courtyard Marks (`T18.10`, #25-#32)
+
+| n | id | name | mark | staged files |
+|---|---|---|---|---|
+| 25 | `grid.herb-garden` | HERB GARDEN PLOTS (1-3) | Pending | `herb-garden-1.png`, `herb-garden-2.png`, `herb-garden-3.png` |
+| 26 | `grid.silver-seam` | SILVER SEAM OUTCROPS (1-2) | Pending | `silver-seam-1.png`, `silver-seam-2.png` |
+| 27 | `courtyard-mark.fjord-bone-standard` | COURTYARD MARK: FJORD-BONE STANDARD | Pending | `courtyard-mark-fjord-bone-standard.png` |
+| 28 | `courtyard-mark.barrow-brazier` | COURTYARD MARK: BARROW BRAZIER | Pending | `courtyard-mark-barrow-brazier.png` |
+| 29 | `courtyard-mark.river-reed-basin` | COURTYARD MARK: RIVER-REED BASIN | Pending | `courtyard-mark-river-reed-basin.png` |
+| 30 | `courtyard-mark.stoneback-cairn` | COURTYARD MARK: STONEBACK CAIRN | Pending | `courtyard-mark-stoneback-cairn.png` |
+| 31 | `courtyard-mark.kettle-barrow-wreath` | COURTYARD MARK: KETTLE-BARROW WREATH | Pending | `courtyard-mark-kettle-barrow-wreath.png` |
+| 32 | `courtyard-mark.watch-fire-sconce` | COURTYARD MARK: WATCH-FIRE SCONCE | Pending | `courtyard-mark-watch-fire-sconce.png` |

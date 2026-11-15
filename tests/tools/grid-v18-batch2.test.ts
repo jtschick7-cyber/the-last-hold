@@ -198,17 +198,19 @@ describe('v1.8 Grid Art Batch 2 (T18.9, D623, D475)', () => {
     expect(lightHexes.has('cfc6b8')).toBe(true);
 
     const marks = readFileSync(BATCH2_CONTACT_PATHS.marks, 'utf8');
+    const batch1Section = marks.split('## Batch 2')[0] ?? '';
+    const batch2Section = (marks.split('## Batch 2')[1] ?? '').split('## Batch 3')[0] ?? '';
     // Batch 1 remains Keep
     for (let n = 1; n <= 12; n++) {
-      expect(marks).toContain(`| ${n} |`);
+      expect(batch1Section).toContain(`| ${n} |`);
     }
-    expect(marks).toContain('| 1 | `grid.hearth-hall.hamlet`');
-    expect(marks).toContain('| Keep |');
+    expect(batch1Section).toContain('| 1 | `grid.hearth-hall.hamlet`');
+    expect(batch1Section).toContain('| Keep |');
     // Batch 2 rows #13..#24 all marked Keep
     for (const s of BATCH2_SUBJECTS) {
-      expect(marks).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | Keep |`);
+      expect(batch2Section).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | Keep |`);
     }
-    expect(marks).not.toContain('Pending');
+    expect(batch2Section).not.toContain('Pending');
   });
 
   it('keeps public/assets/grid/ untouched (83 original files)', () => {
