@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.1`–`T18.12` complete, `T18.13 [?]` awaiting `Q87`).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`; `D628` `Proposed`), **in progress** (`T18.1`–`T18.12` complete).
-- **Last task:** `T18.13` **`[?]`** — Applied `Q86 (a)` pure `0.8×` round `layout.*` (`0.02 / 0.01 / 0.04`), `breach.*` (`0.15 / 0.25 / 0.05`), and `vigil.embersPerLevel: 0.22` in `src/content/balance.ts` + `docs/gdd.md`; added 4× CPU `layoutTactics`/`v16Migration` benchmarks; verified rebuilt `dist/` gzip size (`533,306 B ≤ 614,400 B`), `dist/sw.js` hashes (`0` mismatches), save-size & pack tests (`22/22` pass), and `61/63` checks in 65-run `npm run sim:check` (6-shard Playwright e2e `236/236` & `npm run bench` `19.4 s` also passed prior to the final `adjSilver: 0.015 → 0.02` tweak); logged **`Q87`** before editing `sim/targets.ts` or running `npm run sim:accept`.
-- **Next:** Resolve **`Q87`**, finish `T18.13` (`sim/targets.ts` + `npm run sim:accept`, re-verify post-edit e2e/bench if requested), then proceed to `T18.14`.
-- **Open questions:** `Q87` (`sim/targets.ts` `ENGAGEMENT.provisionsMatter.minShare` + `EVENTS.minBountyShare` under `Q86 (a)` pure `0.8×` round).
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.1`–`T18.13` complete).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`; `D628` `Proposed`), **in progress** (`T18.1`–`T18.13` complete).
+- **Last task:** `T18.13` — Applied `Q86 (a)` pure `0.8×` round constants + `Q87 (a)` target calibration (`EVENTS.minBountyShare: 0.695`, `ENGAGEMENT.provisionsMatter.minShare: 0.16` in `sim/targets.ts`), recorded `sim/baseline.json` (`rulesVersion: 7`) via 65-run `npm run sim:accept` (`63/63` checks green in `185.6 s`), added 4× CPU `layoutTactics`/`v16Migration` bench checks, verified rebuilt `dist/` gzip size (`533,306 B ≤ 614,400 B`) & `dist/sw.js` (`0` mismatches), checked off `T18.13` `[x]`, and confirmed `npm run check` green (`≤ 90 s`).
+- **Next:** `T18.14` — Preview build & iPhone playtest hand-off (plus optional fresh Playwright bench/e2e re-run after `adjSilver: 0.015 → 0.02` if desired).
+- **Open questions:** None (`Q87` answered `(a)`).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -214,3 +214,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
   - On final pure `0.8×` round `Q86 (a)` (`adjSilver: 0.02`), `61/63` checks pass in `188.8 s`: `contracts-own-silver` (`10/10` seeds `70.6%–79.9%`), `orders-silver` (`76.0%`), `orders-provisions` (`28.1%`), `recipe-book` (`36/36`), `tokens-not-wasted` (`28.6%`), `bastion` (`96.00 h` Mon / `84.00 h` Sat), `vigil-embers-level` (`level 0 = 314`, ratios `1.025, 1.048, 1.019`, `4.8% ≤ 5%`), `descent-victory` (`80%` wins, `6` downed), and all `breach-*` checks pass (`149/208` moments match `v1.5` baseline).
   - Blocked on **`Q87`** (`docs/questions.md`, `D628` `Proposed`, `T18.13 [?]`) before editing `sim/targets.ts` or running `npm run sim:accept`: `provisions-matter` (`3/10` seeds `18.9% / 17.3% / 16.5%` vs `20–40%`; `mon` median `30.1%`, `sat` `23.4%`) and `silver-with-boss` (`69.9%` vs `≥ 70.0%`). Earlier `< 2×` sweeps and `adjSilver: 0.015` (`sim/reports/2026-11-15T17-25-33-968Z-check.md`, `59/63` passing) confirmed `adjSilver: 0.015` still measures `silver-with-boss` at `69.9%` while regressing `vigil-embers-level` (`11.1%`) and `descent-victory` (`86%`), and `provisions()` scaling prevents `layout.adjFood` from lifting `provisions-matter` without breaking `contracts-own-silver`.
 - **Verification & next:** Final `npm run check` verified green (`≤ 90 s`), committed locally on `milestone/v1.8` (`sim/targets.ts` and `sim/baseline.json` untouched pending `Q87`).
+
+## 2026-11-15 — v1.8 T18.13 (complete): Apply Q87 (a) targets, record v1.8 sim/baseline.json (rulesVersion 7) & close T18.13
+
+- **Owner approval `Q87 (a)` (`sim/targets.ts`, `sim/baseline.json`, `docs/questions.md`, `docs/decisions.md`):**
+  - Updated `sim/targets.ts`: `EVENTS.minBountyShare` (`0.7 → 0.695`) and `ENGAGEMENT.provisionsMatter.minShare` (`0.2 → 0.16`, `16–40%`); recorded owner approval `(a)` on `Q87` in `docs/questions.md` and updated `D628` (`Proposed`) in `docs/decisions.md`.
+- **Full 65-run `npm run sim:accept` (`sim/reports/2026-11-15T17-47-04-853Z-check.md`, `185.6 s`):**
+  - All **`63/63` checks passed (`0` failures)**: `provisions-matter` (`10/10` seeds `16.5%–33.1%`), `silver-with-boss` (`69.9% ≥ 69.5%`), `contracts-own-silver` (`10/10` seeds `70.6%–79.9%`), `vigil-embers-level` (`4.8% ≤ 5%`), `descent-victory` (`80%` wins / `6` downed), `bastion` (`96.00 h` Mon / `84.00 h` Sat), and all `breach-*` checks (`15 vs 15`, `15 vs 14` on `sim-4`, `16 vs 18` bad layout).
+  - Recorded updated `sim/baseline.json` (`rulesVersion: 7`; `149/208` moments matching `v1.5` baseline).
+- **Completion & verification:** Marked `T18.13` **`[x]`** in `docs/implementation-plan.md`, confirmed `npm run check` green (`≤ 90 s`) after the final edit, and committed locally on `milestone/v1.8` (ready for `T18.14`).
