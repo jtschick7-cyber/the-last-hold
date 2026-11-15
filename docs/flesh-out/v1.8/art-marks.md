@@ -40,7 +40,7 @@ Reviewed across 3 numbered batches (`T18.8`, `T18.9`, `T18.10`, `D623`, `D475`).
 
 | n | id | name | mark | staged files |
 |---|---|---|---|---|
-| 25 | `grid.herb-garden` | HERB GARDEN PLOTS (1-3) | Pending | `herb-garden-1.png`, `herb-garden-2.png`, `herb-garden-3.png` |
+| 25 | `grid.herb-garden` | HERB GARDEN PLOTS (1-3) | Keep | `herb-garden-1.png`, `herb-garden-2.png`, `herb-garden-3.png` |
 | 26 | `grid.silver-seam` | SILVER SEAM OUTCROPS (1-2) | Keep | `silver-seam-1.png`, `silver-seam-2.png` |
 | 27 | `courtyard-mark.fjord-bone-standard` | COURTYARD MARK: FJORD-BONE STANDARD | Keep | `courtyard-mark-fjord-bone-standard.png` |
 | 28 | `courtyard-mark.barrow-brazier` | COURTYARD MARK: BARROW BRAZIER | Keep | `courtyard-mark-barrow-brazier.png` |

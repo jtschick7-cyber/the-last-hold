@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.10` `#26`–`#32` Keep, `#25` redrawn and awaiting Keep/Redraw confirmation).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.1`–`T18.9` complete; `T18.10` `[ ]` awaiting final Keep mark on `#25`).
-- **Last task:** `T18.10` (round 2 redraw) — Recorded **Keep** for `#26` (`silver-seam-1..2`) and `#27`–`#32` (`6` Event *Courtyard Marks*); redrew `#25` (`herb-garden-1..3`) with organic cobble/oak botanical herb beds, drying shed, & sculpted yarrow/mugwort/juniper clumps and regenerated Dark/Light Contact Sheet 3 (`public/assets/` untouched until `T18.11`).
-- **Next:** Owner **Keep / Redraw** confirmation on `#25` (`herb-garden-1..3`), then `T18.11` once `#25` is approved Keep.
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.10` complete, all `#01`–`#32` approved Keep).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.1`–`T18.10` complete).
+- **Last task:** `T18.10` — Grid Art Batch 3 (`#25`–`#32`: `herb-garden-1..3`, `silver-seam-1..2`, and `6` `16 × 16` Event *Courtyard Marks*, `11` PNGs; `89` total staged in `art-src/v1.8-staging/`) **all 8 approved Keep** across rounds 1–2 (`public/assets/grid/` and `public/assets/scenes/` untouched until `T18.11`).
+- **Next:** `T18.11` — Deploy all approved Batches 1–3 into `public/assets/`, wire `courtyard-mark.<id>` & `HoldGrid`/`HoldScene` pixel PNGs, update `D615` cap & SHA-256 hashes.
 - **Open questions:** None (`Q83`–`Q85` answered `(a)`).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -179,3 +179,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **Redrew `#25` (`tools/grid-v18-plots-extra.ts`, `art-src/v1.8-staging/herb-garden-1..3.png`):** Replaced the rectangular green-box beds with organic cobblestone spiral & chamfered oak-curbed dark-loam herb beds, apothecary drying shed with hanging herbs, brass sundial, willow trellis, copper watering pitcher, and individually sculpted white yarrow umbels, purple mugwort spires, and blue juniper berry clumps overflowing the borders across tiers `1..3` (keeping `1` connected silhouette per sprite).
 - **Regeneration & verification (`tests/tools/grid-v18-batch3.test.ts`):** Updated Contact Sheet 3 assertions for `#26`–`#32` **Keep** + `#25` **Pending** and single-island coherence on `herb-garden-1..3`; regenerated Dark/Light Contact Sheet 3 and visually inspected both PNGs (`public/assets/grid/` and `public/assets/scenes/` untouched; `npm run check` verified green after final edit).
 - **Next:** Stop for owner **Keep / Redraw** confirmation on redrawn `#25` (`herb-garden-1..3`).
+
+## 2026-11-15 — v1.8 T18.10 (complete): All Batch 3 subjects (#25–#32) approved Keep on Contact Sheet 3
+- **Final Keep approval (`docs/flesh-out/v1.8/art-marks.md`, `tools/contact-sheet-v18.ts`):** Owner approved `#25` (`herb-garden-1..3`) **Keep**, completing **32/32 Keep** across all three Grid Art Overhaul batches (`#01`–`#12`, `#13`–`#24`, `#25`–`#32`; `89` losslessly packed Zughy-32 PNGs staged in `art-src/v1.8-staging/`). `public/assets/grid/` (`83` PNGs) and `public/assets/scenes/` remain untouched until `T18.11`.
+- **Tests & verification (`tests/tools/grid-v18-batch3.test.ts`):** Tightened Batch 3 assertions so every `#25`–`#32` row verifies `| Keep |` with zero `Pending` marks across the entire ledger, checked off `T18.10` in `docs/implementation-plan.md`, and confirmed `npm run check` green (`≤ 90 s`).
+- **Next:** `T18.11` — Deploy all approved Batches 1–3 into `public/assets/`, wire `courtyard-mark.<id>` sprites into `HoldGrid` & `HoldScene`, update `D615` cap & SHA-256 hashes.

@@ -121,7 +121,7 @@ const BATCH2_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {
 };
 
 const BATCH3_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {
-  25: 'Pending',
+  25: 'Keep',
   26: 'Keep',
   27: 'Keep',
   28: 'Keep',

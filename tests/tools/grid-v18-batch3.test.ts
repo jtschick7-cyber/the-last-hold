@@ -283,9 +283,9 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
     expect(batch2Section).not.toContain('Pending');
 
     for (const s of BATCH3_SUBJECTS) {
-      const expected = s.num === 25 ? 'Pending' : 'Keep';
-      expect(batch3Section).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | ${expected} |`);
+      expect(batch3Section).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | Keep |`);
     }
+    expect(marks).not.toContain('Pending');
   });
 
   it('keeps public/assets/grid/ (83 files) and public/assets/scenes/ untouched until T18.11', () => {
