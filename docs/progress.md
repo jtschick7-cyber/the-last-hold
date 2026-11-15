@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.9` complete).
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.9` complete, `T18.10 [?]` awaiting `Q83`–`Q85`).
 - **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.1`–`T18.9` complete).
 - **Last task:** `T18.9` — Grid Art Batch 2 (`#13`–`#24`: `8` level buildings & `4` primary plot archetypes, `34` PNGs) staged in `art-src/v1.8-staging/` and **all 12 approved (Keep)** across rounds 1–2 (`public/assets/grid/` untouched until `T18.11`).
-- **Next:** `T18.10` — Grid Art Batch 3 (`≤ 12` subjects): remaining plot variants (`herb-garden`, `silver-seam`) & `6` Event *Courtyard Marks*.
-- **Open questions:** None (`Q79`–`Q82` answered `(a)`).
+- **Next:** `T18.10 [?]` — Grid Art Batch 3 (`≤ 12` subjects): remaining plot variants (`herb-garden`, `silver-seam`) & `6` Event *Courtyard Marks* (blocked on owner confirmation for `Q83`–`Q85` before drawing/staging).
+- **Open questions:** `Q83`–`Q85` (`T18.10`: Courtyard Mark PNG dimensions, `HoldScene` accent crop/staging & deploy paths, and `src/content/assets.ts` ID mapping).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -162,3 +162,8 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **Final Keep approval (`docs/flesh-out/v1.8/art-marks.md`, `tools/contact-sheet-v18.ts`):** Owner marked `#22` (`farm-1..3`) and `#23` (`woodcutter-3`) **Keep**, completing 12/12 **Keep** approval across Batch 2 (`#13`–`#24`, `34` packed PNGs staged in `art-src/v1.8-staging/`, `public/assets/grid/` untouched until `T18.11`).
 - **Tests & verification (`tests/tools/grid-v18-batch2.test.ts`):** Tightened Contact Sheet 2 assertions to verify every `#13`–`#24` row carries `| Keep |` with zero `Pending` entries remaining, checked off `T18.9` in `docs/implementation-plan.md`, and ran `npm run check` green (`≤ 90 s`).
 - **Next:** `T18.10` — Grid Art Batch 3 (`≤ 12` subjects): `herb-garden`, `silver-seam` & `6` Event *Courtyard Marks*.
+
+## 2026-11-15 — v1.8 T18.10 [?]: Log Q83–Q85 before authoring or staging Courtyard Mark PNGs
+- **Audit completed:** Inspected `tools/contact-sheet-v18.ts`, `tools/grid-v18-*.ts`, `tools/pixel.ts`, `tools/png-pack.ts`, `tests/tools/grid-v18-batch{1,2}.test.ts`, `tests/tools/layout-grid-art.test.ts`, `src/content/{palette,assets,courtyard-marks}.ts`, `src/ui/widgets/{CourtyardMarkAccents,HoldGrid,HoldScene}.tsx`, existing `herb-garden-1..3` / `silver-seam-1..2` PNGs, and `hold-{hamlet,keep,citadel,bastion}.png`; baseline `npm run check` green (`266` files / `4,155` Vitest tests + `sim:check --fast`). `public/assets/grid/` (`83` PNGs) and `public/assets/scenes/` remain untouched.
+- **Open questions logged (`docs/questions.md`, `Q83`–`Q85`):** `docs/` and `src/content/assets.ts` leave three pre-drawing specs open: `Q83` Courtyard Mark PNG dimensions & unified vs. dual Grid/Scene sprites (recommends unified `16 × 16 px` sprite at `1×` native integer scale), `Q84` `HoldScene` accent crop, staging path, & `T18.11` deploy path (recommends standalone `art-src/v1.8-staging/courtyard-mark-<id>.png` → `public/assets/grid/courtyard-mark-<id>.png` at `SCENE_ANCHORS`), and `Q85` `src/content/assets.ts` ID mapping & manifest timing (recommends `courtyard-mark.<id>` keeping `83`-asset `grid.*` invariant intact until `T18.11`).
+- **Blocked & stopped (`[?]`):** Marked `T18.10 [?]` in `docs/implementation-plan.md` awaiting owner confirmation on `Q83`–`Q85` before drawing/staging Batch 3 PNGs or rendering Contact Sheet 3.
