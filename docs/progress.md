@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.1`–`T18.11` complete, `T18.12 [?]` awaiting `Q86`).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.1`–`T18.11` complete, `T18.12 [?]` stopped for owner calibration confirmation).
-- **Last task:** `T18.12 [?]` — Upgraded `arrangeFortress` / greedy placement / Breach `tactician` support & rampart screening in `src/core/systems/` and added `8 × 12` AoE/`Warded`/Breach `v7` calibration probes (`docs/flesh-out/v1.8/breach-calibration.md`); measured `1.0×` vs `0.8×` round sweeps without changing `balance.ts` / `sim/baseline.json` / `sim/targets.ts`, logged `Q86` in `docs/questions.md`, and stopped for owner confirmation.
-- **Next:** `T18.13` (after `Q86` answer) — Finalize `balance.ts` values, `sim/targets.ts`, and `npm run sim:accept`.
-- **Open questions:** `Q86` (open — `T18.12` calibration options `(a)/(b)/(c)` for `layout.*`, `breach.*`, `vigil.embersPerLevel`, and `T18.13` `sim:accept`).
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.1`–`T18.12` complete).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`), **in progress** (`T18.1`–`T18.12` complete).
+- **Last task:** `T18.12` — Upgraded `arrangeFortress` / greedy placement / Breach `tactician` support & rampart screening in `src/core/systems/` and added `8 × 12` AoE/`Warded`/Breach `v7` calibration probes (`docs/flesh-out/v1.8/breach-calibration.md`); measured `1.0×` vs `0.8×` round sweeps without changing `balance.ts` / `sim/baseline.json` / `sim/targets.ts`, logged `Q86` in `docs/questions.md`, and recorded owner approval `(a)` for `T18.13`.
+- **Next:** `T18.13` — Finalize `balance.ts` values (`Q86 (a)`), perf/size benchmarks, `sim/targets.ts` + `npm run sim:accept`, and 6-shard e2e.
+- **Open questions:** None (`Q86` answered `(a)`).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -192,12 +192,12 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **Playwright polish & pixel-mark sweeps (`tests/e2e/polish-screens.ts`, `tests/e2e/polish-widths.spec.ts`, `tests/e2e/hold-look.spec.ts`):** Added `v16-played` Bastion flows (`hold-grid-bastion-marks`, `arrange-hold-bastion`, `hold-look-unlocked`) and `320–1300 px` layout-width checks for `Hold Grid`, `Arrange Hold` (`8 × 12`), and `Hold Look`. `--project=phone-chromium` passed `arrange-hold.spec.ts`, `polish-widths.spec.ts`, and `polish-motion.spec.ts` (`16` tests), `hold-look.spec.ts` (`4/4` verifying `16 × 16` pixel PNGs on `HoldGrid` & `HoldScene`), and full `polish-{tap-targets,text-size,contrast}.spec.ts` (`74` tests, **0 findings** across `97` screens / `13,464` text measurements / `320 px` Largest text; post-regex update `v16-played` rerun passed `3/3` with `0` missing text). Checked off `T18.11` in `docs/implementation-plan.md`; final `npm run check` green (`≤ 90 s`).
 - **Next:** `T18.12` — Simulator policy teaching (`tactician`, presets/arrange on `8 × 12` & Breach `v7`) & owner calibration table.
 
-## 2026-11-15 — v1.8 T18.12 [?]: Simulator policy teaching (`8 × 12` AoE/`Warded`/Breach `v7`) & owner calibration table
+## 2026-11-15 — v1.8 T18.12: Simulator policy teaching (`8 × 12` AoE/`Warded`/Breach `v7`) & owner calibration table
 
 - **Core placement & Breach tactics (`src/core/systems/layout-place.ts`, `src/core/systems/breach-suggest.ts`, `src/core/systems/breach.ts`):**
   - Updated `arrangeFortress`, `greedyPlacement`, `chooseSupportMoves`, `rampartScreenCandidate`, `autoDefenses`, and lexicographic Breach candidate ranking (`[coveredCols, depth2Cols, distinctTowers, interiorTowers, screenedCount, layoutScore]`) so presets and Tactician evaluate `8 × 12` AoE adjacency, `Warded` perimeter screening, and depth-2 Rampart support without modifying non-policy core rules or introducing bare tuning constants.
 - **Calibration probes & report (`sim/breach-probe.ts`, `sim/breach-calibration.ts`, `sim/breach-cli.ts`, `sim/tactician.test.ts`, `sim/breach-calibration.test.ts`, `docs/flesh-out/v1.8/breach-calibration.md`):**
   - Added `BREACH_MODES`, `carelessLayoutCommands`, `arrangedModeState`, `measureMode`, `measureModeTacticsOnly`, `V18_LAYOUT_SCALES`, `V18_SWEEPS`, and v1.8 calibration sections (`Sections 1c`, `6`, `7`, `8`) comparing `Economy`, `Balanced`, `Fortress`, `Tactician`, and `Careless` `8 × 12` layouts plus `1.0×` vs `0.8×` round sweeps while leaving `src/content/balance.ts`, `sim/baseline.json`, `sim/targets.ts`, and `docs/gdd.md` untouched.
   - Observed `npm run sim:check` (65 runs): `1.0×` placeholders passed `58/63` (`breach-*` all passed; `5` failed: `contracts-own-silver`, `provisions-matter`, `recipe-book`, `tokens-not-wasted`, `vigil-embers-level`; `bastion` `-10.00 h`), while temporary `0.8×` round `layout.*` (`0.02 / 0.01 / 0.04`, restored cleanly) passed `60/63` and preserved `bastion: 96.00 h` across all 5 standard profiles (`3` failed: `provisions-matter`, `silver-with-boss` 69.9%, `vigil-embers-level` 9.6% gap).
-- **Owner question & verification:** Logged **`Q86`** in `docs/questions.md`, marked `T18.12 [?]` in `docs/implementation-plan.md`, and verified `npm run check` green (`≤ 90 s`).
-- **Next:** Owner decision on `Q86`, then `T18.13` — finalize `balance.ts`, `sim/targets.ts`, and `npm run sim:accept`.
+- **Owner decision & verification:** Logged **`Q86`** in `docs/questions.md`, recorded owner approval `(a)`, marked `T18.12` complete (`[x]`) in `docs/implementation-plan.md`, and verified `npm run check` green (`≤ 90 s`).
+- **Next:** `T18.13` — finalize `balance.ts` values (`Q86 (a)`), perf/size benchmarks, `sim/targets.ts` + `npm run sim:accept`, and 6-shard e2e.
