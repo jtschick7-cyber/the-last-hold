@@ -10,7 +10,18 @@ import { createNewGame } from '../src/core/state/new-game';
 import { bandFor } from '../src/core/story/band';
 import { laneTableFor, volley, wallCut } from '../src/core/systems/breach';
 import { footprint, isPieceUnlocked } from '../src/core/systems/layout';
-import { arrangedState, type BreachVariant } from './breach-probe';
+import {
+  evaluateHoldTactics,
+  tacticalBrewFactor,
+  tacticalProductionFactor,
+  tacticalThreatFactor,
+} from '../src/core/systems/layout-tactics';
+import {
+  arrangedModeState,
+  arrangedState,
+  type BreachModeId,
+  type BreachVariant,
+} from './breach-probe';
 import { median } from './checks/helpers';
 import { STARTS } from './run';
 
@@ -92,6 +103,25 @@ export interface Cell {
   readonly towers: number;
 }
 
+export interface ModeTacticsSummary {
+  readonly mode: BreachModeId;
+  readonly foodMult: number;
+  readonly woodMult: number;
+  readonly ironMult: number;
+  readonly silverMult: number;
+  readonly brewMult: number;
+  readonly threatMult: number;
+  readonly wardedShare: number;
+  readonly links: number;
+  readonly connectedWalls: number;
+  readonly screenedTowers: number;
+  readonly sectorLanes: number;
+}
+
+export interface ModeCell extends Cell {
+  readonly tactics: ModeTacticsSummary;
+}
+
 const quantile = (sorted: readonly number[], q: number): number =>
   sorted[Math.floor(q * (sorted.length - 1))] ?? 0;
 
@@ -117,22 +147,15 @@ export interface Tweak {
   readonly post?: Adjust;
 }
 
-const measureSeed = (
+const measureSeedState = (
   s: SeedState,
   level: Level,
-  variant: BreachVariant,
+  state: GameState,
+  v5: boolean,
   samples: number,
-  tweak?: Tweak,
 ): SeedCell => {
-  const base = structuredClone(s.before);
-  base.buildings.walls = level.walls;
-  base.buildings.watchtower = level.tower;
-  tweak?.pre?.(base);
-  const state = arrangedState(base, variant);
-  tweak?.post?.(state);
   const prep = s.stand.prep ?? { oils: {}, potions: {} };
   const input = previewInputFor(state, s.stand.party, prep, samples);
-  const v5 = variant === 'v5';
   const standInput: StandInput = v5 ? { ...input.stand, lanes: undefined } : input.stand;
   if (v5) delete (standInput as { lanes?: unknown }).lanes;
   const cap = num('combat.takenCap');
@@ -174,14 +197,7 @@ const measureSeed = (
   };
 };
 
-export const measure = (
-  seeds: readonly SeedState[],
-  level: Level,
-  variant: BreachVariant,
-  samples: number,
-  tweak?: Tweak,
-): Cell => {
-  const cells = seeds.map((s) => measureSeed(s, level, variant, samples, tweak));
+const summarizeSeedCells = (cells: readonly SeedCell[]): Cell => {
   const med = median(cells.map((c) => c.median));
   const milestones = constantAt('relics.waveMilestones').value as readonly number[];
   return {
@@ -204,6 +220,194 @@ export const measure = (
     towers: median(cells.map((c) => c.towers)),
   };
 };
+
+const measureSeed = (
+  s: SeedState,
+  level: Level,
+  variant: BreachVariant,
+  samples: number,
+  tweak?: Tweak,
+): SeedCell => {
+  const base = structuredClone(s.before);
+  base.buildings.walls = level.walls;
+  base.buildings.watchtower = level.tower;
+  tweak?.pre?.(base);
+  const state = arrangedState(base, variant);
+  tweak?.post?.(state);
+  return measureSeedState(s, level, state, variant === 'v5', samples);
+};
+
+export const measure = (
+  seeds: readonly SeedState[],
+  level: Level,
+  variant: BreachVariant,
+  samples: number,
+  tweak?: Tweak,
+): Cell => summarizeSeedCells(seeds.map((s) => measureSeed(s, level, variant, samples, tweak)));
+
+export const measureMode = (
+  seeds: readonly SeedState[],
+  level: Level,
+  mode: BreachModeId,
+  samples: number,
+  tweak?: Tweak,
+): ModeCell => {
+  const seedStates = seeds.map((s) => {
+    const base = structuredClone(s.before);
+    base.buildings.walls = level.walls;
+    base.buildings.watchtower = level.tower;
+    tweak?.pre?.(base);
+    const state = arrangedModeState(base, mode);
+    tweak?.post?.(state);
+    return { seed: s, state };
+  });
+  const cells = seedStates.map(({ seed, state }) =>
+    measureSeedState(seed, level, state, false, samples),
+  );
+  const summary = summarizeSeedCells(cells);
+  const tacs = seedStates.map(({ state }) => {
+    const t = evaluateHoldTactics(state);
+    const table = laneTableFor(state);
+    return {
+      foodMult: tacticalProductionFactor(state, 'food')?.value ?? 1,
+      woodMult: tacticalProductionFactor(state, 'wood')?.value ?? 1,
+      ironMult: tacticalProductionFactor(state, 'iron')?.value ?? 1,
+      silverMult: tacticalProductionFactor(state, 'silver')?.value ?? 1,
+      brewMult: tacticalBrewFactor(state)?.value ?? 1,
+      threatMult: tacticalThreatFactor(state)?.value ?? 1,
+      warded: t.hearthWarded ? 1 : 0,
+      links: t.links.length,
+      connectedWalls: t.connectedWalls.size,
+      screenedTowers: t.screenedTowers.size,
+      sectorLanes: (table.sectorCols ?? []).filter((n) => n > 0).length,
+    };
+  });
+  return {
+    ...summary,
+    tactics: {
+      mode,
+      foodMult: median(tacs.map((x) => x.foodMult)),
+      woodMult: median(tacs.map((x) => x.woodMult)),
+      ironMult: median(tacs.map((x) => x.ironMult)),
+      silverMult: median(tacs.map((x) => x.silverMult)),
+      brewMult: median(tacs.map((x) => x.brewMult)),
+      threatMult: median(tacs.map((x) => x.threatMult)),
+      wardedShare: tacs.reduce((n, x) => n + x.warded, 0) / Math.max(1, tacs.length),
+      links: median(tacs.map((x) => x.links)),
+      connectedWalls: median(tacs.map((x) => x.connectedWalls)),
+      screenedTowers: median(tacs.map((x) => x.screenedTowers)),
+      sectorLanes: median(tacs.map((x) => x.sectorLanes)),
+    },
+  };
+};
+
+export const measureModeTacticsOnly = (
+  seeds: readonly SeedState[],
+  level: Level,
+  mode: BreachModeId,
+  tweak?: Tweak,
+): ModeTacticsSummary => {
+  const tacs = seeds.map((s) => {
+    const base = structuredClone(s.before);
+    base.buildings.walls = level.walls;
+    base.buildings.watchtower = level.tower;
+    tweak?.pre?.(base);
+    const state = arrangedModeState(base, mode);
+    tweak?.post?.(state);
+    const t = evaluateHoldTactics(state);
+    const table = laneTableFor(state);
+    return {
+      foodMult: tacticalProductionFactor(state, 'food')?.value ?? 1,
+      woodMult: tacticalProductionFactor(state, 'wood')?.value ?? 1,
+      ironMult: tacticalProductionFactor(state, 'iron')?.value ?? 1,
+      silverMult: tacticalProductionFactor(state, 'silver')?.value ?? 1,
+      brewMult: tacticalBrewFactor(state)?.value ?? 1,
+      threatMult: tacticalThreatFactor(state)?.value ?? 1,
+      warded: t.hearthWarded ? 1 : 0,
+      links: t.links.length,
+      connectedWalls: t.connectedWalls.size,
+      screenedTowers: t.screenedTowers.size,
+      sectorLanes: (table.sectorCols ?? []).filter((n) => n > 0).length,
+    };
+  });
+  return {
+    mode,
+    foodMult: median(tacs.map((x) => x.foodMult)),
+    woodMult: median(tacs.map((x) => x.woodMult)),
+    ironMult: median(tacs.map((x) => x.ironMult)),
+    silverMult: median(tacs.map((x) => x.silverMult)),
+    brewMult: median(tacs.map((x) => x.brewMult)),
+    threatMult: median(tacs.map((x) => x.threatMult)),
+    wardedShare: tacs.reduce((n, x) => n + x.warded, 0) / Math.max(1, tacs.length),
+    links: median(tacs.map((x) => x.links)),
+    connectedWalls: median(tacs.map((x) => x.connectedWalls)),
+    screenedTowers: median(tacs.map((x) => x.screenedTowers)),
+    sectorLanes: median(tacs.map((x) => x.sectorLanes)),
+  };
+};
+
+export const V18_LAYOUT_SCALES = [0.25, 0.5, 0.75, 1, 1.5, 2] as const;
+
+const LAYOUT_PLACEHOLDER_KEYS = [
+  'layout.adjFood',
+  'layout.adjWood',
+  'layout.adjIron',
+  'layout.adjSilver',
+  'layout.adjBrew',
+  'layout.adjCottage',
+  'layout.adjTrophy',
+  'layout.wardedThreatCut',
+  'layout.wardedBonus',
+] as const;
+
+const scaledLayoutValues = (scale: number): Record<string, number> =>
+  Object.fromEntries(
+    LAYOUT_PLACEHOLDER_KEYS.map((k) => [
+      k,
+      Math.round((constantAt(k).value as number) * scale * 10000) / 10000,
+    ]),
+  );
+
+export const V18_SWEEPS: readonly Sweep[] = [
+  ...[0, 0.1, 0.15, 0.2, 0.25, 0.3].map((v) => ({
+    name: 'rampartBonus',
+    label: String(v),
+    values: { 'breach.rampartBonus': v },
+  })),
+  ...[0, 0.15, 0.25, 0.35, 0.5].map((v) => ({
+    name: 'screenedBonus',
+    label: String(v),
+    values: { 'breach.screenedBonus': v },
+  })),
+  ...[0, 0.03, 0.05, 0.08, 0.1].map((v) => ({
+    name: 'sectorBonus',
+    label: String(v),
+    values: { 'breach.sectorBonus': v },
+  })),
+  ...V18_LAYOUT_SCALES.map((scale) => ({
+    name: 'layoutScale',
+    label: `${scale}x`,
+    values: scaledLayoutValues(scale),
+  })),
+];
+
+export const sweepModeCell = (
+  seeds: readonly SeedState[],
+  sweep: Sweep,
+  level: Level,
+  mode: BreachModeId,
+  samples: number,
+  tweak?: Tweak,
+): ModeCell => withValues(sweep.values, () => measureMode(seeds, level, mode, samples, tweak));
+
+export const sweepModeTactics = (
+  seeds: readonly SeedState[],
+  sweep: Sweep,
+  level: Level,
+  mode: BreachModeId,
+  tweak?: Tweak,
+): ModeTacticsSummary =>
+  withValues(sweep.values, () => measureModeTacticsOnly(seeds, level, mode, tweak));
 
 /** One value (or set of values, for a split) tried for a tunable. */
 export interface Sweep {

@@ -409,7 +409,11 @@ const arrangeFortress = (state: GameState): void => {
   // Row minY + 1 (if in frontRows 0..4): spread Screened Watchtowers behind connected row-0 walls.
   const screenY = frontY + 1;
   if (screenY <= maxFrontY) {
-    for (const x of ARRANGE_PATTERNS.towerScreenCols) {
+    const screenCols = [
+      ...ARRANGE_PATTERNS.towerScreenCols.filter((x) => p.taken.has(key({ x, y: frontY }))),
+      ...ARRANGE_PATTERNS.towerScreenCols.filter((x) => !p.taken.has(key({ x, y: frontY }))),
+    ];
+    for (const x of screenCols) {
       const tId = towers.find((id) => !p.placed[id]);
       if (!tId) break;
       if (x >= bounds.minX && x <= bounds.maxX) putPiece(p, tId, { x, y: screenY }, true);

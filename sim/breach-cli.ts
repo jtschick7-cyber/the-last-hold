@@ -1,7 +1,16 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { constantAt, num } from '../src/core/balance-access';
-import type { BreachVariant } from './breach-probe';
+import { apply } from '../src/core/commands';
+import { BREACH_MODES, type BreachModeId, type BreachVariant } from './breach-probe';
+import {
+  measureMode,
+  measureModeTacticsOnly,
+  sweepModeCell,
+  sweepModeTactics,
+  V18_SWEEPS,
+} from './breach-calibration';
 import {
   LEVELS,
   SWEEPS,
@@ -19,11 +28,16 @@ import {
 // before TB.13 sets the constants (Q63). `-- --samples 100 --out file.md --quick` (quick: no sweeps).
 // Reported only: it judges nothing and changes no constant. Not part of `npm run check`.
 const DEFAULT_OUT = fileURLToPath(
-  new URL('../docs/flesh-out/v1.5/breach-calibration.md', import.meta.url),
+  new URL('../docs/flesh-out/v1.8/breach-calibration.md', import.meta.url),
 );
-const PROPOSAL = fileURLToPath(
-  new URL('../docs/flesh-out/v1.5/breach-proposal.md', import.meta.url),
-);
+const MODE_NAME: Record<BreachModeId, string> = {
+  economy: 'Economy (Auto)',
+  balanced: 'Balanced (Auto)',
+  fortress: 'Fortress (Auto)',
+  tactician: 'Tactician (Suggest)',
+  careless: 'Careless (Exposed)',
+};
+const f3 = (x: number): string => x.toFixed(3);
 
 const row = (cells: readonly (string | number)[]): string => `| ${cells.join(' | ')} |`;
 const range = (c: Cell): string => `${c.median} (${c.p10}–${c.p90}), mean ${c.mean.toFixed(2)}`;
@@ -121,6 +135,47 @@ const main = async (): Promise<void> => {
   }
   lap('section 1b');
 
+  md.push(
+    '## 1c. v1.8 layout modes at the first stand (8 × 12, v7 Breach tactics)',
+    '',
+    'Compares Economy, Balanced, Fortress (`autoArrange` modes), Tactician (`Suggest`), and Careless (exposed `1.0×` layout) across `low`, `mid`, and `max` on all 5 Monday seeds.',
+    '',
+  );
+  for (const level of LEVELS) {
+    md.push(
+      `### ${level.name}: Walls ${level.walls}, Watchtower ${level.tower}`,
+      '',
+      row([
+        'Mode',
+        'Waves held',
+        'Seeds Held+',
+        'Seeds Triumphant',
+        'Mean wall cut',
+        'Mean volley',
+        'Pieces / towers',
+        'Conn walls / Screened / Sector lanes',
+      ]),
+      row(['---', '---', '---', '---', '---', '---', '---', '---']),
+    );
+    for (const mode of BREACH_MODES) {
+      const m = measureMode(seeds, level, mode, samples);
+      md.push(
+        row([
+          MODE_NAME[mode],
+          range(m),
+          `${m.held} of ${seeds.length}`,
+          `${m.triumphant} of ${seeds.length}`,
+          `${f1(m.meanCut)}%`,
+          f1(m.meanVolley),
+          `${m.pieces} / ${m.towers}`,
+          `${f1(m.tactics.connectedWalls)} / ${f1(m.tactics.screenedTowers)} / ${f1(m.tactics.sectorLanes)}`,
+        ]),
+      );
+    }
+    md.push('');
+  }
+  lap('section 1c');
+
   md.push('## 2. The low Walls level (fewer wall segments, GDD §5.9.11)', '');
   for (const level of LEVELS) {
     const a = base.get(`${level.name}/auto`) as Cell;
@@ -208,7 +263,126 @@ const main = async (): Promise<void> => {
     );
   }
   md.push('');
-  if (existsSync(PROPOSAL)) md.push(readFileSync(PROPOSAL, 'utf8'));
+  const fillBastion = {
+    pre: (s: Parameters<typeof apply>[0]): void => {
+      apply(s, { type: 'debug.layoutFillBastion' }, s.time);
+    },
+  };
+  const tactLevel = LEVELS[2] ?? { name: 'max' as const, walls: 15, tower: 15 };
+  const pushTacticsTable = (title: string, tweak?: typeof fillBastion): void => {
+    md.push(
+      title,
+      '',
+      row([
+        'Mode',
+        'Food ×',
+        'Wood ×',
+        'Iron ×',
+        'Silver ×',
+        'Brew time ×',
+        'Threat ×',
+        'Warded',
+        'Links',
+      ]),
+      row(['---', '---', '---', '---', '---', '---', '---', '---', '---']),
+    );
+    for (const mode of BREACH_MODES) {
+      const t = measureModeTacticsOnly(seeds, tactLevel, mode, tweak);
+      md.push(
+        row([
+          MODE_NAME[mode],
+          f3(t.foodMult),
+          f3(t.woodMult),
+          f3(t.ironMult),
+          f3(t.silverMult),
+          f3(t.brewMult),
+          f3(t.threatMult),
+          pct(t.wardedShare),
+          f1(t.links),
+        ]),
+      );
+    }
+    md.push('');
+  };
+
+  md.push(
+    '## 6. v1.8 tactical economy, alchemy & Threat across 8 × 12 layouts',
+    '',
+    'Compares tactical multipliers on each seed before the first Bastion stand (natural progress) and on a full `8 × 12` Bastion hold (`debug.layoutFillBastion`) using current `layout.*` placeholders.',
+    '',
+  );
+  pushTacticsTable('### First Bastion stand state');
+  pushTacticsTable('### Full 8 × 12 Bastion hold', fillBastion);
+  lap('section 6');
+
+  md.push(
+    '## 7. v1.8 candidate tunable sweeps (§7.15 & §7.16)',
+    '',
+    '### Breach v7 sweeps (placeholder baselines: rampartBonus 0.15, screenedBonus 0.25, sectorBonus 0.05)',
+    '',
+  );
+  const v7ModeNames: readonly BreachModeId[] = ['fortress', 'tactician', 'careless'];
+  for (const name of ['rampartBonus', 'screenedBonus', 'sectorBonus']) {
+    const group = V18_SWEEPS.filter((s) => s.name === name);
+    md.push(
+      `#### ${name}`,
+      '',
+      row(['Value', 'Point', ...v7ModeNames.map((m) => MODE_NAME[m])]),
+      row(['---', '---', '---', '---', '---']),
+    );
+    for (const sweep of group) {
+      for (const level of LEVELS) {
+        const cells = v7ModeNames.map((m) => {
+          const c = sweepModeCell(seeds, sweep, level, m, samples);
+          return `${c.median} (mean ${c.mean.toFixed(2)})`;
+        });
+        md.push(row([sweep.label, level.name, ...cells]));
+      }
+      lap(`${sweep.name} ${sweep.label}`);
+    }
+    md.push('');
+  }
+
+  md.push(
+    '### Layout tactical scale sweep on full 8 × 12 Bastion hold (`1.0x` = current placeholders)',
+    '',
+    row([
+      'Scale',
+      'Mode',
+      'Food ×',
+      'Wood ×',
+      'Iron ×',
+      'Silver ×',
+      'Brew time ×',
+      'Threat ×',
+      'Warded',
+      'Links',
+    ]),
+    row(['---', '---', '---', '---', '---', '---', '---', '---', '---', '---']),
+  );
+  for (const sweep of V18_SWEEPS.filter((s) => s.name === 'layoutScale')) {
+    for (const mode of BREACH_MODES) {
+      const t = sweepModeTactics(seeds, sweep, tactLevel, mode, fillBastion);
+      md.push(
+        row([
+          sweep.label,
+          MODE_NAME[mode],
+          f3(t.foodMult),
+          f3(t.woodMult),
+          f3(t.ironMult),
+          f3(t.silverMult),
+          f3(t.brewMult),
+          f3(t.threatMult),
+          pct(t.wardedShare),
+          f1(t.links),
+        ]),
+      );
+    }
+  }
+  md.push('');
+  lap('section 7 (layoutScale)');
+
+  mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, md.join('\n'));
   console.log(`Wrote ${out} (${((performance.now() - began) / 1000).toFixed(1)} s)`);
 };

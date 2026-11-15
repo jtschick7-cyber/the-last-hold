@@ -6,7 +6,14 @@ import type { Command } from '../src/core/commands';
 import { POLICY_IDS, play } from '../src/core/policies';
 import { arrangeHold } from '../src/core/systems/breach';
 import { createNewGame } from '../src/core/state/new-game';
-import { badLayoutCommands } from './breach-probe';
+import { laneTableFor, tacticianCommands } from '../src/core/systems/breach';
+import {
+  tacticalBrewFactor,
+  tacticalProductionFactor,
+  tacticalThreatFactor,
+} from '../src/core/systems/layout-tactics';
+import { apply } from '../src/core/commands';
+import { badLayoutCommands, carelessLayoutCommands } from './breach-probe';
 import { runOne } from './run';
 import { shardOf, specsOfShard } from './shards';
 import { buildSpecs } from './specs';
@@ -42,14 +49,72 @@ describe('the Tactician and the probe', () => {
     expect(run?.breach?.probe).not.toBeNull();
   });
 
-  it('probes Auto-arrange, its own layout, the bad layout and the version 5 rules on one state', () => {
+  it('probes Auto-arrange, its own layout, the bad layout, v5 rules, and v1.8 mode comparisons on one state', () => {
     const probe = run?.breach?.probe;
     expect(probe?.points.map((p) => p.variant)).toEqual(['auto', 'tactician', 'bad', 'v5']);
     expect(probe?.points.find((p) => p.variant === 'v5')?.pieces).toEqual([]);
-    // Suggest never scores below Auto-arrange, and the bad layout cannot beat both.
+    // Suggest/Tactician never holds fewer waves than Auto-arrange, and bad cannot beat both.
     const m = (v: string): number => probe?.points.find((p) => p.variant === v)?.median ?? -1;
-    expect(m('tactician')).toBeGreaterThanOrEqual(0);
+    expect(m('tactician')).toBeGreaterThanOrEqual(m('auto'));
     expect(m('bad')).toBeLessThanOrEqual(Math.max(m('auto'), m('tactician')));
+
+    // v1.8 mode comparison: Careless obeys strict 1.0x floor, Economy & Balanced beat Careless in tactics,
+    // and Fortress & Tactician beat Careless at max defenses in v7 Breach waves held.
+    const byMode = new Map((probe?.modes ?? []).map((x) => [x.mode, x]));
+    expect([...byMode.keys()]).toEqual([
+      'economy',
+      'balanced',
+      'fortress',
+      'tactician',
+      'careless',
+    ]);
+    const careless = byMode.get('careless');
+    const economy = byMode.get('economy');
+    const balanced = byMode.get('balanced');
+    const fortress = byMode.get('fortress');
+    const tact = byMode.get('tactician');
+    expect(careless?.foodMult).toBe(1);
+    expect(careless?.woodMult).toBe(1);
+    expect(careless?.ironMult).toBe(1);
+    expect(careless?.silverMult).toBe(1);
+    expect(careless?.brewMult).toBe(1);
+    expect(careless?.threatMult).toBe(1);
+    expect(careless?.hearthWarded).toBe(false);
+    expect(careless?.links).toBe(0);
+    expect(economy?.foodMult).toBeGreaterThan(careless?.foodMult ?? 99);
+    expect(balanced?.foodMult).toBeGreaterThan(careless?.foodMult ?? 99);
+    expect(fortress?.screenedTowers).toBeGreaterThanOrEqual(1);
+    expect(fortress?.connectedWalls).toBeGreaterThanOrEqual(2);
+    expect(fortress?.sectorLanes).toBeGreaterThanOrEqual(careless?.sectorLanes ?? 99);
+    expect(fortress?.maxWaves.median).toBeGreaterThan(careless?.maxWaves.median ?? 99);
+    expect(tact?.maxWaves.median).toBeGreaterThan(careless?.maxWaves.median ?? 99);
+  });
+
+  it('builds Screened Watchtowers, connected ramparts, and Sector Support at Bastion via tacticianCommands', () => {
+    const s = createNewGame('v18-tact-bastion', Date.UTC(1970, 0, 5, 7));
+    expect(apply(s, { type: 'debug.layoutFillBastion' }, s.time).ok).toBe(true);
+    const cmds = tacticianCommands(s);
+    expect(cmds.length).toBeGreaterThan(0);
+    for (const cmd of cmds) {
+      expect(['layout.unplace', 'layout.place']).toContain(cmd.type);
+      expect(apply(s, cmd, s.time).ok, cmd.type).toBe(true);
+    }
+    const table = laneTableFor(s);
+    expect(table.screened?.some(Boolean)).toBe(true);
+    expect(table.rampartCols?.filter(Boolean).length).toBeGreaterThanOrEqual(4);
+    expect(table.sectorCols?.filter((n) => n > 0).length).toBeGreaterThanOrEqual(5);
+
+    // Careless layout on the same full Bastion hold drops every scalar tactical modifier back to 1.0x.
+    const careless = structuredClone(s);
+    for (const cmd of carelessLayoutCommands(careless)) {
+      expect(apply(careless, cmd, careless.time).ok, cmd.type).toBe(true);
+    }
+    expect(tacticalProductionFactor(careless, 'food')).toBeNull();
+    expect(tacticalProductionFactor(careless, 'wood')).toBeNull();
+    expect(tacticalProductionFactor(careless, 'iron')).toBeNull();
+    expect(tacticalProductionFactor(careless, 'silver')).toBeNull();
+    expect(tacticalBrewFactor(careless)).toBeNull();
+    expect(tacticalThreatFactor(careless)).toBeNull();
   });
 
   it('issues layout commands only through arrangeHold: Auto-arrange for everyone, the Suggest rule for the Tactician', () => {

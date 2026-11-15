@@ -56,5 +56,32 @@ export const greedyPlacement = (
     left.splice(left.indexOf(pick.piece), 1);
     placed.push({ id: pick.piece.id, tower: pick.piece.tower, x: tile.x, y: tile.y });
   }
+  // v1.8 Screened Volley post-pass: if both towers and walls exist and swapping a tower south
+  // of a wall in the same column increases score (connected rampart + Screened tower), apply it.
+  if (placed.some((p) => p.tower) && placed.some((p) => !p.tower)) {
+    let improved = true;
+    while (improved) {
+      improved = false;
+      const curScore = score(placed);
+      for (let i = 0; i < placed.length; i += 1) {
+        const ti = placed[i];
+        if (!ti || !ti.tower) continue;
+        for (let j = 0; j < placed.length; j += 1) {
+          const wj = placed[j];
+          if (!wj || wj.tower || wj.x !== ti.x || ti.y >= wj.y) continue;
+          const swapped = placed.map((p, idx) =>
+            idx === i ? { ...p, y: wj.y } : idx === j ? { ...p, y: ti.y } : p,
+          );
+          if (score(swapped) > curScore) {
+            placed[i] = swapped[i] as Placement;
+            placed[j] = swapped[j] as Placement;
+            improved = true;
+            break;
+          }
+        }
+        if (improved) break;
+      }
+    }
+  }
   return placed;
 };

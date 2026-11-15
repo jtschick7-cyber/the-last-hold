@@ -3,8 +3,10 @@ import { V18_TEXT } from '../../content/v18-text';
 import {
   GRID_COLS,
   GRID_ROWS,
+  HOLD_CENTER,
   PIECES,
   WARD_SUGGEST_WEIGHTS,
+  type GridCoord,
   type HoldPieceId,
 } from '../../content/hold-layout';
 import { constantAt, num } from '../balance-access';
@@ -769,21 +771,385 @@ export const describeFreeze = (state: GameState): string => {
   return `Counted pieces per lane ${JSON.stringify(table.pieces)}; towers in columns ${JSON.stringify(table.towerCols)}.`;
 };
 
+const SUPPORT_IDS = ['barracks', 'lodge'] as const;
+type SupportId = (typeof SUPPORT_IDS)[number];
+
+/** Picks support tiles (`barracks`, `lodge`) that maximize Sector Support coverage over weighted Breach lanes. */
+const chooseSupportMoves = (
+  state: GameState,
+  laneWeights: readonly number[],
+  rows: number,
+  lanes: number,
+): Partial<Record<SupportId, GridCoord>> => {
+  const bounds = clearingBounds(state.cycle.age);
+  const unlockedSupport = SUPPORT_IDS.filter((id) => isPieceUnlocked(state, id));
+  if (unlockedSupport.length === 0) return {};
+
+  const blocked = new Set<string>();
+  for (const def of PIECES) {
+    if (isDefense(def.id)) continue;
+    if ((SUPPORT_IDS as readonly string[]).includes(def.id) && isPieceUnlocked(state, def.id))
+      continue;
+    const at = state.layout.placed[def.id];
+    if (!at) continue;
+    for (const t of footprint(def, at)) blocked.add(`${t.x},${t.y}`);
+  }
+
+  const freeSupportTiles = (id: SupportId): GridCoord[] => {
+    const out: GridCoord[] = [];
+    const seenCol = new Set<number>();
+    const cur = state.layout.placed[id];
+    if (cur && inClearing(bounds, cur) && !blocked.has(`${cur.x},${cur.y}`)) {
+      out.push(cur);
+      seenCol.add(cur.x);
+    }
+    for (let y = Math.max(bounds.minY, rows); y <= bounds.maxY; y += 1) {
+      for (let x = bounds.minX; x <= bounds.maxX; x += 1) {
+        if (seenCol.has(x) || blocked.has(`${x},${y}`)) continue;
+        out.push({ x, y });
+        seenCol.add(x);
+      }
+    }
+    if (out.length === 0) {
+      for (let y = bounds.minY; y <= bounds.maxY; y += 1) {
+        for (let x = bounds.minX; x <= bounds.maxX; x += 1) {
+          if (!blocked.has(`${x},${y}`)) out.push({ x, y });
+        }
+      }
+    }
+    return out;
+  };
+
+  const overlapMult = 1 + numbersNow().coverNeighbour;
+  const scoreSupport = (b?: GridCoord, l?: GridCoord): number => {
+    let total = 0;
+    for (let c = 0; c < lanes; c += 1) {
+      const hasB = b && Math.abs(c - b.x) <= 1;
+      const hasL = l && Math.abs(c - l.x) <= 1;
+      const mult = hasB && hasL ? overlapMult : hasB || hasL ? 1 : 0;
+      total += mult * (laneWeights[c] ?? 1);
+    }
+    return total;
+  };
+
+  const bUnlocked = unlockedSupport.includes('barracks');
+  const lUnlocked = unlockedSupport.includes('lodge');
+  const bOpts = bUnlocked ? freeSupportTiles('barracks') : [undefined];
+  const lOpts = lUnlocked ? freeSupportTiles('lodge') : [undefined];
+  let bestScore = -1;
+  let bestB: GridCoord | undefined;
+  let bestL: GridCoord | undefined;
+  for (const b of bOpts) {
+    for (const l of lOpts) {
+      if (b && l && b.x === l.x && b.y === l.y) continue;
+      const s = scoreSupport(b, l);
+      if (s > bestScore) {
+        bestScore = s;
+        bestB = b;
+        bestL = l;
+      }
+    }
+  }
+  return {
+    ...(bUnlocked && bestB ? { barracks: bestB } : {}),
+    ...(lUnlocked && bestL ? { lodge: bestL } : {}),
+  };
+};
+
+/** Builds a connected row-`minY` rampart centered on peak lanes, Screened Watchtowers behind it, and extra walls. */
+const rampartScreenCandidate = (
+  state: GameState,
+  free: readonly SuggestTile[],
+  laneWeights: readonly number[],
+  evalPlaced: (coords: readonly PlacedCoord[]) => number,
+): LayoutMove[] => {
+  const bounds = clearingBounds(state.cycle.age);
+  const owned = PIECES.filter((p) => isDefense(p.id) && isPieceUnlocked(state, p.id));
+  const walls = owned.filter((p) => !p.id.startsWith('watchtower-')).map((p) => p.id);
+  const towers = owned.filter((p) => p.id.startsWith('watchtower-')).map((p) => p.id);
+  if (walls.length === 0 && towers.length === 0) return [];
+
+  const freeSet = new Set(free.map((t) => `${t.x},${t.y}`));
+  const used = new Set<string>();
+  const coords: PlacedCoord[] = [];
+  const moves: LayoutMove[] = [];
+  const take = (id: HoldPieceId, x: number, y: number, tower: boolean): boolean => {
+    const key = `${x},${y}`;
+    if (!freeSet.has(key) || used.has(key)) return false;
+    used.add(key);
+    coords.push({ x, y, tower });
+    moves.push({ pieceId: id, x, y });
+    return true;
+  };
+
+  // Cover as many contiguous northmost columns (minY) as total owned defenses allow before stacking behind.
+  const minY = bounds.minY;
+  const k = numbersNow();
+  const northCols = free.filter((t) => t.y === minY).map((t) => t.x);
+  const pickContiguous = (cols: readonly number[], len: number): number[] => {
+    if (len <= 0) return [];
+    let bestSlice: number[] = [];
+    let bestSpanScore = -Infinity;
+    for (let i = 0; i <= cols.length - len; i += 1) {
+      const slice = cols.slice(i, i + len);
+      const contiguous = slice.every((col, idx) => {
+        const prev = slice[idx - 1];
+        return idx === 0 || (prev !== undefined && col === prev + 1);
+      });
+      if (!contiguous) continue;
+      let score = 0;
+      for (const c of slice) {
+        score +=
+          (laneWeights[c] ?? 0) +
+          k.coverNeighbour * ((laneWeights[c - 1] ?? 0) + (laneWeights[c + 1] ?? 0));
+      }
+      if (score > bestSpanScore) {
+        bestSpanScore = score;
+        bestSlice = slice;
+      }
+    }
+    if (bestSlice.length > 0) return bestSlice;
+    return [...cols]
+      .sort((a, b) => (laneWeights[b] ?? 0) - (laneWeights[a] ?? 0) || a - b)
+      .slice(0, len);
+  };
+
+  const targetCols = Math.min(walls.length + towers.length, northCols.length);
+  const chosenNorth = pickContiguous(northCols, targetCols);
+  const wallSpan = Math.min(walls.length, chosenNorth.length);
+  const wallCols = pickContiguous(chosenNorth, wallSpan);
+  const wallColSet = new Set(wallCols);
+  let wIdx = 0;
+  for (const x of wallCols) {
+    const wId = walls[wIdx];
+    if (!wId) break;
+    if (take(wId, x, minY, false)) wIdx += 1;
+  }
+
+  // Put front-line towers on any remaining chosenNorth columns first (preferring interior columns)
+  // so every column has cover, then place remaining watchtowers directly south of a connected north
+  // wall in distinct interior columns when available (Screened Volley + full-lane reach).
+  const towerNorthCols = chosenNorth
+    .filter((x) => !wallColSet.has(x))
+    .sort((a, b) => Math.abs(a - HOLD_CENTER.x) - Math.abs(b - HOLD_CENTER.x) || a - b);
+  let tIdx = 0;
+  for (const x of towerNorthCols) {
+    if (tIdx >= towers.length) break;
+    const tId = towers[tIdx];
+    if (tId && take(tId, x, minY, true)) tIdx += 1;
+  }
+  while (tIdx < towers.length) {
+    const tId = towers[tIdx];
+    if (!tId) break;
+    const northWalls = new Set(coords.filter((p) => !p.tower && p.y === minY).map((p) => p.x));
+    const screenedOptions = free.filter(
+      (t) => t.y === minY + 1 && northWalls.has(t.x) && !used.has(`${t.x},${t.y}`),
+    );
+    const distinctScreened = screenedOptions.filter(
+      (t) => !coords.some((p) => p.tower && p.x === t.x),
+    );
+    const pool =
+      distinctScreened.length > 0
+        ? distinctScreened
+        : screenedOptions.length > 0
+          ? screenedOptions
+          : free.filter((t) => !used.has(`${t.x},${t.y}`));
+    let bestTile: SuggestTile | null = null;
+    let bestScore = -Infinity;
+    for (const tile of pool) {
+      const s = evalPlaced([...coords, { x: tile.x, y: tile.y, tower: true }]);
+      if (s > bestScore) {
+        bestScore = s;
+        bestTile = tile;
+      }
+    }
+    if (!bestTile) break;
+    take(tId, bestTile.x, bestTile.y, true);
+    tIdx += 1;
+  }
+
+  // Spread remaining walls evenly across columns (fewest placed pieces first) to build depth without over-stacking.
+  while (wIdx < walls.length) {
+    const wId = walls[wIdx];
+    if (!wId) break;
+    const avail = free.filter((t) => !used.has(`${t.x},${t.y}`));
+    if (avail.length === 0) break;
+    const colCount = (x: number): number => coords.filter((p) => p.x === x).length;
+    const minDepth = Math.min(...avail.map((t) => colCount(t.x)));
+    const wallPool = avail.filter((t) => colCount(t.x) === minDepth);
+    let bestTile: SuggestTile | null = null;
+    let bestScore = -Infinity;
+    for (const tile of wallPool) {
+      const s = evalPlaced([...coords, { x: tile.x, y: tile.y, tower: false }]);
+      if (s > bestScore) {
+        bestScore = s;
+        bestTile = tile;
+      }
+    }
+    if (!bestTile) break;
+    take(wId, bestTile.x, bestTile.y, false);
+    wIdx += 1;
+  }
+
+  return moves;
+};
+
 /**
- * GDD §6.1 (D589): the commands the Tactician sends to arrange the hold with the Suggest rule:
- * `layout.unplace` for every placed defense it owns, then `layout.place` in Suggest's order.
+ * GDD §6.1 & v1.8 (D589, T18.12): the commands the Tactician sends to arrange the hold for v7 Breach
+ * tactics: spreads `barracks` / `lodge` for Sector Support, compares balanced/fortress Suggest and
+ * Auto-arrange plus connected Screened Ramparts across opening + uniform lane weights, and emits
+ * `layout.unplace` then `layout.place` commands.
  */
 export const tacticianCommands = (state: GameState): Command[] => {
-  const lift = PIECES.filter(
-    (p) => isDefense(p.id) && isPieceUnlocked(state, p.id) && state.layout.placed[p.id],
-  ).map((p): Command => ({ type: 'layout.unplace', pieceId: p.id }));
-  const put = suggestLayout(state).moves.map((m): Command => ({
+  const rows = num('breach.frontRows');
+  const laneCount = num('breach.lanes');
+  const bounds = clearingBounds(state.cycle.age);
+  const k = numbersNow();
+  const waves12 = lanesFor(standSeed(state), num('breach.suggestWaves'));
+  const tailWeight = 1 + waves12.length / Math.max(1, laneCount);
+  const combinedWeights = Array.from(
+    { length: laneCount },
+    (_, c) => waves12.filter((l) => l === c).length + tailWeight,
+  );
+
+  const supportMoves = chooseSupportMoves(state, combinedWeights, rows, laneCount);
+  const probe = {
+    ...state,
+    layout: { ...state.layout, placed: { ...state.layout.placed } },
+  } as GameState;
+  for (const [id, at] of Object.entries(supportMoves)) {
+    if (at) probe.layout.placed[id as HoldPieceId] = at;
+  }
+
+  const held = new Set<string>();
+  for (const def of PIECES) {
+    if (isDefense(def.id)) continue;
+    const at = probe.layout.placed[def.id];
+    if (!at) continue;
+    for (const t of footprint(def, at)) held.add(`${t.x},${t.y}`);
+  }
+  const free: SuggestTile[] = [];
+  for (let y = bounds.minY; y <= Math.min(bounds.maxY, rows - 1); y += 1) {
+    for (let x = bounds.minX; x <= Math.min(bounds.maxX, laneCount - 1); x += 1) {
+      if (!held.has(`${x},${y}`)) free.push({ x, y });
+    }
+  }
+  const freeKeys = new Set(free.map((t) => `${t.x},${t.y}`));
+  const behind = behindDefenses(probe);
+  const sectorCols = activeSectorCols(probe, laneCount);
+  const occScratch = new Uint8Array(laneCount * GRID_ROWS);
+  const connScratch = new Uint8Array(laneCount * GRID_ROWS);
+  const evalPlaced = (coords: readonly PlacedCoord[]): number =>
+    layoutScore(
+      tableOf(coords, k, sectorCols, behind, laneCount, occScratch, connScratch),
+      combinedWeights,
+    );
+
+  const autoDefenses = (mode: LayoutArrangeMode): LayoutMove[] => {
+    const copy = {
+      ...probe,
+      layout: { ...probe.layout, placed: { ...probe.layout.placed } },
+    } as GameState;
+    autoArrange(copy, mode);
+    const moves = countedPieces(copy)
+      .filter((p) => freeKeys.has(`${p.x},${p.y}`))
+      .map((p) => ({ pieceId: p.id, x: p.x, y: p.y }));
+    for (let i = 0; i < moves.length; i += 1) {
+      const m = moves[i];
+      if (!m || !m.pieceId.startsWith('watchtower-')) continue;
+      const alreadyScreened = moves.some(
+        (w) => w.x === m.x && !w.pieceId.startsWith('watchtower-') && w.y === m.y - 1,
+      );
+      if (alreadyScreened) continue;
+      const southWalls = moves
+        .filter((w) => w.x === m.x && !w.pieceId.startsWith('watchtower-') && w.y > m.y)
+        .sort((a, b) => a.y - b.y);
+      const targetWall = southWalls[0];
+      if (!targetWall) continue;
+      const wallIdx = moves.indexOf(targetWall);
+      if (wallIdx !== -1) {
+        moves[i] = { ...m, y: targetWall.y };
+        moves[wallIdx] = { ...targetWall, y: m.y };
+      }
+    }
+    return moves;
+  };
+
+  const candidates: LayoutMove[][] = [
+    [...suggestLayoutFor(probe, waves12, 'balanced').moves],
+    [...suggestLayoutFor(probe, waves12, 'fortress').moves],
+    autoDefenses('balanced'),
+    autoDefenses('fortress'),
+    rampartScreenCandidate(probe, free, combinedWeights, evalPlaced),
+  ];
+
+  const ownedDefenseCount = PIECES.filter(
+    (p) => isDefense(p.id) && isPieceUnlocked(probe, p.id),
+  ).length;
+  const targetCols = Math.min(laneCount, ownedDefenseCount);
+  const targetDepth2 = Math.max(0, Math.min(laneCount, ownedDefenseCount - laneCount));
+  let bestMoves = candidates[0] ?? [];
+  let bestRank: readonly number[] | null = null;
+  const beats = (next: readonly number[], cur: readonly number[] | null): boolean => {
+    if (!cur) return true;
+    for (let i = 0; i < next.length; i += 1) {
+      const a = next[i] ?? 0;
+      const b = cur[i] ?? 0;
+      if (a !== b) return a > b;
+    }
+    return false;
+  };
+  for (const cand of candidates) {
+    const coords: PlacedCoord[] = cand.map((m) => ({
+      x: m.x,
+      y: m.y,
+      tower: m.pieceId.startsWith('watchtower-'),
+    }));
+    const table = tableOf(coords, k, sectorCols, behind, laneCount, occScratch, connScratch);
+    const coveredCols = Math.min(targetCols, table.pieces.filter((n) => n > 0).length);
+    const depth2Cols = Math.min(targetDepth2, table.pieces.filter((n) => n >= 2).length);
+    const distinctTowers = new Set(table.towerCols).size;
+    const interiorTowers = table.towerCols.filter((c) => c >= 2 && c < laneCount - 2).length;
+    const screenedCount = (table.screened ?? []).filter(Boolean).length;
+    const rank = [
+      coveredCols,
+      depth2Cols,
+      distinctTowers,
+      interiorTowers,
+      screenedCount,
+      layoutScore(table, combinedWeights),
+    ];
+    if (beats(rank, bestRank)) {
+      bestRank = rank;
+      bestMoves = cand;
+    }
+  }
+
+  const movedSupport = SUPPORT_IDS.filter((id) => {
+    const next = supportMoves[id];
+    const cur = state.layout.placed[id];
+    return next !== undefined && (!cur || cur.x !== next.x || cur.y !== next.y);
+  });
+
+  const lift: Command[] = [
+    ...PIECES.filter(
+      (p) => isDefense(p.id) && isPieceUnlocked(state, p.id) && state.layout.placed[p.id],
+    ).map((p): Command => ({ type: 'layout.unplace', pieceId: p.id })),
+    ...movedSupport
+      .filter((id) => state.layout.placed[id])
+      .map((id): Command => ({ type: 'layout.unplace', pieceId: id })),
+  ];
+  const putSupport: Command[] = movedSupport.flatMap((id): Command[] => {
+    const at = supportMoves[id];
+    return at ? [{ type: 'layout.place', pieceId: id, x: at.x, y: at.y }] : [];
+  });
+  const putDefenses: Command[] = bestMoves.map((m): Command => ({
     type: 'layout.place',
     pieceId: m.pieceId,
     x: m.x,
     y: m.y,
   }));
-  return [...lift, ...put];
+  return [...lift, ...putSupport, ...putDefenses];
 };
 
 /**
