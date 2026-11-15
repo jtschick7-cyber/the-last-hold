@@ -147,6 +147,10 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
     expect(h1 && h2 && pixelDiffCount(h1, h2)).toBeGreaterThan(40);
     expect(h2 && h3 && pixelDiffCount(h2, h3)).toBeGreaterThan(40);
     expect(h1 && h3 && pixelDiffCount(h1, h3)).toBeGreaterThan(40);
+    // Unified cohesive silhouette per tier (no stray detached confetti)
+    expect(h1 && countOpaqueIslands(h1)).toBe(1);
+    expect(h2 && countOpaqueIslands(h2)).toBe(1);
+    expect(h3 && countOpaqueIslands(h3)).toBe(1);
 
     // v1.1 Redraw note: lush herb beds + white (yarrow), purple (mugwort), blue (juniper) blossoms, distinct from farm-3
     expect(h3).toBeDefined();
@@ -279,7 +283,8 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
     expect(batch2Section).not.toContain('Pending');
 
     for (const s of BATCH3_SUBJECTS) {
-      expect(batch3Section).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | Pending |`);
+      const expected = s.num === 25 ? 'Pending' : 'Keep';
+      expect(batch3Section).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | ${expected} |`);
     }
   });
 

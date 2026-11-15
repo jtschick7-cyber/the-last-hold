@@ -122,13 +122,13 @@ const BATCH2_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {
 
 const BATCH3_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {
   25: 'Pending',
-  26: 'Pending',
-  27: 'Pending',
-  28: 'Pending',
-  29: 'Pending',
-  30: 'Pending',
-  31: 'Pending',
-  32: 'Pending',
+  26: 'Keep',
+  27: 'Keep',
+  28: 'Keep',
+  29: 'Keep',
+  30: 'Keep',
+  31: 'Keep',
+  32: 'Keep',
 };
 
 function formatMarkRows(
