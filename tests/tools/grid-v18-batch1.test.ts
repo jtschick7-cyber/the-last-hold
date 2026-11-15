@@ -224,12 +224,13 @@ describe('v1.8 Grid Art Batch 1 (T18.8, D623, D475)', () => {
     expect(lightHexes.has('cfc6b8')).toBe(true);
 
     const marks = readFileSync(marksPath, 'utf8');
+    const batch1Section = marks.split('## Batch 2')[0] ?? marks;
     for (const s of BATCH1_SUBJECTS) {
-      expect(marks).toContain(`| ${s.num} |`);
-      expect(marks).toContain(s.id);
-      expect(marks).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | Keep |`);
+      expect(batch1Section).toContain(`| ${s.num} |`);
+      expect(batch1Section).toContain(s.id);
+      expect(batch1Section).toContain(`| ${s.num} | \`${s.id}\` | ${s.label} | Keep |`);
     }
-    expect(marks).not.toContain('| Pending |');
+    expect(batch1Section).not.toContain('| Pending |');
   });
 
   it('leaves shipped public/assets/grid/ untouched (matches HEAD & non-redrawn v1.1 hashes)', () => {

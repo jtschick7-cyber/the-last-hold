@@ -4,20 +4,34 @@ import { PNG } from 'pngjs';
 import { C } from './pixel';
 import { packPng } from './png-pack';
 import { writePackedPng } from './grid-v18-kit';
-import { BATCH1_SUBJECTS } from './grid-v18-batch1';
+import { BATCH1_SUBJECTS, type Batch1Subject } from './grid-v18-batch1';
+import { BATCH2_SUBJECTS } from './grid-v18-batch2';
 import { drawBitmapText, fillPngRect } from './grid-v18-font';
 
-export { BATCH1_SUBJECTS };
+export { BATCH1_SUBJECTS, BATCH2_SUBJECTS };
 
 const ROOT = resolve(import.meta.dirname, '..');
 export const STAGING_DIR = resolve(ROOT, 'art-src', 'v1.8-staging');
+const MARKS_PATH = resolve(ROOT, 'docs', 'flesh-out', 'v1.8', 'art-marks.md');
+
 export const CONTACT_SHEET_PATHS = {
   dark: resolve(ROOT, 'docs', 'flesh-out', 'v1.8', 'contact-sheets', 'contact-sheet-1-dark.png'),
   light: resolve(ROOT, 'docs', 'flesh-out', 'v1.8', 'contact-sheets', 'contact-sheet-1-light.png'),
-  marks: resolve(ROOT, 'docs', 'flesh-out', 'v1.8', 'art-marks.md'),
+  marks: MARKS_PATH,
 } as const;
 
-function renderContactSheet(ground: 'dark' | 'light'): Buffer {
+export const BATCH2_CONTACT_PATHS = {
+  dark: resolve(ROOT, 'docs', 'flesh-out', 'v1.8', 'contact-sheets', 'contact-sheet-2-dark.png'),
+  light: resolve(ROOT, 'docs', 'flesh-out', 'v1.8', 'contact-sheets', 'contact-sheet-2-light.png'),
+  marks: MARKS_PATH,
+} as const;
+
+function renderContactSheet(
+  subjects: readonly Batch1Subject[],
+  sheetNumber: 1 | 2,
+  rangeLabel: string,
+  ground: 'dark' | 'light',
+): Buffer {
   const width = 920;
   const headerH = 60;
   const pad = 20;
@@ -27,7 +41,7 @@ function renderContactSheet(ground: 'dark' | 'light'): Buffer {
   const totalH =
     headerH +
     pad +
-    BATCH1_SUBJECTS.reduce((sum, s) => sum + cardHdr + s.cardHeight + bodyPad * 2 + rowGap, 0) +
+    subjects.reduce((sum, s) => sum + cardHdr + s.cardHeight + bodyPad * 2 + rowGap, 0) +
     pad;
 
   const png = new PNG({ width, height: totalH });
@@ -39,7 +53,7 @@ function renderContactSheet(ground: 'dark' | 'light'): Buffer {
     png,
     pad,
     12,
-    `V1.8 CONTACT SHEET 1 - BATCH 1 (#01-#12) [${ground.toUpperCase()} #${swatchHex.slice(1)}]`,
+    `V1.8 CONTACT SHEET ${sheetNumber} - BATCH ${sheetNumber} (${rangeLabel}) [${ground.toUpperCase()} #${swatchHex.slice(1)}]`,
     C.gold,
     2,
   );
@@ -53,7 +67,7 @@ function renderContactSheet(ground: 'dark' | 'light'): Buffer {
   );
 
   let cy = headerH + pad;
-  for (const subject of BATCH1_SUBJECTS) {
+  for (const subject of subjects) {
     const cardW = width - pad * 2;
     const cardH = cardHdr + subject.cardHeight + bodyPad * 2;
     fillPngRect(png, pad, cy, cardW, cardHdr, '#39314b');
@@ -84,12 +98,21 @@ const APPROVED_BATCH1_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pendin
   12: 'Keep',
 };
 
-function buildArtMarksMarkdown(): string {
-  const rows = BATCH1_SUBJECTS.map(
-    (s) =>
-      `| ${s.num} | \`${s.id}\` | ${s.label} | ${APPROVED_BATCH1_MARKS[s.num] ?? 'Pending'} | ${s.stagedFiles.map((f) => `\`${f.name}\``).join(', ')} |`,
-  ).join('\n');
+const BATCH2_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {};
 
+function formatMarkRows(
+  subjects: readonly Batch1Subject[],
+  marksMap: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>>,
+): string {
+  return subjects
+    .map(
+      (s) =>
+        `| ${s.num} | \`${s.id}\` | ${s.label} | ${marksMap[s.num] ?? 'Pending'} | ${s.stagedFiles.map((f) => `\`${f.name}\``).join(', ')} |`,
+    )
+    .join('\n');
+}
+
+function buildArtMarksMarkdown(): string {
   return [
     '# Art marks (v1.8 Grid Art Overhaul: Keep / Redraw)',
     '',
@@ -99,32 +122,77 @@ function buildArtMarksMarkdown(): string {
     '',
     '| n | id | name | mark | staged files |',
     '|---|---|---|---|---|',
-    rows,
+    formatMarkRows(BATCH1_SUBJECTS, APPROVED_BATCH1_MARKS),
+    '',
+    '## Batch 2 - Level Buildings & Primary Plot Archetypes (`T18.9`, #13-#24)',
+    '',
+    '| n | id | name | mark | staged files |',
+    '|---|---|---|---|---|',
+    formatMarkRows(BATCH2_SUBJECTS, BATCH2_MARKS),
     '',
   ].join('\n');
 }
 
-/** Stages packed Batch 1 PNGs, renders Dark/Light Contact Sheet 1, and writes art-marks.md. */
-export function writeBatch1Artifacts(): void {
+function stageSubjects(subjects: readonly Batch1Subject[]): void {
   mkdirSync(STAGING_DIR, { recursive: true });
-  mkdirSync(resolve(CONTACT_SHEET_PATHS.dark, '..'), { recursive: true });
-
-  for (const subject of BATCH1_SUBJECTS) {
+  for (const subject of subjects) {
     for (const file of subject.stagedFiles) {
       writePackedPng(STAGING_DIR, file.name, file.render(), file.h);
     }
   }
-  writeFileSync(CONTACT_SHEET_PATHS.dark, renderContactSheet('dark'));
-  writeFileSync(CONTACT_SHEET_PATHS.light, renderContactSheet('light'));
-  writeFileSync(CONTACT_SHEET_PATHS.marks, buildArtMarksMarkdown());
+}
+
+/** Stages packed Batch 1 PNGs, renders Dark/Light Contact Sheet 1, and writes art-marks.md. */
+export function writeBatch1Artifacts(): void {
+  mkdirSync(resolve(CONTACT_SHEET_PATHS.dark, '..'), { recursive: true });
+  stageSubjects(BATCH1_SUBJECTS);
+  writeFileSync(
+    CONTACT_SHEET_PATHS.dark,
+    renderContactSheet(BATCH1_SUBJECTS, 1, '#01-#12', 'dark'),
+  );
+  writeFileSync(
+    CONTACT_SHEET_PATHS.light,
+    renderContactSheet(BATCH1_SUBJECTS, 1, '#01-#12', 'light'),
+  );
+  writeFileSync(MARKS_PATH, buildArtMarksMarkdown());
+}
+
+/** Stages packed Batch 2 PNGs, renders Dark/Light Contact Sheet 2, and updates art-marks.md. */
+export function writeBatch2Artifacts(): void {
+  mkdirSync(resolve(BATCH2_CONTACT_PATHS.dark, '..'), { recursive: true });
+  stageSubjects(BATCH2_SUBJECTS);
+  writeFileSync(
+    BATCH2_CONTACT_PATHS.dark,
+    renderContactSheet(BATCH2_SUBJECTS, 2, '#13-#24', 'dark'),
+  );
+  writeFileSync(
+    BATCH2_CONTACT_PATHS.light,
+    renderContactSheet(BATCH2_SUBJECTS, 2, '#13-#24', 'light'),
+  );
+  writeFileSync(MARKS_PATH, buildArtMarksMarkdown());
 }
 
 if (
   process.argv.includes('--write') ||
   (process.argv[1] !== undefined && import.meta.filename === resolve(process.argv[1]))
 ) {
-  writeBatch1Artifacts();
-  console.log(
-    `Staged v1.8 Batch 1 (${BATCH1_SUBJECTS.length} subjects) + Dark/Light Contact Sheet 1.`,
-  );
+  const batchIdx = process.argv.indexOf('--batch');
+  const mode = batchIdx >= 0 ? process.argv[batchIdx + 1] : 'all';
+  if (mode === '1') {
+    writeBatch1Artifacts();
+    console.log(
+      `Staged v1.8 Batch 1 (${BATCH1_SUBJECTS.length} subjects) + Dark/Light Contact Sheet 1.`,
+    );
+  } else if (mode === '2') {
+    writeBatch2Artifacts();
+    console.log(
+      `Staged v1.8 Batch 2 (${BATCH2_SUBJECTS.length} subjects) + Dark/Light Contact Sheet 2.`,
+    );
+  } else {
+    writeBatch1Artifacts();
+    writeBatch2Artifacts();
+    console.log(
+      `Staged v1.8 Batches 1+2 (${BATCH1_SUBJECTS.length + BATCH2_SUBJECTS.length} subjects) + Dark/Light Contact Sheets.`,
+    );
+  }
 }
