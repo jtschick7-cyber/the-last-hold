@@ -69,10 +69,25 @@ function renderContactSheet(ground: 'dark' | 'light'): Buffer {
   return packed !== null && packed.length <= raw.length ? packed : raw;
 }
 
+const APPROVED_BATCH1_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {
+  1: 'Keep',
+  2: 'Keep',
+  3: 'Keep',
+  4: 'Keep',
+  5: 'Keep',
+  6: 'Keep',
+  7: 'Keep',
+  8: 'Keep',
+  9: 'Keep',
+  10: 'Keep',
+  11: 'Keep',
+  12: 'Keep',
+};
+
 function buildArtMarksMarkdown(): string {
   const rows = BATCH1_SUBJECTS.map(
     (s) =>
-      `| ${s.num} | \`${s.id}\` | ${s.label} | Pending | ${s.stagedFiles.map((f) => `\`${f.name}\``).join(', ')} |`,
+      `| ${s.num} | \`${s.id}\` | ${s.label} | ${APPROVED_BATCH1_MARKS[s.num] ?? 'Pending'} | ${s.stagedFiles.map((f) => `\`${f.name}\``).join(', ')} |`,
   ).join('\n');
 
   return [
