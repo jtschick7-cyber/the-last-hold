@@ -113,57 +113,117 @@ function drawSplitRailFence(c: Canvas, x0: number, x1: number, y: number): void 
   c.set(x1 - 1, y, C.sand);
 }
 
-function drawWheatField(
+/** Draws a rich turned-soil patch with chamfered corners and subtle loam ridge lines. */
+function drawLoamBed(
   c: Canvas,
   x0: number,
   y0: number,
   x1: number,
   y1: number,
   seed: number,
-  sproutMix = false,
 ): void {
-  c.rect(x0, y0, x1 - x0 + 1, y1 - y0 + 1, C.brownDark);
-  for (let y = y0; y <= y1; y++) {
-    for (let x = x0; x <= x1; x++) {
-      const h = mixHash(x, y, seed);
-      const isFurrow = (y - y0) % 3 === 2;
-      if (isFurrow && h % 3 === 0) {
-        c.set(x, y, C.brown);
-      } else if (sproutMix && x < x0 + Math.floor((x1 - x0) * 0.4)) {
-        c.set(x, y, h % 2 === 0 ? C.grass : C.lime);
-      } else if ((x + y) % 2 === 0 || h < 2) {
-        c.set(x, y, h === 0 ? C.cream : h === 1 ? C.gold : C.sand);
-      } else {
-        c.set(x, y, h === 2 ? C.gold : C.orange);
+  c.rect(x0 + 1, y0, x1 - x0 - 1, y1 - y0 + 1, C.brownDark);
+  c.rect(x0, y0 + 1, x1 - x0 + 1, y1 - y0 - 1, C.brownDark);
+  for (let y = y0 + 1; y <= y1 - 1; y++) {
+    if ((y - y0) % 3 === 1) {
+      for (let x = x0 + 1; x <= x1 - 1; x++) {
+        if (mixHash(x, y, seed) <= 1) c.set(x, y, C.brown);
       }
     }
   }
 }
 
+/** Draws an organic nodding wheat tuft (green/olive lower stem + curved golden grain plume). */
+function drawWheatTuft(c: Canvas, bx: number, by: number, lean: -1 | 1, tall: boolean): void {
+  // Grounded leaf blades & stem
+  c.set(bx, by, C.moss);
+  c.set(bx + lean, by, C.grass);
+  c.set(bx, by - 1, C.grass);
+  c.set(bx + lean, by - 1, C.sand);
+  // Nodding golden grain head
+  c.set(bx + lean, by - 2, C.gold);
+  c.set(bx + lean * 2, by - 2, C.gold);
+  c.set(bx, by - 2, C.orange);
+  if (tall) {
+    c.set(bx + lean, by - 3, C.cream);
+    c.set(bx + lean * 2, by - 3, C.gold);
+  } else {
+    c.set(bx + lean, by - 2, C.cream);
+  }
+}
+
+/** Draws staggered botanical wheat tufts across turned loam (no flat wall stripes or grid boxes). */
+function drawTuftedWheatRows(
+  c: Canvas,
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  seed: number,
+): void {
+  drawLoamBed(c, x0, y0, x1, y1, seed);
+  let rowIdx = 0;
+  for (let by = y0 + 3; by <= y1 - 1; by += 4) {
+    const startX = x0 + 2 + (rowIdx % 2) * 2;
+    for (let bx = startX; bx <= x1 - 3; bx += 4) {
+      const h = mixHash(bx, by, seed);
+      drawWheatTuft(c, bx, by, 1, h !== 2);
+    }
+    rowIdx++;
+  }
+}
+
+/** Draws a plump thatched conical hayrick with layered straw skirts & twine crown. */
 function drawHaystack(c: Canvas, cx: number, bottomY: number, r: number): void {
-  for (let dy = 0; dy <= r + 1; dy++) {
+  for (let dy = 0; dy <= r + 2; dy++) {
     const ry = bottomY - dy;
-    const span = Math.max(1, Math.round((r * (r + 2 - dy)) / (r + 1)));
+    const span = Math.max(1, Math.round((r * (r + 3 - dy)) / (r + 2)));
     for (let dx = -span; dx <= span; dx++) {
-      const col = dy >= r ? C.cream : dx > 0 ? C.orange : dy % 2 === 0 ? C.gold : C.sand;
+      const col =
+        dy >= r + 1
+          ? C.cream
+          : dy === 2
+            ? C.brown
+            : dx > 1
+              ? C.orange
+              : (dx + dy) % 2 === 0
+                ? C.gold
+                : C.sand;
       c.set(cx + dx, ry, col);
     }
   }
-  c.rect(cx - r, bottomY, r * 2 + 1, 1, C.brown);
+  c.rect(cx - r, bottomY, r * 2 + 1, 1, C.brownDark);
+}
+
+/** Draws a waist-tied upright harvest wheat sheaf. */
+function drawBoundSheaf(c: Canvas, cx: number, bottomY: number): void {
+  c.rect(cx - 2, bottomY - 5, 5, 2, C.gold);
+  c.rect(cx - 1, bottomY - 6, 3, 1, C.cream);
+  c.rect(cx - 1, bottomY - 3, 3, 1, C.brown);
+  c.rect(cx - 2, bottomY - 2, 5, 3, C.sand);
+  c.rect(cx - 1, bottomY - 1, 3, 2, C.gold);
+}
+
+/** Draws a small pitched timber grain crib / threshing shed anchoring Tier 3 farms. */
+function drawHarvestShed(c: Canvas, x: number, y: number): void {
+  for (let r = 0; r < 4; r++) {
+    const span = 3 + r * 2;
+    const rx = x + 4 - Math.floor(span / 2);
+    c.rect(rx, y + r, span, 1, r === 0 ? C.clay : r === 3 ? C.wine : C.rust);
+  }
+  c.rect(x + 1, y + 4, 7, 5, C.brown);
+  c.rect(x + 2, y + 5, 5, 4, C.sand);
+  c.rect(x + 3, y + 6, 3, 3, C.brownDark);
 }
 
 function drawScarecrow(c: Canvas, cx: number, footY: number): void {
-  // Timber cross post anchored into wheat with arms rising above rear fence horizon
   c.rect(cx, footY - 13, 1, 14, C.brownDark);
   c.rect(cx - 5, footY - 10, 11, 1, C.brown);
-  // Straw sleeve tufts at crossbar tips
   c.rect(cx - 6, footY - 10, 2, 2, C.gold);
   c.rect(cx + 5, footY - 10, 2, 2, C.gold);
-  // Bright terracotta crimson patched coat
   c.rect(cx - 2, footY - 10, 5, 5, C.red);
   c.rect(cx - 1, footY - 9, 3, 3, C.rust);
   c.rect(cx - 1, footY - 5, 3, 1, C.gold);
-  // Burlap head & wide conical straw hat cleanly contrasting above the fence rail
   c.rect(cx - 1, footY - 13, 3, 3, C.sand);
   c.rect(cx - 4, footY - 14, 9, 1, C.gold);
   c.rect(cx - 2, footY - 15, 5, 1, C.brownDark);
@@ -172,37 +232,45 @@ function drawScarecrow(c: Canvas, cx: number, footY: number): void {
 
 function drawFarm(c: Canvas, density: 1 | 2 | 3): void {
   if (density === 1) {
-    // Compact kitchen garden patch: soil furrows, green shoots, starter wheat & bushel basket
-    drawSplitRailFence(c, 5, 25, 13);
-    drawWheatField(c, 6, 17, 24, 27, 101, true);
-    c.rect(5, 17, 1, 11, C.brownDark);
-    c.rect(25, 17, 1, 11, C.brownDark);
-    c.rect(6, 27, 19, 1, C.brownDark);
-    c.rect(21, 24, 5, 4, C.brown);
-    c.rect(22, 23, 3, 2, C.gold);
+    // Tier 1: modest chamfered loam plot behind corner fence + staggered waving wheat tufts + fork & bushel
+    drawSplitRailFence(c, 5, 22, 12);
+    drawTuftedWheatRows(c, 5, 16, 23, 27, 101);
+    // Leaning oak hayfork beside top-right post
+    c.line(24, 11, 22, 19, C.brown);
+    c.rect(23, 9, 3, 2, C.ash);
+    // Woven harvest bushel overflowing with golden wheat at lower-right corner
+    c.rect(21, 22, 5, 5, C.brown);
+    c.rect(22, 21, 3, 2, C.cream);
+    c.set(23, 22, C.gold);
     return;
   }
 
   if (density === 2) {
-    // Medium harvest plot + tall conical haystack breaking silhouette above rear rail
-    drawSplitRailFence(c, 4, 27, 10);
-    drawWheatField(c, 5, 14, 26, 27, 202);
-    drawHaystack(c, 10, 14, 4);
-    c.rect(4, 14, 1, 14, C.brownDark);
-    c.rect(27, 14, 1, 14, C.brownDark);
-    c.rect(5, 28, 22, 1, C.brownDark);
+    // Tier 2: upper conical hayrick + hayfork + broad open botanical wheatfield + bound sheaf
+    drawSplitRailFence(c, 12, 27, 11);
+    drawTuftedWheatRows(c, 3, 15, 27, 28, 202);
+    drawHaystack(c, 9, 16, 4);
+    c.line(14, 9, 13, 16, C.brown);
+    c.rect(13, 8, 3, 2, C.ash);
+    drawBoundSheaf(c, 25, 26);
     return;
   }
 
-  // Density 3: expansive unified golden field + twin corner haystacks + elevated proud scarecrow
-  drawSplitRailFence(c, 3, 28, 10);
-  drawWheatField(c, 3, 14, 28, 28, 303);
-  c.rect(2, 14, 1, 15, C.brownDark);
-  c.rect(29, 14, 1, 15, C.brownDark);
-  c.rect(3, 29, 26, 1, C.brownDark);
-  drawHaystack(c, 7, 18, 4);
-  drawHaystack(c, 25, 26, 3);
-  drawScarecrow(c, 16, 18);
+  // Tier 3: grain shed + hayrick + sweeping tufted golden wheatfield + rising scarecrow + laden wheelcart
+  drawSplitRailFence(c, 14, 28, 11);
+  drawTuftedWheatRows(c, 3, 15, 28, 29, 303);
+  drawHarvestShed(c, 2, 6);
+  drawHaystack(c, 12, 16, 3);
+  drawScarecrow(c, 19, 20);
+  drawBoundSheaf(c, 26, 20);
+  // Wheeled harvest cart laden with sheaves on lower-right corner
+  c.rect(19, 23, 8, 4, C.brown);
+  c.rect(20, 21, 6, 3, C.gold);
+  c.set(22, 21, C.cream);
+  c.rect(20, 27, 2, 2, C.brownDark);
+  c.rect(25, 27, 2, 2, C.brownDark);
+  c.set(20, 27, C.sand);
+  c.set(25, 27, C.sand);
 }
 
 /** Draws a circular pale-ringed stacked log facing the viewer. */
@@ -259,21 +327,44 @@ function drawWoodcutter(c: Canvas, density: 1 | 2 | 3): void {
     return;
   }
 
-  // Density 3: timber woodshed + full cordwood rick + foreground chopping block & axe
-  c.rect(4, 20, 24, 7, C.brownDark);
-  c.rect(3, 6, 16, 3, C.brownDark);
-  c.rect(4, 5, 14, 2, C.brown);
-  c.rect(4, 7, 14, 1, C.sand);
-  c.rect(3, 9, 2, 12, C.brownDark);
-  c.rect(17, 9, 2, 12, C.brownDark);
-  drawStackedLog(c, 5, 10, 12, true);
-  drawStackedLog(c, 5, 14, 12, true);
-  drawStackedLog(c, 5, 18, 12, true);
-  drawStackedLog(c, 20, 21, 9, false);
-  drawStackedLog(c, 20, 17, 9, false);
-  drawStackedLog(c, 22, 13, 7, false);
-  drawStumpWithAxe(c, 10, 28);
-  c.set(15, 28, C.cream);
+  // Density 3 (clean open-air evolution of woodcutter-1 & 2): woodshed awning + stepped horizontal logs + foreground stump & axe
+  // Low compact woodchip sill uniting stump on left to tall horizontal cordwood rick on right
+  c.rect(8, 25, 18, 2, C.brownDark);
+
+  // Pitched timber awning shelter at top-left (widening downward to eaves + thin posts)
+  for (let row = 0; row < 4; row++) {
+    const span = 4 + row * 4;
+    const rx = 9 - Math.floor(span / 2);
+    c.rect(
+      rx,
+      4 + row,
+      span,
+      1,
+      row === 0 ? C.sand : row === 1 ? C.clay : row === 2 ? C.rust : C.brownDark,
+    );
+  }
+  c.rect(4, 8, 1, 10, C.brownDark);
+  c.rect(14, 8, 1, 10, C.brownDark);
+  // Two horizontal cylindrical logs stacked cleanly beneath the shelter awning
+  drawStackedLog(c, 5, 14, 9, true);
+  drawStackedLog(c, 6, 10, 8, true);
+
+  // Stepped horizontal cordwood rick on right (clean circular cut ends on left, matching D1/D2 language)
+  drawStackedLog(c, 17, 21, 12, false);
+  drawStackedLog(c, 17, 17, 12, false);
+  drawStackedLog(c, 18, 13, 11, false);
+  drawStackedLog(c, 20, 9, 8, false);
+  c.rect(26, 12, 3, 11, C.brownDark);
+  c.rect(27, 13, 2, 2, C.cream);
+  c.rect(27, 17, 2, 2, C.cream);
+  c.rect(27, 21, 2, 2, C.cream);
+
+  // Foreground flared chopping stump + gleaming embedded axe + two split billets
+  drawStumpWithAxe(c, 9, 28);
+  c.set(5, 28, C.sand);
+  c.set(14, 28, C.cream);
+  c.rect(15, 25, 4, 2, C.sand);
+  c.rect(16, 26, 3, 1, C.cream);
 }
 
 /** Draws faceted granite cliff mass & timber-shored arched mine adit glowing with warm lantern. */

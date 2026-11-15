@@ -98,11 +98,24 @@ const APPROVED_BATCH1_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pendin
   12: 'Keep',
 };
 
-const BATCH2_MARKS: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>> = {};
+const BATCH2_MARKS: Readonly<Record<number, string>> = {
+  13: 'Keep',
+  14: 'Keep',
+  15: 'Keep',
+  16: 'Keep',
+  17: 'Keep',
+  18: 'Keep',
+  19: 'Keep',
+  20: 'Keep',
+  21: 'Keep',
+  22: 'Pending (round 2 redraw: all tiers)',
+  23: 'Pending (D1-D2 Keep; D3 round 2 redraw)',
+  24: 'Keep',
+};
 
 function formatMarkRows(
   subjects: readonly Batch1Subject[],
-  marksMap: Readonly<Record<number, 'Keep' | 'Redraw' | 'Pending'>>,
+  marksMap: Readonly<Record<number, string>>,
 ): string {
   return subjects
     .map(
