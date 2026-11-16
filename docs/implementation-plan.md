@@ -2,7 +2,7 @@
 
 **Status:** Revised after the plan review (D34–D36). Awaiting owner approval.
 **Reads with:** `CLAUDE.md` (the workflow, definition of done, and owner gates live there, not here), `gdd.md` (what), `technical-design.md` (how), `decisions.md` (why).
-**Depth:** v0.0–v1.8 are in full detail (v1.0 completed 2026-10-22, D472–D497; v1.1 completed 2026-10-23, D498–D518; v1.2 completed 2026-10-23, D519–D537; v1.3 completed 2026-10-24, D538–D556; v1.4 completed 2026-10-28, D557–D578; v1.5 completed 2026-10-29, D579–D599; v1.6 completed 2026-11-04, D600–D603; v1.7 completed 2026-11-13, D604–D616; v1.8 fleshed out 2026-11-13, D617–D624, in full detail below).
+**Depth:** v0.0–v1.8 are in full detail (v1.0 completed 2026-10-22, D472–D497; v1.1 completed 2026-10-23, D498–D518; v1.2 completed 2026-10-23, D519–D537; v1.3 completed 2026-10-24, D538–D556; v1.4 completed 2026-10-28, D557–D578; v1.5 completed 2026-10-29, D579–D599; v1.6 completed 2026-11-04, D600–D603; v1.7 completed 2026-11-13, D604–D616; v1.8 completed 2026-11-15, D617–D629, in full detail below).
 **Markers:** **[JC]** = judgment call. **👤** = owner task. **[?]** = task blocked on an owner question (see `docs/questions.md`).
 
 ---
@@ -111,7 +111,7 @@ Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage r
 *Actual (v1.6, at VB.1):* 4 progress entries (portraits D600, Hold atmosphere & micro-feedback D601, Orders & Descent banners D602, and post-merge Q65 6-shard resolution D603).
 *Sizing note (v1.7):* 11 tasks (`VB.1`–`VB.11`), zero save or combat-rule changes, interleaving 4 sprite contact-sheet batches of 10 (`VB.2`, `VB.4`, `VB.6`, `VB.8`) with UI and audio tasks (`VB.3`, `VB.5`, `VB.7`, `VB.9`) so art quota replenishes naturally between sessions, plus one ~3-minute sound audition stop (`VB.5`). Estimated 11–13 sessions (one task per session, allowing 1–2 extra passes if any sprite batch needs a redraw).
 *Actual (v1.7, complete):* 13 progress entries (`VB.1` docs commit, `VB.2`–`VB.11`, playtest cache/wrapping fix, and milestone end), inside the 11–13 estimate.
-*Actual (v1.8, at T18.14 hand-off):* 23 progress entries (`T18.1` docs commit through `T18.14` hand-off across 14 tasks `T18.1`–`T18.14`, including `[?]` question stops and art contact-sheet review passes).
+*Actual (v1.8, complete):* 24 progress entries (`T18.1` docs commit through `T18.14` hand-off and milestone end across 14 tasks `T18.1`–`T18.14`, including `[?]` question stops and art contact-sheet review passes).
 
 *Actuals (added at SF.12):* v1.1 22 progress entries (against 12–16 estimated; entries overcount sessions); v1.2 13 entries (the docs commit and SF.1–SF.12, one task each, against 8–11 estimated). **Final v1.2 count, at the v1.3 wrap-up:** 16 entries (the docs commit, SF.1–SF.12, the silent-switch fix, the milestone end, and the merge with the e2e split), against 8–11 estimated.
 *Actual (v1.4, at the v1.5 docs commit):* 18 progress entries (the docs commit, TD.2 to TD.11 with TD.4a–c, TD.7a–c and TD.8a–b, the Q60 docs entry, the TD.6 draft and its close, and the milestone end), against 14–17 estimated.
@@ -1351,7 +1351,7 @@ Each task is one session (`AGENTS.md`). Note the interleaving of sprite batches 
 
 ### v1.8 — Ward & Rampart
 
-**Status:** in progress *(fleshed out 2026-11-13; decisions D617–D624; summary in `docs/flesh-out/v1.8/v1.8-summary.md`)*
+**Status:** complete *(merged 2026-11-15, PR #30, tagged `v1.8.0`; decisions D617–D629; summary in `docs/flesh-out/v1.8/v1.8-summary.md`)*
 
 **Scope:** Grid-focused tactical and visual milestone turning the Hold Grid into an `8 × 12` portrait castle (`6×6` Hamlet → `8×8` Keep → `8×10` Citadel → `8×12` Bastion) with pure-upside *Age of Empires* district adjacency (`1.0×` floor, itemized in `Breakdown`), *Clash of Clans* North-Reach `Warded` flood (slowing Threat when Hearth Hall is shielded without building destruction or repair chores, `D108`), `breach.frontRows` `3 → 5`, connected-wall rampart bonus, Watchtower **Screened Volley**, Barracks / Hunter's Lodge **Sector Support**, dual `rulesVersion` (`6 → 7`), Save Schema `15 → 16` inner-ward shift migration, `2` saved Layout Presets, 3-mode Auto-Arrange / Suggest (*Balanced*, *Economy*, *Fortress*), `6` permanent toggleable Event **Courtyard Marks** closing `D490` & §5.12.12 in a **Hold Look** drawer alongside bought `COSMETIC_IDS`, and a cohesive Zughy-32 Hold Grid tile art refresh across 3 contact-sheet batches of `≤ 12` (`D617`–`D624`).
 

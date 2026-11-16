@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (pushed to `origin/milestone/v1.8`; PR `#30` open to `main`; `T18.1`–`T18.14` complete, awaiting owner iPhone playtest sign-off).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D628` `Decided`), **in progress** (`T18.1`–`T18.14` complete; awaiting owner `"playtest passed"` before `v1.8.0` merge/tag).
-- **Last task:** `T18.14` — Preview build & iPhone playtest hand-off (promoted `D628` to `Decided`, fixed `vite.config.ts` `includeManifestIcons: false` + `tests/tools/png-pack.test.ts` preview SW check, aligned `HoldScreen` `Rank ▸` / `Layout ▸` / `Hold Look ▸` buttons onto one single row below the heading with `12/12` Playwright layout/width/Hold Look tests passing, verified `0` SW duplicate-hash mismatches across live/preview, marked `T18.14` `[x]`, opened PR `#30`, and confirmed `npm run check` green in `≤ 90 s`).
-- **Next:** Owner iPhone playtest on `/preview/` (`"playtest passed"` before `v1.8.0` merge/tag).
-- **Open questions:** None (`Q85`–`Q87` answered `(a)`).
+- **Branch:** `main` (post-`v1.8.0`, merged PR `#30` from `milestone/v1.8`).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D629` `Decided`), **complete**.
+- **Last task:** `v1.8` milestone end — PR `#30` merged and tagged `v1.8.0`.
+- **Next:** v1.9 flesh-out session (`docs/implementation-plan.md` §0.4) or next milestone direction from the owner.
+- **Open questions:** None.
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -232,3 +232,7 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **HoldScreen single-row actions (`src/ui/screens/HoldScreen.tsx`, `tests/e2e/hold-look.spec.ts`):** Moved `Stanholm — {Rank}` onto its own heading line above a dedicated `[data-hold-actions]` row so `Rank ▸`, `Layout ▸`, and `Hold Look ▸` sit together on a single line across `320–390 px` phone widths (`≥ 44 × 44 px` tap targets, `0` overflow) while still allowing `GDD §9.20` wrap at `320 px Largest`; verified `12/12` Playwright tests passing across `hold-look`, `hold-grid`, and `polish-widths`.
 - **Skipped / deferred:** No merge or `v1.8.0` tag executed (awaiting owner `"playtest passed"` on PR `#30`); `package.json` left unchanged (`build:preview` not added; CI uses `LH_CHANNEL=preview npm run build -- --outDir dist-preview`).
 - **Verification & next:** Final `npm run check` verified green (`≤ 90 s`) after the final edit; pushing `milestone/v1.8` updates PR `#30` and `/preview/` for the owner iPhone playtest.
+
+## 2026-11-15 — v1.8 milestone end (PR #30 merged & tagged v1.8.0)
+- **Owner sign-off (`D629`):** Owner confirmed **Playtest passed** on iPhone after pushing `4849bd3` (preview SW `includeManifestIcons: false` icon-hash fix + single-row `HoldScreen` `Rank ▸` / `Layout ▸` / `Hold Look ▸` layout). Logged `D629` (`Decided`) in `docs/decisions.md` and marked `v1.8` `Status: complete` (`24` actual entries in `§0.7` of `docs/implementation-plan.md`).
+- **Release wrap-up:** Verified `sim/baseline.json` (`rulesVersion: 7`, `63/63` simulator checks passing per `D628`) and save schema `16`, ran final `npm run check` (`≤ 90 s`), merged PR `#30` (`milestone/v1.8` → `main`), and tagged `v1.8.0`.
