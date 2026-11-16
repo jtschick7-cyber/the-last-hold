@@ -2,6 +2,7 @@
 // (tools/png-pack.ts) turns a picture of up to 256 colors into an indexed PNG, and hands back
 // nothing at all unless the result is smaller and decodes to exactly the same pixels.
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, sep } from 'node:path';
@@ -108,13 +109,28 @@ describe('every picture the game ships', () => {
   });
 });
 
+const swManifest = (swPath: string): Map<string, string> => {
+  const entries = [
+    ...readFileSync(swPath, 'utf8').matchAll(
+      /\{\s*"?url"?:\s*"([^"]+)"\s*,\s*"?revision"?:\s*("[^"]*"|null)\s*\}/g,
+    ),
+  ];
+  expect(entries.length).toBeGreaterThan(250);
+  const seen = new Map<string, string>();
+  for (const [, url, revision] of entries) {
+    expect(seen.get(url as string) ?? revision, url).toBe(revision);
+    seen.set(url as string, revision as string);
+  }
+  return seen;
+};
+
 describe('the live build', () => {
   it('has no contact sheet and no picture that is not as small as the packer can make it', () => {
     const out = mkdtempSync(join(tmpdir(), 'lh-png-'));
     try {
       execFileSync('npx', ['vite', 'build', '--outDir', out, '--emptyOutDir'], {
         cwd: root,
-        env: { ...process.env, LH_CHANNEL: 'live' },
+        env: { ...process.env, NODE_ENV: 'production', LH_CHANNEL: 'live' },
         stdio: 'ignore',
       });
       expect(existsSync(join(out, 'contact-sheet.html'))).toBe(false);
@@ -127,28 +143,26 @@ describe('the live build', () => {
         if (!f.startsWith(join(out, 'icons') + sep)) expect(packPng(readFileSync(f)), f).toBeNull();
       // The service worker lists every file once, or with the same hash each time: Workbox refuses to
       // install otherwise and the game stops working offline.
-      const entries = [
-        ...readFileSync(join(out, 'sw.js'), 'utf8').matchAll(/\{url:"([^"]+)",revision:([^}]+)\}/g),
-      ];
-      const seen = new Map<string, string>();
-      for (const [, url, revision] of entries) {
-        expect(seen.get(url as string) ?? revision, url).toBe(revision);
-        seen.set(url as string, revision as string);
-      }
+      swManifest(join(out, 'sw.js'));
     } finally {
       rmSync(out, { recursive: true, force: true });
     }
   }, 90_000);
 
-  it('keeps the contact sheet in the preview build', () => {
+  it('keeps the contact sheet in the preview build and has zero duplicate SW icon hashes', () => {
     const out = mkdtempSync(join(tmpdir(), 'lh-preview-'));
     try {
       execFileSync('npx', ['vite', 'build', '--outDir', out, '--emptyOutDir'], {
         cwd: root,
-        env: { ...process.env, LH_CHANNEL: 'preview' },
+        env: { ...process.env, NODE_ENV: 'production', LH_CHANNEL: 'preview' },
         stdio: 'ignore',
       });
       expect(existsSync(join(out, 'contact-sheet.html'))).toBe(true);
+      const seen = swManifest(join(out, 'sw.js'));
+      const previewIconHash = createHash('md5')
+        .update(readFileSync(join(root, 'art-src/icons-preview/icon-192.png')))
+        .digest('hex');
+      expect(seen.get('icons/icon-192.png')).toBe(`"${previewIconHash}"`);
     } finally {
       rmSync(out, { recursive: true, force: true });
     }
