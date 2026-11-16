@@ -44,21 +44,25 @@ export const HoldScreen = () => {
         <div class={styles.holdSky} data-threat={threatTier(s.threat)}>
           {appSettings.value.holdView === 'grid' ? <HoldGrid /> : <HoldScene age={s.cycle.age} />}
         </div>
-        <div class={styles.row} style={{ flexWrap: 'wrap', gap: 'var(--space-1)' }}>
-          <h1
-            class={`${styles.grow} ${styles.cardTitle}`}
-            style={{
-              flex: '1 1 11rem',
-              fontSize: 'calc(1.6rem * var(--text-undo))',
-              color: 'var(--c-ember)',
-              textTransform: 'none',
-            }}
-          >
-            Stanholm — {ages[s.cycle.age].name}
-          </h1>
+        <h1
+          class={styles.cardTitle}
+          style={{
+            fontSize: 'calc(1.6rem * var(--text-undo))',
+            color: 'var(--c-ember)',
+            textTransform: 'none',
+          }}
+        >
+          Stanholm — {ages[s.cycle.age].name}
+        </h1>
+        <div
+          class={styles.row}
+          data-hold-actions="true"
+          style={{ gap: 'var(--space-1)', marginBottom: 'var(--space-2)' }}
+        >
           <button
             type="button"
             class={styles.btn}
+            style={{ flex: '1 1 auto', padding: 'var(--space-1) 0.375rem' }}
             onClick={() => openSheet('Rank', () => <AgeSheet />)}
           >
             Rank ▸
@@ -66,6 +70,7 @@ export const HoldScreen = () => {
           <button
             type="button"
             class={styles.btn}
+            style={{ flex: '1 1 auto', padding: 'var(--space-1) 0.375rem' }}
             data-layout-button="true"
             data-tray-count={tray}
             onClick={openArrangeHold}
@@ -75,6 +80,7 @@ export const HoldScreen = () => {
           <button
             type="button"
             class={styles.btn}
+            style={{ flex: '1 1 auto', padding: 'var(--space-1) 0.375rem' }}
             data-hold-look-button="hold"
             onClick={openHoldLook}
           >

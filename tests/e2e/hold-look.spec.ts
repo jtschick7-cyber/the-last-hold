@@ -51,7 +51,28 @@ test('Hold Look opens from HoldScreen & ArrangeHold and shows locked badges clea
     }
   });
 
-  // 1. Open from HoldScreen
+  // 1. HoldScreen actions sit on a single row across 320–390 px with >= 44x44 tap targets and 0 overflow.
+  for (const width of [320, 360, 375, 390]) {
+    await page.setViewportSize({ width, height: 740 });
+    const rankBox = await page.getByRole('button', { name: 'Rank ▸' }).boundingBox();
+    const layoutBox = await page.locator('[data-layout-button]').boundingBox();
+    const lookBox = await page.locator('[data-hold-look-button="hold"]').boundingBox();
+    expect(rankBox, `Rank @${width}`).not.toBeNull();
+    expect(layoutBox, `Layout @${width}`).not.toBeNull();
+    expect(lookBox, `Hold Look @${width}`).not.toBeNull();
+    if (!rankBox || !layoutBox || !lookBox) throw new Error(`missing button box @${width}`);
+    const midY = (b: typeof rankBox) => b.y + b.height / 2;
+    expect(Math.abs(midY(rankBox) - midY(layoutBox)), `Rank/Layout row @${width}`).toBeLessThan(2);
+    expect(Math.abs(midY(layoutBox) - midY(lookBox)), `Layout/Look row @${width}`).toBeLessThan(2);
+    const holdOverflow = await overflow(page);
+    expect(holdOverflow.page, `page overflow @${width}`).toBeNull();
+    expect(holdOverflow.clipped, `clipped overflow @${width}`).toEqual([]);
+    const holdTaps = await scanTappables(page);
+    expect(holdTaps.small, `small taps @${width}`).toEqual([]);
+  }
+  await page.setViewportSize({ width: 412, height: 915 });
+
+  // 2. Open from HoldScreen
   const holdBtn = page.locator('[data-hold-look-button="hold"]');
   await expect(holdBtn).toHaveText('Hold Look ▸');
   await holdBtn.click();
@@ -312,9 +333,10 @@ test('Hold Look fits 320 px Largest text size, passes tap targets, contrast, and
     remembered,
   );
 
-  // HoldScreen buttons wrap cleanly >= 44x44 and 0 page overflow.
+  // HoldScreen buttons stay >= 44x44 with 0 page or clipped overflow at 320 px Largest text size.
   const holdOverflow = await overflow(page);
   expect(holdOverflow.page).toBeNull();
+  expect(holdOverflow.clipped).toEqual([]);
   const holdTaps = await scanTappables(page);
   expect(holdTaps.small).toEqual([]);
 
