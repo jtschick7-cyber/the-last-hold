@@ -39,8 +39,9 @@ export const greedyPlacement = (
     for (const piece of tries) {
       for (let i = 0; i < open.length; i++) {
         const tile = open[i] as SuggestTile;
-        const delta =
-          score([...placed, { id: piece.id, tower: piece.tower, x: tile.x, y: tile.y }]) - base;
+        placed.push({ id: piece.id, tower: piece.tower, x: tile.x, y: tile.y });
+        const delta = score(placed) - base;
+        placed.pop();
         const found = { piece, tile: i, delta };
         // A tower that would only lower the score is held back for the end.
         if (piece.tower && delta < 0) {
@@ -69,15 +70,14 @@ export const greedyPlacement = (
         for (let j = 0; j < placed.length; j += 1) {
           const wj = placed[j];
           if (!wj || wj.tower || wj.x !== ti.x || ti.y >= wj.y) continue;
-          const swapped = placed.map((p, idx) =>
-            idx === i ? { ...p, y: wj.y } : idx === j ? { ...p, y: ti.y } : p,
-          );
-          if (score(swapped) > curScore) {
-            placed[i] = swapped[i] as Placement;
-            placed[j] = swapped[j] as Placement;
+          placed[i] = { ...ti, y: wj.y };
+          placed[j] = { ...wj, y: ti.y };
+          if (score(placed) > curScore) {
             improved = true;
             break;
           }
+          placed[i] = ti;
+          placed[j] = wj;
         }
         if (improved) break;
       }

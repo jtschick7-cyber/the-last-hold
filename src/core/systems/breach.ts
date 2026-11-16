@@ -482,16 +482,16 @@ export const laneView = (state: GameState): LaneView => {
 export const layoutScore = (table: LaneTable, waves: readonly number[]): number => {
   const towers = table.towerCols.length;
   const screenPct = Math.round(100 * (table.k.screenedBonus ?? 0));
+  const screenMult = (100 + screenPct) / 100;
   let sum = 0;
   for (let c = 0; c < table.pieces.length; c++) {
     const w = waves[c] ?? 0;
     if (w === 0) continue;
-    const shares = table.towerCols.reduce(
-      (s, col, i) =>
-        s +
-        reachShare(table, Math.abs(col - c)) * (table.screened?.[i] ? (100 + screenPct) / 100 : 1),
-      0,
-    );
+    let shares = 0;
+    for (let i = 0; i < towers; i++) {
+      const col = table.towerCols[i] ?? 0;
+      shares += reachShare(table, Math.abs(col - c)) * (table.screened?.[i] ? screenMult : 1);
+    }
     const sectorMult = 1 + (table.sectorCols?.[c] ?? 0) * (table.k.sectorBonus ?? 0);
     const reach = towers === 0 ? 0 : (shares / (100 * towers)) * sectorMult;
     const rampartMult =
@@ -531,39 +531,53 @@ const northWardScore = (
   plotIndices: readonly number[],
   clearIndices: readonly number[],
 ): number => {
+  const cols = GRID_COLS;
+  const totalTiles = cols * GRID_ROWS;
+  const wHearth = WARD_SUGGEST_WEIGHTS.hearthWarded;
+  const wPlot = WARD_SUGGEST_WEIGHTS.wardedPlot;
+  const wClear = WARD_SUGGEST_WEIGHTS.unreachedClear;
   blocked.set(baseBlocked);
-  for (const p of front) blocked[p.y * GRID_COLS + p.x] = 1;
-  reached.fill(0);
+  for (let i = 0; i < front.length; i += 1) {
+    const p = front[i];
+    if (p) blocked[p.y * cols + p.x] = 1;
+  }
   let head = 0;
   let tail = 0;
-  for (let x = 0; x < GRID_COLS; x += 1) {
+  for (let x = 0; x < cols; x += 1) {
     if (blocked[x]) continue;
-    reached[x] = 1;
     queue[tail++] = x;
+  }
+  if (tail === 0) {
+    return (
+      (hallIndices.length > 0 ? wHearth : 0) +
+      plotIndices.length * wPlot +
+      clearIndices.length * wClear
+    );
+  }
+  reached.fill(0);
+  for (let i = 0; i < tail; i += 1) {
+    const x = queue[i];
+    if (x !== undefined) reached[x] = 1;
   }
   while (head < tail) {
     const idx = queue[head++];
     if (idx === undefined) continue;
-    const x = idx % GRID_COLS;
+    const x = idx % cols;
     if (x > 0 && !blocked[idx - 1] && !reached[idx - 1]) {
       reached[idx - 1] = 1;
       queue[tail++] = idx - 1;
     }
-    if (x + 1 < GRID_COLS && !blocked[idx + 1] && !reached[idx + 1]) {
+    if (x + 1 < cols && !blocked[idx + 1] && !reached[idx + 1]) {
       reached[idx + 1] = 1;
       queue[tail++] = idx + 1;
     }
-    if (idx >= GRID_COLS && !blocked[idx - GRID_COLS] && !reached[idx - GRID_COLS]) {
-      reached[idx - GRID_COLS] = 1;
-      queue[tail++] = idx - GRID_COLS;
+    if (idx >= cols && !blocked[idx - cols] && !reached[idx - cols]) {
+      reached[idx - cols] = 1;
+      queue[tail++] = idx - cols;
     }
-    if (
-      idx + GRID_COLS < GRID_COLS * GRID_ROWS &&
-      !blocked[idx + GRID_COLS] &&
-      !reached[idx + GRID_COLS]
-    ) {
-      reached[idx + GRID_COLS] = 1;
-      queue[tail++] = idx + GRID_COLS;
+    if (idx + cols < totalTiles && !blocked[idx + cols] && !reached[idx + cols]) {
+      reached[idx + cols] = 1;
+      queue[tail++] = idx + cols;
     }
   }
   let hearthWarded = hallIndices.length > 0 ? 1 : 0;
@@ -584,11 +598,7 @@ const northWardScore = (
     const cIdx = clearIndices[i];
     if (cIdx !== undefined && reached[cIdx] === 0) unreachedClear += 1;
   }
-  return (
-    hearthWarded * WARD_SUGGEST_WEIGHTS.hearthWarded +
-    wardedPlots * WARD_SUGGEST_WEIGHTS.wardedPlot +
-    unreachedClear * WARD_SUGGEST_WEIGHTS.unreachedClear
-  );
+  return hearthWarded * wHearth + wardedPlots * wPlot + unreachedClear * wClear;
 };
 
 /** Suggest layout for a given list of lanes (the first waves of the stand, or a fixed fixture). Changes nothing. */
@@ -634,28 +644,115 @@ export const suggestLayoutFor = (
   }));
   const behind = behindDefenses(state);
   const sectorCols = activeSectorCols(state, laneCount);
+  const baseOcc = new Uint8Array(laneCount * GRID_ROWS);
+  for (const p of behind) baseOcc[gridIndex(p.x, p.y, laneCount)] = 1;
   const occScratch = new Uint8Array(laneCount * GRID_ROWS);
   const connScratch = new Uint8Array(laneCount * GRID_ROWS);
-  const breachScore = (cols: readonly PlacedCoord[]): number =>
-    layoutScore(tableOf(cols, k, sectorCols, behind, laneCount, occScratch, connScratch), waves);
+  const piecesScratch = new Array<number>(laneCount).fill(0);
+  const rampartScratch = new Array<boolean>(laneCount).fill(false);
+  const towerColsScratch: number[] = [];
+  const screenedScratch: boolean[] = [];
+  const frontTowersScratch: PlacedCoord[] = [];
+  const tableScratch: LaneTable = {
+    pieces: piecesScratch,
+    towerCols: towerColsScratch,
+    rampartCols: rampartScratch,
+    screened: screenedScratch,
+    sectorCols,
+    k,
+  };
+  const markConn = (list: readonly PlacedCoord[]): void => {
+    for (const p of list) {
+      if (p.tower) continue;
+      const idx = p.y * laneCount + p.x;
+      const linked =
+        (p.x > 0 && occScratch[idx - 1] === 1) ||
+        (p.x + 1 < laneCount && occScratch[idx + 1] === 1) ||
+        (p.y > 0 && occScratch[idx - laneCount] === 1) ||
+        (p.y + 1 < GRID_ROWS && occScratch[idx + laneCount] === 1);
+      if (linked) connScratch[idx] = 1;
+    }
+  };
+  const breachScore = (cols: readonly PlacedCoord[]): number => {
+    occScratch.set(baseOcc);
+    connScratch.fill(0);
+    piecesScratch.fill(0);
+    rampartScratch.fill(false);
+    frontTowersScratch.length = 0;
+    for (const p of cols) occScratch[p.y * laneCount + p.x] = 1;
+    markConn(cols);
+    markConn(behind);
+    for (const p of cols) {
+      piecesScratch[p.x] = (piecesScratch[p.x] ?? 0) + 1;
+      if (p.tower) {
+        frontTowersScratch.push(p);
+      } else if (connScratch[p.y * laneCount + p.x] === 1) {
+        rampartScratch[p.x] = true;
+      }
+    }
+    if (frontTowersScratch.length > 1) {
+      frontTowersScratch.sort((a, b) => a.x - b.x || a.y - b.y);
+    }
+    towerColsScratch.length = frontTowersScratch.length;
+    screenedScratch.length = frontTowersScratch.length;
+    for (let i = 0; i < frontTowersScratch.length; i += 1) {
+      const t = frontTowersScratch[i] as PlacedCoord;
+      towerColsScratch[i] = t.x;
+      screenedScratch[i] = t.y > 0 && connScratch[(t.y - 1) * laneCount + t.x] === 1;
+    }
+    return layoutScore(tableScratch, waves);
+  };
   const baseBlocked = new Uint8Array(GRID_COLS * GRID_ROWS);
   for (const p of behind) baseBlocked[gridIndex(p.x, p.y, GRID_COLS)] = 1;
   const blockedScratch = new Uint8Array(GRID_COLS * GRID_ROWS);
   const reachedScratch = new Uint8Array(GRID_COLS * GRID_ROWS);
   const queueScratch = new Int8Array(GRID_COLS * GRID_ROWS);
+  const wardTileCache = new Float64Array(GRID_COLS * GRID_ROWS).fill(-1);
+  let wardCacheLen = -1;
+  let wardCachePrevIdx = -1;
+  const evalWard = (cols: readonly PlacedCoord[]): number => {
+    const len = cols.length;
+    if (len === 0) {
+      return northWardScore(
+        cols,
+        baseBlocked,
+        blockedScratch,
+        reachedScratch,
+        queueScratch,
+        hallIndices,
+        plotIndices,
+        clearIndices,
+      );
+    }
+    const prev = len > 1 ? cols[len - 2] : undefined;
+    const prevIdx = prev ? prev.y * laneCount + prev.x : -1;
+    if (len !== wardCacheLen || prevIdx !== wardCachePrevIdx) {
+      wardTileCache.fill(-1);
+      wardCacheLen = len;
+      wardCachePrevIdx = prevIdx;
+    }
+    const last = cols[len - 1] as PlacedCoord;
+    const lastIdx = last.y * laneCount + last.x;
+    const cached = wardTileCache[lastIdx];
+    if (cached !== undefined && cached >= 0 && len < owned.length) {
+      return cached;
+    }
+    const val = northWardScore(
+      cols,
+      baseBlocked,
+      blockedScratch,
+      reachedScratch,
+      queueScratch,
+      hallIndices,
+      plotIndices,
+      clearIndices,
+    );
+    if (len < owned.length) wardTileCache[lastIdx] = val;
+    return val;
+  };
   const objective =
     mode === 'economy'
-      ? (cols: readonly PlacedCoord[]): number =>
-          northWardScore(
-            cols,
-            baseBlocked,
-            blockedScratch,
-            reachedScratch,
-            queueScratch,
-            hallIndices,
-            plotIndices,
-            clearIndices,
-          ) + breachScore(cols)
+      ? (cols: readonly PlacedCoord[]): number => evalWard(cols) + breachScore(cols)
       : breachScore;
   const greedy = greedyPlacement(owned, free, objective);
   // Auto-arrange's defense positions, on the tiles Suggest may use, worked out on a copy.
