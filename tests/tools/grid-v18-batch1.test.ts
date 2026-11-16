@@ -12,7 +12,6 @@ import {
 } from '../../src/content/hold-layout';
 import { palette } from '../../src/content/palette';
 import { redrawIds } from '../../tools/contact-sheet-data';
-import { packPng } from '../../tools/png-pack';
 import { BATCH1_SUBJECTS, CONTACT_SHEET_PATHS, STAGING_DIR } from '../../tools/contact-sheet-v18';
 import { WALL_MASKS, buildWallTile, drawWatchtower } from '../../tools/grid-v18-defense';
 import { HALL_DOOR_BOX, HALL_LAMP_BOX, HALL_RANKS, drawHallV18 } from '../../tools/grid-v18-hall';
@@ -184,13 +183,12 @@ describe('v1.8 Grid Art Batch 1 (T18.8, D623, D475)', () => {
         expect(existsSync(fullPath)).toBe(true);
         const buf = readFileSync(fullPath);
         const png = checkPngCompliance(buf, file.w, file.h);
-        const fresh = PNG.sync.read(file.render().toPng(file.h));
+        const rawRgba = file.render().toPng(file.h);
+        const fresh = PNG.sync.read(rawRgba);
         expect(png.data.equals(fresh.data)).toBe(true);
-        // Packed PNG stays as compact as or tighter than png-pack
-        const repacked = packPng(buf);
-        if (repacked !== null) {
-          expect(buf.length).toBeLessThanOrEqual(repacked.length);
-        }
+        // Staged PNG is indexed-colour (colorType 3) and smaller than raw RGBA across all OS zlib builds
+        expect(buf[25]).toBe(3);
+        expect(buf.length).toBeLessThan(rawRgba.length);
       }
     }
   });

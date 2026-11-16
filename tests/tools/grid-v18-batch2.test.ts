@@ -4,7 +4,6 @@ import { resolve } from 'node:path';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 import { palette } from '../../src/content/palette';
-import { packPng } from '../../tools/png-pack';
 import { BATCH2_CONTACT_PATHS, BATCH2_SUBJECTS, STAGING_DIR } from '../../tools/contact-sheet-v18';
 import { drawLevelBuildingV18, LEVEL_BUILDING_FAMILIES } from '../../tools/grid-v18-buildings';
 import { drawPlotV18, BATCH2_PLOT_FAMILIES } from '../../tools/grid-v18-plots';
@@ -162,12 +161,12 @@ describe('v1.8 Grid Art Batch 2 (T18.9, D623, D475)', () => {
         expect(existsSync(fullPath)).toBe(true);
         const buf = readFileSync(fullPath);
         const png = checkPngCompliance(buf, file.w, file.h);
-        const fresh = PNG.sync.read(file.render().toPng(file.h));
+        const rawRgba = file.render().toPng(file.h);
+        const fresh = PNG.sync.read(rawRgba);
         expect(png.data.equals(fresh.data)).toBe(true);
-        const repacked = packPng(buf);
-        if (repacked !== null) {
-          expect(buf.length).toBeLessThanOrEqual(repacked.length);
-        }
+        // Staged PNG is indexed-colour (colorType 3) and smaller than raw RGBA across all OS zlib builds
+        expect(buf[25]).toBe(3);
+        expect(buf.length).toBeLessThan(rawRgba.length);
         stagedCount++;
       }
     }

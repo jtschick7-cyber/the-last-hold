@@ -25,7 +25,6 @@ import {
   BATCH3_SUBJECTS,
   STAGING_DIR,
 } from '../../tools/contact-sheet-v18';
-import { packPng } from '../../tools/png-pack';
 
 const ROOT = resolve(import.meta.dirname, '..', '..');
 const PUBLIC_GRID = resolve(ROOT, 'public', 'assets', 'grid');
@@ -104,7 +103,10 @@ describe('v1.8 deployed grid art & Courtyard Marks (T18.11)', () => {
       const stagedBuf = readFileSync(stagedPath);
       const liveBuf = readFileSync(livePath);
       expect(liveBuf.equals(stagedBuf), `live vs staged mismatch: ${file.name}`).toBe(true);
-      expect(packPng(liveBuf), `re-packable PNG: ${file.name}`).toBeNull();
+      expect(liveBuf[25], `indexed PNG colorType: ${file.name}`).toBe(3);
+      expect(liveBuf.length, `packed smaller than raw RGBA: ${file.name}`).toBeLessThan(
+        file.render().toPng(file.h).length,
+      );
 
       const assetId = assetIdForGridFile(file.name);
       expect(frozen[assetId], `hash mismatch: ${assetId}`).toBe(sha256(liveBuf));

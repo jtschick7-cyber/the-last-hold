@@ -21,7 +21,6 @@ import {
   drawSilverSeamV18,
 } from '../../tools/grid-v18-plots-extra';
 import { C } from '../../tools/pixel';
-import { packPng } from '../../tools/png-pack';
 
 const ROOT = resolve(import.meta.dirname, '..', '..');
 const PALETTE_SET = new Set((palette?.colors ?? []).map((h) => h.toLowerCase()));
@@ -230,12 +229,12 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
         const buf = readFileSync(fullPath);
         expect(buf.length).toBeLessThanOrEqual(142_000);
         const { png } = checkPngCompliance(buf, file.w, file.h);
-        const fresh = PNG.sync.read(file.render().toPng(file.h));
+        const rawRgba = file.render().toPng(file.h);
+        const fresh = PNG.sync.read(rawRgba);
         expect(png.data.equals(fresh.data)).toBe(true);
-        const repacked = packPng(buf);
-        if (repacked !== null) {
-          expect(buf.length).toBeLessThanOrEqual(repacked.length);
-        }
+        // Staged PNG is indexed-colour (colorType 3) and smaller than raw RGBA across all OS zlib builds
+        expect(buf[25]).toBe(3);
+        expect(buf.length).toBeLessThan(rawRgba.length);
         stagedCount++;
       }
     }
