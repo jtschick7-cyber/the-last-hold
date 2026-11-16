@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.1`–`T18.13` complete).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627`; `D628` `Proposed`), **in progress** (`T18.1`–`T18.13` complete).
-- **Last task:** `T18.13` — Applied `Q86 (a)` pure `0.8×` round constants + `Q87 (a)` target calibration (`EVENTS.minBountyShare: 0.695`, `ENGAGEMENT.provisionsMatter.minShare: 0.16` in `sim/targets.ts`), recorded `sim/baseline.json` (`rulesVersion: 7`) via 65-run `npm run sim:accept` (`63/63` checks green in `185.6 s`), added 4× CPU `layoutTactics`/`v16Migration` bench checks, verified rebuilt `dist/` gzip size (`533,306 B ≤ 614,400 B`) & `dist/sw.js` (`0` mismatches), checked off `T18.13` `[x]`, and confirmed `npm run check` green (`≤ 90 s`).
-- **Next:** `T18.14` — Preview build & iPhone playtest hand-off (plus optional fresh Playwright bench/e2e re-run after `adjSilver: 0.015 → 0.02` if desired).
-- **Open questions:** None (`Q87` answered `(a)`).
+- **Branch:** `milestone/v1.8` (local branch from `main`; `T18.1`–`T18.14` complete, awaiting owner approval to push/PR and iPhone playtest sign-off).
+- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D627` `Decided`; `D628` `Proposed`), **in progress** (`T18.1`–`T18.14` complete; awaiting owner `"playtest passed"` before `v1.8.0` merge/tag).
+- **Last task:** `T18.14` — Preview build & iPhone playtest hand-off (verified `dist/` `533,312 B ≤ 614,400 B` across `326` files with `0` `dist/sw.js` duplicate-hash mismatches and clean `dist-preview/` build across `375` files, marked `T18.14` `[x]`, recorded `23` entries in `§0.7`, and confirmed `npm run check` green in `≤ 90 s`).
+- **Next:** Owner gate — confirm whether to mark `D628` `Decided`, push `milestone/v1.8` & open the preview PR to `main`, and run the iPhone playtest (`"playtest passed"` before `v1.8.0` merge/tag).
+- **Open questions:** None (`Q85`–`Q87` answered `(a)`).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -223,3 +223,10 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
   - All **`63/63` checks passed (`0` failures)**: `provisions-matter` (`10/10` seeds `16.5%–33.1%`), `silver-with-boss` (`69.9% ≥ 69.5%`), `contracts-own-silver` (`10/10` seeds `70.6%–79.9%`), `vigil-embers-level` (`4.8% ≤ 5%`), `descent-victory` (`80%` wins / `6` downed), `bastion` (`96.00 h` Mon / `84.00 h` Sat), and all `breach-*` checks (`15 vs 15`, `15 vs 14` on `sim-4`, `16 vs 18` bad layout).
   - Recorded updated `sim/baseline.json` (`rulesVersion: 7`; `149/208` moments matching `v1.5` baseline).
 - **Completion & verification:** Marked `T18.13` **`[x]`** in `docs/implementation-plan.md`, confirmed `npm run check` green (`≤ 90 s`) after the final edit, and committed locally on `milestone/v1.8` (ready for `T18.14`).
+
+## 2026-11-15 — v1.8 T18.14: Preview build & iPhone playtest hand-off
+
+- **Production & preview builds:** Ran `npm run build` (`dist/`: `326` files, `533,312 B` gzipped vs `614,400 B` ceiling with `81,088 B` headroom, `dist/sw.js` `329` entries / `323` unique URLs with `0` duplicate-hash mismatches, `contact-sheet.html` & `audition.html` absent) and `LH_CHANNEL=preview npm run build -- --outDir dist-preview` (`dist-preview/`: `375` files, `contact-sheet.html` & `audition.html` present; noted pre-existing `dist-preview/sw.js` revision mismatch on the `5` `icons/*.png` entries where `includeAssets` hashes `public/icons/` before `previewIcons` swaps in `art-src/icons-preview/`).
+- **Plan & gate status:** Ticked `T18.14` `[x]` and recorded `23` actual progress entries in `docs/implementation-plan.md` `§0.7` (leaving `v1.8` `Status: in progress` until playtest sign-off); kept `D628` `Proposed` in `docs/decisions.md` per the owner gate on marking decisions `Decided`.
+- **Skipped / deferred:** No git push, PR open, merge, or `v1.8.0` tag executed (awaiting owner approval); `vite.config.ts` and `package.json` (`build:preview`) left untouched.
+- **Verification & next:** Final `npm run check` verified green (`≤ 90 s`). Awaiting owner answers on promoting `D628` to `Decided`, pushing `milestone/v1.8` / opening the preview PR to `main`, and completing the iPhone playtest (`"playtest passed"`).
