@@ -6,7 +6,7 @@ import { BREACH_TEXT as T } from '../../src/content/breach-text';
 
 const gdd = readFileSync(new URL('../../docs/gdd.md', import.meta.url), 'utf8');
 const start = gdd.indexOf('### 9.25 The Breach');
-const section = gdd.slice(start, gdd.indexOf('\n## 10.', start));
+const section = gdd.slice(start, gdd.indexOf('\n### 9.26', start));
 const rows = section
   .slice(section.indexOf('| String | Where it shows |'))
   .split('\n')

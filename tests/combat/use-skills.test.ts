@@ -23,7 +23,7 @@ const ticks = (r: FightResult, actor: string): number[] =>
 
 describe('the rules version', () => {
   it('is 6 from v1.5 (it was 5 for the use-skills and item lines, D308)', () => {
-    expect(RULES_VERSION).toBe(6);
+    expect(RULES_VERSION).toBe(7);
   });
 });
 

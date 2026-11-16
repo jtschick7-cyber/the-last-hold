@@ -8,6 +8,7 @@ import type { Explained } from '../breakdown/breakdown';
 import type { GameState } from '../state/game-state';
 import { jobSlots } from './housing';
 import { applyBuckets, type Bonus } from './buckets';
+import { tacticalProductionFactor } from './layout-tactics';
 import { emberBonuses, relicBonuses } from '../long-night/bonuses';
 
 // GDD §5.1.1: rate_R = workers_R × baseRate_R × buckets. Rates are per minute,
@@ -98,14 +99,25 @@ export const productionRate = (
     resource === 'silver'
       ? applyBuckets(base, bonuses, SILVER_BUCKETS)
       : applyBuckets(base, bonuses);
+  // GDD §5.1.5, §7.16 (D619, D625): district adjacency and Warded tactics multiply after buckets (Silver takes only Silver tactics).
+  const tactical = tacticalProductionFactor(state, resource);
+  const value = tactical ? result.value * tactical.value : result.value;
+  const formula =
+    resource === 'silver'
+      ? tactical
+        ? 'base × relic × event × tactics (no other bonuses apply to silver)'
+        : 'base × relic × event (no other bonuses apply to silver)'
+      : tactical
+        ? 'base × Π (1 + Σ bucket) × tactics'
+        : result.breakdown.formula;
   return {
-    value: result.value,
+    value,
     breakdown: {
       ...result.breakdown,
+      value,
       label: `${resources[def.produces].name} per minute`,
-      ...(resource === 'silver'
-        ? { formula: 'base × relic × event (no other bonuses apply to silver)' }
-        : {}),
+      ...(formula ? { formula } : {}),
+      ...(tactical ? { children: [...(result.breakdown.children ?? []), tactical.breakdown] } : {}),
     },
   };
 };

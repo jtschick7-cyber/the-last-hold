@@ -1,13 +1,20 @@
 import { useState } from 'preact/hooks';
 import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/consumables';
 import { INGREDIENT_IDS, ingredients, type IngredientId } from '../../content/ingredients';
+import { V18_TEXT } from '../../content/v18-text';
 import { greyWivesBookLine } from '../../core/story/orders-views';
 import { experimentProblem, knownRecipes } from '../../core/alchemy/book';
 import { brewSummary } from '../../core/alchemy/brew-text';
 import { skillLevel } from '../../core/skills/skills';
 import type { Breakdown } from '../../core/breakdown/breakdown';
 import { Num } from '../widgets/Num';
-import { brewSlots, experimentMs, kettlesBusy } from '../../core/alchemy/brewing';
+import {
+  brewDuration,
+  brewSlots,
+  experimentDuration,
+  experimentMs,
+  kettlesBusy,
+} from '../../core/alchemy/brewing';
 import { gardenCount, nextGardenTime } from '../../core/alchemy/garden';
 import {
   bookCount,
@@ -101,8 +108,13 @@ const BrewSection = ({ s }: { s: GameState }) => {
   const have = CONSUMABLE_IDS.filter((c) => s.stores[c] > 0);
   const reagents = INGREDIENT_IDS.filter((i) => s.stores[i] > 0);
   const known = CONSUMABLE_IDS.filter((id) => knownRecipes(s, id).length > 0);
+  const brewTime = brewDuration(s);
   return (
     <div>
+      <p class={styles.small} data-testid="brew-time-line">
+        {V18_TEXT.brewTime}:{' '}
+        <Num text={formatDuration(brewTime.value)} breakdown={() => brewTime.breakdown} marked />
+      </p>
       <h3 class={styles.cardTitle}>Stores</h3>
       <p class={styles.small}>
         {have.length > 0
@@ -166,6 +178,7 @@ const ExperimentSection = ({ s }: { s: GameState }) => {
   const [a, setA] = useState<IngredientId | ''>('');
   const [b, setB] = useState<IngredientId | ''>('');
   const units = num('experiment.units');
+  const expTime = experimentDuration(s);
   const problem =
     a && b ? experimentProblem(s, a, b) : 'Pick two ingredients to put in a kettle together.';
   const kettle = brewSlots(s) === 0 ? 'Build an Alchemist’s Hut to experiment.' : null;
@@ -176,10 +189,10 @@ const ExperimentSection = ({ s }: { s: GameState }) => {
   const why = kettle ?? problem ?? short;
   return (
     <div>
-      <p class={styles.small}>
+      <p class={styles.small} data-testid="experiment-time-line">
         An experiment puts {units} of each ingredient in a kettle for{' '}
-        {formatDuration(experimentMs(s) / 1000)} and teaches what the pair shares. Nothing is
-        brewed.
+        <Num text={formatDuration(expTime.value)} breakdown={() => expTime.breakdown} marked /> and
+        teaches what the pair shares. Nothing is brewed.
       </p>
       <IngredientPick s={s} label="First" value={a} onChange={setA} />
       <IngredientPick s={s} label="Second" value={b} onChange={setB} />

@@ -40,8 +40,8 @@ const OLD = ['v12-owner.json', 'v12.json', 'v12-played.json'];
 
 describe('the v12 → v13 migration', () => {
   it('is schema 13, and rules version is 6 from v1.5', () => {
-    expect(SCHEMA_VERSION).toBe(15); // D593 (a): was 14 before v1.5
-    expect(RULES_VERSION).toBe(6);
+    expect(SCHEMA_VERSION).toBe(16); // D624 (a): was 15 before v1.8
+    expect(RULES_VERSION).toBe(7);
     expect(readFixture('v12-owner.json').schemaVersion).toBe(12);
     expect(readFixture('v13.json').schemaVersion).toBe(13);
   });
@@ -51,7 +51,7 @@ describe('the v12 → v13 migration', () => {
     (f) => {
       const loaded = loadFull(readFixture(f));
       expect(loaded.warnings).toEqual([]);
-      expect(loaded.state.meta.schemaVersion).toBe(15); // D593 (a): was 14 before v1.5
+      expect(loaded.state.meta.schemaVersion).toBe(16); // D624 (a): was 15 before v1.8
       expect(loaded.state.vigil).toEqual({ on: false, stands: 0 });
       expect(JSON.stringify(loaded.state)).not.toContain('vigilLevel');
       expect(roundTrip(loaded.state)).toEqual(loaded.state);
@@ -102,8 +102,8 @@ describe('the v12 → v13 migration', () => {
     }
   });
 
-  it('the current code refuses a save from a newer version (16)', () => {
-    const env = { ...readFixture('v13.json'), schemaVersion: 16 }; // D593 (a): was 15 before v1.5
+  it('the current code refuses a save from a newer version (17)', () => {
+    const env = { ...readFixture('v13.json'), schemaVersion: 17 }; // D624 (a): was 16 before v1.8
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 
@@ -195,7 +195,7 @@ describe('v13-played.json (made in KV.4 with the real commands)', () => {
   it('loads with no warnings, validates and round-trips', () => {
     const r = loaded();
     expect(r.warnings).toEqual([]);
-    expect(r.state.meta.schemaVersion).toBe(15); // D593 (a): was 14 before v1.5
+    expect(r.state.meta.schemaVersion).toBe(16); // D624 (a): was 15 before v1.8
     expect(roundTrip(r.state)).toEqual(r.state);
   });
 

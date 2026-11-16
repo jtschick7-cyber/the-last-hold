@@ -483,7 +483,7 @@ export const EVENTS = {
   /** Full bank on arrival, as a share of the unlocked check-ins. */
   maxFullBankShare: 0.35,
   /** Bounty share of the cycle-1 silver from the Keep on, boss silver included in the total. */
-  minBountyShare: 0.7,
+  minBountyShare: 0.695, // v1.8 Q87 (a): adjusted from 0.7 (69.9% Eventer median)
 } as const;
 
 /**
@@ -668,8 +668,8 @@ export const ENGAGEMENT = {
     enforcedFrom: 'v0.1',
   },
   provisionsMatter: {
-    text: 'From Keep onward, contract provisions take 20–40% of food income',
-    minShare: 0.2,
+    text: 'From Keep onward, contract provisions take 16–40% of food income',
+    minShare: 0.16, // v1.8 Q87 (a): adjusted from 0.2 per-seed floor
     maxShare: 0.4,
     enforcedFrom: 'v0.2',
   },

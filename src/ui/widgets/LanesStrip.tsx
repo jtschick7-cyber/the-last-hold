@@ -1,10 +1,37 @@
 import { signal } from '@preact/signals';
 import { BREACH_TEXT, wavesText } from '../../content/breach-text';
+import { V18_TEXT } from '../../content/v18-text';
 import type { LaneInfo, LaneView } from '../../core/systems/breach';
 import { openSheet } from '../app/sheets';
 import { BreakdownView } from '../sheets/BreakdownView';
 import styles from '../styles/ui.module.css';
 import css from './LanesStrip.module.css';
+
+const stripTacticsSummary = (view: LaneView): string | null => {
+  const parts: string[] = [];
+  const rampartLanes = view.lanes.filter((l) => l.rampartPercent > 0);
+  const firstRampart = rampartLanes[0];
+  if (firstRampart) {
+    parts.push(
+      `${V18_TEXT.rampartTag(firstRampart.rampartPercent)} (${rampartLanes.map((l) => l.lane).join(', ')})`,
+    );
+  }
+  if (view.screenedCount > 0) parts.push(V18_TEXT.screenedCount(view.screenedCount));
+  const sectorPercents = [...new Set(view.lanes.map((l) => l.sectorPercent).filter((p) => p > 0))];
+  for (const pct of sectorPercents) {
+    const lanes = view.lanes.filter((l) => l.sectorPercent === pct).map((l) => l.lane);
+    parts.push(`${V18_TEXT.sectorTag(pct)} (${lanes.join(', ')})`);
+  }
+  return parts.length > 0 ? parts.join(' · ') : null;
+};
+
+const laneTacticsTags = (lane: LaneInfo): string | null => {
+  const parts: string[] = [];
+  if (lane.rampartPercent > 0) parts.push(V18_TEXT.rampartTag(lane.rampartPercent));
+  if (lane.screenedTowers > 0) parts.push(V18_TEXT.screenedCount(lane.screenedTowers));
+  if (lane.sectorPercent > 0) parts.push(V18_TEXT.sectorTag(lane.sectorPercent));
+  return parts.length > 0 ? parts.join(' · ') : null;
+};
 
 // GDD §9.25 (D588): the Lanes strip and its text list. It draws what `laneView` gives and works out
 // no lane number (CLAUDE.md). A tap on a lane opens its breakdown sheet and, on the Arrange Hold sheet,
@@ -81,26 +108,44 @@ export const LanesStrip = ({ view, light }: { view: LaneView; light: boolean }) 
           <p class={styles.small} data-testid="lanes-hint">
             {BREACH_TEXT.hint}
           </p>
+          {(() => {
+            const summary = stripTacticsSummary(view);
+            return (
+              summary && (
+                <p class={styles.small} data-testid="lanes-tactics-summary">
+                  {summary}
+                </p>
+              )
+            );
+          })()}
         </>
       ) : (
         <ul class={css.list} data-testid="lanes-list">
-          {view.lanes.map((lane) => (
-            <li key={lane.lane}>
-              <button
-                type="button"
-                data-testid={`lane-line-${lane.lane}`}
-                class={css.line}
-                onClick={() => tap(lane, light)}
-              >
-                {BREACH_TEXT.listLine(
-                  lane.lane,
-                  lane.coverPercent,
-                  lane.towerReachPercent,
-                  wavesText(lane.waves, view.waveCount),
+          {view.lanes.map((lane) => {
+            const laneTags = laneTacticsTags(lane);
+            return (
+              <li key={lane.lane}>
+                <button
+                  type="button"
+                  data-testid={`lane-line-${lane.lane}`}
+                  class={css.line}
+                  onClick={() => tap(lane, light)}
+                >
+                  {BREACH_TEXT.listLine(
+                    lane.lane,
+                    lane.coverPercent,
+                    lane.towerReachPercent,
+                    wavesText(lane.waves, view.waveCount),
+                  )}
+                </button>
+                {laneTags && (
+                  <div class={styles.small} data-testid={`lane-tactics-${lane.lane}`}>
+                    {laneTags}
+                  </div>
                 )}
-              </button>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
       <p class={styles.small} data-testid="lanes-help">

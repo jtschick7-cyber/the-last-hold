@@ -15,18 +15,20 @@ import {
   groundTileId,
   ruinTileId,
 } from '../../content/assets';
-import { buildHoldGridView, type ActivePiece } from '../../core/systems/layout';
-import { inClearing } from '../../core/systems/layout';
+import { GRID_COLS, GRID_ROWS } from '../../content/hold-layout';
+import { buildHoldGridView, inClearing, type ActivePiece } from '../../core/systems/layout';
 import { game } from '../app/runtime';
+import { CourtyardMarkAccents } from './CourtyardMarkAccents';
 import { Sprite } from './Sprite';
 
-// GDD §9.21: the Hold screen's 8 × 8 grid header. Purely visual and non-interactive; it reads
-// buildHoldGridView and decides no rule. The picture is 256 px wide (32 px tiles) with a 16 px
-// border strip above and below, and scales to the card width.
-const W = 256;
-const H = 288;
+// GDD §9.21 (T18.6): the Hold screen's 8 × 12 grid header. Purely visual and non-interactive; it
+// reads buildHoldGridView and decides no rule. The 8 × 12 yard is 256 × 384 px (32 px tiles) with a
+// 16 px border strip above and below (256 × 416 px total), scaling to the card width.
 const T = 32;
 const STRIP = 16;
+const W = GRID_COLS * T;
+const GRID_H = GRID_ROWS * T;
+const H = GRID_H + STRIP * 2;
 const pctX = (px: number): string => `${(px / W) * 100}%`;
 const pctY = (px: number): string => `${(px / H) * 100}%`;
 
@@ -73,7 +75,7 @@ const Layer = ({
   [k: `data-${string}`]: string | number | undefined;
 }) => {
   const left = strip ? 0 : x * T;
-  const top = strip === 'north' ? 0 : strip === 'south' ? STRIP + 8 * T : STRIP + y * T;
+  const top = strip === 'north' ? 0 : strip === 'south' ? STRIP + GRID_H : STRIP + y * T;
   return (
     <span
       style={{
@@ -97,7 +99,7 @@ export const HoldGrid = () => {
   const walls = v.active.filter((p) => p.id.startsWith('wall-'));
   const tower1 = v.active.find((p) => p.id === 'watchtower-1');
   const cells: { x: number; y: number }[] = [];
-  for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) cells.push({ x, y });
+  for (let y = 0; y < GRID_ROWS; y++) for (let x = 0; x < GRID_COLS; x++) cells.push({ x, y });
   const c = v.cosmetics;
   return (
     <div
@@ -112,6 +114,7 @@ export const HoldGrid = () => {
       data-bell={c.bell ?? 'none'}
       data-lanterns={c.lanterns ?? 'none'}
       data-ghosts={v.ghosts.length}
+      data-courtyard-marks={v.courtyardMarks.join(',')}
       style={{
         position: 'relative',
         width: '100%',
@@ -197,6 +200,20 @@ export const HoldGrid = () => {
       {v.look === 'lamp' && hall && (
         <Layer id={GRID_HALL_LAMP_ID} x={hall.x} y={hall.y} w={2} h={2} data-lamp="hall" />
       )}
+      {v.courtyardMarks.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: pctY(STRIP),
+            height: pctY(GRID_H),
+            pointerEvents: 'none',
+          }}
+        >
+          <CourtyardMarkAccents marks={v.courtyardMarks} variant="grid" />
+        </div>
+      )}
       <span
         style={{
           position: 'absolute',
@@ -217,7 +234,7 @@ export const HoldGrid = () => {
         style={{
           position: 'absolute',
           left: '2%',
-          top: pctY(STRIP + 8 * T),
+          top: pctY(STRIP + GRID_H),
           height: pctY(STRIP),
           display: 'flex',
           alignItems: 'center',

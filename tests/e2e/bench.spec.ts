@@ -35,6 +35,9 @@ const BUDGET = {
   lanesStrip: 16,
   suggestLayout: 20,
   breachMigration: 100,
+  // v1.8 (D624): full uncached layout-tactics recompute on 8×12 Bastion hold and v15 → v16 migration.
+  layoutTactics: 5,
+  v16Migration: 100,
   // v1.7 (D612): advancing one watched Arena combat step with its pose change and floating callout.
   arenaStep: 16,
 };
@@ -62,6 +65,8 @@ type Bench = {
   lanesStrip: number;
   suggestLayout: number;
   breachMigration: number;
+  layoutTactics: number;
+  v16Migration: number;
   arenaStep: number;
 };
 
@@ -100,6 +105,9 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
   console.log(
     `hunt odds ${ms.huntOdds.toFixed(0)} ms, hunt Suggest ${ms.huntSuggest.toFixed(0)} ms`,
   );
+  console.log(
+    `layout-tactics recompute ${ms.layoutTactics.toFixed(2)} ms, v15 → v16 migration (owner save) ${ms.v16Migration.toFixed(1)} ms`,
+  );
   console.log(`Arena step render: ${ms.arenaStep.toFixed(2)} ms`);
   for (const [name, took, budget] of [
     ['odds', ms.odds, BUDGET.odds],
@@ -125,6 +133,8 @@ test('odds, Suggest and the stand preview stay within 2× their budget on a thro
     ['the Lanes strip render', ms.lanesStrip, BUDGET.lanesStrip],
     ['Suggest layout', ms.suggestLayout, BUDGET.suggestLayout],
     ['the v14 → v15 migration', ms.breachMigration, BUDGET.breachMigration],
+    ['the layout-tactics recompute', ms.layoutTactics, BUDGET.layoutTactics],
+    ['the v15 → v16 migration', ms.v16Migration, BUDGET.v16Migration],
     ['the Arena step render', ms.arenaStep, BUDGET.arenaStep],
   ] as const) {
     if (took > budget) {

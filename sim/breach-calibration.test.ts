@@ -1,6 +1,6 @@
-// Plan TB.12: the calibration grid only tries values the rules allow (GDD §7.15).
+// Plan TB.12 & T18.12: the calibration grid only tries values the rules allow (GDD §7.15–§7.16).
 import { describe, expect, it } from 'vitest';
-import { LEVELS, SWEEPS } from './breach-calibration';
+import { LEVELS, SWEEPS, V18_LAYOUT_SCALES, V18_SWEEPS } from './breach-calibration';
 
 describe('the Breach calibration grid', () => {
   it('names the three level points of the plan', () => {
@@ -30,6 +30,19 @@ describe('the Breach calibration grid', () => {
           ),
         ).toBeLessThan(1e-9);
       if ('breach.depthMax' in v) expect(Number.isInteger(v['breach.depthMax'])).toBe(true);
+    }
+  });
+
+  it('keeps v1.8 Breach and Layout calibration sweeps within valid non-negative bounds', () => {
+    expect(V18_LAYOUT_SCALES.length).toBeGreaterThanOrEqual(4);
+    for (const s of V18_SWEEPS) {
+      for (const [k, v] of Object.entries(s.values)) {
+        expect(typeof v, k).toBe('number');
+        expect(v as number, k).toBeGreaterThanOrEqual(0);
+        if (k === 'layout.wardedThreatCut' || k === 'layout.adjBrew') {
+          expect(v as number, k).toBeLessThan(1);
+        }
+      }
     }
   });
 });

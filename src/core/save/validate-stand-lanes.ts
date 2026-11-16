@@ -1,6 +1,7 @@
 import {
   LANE_COUNT,
   MAX_PIECES_PER_COLUMN,
+  MAX_SECTOR_SUPPORT,
   MAX_TOWER_COLUMNS,
   type LaneNumbers,
   type LaneTable,
@@ -29,10 +30,33 @@ const multipleOf = (n: number, per: number, where: string): number => {
 
 const numbersFrom = (v: unknown, where: string, warnings: string[]): LaneNumbers => {
   const o = obj(v, where);
+  const allowed = new Set<string>([...KEYS, ...V7_KEYS]);
   for (const key of Object.keys(o))
-    if (!KEYS.includes(key)) warnings.push(`Dropped unknown ${where}.${key}.`);
+    if (!allowed.has(key)) warnings.push(`Dropped unknown ${where}.${key}.`);
   const reach = arr(o.towerReach, `${where}.towerReach`);
   if (reach.length !== REACH_LENGTH) throw new Invalid(`${where}.towerReach is the wrong length.`);
+  const rampartBonus =
+    o.rampartBonus === undefined
+      ? undefined
+      : inRange(
+          finite(o.rampartBonus, `${where}.rampartBonus`),
+          0,
+          MAX_STEP,
+          `${where}.rampartBonus`,
+        );
+  const screenedBonus =
+    o.screenedBonus === undefined
+      ? undefined
+      : inRange(
+          finite(o.screenedBonus, `${where}.screenedBonus`),
+          0,
+          MAX_STEP,
+          `${where}.screenedBonus`,
+        );
+  const sectorBonus =
+    o.sectorBonus === undefined
+      ? undefined
+      : inRange(finite(o.sectorBonus, `${where}.sectorBonus`), 0, MAX_STEP, `${where}.sectorBonus`);
   return {
     coverOwn: inRange(finite(o.coverOwn, `${where}.coverOwn`), 0, 1, `${where}.coverOwn`),
     coverNeighbour: inRange(
@@ -57,15 +81,35 @@ const numbersFrom = (v: unknown, where: string, warnings: string[]): LaneNumbers
       100,
       `${where}.volleyScale`,
     ),
+    ...(rampartBonus !== undefined ? { rampartBonus } : {}),
+    ...(screenedBonus !== undefined ? { screenedBonus } : {}),
+    ...(sectorBonus !== undefined ? { sectorBonus } : {}),
   };
 };
 const KEYS = ['coverOwn', 'coverNeighbour', 'depthStep', 'depthMax', 'towerReach', 'volleyScale'];
+const V7_KEYS = ['rampartBonus', 'screenedBonus', 'sectorBonus'] as const;
+
+const v7BoolArr = (v: unknown, len: number, where: string): boolean[] => {
+  const xs = arr(v, where);
+  if (xs.length !== len) throw new Invalid(`${where} must have ${len} entries.`);
+  return xs.map((x, i) => {
+    if (typeof x !== 'boolean') throw new Invalid(`${where}[${i}] must be true or false.`);
+    return x;
+  });
+};
 
 export const laneTableFrom = (v: unknown, where: string, warnings: string[]): LaneTable => {
   const o = obj(v, where);
+  const allowedKeys = new Set([
+    'pieces',
+    'towerCols',
+    'k',
+    'rampartCols',
+    'screened',
+    'sectorCols',
+  ]);
   for (const key of Object.keys(o))
-    if (key !== 'pieces' && key !== 'towerCols' && key !== 'k')
-      warnings.push(`Dropped unknown ${where}.${key}.`);
+    if (!allowedKeys.has(key)) warnings.push(`Dropped unknown ${where}.${key}.`);
   const pieces = arr(o.pieces, `${where}.pieces`);
   if (pieces.length !== LANE_COUNT)
     throw new Invalid(`${where}.pieces must have ${LANE_COUNT} entries.`);
@@ -88,5 +132,36 @@ export const laneTableFrom = (v: unknown, where: string, warnings: string[]): La
   towersIn.forEach((n, c) => {
     if (n > (counts[c] ?? 0)) throw new Invalid(`${where}.towerCols names a column with no piece.`);
   });
-  return { pieces: counts, towerCols, k: numbersFrom(o.k, `${where}.k`, warnings) };
+  const rampartCols =
+    o.rampartCols === undefined
+      ? undefined
+      : v7BoolArr(o.rampartCols, LANE_COUNT, `${where}.rampartCols`);
+  const screened =
+    o.screened === undefined
+      ? undefined
+      : v7BoolArr(o.screened, towerCols.length, `${where}.screened`);
+  const sectorCols =
+    o.sectorCols === undefined
+      ? undefined
+      : (() => {
+          const xs = arr(o.sectorCols, `${where}.sectorCols`);
+          if (xs.length !== LANE_COUNT)
+            throw new Invalid(`${where}.sectorCols must have ${LANE_COUNT} entries.`);
+          return xs.map((x, i) =>
+            inRange(
+              count(x, `${where}.sectorCols[${i}]`),
+              0,
+              MAX_SECTOR_SUPPORT,
+              `${where}.sectorCols[${i}]`,
+            ),
+          );
+        })();
+  return {
+    pieces: counts,
+    towerCols,
+    ...(rampartCols !== undefined ? { rampartCols } : {}),
+    ...(screened !== undefined ? { screened } : {}),
+    ...(sectorCols !== undefined ? { sectorCols } : {}),
+    k: numbersFrom(o.k, `${where}.k`, warnings),
+  };
 };

@@ -39,8 +39,9 @@ export const greedyPlacement = (
     for (const piece of tries) {
       for (let i = 0; i < open.length; i++) {
         const tile = open[i] as SuggestTile;
-        const delta =
-          score([...placed, { id: piece.id, tower: piece.tower, x: tile.x, y: tile.y }]) - base;
+        placed.push({ id: piece.id, tower: piece.tower, x: tile.x, y: tile.y });
+        const delta = score(placed) - base;
+        placed.pop();
         const found = { piece, tile: i, delta };
         // A tower that would only lower the score is held back for the end.
         if (piece.tower && delta < 0) {
@@ -55,6 +56,32 @@ export const greedyPlacement = (
     const tile = open.splice(pick.tile, 1)[0] as SuggestTile;
     left.splice(left.indexOf(pick.piece), 1);
     placed.push({ id: pick.piece.id, tower: pick.piece.tower, x: tile.x, y: tile.y });
+  }
+  // v1.8 Screened Volley post-pass: if both towers and walls exist and swapping a tower south
+  // of a wall in the same column increases score (connected rampart + Screened tower), apply it.
+  if (placed.some((p) => p.tower) && placed.some((p) => !p.tower)) {
+    let improved = true;
+    while (improved) {
+      improved = false;
+      const curScore = score(placed);
+      for (let i = 0; i < placed.length; i += 1) {
+        const ti = placed[i];
+        if (!ti || !ti.tower) continue;
+        for (let j = 0; j < placed.length; j += 1) {
+          const wj = placed[j];
+          if (!wj || wj.tower || wj.x !== ti.x || ti.y >= wj.y) continue;
+          placed[i] = { ...ti, y: wj.y };
+          placed[j] = { ...wj, y: ti.y };
+          if (score(placed) > curScore) {
+            improved = true;
+            break;
+          }
+          placed[i] = ti;
+          placed[j] = wj;
+        }
+        if (improved) break;
+      }
+    }
   }
   return placed;
 };

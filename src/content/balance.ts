@@ -380,7 +380,7 @@ export const balance = {
   // 0.22 after the Breach moved the stand results (TB.11a, D596; owner said yes): same waves lost per level.
   vigil: {
     strengthPerLevel: tunable(0.28),
-    embersPerLevel: tunable(0.26),
+    embersPerLevel: tunable(0.22),
   },
   // ---- GDD §7.14 The Descent (v1.4, D557-D568) ----
   descent: {
@@ -397,11 +397,11 @@ export const balance = {
     stageTiers: tunable([7, 8, 9]),
     unlitBaseHealth: tunable(4500), // base tier 5; see above
   },
-  // GDD §7.15 (v1.5, D581-D583). Only lanes and frontRows are locked. The tunables were confirmed by the
-  // owner from the TB.12 calibration table (Q63, D598); volleyScale was moved 1 -> 3 (D598).
+  // GDD §7.15 (v1.5, D581-D583; v1.8 D618). Only lanes and frontRows are locked. The tunables were confirmed by the
+  // owner from the TB.12 calibration table (Q63, D598); volleyScale moved 1 -> 3 (D598); frontRows moved 3 -> 5 (D618).
   breach: {
     lanes: locked(8), // the 8 columns of the Fell Breach
-    frontRows: locked(3), // rows 0 to 2 count
+    frontRows: locked(5), // rows 0 to 4 count (D618)
     coverOwn: tunable(0.5), // coverOwn + 2 x coverNeighbour = 1
     coverNeighbour: tunable(0.25),
     depthStep: tunable(0.25), // wall cut per extra piece in a column
@@ -409,6 +409,21 @@ export const balance = {
     towerReach: tunable([1, 0.5, 0.25]), // own column, 1 away, 2 away; multiples of 0.25
     volleyScale: tunable(3), // restores today's average volley (TB.12 table, D598); in hundredths
     suggestWaves: tunable(12), // waves the Suggest rule and the strip's dots look at
+    rampartBonus: tunable(0.15), // connected north wall rampart cover boost (v1.8, D620, Q86a)
+    screenedBonus: tunable(0.25), // watchtower screened-volley reach boost (v1.8, D620, Q86a)
+    sectorBonus: tunable(0.05), // barracks / lodge per-support sector boost (v1.8, D620, Q86a)
+  },
+  layout: {
+    // GDD §7.16 (v1.8, D619, D625, Q86a): calibrated 0.8x round tactical multipliers.
+    adjFood: tunable(0.02),
+    adjWood: tunable(0.02),
+    adjIron: tunable(0.02),
+    adjSilver: tunable(0.02),
+    adjBrew: tunable(0.02),
+    adjCottage: tunable(0.01),
+    adjTrophy: tunable(0.02),
+    wardedThreatCut: tunable(0.04),
+    wardedBonus: tunable(0.02),
   },
 } as const;
 

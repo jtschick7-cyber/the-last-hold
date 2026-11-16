@@ -51,7 +51,7 @@ describe('layout.setDefenses', () => {
   it('an empty list lifts every front-row defense', () => {
     const s = hold();
     expect(apply(s, { type: 'layout.setDefenses', moves: [] }, s.time).ok).toBe(true);
-    expect(Object.entries(s.layout.placed).filter(([id, at]) => isDefense(id) && at.y < 3)).toEqual(
+    expect(Object.entries(s.layout.placed).filter(([id, at]) => isDefense(id) && at.y < 5)).toEqual(
       [],
     );
   });
@@ -64,15 +64,16 @@ describe('layout.setDefenses', () => {
       expect(r.ok).toBe(false);
       expect(JSON.stringify(s.layout)).toBe(before);
     });
-  refused('a target outside the front rows', () => [move('wall-1', 0, 3)]);
+  refused('a target outside the front rows', () => [move('wall-1', 0, 5)]);
   refused('a target outside the grid', () => [move('wall-1', 8, 0)]);
   refused('a fractional target', () => [move('wall-1', 0.5, 0)]);
-  refused('a target another building holds', (s) => {
-    const held = Object.entries(s.layout.placed).find(
-      ([k, v]) => !isDefense(k) && k !== 'hearth-hall' && v.y < 3,
-    );
-    expect(held).toBeDefined();
-    return [move('wall-1', held?.[1].x ?? 0, held?.[1].y ?? 0)];
+  it('refuses and changes nothing: a target another building holds', () => {
+    const s = hold();
+    expect(apply(s, { type: 'layout.place', pieceId: 'farm-1', x: 3, y: 4 }, s.time).ok).toBe(true);
+    const before = JSON.stringify(s.layout);
+    const r = apply(s, { type: 'layout.setDefenses', moves: [move('wall-1', 3, 4)] }, s.time);
+    expect(r.ok).toBe(false);
+    expect(JSON.stringify(s.layout)).toBe(before);
   });
   refused('two pieces on one tile', () => [move('wall-1', 0, 0), move('wall-2', 0, 0)]);
   refused('the same piece twice', () => [move('wall-1', 0, 0), move('wall-1', 1, 0)]);

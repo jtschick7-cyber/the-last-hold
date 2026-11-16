@@ -1373,4 +1373,32 @@ export const checkedNames: readonly CheckedName[] = [
     result: 'clear',
     note: 'Plan subtitle only, not shown to the player (D610). Searched 2026-11-04 against GDD §2.3 influences: replaces draft "Blades & Hearthfire" (Skyrim Hearthfire DLC / The Blades); zero match in any influence.',
   },
+  // v1.8 flesh-out (T18.1, 2026-11-13, D623): Ward & Rampart subtitle, 6 Courtyard Marks, and tactical / Hold Look UI words. Web-searched 2026-11-13 against GDD §2.3 influences.
+  {
+    name: 'Ward & Rampart',
+    checked: '2026-11-13',
+    result: 'clear',
+    note: 'v1.8 docs-only milestone subtitle (D617, D623). Searched 2026-11-13 against GDD §2.3 influences: zero collision.',
+  },
+  ...[
+    'Fjord-Bone Standard',
+    'Barrow Brazier',
+    'River-Reed Basin',
+    'Stoneback Cairn',
+    'Kettle-Barrow Wreath',
+    'Watch-Fire Sconce',
+  ].map((name): CheckedName => ({
+    name,
+    checked: '2026-11-13',
+    result: 'clear',
+    note: 'v1.8 Event Courtyard Mark cosmetic unlocked from Great Beasts and Legendary Hunts (D622, D623). Grounded in game places/folklore; zero collision in any GDD §2.3 influence.',
+  })),
+  ...['Hold Look', 'Courtyard Marks', 'Warded', 'Screened Volley', 'Sector Support'].map(
+    (name): CheckedName => ({
+      name,
+      checked: '2026-11-13',
+      result: 'generic',
+      note: 'v1.8 plain English UI/tactical words (D619, D622, D623). Zero match as named feature/term in any GDD §2.3 influence.',
+    }),
+  ),
 ];

@@ -26,6 +26,7 @@ const READERS = new Set([
   'src/core/commands/types.ts',
   'src/core/long-night/reset.ts',
   'src/core/save/migration-v12.ts',
+  'src/core/save/migration-v16.ts',
   'src/core/save/validate-layout.ts',
   'src/core/save/validate.ts',
   'src/core/state/game-state.ts',
@@ -33,6 +34,7 @@ const READERS = new Set([
   'src/core/state/new-game.ts',
   'src/core/systems/layout-catalog.ts',
   'src/core/systems/layout-place.ts',
+  'src/core/systems/layout-tactics.ts',
   'src/core/systems/layout.ts',
 ]);
 /** The modules of the five that must never read the layout (technical design §19.1): economy, combat, the stand fight, contracts and advance. */
@@ -44,14 +46,27 @@ const BANNED = [
   'src/core/sim/advance.ts',
 ];
 
+/** Non-READERS allowed to import pure scalar tactical modifiers from layout-tactics.ts (Q67 (a), D625). */
+const TACTICS_CONSUMERS = new Set([
+  'src/core/systems/production.ts',
+  'src/core/threat/threat.ts',
+  'src/core/alchemy/brewing.ts',
+]);
+
 export const layoutReadOffenders = (files: { path: string; text: string }[]): string[] =>
   files
     .filter((f) => !READERS.has(f.path))
-    .filter((f) =>
-      /\blayout\b|hold-layout|layout-state|layout-catalog|state\.layout/i.test(
-        f.text.replace(/\/\/.*$/gm, ''),
-      ),
-    )
+    .filter((f) => {
+      const stripped = f.text.replace(/\/\/.*$/gm, '');
+      if (
+        /\blayout\b(?!-tactics)|hold-layout|layout-state|layout-catalog|state\.layout/i.test(
+          stripped,
+        )
+      ) {
+        return true;
+      }
+      return /layout-tactics/.test(stripped) && !TACTICS_CONSUMERS.has(f.path);
+    })
     .map((f) => f.path);
 
 /** Names a UI file must not take from the Breach module (it takes `laneView` and types only). */
@@ -83,6 +98,25 @@ describe('the layout is read only by the Breach module, the layout modules and t
   it.each(BANNED)('a planted read from %s fails the check', (path) => {
     const planted = [{ path, text: 'const l = state.layout.placed;' }];
     expect(layoutReadOffenders(planted)).toEqual([path]);
+  });
+
+  it('non-consumer banned modules fail if they import layout-tactics or hold-layout', () => {
+    expect(
+      layoutReadOffenders([
+        {
+          path: 'src/core/sim/advance.ts',
+          text: "import { tacticalProductionFactor } from '../systems/layout-tactics';",
+        },
+        {
+          path: 'src/core/systems/production.ts',
+          text: "import { CANONICAL_LAYOUT } from '../../content/hold-layout';",
+        },
+        {
+          path: 'src/core/systems/production.ts',
+          text: "import { tacticalProductionFactor } from './layout-tactics';",
+        },
+      ]),
+    ).toEqual(['src/core/sim/advance.ts', 'src/core/systems/production.ts']);
   });
 
   it('the banned modules exist, so the check is about real files', () => {
@@ -123,6 +157,9 @@ describe('each breach.* key is read in one file under src/core', () => {
     'suggestWaves',
     'lanes',
     'frontRows',
+    'rampartBonus',
+    'screenedBonus',
+    'sectorBonus',
   ];
   it.each(KEYS)('breach.%s', (key) => {
     const readers = core

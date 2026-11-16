@@ -19,6 +19,7 @@ import v11Played from '../saves/fixtures/v11-played.json';
 import v12Played from '../saves/fixtures/v12-played.json';
 import v13Played from '../saves/fixtures/v13-played.json';
 import v14Played from '../saves/fixtures/v14-played.json';
+import v15Owner from '../saves/fixtures/v15-owner.json';
 import { h, render } from 'preact';
 import {
   hunterPortraitId,
@@ -29,6 +30,7 @@ import {
 } from '../../src/content/assets';
 import type { FloorCombatant, PlaybackCallout } from '../../src/core/delves/view';
 import { laneView, suggestLayout } from '../../src/core/systems/breach';
+import { evaluateHoldTactics } from '../../src/core/systems/layout-tactics';
 import { adoptGame, dispatch, game, startGame } from '../../src/ui/app/runtime';
 import { Arena } from '../../src/ui/delve/Arena';
 import { LanesStrip } from '../../src/ui/widgets/LanesStrip';
@@ -84,6 +86,8 @@ type Bench = {
   lanesStrip: number;
   suggestLayout: number;
   breachMigration: number;
+  layoutTactics: number;
+  v16Migration: number;
   arenaStep: number;
 };
 
@@ -225,6 +229,16 @@ const arenaStepBench = (): number => {
     potions: { [HUNTER_IDS[1] ?? 'zora']: 'quickfoot-tincture' as const },
     bombs: ['fire-pot' as const, 'saltburst' as const],
   };
+  const bastion = game();
+  const bastionA = {
+    ...bastion,
+    buildings: { ...bastion.buildings, farm: Math.max(3, bastion.buildings.farm) },
+  };
+  const bastionB = {
+    ...bastion,
+    buildings: { ...bastion.buildings, farm: Math.max(3, bastion.buildings.farm) + 1 },
+  };
+  let tacticsFlip = false;
   return {
     huntOdds: best(() => computeHuntOdds({ ...hunt, party: fourteen.slice(0, 4), prep: huntPrep })),
     huntSuggest: best(() =>
@@ -319,6 +333,12 @@ const arenaStepBench = (): number => {
     ),
     suggestLayout: best(() => suggestLayout(game())),
     breachMigration: best(() => loadEnvelope(structuredClone(v14Played))),
+    // v1.8 (GDD §6.5, D624): full uncached layout-tactics recompute on an 8×12 Bastion hold + v15 → v16 migration.
+    layoutTactics: best(() => {
+      tacticsFlip = !tacticsFlip;
+      return evaluateHoldTactics(tacticsFlip ? bastionA : bastionB);
+    }),
+    v16Migration: best(() => loadEnvelope(structuredClone(v15Owner))),
     arenaStep: arenaStepBench(),
     bossPreview: best(() => previewBoss({ ...boss, party: fourteen.slice(0, 4) })),
     bossSuggest: best(() =>

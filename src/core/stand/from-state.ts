@@ -3,6 +3,7 @@ import { CONSUMABLE_IDS, consumables, type ConsumableId } from '../../content/co
 import type { HunterId } from '../../content/hunters';
 import type { MonsterId } from '../../content/monsters';
 import { num } from '../balance-access';
+import { RULES_VERSION } from '../rules-version';
 import type { GameState, Preparation } from '../state/game-state';
 import { snapshotOf } from '../systems/hunters';
 import { vigilLevelFor } from '../systems/vigil';
@@ -58,8 +59,9 @@ export const standInputFor = (
   ...(standPoolOf(state) === 'dross' ? { pool: 'dross' as const } : {}),
   // Level 0 adds no field, so a stand with the switch Off is exactly an ordinary stand (D542).
   ...(vigilLevelFor(state) > 0 ? { vigilLevel: vigilLevelFor(state) } : {}),
-  // Technical design §23.3: from Bastion the stand carries the lane table the hold gives now, which is
-  // what makes it a version 6 stand; below Bastion (the v0.4 arrival) there is none (version 5).
+  // Technical design §23.3 & §25.3: from Bastion the stand carries the lane table the hold gives
+  // now (version 6/7); below Bastion (the v0.4 arrival) there is none (version 5).
+  rulesVersion: RULES_VERSION,
   ...(state.cycle.age === 'bastion' && !noLanes ? { lanes: laneTableFor(state) } : {}),
 });
 

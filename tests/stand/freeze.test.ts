@@ -31,14 +31,14 @@ const make = (s: GameState, extra: Record<string, unknown> = {}) =>
   apply(s, { type: 'stand.make', party: party(s), ...extra } as never, s.time);
 
 describe('Start freezes the table (§23.3)', () => {
-  it('saves the table the layout gives now, and stamps the stand version 6', () => {
+  it('saves the table the layout gives now, and stamps the stand version 7', () => {
     const s = load();
     const want = laneTableFor(s);
     expect(want.pieces.some((n) => n > 0)).toBe(true);
     expect(make(s).ok).toBe(true);
     const rec = stand(s);
     expect(rec.lanes).toEqual(want);
-    expect(rec.rulesVersion).toBe(6);
+    expect(rec.rulesVersion).toBe(7);
   });
 
   it('places, moves and trays nothing: the layout is identical before and after', () => {

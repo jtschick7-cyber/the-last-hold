@@ -69,16 +69,16 @@ describe('layout.place', () => {
   it('refuses the Hearth Hall tiles, locked rings, locked pieces and bad tiles', () => {
     const s = full('keep');
     for (const [x, y] of [
-      [3, 3],
-      [4, 4],
+      [3, 6],
+      [4, 7],
       [0, 0], // outside the Keep clearing
       [7, 1],
-      [-1, 2],
-      [2.5, 2],
+      [-1, 5],
+      [2.5, 5],
     ])
       expect(place(s, 'mill', x ?? 0, y ?? 0).ok, `${x},${y}`).toBe(false);
     const n = createNewGame('n', 0);
-    expect(place(n, 'mill', 2, 2).ok).toBe(false); // not built
+    expect(place(n, 'mill', 2, 6).ok).toBe(false); // not built
     expect(at(s, 'mill')).toEqual(CANONICAL_LAYOUT.mill);
   });
 
@@ -86,40 +86,48 @@ describe('layout.place', () => {
     const s = full('keep');
     const before = structuredClone(s.layout);
     place(s, 'mill', 0, 0);
-    place(s, 'hearth-hall', 5, 5);
+    place(s, 'hearth-hall', 5, 2); // y=2 is outside Keep clearing
+    place(s, 'hearth-hall', 7, 5); // x=7 overflows 2x2 grid width
     expect(s.layout).toEqual(before);
   });
 
   it('puts a tray piece on a free tile', () => {
     const s = full();
     run(s, { type: 'layout.unplace', pieceId: 'mill' });
-    expect(place(s, 'mill', 6, 6).ok).toBe(true);
-    expect(at(s, 'mill')).toEqual({ x: 6, y: 6 });
+    expect(place(s, 'mill', 6, 9).ok).toBe(true);
+    expect(at(s, 'mill')).toEqual({ x: 6, y: 9 });
   });
 });
 
-describe('the Hearth Hall (M4)', () => {
-  it('moves only within 2..4 × 2..4', () => {
-    const s = full();
+describe('the Hearth Hall (M4, D618)', () => {
+  it('moves freely within the active clearing and refuses tiles outside it', () => {
+    const hamlet = full('hamlet');
     for (const [x, y] of [
-      [1, 3],
-      [5, 3],
-      [3, 1],
-      [3, 5],
+      [0, 6], // x=0 outside Hamlet (1..6, 4..9)
+      [6, 6], // x=7 outside Hamlet
+      [3, 3], // y=3 outside Hamlet
+      [3, 9], // y=10 outside Hamlet
     ])
-      expect(place(s, 'hearth-hall', x ?? 0, y ?? 0).ok, `${x},${y}`).toBe(false);
-    expect(at(s, 'hearth-hall')).toEqual({ x: 3, y: 3 });
-    expect(place(s, 'hearth-hall', 2, 2).ok).toBe(true);
-    expect(at(s, 'hearth-hall')).toEqual({ x: 2, y: 2 });
+      expect(place(hamlet, 'hearth-hall', x ?? 0, y ?? 0).ok, `${x},${y}`).toBe(false);
+    expect(at(hamlet, 'hearth-hall')).toEqual({ x: 3, y: 6 });
+    expect(place(hamlet, 'hearth-hall', 1, 4).ok).toBe(true);
+    expect(at(hamlet, 'hearth-hall')).toEqual({ x: 1, y: 4 });
+    expect(place(hamlet, 'hearth-hall', 5, 8).ok).toBe(true);
+    expect(at(hamlet, 'hearth-hall')).toEqual({ x: 5, y: 8 });
+
+    const bastion = full('bastion');
+    expect(place(bastion, 'hearth-hall', 0, 0).ok).toBe(true);
+    expect(place(bastion, 'hearth-hall', 6, 10).ok).toBe(true);
+    expect(place(bastion, 'hearth-hall', 7, 10).ok).toBe(false);
   });
 
   it('puts the pieces it covers into the tiles it leaves', () => {
     const s = full();
-    // Hall (3,3)-(4,4) → (2,2)-(3,3): covers (2,2) silver-seam-2, (3,2) smithy, (2,3) mill; leaves (4,3), (3,4), (4,4).
-    expect(place(s, 'hearth-hall', 2, 2).ok).toBe(true);
+    // Hall (3,6)-(4,7) → (2,5)-(3,6): covers (2,5) silver-seam-2, (3,5) smithy, (2,6) mill; leaves (4,6), (3,7), (4,7).
+    expect(place(s, 'hearth-hall', 2, 5).ok).toBe(true);
     const moved = ['silver-seam-2', 'smithy', 'mill'] as const;
     const spots = moved.map((id) => must(s, id)).map((c) => `${c.x},${c.y}`);
-    expect([...spots].sort()).toEqual(['3,4', '4,3', '4,4']);
+    expect([...spots].sort()).toEqual(['3,7', '4,6', '4,7']);
     // No two pieces share a tile, and the Hall's tiles are free.
     const all = new Set<string>();
     for (const id of HOLD_PIECE_IDS) {
@@ -138,7 +146,7 @@ describe('the Hearth Hall (M4)', () => {
   it('cannot be unplaced', () => {
     const s = full();
     expect(run(s, { type: 'layout.unplace', pieceId: 'hearth-hall' }).ok).toBe(false);
-    expect(at(s, 'hearth-hall')).toEqual({ x: 3, y: 3 });
+    expect(at(s, 'hearth-hall')).toEqual({ x: 3, y: 6 });
   });
 });
 
@@ -191,46 +199,46 @@ describe('unplace, clear, auto-arrange and ghosts', () => {
 describe('auto-placement (M2, S6)', () => {
   it('a new game places the starting Farm and Camp, nearest the middle first', () => {
     const s = createNewGame('n', 0);
-    expect(tiles(s)).toEqual(['hearth-hall@3,3', 'farm-1@3,2', 'woodcutter-1@4,2']);
+    expect(tiles(s)).toEqual(['hearth-hall@3,6', 'farm-1@3,5', 'woodcutter-1@4,5']);
     expect(buildHoldGridView(s).tray).toEqual([]);
   });
 
   it('a bought building takes the next free tile by distance, then y, then x', () => {
     const s = rich();
     run(s, { type: 'build.buy', building: 'cottage', count: 1 });
-    expect(at(s, 'cottage-1')).toEqual({ x: 2, y: 3 });
+    expect(at(s, 'cottage-1')).toEqual({ x: 2, y: 6 });
     run(s, { type: 'build.buy', building: 'cottage', count: 1 });
-    expect(at(s, 'cottage-1')).toEqual({ x: 2, y: 3 }); // already placed: not moved
+    expect(at(s, 'cottage-1')).toEqual({ x: 2, y: 6 }); // already placed: not moved
   });
 
   it('a piece that unlocks keeps its saved spot: active when free and cleared', () => {
     const s = createNewGame('b', 0);
-    s.layout.placed.mill = { x: 5, y: 5 }; // a blueprint from an earlier cycle
+    s.layout.placed.mill = { x: 5, y: 8 }; // a blueprint from an earlier cycle
     s.resources = { food: 1e9, wood: 1e9, iron: 1e9, silver: 1e9 };
     run(s, { type: 'build.upgrade', building: 'mill' });
-    expect(at(s, 'mill')).toEqual({ x: 5, y: 5 });
+    expect(at(s, 'mill')).toEqual({ x: 5, y: 8 });
     expect(getPieceStatus(s, 'mill')).toBe('active');
   });
 
   it('a piece whose saved spot is in a closed ring becomes dormant and keeps the blueprint', () => {
     const s = createNewGame('d', 0);
-    s.layout.placed.mill = { x: 6, y: 6 };
+    s.layout.placed.mill = { x: 7, y: 8 }; // outside Hamlet (1..6, 4..9), cleared at Keep
     s.resources = { food: 1e9, wood: 1e9, iron: 1e9, silver: 1e9 };
     run(s, { type: 'build.upgrade', building: 'mill' });
-    expect(at(s, 'mill')).toEqual({ x: 6, y: 6 });
+    expect(at(s, 'mill')).toEqual({ x: 7, y: 8 });
     expect(getPieceStatus(s, 'mill')).toBe('dormant-ring');
     expect(buildHoldGridView(s).tray).toEqual([]);
   });
 
   it('never overwrites a saved coordinate, and a free-tile search never takes a blueprint tile', () => {
     const s = createNewGame('p', 0);
-    // A blueprint holds (3,2), the nearest free tile; the Farm and Camp are re-placed around it.
-    s.layout.placed = { 'hearth-hall': { x: 3, y: 3 }, sawpit: { x: 3, y: 2 } };
+    // A blueprint holds (3,5), the nearest free tile; the Farm and Camp are re-placed around it.
+    s.layout.placed = { 'hearth-hall': { x: 3, y: 6 }, sawpit: { x: 3, y: 5 } };
     const before = structuredClone(s.layout.placed);
     autoPlaceUnlocked(s);
     for (const [id, c] of Object.entries(before))
       expect(s.layout.placed[id as HoldPieceId]).toEqual(c);
-    expect(at(s, 'farm-1')).toEqual({ x: 4, y: 2 });
+    expect(at(s, 'farm-1')).toEqual({ x: 4, y: 5 });
   });
 
   it('a piece the player sent to the tray stays there when something else is bought', () => {

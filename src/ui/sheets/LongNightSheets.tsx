@@ -34,6 +34,8 @@ import {
   relicIconId,
 } from '../../content/assets';
 import { bosses } from '../../content/great-beasts';
+import { V18_TEXT } from '../../content/v18-text';
+import { BreakdownView } from './BreakdownView';
 import { HearthView } from './HearthView';
 
 // GDD §5.9.7 and §9.13 (D110, D115): the Long Night sheets, in order: the stand's
@@ -113,9 +115,16 @@ const WaveLogView = ({ stand, n }: { stand: StandRecord; n: number }) => {
       </div>
       <OlderRules stand={stand} replay={result} />
       {w.breach && (
-        <p class={styles.small} data-testid="wave-log-header">
-          {w.breach.header}
-        </p>
+        <>
+          <p class={styles.small} data-testid="wave-log-header">
+            {w.breach.header}
+          </p>
+          <div data-testid="wave-log-defenses">
+            <h4 class={styles.cardTitle}>{V18_TEXT.waveLogDefenses}</h4>
+            <BreakdownView breakdown={w.breach.wallCut.breakdown} />
+            <BreakdownView breakdown={w.breach.volley.breakdown} />
+          </div>
+        </>
       )}
       <ul class={styles.list} style={{ fontSize: '0.875rem' }}>
         {w.fight.log.map((l, i) => (

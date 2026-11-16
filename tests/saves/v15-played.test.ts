@@ -6,7 +6,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadEnvelope } from '../../src/core/save';
 import { standReplayDiffers } from '../../src/core/replay-check';
-import { RULES_VERSION } from '../../src/core/rules-version';
 import { replayStand } from '../../src/core/stand/replay';
 
 const load = () => {
@@ -25,7 +24,7 @@ describe('v15-played.json', () => {
   it('was played: the debug mark is set, and four stands carry a lane table', () => {
     expect(s.meta.debugUsed).toBe(true);
     expect(withLanes).toHaveLength(4);
-    for (const st of withLanes) expect(st.rulesVersion).toBe(RULES_VERSION);
+    for (const st of withLanes) expect(st.rulesVersion).toBe(6);
   });
 
   it('the four tables are a spread: the Tray stand counts fewer pieces than the canonical one', () => {

@@ -33,15 +33,16 @@ const loadFull = (env: unknown) => {
 const roundTrip = (s: GameState): GameState =>
   loadFull(JSON.parse(encodeSaveFile(makeEnvelope(s, 0)))).state;
 const withLayout = (layout: unknown): Env => {
-  const e = structuredClone(readFixture('v12.json'));
+  // Build at the current schema so S13 layout-guard tests validate directly without pre-v16 migration shifting coordinates.
+  const e = makeEnvelope(createNewGame('guard', 0), 0) as unknown as Env;
   e.state.layout = layout;
   return e;
 };
 
 describe('the v11 → v12 migration', () => {
   it('is schema 12, and rules version is 6 from v1.5', () => {
-    expect(SCHEMA_VERSION).toBe(15); // D593 (a): was 14 before v1.5
-    expect(RULES_VERSION).toBe(6);
+    expect(SCHEMA_VERSION).toBe(16); // D624 (a): was 15 before v1.8
+    expect(RULES_VERSION).toBe(7);
     expect(readFixture('v11-owner.json').schemaVersion).toBe(11);
     expect(readFixture('v12.json').schemaVersion).toBe(12);
   });
@@ -51,7 +52,7 @@ describe('the v11 → v12 migration', () => {
     (f) => {
       const loaded = loadFull(readFixture(f));
       expect(loaded.warnings).toEqual([]);
-      expect(loaded.state.meta.schemaVersion).toBe(15); // D593 (a): was 14 before v1.5
+      expect(loaded.state.meta.schemaVersion).toBe(16); // D624 (a): was 15 before v1.8
       expect(Object.keys(loaded.state.layout.placed)).toHaveLength(40);
       expect(roundTrip(loaded.state)).toEqual(loaded.state);
     },
@@ -63,13 +64,13 @@ describe('the v11 → v12 migration', () => {
   });
 
   it.each(['v11-owner.json', 'v11-played.json'])(
-    '%s: the step itself adds only the layout',
+    '%s: the step itself adds only the frozen v12 layout',
     (f) => {
       const before = readFixture(f).state;
       const step = migrations[11];
       if (!step) throw new Error('no step from version 11');
       const after = step(before);
-      expect(after.layout).toEqual(canonicalLayout());
+      expect(after.layout).toEqual(readFixture('v12.json').state.layout);
       const rest = { ...after };
       delete rest.layout;
       expect(rest).toEqual(before);
@@ -109,8 +110,8 @@ describe('the v11 → v12 migration', () => {
     }
   });
 
-  it('a save from a newer version (16) is refused with the usual message', () => {
-    const env = { ...readFixture('v12.json'), schemaVersion: 16 }; // D593 (a): was 15 before v1.5
+  it('a save from a newer version (17) is refused with the usual message', () => {
+    const env = { ...readFixture('v12.json'), schemaVersion: 17 }; // D624 (a): was 16 before v1.8
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 
@@ -122,20 +123,21 @@ describe('the v11 → v12 migration', () => {
 });
 
 describe('a new game and the Long Night (D502)', () => {
-  it('starts with the Hearth Hall at (3, 3), the starting Farm and Camp placed (TL.3), no ghosts shown for the rest', () => {
+  it('starts with the Hearth Hall at (3, 6), the starting Farm and Camp placed (TL.3), no ghosts shown for the rest', () => {
     expect(createNewGame('seed', 0).layout).toEqual({
       placed: {
-        'hearth-hall': { x: 3, y: 3 },
-        'farm-1': { x: 3, y: 2 },
-        'woodcutter-1': { x: 4, y: 2 },
+        'hearth-hall': { x: 3, y: 6 },
+        'farm-1': { x: 3, y: 5 },
+        'woodcutter-1': { x: 4, y: 5 },
       },
       showGhosts: true,
+      presets: [null, null],
     });
   });
 
   it('the Long Night keeps the layout exactly', () => {
     const s = loadFull(readFixture('v12.json')).state;
-    s.layout.placed['mill'] = { x: 7, y: 7 };
+    s.layout.placed['mill'] = { x: 7, y: 10 };
     s.layout.showGhosts = false;
     const before = structuredClone(s.layout);
     resetForNewCycle(s);
@@ -146,29 +148,29 @@ describe('a new game and the Long Night (D502)', () => {
 describe('the layout guard (S13)', () => {
   it('drops a place off the grid, with a warning', () => {
     const l = canonicalLayout();
-    l.placed['mill'] = { x: 8, y: 3 };
-    l.placed['sawpit'] = { x: 1.5, y: 3 };
+    l.placed['mill'] = { x: 8, y: 6 };
+    l.placed['sawpit'] = { x: 1.5, y: 6 };
     const r = loadFull(withLayout(l));
     expect(r.state.layout.placed['mill']).toBeUndefined();
     expect(r.state.layout.placed['sawpit']).toBeUndefined();
     expect(r.warnings).toHaveLength(2);
   });
 
-  it('puts a missing or misplaced Hearth Hall back at (3, 3)', () => {
-    for (const hall of [undefined, { x: 0, y: 0 }, { x: 5, y: 3 }]) {
+  it('puts a missing or out-of-grid Hearth Hall back at (3, 6)', () => {
+    for (const hall of [undefined, { x: 7, y: 6 }, { x: 3, y: 11 }]) {
       const l = canonicalLayout();
       if (hall) l.placed['hearth-hall'] = hall;
       else delete l.placed['hearth-hall'];
-      expect(loadFull(withLayout(l)).state.layout.placed['hearth-hall']).toEqual({ x: 3, y: 3 });
+      expect(loadFull(withLayout(l)).state.layout.placed['hearth-hall']).toEqual({ x: 3, y: 6 });
     }
   });
 
   it('sends a piece standing on an earlier piece to the tray, the Hall winning', () => {
     const l = canonicalLayout();
-    l.placed['mill'] = { x: 4, y: 4 }; // inside the Hall's four tiles
+    l.placed['mill'] = { x: 4, y: 7 }; // inside the Hall's four tiles at (3,6)-(4,7)
     const r = loadFull(withLayout(l));
     expect(r.state.layout.placed['mill']).toBeUndefined();
-    expect(r.state.layout.placed['hearth-hall']).toEqual({ x: 3, y: 3 });
+    expect(r.state.layout.placed['hearth-hall']).toEqual({ x: 3, y: 6 });
     expect(r.warnings.join(' ')).toContain('mill');
   });
 

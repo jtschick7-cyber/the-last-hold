@@ -1,11 +1,14 @@
 import { signal } from '@preact/signals';
 import { useEffect, useState } from 'preact/hooks';
+import { ARRANGE_TEXT } from '../../content/v18-text';
 import { BREACH_TEXT } from '../../content/breach-text';
 import { ages } from '../../content/ages';
 import { buildings } from '../../content/buildings';
 import { ghostTileId, groundTileId } from '../../content/assets';
-import type { HoldPieceId } from '../../content/hold-layout';
+import { GRID_COLS, GRID_ROWS, type HoldPieceId } from '../../content/hold-layout';
+import type { LayoutArrangeMode } from '../../core/state/layout-state';
 import { buildHoldGridView, inClearing } from '../../core/systems/layout';
+import { evaluateHoldTactics } from '../../core/systems/layout-tactics';
 import { suggestSix } from '../../core/stand/suggest';
 import { previewInputFor } from '../../core/stand/from-state';
 import {
@@ -22,11 +25,19 @@ import styles from '../styles/ui.module.css';
 import { groundLook, outsideTile, pieceImage } from '../widgets/HoldGrid';
 import { LanesStrip, litLane } from '../widgets/LanesStrip';
 import { Sprite } from '../widgets/Sprite';
+import { ArrangeHoldControls } from './ArrangeHoldControls';
+import { ArrangeHoldOverlays } from './ArrangeHoldOverlays';
+import { openHoldLook } from './HoldLookSheet';
+import {
+  CELL,
+  cellBox,
+  countPieceLinks,
+  isDefensePieceId,
+  selectedTacticsLine,
+} from './arrange-tactics';
 
-// GDD §9.21: the Arrange Hold sheet. Tap-only. Every rule (what fits, swaps, the Hall's anchor)
-// is in core's layout.* commands; this sheet only sends them and draws the result. The only text
-// is the §9.21 table's, except the tray item names and the dialog's two buttons (see progress.md).
-const CELL = 44;
+// GDD §9.21 (T18.6): the 8 × 12 Arrange Hold sheet. Tap-only. Every rule (what fits, swaps,
+// tactical overlays, presets) lives in core; this sheet only sends commands and renders state.
 
 const nameOf = (id: HoldPieceId): string => {
   const n = id.match(/-(\d+)$/);
@@ -37,9 +48,10 @@ const nameOf = (id: HoldPieceId): string => {
 
 type Pick = HoldPieceId | null;
 
-// GDD §9.25 (D588): the suggestion lives in signals, because a sheet opened over this one hides it.
-// It is shown only while the hold is exactly as it was when Suggest was tapped, so Use this layout
-// never applies a list that no longer fits.
+// GDD §9.25 (D588): mode & suggestion live in signals because subsheets (Lane breakdown) cover
+// this sheet cleanly without losing selection state while opened from Hold.
+const arrangeMode = signal<LayoutArrangeMode>('balanced');
+
 interface Suggested {
   readonly key: string;
   readonly moves: readonly LayoutMove[];
@@ -49,13 +61,14 @@ interface Suggested {
 const suggested = signal<Suggested | null>(null);
 const holdKey = (): string => {
   const s = game();
-  return `${JSON.stringify(s.layout.placed)}|${s.buildings.walls}|${s.buildings.watchtower}`;
+  return `${JSON.stringify(s.layout.placed)}|${s.buildings.walls}|${s.buildings.watchtower}|${arrangeMode.value}`;
 };
 
-/** Opens the Arrange Hold sheet fresh: nothing lit, nothing suggested. */
+/** Opens the Arrange Hold sheet fresh: nothing lit, nothing suggested, mode Balanced. */
 export const openArrangeHold = (): void => {
   litLane.value = null;
   suggested.value = null;
+  arrangeMode.value = 'balanced';
   openSheet('Arrange Hold', () => <ArrangeHoldSheet />);
 };
 
@@ -67,6 +80,8 @@ export const ArrangeHoldSheet = () => {
   const s = game();
   const v = buildHoldGridView(s);
   const lanes = laneView(s);
+  const tactics = evaluateHoldTactics(s);
+  const linkCounts = countPieceLinks(tactics.links);
   const lane = litLane.value === null ? undefined : lanes.lanes[litLane.value];
   const lit = new Set<string>([...(lane?.coverPieces ?? []), ...(lane?.towerPieces ?? [])]);
   const b = v.clearing;
@@ -97,6 +112,7 @@ export const ArrangeHoldSheet = () => {
   const sel = picked ? v.active.find((p) => p.id === picked) : undefined;
   const inTray = picked !== null && v.tray.includes(picked);
   const current = sel ?? (inTray && picked ? { id: picked, tier: 1 } : null);
+  const selTactics = sel ? selectedTacticsLine(sel.id, tactics, linkCounts.get(sel.id) ?? 0) : null;
   const send = (cmd: Parameters<typeof dispatch>[0]): void => void dispatch(cmd);
 
   const tapTile = (x: number, y: number): void => {
@@ -129,18 +145,22 @@ export const ArrangeHoldSheet = () => {
       <p class={styles.small} style={{ margin: 0 }}>
         ▲ The Fell Breach
       </p>
-      <div data-internal-scroll="true" style={{ overflowX: 'auto' }}>
+      <div
+        data-internal-scroll="true"
+        style={{ overflowX: 'auto', marginInline: 'calc(-1 * var(--space-3))' }}
+      >
         <div
           style={{
             position: 'relative',
-            width: `${CELL * 8}px`,
-            height: `${CELL * 8}px`,
+            width: `${CELL * GRID_COLS}px`,
+            height: `${CELL * GRID_ROWS}px`,
+            margin: '0 auto',
             lineHeight: 0,
           }}
         >
-          {Array.from({ length: 64 }, (_, i) => {
-            const x = i % 8;
-            const y = Math.floor(i / 8);
+          {Array.from({ length: GRID_COLS * GRID_ROWS }, (_, i) => {
+            const x = i % GRID_COLS;
+            const y = Math.floor(i / GRID_COLS);
             const inside = inClearing(b, { x, y });
             return (
               <span key={i} style={cellBox(x, y, 1, 1)}>
@@ -158,100 +178,31 @@ export const ArrangeHoldSheet = () => {
               <Sprite id={pieceImage(p, v.age)} fill />
             </span>
           ))}
-          {/* GDD §9.25: the pieces that cover the chosen lane, an outline and a corner mark (never colour alone), no animation. */}
-          {lanes.shown &&
-            v.active
-              .filter((p) => lit.has(p.id))
-              .map((p) => (
-                <span
-                  key={p.id}
-                  data-lit-piece={p.id}
-                  style={{
-                    ...cellBox(p.x, p.y, p.w, p.h),
-                    boxSizing: 'border-box',
-                    outline: '3px dashed #fff',
-                    outlineOffset: '-3px',
-                    boxShadow: 'inset 0 0 0 5px #000',
-                    pointerEvents: 'none',
-                    lineHeight: 1,
-                  }}
-                >
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      padding: '1px 3px',
-                      background: '#000',
-                      color: '#fff',
-                      fontSize: '10px',
-                    }}
-                  >
-                    ◤
-                  </span>
-                </span>
-              ))}
-          {/* GDD §9.25: the suggested target tiles, an outline and a corner mark (never colour alone), no animation. */}
-          {sug &&
-            sug.moves.map((m) => (
-              <span
-                key={`${m.x},${m.y}`}
-                data-suggest-target={`${m.x},${m.y}`}
-                style={{
-                  ...cellBox(m.x, m.y, 1, 1),
-                  boxSizing: 'border-box',
-                  outline: '3px dotted #fff',
-                  outlineOffset: '-3px',
-                  boxShadow: 'inset 0 0 0 5px #000',
-                  pointerEvents: 'none',
-                  lineHeight: 1,
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    bottom: 0,
-                    padding: '1px 3px',
-                    background: '#000',
-                    color: '#fff',
-                    fontSize: '10px',
-                  }}
-                >
-                  ◆
-                </span>
-              </span>
-            ))}
-          {/* N9: one high-contrast outline round the whole piece (white over black), 2 × 2 included. */}
-          {sel && (
-            <span
-              data-selection-outline="true"
-              style={{
-                ...cellBox(sel.x, sel.y, sel.w, sel.h),
-                boxSizing: 'border-box',
-                outline: '3px solid #fff',
-                outlineOffset: '-3px',
-                boxShadow: 'inset 0 0 0 5px #000',
-                pointerEvents: 'none',
-              }}
-            />
-          )}
+          <ArrangeHoldOverlays
+            view={v}
+            tactics={tactics}
+            linkCounts={linkCounts}
+            lanes={lanes}
+            lit={lit}
+            moves={sug?.moves ?? null}
+            selected={sel}
+          />
           <div
             style={{
               position: 'absolute',
               inset: 0,
               display: 'grid',
-              gridTemplateColumns: `repeat(8, ${CELL}px)`,
+              gridTemplateColumns: `repeat(${GRID_COLS}, ${CELL}px)`,
               gridAutoRows: `${CELL}px`,
             }}
           >
-            {Array.from({ length: 64 }, (_, i) => {
-              const x = i % 8;
-              const y = Math.floor(i / 8);
+            {Array.from({ length: GRID_COLS * GRID_ROWS }, (_, i) => {
+              const x = i % GRID_COLS;
+              const y = Math.floor(i / GRID_COLS);
               const p = at(x, y);
+              const inside = inClearing(b, { x, y });
               const on = !!sel && !!p && p.id === sel.id;
+              const warded = inside && !tactics.northReached[i] && (!p || !isDefensePieceId(p.id));
               return (
                 <button
                   key={i}
@@ -260,8 +211,9 @@ export const ArrangeHoldSheet = () => {
                   aria-pressed={on}
                   data-tile={`${x},${y}`}
                   data-piece={p?.id ?? ''}
-                  data-locked={String(!inClearing(b, { x, y }))}
+                  data-locked={String(!inside)}
                   data-selected={String(on)}
+                  data-warded={String(warded)}
                   onClick={() => tapTile(x, y)}
                   style={{
                     width: `${CELL}px`,
@@ -280,6 +232,20 @@ export const ArrangeHoldSheet = () => {
       <p class={styles.small} style={{ margin: 0 }}>
         ▼ Lowland Gate
       </p>
+      <p
+        class={styles.small}
+        data-tactics-bar="true"
+        data-ward-status={tactics.hearthWarded ? 'warded' : 'exposed'}
+        data-links-count={tactics.links.length}
+        data-screened-count={tactics.screenedTowers.size}
+        style={{ margin: 'var(--space-1) 0' }}
+      >
+        Hearth Hall:{' '}
+        <strong class={tactics.hearthWarded ? styles.good : styles.warn}>
+          {tactics.hearthWarded ? ARRANGE_TEXT.warded : ARRANGE_TEXT.exposed}
+        </strong>{' '}
+        · {ARRANGE_TEXT.linked(tactics.links.length)} · {tactics.screenedTowers.size} Screened
+      </p>
       <div class={styles.divider} data-info-bar="true" aria-live="polite">
         {note ? (
           <p>{note}</p>
@@ -288,6 +254,11 @@ export const ArrangeHoldSheet = () => {
             <p>
               Selected: {nameOf(current.id)} (Tier {current.tier})
             </p>
+            {selTactics && (
+              <p class={styles.small} data-selected-tactics="true">
+                {selTactics}
+              </p>
+            )}
             <p class={styles.small}>Tap an open tile to move or swap</p>
           </>
         ) : (
@@ -329,35 +300,44 @@ export const ArrangeHoldSheet = () => {
           ))}
         </div>
       </div>
-      <div class={`${styles.row} ${styles.divider}`} style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
-        <button
-          type="button"
-          class={styles.btn}
-          onClick={() => {
-            setConfirming(false);
-            send({ type: 'layout.autoArrange' });
-          }}
-        >
-          Auto-arrange
-        </button>
-        <button type="button" class={styles.btn} onClick={() => setConfirming(true)}>
-          Clear to tray…
-        </button>
-        {lanes.shown && (
-          <button
-            type="button"
-            class={styles.btn}
-            data-testid="suggest-layout"
-            onClick={() => {
-              setConfirming(false);
-              setPicked(null);
-              suggested.value = { key: holdKey(), moves: suggestLayout(s).moves, line: null };
-            }}
-          >
-            {BREACH_TEXT.suggest}
-          </button>
-        )}
-      </div>
+      <ArrangeHoldControls
+        mode={arrangeMode.value}
+        presets={s.layout.presets}
+        showSuggest={lanes.shown}
+        onSelectMode={(mode) => {
+          setConfirming(false);
+          suggested.value = null;
+          arrangeMode.value = mode;
+        }}
+        onAutoArrange={() => {
+          setConfirming(false);
+          setPicked(null);
+          setNote(null);
+          send({ type: 'layout.autoArrange', mode: arrangeMode.value });
+        }}
+        onRequestClear={() => setConfirming(true)}
+        onSuggest={() => {
+          setConfirming(false);
+          setPicked(null);
+          suggested.value = {
+            key: holdKey(),
+            moves: suggestLayout(s, arrangeMode.value).moves,
+            line: null,
+          };
+        }}
+        onOpenHoldLook={openHoldLook}
+        onSavePreset={(slot) => {
+          setConfirming(false);
+          send({ type: 'layout.savePreset', slot });
+        }}
+        onApplyPreset={(slot) => {
+          setConfirming(false);
+          if (dispatch({ type: 'layout.applyPreset', slot }).ok) {
+            setPicked(null);
+            setNote(null);
+          }
+        }}
+      />
       {sug && (
         <div class={styles.divider} data-testid="suggest-result" aria-live="polite">
           {sug.line && <p data-testid="suggest-line">{sug.line}</p>}
@@ -429,11 +409,3 @@ export const ArrangeHoldSheet = () => {
     </div>
   );
 };
-
-const cellBox = (x: number, y: number, w: number, h: number) => ({
-  position: 'absolute' as const,
-  left: `${x * CELL}px`,
-  top: `${y * CELL}px`,
-  width: `${w * CELL}px`,
-  height: `${h * CELL}px`,
-});

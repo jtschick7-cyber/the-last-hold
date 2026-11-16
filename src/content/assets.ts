@@ -18,6 +18,7 @@ import { ITEM_RARITY_IDS, itemRarities, type ItemRarity } from './items';
 import { LEGENDARY_IDS, legendaries, type LegendaryId } from './legendaries';
 import { ORDER_IDS, ORDER_NAMES, type OrderId } from './orders';
 import { HUNTER_RANK_IDS, hunterRanks, type HunterRank } from './ranks';
+import { COURTYARD_MARK_IDS, courtyardMarkDef, type CourtyardMarkId } from './courtyard-marks';
 
 // Technical design §12.1: every image the game shows has a manifest row.
 // Swapping art means replacing a file or changing a row, never code. A row with
@@ -159,6 +160,7 @@ export const gridCosmeticId = (c: (typeof GRID_COSMETIC_IDS)[number]): string =>
 export const GRID_WALL_FROST_ID = 'grid.frost.wall';
 export const gridStripId = (e: string): string => `grid.strip.${e}`;
 export const cosmeticId = (c: CosmeticId, age: AgeId): string => `scene.cosmetic.${c}.${age}`;
+export const courtyardMarkAssetId = (id: CourtyardMarkId): string => `courtyard-mark.${id}`;
 
 // Plan T1.31a: the v0.1 images, built from the owner's CC0 Kenney packs by
 // tools/build-art.ts (recipes in tools/art-recipes.ts) and recolored to the
@@ -696,6 +698,17 @@ export const assets: readonly AssetEntry[] = [
         'tools/gen-sprites.ts',
         'scene',
       ),
+    ),
+  ),
+  // v1.8 T18.11 (Q83(a), Q85(a)): unified 16 × 16 Event Courtyard Marks rendered at 1× on HoldGrid and HoldScene.
+  ...COURTYARD_MARK_IDS.map((id) =>
+    generated(
+      courtyardMarkAssetId(id),
+      [16, 16],
+      courtyardMarkDef(id).name,
+      `grid/courtyard-mark-${id}.png`,
+      GRID_GENERATOR,
+      'icon',
     ),
   ),
 ];

@@ -144,7 +144,10 @@ export default defineConfig({
       // so the update banner never reloads on its own (technical design §11.1).
       injectRegister: false,
       registerType: 'prompt',
-      includeAssets: ['icons/*.png'],
+      // workbox.globPatterns scans outDir after previewIcons.writeBundle swaps in the marked
+      // preview icons; disabling includeAssets/includeManifestIcons prevents VitePWA from also
+      // hashing public/icons/* beforehand and emitting conflicting duplicate SW entries (D489 (5)).
+      includeManifestIcons: false,
       manifest: {
         id: base,
         name: appName,

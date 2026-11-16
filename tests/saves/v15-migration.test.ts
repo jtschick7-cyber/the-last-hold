@@ -64,8 +64,8 @@ const k = (t: Record<string, unknown>) => t.k as Record<string, unknown>;
 
 describe('the v14 → v15 migration', () => {
   it('is schema 15, and rules version is 6 from TB.5', () => {
-    expect(SCHEMA_VERSION).toBe(15);
-    expect(RULES_VERSION).toBe(6);
+    expect(SCHEMA_VERSION).toBe(16); // D624 (a): was 15 before v1.8
+    expect(RULES_VERSION).toBe(7);
     expect(readFixture('v14-owner.json').schemaVersion).toBe(14);
     expect(readFixture('v15.json').schemaVersion).toBe(15);
   });
@@ -73,7 +73,7 @@ describe('the v14 → v15 migration', () => {
   it.each(ALL)('%s loads with no warnings, and round-trips', (f) => {
     const loaded = loadFull(readFixture(f));
     expect(loaded.warnings).toEqual([]);
-    expect(loaded.state.meta.schemaVersion).toBe(15);
+    expect(loaded.state.meta.schemaVersion).toBe(16); // D624 (a): was 15 before v1.8
     expect(roundTrip(loaded.state)).toEqual(loaded.state);
   });
 
@@ -97,16 +97,24 @@ describe('the v14 → v15 migration', () => {
     );
   });
 
-  it.each(ALL)('%s: no stand record has a lane table, and the layout is unchanged', (f) => {
-    const raw = readFixture(f).state;
-    const after = loadFull(readFixture(f)).state;
-    for (const c of after.cycles) if (c.stand) expect(c.stand).not.toHaveProperty('lanes');
-    expect(after.layout).toEqual(raw.layout);
-  });
+  it.each(ALL)(
+    '%s: no stand record has a lane table, and v14 → v15 leaves layout unchanged',
+    (f) => {
+      const raw = readFixture(f).state;
+      const step = migrations[14];
+      if (!step) throw new Error('no step from version 14');
+      const stepAfter = step(raw);
+      expect(stepAfter.layout).toEqual(raw.layout);
+      const after = loadFull(readFixture(f)).state;
+      for (const c of after.cycles) if (c.stand) expect(c.stand).not.toHaveProperty('lanes');
+    },
+  );
 
-  it("the owner's own save keeps every placed piece where it was", () => {
+  it("v14 → v15 keeps every placed piece of the owner's save where it was", () => {
     const raw = readFixture('v14-owner.json').state as { layout: { placed: object } };
-    const after = loadFull(readFixture('v14-owner.json')).state;
+    const step = migrations[14];
+    if (!step) throw new Error('no step from version 14');
+    const after = step(raw) as { layout: { placed: object } };
     expect(after.layout.placed).toEqual(raw.layout.placed);
     expect(Object.keys(after.layout.placed)).toHaveLength(Object.keys(raw.layout.placed).length);
   });
@@ -131,8 +139,8 @@ describe('the v14 → v15 migration', () => {
     }
   });
 
-  it('the current code refuses a save from a newer version (16)', () => {
-    const env = { ...readFixture('v15.json'), schemaVersion: 16 };
+  it('the current code refuses a save from a newer version (17)', () => {
+    const env = { ...readFixture('v15.json'), schemaVersion: 17 }; // D624 (a): was 16 before v1.8
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 
@@ -164,7 +172,10 @@ describe('the lane table guard (technical design §23.6)', () => {
       ['null', null],
       ['pieces too short', mutate((t) => (t.pieces = [1, 1, 1]))],
       ['pieces too long', mutate((t) => (t.pieces = [1, 1, 1, 1, 1, 1, 1, 1, 1]))],
-      ['a piece count of 4', mutate((t) => (t.pieces = [4, 1, 3, 1, 0, 1, 2, 1]))],
+      [
+        'a piece count above max',
+        mutate((t) => (t.pieces = [MAX_PIECES_PER_COLUMN + 1, 1, 3, 1, 0, 1, 2, 1])),
+      ],
       ['a negative piece count', mutate((t) => (t.pieces = [-1, 1, 3, 1, 0, 1, 2, 1]))],
       ['a fractional piece count', mutate((t) => (t.pieces = [1.5, 1, 3, 1, 0, 1, 2, 1]))],
       ['four tower columns', mutate((t) => (t.towerCols = [0, 1, 2, 2]))],

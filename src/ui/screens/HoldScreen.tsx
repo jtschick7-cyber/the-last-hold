@@ -1,4 +1,5 @@
 import { ages } from '../../content/ages';
+import { V18_TEXT } from '../../content/v18-text';
 import { appSettings, game, version } from '../app/runtime';
 import { openSheet } from '../app/sheets';
 import { useEffect } from 'preact/hooks';
@@ -10,6 +11,7 @@ import { PeasantsPanel } from './PeasantsPanel';
 import { HoldScene } from '../widgets/HoldScene';
 import { HoldGrid } from '../widgets/HoldGrid';
 import { openArrangeHold } from '../sheets/ArrangeHoldSheet';
+import { openHoldLook } from '../sheets/HoldLookSheet';
 import { buildHoldGridView } from '../../core/systems/layout';
 import { ThreatMeter } from '../widgets/ThreatMeter';
 import { LongNightView, lastStand } from '../sheets/LongNightSheets';
@@ -42,20 +44,25 @@ export const HoldScreen = () => {
         <div class={styles.holdSky} data-threat={threatTier(s.threat)}>
           {appSettings.value.holdView === 'grid' ? <HoldGrid /> : <HoldScene age={s.cycle.age} />}
         </div>
-        <div class={styles.row}>
-          <h1
-            class={`${styles.grow} ${styles.cardTitle}`}
-            style={{
-              fontSize: 'calc(1.6rem * var(--text-undo))',
-              color: 'var(--c-ember)',
-              textTransform: 'none',
-            }}
-          >
-            Stanholm — {ages[s.cycle.age].name}
-          </h1>
+        <h1
+          class={styles.cardTitle}
+          style={{
+            fontSize: 'calc(1.6rem * var(--text-undo))',
+            color: 'var(--c-ember)',
+            textTransform: 'none',
+          }}
+        >
+          Stanholm — {ages[s.cycle.age].name}
+        </h1>
+        <div
+          class={styles.row}
+          data-hold-actions="true"
+          style={{ gap: 'var(--space-1)', marginBottom: 'var(--space-2)' }}
+        >
           <button
             type="button"
             class={styles.btn}
+            style={{ flex: '1 1 auto', padding: 'var(--space-1) 0.375rem' }}
             onClick={() => openSheet('Rank', () => <AgeSheet />)}
           >
             Rank ▸
@@ -63,11 +70,21 @@ export const HoldScreen = () => {
           <button
             type="button"
             class={styles.btn}
+            style={{ flex: '1 1 auto', padding: 'var(--space-1) 0.375rem' }}
             data-layout-button="true"
             data-tray-count={tray}
             onClick={openArrangeHold}
           >
             {tray > 0 ? `Layout (${tray}) ▸` : 'Layout ▸'}
+          </button>
+          <button
+            type="button"
+            class={styles.btn}
+            style={{ flex: '1 1 auto', padding: 'var(--space-1) 0.375rem' }}
+            data-hold-look-button="hold"
+            onClick={openHoldLook}
+          >
+            {V18_TEXT.holdLookButton}
           </button>
         </div>
         <ThreatMeter />

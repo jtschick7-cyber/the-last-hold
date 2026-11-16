@@ -4,8 +4,11 @@ import { AGE_IDS } from '../../src/content/ages';
 import { BUILDING_IDS } from '../../src/content/buildings';
 import {
   CANONICAL_LAYOUT,
-  GRID_SIZE,
+  GRID_COLS,
+  GRID_ROWS,
   HALL_ANCHOR,
+  HALL_DEFAULT,
+  hallAnchorBounds,
   HOLD_PIECE_IDS,
   PIECES,
 } from '../../src/content/hold-layout';
@@ -55,37 +58,43 @@ describe('the layout catalog', () => {
     ).toEqual([1, 1, 1, 1, 3, 5, 7, 9, 11, 13, 15]);
   });
 
-  it('has the clearings of D500: 16, 36, 48 and 64 tiles', () => {
+  it('has the clearings of D500 / D618: 36, 64, 80 and 96 tiles', () => {
     const size = (age: (typeof AGE_IDS)[number]): number => {
       const b = clearingBounds(age);
       return (b.maxX - b.minX + 1) * (b.maxY - b.minY + 1);
     };
-    expect(AGE_IDS.map(size)).toEqual([16, 36, 48, 64]);
+    expect(AGE_IDS.map(size)).toEqual([36, 64, 80, 96]);
   });
 });
 
 describe('the canonical layout', () => {
-  it('places every piece on the grid with no two pieces on one tile, leaving 21 open', () => {
+  it('places every piece on the 8 × 12 grid with no two pieces on one tile, leaving 53 open', () => {
     const all = HOLD_PIECE_IDS.flatMap(tiles);
     expect(new Set(all).size).toBe(all.length);
     for (const t of all) {
       const [x, y] = t.split(',').map(Number) as [number, number];
       expect(x).toBeGreaterThanOrEqual(0);
-      expect(x).toBeLessThan(GRID_SIZE);
+      expect(x).toBeLessThan(GRID_COLS);
       expect(y).toBeGreaterThanOrEqual(0);
-      expect(y).toBeLessThan(GRID_SIZE);
+      expect(y).toBeLessThan(GRID_ROWS);
     }
-    expect(GRID_SIZE * GRID_SIZE - all.length).toBe(21);
+    expect(GRID_COLS * GRID_ROWS - all.length).toBe(53);
   });
 
-  it('anchors the Hearth Hall inside 2..4 × 2..4, so it is inside every Rank (M4)', () => {
+  it('anchors the Hearth Hall at (3, 6) inside the Hamlet clearing and flexible anchor bounds', () => {
     const hall = CANONICAL_LAYOUT['hearth-hall'];
-    expect(hall).toEqual({ x: 3, y: 3 });
-    expect(hall.x).toBeGreaterThanOrEqual(HALL_ANCHOR.min);
-    expect(hall.x).toBeLessThanOrEqual(HALL_ANCHOR.max);
+    expect(hall).toEqual(HALL_DEFAULT);
+    expect(hall).toEqual({ x: 3, y: 6 });
+    expect(hall.x).toBeGreaterThanOrEqual(HALL_ANCHOR.minX);
+    expect(hall.x).toBeLessThanOrEqual(HALL_ANCHOR.maxX);
+    expect(hall.y).toBeGreaterThanOrEqual(HALL_ANCHOR.minY);
+    expect(hall.y).toBeLessThanOrEqual(HALL_ANCHOR.maxY);
     const hamlet = clearingBounds('hamlet');
-    expect(hall.x + 1).toBeLessThanOrEqual(hamlet.maxX);
-    expect(hall.y + 1).toBeLessThanOrEqual(hamlet.maxY);
+    const hb = hallAnchorBounds(hamlet);
+    expect(hall.x).toBeGreaterThanOrEqual(hb.minX);
+    expect(hall.x).toBeLessThanOrEqual(hb.maxX);
+    expect(hall.y).toBeGreaterThanOrEqual(hb.minY);
+    expect(hall.y).toBeLessThanOrEqual(hb.maxY);
   });
 
   it('puts each group in the Rank that opens it (M1)', () => {

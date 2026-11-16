@@ -1,6 +1,6 @@
 # The Last Hold — Game Design Document
 
-**Status (v1.1 flesh-out 2026-10-22):** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑. v1.1 adds the Hold layout grid (§5.1.5, §9.21), the post-v1.0 roadmap (D498–D508), and accessibility/settings updates (§9.20). v1.5 adds the Breach: lanes, cover and the front zone for Walls and Watchtowers in the Last Stand (§5.9.11, §7.15, §9.25; D579–D595).
+**Status (v1.1 flesh-out 2026-10-22):** Approved through §10 (D26–D29). Revised after the GDD review (D30–D31); edits to approved sections are marked ⚑. v1.1 adds the Hold layout grid (§5.1.5, §9.21), the post-v1.0 roadmap (D498–D508), and accessibility/settings updates (§9.20). v1.5 adds the Breach: lanes, cover and the front zone for Walls and Watchtowers in the Last Stand (§5.9.11, §7.15, §9.25; D579–D595). v1.8 ("Ward & Rampart", fleshed out 2026-11-13) expands the grid to `8 × 12`, adds Age of Empires district adjacency, Clash of Clans North-Reach `Warded` geometry, Screened Volleys, Sector Support, 2 Layout Presets, 6 permanent Event Courtyard Marks (`D490`), and a Zughy-32 grid art refresh (§5.1.5, §5.9.11, §5.12.12, §6.5, §9.12, §9.21, §9.26; D617–D624).
 **Markers:** **[JC]** = judgment call; the owner can override any of them. *(vX.Y)* = the milestone that introduces something. The judgment-call lists at the end of each section are a historical record of when each call was added; where a list and a section body disagree, the body (with its revision trail and `decisions.md`) is authoritative.
 **Related docs:** `setting-primer.md` (spoiler-free; readable from v0.1), `lore-secrets.md` (the full truth; **kept outside the repo until v0.5**, D36), `technical-design.md`, `implementation-plan.md`, `decisions.md`.
 
@@ -168,6 +168,8 @@ This is the heart of the game and must stay fast. **Target: a routine check-in i
 | v1.3 | Keep the Vigil: Rising Vigil, an optional On / Off switch on the Last Stand screen that makes stands harder, one step more each time, once the Remembering gate is open (§5.9.10, §9.23) |
 | v1.4 | The Descent: the third ending, a three-stage all-hands relay into the Deep using what the hold learned across every cycle, once the Remembering gate is open and the hold reaches Bastion (§5.15.10, §9.24) |
 | v1.5 | The Breach: each Last Stand wave comes down one of 8 lanes; where Walls and Watchtowers stand in the three rows nearest the Fell Breach decides how well they work in that lane (§5.9.11, §9.25) |
+| v1.6–v1.7 | AI Pixel Art, Contract Playback & Frontier Ambience: redrawn Zughy-32 portraits, scene banners, and all 40 battle sprite strips; Contract `Watch fight ▸` with Arena callouts; 3 Kenney cues and procedural Web Audio `Ambience` (§6.5, §9.12, §9.22) |
+| v1.8 | Ward & Rampart: `8 × 12` tactical Hold Grid with expanded Age clearings, pure-upside district adjacency in `Breakdown`, North-Reach `Warded` Threat shield, Screened Watchtowers, Sector Support (`rulesVersion` 7), 2 Layout Presets, 6 permanent Event Courtyard Marks (closes D490), and Zughy-32 grid art refresh (§5.1.5, §5.9.11, §5.12.12, §9.12, §9.21, §9.26) |
 
 ---
 
@@ -501,12 +503,19 @@ The Hold sits on an **8 × 8 grid** (`x = 0..7` west to east, `y = 0..7` north t
   4. Auto-placement ordering (S6): defenses (`wall-*`, `watchtower-*`) prioritize row `1` west to east, then row `2` wings, then row `0`. Other buildings prioritize tiles ordered by Manhattan distance from the center `(3.5, 3.5)`, then `y` ascending, then `x` ascending. Other buildings never take a defense tile (row `1`, the row `2` wings, row `0`) by auto-placement, so those tiles stay free for walls and towers (D510).
   5. On `hold.rankUp`, any `dormant-ring` piece whose tile opened becomes `active`. Any pieces in `tray` auto-place onto newly opened free tiles.
   6. On new game creation (M3), `placed` starts with `hearth-hall: { x: 3, y: 3 }` (no ghosts for unbuilt buildings), and the starting Farm and Woodcutter's Camp are then placed by rules 3 and 4, nearest the middle first, so the tray starts empty. At the start of a new cycle after the Long Night, starting buildings wake up at their saved spots, or are placed by the same rules if they have none; the saved blueprint is otherwise untouched.
-- **Canonical Auto-arrange layout (D503, M1):**
+- **Canonical Auto-arrange layout (D503, M1, baseline v1.1–v1.7):**
   - `hearth-hall` at `(3, 3)–(4, 4)`.
   - Hamlet inner ring (`2..5 × 2..5`): `silver-seam-2 (2,2)`, `smithy (3,2)`, `silver-seam-1 (4,2)`, `mine-1 (5,2)`, `mill (2,3)`, `sawpit (5,3)`, `farm-1 (2,4)`, `woodcutter-1 (5,4)`, `cottage-1 (2,5)`, `cottage-2 (3,5)`, `farm-2 (4,5)`, `woodcutter-2 (5,5)`.
   - Keep ring (`1..6 × 1..6`): `alchemist (1,2)`, `herb-garden-1 (1,3)`, `herb-garden-2 (1,4)`, `herb-garden-3 (1,5)`, `mine-2 (6,2)`, `mine-3 (6,3)`, `lodge (6,4)`, `barracks (6,5)`, `trophy-hall (1,6)`, `bell-tower (2,6)`, `cottage-3 (3,6)`, `farm-3 (4,6)`, `woodcutter-3 (5,6)`.
   - Citadel defense front (`y = 1` and `y = 2`): `wall-1 (0,1)`, `wall-2 (1,1)`, `watchtower-1 (2,1)`, `wall-3 (3,1)`, `wall-4 (4,1)`, `watchtower-2 (5,1)`, `wall-5 (6,1)`, `wall-6 (7,1)`, `wall-7 (0,2)`, `wall-8 (7,2)`.
   - Bastion forward breach defenses (`y = 0`): `wall-9 (2,0)`, `watchtower-3 (3,0)`, `wall-10 (4,0)`, `wall-11 (5,0)`.
+
+- **⚑ v1.8 Tactical Expansion (*Ward & Rampart*, D618–D621; wired across `T18.2`–`T18.4`):**
+  - **Expanded Portrait Grid (`8 × 12`, 96 tiles):** Columns stay `x = 0..7` (`8 × 44 px = 352 px` in Arrange Hold for zero horizontal phone scroll at `360–390 px`), while rows expand north-to-south to `y = 0..11` (leaving `53` open courtyard/rampart tiles at Bastion).
+  - **Expanded Age Clearings:** **Hamlet** `6 × 6` (`x = 1..6, y = 4..9`, `36` tiles), **Keep** `8 × 8` (`x = 0..7, y = 3..10`, `64` tiles), **Citadel** `8 × 10` (`x = 0..7, y = 1..10`, `80` tiles), and **Bastion** `8 × 12` (`x = 0..7, y = 0..11`, `96` tiles). The `2 × 2` Hearth Hall may be placed anywhere completely inside the active clearing (`v15 → v16` migration shifts existing `8 × 8` non-front coordinates cleanly toward the expanded inner courtyard while keeping `y = 0..2` defenses anchored north).
+  - **Age of Empires District Adjacency (`1.0×` Floor + Transparent Upside):** Orthogonal neighbor links (`N/E/S/W`) add inspectable `+X%` bonuses in each resource's `Breakdown`: `farm-1..3` beside `mill` (`+Food`), `woodcutter-1..3` beside `sawpit` (`+Wood`), `mine-1..3` and `silver-seam-1..2` beside `smithy` (`+Iron` / `+Silver`), `herb-garden-1..3` beside `alchemist` (deterministic herb/brew uplift), `cottage-1..3` beside `hearth-hall` or within `bell-tower`'s `3 × 3` ring, and `trophy-hall` beside `hearth-hall` or `barracks`. Misplaced or unlinked buildings remain cleanly at today's `1.0×` baseline (zero negative penalties).
+  - **North-Reach `Warded` Core:** Traces orthogonal open-tile reachability southward from the Fell Breach (`y = 0`); active `wall-*` and `watchtower-*` seams block reach. When `hearth-hall` is sealed behind continuous ramparts (**Warded**), hourly Threat slows gently (`D619`); Warded economy plots gain a gentle inner-ward stability uplift without ever adding building damage or repair chores (`D108`).
+  - **Presets & Three-Mode Auto-Arrange (`D621`):** Adds **`2` saved Layout Presets** (*Slot 1* / *Slot 2*, swappable anytime outside an active Stand with zero side effects outside `state.layout`) plus **Balanced**, **Economy**, and **Fortress** priorities for **Auto-Arrange** and **Suggest layout**. `v1.1`'s rule that newly unlocked pieces auto-place without overwriting existing blueprints stays intact.
 
 ---
 
@@ -1102,7 +1111,13 @@ From v1.5 the Hold's layout (§5.1.5) decides how well **Walls and Watchtowers**
 - **Honest limits.** (1) Wall segments unlock slowly (4 at Walls level 1, then one more at levels 3, 5, 7, 9, 11, 13 and 15, 11 in all), so a Bastion stand with a low Walls level cannot cover every lane whatever the layout; the baseline shift (D589) is reported, not hidden. (2) The numbers are tunable placeholders until the owner approves the calibration table (§6.2, D583). (3) Suggest layout is a fast fixed rule, not a search: it can be beaten by a thoughtful layout, which is intended. (4) Economy buildings on front-row tiles can be moved off them, so a player can make room for a third piece in a column; Suggest uses only free tiles and never moves another building. (5) Suggest weighs cover and tower reach equally: a fixed design choice, not tuned.
 - **Suggest layout (D588, D590).** A button on the Arrange Hold sheet, shown from Bastion on and never disabled there. It reads the lanes of the first `breach.suggestWaves` waves, counts how many waves come down each lane, and builds a layout one piece at a time: at each step it adds the one wall or tower piece, on one free front-row tile that holds no other building, that raises the weighted total of `cover × (1 + depthStep × extra)` plus tower reach the most (ties: the smaller row, then the smaller column), until every owned defense is placed; if the Auto-arrange defense positions score higher, it returns those instead, so it never scores below Auto-arrange. **It shows the result and its preview and places nothing by itself.** Whether the player may apply it with one tap is Q61 (asked in the first message of the build thread; the button is built only if yes). The simulated Tactician (§6.1) uses the same rule.
 - **Debug.** `debug.breach.freeze` (a core command, marks `debugUsed`) shows the lane table a stand would freeze now (technical design §15). Tests use real seeds with known lanes.
-- **Deferred, not cut (with reasons).** The inner ward and buildings taking damage (buildings take no damage, D108, so there is nothing to protect without a new rule); per-wave monster traits tied to lanes (a new rule set); any story text. See §10.
+- **Deferred, not cut (with reasons).** Buildings taking permanent damage or repair chores (no damage to buildings, D108); per-wave monster traits tied to lanes (a new rule set); any story text. See §10.
+- **⚑ v1.8 Breach Expansion (`rulesVersion` `6 → 7` dual path; D618–D620; wired across `T18.2`–`T18.4`):**
+  - **Deeper Front Zone (`breach.frontRows` `3 → 5`):** On the `8 × 12` Hold, active `wall-*` and `watchtower-*` pieces in rows **`0..4`** count toward Breach cover and shared tower volleys (`breach.lanes = 8` stays `8`).
+  - **Connected Ramparts (`wallConnectionMask`):** Connected adjacent `wall-*` segments strengthen lane cover vs. isolated single-tile walls (`breach.rampartBonus` tunable, calibrated in `T18.12`).
+  - **Watchtower *Screened Volley*:** Any counted `watchtower-*` in rows `0..4` with a connected active `wall-*` immediately north (`y - 1`) fires a boosted **Screened Volley** (`breach.screenedBonus` tunable).
+  - **Sector Support (`barracks` & `lodge`):** Placed `barracks` and `lodge` tiles lend a gentle **Sector Support** bolster (`breach.sectorBonus` tunable) across their own column and immediate neighbors (`x ± 1`), frozen in the `v7` stand table at **Start**.
+  - **Legacy safety:** Pre-v1.8 stands (`rulesVersion` `5` and `6`), Arrival stands below Bastion, and all existing golden fights replay line-for-bit identically. Planned constants live in `docs/flesh-out/v1.8/v1.8-summary.md` until `T18.2`–`T18.4` wire them into `balance.ts` and §7.16.
 
 ### 5.10 Delves *(v0.7; ⚑ v0.7 flesh-out, D244–D272)*
 
@@ -1367,7 +1382,7 @@ Boss and hunt wins are **not contract wins.** They do not change threat, act cou
 - Events add nothing to Orders in v0.10 (§5.13.2); that may change later.
 - No Delve trophies, bestiary kills or Legendaries come from events; no event is the only source of anything required (lore §8).
 - More hunts, more bosses, a boss shop and Boss marks are not planned.
-- Event-only cosmetics and the legendary hunters' animation are deferred past v1.0 (D490). The Great Beasts' portraits are part of the v1.0 art pass if the owner marks them (D475).
+- Event-only cosmetics (`6` permanent **Courtyard Marks** closing D490, **implemented in v1.8, D622**) and the legendary hunters' bespoke animations (implemented in v1.7, D605) are now complete; **what remains out of scope** is new boss/hunt additions (`§5.12.12`). The Great Beasts' portraits were redrawn in v1.0 / v1.6.
 
 ### 5.13 Orders *(v0.10; ⚑ v0.10 flesh-out, D407–D425)*
 
@@ -1838,10 +1853,13 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **Reading start** *(v0.11, D469)* | ≤ 50 ms | Tap on R-03's Continue to the first name painted, on the throttled profile (`tests/e2e/remembering-layout.spec.ts`) |
 | **v10 → v11 migration** *(v0.11, D469)* | ≤ 100 ms | A played v10 save, on the load path (the throttled benchmark) |
 | **Remembering save growth** *(v0.11, D469)* | ≤ 0.5 KB | The whole `remembering` block, everything recorded (checked by a unit test, not the throttled benchmark) |
-| **Hold grid render** *(v1.1, D506)* | ≤ 16 ms (one frame) | The Hold screen's 8 × 8 grid header, from the view built in `core` (memoized) |
-| **Arrange Hold sheet open** *(v1.1, D506)* | ≤ 50 ms | Opening the 8 × 8 placement sheet with its tray |
+| **Hold grid render** *(v1.1, D506; v1.8, D624)* | ≤ 16 ms (one frame) | The Hold screen's grid header (`8 × 8` in v1.1; `8 × 12` `256 × 384 px` native in v1.8), from the view built in `core` (memoized) |
+| **Tactical Hold recompute** *(v1.8, D624)* | ≤ 5 ms | Full `layout-tactics` evaluation (adjacency + North-Reach `Warded` flood + Siege sectors), after a command |
+| **Arrange Hold sheet open** *(v1.1, D506; v1.8, D624)* | ≤ 50 ms | Opening the placement sheet with its tray (`8 × 12` grid from v1.8) |
 | **v11 → v12 migration** *(v1.1, D506)* | ≤ 100 ms | A played v11 save, on the load path (the throttled benchmark) |
-| **Hold layout save growth** *(v1.1, D506, M5)* | ≤ 1.5 KB | The whole `layout` block with all 40 pieces placed (checked by a unit test, not the throttled benchmark; measured ~1.1 KB) |
+| **v15 → v16 migration** *(v1.8, D624)* | ≤ 100 ms | A played v15 save with inner-ward shift + Event Courtyard Marks backfill, on the throttled benchmark |
+| **Hold layout & Presets save growth** *(v1.1, D506, M5; v1.8, D624)* | ≤ 2.0 KB (was ≤ 1.5 KB for v1.1 `40` pieces alone) | The whole `layout` block with all 40 pieces placed plus 2 custom `presets` slots (checked by a unit test, not the throttled benchmark) |
+| **Event Courtyard Marks save growth** *(v1.8, D624)* | ≤ 0.3 KB | Permanent unlocked/toggled Event Keepsake IDs and Hold Look toggle flags (checked by a unit test) |
 | **Sound files, total** *(v1.2, D523; v1.7, D608)* | ≤ 45 KB (was ≤ 30 KB in v1.2) | All 10 shipped sound files together (1 KB = 1,024 bytes). Checked by a unit test on the files, not the throttled benchmark. **The download row below is the binding limit:** the sound and ambience code also count, so the room for audio is what is left of 600 KB after the code is built |
 | **v12 → v13 migration** *(v1.3, D547)* | ≤ 100 ms | A played v12 save, on the load path (the throttled benchmark) |
 | **Vigil save growth** *(v1.3, D547)* | ≤ 0.5 KB | The whole `vigil` block plus 20 recorded `vigilLevel` values (checked by a unit test, not the throttled benchmark). Each stand fought On adds about 16 bytes for ever; there is no cap |
@@ -1853,7 +1871,7 @@ The simulator can't measure these. The owner checks them at the end of each mile
 | **v14 → v15 migration** *(v1.5, D590, D599)* | ≤ 100 ms | A played v14 save, on the load path (the throttled benchmark) |
 | **Lane table save growth** *(v1.5, D590, D599)* | ≤ 0.4 KB per stand record | The lane table on one stand record, with 3 towers (checked by a unit test, not the throttled benchmark); the Last Stand preview budget (≤ 1 s) is unchanged and now includes the lanes |
 | **Arena step render** *(v1.7, D612)* | ≤ 16 ms (one frame) | Advancing one watched Arena combat step with its pose change and floating callout |
-| **Download size** *(v1.0, D494)* | ≤ 600 KB | The production build, every file compressed with gzip (v0.11: 500 KB; v1.0: 506 KB; v1.1: 568 KB, measured as 582,081 bytes; **v1.2 (D523): the row stays; the sounds are capped at 30 KB and the whole build must still measure 600 KB or less; measured 610,508 bytes**; **v1.3 (D547): the row stays; 3,892 bytes are left for the vigil code (a rough guess of 2–4 KB gzipped, not measured); if the build is over 614,400 bytes, stop and ask, never change the row**; **D553: the build packs every picture as an indexed PNG without changing a pixel — leaving `icons/` unpacked so `sw.js` never lists duplicate hashes — and the live build no longer carries the contact sheet, measuring 449,810 bytes in the container after the icon fix (room about 164 KB); v1.4 (D565): the 600 KB row stays, and v1.4's code, texts and 5 packed PNGs fit well inside it; measured 457,443 bytes at the v1.4 milestone end, about 157 KB under the row; v1.5 (D590): measured 467,553 bytes; v1.6 (D600–D602): measured 481,774 bytes, about 129.5 KB under the row; v1.7 (D608, D612): the 600 KB row stays as the binding limit, with shipped MP3s capped at 45 KB**). Measured at the milestone end; not a test in `npm run check` |
+| **Download size** *(v1.0, D494)* | ≤ 600 KB | The production build, every file compressed with gzip (v0.11: 500 KB; v1.0: 506 KB; v1.1: 568 KB, measured as 582,081 bytes; **v1.2 (D523): the row stays; the sounds are capped at 30 KB and the whole build must still measure 600 KB or less; measured 610,508 bytes**; **v1.3 (D547): the row stays; 3,892 bytes are left for the vigil code (a rough guess of 2–4 KB gzipped, not measured); if the build is over 614,400 bytes, stop and ask, never change the row**; **D553: the build packs every picture as an indexed PNG without changing a pixel — leaving `icons/` unpacked so `sw.js` never lists duplicate hashes — and the live build no longer carries the contact sheet, measuring 449,810 bytes in the container after the icon fix (room about 164 KB); v1.4 (D565): the 600 KB row stays, and v1.4's code, texts and 5 packed PNGs fit well inside it; measured 457,443 bytes at the v1.4 milestone end, about 157 KB under the row; v1.5 (D590): measured 467,553 bytes; v1.6 (D600–D602): measured 481,774 bytes, about 129.5 KB under the row; v1.7 (D608, D612): measured 511,970 bytes across 320 files with 102,430 bytes of headroom; v1.8 (D623, D624): the 600 KB ceiling stays binding while `D615`'s packed-PNG sub-cap bumps cleanly in `T18.11` to cover the Zughy-32 grid art refresh + 6 Courtyard Marks**). Measured at the milestone end; not a test in `npm run check` |
 | **Simulator: the Orderer shard** *(v0.10, D445)* | ≤ 5 min per CI job *(D320)* | The `orders` shard, Monday seeds only |
 | **Simulator: the Vigilant shard** *(v1.3, D546)* | ≤ 5 min per CI job *(D320)*; stop and ask if it would pass 4 min | The `vigil` shard, Monday seeds only |
 | **Simulator: one 3-cycle run** | ≤ 60 s in CI | Headless, in Node |
@@ -2121,7 +2139,7 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Wave strength per vigil level | Health and Might × (1 + w × Threat + s × L), w = `threat.waveStrengthPerPoint` (§7.6) | `vigil.strengthPerLevel` = 0.28 *(D554, retuned from 0.32 by D596; about 3 waves fewer held by level 3 on the Vigilant's gate-open stand)* | 5.9.10 |
-| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = 0.26 *(D554, retuned from 0.22 by D596; Embers at levels 1 to 3 within about 1% of level 0 at the stand's own Threat)* | 5.9.10 |
+| Embers per vigil level | the Embers multiplier (1 + b × Threat + e × L), b = `embers.threatBonus` (§7.6) | `vigil.embersPerLevel` = 0.22 *(D554, retuned from 0.26 in v1.8 T18.13, Q86a; Embers at levels 1 to 3 within 3.7% of level 0 at the stand's own Threat)* | 5.9.10 |
 | The level | L = stands already fought with the switch On + 1, for an On stand; 0 for an Off stand | — (no cap) | 5.9.10 |
 
 ### 7.14 The Descent *(v1.4, D557–D568)*
@@ -2145,15 +2163,32 @@ Every constant here is **tunable**. Both were measured in KV.9 on the Vigilant's
 | Formula | Expression | Constants | § |
 |---|---|---|---|
 | Lanes | wave n takes lane `floor(roll × lanes)`, one roll from `${gameSeed}:stand:${cycle}:lane:${n}` | `breach.lanes` = 8 **(locked)** | 5.9.11 |
-| Front zone | a counted piece is `active` with row `y` < frontRows | `breach.frontRows` = 3 **(locked)** | 5.9.11 |
+| Front zone | a counted piece is `active` with row `y` < frontRows | `breach.frontRows` = 5 **(locked)** | 5.9.11 |
 | Cover | `coverOwn` for a piece in the column plus `coverNeighbour` for each neighbouring column with a piece (the ruined edge counts as walled) | `breach.coverOwn` = 0.5, `breach.coverNeighbour` = 0.25 | 5.9.11 |
 | Depth | `extra = min(depthMax, counted pieces in the column − 1)`; the wall cut × (1 + depthStep × extra) | `breach.depthStep` = 0.25, `breach.depthMax` = 2 | 5.9.11 |
 | Wall cut in a lane | the Walls constant of §7.6 × Walls level × cover × (1 + depthStep × extra), in taken% (75% cap) | none new (the Walls constant is in §7.6) | 5.9.2, 5.9.11 |
 | Tower reach | a counted tower's share for a lane d columns away | `breach.towerReach` = [1, 0.5, 0.25] (own column, 1 away, 2 away; nothing beyond) | 5.9.11 |
 | Volley in a lane | floor(the volley per level of §7.6 × Watchtower level × volleyScale × Σ reach ÷ counted towers); 0 when no tower counts; whole-number arithmetic | `breach.volleyScale` = 3 | 5.9.2, 5.9.11 |
 | Suggest layout and the Lanes strip | the lanes of the first N waves (tuning N changes the strip's dots too) | `breach.suggestWaves` = 12 | 5.9.11, 9.25 |
+| Connected Ramparts *(v1.8, D620, Q86a)* | `(cover + extra) × (1 + rampartBonus)` when lane `c` holds ≥ 1 active connected front `wall-*` (`wallConnectionMask > 0`) in `y = 0..4` | `breach.rampartBonus` = 0.15 | 5.9.11 |
+| Screened Volley *(v1.8, D620, Q86a)* | counted front `watchtower-*` (`y = 0..4`) with an active connected `wall-*` directly north (`y - 1`, `wallConnectionMask > 0`) scales its reach weight × `(1 + screenedBonus)` in whole-number arithmetic | `breach.screenedBonus` = 0.25 | 5.9.11 |
+| Sector Support *(v1.8, D620, Q86a)* | `sector = 0..2` distinct active `barracks` / `lodge` covering `x ± 1`: `volley × (1 + sector × sectorBonus)` and `partyTaken × (1 − sector × sectorBonus)` | `breach.sectorBonus` = 0.05 | 5.9.11 |
 
+### 7.16 Hold layout & tactics *(v1.8, D619, D625, Q86a)*
 
+Every constant below is **tunable** (wired in `T18.3` and calibrated in `T18.13` under `Q86 (a)`). All modifiers obey a **`1.0×` floor** (zero negative penalties on unlinked or open layouts) and inspect cleanly in resource / Threat `Breakdown`.
+
+| Rule | Expression | Constants | § |
+|---|---|---|---|
+| Food district link | +`adjFood` per active `farm-1..3` orthogonally touching active `mill` | `layout.adjFood` = 0.02 | 5.1.5 |
+| Wood district link | +`adjWood` per active `woodcutter-1..3` orthogonally touching active `sawpit` | `layout.adjWood` = 0.02 | 5.1.5 |
+| Iron district link | +`adjIron` per active `mine-1..3` orthogonally touching active `smithy` | `layout.adjIron` = 0.02 | 5.1.5 |
+| Silver district link | +`adjSilver` per active `silver-seam-1..2` orthogonally touching active `smithy` (post-bucket Silver tactical uplift; `D30` untouched) | `layout.adjSilver` = 0.02 | 5.1.5 |
+| Alchemist herb link | `brewMs` and `experimentMs` multiply by `(1 − linkedGardens × adjBrew)` for active `herb-garden-1..3` orthogonally touching active `alchemist` | `layout.adjBrew` = 0.02 | 5.1.5, 5.7 |
+| Hearth / Bell warmth | +`adjCottage` per active `cottage-1..3` (counted once) orthogonally touching active `hearth-hall` or within active `bell-tower`'s `3 × 3` ring (`max(\|dx\|, \|dy\|) ≤ 1`), to non-silver production | `layout.adjCottage` = 0.01 | 5.1.5 |
+| Martial Hall trophy link | +`adjTrophy` to non-silver production when active `trophy-hall` orthogonally touches active `hearth-hall` or active `barracks` (`1×`) | `layout.adjTrophy` = 0.02 | 5.1.5 |
+| Warded Hearth Hall | North-Reach `O(8 × 12)` BFS from open `y = 0` tiles blocked by active `wall-*` / `watchtower-*`; Threat per hour multiplies by `(1 − wardedThreatCut)` when all `4` tiles of `hearth-hall` are unreached | `layout.wardedThreatCut` = 0.04 | 5.1.5, 5.9.1 |
+| Warded inner-ward plots | +`wardedBonus` per active Warded economy plot (`farm-1..3` → Food, `woodcutter-1..3` → Wood, `mine-1..3` → Iron, `silver-seam-1..2` → Silver) | `layout.wardedBonus` = 0.02 | 5.1.5 |
 
 ---
 
@@ -3040,6 +3075,8 @@ The Hut opens from its building row on the Hold screen.
 | v1.3 | Keep the Vigil: no new screen. One Rising Vigil row (On / Off) on the Last Stand screen once the Remembering gate is open, two extra lines in the stand preview, one in the confirmation and one in the result, and a mark and a line on the Roll of Wardens (§5.9.10, §9.23) |
 | v1.4 | The Descent: The Descent button on The Remembering card once the gate is open and the hold reaches Bastion, the Descent sheet (marching order for up to 14 hunters, What the Hold Learned breakdown, preparation, 3-stage preview), 3-stage playback and story cards D-01 to D-07, result sheet, Roll of Wardens mark, and "The Descent" on the Library's Remembering shelf (§5.15.10, §9.24) |
 | v1.5 | The Breach: no new screen. A Lanes strip (with a text-list alternative) on the Arrange Hold sheet and on the Last Stand screen, a lane tag on each wave in the wave list, a lane breakdown sheet, a Suggest layout button, one line in the Start confirmation and a header line in stand wave logs (§5.9.11, §9.25) |
+| v1.6–v1.7 | Steel & Hearth / Pixel Art: no new core tab. Redrawn portraits, orders/descent banners, and 40 battle sprites; Contract `Watch fight ▸` Arena sheet; `Ambience` [On] [Off] row in Settings (§9.4, §9.12, §9.15, §9.22) |
+| v1.8 | Ward & Rampart: `8 × 12` Hold Grid header (`256 × 384 px`) and Arrange Hold sheet with live adjacency highlights, `Warded` perimeter shade, `Screened` tower mark, 2 Layout Presets, 3 Auto-Arrange modes, and a Hold Look sheet for toggling the 6 permanent Event Courtyard Marks and bought Riftglass accents (§5.1.5, §9.12, §9.21, §9.26) |
 
 **Honest scope note.** Claude Code builds these layouts reliably. What it does less well without human eyes is visual polish: spacing, contrast, how pixel art and UI chrome feel together.
 - Each milestone's playtest checklist includes a short "looks wrong on my phone" pass, where you send screenshots.
@@ -3072,6 +3109,7 @@ The full pipeline (manifest, generators, credits) belongs in `technical-design.m
 - **v1.4 (D565):** 5 code-generated pictures in the 32-colour palette, registered in the manifest: `portrait.monster.unlit` (64 × 64 px), `sprite.monster.unlit` (32 × 32 px frames, 160 × 32 px 5-frame battle sprite strip), and three 160 × 64 px Deep stage banners (`scene.descent.stage-1` *The Crack*, `scene.descent.stage-2` *The Sealed Stair*, `scene.descent.stage-3` *Below the Seal*). The Roll of Wardens mark for *"Led the Descent."* is drawn in code as an inline SVG (no PNG file). All 5 PNGs go on a numbered v1.4 contact sheet (1–5) shown to the owner in the conversation first; existing v1.0 and v1.1 PNG hashes stay byte-identical; approved hashes frozen in `art-src/v1.4-hashes.json`.
 - **v1.6 (D600–D602):** all 37 `64 × 64 px` portraits (14 hunters, 16 bestiary species, 6 event creatures, 1 The Unlit) redrawn in Option B chamfered stone/iron plaques (`art-src/v1.6-portrait-hashes.json`), the 4 Hold scenes harmonized to `HoldGrid` moss/loam ground tones, and all 7 `160 × 64 px` Orders and Descent stage banners redrawn (`art-src/v1.6-banner-hashes.json`) — strictly in the 32-colour Zughy palette.
 - **v1.7 (D605, closes D490):** all 40 `160 × 32 px` 5-frame battle sprite strips (14 hunters, 16 bestiary species, 3 Deep guardians, 6 event creatures, 1 The Unlit; `32 × 32 px` frames on transparent backgrounds in the 32-colour Zughy palette; hunters facing right, foes facing left) redrawn to match their v1.6 portraits with custom lunge flourishes and bespoke `idle2` + `lunge` flame, marsh-ward, and bone-needle animations on the 3 legendary hunters (*Gest Tall-Torch*, *Radmila of the Reeds*, *Ragnhild Eye-Taker*). Reviewed in 4 contact-sheet batches of 10 (`VB.2`, `VB.4`, `VB.6`, `VB.8`) beside their v1.6 portraits on dark and light backgrounds; previous strips backed up in `art-src/previous-v1.7/sprites/` and approved SHA-256 hashes frozen in `art-src/v1.7-sprite-hashes.json`.
+- **v1.8 (D623, closes D490 Event Cosmetics):** hybrid authoring pass redrawing all Hold Grid tiles in unified 32-colour Zughy pixel art matching the v1.6 Hold scenes and v1.7 battle sprites: `64 × 64 px` Hearth Hall (`2 × 2`), `8` unique `32 × 32 px` level buildings, `5` plot/seam archetypes, `watchtower`, core `wall` kit (generating deterministic 16-mask wall and clearing-border variants), clearing ground, and the `6` Event Courtyard Marks (with mirrored accents on the Classic Hold scenes). Reviewed across 3 numbered contact-sheet batches of `≤ 12` subjects (`T18.8`–`T18.10`, D475); previous tiles backed up in `art-src/previous-v1.8/grid/`; approved SHA-256 hashes frozen in `art-src/v1.8-grid-hashes.json`.
 
 **Honest note:** CC0 packs almost never include Slavic and Nordic folklore creatures, so earlier milestones shipped plain code-generated silhouettes; v1.6 and v1.7 replace all portraits, banners, and battle sprite strips while keeping the manifest and 32-colour Zughy palette intact.
 
@@ -3189,78 +3227,93 @@ v1.0 changes **no game number, formula or save field.** Everything below is pres
 - **The screen list** (used by the tap sweep, the Text size, contrast and layout checks): Hold (at Hamlet, Keep, Citadel and Bastion); the away sheet (with the reminder); the rates and breakdown sheets; the Rank screen (the Hearth, the Roll of Wardens, the Riftglass shop, "What the ember remembers"); Hunters (roster, candidates); the hunter sheet (talents, slots, alternate traits, letters), the slot picker, Stores and Salvage; Contracts (board, launch sheet, fight log); Bestiary and an entry; the Alchemist's Hut (the 12 × 3 Book grid, Experiment); the Archive (all four tabs, the document reader, the Names view, the Villages panel); the Last Stand screen, the Long Night sheets and the arrival sheet; a Delve (entry, floor playback, doors, blessing, guardian, result); Events (boss sheet and playback, hunt sheet and playback, the Great Beasts shelf, the Rime shelf); the Orders (card, sheets, the seat step, chapter and opening scenes); the Remembering (card in its four forms, Pechko's scene, the reading, the ending cards, the Library shelf); More (Reports, Hall of the Fallen, Save & Data, Settings, About & Credits, Diagnostics). The debug panel is excluded. In v1.1, Hold in Grid view and the Arrange Hold sheet (with a piece selected and with items in the Tray) are added to this list (D507). Claude Code records in the progress entry which fixture or debug command reaches each screen.
 - **Layout checks (Playwright, 320, 360, 900, 1300 px):** each of the above, at Match phone and at Largest, in both themes.
 
-### 9.21 The Hold's Layout screens *(v1.1, D500–D504; red-team M8, S5, S7, S8)*
+### 9.21 The Hold's Layout screens *(v1.1, D500–D504; v1.8, D618, D621; red-team M8, S5, S7, S8)*
 
 - **Hold screen header (Grid view, default):**
-  - Shows the **8 × 8 grid** (`256 × 256 px` native = `32 px` per tile, scaled smoothly to the card width, shrinking on a `320 px` screen just like the Classic scene in §9.20; D503, S5).
-  - Top border strip reads **▲ The Fell Breach**; bottom border strip reads **▼ Lowland Gate** (with the Gatehouse banners cosmetic if bought).
-  - The grid header is **purely visual and non-interactive** (no sub-44 px tap targets on header tiles). Only **[Layout ▸]** and **[Rank ▸]** are tappable buttons (both ≥ 44 × 44 px).
+  - Shows the **`8 × 12` portrait grid** (`256 × 384 px` native = `32 px` per tile, scaled smoothly to the card width, shrinking on a `320 px` screen just like the Classic scene in §9.20; D503, D618, S5).
+  - Top border strip reads **▲ The Fell Breach**; bottom border strip reads **▼ Lowland Gate** (with the Gatehouse banners cosmetic if bought and toggled Shown).
+  - The grid header is **purely visual and non-interactive** (no sub-44 px tap targets on header tiles). Only **[Rank ▸]**, **[Layout ▸]**, and **[Hold Look ▸]** (§9.26) are tappable buttons (all `≥ 44 × 44 px`).
   - Tiles outside the current Rank's clearing (§5.1.5) show dark pines and ruined wall stones.
-  - Active unlocked pieces render their current visual tier or density (§5.1.5), with the `2 × 2` Hearth Hall covering four tiles (showing the Carved Hearth Hall door cosmetic if bought, and the Act VI frost or post-Remembering window lamp). Dormant saved pieces render as faint stone foundation outlines when **Blueprint ghosts** is On.
-  - Cosmetic rendering across Ranks (S7): Carved Hearth Hall door and Gatehouse banners show at all Ranks; Watchtower bell and Wall lanterns show on border pillars at Hamlet/Keep, and on placed tower/wall segments once built.
-  - Below the grid: `Stanholm — [Rank]`, **[Layout ▸]** (at least `44 × 44 px`; shows badge `Layout (2) ▸` only if unlocked pieces are unplaced in the Tray; dormant-ring pieces never trigger badge), and **[Rank ▸]**.
-  - **Settings (`More ▸ Settings`):** **Hold view** (`Grid` / `Classic scene`, default `Grid`), stored in the external settings key (`lasthold:settings`, §9.20). Switching to `Classic scene` shows the v1.0 pixel hold scene with `[Layout ▸]` still available beside `[Rank ▸]`.
+  - Active unlocked pieces render their current visual tier or density (§5.1.5), with the `2 × 2` Hearth Hall covering four tiles (showing the Carved Hearth Hall door cosmetic if bought and Shown, and the Act VI frost or post-Remembering window lamp). Dormant saved pieces render as faint stone foundation outlines when **Blueprint ghosts** is On.
+  - Cosmetic & Courtyard Mark rendering across Ranks (S7, D622): Carved Hearth Hall door and Gatehouse banners show at all Ranks; Watchtower bell and Wall lanterns show on border pillars at Hamlet/Keep, and on placed tower/wall segments once built; unlocked Courtyard Marks (§9.26) render across the hold apron when toggled **Shown** in **Hold Look**.
+  - Below the grid: `Stanholm — [Rank]`, **[Rank ▸]**, **[Layout ▸]** (at least `44 × 44 px`; shows badge `Layout (2) ▸` only if unlocked pieces are unplaced in the Tray; dormant-ring pieces never trigger badge), and **[Hold Look ▸]** (at least `44 × 44 px`).
+  - **Settings (`More ▸ Settings`):** **Hold view** (`Grid` / `Classic scene`, default `Grid`), stored in the external settings key (`lasthold:settings`, §9.20). Switching to `Classic scene` shows the v1.0 pixel hold scene with visible Courtyard Marks and bought cosmetics (§9.26), and `[Layout ▸]` / `[Hold Look ▸]` still available beside `[Rank ▸]`.
 - **Arrange Hold sheet** (opens from **[Layout ▸]**):
 
 ```
 ┌──────────────────────────────────┐
 │ Arrange Hold                 [✕] │
-│ Bastion · 8×8 open · 24/40 placed│
+│ Bastion · 8×12 open · 24/40 placed│
 │ ▲ The Fell Breach                │
 │ ┌───┬───┬───┬───┬───┬───┬───┬───┐│
-│ │   │   │🧱 │🗼 │🧱 │   │   │   ││
-│ ├───┼───┼───┼───┼───┼───┼───┼───┤│
-│ │🧱 │🧱 │🗼 │🧱 │🧱 │🗼 │🧱 │🧱 ││
-│ ├───┼───┼───┼───┼───┼───┼───┼───┤│
-│ │🧱 │   │⚒️ │🏰 │🏰 │   │   │🧱 ││
-│ ├───┼───┼───┼───┼───┼───┼───┼───┤│
-│ │   │   │⚗️ │🏰 │🏰 │   │🏹 │   ││
+│ │   │🧱 │🗼 │🧱 │   │🗼 │🧱 │   ││
+│ │   │   │   │   │   │   │   │   ││  (rows 0..11 portrait yard;
+│ │   │   │⚔️ │🏰 │🏰 │   │   │   ││   Adjacency links, Warded band,
+│ │   │   │⚗️ │🏰 │🏰 │   │🏹 │   ││   & Screened tower marks)
 │ └───┴───┴───┴───┴───┴───┴───┴───┘│
 │ ▼ Lowland Gate                   │
+│ Hearth Hall: Warded · 4 linked · 2 Screened │
 ├──────────────────────────────────┤
 │ Selected: Smithy Lv9 (Tier II)   │
+│ Warded · 1 linked                │
 │ Tap an open tile to move or swap │
 │ [Move to tray]                   │
 ├──────────────────────────────────┤
 │ TRAY (unplaced: 2)               │
-│ [🏡 Cottage Plot 2 (Pair)] [🌿]  │
+│ [Cottage 2] [Herb Garden 1]      │
 ├──────────────────────────────────┤
+│ [Balanced] [Economy] [Fortress]  │
 │ [Auto-arrange] [Clear to tray…]  │
+│ [Suggest layout…] [Hold Look ▸]  │
+│ Presets                          │
+│ Slot 1  Empty     [Save] [Apply] │
+│ Slot 2  14 placed [Save] [Apply] │
 │ Blueprint ghosts: [On] [Off]     │
 └──────────────────────────────────┘
 ```
 
-- **Player-facing strings table (S8):**
+- **Player-facing strings table (S8; updated for v1.8 `D618`, `D621`):**
   | String | Where it shows | Purpose |
   |---|---|---|
   | `Arrange Hold` | Sheet title | Header |
   | `{Rank} · {w}×{h} open · {placed}/{total} placed` | Subtitle | Grid summary (`total` = 40, `placed` counts active pieces only) |
   | `▲ The Fell Breach` / `▼ Lowland Gate` | Border strips | Spatial orientation |
+  | `Hearth Hall: {status} · {n} linked · {n} Screened` | Tactical status bar | Live courtyard status (`status`: `Warded` or `Exposed`) |
+  | `Warded` / `Exposed` / `Screened` / `{n} linked` | Selected-piece tactics line & status tags | Active tactical state on the selected piece (`selectedTacticsLine`) |
   | `Tap an open tile to move or swap` | Info bar | Instruction when piece selected |
   | `Tap an active piece or tray item to select` | Info bar | Default instruction when nothing selected |
   | `Clears at {Rank}` | Info bar | Tapping a locked outer-ring tile |
   | `Selected: {Name} (Tier {N})` | Info bar | Selected building details |
-  | `[Move to tray]` | Info bar button | Moves selected 1 × 1 piece to tray |
+  | `Move to tray` | Info bar button | Moves selected 1 × 1 piece to tray |
   | `TRAY (unplaced: {n})` | Tray header | Tray count (`n` = pieces in tray only) |
-  | `[Auto-arrange]` | Footer button | Applies canonical fortress layout |
-  | `[Clear to tray…]` | Footer button | Opens confirmation dialog |
+  | `Layout mode` | Segmented group label | Accessible label for layout mode selector |
+  | `Balanced` / `Economy` / `Fortress` | Mode selector buttons | Chooses priority mode for Auto-arrange and Suggest layout (`Q76`) |
+  | `Auto-arrange` | Controls button | Applies the selected mode's arrangement |
+  | `Clear to tray…` | Controls button | Opens confirmation dialog |
   | `Move all placed buildings except the Hearth Hall to the tray? Dormant blueprint outlines will be cleared.` | Confirmation dialog | Warning before clearing grid |
-  | `Blueprint ghosts: [On] [Off]` | Footer toggle | Toggles foundation ghost outlines |
+  | `Clear to tray` / `Cancel` | Confirmation dialog buttons | Confirms or cancels clearing grid |
+  | `Presets` | Section heading | Two manual layout save slots (`D621`, `Q76`) |
+  | `Slot {n}` | Preset row label | Names slot 1 or 2 |
+  | `Empty` / `{n} placed` | Preset slot status | Shows empty state or saved building count |
+  | `Save` / `Apply` | Preset row buttons | One-tap save/overwrite or apply preset slot |
+  | `Blueprint ghosts:` / `On` / `Off` | Footer toggle | Toggles foundation ghost outlines |
 
 - **Interaction rules (tap-only, no drag required):**
   - Every grid cell in the Arrange Hold sheet and every item in the Tray is a button of **at least `44 × 44 px` at every Text size**.
-  - Selected tiles show a high-contrast highlight border (N9).
-  - **Tap an active piece** on the grid (or an item in the **Tray**) to select it. The info bar shows its name, level or count, visual tier, and (for `1 × 1` pieces on the grid) **[Move to tray]**.
+  - Selected tiles show a high-contrast highlight border (N9). Always-on colorblind-safe overlays inside `Arrange Hold` show AoE adjacency link lines & shapes, `Warded` perimeter shading, and `Screened` watchtower marks (all static under Reduce Motion).
+  - **Tap an active piece** on the grid (or an item in the **Tray**) to select it. The info bar shows its name, tier, active tactical tags (`Warded` / `Exposed`, `Screened`, `{n} linked`), and (for `1 × 1` pieces on the grid) **[Move to tray]**.
   - **Tap any tile inside the current Rank's clearing** while a piece is selected:
     - If the target tile is empty, the piece moves there.
     - If the target tile holds another `1 × 1` piece, the two pieces **swap** places (if the selected piece came from the Tray, the displaced piece goes to the Tray).
-    - If the `2 × 2` **Hearth Hall** is selected (`x = 2..4, y = 2..4`, M4), tapping the new top-left tile moves the Hearth Hall there and moves any `1 × 1` pieces in that `2 × 2` footprint into the vacated Hearth Hall tiles (or to the Tray if they overlapped).
+    - If the `2 × 2` **Hearth Hall** is selected, tapping the new top-left tile inside the clearing moves the Hearth Hall there and moves any `1 × 1` pieces in that `2 × 2` footprint into the vacated Hearth Hall tiles (or to the Tray if they overlapped).
   - Tapping a **locked outer-ring tile** shows *"Clears at Keep / Citadel / Bastion"* in the info bar and does not place the piece.
-  - **Auto-arrange** applies the canonical fortress layout (§5.1.5) in one tap.
+  - **Balanced / Economy / Fortress** selects the priority mode used by **Auto-arrange** and **Suggest layout…** without changing the grid when switching tabs; **[Hold Look ▸]** opens the Hold Look sheet (§9.26) stacked on top.
+  - **Auto-arrange** applies the selected mode's fortress/economy/balanced layout (§5.1.5) in one tap.
+  - **Presets (Slot 1 / Slot 2):** **Save** captures placed tiles into that slot in one tap; **Apply** restores that slot into the current Rank's clearing.
   - **Clear to tray…** asks for confirmation, then clears all `1 × 1` pieces to the Tray and clears dormant coordinates so the warden can lay out the hold from scratch.
   - **Blueprint ghosts (On / Off)** toggles `state.layout.showGhosts` (§5.1.5).
 - **320 px and Text size fit:**
-  - In the Arrange Hold sheet, when container width is `< 352 px` (such as the `320 px` check width, N3), the tile grid sits inside a self-contained horizontal scroll container (`data-internal-scroll="true"`, M7), so the page itself never scrolls horizontally (`scrollWidth ≤ innerWidth`) and every tile stays a full `44 × 44 px` tap target. On `≥ 352 px` containers, all 8 columns fit without scrolling.
+  - In the Arrange Hold sheet, when container width is `< 352 px` (such as the `320 px` check width, N3), the tile grid sits inside a self-contained horizontal scroll container (`data-internal-scroll="true"`, M7), so the page itself never scrolls horizontally (`scrollWidth ≤ innerWidth`) and every tile stays a full `44 × 44 px` tap target. At `360–390 px`, full-bleed sheet padding alignment lets all `8` columns (`352 px`) fit with zero horizontal scroll at every Text size.
   - Under reduced motion (§9.20), the grid header and the Arrange Hold sheet show still frames with no transitions or bobbing.
 
 ### 9.22 Sounds of the Frontier *(v1.2, D519–D528; v1.7, D608–D610)*
@@ -3437,7 +3490,46 @@ v1.5 adds **no new screen**. It adds a Lanes strip to two screens that already e
 
 - **Layout and checks.** No new tap, sheet, confirmation or animation in any routine flow; **a routine check-in stays at 15 taps or fewer** (the strip is part of two screens the player already opens, and Start has no extra tap). Every lane box, switch button, Suggest button and the Arrange Hold button is a tappable thing of at least 44 × 44 px at 320, 360, 375 and 390 px and at every Text size, and the page never scrolls sideways at 320 px at Largest (the sweeps also run at 375 and 390 px). Contrast passes in both themes (§9.20). The Last Stand screen and the Arrange Hold sheet, both with the strip, are added to the screen list the sweeps read (D593).
 - **Debug.** `debug.breach.freeze` (a core command, marks `debugUsed`; technical design §15).
-- **Deferred, not cut (with reasons).** The inner ward and buildings taking damage (no damage to buildings, D108); per-wave monster traits tied to lanes (a new rule set); story text (the owner supplies it if wanted); a dedicated Lanes sheet (the strip and the breakdown sheet are enough); a sound for the Breach (not one of the 15 moments, §9.22).
+- **Deferred, not cut (with reasons).** Permanent building damage and repair chores (buildings take no damage, D108); per-wave monster traits tied to lanes (a new rule set); story text (the owner supplies it if wanted); a dedicated Lanes sheet (the strip and the breakdown sheet are enough); a sound for the Breach (not one of the 15 moments, §9.22).
+
+### 9.26 Hold Look, Courtyard Marks & v1.8 Breakdowns *(v1.8, D622, D625, Q79–Q82)*
+
+- **Hold Look drawer/sheet (`T18.7`):** Opened from **[Hold Look ▸]** on the Hold screen or inside `Arrange Hold` (`≥ 44 × 44 px` button). Lets the warden toggle every owned cosmetic **Shown** or **Hidden** individually across both the `8 × 12` Grid and Classic scene without changing any combat or economy rule:
+  - **Courtyard Marks (`6` permanent Event Cosmetics, closes D490):** unlocked permanently across resets on first kill of each Great Beast or first clear of each Legendary Hunt (and backfilled on load for already-cleared events): **Fjord-Bone Standard** (*The Lindworm of Velk Fjord*), **Barrow Brazier** (*The Barrow-King*), **River-Reed Basin** (*The Mother of the River*), **Stoneback Cairn** (*Stoneback the Fell Troll*), **Kettle-Barrow Wreath** (*The Mara of Kettle Barrow*), and **Watch-Fire Sconce** (*Likho the One-Eyed*). Locked marks display with a static **Locked** badge and source hint (`Locked · {source}`).
+  - **Riftglass Shop (`4` Delve shop cosmetics, `COSMETIC_IDS`):** *Gatehouse Banners*, *Wall Lanterns*, *Carved Hearth Hall Door*, and *Watchtower Bell*; bought cosmetics toggle between **Shown** and **Hidden**, while unbought cosmetics show **Locked** (`Buy in the Riftglass shop (Rank ▸)`).
+- **Tactical Breakdowns & v7 Stand Logs (`D625`, `Q81`):** `Rates`, `Threat`, and `Hut` inspectable breakdowns expose single-source `Hold tactics` / `Warded Hearth Hall` modifiers with exact parity. In `Bastion`, `Lanes` / `Stand` indicators summarize `Rampart +{p}%`, `{n} Screened`, and `Sector +{p}%`, and `Wave log` renders `Defenses` breakdowns (including nested `Screened (+{p}%)` on screened watchtowers) while keeping legacy `v5`/`v6` wave logs untouched.
+- **Player-facing strings table (word for word; no others in `src/content/v18-text.ts` `V18_TEXT`):**
+
+  | String | Where it shows | Purpose |
+  |---|---|---|
+  | `Hold Look ▸` | Hold screen & `Arrange Hold` button | Opens the Hold Look sheet |
+  | `Hold Look` | Sheet title | Sheet header |
+  | `Show or hide earned Courtyard Marks and bought Hold accents across the Grid and Scene.` | `Hold Look` intro paragraph | Explains cosmetic visibility toggles |
+  | `Courtyard Marks` | `Hold Look` section heading | Groups the 6 permanent event cosmetics |
+  | `Riftglass Shop` | `Hold Look` section heading | Groups the 4 Delve shop cosmetics |
+  | `Earned · {source}` / `Locked · {source}` | Courtyard Mark row sub-line | Names the Great Beast or Legendary Hunt source |
+  | `Bought in Riftglass shop` / `Buy in the Riftglass shop (Rank ▸)` | Shop cosmetic row sub-line | Shows unlock status or points to Rank shop |
+  | `Shown` / `Hidden` | Cosmetic toggle button (`aria-pressed`) | Shows or hides the cosmetic on Grid and Scene |
+  | `Locked` | Static badge on unowned rows | Marks unowned cosmetics |
+  | `Hold tactics` | `Rates` & `Hut` breakdown parent node | Groups district adjacency and Warded bonuses |
+  | `Mill links ({n})` | Food production breakdown child | Active Farm links beside Mill |
+  | `Sawpit links ({n})` | Wood production breakdown child | Active Woodcutter links beside Sawpit |
+  | `Smithy links ({n})` | Iron & Silver breakdown child | Active Mine / Silver Seam links beside Smithy |
+  | `Alchemist links ({n})` | `Hut` brew & experiment breakdown child | Active Herb Garden links beside Alchemist's Hut |
+  | `Warm Cottages ({n})` | Food, Wood & Iron breakdown child | Active Cottages beside Hearth Hall or Bell Foundry |
+  | `Trophy Hall link` | Food, Wood & Iron breakdown child | Active Trophy Hall beside Hearth Hall or Barracks |
+  | `Warded plots ({n})` | Production breakdown child | Active production plots enclosed behind north defenses |
+  | `Warded Hearth Hall` | `Threat` breakdown factor | Hourly Threat slow factor when Hearth Hall is Warded |
+  | `Brew time` | `Hut` Brew tab timing label & breakdown root | Inspectable brew duration breakdown |
+  | `Experiment time` | `Hut` Experiment breakdown root | Inspectable experiment duration breakdown |
+  | `Base time` | `Hut` duration breakdown base child | Unmodified base brew or experiment seconds |
+  | `Connected rampart (+{p}%)` | Lane `wallCut` & Wave log breakdown | Wall rampart bonus when lane column wall is connected |
+  | `Screened (+{p}%)` | Screened watchtower nested breakdown | Volley bonus from wall directly north of watchtower |
+  | `Sector support (+{p}%)` | Lane `volley` & Wave log breakdown | Barracks / Lodge support bonus behind lane |
+  | `Rampart +{p}%` | `Lanes` / `Stand` tactical summary tag | Highlights rampart-connected lanes |
+  | `Sector +{p}%` | `Lanes` / `Stand` tactical summary tag | Highlights sector-supported lanes |
+  | `{n} Screened` | `Lanes` / `Stand` tactical summary tag | Shows count of Screened Watchtowers |
+  | `Defenses` | `Wave log` section heading | Groups wall-cut and volley breakdowns per wave |
 
 ---
 
@@ -3467,7 +3559,7 @@ v1.5 adds **no new screen**. It adds a Lanes strip to two screens that already e
 | The Descent (a third ending) | Deferred (D448, D477); scheduled as v1.4 (D499); **fleshed out 2026-10-25 as a three-stage all-hands relay in the Deep (D557–D568, §5.15.10, §9.24)** | Milestone v1.4 "The Descent" |
 | Rising difficulty for Keep the Vigil (an endless mode) | Deferred (D453, D477); scheduled as v1.3 (D499); **fleshed out 2026-10-24 as Rising Vigil, an optional switch on the stand screen (D538–D551, §5.9.10, §9.23)** | Milestone v1.3 "Keep the Vigil" |
 | Tactical building placement in the Last Stand ("The Breach") | Split from decorative placement (D499, D500); **fleshed out 2026-10-28 as lanes, cover and the front zone for Walls and Watchtowers only (D579–D595, §5.9.11, §9.25)** | Milestone v1.5 "The Breach" |
-| An inner ward (protection for key buildings) and buildings taking damage | Buildings take no damage (D108); protecting them needs a new damage rule (D580) | Not planned |
+| Permanent building damage and repair chores | Buildings never suffer destruction or require post-stand repairs (D108); non-destructive North-Reach `Warded` geometry ships in v1.8 (`D619`) | Fixed base integrity |
 | Per-wave monster traits tied to lanes | A new rule set with its own balance (D580) | Not planned |
 | Screen-reader labels and keyboard focus | Considered for v1.0 and left out (D489) | Not planned; a later accessibility pass if wanted |
 | Orders giving silver or fight bonuses; events adding standing; a seat cost; a fifth Order | Not planned (D418) | — |
@@ -3662,3 +3754,11 @@ Each one is also marked **[JC]** where it appears.
 3. **Optional `Watch fight ▸` on Contract result rows** beside `Fight log ▸`, built by a read-only core view helper, showing the earlier-rules note if applicable and playing no repeat result jingle at completion (D606).
 4. **Arena step callouts (`-{n}`, `★ -{n}`, `+{n}`, `MISS`), hit recoil, and skill/ability rim-glows** read straight from `LogEntry` fields with zero UI math and strictly gated behind Reduce motion, plus fixing the double-mirrored monster sprite in Last Stand wave logs (D607).
 5. **Ten short Kenney MP3 cues (`≤ 45 KB` sub-cap) plus zero-byte procedural Web Audio `Ambience`**, independent of `Sound`, off by default, respecting the phone's silent switch, and fading to complete silence during The Remembering reading (`R-01`–`R-11`) and The Descent story cards (`D-01`–`D-07`) while keeping the 600 KB whole-build ceiling intact (D608–D612).
+
+## Judgment calls added in the v1.8 flesh-out (D617–D624)
+
+1. **`8 × 12` Portrait Castle & expanded Age clearings (`Hamlet 6×6` → `Keep 8×8` → `Citadel 8×10` → `Bastion 8×12`):** preserves `8` columns (`352 px` in Arrange Hold) so `360–390 px` phones keep zero horizontal scrolling while opening `53` spare Bastion tiles; unlocks `breach.frontRows` `3 → 5` (D618).
+2. **Core *AoE + CoC* tactical geometry with a pure-upside `1.0×` floor and zero building destruction (`D108` intact):** orthogonal district adjacency itemized in `Breakdown`, North-Reach `Warded` flood (slowing Threat when `hearth-hall` is Warded + inner-ward uplift), connected-wall cover boost, `watchtower` *Screened Volley*, and `barracks`/`lodge` *Sector Support*, isolated in pure `layout-tactics.ts` (D619).
+3. **`rulesVersion` `6 → 7` dual replay path & save schema `15 → 16`:** pre-v1.8 `v5`/`v6` stands and golden fights replay untouched; migrating `v15` `8 × 8` layouts shifts `hearth-hall` and inner buildings cleanly southward into the inner courtyard while anchoring north front walls (`y = 0..2`), and adds `2` custom Layout Presets + 3-mode Auto-Arrange/Suggest (*Balanced*, *Economy*, *Fortress*) (D620, D621).
+4. **Six permanent cross-cycle Event *Courtyard Marks* closing `D490` & §5.12.12:** one per Great Beast & Legendary Hunt with backfill on load, toggled alongside `COSMETIC_IDS` inside the **Hold Look** drawer (`HoldGrid` + matching `HoldScene` accents) (D622).
+5. **Hybrid Zughy-32 Grid Art Refresh across 3 review batches (`≤ 12` subjects each, `D475`) + `D615` PNG sub-cap bump inside `≤ 614,400 B` gzipped:** §2.3 collision-checked `Ward & Rampart`, 6 Courtyard Marks, and tactical UI terms logged in `tests/content/names.ts`; `14` tasks / `12–15` sessions with `T18.12` simulator calibration moving `sim/baseline.json` once after owner approval (D623, D624).
