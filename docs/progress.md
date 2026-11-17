@@ -4,9 +4,9 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `main` (post-`v1.9.0`, merged from `milestone/v1.9`).
-- **Milestone:** v1.9 "Kettle & Fang" (`D630`–`D638` `Decided`), **complete**.
-- **Last task:** `v1.9` milestone end — `milestone/v1.9` merged to `main` and tagged `v1.9.0`.
+- **Branch:** `main` (post-`v1.9.1`, fixing Ubuntu CI OS-dependent `zlib` check in `tests/tools/art-v19.test.ts`).
+- **Milestone:** v1.9 "Kettle & Fang" (`D630`–`D638` `Decided`), **complete** (`v1.9.0` merged, `v1.9.1` CI fix).
+- **Last task:** `v1.9.1` CI fix (`tests/tools/art-v19.test.ts`) — Replaced macOS-dependent `packPng(deployedBuf) === null` assertion on `public/assets/` with OS-independent indexed `colorType === 3` and `< rawUnpacked.length` checks (`706e1de` pattern); `npm run check` confirmed green (`≤ 90 s`), pushed to `main` + `milestone/v1.9`, and tagged `v1.9.1`.
 - **Next:** Next milestone direction or flesh-out session from the owner (`docs/implementation-plan.md` §0.4).
 - **Open questions:** None.
 
@@ -322,3 +322,6 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 ## 2026-11-17 — v1.9 milestone end (merged to main & tagged v1.9.0)
 - **Owner sign-off (`D638`):** Owner confirmed **Playtest passed** on iPhone after pushing `ef88acb`. Logged `D638` (`Decided`) in `docs/decisions.md` and marked `v1.9` `Status: complete` (`13` actual entries in `§0.7` of `docs/implementation-plan.md`).
 - **Release wrap-up:** Verified `sim/baseline.json` (`rulesVersion: 8`, `63 / 63` simulator checks passing per `D637`) and save schema `17`, ran final `npm run check` (`≤ 90 s`), merged `milestone/v1.9` to `main`, pushed `main`, and pushed release tag `v1.9.0`.
+
+## 2026-11-17 — `v1.9.1`: OS-independent PNG packing check in `tests/tools/art-v19.test.ts`
+- **CI failure & fix (`tests/tools/art-v19.test.ts#L316`):** Ubuntu CI `check` caught `portraits/creature-beacon-bane.png` failing `packPng(deployedBuf) === null` due to macOS vs. Linux `zlib` deflate differences while all 6 Ubuntu E2E shards and `Deploy` succeeded. Applied the `v1.8` (`706e1de`) OS-independent pattern (`colorType === 3`, `deployedBuf.length < rawUnpackedFor(s).length`, while preserving `deployedBuf.equals(stagedBuf)`, frozen SHA-256 hashes, and `png-pack.test.ts` budget checks), verified `npm run check` green (`≤ 90 s`), pushed to `main` & `milestone/v1.9`, and tagged `v1.9.1`.

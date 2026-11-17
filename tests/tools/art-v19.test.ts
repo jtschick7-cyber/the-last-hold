@@ -14,7 +14,6 @@ import { V19_HASHES_PATH } from '../../tools/deploy-v19';
 import { drawCourtyardMarkV18, V18_COURTYARD_MARK_IDS } from '../../tools/grid-v18-marks';
 import { drawCourtyardMarkV19, V19_MARK_IDS } from '../../tools/marks-v19';
 import { C } from '../../tools/pixel';
-import { packPng } from '../../tools/png-pack';
 import { drawPortraitV19, V19_PORTRAIT_IDS } from '../../tools/portraits-v19';
 import { drawSpriteCanvasV19, renderSpriteStripV19, V19_SPRITE_IDS } from '../../tools/sprites-v19';
 
@@ -265,18 +264,20 @@ describe('v1.9 Kettle & Fang art batch (T19.6, D475, D635)', () => {
   });
 
   it('deploys all 6 owner-approved Keep PNGs, freezes v1.9 SHA-256 hashes, registers isV19Asset, and leaves v1.0-v1.8 frozen hashes untouched', () => {
+    const rawUnpackedFor = (s: (typeof V19_SUBJECTS)[number]): Buffer =>
+      s.kind === 'portrait'
+        ? drawPortraitV19(s.subjectKey as 'thorn-stag').toPng(64)
+        : s.kind === 'sprite'
+          ? renderSpriteStripV19(s.subjectKey as 'thorn-stag')
+          : drawCourtyardMarkV19(s.subjectKey as 'thorn-antler-rack').toPng(16);
+
     for (const s of V19_SUBJECTS) {
       const stagedPath = resolve(V19_STAGING_DIR, s.stagingRelPath);
       expect(existsSync(stagedPath), stagedPath).toBe(true);
       const buf = readFileSync(stagedPath);
       expect(buf[25], `${s.stagingRelPath} indexed colorType 3`).toBe(3);
 
-      const rawUnpacked =
-        s.kind === 'portrait'
-          ? drawPortraitV19(s.subjectKey as 'thorn-stag').toPng(64)
-          : s.kind === 'sprite'
-            ? renderSpriteStripV19(s.subjectKey as 'thorn-stag')
-            : drawCourtyardMarkV19(s.subjectKey as 'thorn-antler-rack').toPng(16);
+      const rawUnpacked = rawUnpackedFor(s);
       expect(buf.length).toBeLessThan(rawUnpacked.length);
       expect(PNG.sync.read(buf).data.equals(PNG.sync.read(rawUnpacked).data)).toBe(true);
     }
@@ -313,7 +314,11 @@ describe('v1.9 Kettle & Fang art batch (T19.6, D475, D635)', () => {
       const stagedBuf = readFileSync(resolve(V19_STAGING_DIR, s.stagingRelPath));
       const deployedBuf = readFileSync(resolve(ROOT, 'public', 'assets', s.deployedRelPath));
       expect(deployedBuf.equals(stagedBuf), s.deployedRelPath).toBe(true);
-      expect(packPng(deployedBuf), `${s.deployedRelPath} already maximally packed`).toBeNull();
+      // Indexed PNG (colorType 3) stays strictly smaller than raw RGBA across all OS zlib builds (cf. D623 / 706e1de)
+      expect(deployedBuf[25], `${s.deployedRelPath} indexed colorType 3`).toBe(3);
+      expect(deployedBuf.length, `${s.deployedRelPath} smaller than raw RGBA`).toBeLessThan(
+        rawUnpackedFor(s).length,
+      );
       const sha = createHash('sha256').update(deployedBuf).digest('hex');
       expect(sha, s.id).toBe(frozen[s.id]);
     }
