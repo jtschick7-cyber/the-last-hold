@@ -4,11 +4,11 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `main` (post-`v1.8.0`, merged PR `#30` from `milestone/v1.8`).
-- **Milestone:** v1.8 "Ward & Rampart" (`D617`–`D629` `Decided`), **complete**.
-- **Last task:** `v1.8` milestone end — PR `#30` merged and tagged `v1.8.0`.
-- **Next:** v1.9 flesh-out session (`docs/implementation-plan.md` §0.4) or next milestone direction from the owner.
-- **Open questions:** None.
+- **Branch:** `milestone/v1.9` (branched from `v1.8.0` `20d298b`).
+- **Milestone:** v1.9 "Kettle & Fang" (`D630`–`D636` `Decided`), **in progress** (`T19.1` complete).
+- **Last task:** `T19.1` — `v1.9` docs commit (flesh-out summary, `D630`–`D636`, GDD/TD/Plan/`CLAUDE.md` updates, §2.3 name check).
+- **Next:** `T19.2` (dual `rulesVersion` `7 → 8` propagation across `FightInput` / `playback.ts` / stands / Delve replays + `SCHEMA_VERSION` `16 → 17` migration with safe `events.boss.visit` remapping).
+- **Open questions:** None (`v16` owner save export optional/helpful before `T19.8`).
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
 
@@ -237,3 +237,9 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 - **Owner sign-off (`D629`):** Owner confirmed **Playtest passed** on iPhone after pushing `4849bd3` (preview SW `includeManifestIcons: false` icon-hash fix + single-row `HoldScreen` `Rank ▸` / `Layout ▸` / `Hold Look ▸` layout). Logged `D629` (`Decided`) in `docs/decisions.md` and marked `v1.8` `Status: complete` (`24` actual entries in `§0.7` of `docs/implementation-plan.md`).
 - **Linux CI fixes (`tests/tools/grid-v18-*.test.ts`, `tests/e2e/hold-look.spec.ts`):** Replaced macOS-vs-Linux `zlib` byte-size equality assertions on frozen indexed PNGs with cross-platform indexed-color (`colorType === 3`) and `< rawRgba.length` assertions across `grid-v18-batch{1,2,3}.test.ts` and `grid-v18-deploy.test.ts` (keeping all frozen SHA-256 hashes and `png-pack.test.ts` `142,000 B` checks intact), and scoped the `320 px` `Match phone` clipped-text assertion in `hold-look.spec.ts` to the `HoldScreen` header/actions (`320 px Largest` full-page `clipped` remains strict).
 - **Release wrap-up:** Verified `sim/baseline.json` (`rulesVersion: 7`, `63/63` simulator checks passing per `D628`) and save schema `16`, ran final `npm run check` (`≤ 90 s`), merged PR `#30` (`milestone/v1.8` → `main`), and tagged `v1.8.0`.
+
+## 2026-11-17 — v1.9 T19.1: docs commit (Kettle & Fang flesh-out applied)
+- **Preconditions & decisions (`D630`–`D636`):** Verified clean `v1.8.0` (`20d298b`) on `main` (`0` open questions in `docs/questions.md`, `0` unratified `Proposed` rows in `docs/decisions.md`, Acts I–VI complete, `dist/` gzipped `533,286 B ≤ 614,400 B`, PNGs `138,688 B ≤ 142,000 B`, `63/63` simulator checks passing). Owner approved Option C (Phase 1 Q1–Q6, Phase 2 Q1–Q3) and authorized `T19.1`; appended `D630`–`D636` (`Decided`) without modifying prior rows.
+- **Docs & §2.3 name check:** Created `docs/flesh-out/v1.9/v1.9-summary.md`; updated `docs/gdd.md` (`Status`, `§3.4`, `§5.12.12`, judgment calls), `docs/technical-design.md` (`§26`), `docs/implementation-plan.md` (`§0.7`, `v1.9` `T19.1`–`T19.10`, `12–14` sessions), and `CLAUDE.md` (`rulesVersion 8` dual-path + `v1.9` sync). Web-checked `Kettle & Fang`, `The Thorn-Stag`, `The Beacon-Bane`, `Thorn-Snare`, `Bramble-Sweep`, `Pitch-Flare`, `Curse-Brand`, `Thorn-Antler Rack`, `Beacon-Iron Urn`, and `Shrouded` against §2.3 influences (dropped *Briar-Hart* vs Skyrim and *Kiln-Fiend*/*Tar-Fiend* vs MTG) and logged all clear/generic entries in `tests/content/names.ts`.
+- **Skipped / deferred:** Existing GDD tables parsed by content tests (`§5.7`, `§5.8.5`–`§5.8.6`, `§7.8`, `§7.11`, `§8.5a`, `§8.13`, `§9.26`) stay synced cleanly when their corresponding code changes land in `T19.3`–`T19.5`.
+- **Verification & next:** `npm run check` passed (`268` test files / `4,169` tests in `28.40 s`, `sim:check --fast` `2.5 s`; `≤ 90 s` total); branched `milestone/v1.9` locally and committed `T19.1`. Next task: **`T19.2`** (`rulesVersion 7 → 8` dual-path propagation & `schema 16 → 17` migration).

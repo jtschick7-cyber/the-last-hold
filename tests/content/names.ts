@@ -1401,4 +1401,41 @@ export const checkedNames: readonly CheckedName[] = [
       note: 'v1.8 plain English UI/tactical words (D619, D622, D623). Zero match as named feature/term in any GDD §2.3 influence.',
     }),
   ),
+  // v1.9 flesh-out (T19.1, 2026-11-17, D635): Kettle & Fang subtitle, 2 new Great Beasts, abilities, Courtyard Marks, and combat status. Web-searched 2026-11-17 against GDD §2.3 influences.
+  {
+    name: 'Kettle & Fang',
+    checked: '2026-11-17',
+    result: 'clear',
+    note: 'v1.9 milestone subtitle (D630, D635). Searched 2026-11-17 against GDD §2.3 influences: zero collision.',
+  },
+  {
+    name: 'The Thorn-Stag',
+    checked: '2026-11-17',
+    result: 'clear',
+    note: 'v1.9 Great Beast #4 (Field & Forest Spirits, D631, D635). Replaces rejected draft "Briar-Hart" (Skyrim Forsworn Briarheart); zero match in any GDD §2.3 influence.',
+  },
+  {
+    name: 'The Beacon-Bane',
+    checked: '2026-11-17',
+    result: 'clear',
+    note: 'v1.9 Great Beast #5 (Cursed, D631, D635). Avoids Dark Souls avoid-list words and rejected MTG drafts "Kiln-Fiend"/"Tar-Fiend"; zero match in any GDD §2.3 influence.',
+  },
+  ...['Thorn-Snare', 'Bramble-Sweep', 'Pitch-Flare', 'Curse-Brand'].map((name): CheckedName => ({
+    name,
+    checked: '2026-11-17',
+    result: 'clear',
+    note: 'v1.9 Great Beast ability names (D631, D635). Searched 2026-11-17 against GDD §2.3 influences: zero collision.',
+  })),
+  ...['Thorn-Antler Rack', 'Beacon-Iron Urn'].map((name): CheckedName => ({
+    name,
+    checked: '2026-11-17',
+    result: 'clear',
+    note: 'v1.9 permanent Courtyard Marks unlocked from Great Beasts #4 and #5 (D631, D635). Zero match in any GDD §2.3 influence.',
+  })),
+  {
+    name: 'Shrouded',
+    checked: '2026-11-17',
+    result: 'generic',
+    note: 'v1.9 Poppy Smoke status effect label (D633, D635). Plain English word; zero named collision in any GDD §2.3 influence.',
+  },
 ];
