@@ -34,14 +34,14 @@ import { unlockBossMark } from './cosmetics';
 // pool lost; milestones are paid once per visit by the attempt that crosses them. Nothing here
 // touches a contract counter, Embers, trophies, the bestiary or the yard (D387).
 
-/** The boss of a visit: the fixed order, round again after the third. */
+/** The boss of a visit: the fixed order, round again after the fifth. */
 export const bossOfVisit = (visit: number): BossId => {
   const order = constantAt('boss.order').value as readonly string[];
   // `boss.order` is locked with short keys (D379); the ids are matched by position.
   return BOSS_IDS[visit % order.length] ?? BOSS_IDS[0];
 };
 
-/** The completed passes through the three bosses at a visit. */
+/** The completed passes through the five bosses at a visit. */
 export const passOfVisit = (visit: number): number =>
   Math.floor(visit / (constantAt('boss.order').value as readonly string[]).length);
 

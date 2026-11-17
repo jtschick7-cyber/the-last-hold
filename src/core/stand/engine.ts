@@ -51,7 +51,7 @@ export interface StandInput {
    * version 6/7 stand, where each wave's lane gives its wall cut and volley. Absent: version 5.
    */
   readonly lanes?: LaneTable;
-  /** Rules version in force for this stand (5, 6, or 7; defaults to current `RULES_VERSION`). */
+  /** Rules version in force for this stand (5, 6, 7, or 8; defaults to current `RULES_VERSION`). */
   readonly rulesVersion?: number;
 }
 
@@ -211,6 +211,7 @@ export const runStand = (input: StandInput): StandResult => {
       prep: { oils: input.prep.oils, potions, bombs },
       stand: { health, monsterStrength: strength, partyTaken, volley },
       alchemy: input.alchemy,
+      ...(input.rulesVersion !== undefined ? { rulesVersion: input.rulesVersion } : {}),
     });
     waves.push({
       wave,

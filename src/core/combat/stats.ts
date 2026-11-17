@@ -13,16 +13,20 @@ export const present = (c: Combatant): boolean => c.health > 0 && c.awayLeft ===
 
 /** Draugr's Swell: Armor +50% (stat%) below half Health. */
 const swellBonus = (c: Combatant): number => {
+  if (c.passivesBlockable && c.abilitiesBlocked > 0) return 0;
   for (const a of c.abilities) {
     if (a.kind === 'swell' && c.health < c.maxHealth * a.belowHealth) return a.armorBonus;
   }
   return 0;
 };
 
-export const mightEff = (c: Combatant): number =>
-  (c.base.might + c.flat.might) *
-  (1 + c.statPct.might + lowHealthMight(c)) *
-  (1 + c.statusPct.might);
+export const mightEff = (c: Combatant): number => {
+  const nm = c.passivesBlockable && c.abilitiesBlocked > 0 ? 1 : (c.namelessMightMult ?? 1);
+  const baseMight = nm === 1 ? c.base.might : c.base.might * nm;
+  return (
+    (baseMight + c.flat.might) * (1 + c.statPct.might + lowHealthMight(c)) * (1 + c.statusPct.might)
+  );
+};
 
 /** Blood in the Snow (Delve): +Might (stat%) while below a share of Health. */
 const lowHealthMight = (c: Combatant): number =>
@@ -76,6 +80,7 @@ export const outgoingPct = (
   type: DamageType,
   ctx: FightContext,
   family: FamilyId | 'deep' = ctx.family,
+  target?: Combatant,
 ): number => {
   let sum = 0;
   for (const e of a.traits) {
@@ -85,6 +90,7 @@ export const outgoingPct = (
   }
   sum += a.dealtBonus; // Delve blessings (v0.7); 0 elsewhere
   sum += a.useDealt; // Torch Held High (v0.9); 0 elsewhere
+  if (a.side === 'hunter' && target && target.shroudedLeft > 0) sum += target.shroudDealtBonus;
   if (family !== 'deep') sum += a.baneVs[family] ?? 0; // bane lines on worn items (v0.8)
   // Oils (GDD §5.7): the weapon is coated for the whole fight; a mismatched oil does nothing.
   if (a.oilFamily !== null && a.oilFamily === family) sum += ctx.oilBonus;
@@ -97,11 +103,13 @@ export const hitChance = (
   party: readonly Combatant[],
   ctx: FightContext,
   cut: number = ctx.hitCut,
+  target?: Combatant,
 ): number => {
   let chance = K.hitChance;
   if (attacker.side === 'hunter') {
     chance -= cut;
     chance += attacker.hitBonus; // Owl-Eye Drops (v0.6)
+    if (target && target.shroudedLeft > 0) chance += target.shroudHitBonus; // Poppy Smoke (v1.9)
     for (const h of party) {
       for (const e of h.traits) {
         if (e.kind === 'partyHitOnLocation' && e.location === ctx.location) chance += e.amount;
@@ -138,7 +146,8 @@ export const takenReduction = (
     defender.extraTaken +
     (defender.takenByType[type] ?? 0) +
     defender.useTaken +
-    defender.talentTaken;
+    defender.talentTaken +
+    defender.tonicTaken;
   if (defender.vanguardShield > 0) {
     // Warp and Weft (Delve): the others take less while a Vanguard stands.
     for (const ally of party)
@@ -162,6 +171,8 @@ export const takenReduction = (
     }
     sum += defender.fireTakenReduction;
     sum += defender.fireTakenPotion; // Coldwater Draught (v0.6)
+  } else if (type === 'frost') {
+    sum += defender.frostTakenPotion; // Coldwater Draught (v1.9)
   }
   const cap = K.takenCap;
   return sum > cap ? cap : sum;
@@ -185,13 +196,14 @@ export const monsterFamily = (id: MonsterId): FamilyId => monsters[id].family;
 
 /**
  * GDD §8.3 Unthawed (Rimewrought): the first Fire hit it takes strips a share of its
- * Armor for the rest of the fight (stat%). A weakness, so a Saltburst never cancels it
- * (D176). Returns the log note, or null if nothing happened.
+ * Armor for the rest of the fight (stat%). Under v1.9 (`rulesVersion >= 8`), Saltburst
+ * can cancel and suppress passives (including Unthawed). Returns the log note, or null.
  */
-export const unthaw = (c: Combatant): string | null => {
+export const unthaw = (c: Combatant, isBlocked?: () => boolean): string | null => {
   if (c.unthawed) return null;
   for (const a of c.abilities) {
     if (a.kind !== 'unthawed') continue;
+    if (isBlocked?.()) return null;
     c.unthawed = true;
     c.statPct.armor -= a.armorStrip;
     return `the ${c.name}'s rime cracks (Unthawed: Armor −${Math.round(a.armorStrip * 100)}% for the fight)`;

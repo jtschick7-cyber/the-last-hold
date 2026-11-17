@@ -47,13 +47,13 @@ describe('recipes (GDD §5.8.2, D198)', () => {
     ]);
   });
 
-  it('a bomb is one carrier and a wood; Saltburst two carriers and a silver', () => {
+  it('a bomb is one carrier and a wood; Saltburst one carrier and a silver (v1.9)', () => {
     const s = hut();
     expect(knownRecipes(s, 'fire-pot')).toEqual([
       { ingredients: { pitch: 1 }, resources: { wood: 1 } },
     ]);
     expect(knownRecipes(s, 'saltburst')).toEqual([
-      { ingredients: { 'rime-salt': 2 }, resources: { silver: 1 } },
+      { ingredients: { 'rime-salt': 1 }, resources: { silver: 1 } },
     ]);
   });
 
@@ -63,14 +63,10 @@ describe('recipes (GDD §5.8.2, D198)', () => {
     expect(recipes(s, 'fire-pot')).toEqual([{ pitch: 1 }, { thornwood: 1 }]);
   });
 
-  it('a mix of two carriers counts for Saltburst (any mix of two units)', () => {
+  it('any single carrier counts for Saltburst (1 unit + 1 silver)', () => {
     const s = hut();
     revealProperty(s, 'grave-dust', 2);
-    expect(recipes(s, 'saltburst')).toEqual([
-      { 'rime-salt': 2 },
-      { 'rime-salt': 1, 'grave-dust': 1 },
-      { 'grave-dust': 2 },
-    ]);
+    expect(recipes(s, 'saltburst')).toEqual([{ 'rime-salt': 1 }, { 'grave-dust': 1 }]);
   });
 
   it('a bomb is known from one carrier, an oil needs two (Poppy Smoke, Hidebane Oil)', () => {

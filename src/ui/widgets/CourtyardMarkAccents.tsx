@@ -13,19 +13,23 @@ const MARK_PX = 16;
 const GRID_ANCHORS: Readonly<Record<CourtyardMarkId, Point>> = {
   'barrow-brazier': [10, 6],
   'kettle-barrow-wreath': [230, 6],
+  'thorn-antler-rack': [6, 94],
   'stoneback-cairn': [4, 184],
   'watch-fire-sconce': [236, 184],
+  'beacon-iron-urn': [234, 274],
   'fjord-bone-standard': [8, 356],
   'river-reed-basin': [230, 358],
 };
 
 const SCENE_ANCHORS: Readonly<Record<CourtyardMarkId, Point>> = {
+  'beacon-iron-urn': [4, 46],
   'fjord-bone-standard': [12, 34],
   'barrow-brazier': [34, 42],
   'stoneback-cairn': [56, 44],
   'kettle-barrow-wreath': [96, 42],
   'river-reed-basin': [116, 44],
   'watch-fire-sconce': [136, 36],
+  'thorn-antler-rack': [140, 46],
 };
 
 /** Static 16 × 16 Zughy-32 pixel-art Courtyard Mark overlay for Grid (256 × 384) and Scene (160 × 64). */

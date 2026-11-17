@@ -329,11 +329,11 @@ final      = 0                                                 if resist = 0 (im
 | Bucket | What goes in it | Examples |
 |---|---|---|
 | **flat** | Fixed additions to a stat, applied before any multiplier | Gear (+9 Might), Quick (+3 Speed) |
-| **stat%** | Percentage changes to a stat that last the whole fight | Quickfoot Tincture (+20% Speed), Swell (+50% Armor) |
+| **stat%** | Percentage changes to a stat that last the whole fight | Quickfoot Tincture (+15% Speed), Swell (+50% Armor) |
 | **status%** | Temporary effects whose duration counts actions | Hamstring (−30% Speed), the Frost Pot slow, Hardwood Tonic, Malice (+5% Might per action) |
 | **outgoing%** | Bonuses to damage dealt | Traits vs a family or location (Grave-warden, Fen-born, Fire-touched), oils |
 | **knowledge%** | Studied / Mastered bonus vs a species | +5% / +10% |
-| **taken%** | Reductions to damage taken. They **add together**, are **capped at 75%**, and apply **after Armor** *(B2)* | Shieldwall −10%, Fire-touched −20% Fire, Emberwright Plate −10% Fire |
+| **taken%** | Reductions to damage taken. They **add together**, are **capped at 75%**, and apply **after Armor** *(B2)* | Shieldwall −10%, Fire-touched −20% Fire, Emberwright Plate −25% Fire |
 
 - Every bucket is additive inside and multiplicative across buckets.
 - `round` rounds half up. Health is always a whole number.
@@ -452,7 +452,7 @@ In v0.1–v0.3, the Keep is the end of content. The Rank screen shows the next R
 | Mill, Sawpit, Smithy level cap | 15 | 20 |
 | Hunter level cap | 15 | 20 |
 | Bounty multiplier | ×3.5 *(D138)* | ×3 *(D138)* |
-| Provisions (`provisions.incomeMinutes`) | 4.4 *(D189)* | 2.5 *(D138)* |
+| Provisions (`provisions.incomeMinutes`) | 4.12 *(D189, D637)* | 2.5 *(D138)* |
 | Active roster | +2 | +2 |
 | Highest contract tier | 5 | 5 |
 | Unlocks | Walls and Watchtower (§5.9.2) | the Last Stand (§5.9.3) |
@@ -623,7 +623,7 @@ Until v0.8, gear is **upgraded in place**: each hunter has a weapon slot and an 
 | **Wright's Blade** *(v0.5, D159; was "Runed Blade", D170)* | +12 Might. Keeps the Silver sub-hit and adds a **Rune sub-hit** of the same size: `0.25 × Might_eff × variance × crit` × the target's Rune resistance, no Armor, its own log line | 600 iron, 300 silver | Smithy 8 and the Citadel (the Forge Hall) |
 | Hide Armor | +2 Armor | 40 wood, 30 food | Smithy 1 |
 | Mail | +5 Armor | 300 iron | Smithy 3 |
-| Emberwright Plate | +8 Armor, −10% Fire damage taken | 600 iron, 150 silver | Smithy 6 |
+| Emberwright Plate | +8 Armor, −25% Fire damage taken | 600 iron, 150 silver | Smithy 6 |
 
 The Wright's Blade (v0.5) is the fourth weapon tier, strictly better than the Silvered Blade, so upgrading in place still works. Like all gear it resets at the Long Night (A4).
 
@@ -679,7 +679,7 @@ Each contract has:
    - **Death chance** per hunter (Reckless contracts only).
    - **Expected rewards.**
    - **"Why?"** opens the summary math: party damage per 100 ticks vs monster Health, and monster damage per 100 ticks vs the party's effective Health.
-4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1 in the Keep (D85), **4.4** in the Citadel (D189) and 2.5 in Bastion (D106, D138; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative. While the Thanes' Moot is seated, the food paid is multiplied by (1 − step × level) (§5.13.5).
+4. **Pay provisions** *(⚑ revisions G3; Q9, D81–D82)*: per hunter, the larger of **30 food** or **N minutes of the hold's food capacity** (what its food jobs would make with every farmer slot filled, limited by the number of peasants; Q11, D84, so moving peasants between jobs cannot lower it), × party size × 2.2^(tier − 1), paid at launch. N is `provisions.incomeMinutes`: 0 in the Hamlet, 1.1 in the Keep (D85, D637), **4.12** in the Citadel (D189, D637) and 2.5 in Bastion (D106, D138; tuned to keep §6.3 #8 in its band). Hamlet contracts therefore stay flat (tier 1 with 2 hunters: 60 food). From the Keep on, provisions grow with the hold, so food stays a real cost (§6.3 #8): a tier-3 party of 3 costs about 15 minutes of food capacity, and a tier-5 party of 4 about 1 h 34 min. The launch sheet's breakdown shows the food capacity used. Failures don't refund provisions; declining is free. If food is short, the launch button shows how long until it's affordable. Nothing launches while you're offline, so food can never go negative. While the Thanes' Moot is seated, the food paid is multiplied by (1 − step × level) (§5.13.5).
 5. Launch. The hunters are busy for the contract's duration.
 
 The **actual outcome** uses `seed = hash(contractSeed, party IDs, preparation IDs)`. It is fixed and reproducible, and it's the same fight the log replays. The 500 preview simulations use different derived seeds, so the preview never reveals the real roll.
@@ -828,7 +828,7 @@ From v0.3, a contract can post an **unknown monster**. The player sees:
 
 The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from reagents. While the Grey Wives are seated, brew time is multiplied by (1 − step × level), fixed when the brew is queued (§5.13.5).
 - The nine v0.3 recipes are known from the start; from v0.6 they are the recipe book's starting recipes, and discovery adds the rest (§5.8).
-- Each brew takes 10 min, one at a time per Hut level. Several can be queued.
+- Each brew takes 10 min, one at a time per Hut level (`hut.timeCutPerLevel` cuts brew and experiment duration by 8% per level above 1, up to −32% at level 5). Several can be queued.
 - Finished consumables go into the hold's stores.
 
 **Preparation slots per contract:**
@@ -846,12 +846,12 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 | Grave Oil | Oil | +35% damage vs Restless Dead | 2 grave dust + 1 juniper |
 | Drowned-Bane Oil | Oil | +35% damage vs Water Spirits | 2 river pearl + 1 yarrow |
 | Thornbane Oil | Oil | +35% damage vs Field & Forest Spirits | 2 thornwood + 1 mugwort |
-| Mending Draught | Potion | Once, below 30% Health: heal 40% of max Health | 2 yarrow + 1 honeycomb |
-| Hardwood Tonic | Potion | +30% Armor until the holder's 5th action | 1 thornwood + 2 juniper |
-| Quickfoot Tincture | Potion | +20% Speed for the whole fight | 2 mugwort + 1 hare's foot |
+| Mending Draught | Potion | Once, below 50% Health: heal 45% of max Health | 2 yarrow + 1 honeycomb |
+| Hardwood Tonic | Potion | +40% Armor and −15% all damage taken until the holder's 8th action | 1 thornwood + 2 juniper |
+| Quickfoot Tincture | Potion | +15% Speed for the whole fight | 2 mugwort + 1 hare's foot |
 | Fire Pot | Bomb | At tick 1: 40 Fire damage, then 10 Fire on each of the monster's next 3 actions | 1 pitch + 1 wood (resource) |
 | Frost Pot | Bomb | At tick 1: 30 Frost damage, then −30% Speed for the monster's next 3 actions | 1 rime salt + 1 wood |
-| Saltburst | Bomb | Triggers on the monster's first ability: cancels it and blocks abilities for the monster's next 3 actions | 2 rime salt + 1 silver (resource) |
+| Saltburst | Bomb | Triggers on the monster's first ability (active or passive): 25 Rune damage, cancels it, and blocks abilities for the monster's next 3 actions | 1 rime salt + 1 silver (resource) |
 
 *v0.6 adds six brews (§5.8.5); 15 in all.*
 
@@ -878,8 +878,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 | Brew kind | Shape |
 |---|---|
 | Oil, potion | 3 units from two different carriers: **2 of one and 1 of the other**, either way round (the player picks the split at Brew) |
-| Fire Pot, Frost Pot, Poppy Smoke | 1 unit of a carrier + 1 wood |
-| Saltburst | 2 units of carriers (any mix) + 1 silver |
+| Fire Pot, Frost Pot, Saltburst, Poppy Smoke | 1 unit of a carrier + resource (`1 wood` or `1 silver` for Saltburst) |
 
 - The nine v0.3 recipes are exactly these shapes, so they are simply the first recipes the book knows. Every other known pair is an **alternate recipe** (e.g. a Fire Pot from thornwood, a Frost Pot from river pearl).
 - Brewing is unchanged from v0.3 (§5.7, D91): one brew per kettle (kettles = Hut level), `brew.time` each, paid when queued, cancel refunds in full, queue unlimited.
@@ -903,14 +902,14 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 |---|---|---|---|
 | **Hidebane Oil** | Oil | +35% damage vs Beasts & Wilds (`oil.familyBonus`) | Gaunt Wolf, Bies; makes well-prepared possible vs the family |
 | **Wright's Oil** | Oil | +35% damage vs the Cursed | All four Cursed; makes well-prepared possible vs the family |
-| **Coldwater Draught** | Potion | The holder takes −40% Fire damage for the whole fight (taken%, inside the 75% cap) | Noon Heat, Seal-burn |
-| **Owl-Eye Drops** | Potion | The holder's hit chance +10 points for the whole fight | Lightless |
-| **Steadfast Draught** | Potion | The first time a monster's ability would cost the holder an action, it doesn't; the ability's other effects still apply | Barrow-Grip, Drowning Song, Enthrall, Lead Astray, Drag Under's grab |
-| **Poppy Smoke** | Bomb (1 carrier + 1 wood) | At tick 1, the monster loses its next action | Fast monsters; a breather |
+| **Coldwater Draught** | Potion | The holder takes −50% Fire and −30% Frost damage and gains +10% Might for the whole fight (taken% inside the 75% cap) | Noon Heat, Seal-burn, Chill/Drain |
+| **Owl-Eye Drops** | Potion | The holder's hit chance +10 points and crit chance +10 points for the whole fight | Lightless, Ill Luck |
+| **Steadfast Draught** | Potion | Prevents the next 2 ability-caused lost actions (scaled by Herbwise & Alchemy) and grants +10% Might for the whole fight; other ability effects still apply | Barrow-Grip, Drowning Song, Enthrall, Lead Astray, Drag Under's grab |
+| **Poppy Smoke** | Bomb (1 carrier + 1 wood) | At tick 1, the monster loses its next action and is Shrouded for 2 actions (party attacks gain +15 hit, +10 crit, +15% damage) | Fast monsters; burst openings |
 
 - **Well prepared:** the two new oils are matching oils like the v0.3 ones. Poppy Smoke has no damage type, so it never counts as a bomb the monster is weak to.
-- **Herbwise** multiplies Coldwater (−50%) and Owl-Eye (+12.5 points); Steadfast has no number, so Herbwise does nothing for it (shown).
-- **Spoil** can ruin a Steadfast Draught that hasn't fired (D92's rule); Coldwater and Owl-Eye are drunk at the start.
+- **Herbwise** multiplies Coldwater (−62.5% Fire / −37.5% Frost / +12.5% Might), Owl-Eye (+12.5 hit / +12.5 crit), and Steadfast (rounds 2 × 1.25 = 3 kept actions and +12.5% Might).
+- **In fights (`rulesVersion >= 8`):** Steadfast and Coldwater apply at the start of the fight; Poppy Smoke applies 1 lost action + 2-action Shrouded; Frost Pot accumulates cleanly alongside Rime-Dipped and Hamstring. Pre-v1.9 saves (`rulesVersion <= 7`) preserve legacy consumable behavior bit for bit.
 - **Saltburst** doesn't cancel the new brews' effects (they are the party's, not the monster's).
 - **In the Last Stand:** potions fire once in the whole stand (Coldwater and Owl-Eye last wave 1 only, like Quickfoot, D120); Steadfast fires once in the stand; automatic bombs per wave are: those the wave is weak to, then one Saltburst, then one Poppy Smoke (up to `prep.bombSlots`).
 - **Fights:** Steadfast and Poppy Smoke are new fight rules; the other four reuse the oil, taken% and hit-chance rules. Old fights and every golden fight replay unchanged, so `rulesVersion` stays 3; if a golden changes, stop and ask (D218).
@@ -920,7 +919,7 @@ The **Alchemist's Hut** (Keep, level building, max 5) brews consumables from rea
 
 | Skill | XP from (tunable) | Gives, per level |
 |---|---|---|
-| **Alchemy** | brew finished 1 · experiment 3 · property revealed 10 | Brews **+3% stronger** (to +30%): every number in a brew's effect (oil bonus, heal, Armor, Speed, Coldwater, Owl-Eye, bomb damage and burn). Counts of actions (Saltburst's block, Steadfast, Poppy Smoke, durations) don't change. Multiplies with Herbwise. |
+| **Alchemy** | brew finished 12 · experiment 5 · property revealed 10 | Brews **+3% stronger** (to +30%): every number in a brew's effect (oil bonus, heal, Armor, Speed, Coldwater, Owl-Eye, Steadfast uses/Might, bomb damage/burn, and Shrouded bonuses). Fixed block durations (Saltburst's 3 actions, Poppy Smoke stun/Shrouded duration) don't change. Multiplies with Herbwise. |
 | **Smithing** | gear upgrade: its tier × 2 · Smithy level built 2 | Gear upgrades cost **2.1% less** per level (to −21%; D240), every resource including silver |
 | **Lore** | clue revealed 1 · species reaching a knowledge level 5 · document or letter found 5 | Clues take **4% less time** (to −40%), after Studied, Tracker and the Bone Whistle |
 | **Command** | contract won: its tier · wave held in the Last Stand 1 | Hunters earn **+4% contract XP** (to +40%), adding with Drill Yard and the Tally Stick |
@@ -1324,8 +1323,8 @@ Two kinds of event, both spent from **one bank of attempt tokens**: a **world bo
 - A party is **up to `boss.partySize` 4**; it may be smaller. A hunt track may allow fewer hunters still (§8.14).
 
 #### 5.12.4 World bosses *(D358, D360)*
-- **One boss at a time, in a fixed order:** the Lindworm of Velk Fjord, the Barrow-King, the Mother of the River (`boss.order`, §8.13). When a boss falls, the next arrives. After the third, the order begins again **one tier higher** (`boss.passTierStep`), so there is always a boss.
-- **A visit** is one boss from first arrival to its fall. Its **tier is fixed by the hold's Rank when the visit's first attempt is made** (`boss.baseTier`: Citadel 4, Bastion 5), plus one for each completed pass through the three. A Rank-up in the middle of a visit changes nothing. Past tier 5 the usual scaling goes on (Health and Might ×1.35, Armor ×1.15 per tier above the base tier, §7.4). The boss sheet shows the tier before the first attempt, and the preview says what the tier would be.
+- **One boss at a time, in a fixed order:** the Lindworm of Velk Fjord, the Barrow-King, the Mother of the River, the Thorn-Stag, and the Beacon-Bane (`boss.order`, §8.13). When a boss falls, the next arrives. After the fifth, the order begins again **one tier higher** (`boss.passTierStep`), so there is always a boss.
+- **A visit** is one boss from first arrival to its fall. Its **tier is fixed by the hold's Rank when the visit's first attempt is made** (`boss.baseTier`: Citadel 4, Bastion 5), plus one for each completed pass through the five. A Rank-up in the middle of a visit changes nothing. Past tier 5 the usual scaling goes on (Health and Might ×1.35, Armor ×1.15 per tier above the base tier, §7.4). The boss sheet shows the tier before the first attempt, and the preview says what the tier would be.
 - **The pool** is the boss's Health, shared by every attempt in the visit: `boss.poolBase` at base tier 3, scaled by tier (§7.11). It is sized so that a good party takes about 12 attempts to empty it.
 - **An attempt** is worked out at once from its seed and **played back** with Skip and Log, like a Delve floor:
   1. Pick up to 4 eligible hunters (**Suggest** fills four, with the highest expected damage, using the same stage-1 method and the same dice for every party as Suggest on a contract, §6.5) and the preparation: one oil and one potion per hunter, up to 2 bombs (`prep.bombSlots`). Oils, traits and bane lines follow the boss's named family (§8.13); location traits (Fen-born and so on) do not apply, as in the Last Stand. **Suggest** has a budget: it tries parties in a fixed order and stops at the first that clears a damage floor (`events.suggestFloor`, a share of the starting pool) or after `events.suggestTries` parties, taking the best seen (a boss cannot be "won", so the contract shortcut of D74 does not apply), and the preview runs in the odds worker (budgets in §6.5).
@@ -1935,7 +1934,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Board refill | 1 per interval, up to the cap; declining is free | `board.interval` = 2 h, `board.cap` = 6 | 3.3 |
 | Board opens | when the first Mine is built (G6) | — | 5.4.1 |
 | Tier unlocks | tier t+1 after k successes at tier t, up to the Rank cap | `contract.unlockSuccesses` = 3, `contract.ageTierCap` = { hamlet 1, keep 5, citadel 5, bastion 5 } *(locked; new entries D106)* | 5.4.1 |
-| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1, citadel 4.4, bastion 2.5 } *(D82, D85, D106, D138, D189)* | 5.4.2 |
+| Provisions | `max(p, m × food capacity/min) × partySize × g^(tier−1)` food at launch (Q9, D81, Q11, D84; m is `provisions.incomeMinutes` for the hold's Rank) | `provisions.base` = 30, `provisions.growth` = 2.2, `provisions.incomeMinutes` = { hamlet 0, keep 1.1, citadel 4.12, bastion 2.5 } *(D82, D85, D106, D138, D189, D637)* | 5.4.2 |
 | Monster tier scaling | Health and Might `× 1.35^(t − t₀)`; Armor `× 1.15^(t − t₀)`, where t₀ is the base tier | `monster.statGrowth` = 1.35, `monster.armorGrowth` = 1.15 | 5.4.1 |
 | Bounty | `b × g^(tier−1) × ageMult` (age bucket doesn't apply) | `bounty.base` = 91 *(⚑ v0.2 tuning: 60 → 72, D76; 72 → 78, D82; v0.4: 78 → 91, D138)*, `bounty.growth` = 1.6, `bounty.ageMult` = { hamlet 1.0, keep 1.1, citadel 3.5, bastion 3 } *(D106, D138)* | 5.4.1 |
 | Trophies | `tier` (+1 if well prepared) | — | 5.4.1 |
@@ -1963,7 +1962,7 @@ Every constant lives in **one data file**, `src/content/balance.ts`, under the k
 | Clue time | per clue; × multiplier if Studied | `clue.time` = 30 min, `clue.studiedMult` = 0.5 | 5.6.3 |
 | Lodge slots | 1 per level | `lodge.maxLevel` = 3 | 5.6.3 |
 | Oil bonus | vs the matching family | `oil.familyBonus` = 0.35 | 5.7 |
-| Brew time | per item, one per Hut level at a time | `brew.time` = 10 min, `hut.maxLevel` = 5 | 5.7 |
+| Brew time | per item, one per Hut level at a time, −8% per level above 1 | `brew.time` = 10 min, `hut.maxLevel` = 5, `hut.timeCutPerLevel` = 0.08 | 5.7 |
 
 ### 7.6 The Long Night *(v0.4, D106–D114)*
 
@@ -2009,10 +2008,10 @@ Every constant here is tunable unless marked locked.
 |---|---|---|---|
 | Experiment | 1 unit of each of two ingredients; takes the time (× Copper Still) | `experiment.time` = 10 min, `experiment.units` = 1 | 5.8.3 |
 | Skill level | level L → L+1 costs `b × g^L` XP; 0–10 | `skill.maxLevel` = 10 **(locked)**, `skill.xpBase` = 20, `skill.xpGrowth` = 1.6 | 5.8.6 |
-| Skill XP | per activity | `skill.xp.alchemy` = { brew 1, experiment 3, property 10 }, `skill.xp.smithing` = { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` = { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` = { contractPerTier 2, wave 1, delveFloor 1 } *(D237; was 1; `delveFloor` v0.8, D316, D345)* | 5.8.6 |
+| Skill XP | per activity | `skill.xp.alchemy` = { brew 12, experiment 5, property 10 } *(D633, D637)*, `skill.xp.smithing` = { gearPerTier 2, smithyLevel 2 }, `skill.xp.lore` = { clue 1, knowledgeLevel 5, document 5 }, `skill.xp.command` = { contractPerTier 2, wave 1, delveFloor 1 } *(D237; was 1; `delveFloor` v0.8, D316, D345)* | 5.8.6 |
 | Skill bonuses | per level | `skill.alchemyPotency` = 0.03, `skill.smithingCost` = 0.021 *(D240; was 0.04, D228, D237)*, `skill.loreClueTime` = 0.04, `skill.commandXp` = 0.04 | 5.8.6 |
 
-Brew numbers live with their content, like every consumable (§5.8.5): Coldwater 0.40 Fire taken; Owl-Eye 0.10 hit chance; Steadfast 1 use; Poppy Smoke 1 lost action; the new oils use `oil.familyBonus`. The properties table is content (§8.6).
+Brew numbers live with their content, like every consumable (§5.7, §5.8.5): Coldwater 0.50 Fire & 0.30 Frost taken (+0.10 Might); Owl-Eye 0.10 hit & 0.10 crit; Steadfast 2 uses (+0.10 Might); Poppy Smoke 1 lost action + 2-action Shrouded; Saltburst 25 Rune; the new oils use `oil.familyBonus`. The properties table is content (§8.6).
 
 
 ### 7.9 Delves *(v0.7, D244–D272)*
@@ -2067,7 +2066,7 @@ Command XP per Delve floor is the `delveFloor` field of `skill.xp.command` (§7.
 | Tokens | 1 per interval, banked by real time up to the max; hard cap; the bank starts empty when events first open | `boss.tokenInterval` = 8 h **(locked)**, `boss.tokenMax` = 6 **(locked)** | 5.12.2 |
 | Rest | per hunter after a boss or hunt attempt; blocks only other event attempts | `boss.hunterRest` = 24 h **(locked)** | 5.12.2 |
 | Opening | the age at which events open (for good, once) | `boss.openAge` = citadel **(locked)** | 5.12.1 |
-| Order | the fixed order of bosses; the order repeats a tier higher | `boss.order` = [lindworm, barrow-king, mother-of-the-river] **(locked)** | 5.12.4 |
+| Order | the fixed order of bosses; the order repeats a tier higher | `boss.order` = [lindworm, barrow-king, mother-of-the-river, thorn-stag, beacon-bane] **(locked)** | 5.12.4 |
 | Pool | `poolBase × 1.35^(tier − 3)` (the §7.4 Health growth per tier above the stat tier 3) | `boss.poolBase` = 21,000 **(locked; measured in T9.13, D400)** | 5.12.4 |
 | Visit tier | the Rank's base tier when the visit's first attempt is made, plus the pass step per completed pass | `boss.baseTier` = { citadel 4, bastion 5 } **(locked)**, `boss.passTierStep` = 1 **(locked)** | 5.12.4 |
 | Milestones | shares of the pool, each paid once per visit | `boss.milestones` = [0.25, 0.5, 0.75, 1.0] **(locked)** | 5.12.5 |
@@ -2434,13 +2433,13 @@ Bought once per hunter with Riftglass (§5.10.8); the hunter then switches freel
 | Halvar | Steady | **Smoke-Lunged** | Damage he takes from monster abilities (not direct attacks) is halved, after resistances, rounded half up (min 1) |
 | Zora | Quick | **Long Hook** | +10 points crit chance |
 | Ostap | Hard to kill | **Splint and Sling** | Recovery times −15% for the other hunters of any contract he joins |
-| Bjarna | Fell-born | **Fjord-born** | +15% Might on river contracts |
-| Vesna | Fen-born | **Field-born** | +15% Might on field contracts |
+| Bjarna | Fell-born | **Fjord-born** | +20% Might on river contracts |
+| Vesna | Fen-born | **Field-born** | +20% Might on field contracts |
 | Radek | Hard to kill | **Broad Back** | +10% max Health (stat%) |
-| Sigrun | Lantern-bearer | **Forge-Eyed** | Party hit chance +5 points on ruin contracts |
-| Toma | Quick | **Thrifty** | Provisions for contracts he joins −15% |
-| Stanko | Quick | **Dipped Knife** | +15% Venom damage dealt (outgoing%) |
-| Herdis | Hard to kill | **Rock-Footed** | +2 Armor (flat) |
+| Sigrun | Lantern-bearer | **Forge-Eyed** | Party hit chance +8 points on ruin contracts |
+| Toma | Quick | **Thrifty** | Provisions for contracts he joins −40% |
+| Stanko | Quick | **Dipped Knife** | +30% Venom damage dealt (outgoing%) |
+| Herdis | Hard to kill | **Rock-Footed** | +4 Armor (flat) |
 | Arvid | Old Wright | **Fjord Axe** | +20% Might vs Water Spirits |
 
 **v0.5 adds Arvid Netmender** *(⚑ lore C4; D154: "Stonebrow" is a Warcraft surname)*, a story hunter **who arrives in play from v0.6 (Act III)**:
@@ -2661,7 +2660,7 @@ Kept forever; shown on the Roll of Wardens. **Their effects work only inside Del
 |---|---|---|---|
 | 1 | Potions she carries are 10% stronger | +8% healing done | +1 Armor |
 | 2 | Potions she carries are 10% stronger more (+20% in all) | +8% healing done more (+16%) | +8% max Health |
-| 3 | Her Mending Draught fires below 40% Health instead of 30% | She heals anyone below 80% Health (instead of 70%) | Her attacks deal 75% of her Might instead of 50% |
+| 3 | Her Mending Draught fires below 65% Health instead of 50% | She heals anyone below 80% Health (instead of 70%) | Her attacks deal 75% of her Might instead of 50% |
 
 The Herbs branch does nothing in Delves (no potions there, D254); the talent sheet says so.
 
@@ -2680,15 +2679,17 @@ Kept forever, worn in the keepsake slot, one of a kind. Numbers are tunable, in 
 
 On the Act V stand's result sheet, after D5-06: *"Wrapped in the same oilcloth: a thole pin of black oak, worn smooth by a rower's hand."*
 
-### 8.13 Great Beasts *(v0.9, D358–D361, D365, D381)*
+### 8.13 Great Beasts *(v0.9, v1.9, D358–D361, D365, D381, D631, D635)*
 
-Optional entries on the Archive's **Great Beasts** shelf (§5.12.8). Each is a **world boss**: it has a **pool** (shared Health across attempts) in place of a Health figure. Stats are at **base tier 3**; each tier above multiplies the pool and Might by 1.35 and Armor by 1.15 (§7.4). Speed doesn't scale. All numbers are **tunable content** (§8 header) except `boss.poolBase` (**locked**, D372), and are first sketches for the simulator to calibrate (T9.13). "Family" is the family a Great Beast counts as for oils, traits and bane lines (D369).
+Optional entries on the Archive's **Great Beasts** shelf (§5.12.8). Each is a **world boss**: it has a **pool** (shared Health across attempts) in place of a Health figure. Stats are at **base tier 3**; each tier above multiplies the pool and Might by 1.35 and Armor by 1.15 (§7.4). Speed doesn't scale. All numbers are **tunable content** (§8 header) except `boss.poolBase` (**locked**, D372). Direct attacks deal Steel damage unless noted (`The Beacon-Bane` strikes with direct **Fire** damage under `rulesVersion` ≥ 8). "Family" is the family a Great Beast counts as for oils, traits and bane lines (D369).
 
 | Great Beast | Family (for oils and traits) | Pool (base tier) | Might | Armor | Speed | Atk |
 |---|---|---|---|---|---|---|
 | **The Lindworm of Velk Fjord** | Beasts & Wilds | `boss.poolBase` | 38 | 10 | 9 | 2 |
 | **The Barrow-King** | Restless Dead | `boss.poolBase` | 55 | 12 | 6 | 1 |
 | **The Mother of the River** | Water Spirits | `boss.poolBase` | 45 | 14 | 11 | 2 |
+| **The Thorn-Stag** | Field & Forest Spirits | `boss.poolBase` | 42 | 11 | 10 | 1 |
+| **The Beacon-Bane** | Cursed | `boss.poolBase` | 44 | 9 | 9 | 2 |
 
 **Resistances** (bold = weakness, ≥ 1.25):
 
@@ -2697,6 +2698,8 @@ Optional entries on the Archive's **Great Beasts** shelf (§5.12.8). Each is a *
 | The Lindworm of Velk Fjord | 0.75 | 1.0 | **1.5** | 0.5 | 1.0 | **1.25** |
 | The Barrow-King | 0.75 | **1.5** | **1.25** | 0.5 | **1.25** | 0.25 |
 | The Mother of the River | 1.0 | **1.25** | 0.5 | **1.5** | 1.0 | 0.25 |
+| The Thorn-Stag | **1.5** | 1.0 | **1.25** | 0.75 | 1.0 | 0.5 |
+| The Beacon-Bane | 0.75 | 1.0 | 0.25 | **1.25** | **1.5** | **1.25** |
 
 **Abilities, drops and what it was:**
 
@@ -2705,15 +2708,19 @@ Optional entries on the Archive's **Great Beasts** shelf (§5.12.8). Each is a *
 | The Lindworm of Velk Fjord | *Coil:* every 3rd action, its attack holds the target (they lose their next action). *Fjord Roar:* on its 1st action and every 5th after, instead of attacking, every hunter's meter is knocked back 20 | wolf fang | A long grey worm that lay in the fjord mouth until the herring ran thin. Velkvik says it was always there; Velkvik's grandmothers say it wasn't. |
 | The Barrow-King | *Barrow-Grip:* every 3rd action, its attack holds the target (they lose their next action). *Grave Chill:* on each of its actions, every standing hunter loses 1.5% of max Health as Frost damage, ignoring Armor | grave dust | A chieftain buried with his hall around him. The barrow doors were sealed with iron, and the iron didn't hold. |
 | The Mother of the River | *Drowning Song:* on its 1st, 5th, 9th… action, instead of attacking, it charms the lowest-Armor hunter, who loses their next action. *Weir-Pull:* every 4th action, instead of attacking, every hunter's meter is knocked back 25 | river pearl | The river's eldest drowned, who kept the others in order. The mills below her pools stopped grinding the year she woke. |
+| The Thorn-Stag | *Thorn-Snare:* every 3rd action, holds the fastest standing hunter (they lose their next action). *Bramble-Sweep:* every 4th action, instead of attacking once, lashes every standing hunter with direct Steel attacks | thornwood | An ironwood hart crowned with the boundary thorns a village planted against the winter woods, grown tall enough to walk them back. |
+| The Beacon-Bane | *Pitch-Flare:* on each of its actions, every standing hunter loses 1.5% of max Health as Fire damage, ignoring Armor (`taken%` applies). *Curse-Brand:* every 4th action, cuts healing received by 50% on the highest-Might hunter for 2 of their actions | noon poppy | An iron signal-brazier that stood above a fell pass until the night nobody came to bank it, walking now on three charred legs with pitch still dripping. |
 
 **Hunter's notebook** (the Great Beasts shelf, under "What it was"; the voice of the setting primer §6.4):
 - **The Lindworm of Velk Fjord:** *"It holds you still, then roars, and everyone's footing goes. Bring fire, and someone who can cover the lost turns. Expect to be back tomorrow."*
 - **The Barrow-King:** *"The cold gets in whether he hits you or not. Steel does little; silver and rune work do the damage. Rest your Mender, because she'll need it."*
 - **The Mother of the River:** *"Sings the one with the thinnest armour to sleep, and shoves everyone's pace back. Frost and silver. She finds the weak one, so there's no point hiding them."*
+- **The Thorn-Stag:** *"Snares the quickest on foot every third turn and sweeps the whole line on the fourth. Steel and fire bite deepest; frost and poison barely scratch the bark."*
+- **The Beacon-Bane:** *"Strikes with live fire, scorches everyone between blows, and brands your hardest hitter so heals only take at half measure. Bring rune, frost, or venom — steel glances off."*
 
 - **Saltburst** cancels the first trigger of any ability above and blocks abilities for the boss's next 3 actions, as for any monster (§5.7).
 - **No boss heals itself,** so the pool can only go down (the rule of §5.12.4 caps it anyway).
-- Folklore bases: a fjord worm in the Norse-Germanic manner; a barrow-lord in the manner of the Nordic grave-mound dead; the drowned-queen of river folklore. **Original names and rows** (§2.3): no creature from any influence.
+- Folklore bases: a fjord worm in the Norse-Germanic manner; a barrow-lord in the manner of the Nordic grave-mound dead; the drowned-queen of river folklore; an antlered boundary-spirit of northern thickets; a cursed watch-beacon walking with pitch. **Original names and rows** (§2.3, `D635`): no creature from any influence.
 
 ### 8.14 Legendary Hunts: quarries, tracks, points *(v0.9, D362, D380, D381)*
 
@@ -3007,7 +3014,7 @@ The Hut opens from its building row on the Hold screen.
 ├──────────────────────────────────┤
 │ Grave Oil   2 grave dust 1 juniper│
 │ +35% vs Restless Dead   [Brew ×1]│
-│ Saltburst   2 rime salt · 1 ⚪    │
+│ Saltburst   1 rime salt · 1 ⚪    │
 │ needs rime salt (have 1)  muted  │
 └──────────────────────────────────┘
 ```
@@ -3496,7 +3503,7 @@ v1.5 adds **no new screen**. It adds a Lanes strip to two screens that already e
 ### 9.26 Hold Look, Courtyard Marks & v1.8 Breakdowns *(v1.8, D622, D625, Q79–Q82)*
 
 - **Hold Look drawer/sheet (`T18.7`):** Opened from **[Hold Look ▸]** on the Hold screen or inside `Arrange Hold` (`≥ 44 × 44 px` button). Lets the warden toggle every owned cosmetic **Shown** or **Hidden** individually across both the `8 × 12` Grid and Classic scene without changing any combat or economy rule:
-  - **Courtyard Marks (`6` permanent Event Cosmetics, closes D490):** unlocked permanently across resets on first kill of each Great Beast or first clear of each Legendary Hunt (and backfilled on load for already-cleared events): **Fjord-Bone Standard** (*The Lindworm of Velk Fjord*), **Barrow Brazier** (*The Barrow-King*), **River-Reed Basin** (*The Mother of the River*), **Stoneback Cairn** (*Stoneback the Fell Troll*), **Kettle-Barrow Wreath** (*The Mara of Kettle Barrow*), and **Watch-Fire Sconce** (*Likho the One-Eyed*). Locked marks display with a static **Locked** badge and source hint (`Locked · {source}`).
+  - **Courtyard Marks (`8` permanent Event Cosmetics, closes D490, extended D631):** unlocked permanently across resets on first kill of each Great Beast or first clear of each Legendary Hunt (and backfilled on load for already-cleared events): **Fjord-Bone Standard** (*The Lindworm of Velk Fjord*), **Barrow Brazier** (*The Barrow-King*), **River-Reed Basin** (*The Mother of the River*), **Thorn-Antler Rack** (*The Thorn-Stag*), **Beacon-Iron Urn** (*The Beacon-Bane*), **Stoneback Cairn** (*Stoneback the Fell Troll*), **Kettle-Barrow Wreath** (*The Mara of Kettle Barrow*), and **Watch-Fire Sconce** (*Likho the One-Eyed*). Locked marks display with a static **Locked** badge and source hint (`Locked · {source}`).
   - **Riftglass Shop (`4` Delve shop cosmetics, `COSMETIC_IDS`):** *Gatehouse Banners*, *Wall Lanterns*, *Carved Hearth Hall Door*, and *Watchtower Bell*; bought cosmetics toggle between **Shown** and **Hidden**, while unbought cosmetics show **Locked** (`Buy in the Riftglass shop (Rank ▸)`).
 - **Tactical Breakdowns & v7 Stand Logs (`D625`, `Q81`):** `Rates`, `Threat`, and `Hut` inspectable breakdowns expose single-source `Hold tactics` / `Warded Hearth Hall` modifiers with exact parity. In `Bastion`, `Lanes` / `Stand` indicators summarize `Rampart +{p}%`, `{n} Screened`, and `Sector +{p}%`, and `Wave log` renders `Defenses` breakdowns (including nested `Screened (+{p}%)` on screened watchtowers) while keeping legacy `v5`/`v6` wave logs untouched.
 - **Player-facing strings table (word for word; no others in `src/content/v18-text.ts` `V18_TEXT`):**
@@ -3768,5 +3775,5 @@ Each one is also marked **[JC]** where it appears.
 
 1. **Five families = five Great Beasts (`D631`):** Adding *The Thorn-Stag* (*Field & Forest Spirits*, Steel/Fire weak, drops *Thornwood*) and *The Beacon-Bane* (*Cursed*, first world boss dealing direct Fire damage + burn + heal-cut, Rune/Frost/Venom weak, drops *Noon poppy*) completes 1:1 boss coverage across all five families and oils (`8` permanent Courtyard Marks total; expanded locked `boss.order`).
 2. **Dual `rulesVersion` (`7 → 8`) & `schema 16 → 17` (`D631`, `D632`):** All historical `rulesVersion <= 7` golden fights, recorded contract replays, stands, and Delve floors reproduce untouched via explicit `rulesVersion` propagation; `schema 17` keeps `visit = 3` (`pool === null`) at *The Thorn-Stag* while remapping active/past pass `1+` visits safely without false Courtyard Mark grants.
-3. **Alchemist's Hut, all 4 bombs & all 6 potions rebalanced under `rulesVersion 8` (`D633`):** *Saltburst* cost drops to `1 carrier + 1 silver`, deals `25` Rune damage, disrupts both active and passive abilities reliably, and fixes its Well-Prepared UI check; *Frost Pot* fixes slow-stacking overwrites alongside *Rime-Dipped* and *Hamstring*; *Poppy Smoke* stuns `1` action plus **Shrouded** (`2` actions: `+15` hit, `+10` crit, `+15%` damage dealt), keeping Well-Prepared elemental/Saltburst-gated; *Quickfoot Tincture* trims (`+20% → +15%` Speed) while all 5 other potions (*Owl-Eye*, *Hardwood*, *Mending*, *Coldwater*, *Steadfast*) gain competitive throughput/survivability and full *Herbwise* + Alchemy scaling; `Alchemist's Hut` grants `−8%` brew/experiment time per level above `1` and `skill.xp.alchemy` brew/experiment XP rises (`{ brew: 4, experiment: 5, property: 10 }`).
+3. **Alchemist's Hut, all 4 bombs & all 6 potions rebalanced under `rulesVersion 8` (`D633`, `D637`):** *Saltburst* cost drops to `1 carrier + 1 silver`, deals `25` Rune damage, disrupts both active and passive abilities reliably, and fixes its Well-Prepared UI check; *Frost Pot* fixes slow-stacking overwrites alongside *Rime-Dipped* and *Hamstring*; *Poppy Smoke* stuns `1` action plus **Shrouded** (`2` actions: `+15` hit, `+10` crit, `+15%` damage dealt), keeping Well-Prepared elemental/Saltburst-gated; *Quickfoot Tincture* trims (`+20% → +15%` Speed) while all 5 other potions (*Owl-Eye*, *Hardwood*, *Mending*, *Coldwater*, *Steadfast*) gain competitive throughput/survivability and full *Herbwise* + Alchemy scaling; `Alchemist's Hut` grants `−8%` brew/experiment time per level above `1` and `skill.xp.alchemy` brew/experiment XP rises (`{ brew: 12, experiment: 5, property: 10 }`).
 4. **Honesty fixes, Riftglass sidegrades & tight simulator calibration (`D634`, `D636`):** `"Why?"` (`explainFight`) reflects start potions, Alchemy potency, and tick-1 bombs; `Suggest` keeps `input.prep` across finalist checks; weak 40-Riftglass alternate traits (*Dipped Knife*, *Thrifty*, *Rock-Footed*, *Fjord-born*, *Field-born*, *Forge-Eyed*) and *Emberwright Plate* (`−10% → −25%` Fire taken) are strengthened; `D615`'s PNG sub-cap bumps (`142 KB → ~150 KB`) inside the unchanged `614,400 B` gzipped ceiling; simulator tunables calibrate cleanly at `T19.9` before accepting `sim/baseline.json` once.

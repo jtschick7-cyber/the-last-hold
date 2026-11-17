@@ -46,13 +46,24 @@ export const unlockHuntMark = (state: Pick<GameState, 'cosmetics'>, huntId: Hunt
   unlockCourtyardMark(state, markForHunt(huntId));
 };
 
+/** Original 3 Great Beasts eligible for historical mark backfill on legacy saves (D631, TD §26.1). */
+const LEGACY_BACKFILL_BOSS_IDS: readonly BossId[] = [
+  'lindworm-of-velk-fjord',
+  'barrow-king',
+  'mother-of-the-river',
+];
+
 /** Idempotently awards missing Courtyard Marks matching past boss kills and unlocked hunts. */
 export const backfillCosmetics = (state: BackfillTarget): void => {
   const visit = state.events?.boss?.visit;
-  const kills = Math.min(typeof visit === 'number' ? visit : 0, BOSS_IDS.length);
+  const kills = Math.min(
+    typeof visit === 'number' ? visit : 0,
+    LEGACY_BACKFILL_BOSS_IDS.length,
+    BOSS_IDS.length,
+  );
   for (let i = 0; i < kills; i += 1) {
-    const bossId = BOSS_IDS[i];
-    if (bossId) unlockBossMark(state, bossId);
+    const bossId = LEGACY_BACKFILL_BOSS_IDS[i];
+    if (bossId && BOSS_IDS.includes(bossId)) unlockBossMark(state, bossId);
   }
   const huntsRecord = state.events?.hunts;
   if (!huntsRecord) return;

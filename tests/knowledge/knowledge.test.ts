@@ -187,6 +187,7 @@ describe('knowledge in real contracts (GDD §5.6.2)', () => {
         monster: ref.monster,
         location: ref.location,
         rolls: seeded(ref.seed),
+        rulesVersion: ref.rulesVersion,
       });
       expect(again.result).toBe(ref.result);
     }

@@ -51,6 +51,12 @@ export const BossSheet = () => {
         ))}
       </ul>
       <p class={`${styles.small} ${styles.dim}`}>
+        {v.lines.attack && (
+          <>
+            attacks: {v.lines.attack}
+            <br />
+          </>
+        )}
         weak: {v.lines.weak}
         <br />
         resists: {v.lines.resists}

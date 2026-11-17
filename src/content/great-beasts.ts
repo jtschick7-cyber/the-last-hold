@@ -9,7 +9,13 @@ import type { IngredientId } from './ingredients';
 // (GDD §8 header) and a first sketch for the simulator (plan T9.13). The quarries of the Legendary
 // Hunts use the same shapes (hunts.ts).
 
-export const BOSS_IDS = ['lindworm-of-velk-fjord', 'barrow-king', 'mother-of-the-river'] as const;
+export const BOSS_IDS = [
+  'lindworm-of-velk-fjord',
+  'barrow-king',
+  'mother-of-the-river',
+  'thorn-stag',
+  'beacon-bane',
+] as const;
 export type BossId = (typeof BOSS_IDS)[number];
 
 /** Each Great Beast's and quarry's ability numbers, exactly as GDD §8.13 and §8.14 word them. */
@@ -49,12 +55,32 @@ export type EventAbility =
   /** Passive: while it stands, every hunter's crit chance is this many points lower. */
   | { readonly kind: 'illLuck'; readonly name: 'Ill Luck'; readonly critCut: number }
   /** On each of its actions, this chance that one random hunter loses their next action. */
-  | { readonly kind: 'misfortune'; readonly name: 'Misfortune'; readonly chance: number };
+  | { readonly kind: 'misfortune'; readonly name: 'Misfortune'; readonly chance: number }
+  /** Every `every`th action, holds the fastest standing hunter (loses their next action) (D631). */
+  | { readonly kind: 'thornSnare'; readonly name: 'Thorn-Snare'; readonly every: number }
+  /** Every `every`th action, instead of attacking once, lashes every standing hunter with direct attacks (D631). */
+  | { readonly kind: 'brambleSweep'; readonly name: 'Bramble-Sweep'; readonly every: number }
+  /** On each of its actions, every standing hunter loses this share of max Health as Fire, ignoring Armor (D631). */
+  | {
+      readonly kind: 'pitchFlare';
+      readonly name: 'Pitch-Flare';
+      readonly maxHealthFraction: number;
+    }
+  /** Every `every`th action, cuts healing received by `healCut` on highest-Might standing hunter for `actions` actions (D631). */
+  | {
+      readonly kind: 'curseBrand';
+      readonly name: 'Curse-Brand';
+      readonly every: number;
+      readonly healCut: number;
+      readonly actions: number;
+    };
 
 export interface EventCreature {
   readonly name: string;
   /** The family it counts as for oils, traits and bane lines only (D369). */
   readonly family: FamilyId;
+  /** Direct attack damage type (defaults to `'steel'`, D631). */
+  readonly damage?: DamageType;
   /** Might, Armor and Speed at base tier 3; Attacks per action. */
   readonly might: number;
   readonly armor: number;
@@ -139,5 +165,44 @@ export const bosses: Readonly<Record<BossId, BossDef>> = {
       "The river's eldest drowned, who kept the others in order. The mills below her pools stopped grinding the year she woke.",
     notebook:
       "Sings the one with the thinnest armour to sleep, and shoves everyone's pace back. Frost and silver. She finds the weak one, so there's no point hiding them.",
+  },
+  'thorn-stag': {
+    id: 'thorn-stag',
+    name: 'The Thorn-Stag',
+    family: 'field-and-forest-spirits',
+    might: 42,
+    armor: 11,
+    speed: 10,
+    attacks: 1,
+    resist: resist(1.5, 1.0, 1.25, 0.75, 1.0, 0.5),
+    abilities: [
+      { kind: 'thornSnare', name: 'Thorn-Snare', every: 3 },
+      { kind: 'brambleSweep', name: 'Bramble-Sweep', every: 4 },
+    ],
+    reagent: 'thornwood',
+    whatItWas:
+      'An ironwood hart crowned with the boundary thorns a village planted against the winter woods, grown tall enough to walk them back.',
+    notebook:
+      'Snares the quickest on foot every third turn and sweeps the whole line on the fourth. Steel and fire bite deepest; frost and poison barely scratch the bark.',
+  },
+  'beacon-bane': {
+    id: 'beacon-bane',
+    name: 'The Beacon-Bane',
+    family: 'cursed',
+    damage: 'fire',
+    might: 44,
+    armor: 9,
+    speed: 9,
+    attacks: 2,
+    resist: resist(0.75, 1.0, 0.25, 1.25, 1.5, 1.25),
+    abilities: [
+      { kind: 'pitchFlare', name: 'Pitch-Flare', maxHealthFraction: 0.015 },
+      { kind: 'curseBrand', name: 'Curse-Brand', every: 4, healCut: 0.5, actions: 2 },
+    ],
+    reagent: 'noon-poppy',
+    whatItWas:
+      'An iron signal-brazier that stood above a fell pass until the night nobody came to bank it, walking now on three charred legs with pitch still dripping.',
+    notebook:
+      'Strikes with live fire, scorches everyone between blows, and brands your hardest hitter so heals only take at half measure. Bring rune, frost, or venom — steel glances off.',
   },
 };

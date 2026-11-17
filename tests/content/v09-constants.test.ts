@@ -14,7 +14,13 @@ describe('GDD §7.11 Events constants', () => {
     expect(value('boss.tokenMax')).toBe(6);
     expect(value('boss.hunterRest')).toBe(24 * 3600);
     expect(value('boss.openAge')).toBe('citadel');
-    expect(value('boss.order')).toEqual(['lindworm', 'barrow-king', 'mother-of-the-river']);
+    expect(value('boss.order')).toEqual([
+      'lindworm',
+      'barrow-king',
+      'mother-of-the-river',
+      'thorn-stag',
+      'beacon-bane',
+    ]);
     expect(value('boss.poolBase')).toBe(21000);
     expect(value('boss.baseTier')).toEqual({ citadel: 4, bastion: 5 });
     expect(value('boss.passTierStep')).toBe(1);

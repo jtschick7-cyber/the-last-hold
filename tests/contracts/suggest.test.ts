@@ -1,6 +1,7 @@
 // Plan T2.18: the Suggested party (GDD §6.5, §5.4.1).
 import { describe, expect, it } from 'vitest';
 import { maxPartySize } from '../../src/core/contracts/party';
+import { computeOdds } from '../../src/core/contracts/odds';
 import { legalParties, suggestParty } from '../../src/core/contracts/suggest';
 import { snap } from '../combat/helpers';
 
@@ -67,5 +68,61 @@ describe('suggestParty', () => {
     // Against an easy monster every party wins every sample, so a lone hunter is as good and cheaper.
     const easy = suggestParty({ ...base, monster: { monster: 'kikimora' as const, tier: 1 } });
     expect(easy?.party).toHaveLength(1);
+  });
+
+  it('forwards input.prep consistently through Stage 2 finalist ranking and final odds', () => {
+    // Bare Zora beats bare Halvar vs tier-2 Kikimora; giving Halvar oil + potion flips Stage 2 to Halvar.
+    const two = (['halvar', 'zora'] as const).map((id) => snap(id, { traits: [], level: 1 }));
+    const prep = {
+      oils: { halvar: 'thornbane-oil' as const },
+      potions: { halvar: 'hardwood-tonic' as const },
+      bombs: ['fire-pot' as const],
+    };
+    const hunterPrepOnly = {
+      oils: { halvar: 'thornbane-oil' as const },
+      potions: { halvar: 'hardwood-tonic' as const },
+      bombs: [],
+    };
+    const tough = {
+      gameSeed: 'prep-suggest',
+      contractId: 'c-prep',
+      available: two,
+      monster: { monster: 'kikimora' as const, tier: 2 },
+      location: 'field' as const,
+      rank: 'keep' as const,
+      maxParty: 1,
+      prep,
+      alchemy: 4,
+    };
+    const barePick = suggestParty({ ...tough, prep: undefined });
+    const hunterPicked = suggestParty({ ...tough, prep: hunterPrepOnly });
+    const picked = suggestParty(tough);
+    expect(picked).not.toBeNull();
+    if (!picked) return;
+    // Returned odds (with oils, potions, bombs) must equal computeOdds with the same input.prep.
+    const withPrep = computeOdds({
+      gameSeed: tough.gameSeed,
+      contractId: tough.contractId,
+      party: picked.party,
+      monster: tough.monster,
+      location: tough.location,
+      rank: tough.rank,
+      prep,
+      alchemy: tough.alchemy,
+    });
+    const withoutPrep = computeOdds({
+      gameSeed: tough.gameSeed,
+      contractId: tough.contractId,
+      party: picked.party,
+      monster: tough.monster,
+      location: tough.location,
+      rank: tough.rank,
+      alchemy: tough.alchemy,
+    });
+    expect(picked.odds.winChance).toBe(withPrep.winChance);
+    expect(picked.odds.why).toEqual(withPrep.why);
+    expect(picked.odds.winChance).toBeGreaterThan(withoutPrep.winChance);
+    expect(barePick?.party.map((h) => h.id)).toEqual(['zora']);
+    expect(hunterPicked?.party.map((h) => h.id)).toEqual(['halvar']);
   });
 });

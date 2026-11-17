@@ -138,6 +138,9 @@ const lastFloor = (v: unknown, party: readonly HunterId[]): DelveFloorRecord => 
     kills: count(o.kills, 'delve.run.lastFloor.kills'),
     vigilUsed: bool(o.vigilUsed, 'delve.run.lastFloor.vigilUsed'),
     result: oneOf(o.result, ['win', 'loss'], 'delve.run.lastFloor.result'),
+    ...(o.rulesVersion === undefined
+      ? {}
+      : { rulesVersion: count(o.rulesVersion, 'delve.run.lastFloor.rulesVersion') }),
   };
 };
 

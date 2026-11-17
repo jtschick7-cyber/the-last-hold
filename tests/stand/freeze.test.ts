@@ -38,7 +38,7 @@ describe('Start freezes the table (§23.3)', () => {
     expect(make(s).ok).toBe(true);
     const rec = stand(s);
     expect(rec.lanes).toEqual(want);
-    expect(rec.rulesVersion).toBe(7);
+    expect(rec.rulesVersion).toBe(8);
   });
 
   it('places, moves and trays nothing: the layout is identical before and after', () => {

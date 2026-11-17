@@ -107,6 +107,7 @@ export interface MarkView {
 }
 
 export interface CreatureLines {
+  readonly attack?: string;
   readonly weak: string;
   readonly resists: string;
   readonly abilities: readonly string[];
@@ -116,11 +117,13 @@ export interface CreatureLines {
 export const creatureLines = (c: {
   resist: Readonly<Record<(typeof DAMAGE_TYPES)[number], number>>;
   abilities: readonly { name: string }[];
+  damage?: (typeof DAMAGE_TYPES)[number];
 }): CreatureLines => {
   const cell = (t: (typeof DAMAGE_TYPES)[number]): string => `${title(t)} ×${c.resist[t]}`;
   const weak = DAMAGE_TYPES.filter((t) => c.resist[t] >= num('prep.weakAt')).map(cell);
   const resists = DAMAGE_TYPES.filter((t) => c.resist[t] < 1).map(cell);
   return {
+    ...(c.damage && c.damage !== 'steel' ? { attack: title(c.damage) } : {}),
     weak: weak.length ? weak.join(', ') : 'nothing in particular',
     resists: resists.length ? resists.join(', ') : 'nothing',
     abilities: c.abilities.map((a) => a.name),
@@ -168,7 +171,7 @@ export const tierExplained = (state: GameState): Explained => {
         : [
             { label: `Base tier (${state.cycle.age})`, value: base ?? tier, key: 'boss.baseTier' },
             {
-              label: 'Completed passes through the three',
+              label: 'Completed passes through the five',
               value: passes,
               formula: `× ${num('boss.passTierStep')} tier each`,
               key: 'boss.passTierStep',

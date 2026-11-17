@@ -103,13 +103,14 @@ describe('the Alchemist’s Hut (GDD §5.7)', () => {
 
   it('brews one at a time per Hut level; the rest wait, and start the moment a kettle frees', () => {
     const s = hut(2);
+    const brew2 = BREW * (1 - num('hut.timeCutPerLevel'));
     for (const item of ['grave-oil', 'fire-pot', 'frost-pot', 'saltburst'] as const)
       run(s, { type: 'brew.queue', item });
     const t0 = s.time;
-    expect(s.queues.brewing.map((j) => j.doneAt)).toEqual([t0 + BREW, t0 + BREW, null, null]);
-    advance(s, t0 + BREW);
-    expect(s.queues.brewing.map((j) => j.doneAt)).toEqual([t0 + 2 * BREW, t0 + 2 * BREW]);
-    advance(s, t0 + 2 * BREW);
+    expect(s.queues.brewing.map((j) => j.doneAt)).toEqual([t0 + brew2, t0 + brew2, null, null]);
+    advance(s, t0 + brew2);
+    expect(s.queues.brewing.map((j) => j.doneAt)).toEqual([t0 + 2 * brew2, t0 + 2 * brew2]);
+    advance(s, t0 + 2 * brew2);
     expect(s.queues.brewing).toEqual([]);
     expect(
       ['grave-oil', 'fire-pot', 'frost-pot', 'saltburst'].map(
@@ -125,7 +126,8 @@ describe('the Alchemist’s Hut (GDD §5.7)', () => {
     expect(s.queues.brewing[1]?.doneAt).toBeNull();
     advance(s, s.time + 3 * MIN);
     expect(run(s, { type: 'build.upgrade', building: 'alchemists-hut' }).ok).toBe(true);
-    expect(s.queues.brewing[1]?.doneAt).toBe(s.time + BREW);
+    const brew2 = BREW * (1 - num('hut.timeCutPerLevel'));
+    expect(s.queues.brewing[1]?.doneAt).toBe(s.time + brew2);
   });
 
   it('cancelling a brew refunds it in full, and a waiting brew behind it moves up', () => {

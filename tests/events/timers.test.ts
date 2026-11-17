@@ -4,9 +4,11 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { apply } from '../../src/core/commands/apply';
 import { loadEnvelope } from '../../src/core/save';
+import { createNewGame } from '../../src/core/state/new-game';
 import { catchUpNow } from '../../src/core/sim/offline';
 import type { EventsState } from '../../src/core/state/events-state';
 import type { GameState } from '../../src/core/state/game-state';
+import { bossOfVisit } from '../../src/core/systems/boss';
 import {
   bankFullBadge,
   eligibleHunters,
@@ -226,6 +228,39 @@ describe('debug commands (each sets debugUsed)', () => {
     s.meta.debugUsed = false;
     const r = apply(s, { type: 'debug.fillBank' }, s.time);
     expect(r.ok).toBe(false);
+    expect(s.meta.debugUsed).toBe(false);
+  });
+
+  it('switches the active Great Beast while preserving the active pass and resetting the pool', () => {
+    const s = owner();
+    s.events.boss = { visit: 6, tier: 6, pool: 4200, paid: 2, attempts: 3 };
+    s.meta.debugUsed = false;
+    expect(apply(s, { type: 'debug.setBoss', boss: 'thorn-stag' }, s.time).ok).toBe(true);
+    expect(s.events.boss).toEqual({ visit: 8, tier: null, pool: null, paid: 0, attempts: 0 });
+    expect(bossOfVisit(s.events.boss.visit)).toBe('thorn-stag');
+    expect(s.meta.debugUsed).toBe(true);
+
+    expect(apply(s, { type: 'debug.setBoss', boss: 'beacon-bane' }, s.time).ok).toBe(true);
+    expect(s.events.boss).toEqual({ visit: 9, tier: null, pool: null, paid: 0, attempts: 0 });
+    expect(bossOfVisit(s.events.boss.visit)).toBe('beacon-bane');
+  });
+
+  it('opens events if Citadel/Bastion was reached via debug, and refuses pre-Citadel or invalid boss IDs', () => {
+    const s = createNewGame('d', 1_760_000_000_000);
+    const before = structuredClone(s);
+    expect(apply(s, { type: 'debug.setBoss', boss: 'thorn-stag' }, s.time).ok).toBe(false);
+    expect(s).toEqual(before);
+
+    expect(apply(s, { type: 'debug.unlockAge', age: 'bastion' }, s.time).ok).toBe(true);
+    expect(apply(s, { type: 'debug.setBoss', boss: 'beacon-bane' }, s.time).ok).toBe(true);
+    expect(s.events.opened).toBe(true);
+    expect(bossOfVisit(s.events.boss.visit)).toBe('beacon-bane');
+
+    const badBefore = structuredClone(s);
+    s.meta.debugUsed = false;
+    const ref = apply(s, { type: 'debug.setBoss', boss: 'dragon' as never }, s.time);
+    expect(ref.ok).toBe(false);
+    expect(s.events.boss).toEqual(badBefore.events.boss);
     expect(s.meta.debugUsed).toBe(false);
   });
 });

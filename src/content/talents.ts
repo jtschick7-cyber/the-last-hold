@@ -37,7 +37,7 @@ export type TalentEffect =
   | { readonly kind: 'potionPower'; readonly amount: number }
   /** Healing done; tiers add. */
   | { readonly kind: 'healingDone'; readonly amount: number }
-  /** The Mending Draught fires below this share of Health (instead of the potion's own 30%, consumables.ts). */
+  /** The Mending Draught fires below this share of Health (instead of the potion's own 50%, consumables.ts). */
   | { readonly kind: 'mendingBelow'; readonly value: number }
   /** The holder heals anyone below this share of Health (instead of `mender.healBelow`). */
   | { readonly kind: 'healsBelow'; readonly value: number }
@@ -156,8 +156,8 @@ export const talents: readonly TalentDef[] = [
     'mender',
     'herbs',
     3,
-    { kind: 'mendingBelow', value: 0.4 },
-    'Her Mending Draught fires below 40% Health instead of 30%',
+    { kind: 'mendingBelow', value: 0.65 },
+    'Her Mending Draught fires below 65% Health instead of 50%',
   ),
   t('mender', 'hands', 1, { kind: 'healingDone', amount: 0.08 }, '+8% healing done'),
   t('mender', 'hands', 2, { kind: 'healingDone', amount: 0.08 }, '+8% healing done more (+16%)'),

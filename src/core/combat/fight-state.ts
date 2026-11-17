@@ -55,6 +55,8 @@ export interface Fight {
   smokeHolder: Combatant | null;
   /** Torch Held High (v0.9): the Vanguard whose torch lifts the party's damage until their next action. */
   torchHolder: Combatant | null;
+  /** Rules version governing this fight's combat maths (D632). */
+  readonly rulesVersion: number;
 }
 
 /** A general fight rule (v0.8, D328 (8)): lowers a monster's turn meter. Toll, Boathook and Rattle the Pots use it. */

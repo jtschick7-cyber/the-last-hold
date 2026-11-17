@@ -195,7 +195,7 @@ test('a hunt: the list, a track, the odds, playback, the result, the shelf and t
   const shelf = page.getByRole('region', { name: 'Great Beasts' });
   await expect(shelf).toBeVisible();
   await expect(shelf.getByRole('button', { name: 'Stoneback the Fell Troll' })).toBeVisible();
-  await expect(shelf.getByRole('button', { name: 'Not yet met' })).toHaveCount(5);
+  await expect(shelf.getByRole('button', { name: 'Not yet met' })).toHaveCount(7);
 
   // A hunter who attended rests; the hunter's sheet says so.
   await tab(page, 'Hunters').click();

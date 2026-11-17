@@ -49,6 +49,8 @@ export interface DelveFloorRecord {
   kills: number;
   vigilUsed: boolean;
   result: 'win' | 'loss';
+  /** Rules version in force when this floor was fought (v17, D632); absent in earlier saves defaults to 7 on replay. */
+  rulesVersion?: number;
 }
 
 export interface DelveRun {

@@ -218,7 +218,7 @@ const generated = (
 });
 
 // Ids whose art isn't drawn yet; <Sprite> draws the placeholder for them.
-const NO_ART_YET: ReadonlySet<string> = new Set<string>([]);
+const NO_ART_YET: ReadonlySet<string> = new Set<string>();
 const placeholder = (
   id: string,
   kind: AssetKind,
@@ -272,15 +272,18 @@ export const assets: readonly AssetEntry[] = [
     ),
   ),
   // v0.9 (T9.16), v1.6 (D596): verified by tools/gen-portraits.ts.
-  ...EVENT_CREATURE_IDS.map((c) =>
-    generated(
-      eventCreaturePortraitId(c),
-      [64, 64],
-      eventCreatureName(c),
-      `portraits/creature-${c}.png`,
-      'tools/gen-portraits.ts',
-    ),
-  ),
+  ...EVENT_CREATURE_IDS.map((c) => {
+    const id = eventCreaturePortraitId(c);
+    return NO_ART_YET.has(id)
+      ? placeholder(id, 'portrait', [64, 64], eventCreatureName(c))
+      : generated(
+          id,
+          [64, 64],
+          eventCreatureName(c),
+          `portraits/creature-${c}.png`,
+          'tools/gen-portraits.ts',
+        );
+  }),
   // The Cursed (v0.5), v1.6 (D596): verified by tools/gen-portraits.ts.
   ...MONSTER_IDS.map((m) =>
     generated(
@@ -387,16 +390,24 @@ export const assets: readonly AssetEntry[] = [
       'sprite',
     ),
   ),
-  ...EVENT_CREATURE_IDS.map((c) =>
-    generated(
-      eventCreatureSpriteId(c),
-      [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
-      `${eventCreatureName(c)}, battle sprite`,
-      `sprites/creature-${c}.png`,
-      'tools/gen-sprites.ts',
-      'sprite',
-    ),
-  ),
+  ...EVENT_CREATURE_IDS.map((c) => {
+    const id = eventCreatureSpriteId(c);
+    return NO_ART_YET.has(id)
+      ? placeholder(
+          id,
+          'sprite',
+          [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+          `${eventCreatureName(c)}, battle sprite`,
+        )
+      : generated(
+          id,
+          [SPRITE_PX * SPRITE_FRAME_NAMES.length, SPRITE_PX],
+          `${eventCreatureName(c)}, battle sprite`,
+          `sprites/creature-${c}.png`,
+          'tools/gen-sprites.ts',
+          'sprite',
+        );
+  }),
   ...MONSTER_IDS.map((m) =>
     generated(
       monsterSpriteId(m),
@@ -700,17 +711,20 @@ export const assets: readonly AssetEntry[] = [
       ),
     ),
   ),
-  // v1.8 T18.11 (Q83(a), Q85(a)): unified 16 × 16 Event Courtyard Marks rendered at 1× on HoldGrid and HoldScene.
-  ...COURTYARD_MARK_IDS.map((id) =>
-    generated(
-      courtyardMarkAssetId(id),
-      [16, 16],
-      courtyardMarkDef(id).name,
-      `grid/courtyard-mark-${id}.png`,
-      GRID_GENERATOR,
-      'icon',
-    ),
-  ),
+  // v1.8 T18.11 (Q83(a), Q85(a)) + v1.9 T19.5 (D631): unified 16 × 16 Event Courtyard Marks rendered at 1× on HoldGrid and HoldScene.
+  ...COURTYARD_MARK_IDS.map((id) => {
+    const assetId = courtyardMarkAssetId(id);
+    return NO_ART_YET.has(assetId)
+      ? placeholder(assetId, 'icon', [16, 16], courtyardMarkDef(id).name)
+      : generated(
+          assetId,
+          [16, 16],
+          courtyardMarkDef(id).name,
+          `grid/courtyard-mark-${id}.png`,
+          GRID_GENERATOR,
+          'icon',
+        );
+  }),
 ];
 
 export const assetById: ReadonlyMap<string, AssetEntry> = new Map(assets.map((a) => [a.id, a]));

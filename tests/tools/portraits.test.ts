@@ -15,12 +15,17 @@ import {
 import { HUNTER_IDS, hunters } from '../../src/content/hunters';
 import { EVENT_CREATURE_IDS } from '../../src/content/hunts';
 import { MONSTER_IDS } from '../../src/content/monsters';
+import { V17_EVENT_CREATURE_IDS } from '../../tools/draw-creatures';
 import { drawHunter } from '../../tools/draw-hunter';
 import { hasDrawing } from '../../tools/draw-monster';
 import { PALETTE_HEX } from '../../tools/pixel';
+import { V19_PORTRAIT_IDS } from '../../tools/portraits-v19';
 
 const approvedHashes = JSON.parse(
   readFileSync(new URL('../../art-src/v1.6-portrait-hashes.json', import.meta.url), 'utf8'),
+) as Record<string, string>;
+const v19Hashes = JSON.parse(
+  readFileSync(new URL('../../art-src/v1.9-hashes.json', import.meta.url), 'utf8'),
 ) as Record<string, string>;
 
 const file = (name: string): Buffer =>
@@ -42,7 +47,7 @@ const CLIPPED_CORNERS: readonly (readonly [number, number])[] = [
 ];
 
 const cases = [
-  ...EVENT_CREATURE_IDS.map((id) => ({
+  ...V17_EVENT_CREATURE_IDS.map((id) => ({
     row: eventCreaturePortraitId(id),
     name: `creature-${id}.png`,
   })),
@@ -97,7 +102,7 @@ describe('generated portraits', () => {
 
   it('has a manifest row for each hunter and species, pointing at its file', () => {
     expect(cases).toHaveLength(
-      EVENT_CREATURE_IDS.length + HUNTER_IDS.length + MONSTER_IDS.length + 1,
+      V17_EVENT_CREATURE_IDS.length + HUNTER_IDS.length + MONSTER_IDS.length + 1,
     );
     for (const c of cases) {
       const row = assetById.get(c.row);
@@ -123,6 +128,38 @@ describe('generated portraits', () => {
         .map((k) => (png.data[i + k] ?? 0).toString(16).padStart(2, '0'))
         .join('');
       expect(PALETTE_HEX.has(hex), `${c.name} pixel ${i / 4}: ${hex}`).toBe(true);
+    }
+  });
+
+  it.each(V19_PORTRAIT_IDS)(
+    'v1.9 portrait.creature.%s matches approved v1.9 hash, is 64 px Option B, and stays in the palette',
+    (id) => {
+      const rowId = eventCreaturePortraitId(id);
+      const row = assetById.get(rowId);
+      expect(row?.source, rowId).toBe('generated');
+      if (row?.source === 'generated') expect(row.file).toBe(`portraits/creature-${id}.png`);
+      const raw = file(`creature-${id}.png`);
+      const hash = createHash('sha256').update(raw).digest('hex');
+      expect(hash).toBe(v19Hashes[rowId]);
+      const png = PNG.sync.read(raw);
+      expect([png.width, png.height]).toEqual([64, 64]);
+      for (const [x, y] of CLIPPED_CORNERS) {
+        expect(png.data[(y * 64 + x) * 4 + 3]).toBe(0);
+      }
+      for (let i = 0; i < png.data.length; i += 4) {
+        if ((png.data[i + 3] ?? 0) === 0) continue;
+        const hex = [0, 1, 2]
+          .map((k) => (png.data[i + k] ?? 0).toString(16).padStart(2, '0'))
+          .join('');
+        expect(PALETTE_HEX.has(hex), `${id} pixel ${i / 4}: ${hex}`).toBe(true);
+      }
+    },
+  );
+
+  it('covers all 8 Great Beasts and Quarries with generated portraits', () => {
+    expect(EVENT_CREATURE_IDS).toHaveLength(8);
+    for (const id of EVENT_CREATURE_IDS) {
+      expect(assetById.get(eventCreaturePortraitId(id))?.source, id).toBe('generated');
     }
   });
 });

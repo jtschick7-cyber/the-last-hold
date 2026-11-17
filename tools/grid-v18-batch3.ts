@@ -1,22 +1,22 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { PNG } from 'pngjs';
-import {
-  COURTYARD_MARK_IDS,
-  courtyardMarkDef,
-  type CourtyardMarkId,
-} from '../src/content/courtyard-marks';
+import { courtyardMarkDef } from '../src/content/courtyard-marks';
 import type { Batch1Subject } from './grid-v18-batch1';
 import { blitCanvasScaled, drawBitmapText } from './grid-v18-font';
 import { stampCanvas } from './grid-v18-kit';
-import { drawCourtyardMarkV18 } from './grid-v18-marks';
+import {
+  drawCourtyardMarkV18,
+  V18_COURTYARD_MARK_IDS,
+  type V18CourtyardMarkId,
+} from './grid-v18-marks';
 import { drawHerbGardenV18, drawSilverSeamV18 } from './grid-v18-plots-extra';
 import { drawGroundV18 } from './grid-v18-terrain';
 import { C, Canvas } from './pixel';
 
 const ROOT = resolve(import.meta.dirname, '..');
 
-const SCENE_ANCHORS: Readonly<Record<CourtyardMarkId, readonly [number, number]>> = {
+const SCENE_ANCHORS: Readonly<Record<V18CourtyardMarkId, readonly [number, number]>> = {
   'fjord-bone-standard': [12, 34],
   'barrow-brazier': [34, 42],
   'stoneback-cairn': [56, 44],
@@ -45,7 +45,7 @@ function onGround(sprite: Canvas, groundKind: 'grass' | 'earth' | 'flags'): Canv
   return composite;
 }
 
-function cropSceneContext(id: CourtyardMarkId, mark: Canvas): Canvas {
+function cropSceneContext(id: V18CourtyardMarkId, mark: Canvas): Canvas {
   const scene = loadHoldKeepScene();
   const [ax, ay] = SCENE_ANCHORS[id];
   const ox = Math.max(0, Math.min(scene.width - 32, ax - 8));
@@ -113,7 +113,7 @@ function drawPlotVariantsRow(
   };
 }
 
-function makeCourtyardMarkSubject(id: CourtyardMarkId, num: number): Batch1Subject {
+function makeCourtyardMarkSubject(id: V18CourtyardMarkId, num: number): Batch1Subject {
   const def = courtyardMarkDef(id);
   return {
     num,
@@ -181,5 +181,5 @@ export const BATCH3_SUBJECTS: readonly Batch1Subject[] = [
       'earth',
     ),
   },
-  ...COURTYARD_MARK_IDS.map((id, idx) => makeCourtyardMarkSubject(id, 27 + idx)),
+  ...V18_COURTYARD_MARK_IDS.map((id, idx) => makeCourtyardMarkSubject(id, 27 + idx)),
 ];

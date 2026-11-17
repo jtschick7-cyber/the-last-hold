@@ -191,6 +191,7 @@ describe('the scripted played fixture (v11-played.json)', () => {
             rolls: seeded(ref.seed),
             prep: ref.prep,
             alchemy: ref.alchemy,
+            rulesVersion: ref.rulesVersion,
           }),
         ),
       ).toBe(false);

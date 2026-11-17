@@ -48,7 +48,8 @@
   --c-ember: #7a444a;
   --c-on-ember: #dff6f5;
   --c-warn: #7a444a;
-  --c-good: #397b44;
+  /* T19.10: #3c5956 reaches 4.5:1 across all light surfaces (#397b44 was 3.42:1 on --c-surface-raised). */
+  --c-good: #3c5956;
   --c-bad: #a93b3b;
   --c-parchment: #f4cca1;
   --c-ink: #302c2e;

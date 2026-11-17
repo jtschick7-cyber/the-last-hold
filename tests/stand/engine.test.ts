@@ -6,6 +6,7 @@ import { num } from '../../src/core/balance-access';
 import { runFight } from '../../src/core/combat';
 import { roundHalfUp } from '../../src/core/combat/build';
 import { seeded } from '../../src/core/rng';
+import { RULES_VERSION } from '../../src/core/rules-version';
 import {
   runStand,
   standTaken,
@@ -191,7 +192,7 @@ describe('wave logs from the saved record (technical design §5.3)', () => {
       defenses: { walls: 0, watchtower: 0 },
       relics: [],
       knowledge: {},
-      rulesVersion: 1,
+      rulesVersion: RULES_VERSION,
       wavesHeld: made.wavesHeld,
       embers: { waves: 0, trophies: 0, total: 0 },
       relicsFound: [],

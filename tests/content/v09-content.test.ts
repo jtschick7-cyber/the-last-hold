@@ -62,10 +62,16 @@ const byName = <T extends { name: string }>(list: readonly T[], name: string): T
 describe('Great Beasts (GDD §8.13)', () => {
   const list = BOSS_IDS.map((id) => bosses[id]);
 
-  it('are the three of the table, in the order of boss.order', () => {
-    expect(BOSS_IDS).toEqual(['lindworm-of-velk-fjord', 'barrow-king', 'mother-of-the-river']);
+  it('are the five of the table, in the order of boss.order', () => {
+    expect(BOSS_IDS).toEqual([
+      'lindworm-of-velk-fjord',
+      'barrow-king',
+      'mother-of-the-river',
+      'thorn-stag',
+      'beacon-bane',
+    ]);
     const order = flattenBalance(balance).get('boss.order')?.value as string[];
-    // boss.order is locked with short keys (D379); the ids are the technical design's (§5.2),
+    // boss.order is locked with short keys (D379, D631); the ids are the technical design's (§5.2, §26.3),
     // so the two lists are matched by position.
     expect(BOSS_IDS.map((id) => id.split('-')[0])).toEqual(order.map((k) => k.split('-')[0]));
     for (const id of BOSS_IDS) expect(bosses[id].id).toBe(id);
@@ -73,7 +79,7 @@ describe('Great Beasts (GDD §8.13)', () => {
 
   it('match the stats table; the pool is boss.poolBase, so there is no Health here', () => {
     const t = table(beastsText, 'Great Beast');
-    expect(t).toHaveLength(3);
+    expect(t).toHaveLength(5);
     for (const [name, family, pool, might, armor, speed, atk] of t) {
       const b = byName(list, name ?? '');
       expect(pool).toBe('`boss.poolBase`');
@@ -95,7 +101,7 @@ describe('Great Beasts (GDD §8.13)', () => {
         .filter((row) => row.length === 7 && row.slice(1).every((c) => !Number.isNaN(num(c))))
         .map(([n, ...v]) => [n, v.map(num)]),
     );
-    expect(Object.keys(r)).toHaveLength(3);
+    expect(Object.keys(r)).toHaveLength(5);
     for (const b of list) expect(resistOf(b), b.name).toEqual(r[b.name]);
   });
 
@@ -118,9 +124,20 @@ describe('Great Beasts (GDD §8.13)', () => {
       { kind: 'drowningSong', name: 'Drowning Song', every: 4 },
       { kind: 'weirPull', name: 'Weir-Pull', every: 4, knockBack: 25 },
     ]);
+    expect(bosses['thorn-stag'].abilities).toEqual([
+      { kind: 'thornSnare', name: 'Thorn-Snare', every: 3 },
+      { kind: 'brambleSweep', name: 'Bramble-Sweep', every: 4 },
+    ]);
+    expect(bosses['beacon-bane'].abilities).toEqual([
+      { kind: 'pitchFlare', name: 'Pitch-Flare', maxHealthFraction: 0.015 },
+      { kind: 'curseBrand', name: 'Curse-Brand', every: 4, healCut: 0.5, actions: 2 },
+    ]);
+    expect(bosses['beacon-bane'].damage).toBe('fire');
     expect(bosses['barrow-king'].reagent).toBe('grave-dust');
     expect(bosses['mother-of-the-river'].reagent).toBe('river-pearl');
     expect(bosses['lindworm-of-velk-fjord'].reagent).toBe('wolf-fang');
+    expect(bosses['thorn-stag'].reagent).toBe('thornwood');
+    expect(bosses['beacon-bane'].reagent).toBe('noon-poppy');
   });
 });
 
@@ -259,9 +276,10 @@ describe('Events content is never required elsewhere (plan T9.4 #3, #4)', () => 
       expect(names.has(c.name), c.name).toBe(false);
   });
 
-  it('has a generated manifest row for each of the six creatures (plan T9.16)', () => {
-    expect(EVENT_CREATURE_IDS).toHaveLength(6);
-    for (const c of EVENT_CREATURE_IDS)
+  it('has a portrait manifest row for each of the eight creatures, all generated', () => {
+    expect(EVENT_CREATURE_IDS).toHaveLength(8);
+    for (const c of EVENT_CREATURE_IDS) {
       expect(assetById.get(eventCreaturePortraitId(c))?.source, c).toBe('generated');
+    }
   });
 });

@@ -16,7 +16,7 @@ export const standInputOf = (record: StandRecord, log = true): StandInput => ({
   alchemy: record.alchemy,
   ...(record.pool ? { pool: record.pool } : {}),
   ...(record.vigilLevel ? { vigilLevel: record.vigilLevel } : {}),
-  // The saved table and rulesVersion select version 5, 6, or 7 cleanly (D584, D620).
+  // The saved table and rulesVersion select version 5, 6, 7, or 8 cleanly (D584, D620, D632).
   rulesVersion: record.rulesVersion,
   ...(record.lanes ? { lanes: record.lanes } : {}),
   log,

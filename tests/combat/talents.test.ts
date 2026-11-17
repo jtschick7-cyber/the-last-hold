@@ -131,8 +131,8 @@ const checks: Record<string, Check> = {
   },
   mendingBelow: (t) => {
     const prep = { oils: {}, potions: { [of('mender')]: 'mending-draught' as const }, bombs: [] };
-    expect(built({ ...withTalent(t), traits: [] }, prep).potion?.below).toBe(0.4);
-    expect(built({ ...base(t), traits: [] }, prep).potion?.below).toBe(0.3);
+    expect(built({ ...withTalent(t), traits: [] }, prep).potion?.below).toBe(0.65);
+    expect(built({ ...base(t), traits: [] }, prep).potion?.below).toBe(0.5);
   },
   healsBelow: (t) => {
     expect(built(withTalent(t)).healThreshold).toBe(0.8);

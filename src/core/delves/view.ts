@@ -159,8 +159,11 @@ const calloutOf = (e: LogEntry, target: string | null): PlaybackCallout | undefi
   if (e.kind === 'crit' && e.amount !== undefined)
     return { target, tone: 'crit', text: `★ -${e.amount}` };
   if (
-    (e.kind === 'hit' || e.kind === 'sub-hit' || e.kind === 'ability') &&
-    e.amount !== undefined
+    e.amount !== undefined &&
+    (e.kind === 'hit' ||
+      e.kind === 'sub-hit' ||
+      e.kind === 'ability' ||
+      ((e.kind === 'bomb' || e.kind === 'burn' || e.kind === 'volley') && e.amount > 0))
   ) {
     return { target, tone: 'hit', text: `-${e.amount}` };
   }

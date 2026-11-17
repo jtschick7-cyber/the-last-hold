@@ -64,8 +64,8 @@ const k = (t: Record<string, unknown>) => t.k as Record<string, unknown>;
 
 describe('the v14 → v15 migration', () => {
   it('is schema 15, and rules version is 6 from TB.5', () => {
-    expect(SCHEMA_VERSION).toBe(16); // D624 (a): was 15 before v1.8
-    expect(RULES_VERSION).toBe(7);
+    expect(SCHEMA_VERSION).toBe(17); // D636 (a): was 16 before v1.9
+    expect(RULES_VERSION).toBe(8);
     expect(readFixture('v14-owner.json').schemaVersion).toBe(14);
     expect(readFixture('v15.json').schemaVersion).toBe(15);
   });
@@ -73,7 +73,7 @@ describe('the v14 → v15 migration', () => {
   it.each(ALL)('%s loads with no warnings, and round-trips', (f) => {
     const loaded = loadFull(readFixture(f));
     expect(loaded.warnings).toEqual([]);
-    expect(loaded.state.meta.schemaVersion).toBe(16); // D624 (a): was 15 before v1.8
+    expect(loaded.state.meta.schemaVersion).toBe(17); // D636 (a): was 16 before v1.9
     expect(roundTrip(loaded.state)).toEqual(loaded.state);
   });
 
@@ -130,6 +130,7 @@ describe('the v14 → v15 migration', () => {
           rolls: seeded(ref.seed),
           prep: ref.prep,
           alchemy: ref.alchemy,
+          rulesVersion: ref.rulesVersion,
         });
         expect(fightReplayDiffers(ref, replay), `${f} ${ref.contractId}`).toBe(false);
       }
@@ -139,8 +140,8 @@ describe('the v14 → v15 migration', () => {
     }
   });
 
-  it('the current code refuses a save from a newer version (17)', () => {
-    const env = { ...readFixture('v15.json'), schemaVersion: 17 }; // D624 (a): was 16 before v1.8
+  it('the current code refuses a save from a newer version (18)', () => {
+    const env = { ...readFixture('v15.json'), schemaVersion: 18 }; // D636 (a): was 17 before v1.9
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 

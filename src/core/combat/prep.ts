@@ -1,7 +1,9 @@
 import { consumables, type ConsumableId } from '../../content/consumables';
+import { RULES_VERSION } from '../rules-version';
 import { roundHalfUp } from './build';
 import { emit, type Fight } from './fight-state';
 import { finalDamage, heal, hurt } from './formula';
+import { syncSlowStatus } from './skills';
 import { speedEff, unthaw } from './stats';
 import type { Combatant, HunterPotion, HunterSnapshot } from './types';
 import type { Preparation } from '../state/game-state';
@@ -17,6 +19,7 @@ import { talentTotals } from './talents';
 export const hunterKit = (
   h: HunterSnapshot,
   prep: Preparation | undefined,
+  rulesVersion = RULES_VERSION,
 ): { oilFamily: Combatant['oilFamily']; potion: HunterPotion | null } => {
   const oil = prep?.oils[h.id];
   const oilEffect = oil ? consumables[oil].effect : null;
@@ -43,7 +46,14 @@ export const hunterKit = (
           name: def.name,
           effect: e,
           power,
-          below: e.kind === 'heal' ? (tal.mendingBelow ?? e.belowHealth) : 0,
+          below:
+            e.kind === 'heal'
+              ? rulesVersion >= 8
+                ? (tal.mendingBelow ?? e.belowHealth)
+                : tal.mendingBelow !== null
+                  ? 0.4
+                  : 0.3
+              : 0,
           used: false,
         }
       : null;
@@ -56,8 +66,10 @@ const percent = (x: number): string => `${Math.round(x * 1000) / 10}%`;
 export const startPotion = (f: Fight, h: Combatant): void => {
   const p = h.potion;
   if (!p) return;
+  const isV8 = f.rulesVersion >= 8;
   if (p.effect.kind === 'speedWholeFight') {
-    const bonus = p.effect.speedBonus * (1 + p.power) * f.potency;
+    const base = isV8 ? p.effect.speedBonus : 0.2;
+    const bonus = base * (1 + p.power) * f.potency;
     h.statPct.speed += bonus;
     h.speed = speedEff(h);
     p.used = true;
@@ -69,47 +81,115 @@ export const startPotion = (f: Fight, h: Combatant): void => {
     });
   } else if (p.effect.kind === 'fireTaken') {
     // GDD §5.8.5: Coldwater Draught, drunk at the start; Herbwise strengthens it.
-    const cut = p.effect.takenCut * (1 + p.power) * f.potency;
-    h.fireTakenPotion += cut;
-    p.used = true;
-    emit(f, {
-      actor: h.id,
-      kind: 'prep',
-      text: () => `${h.name} drinks ${p.name} (−${percent(cut)} Fire damage taken for the fight)`,
-      rolls: [],
-    });
+    if (!isV8) {
+      const cut = 0.4 * (1 + p.power) * f.potency;
+      h.fireTakenPotion += cut;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () => `${h.name} drinks ${p.name} (−${percent(cut)} Fire damage taken for the fight)`,
+        rolls: [],
+      });
+    } else {
+      const scale = (1 + p.power) * f.potency;
+      const fireCut = p.effect.takenCut * scale;
+      const frostCut = p.effect.frostCut * scale;
+      const mightBonus = p.effect.mightBonus * scale;
+      h.fireTakenPotion += fireCut;
+      h.frostTakenPotion += frostCut;
+      h.statPct.might += mightBonus;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () =>
+          `${h.name} drinks ${p.name} (−${percent(fireCut)} Fire and −${percent(frostCut)} Frost damage taken, +${percent(mightBonus)} Might for the fight)`,
+        rolls: [],
+      });
+    }
   } else if (p.effect.kind === 'hitChance') {
-    // GDD §5.8.5: Owl-Eye Drops, put in at the start; the bonus is points of hit chance.
-    const points = p.effect.hitChance * (1 + p.power) * f.potency;
-    h.hitBonus += points;
-    p.used = true;
-    emit(f, {
-      actor: h.id,
-      kind: 'prep',
-      text: () =>
-        `${h.name} uses ${p.name} (+${Math.round(points * 1000) / 10} points to hit for the fight)`,
-      rolls: [],
-    });
+    // GDD §5.8.5: Owl-Eye Drops, put in at the start; the bonus is points of hit (and crit in v1.9).
+    if (!isV8) {
+      const points = 0.1 * (1 + p.power) * f.potency;
+      h.hitBonus += points;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () =>
+          `${h.name} uses ${p.name} (+${Math.round(points * 1000) / 10} points to hit for the fight)`,
+        rolls: [],
+      });
+    } else {
+      const scale = (1 + p.power) * f.potency;
+      const hitPts = p.effect.hitChance * scale;
+      const critPts = p.effect.critChance * scale;
+      h.hitBonus += hitPts;
+      h.critBonus += critPts;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () =>
+          `${h.name} uses ${p.name} (+${Math.round(hitPts * 1000) / 10} points to hit and +${Math.round(critPts * 1000) / 10} points to crit for the fight)`,
+        rolls: [],
+      });
+    }
   } else if (p.effect.kind === 'steadfast') {
-    // Held until an ability would cost the holder an action; Spoil can still ruin it (D92).
-    h.steadfastLeft = p.effect.uses;
+    if (!isV8) {
+      // Held until an ability would cost the holder an action; Spoil can still ruin it (D92).
+      h.steadfastLeft = 1;
+    } else {
+      const scale = (1 + p.power) * f.potency;
+      const uses = roundHalfUp(p.effect.uses * scale);
+      const mightBonus = p.effect.mightBonus * scale;
+      h.steadfastLeft = uses;
+      h.statPct.might += mightBonus;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () =>
+          `${h.name} drinks ${p.name} (+${percent(mightBonus)} Might for the fight, keeps next ${uses} lost action${uses === 1 ? '' : 's'})`,
+        rolls: [],
+      });
+    }
   } else if (p.effect.kind === 'armorUntilAction') {
-    const bonus = p.effect.armorBonus * (1 + p.power) * f.potency;
-    h.statusPct.armor += bonus;
-    h.tonicLeft = p.effect.untilAction;
-    p.used = true;
-    emit(f, {
-      actor: h.id,
-      kind: 'prep',
-      text: () =>
-        `${h.name} drinks ${p.name} (+${percent(bonus)} Armor for ${p.effect.kind === 'armorUntilAction' ? p.effect.untilAction : 0} actions)`,
-      rolls: [],
-    });
+    if (!isV8) {
+      const bonus = 0.3 * (1 + p.power) * f.potency;
+      h.statusPct.armor += bonus;
+      h.tonicLeft = 5;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () => `${h.name} drinks ${p.name} (+${percent(bonus)} Armor for 5 actions)`,
+        rolls: [],
+      });
+    } else {
+      const scale = (1 + p.power) * f.potency;
+      const bonus = p.effect.armorBonus * scale;
+      const taken = p.effect.takenCut * scale;
+      const until = p.effect.untilAction;
+      h.statusPct.armor += bonus;
+      h.tonicTaken += taken;
+      h.tonicLeft = until;
+      p.used = true;
+      emit(f, {
+        actor: h.id,
+        kind: 'prep',
+        text: () =>
+          `${h.name} drinks ${p.name} (+${percent(bonus)} Armor and −${percent(taken)} damage taken for ${until} actions)`,
+        rolls: [],
+      });
+    }
   }
 };
 
 /** One bomb is thrown at `m` (the front monster at tick 1; a Descent bomb may pick another, GDD §5.15.10). */
 export const throwBomb = (f: Fight, id: ConsumableId, m: Combatant): void => {
+  const isV8 = f.rulesVersion >= 8;
   const shown = (x: number): number => Math.round(x * f.potency * 100) / 100;
   const e = consumables[id].effect;
   if (e.kind === 'burn' || e.kind === 'chill') {
@@ -118,7 +198,8 @@ export const throwBomb = (f: Fight, id: ConsumableId, m: Combatant): void => {
     const amount = finalDamage(dealt, m, resist, false, 0, 1);
     hurt(m, amount);
     // A Fire Pot is a Fire hit: it cracks a Rimewrought's rime (Unthawed, D176).
-    const cracked = e.damageType === 'fire' ? unthaw(m) : null;
+    const cracked =
+      e.damageType === 'fire' ? unthaw(m, () => isV8 && cancelsAbility(f, m, 'Unthawed')) : null;
     const slow = e.kind === 'chill';
     if (e.kind === 'burn') {
       // A status with the same name refreshes rather than stacks (GDD §5.0).
@@ -126,14 +207,20 @@ export const throwBomb = (f: Fight, id: ConsumableId, m: Combatant): void => {
       m.burnAmount = e.perAction * f.potency;
     } else {
       m.chillLeft = e.actions;
-      m.statusPct.speed = -e.speedCut;
-      m.speed = speedEff(m);
+      if (isV8) {
+        m.chillCut = e.speedCut;
+        syncSlowStatus(m);
+      } else {
+        m.statusPct.speed = -e.speedCut;
+        m.speed = speedEff(m);
+      }
       for (const a of m.abilities)
         if (a.kind === 'noonHeat') m.noonHeatSuppressed = a.frostSuppressActions;
     }
     emit(f, {
       actor: 'party',
       kind: 'bomb',
+      ...(isV8 ? { target: m.id } : {}),
       text: () =>
         `The party throws a ${consumables[id].name} — ${e.damageType[0]?.toUpperCase()}${e.damageType.slice(1)} ${shown(e.initial)}` +
         `${resist === 1 ? '' : resist === 0 ? ' immune' : ` ×${resist} resist`} = ${amount}` +
@@ -145,13 +232,20 @@ export const throwBomb = (f: Fight, id: ConsumableId, m: Combatant): void => {
       targetHealth: m.health,
     });
   } else if (e.kind === 'smoke') {
-    // GDD §5.8.5: Poppy Smoke, no damage type: the monster loses its next action(s).
+    // GDD §5.8.5 / v1.9: Poppy Smoke: the monster loses its next action(s) and is Shrouded (v1.9+).
     m.lostActions += e.lostActions;
+    if (isV8) {
+      m.shroudedLeft = e.shroudActions;
+      m.shroudHitBonus = e.hitBonus * f.potency;
+      m.shroudCritBonus = e.critBonus * f.potency;
+      m.shroudDealtBonus = e.dealtBonus * f.potency;
+    }
     emit(f, {
       actor: 'party',
       kind: 'bomb',
       text: () =>
-        `The party throws a ${consumables[id].name}: the ${m.name} loses its next ${e.lostActions === 1 ? 'action' : `${e.lostActions} actions`}`,
+        `The party throws a ${consumables[id].name}: the ${m.name} loses its next ${e.lostActions === 1 ? 'action' : `${e.lostActions} actions`}` +
+        `${isV8 ? ` and is Shrouded for ${e.shroudActions} actions` : ''}`,
       rolls: [],
     });
   } else if (e.kind === 'saltburst') {
@@ -201,6 +295,7 @@ export const burnTick = (f: Fight, m: Combatant): void => {
   emit(f, {
     actor: m.id,
     kind: 'burn',
+    ...(f.rulesVersion >= 8 ? { target: m.id } : {}),
     text: () =>
       `The ${m.name} burns — Fire ${m.burnAmount}${resist === 1 ? '' : resist === 0 ? ' immune' : ` ×${resist} resist`} = ${amount} · ${m.name} ${m.health}/${m.maxHealth}`,
     rolls: [],
@@ -225,7 +320,9 @@ const drinkPotion = (f: Fight, h: Combatant): void => {
   p.used = true;
   const healed = heal(
     h,
-    roundHalfUp(h.maxHealth * p.effect.healFraction * (1 + p.power) * f.potency),
+    roundHalfUp(
+      h.maxHealth * (f.rulesVersion >= 8 ? p.effect.healFraction : 0.4) * (1 + p.power) * f.potency,
+    ),
   );
   emit(f, {
     actor: h.id,
@@ -280,6 +377,27 @@ export const cancelsAbility = (f: Fight, m: Combatant, what: string): boolean =>
   f.saltburstCancelled = true;
   // The action it goes off in does not count as one of the blocked actions.
   m.abilitiesBlocked = block + (f.monsterActing ? 1 : 0);
+  if (f.rulesVersion >= 8) {
+    const rawDamage = e?.kind === 'saltburst' ? e.damage : 25;
+    const damageType = e?.kind === 'saltburst' ? e.damageType : 'rune';
+    const resist = m.resist ? m.resist[damageType] : 1;
+    const dealt = rawDamage * f.potency * resist;
+    const amount = finalDamage(dealt, m, resist, false, 0, 1);
+    const shownDmg = Math.round(rawDamage * f.potency * 100) / 100;
+    const label = `${damageType[0]?.toUpperCase()}${damageType.slice(1)}`;
+    hurt(m, amount);
+    emit(f, {
+      actor: 'party',
+      kind: 'bomb',
+      target: m.id,
+      text: () =>
+        `The Saltburst goes off — ${label} ${shownDmg}${resist === 1 ? '' : resist === 0 ? ' immune' : ` ×${resist} resist`} = ${amount}: the ${m.name}'s ${what} is cancelled, and it cannot use its abilities for ${block} actions · ${m.name} ${m.health}/${m.maxHealth}`,
+      rolls: [],
+      amount,
+      targetHealth: m.health,
+    });
+    return true;
+  }
   emit(f, {
     actor: 'party',
     kind: 'bomb',

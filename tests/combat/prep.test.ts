@@ -122,7 +122,7 @@ describe('oils (GDD §5.7)', () => {
 });
 
 describe('potions (GDD §5.7)', () => {
-  it('Quickfoot Tincture: +20% Speed for the whole fight, drunk at the start', () => {
+  it('Quickfoot Tincture: +15% Speed for the whole fight, drunk at the start', () => {
     const zora = snap('zora'); // Speed 16: first action at tick 7
     const bare = fight([zora], { monster: 'kikimora', tier: 1 }, undefined);
     const fast = fight(
@@ -131,13 +131,13 @@ describe('potions (GDD §5.7)', () => {
       prep({ potions: { zora: 'quickfoot-tincture' } }),
     );
     expect(actionTicks(bare, 'zora')[0]).toBe(7);
-    expect(actionTicks(fast, 'zora')[0]).toBe(6); // 19.2 per tick
-    expect(text(fast)).toContain('Zora Sedlak drinks Quickfoot Tincture (+20% Speed');
+    expect(actionTicks(fast, 'zora')[0]).toBe(6); // 18.4 per tick
+    expect(text(fast)).toContain('Zora Sedlak drinks Quickfoot Tincture (+15% Speed');
     expect(fast.log[0]?.tick).toBe(1);
   });
 
-  it('Hardwood Tonic: +30% Armor, covering the holder’s first 5 actions, then gone', () => {
-    const halvar = snap('halvar'); // Armor 8: 10.40 with the tonic
+  it('Hardwood Tonic: +40% Armor and −15% taken, covering the holder’s first 8 actions, then gone', () => {
+    const halvar = snap('halvar'); // Armor 8: 11.20 with the tonic
     const r = fight(
       [halvar],
       { monster: 'wolf', tier: 1 },
@@ -155,12 +155,14 @@ describe('potions (GDD §5.7)', () => {
     }
     expect(armorAt.length).toBeGreaterThan(8);
     for (const x of armorAt)
-      expect(x.armor, `after ${x.actions} actions`).toBe(x.actions < 5 ? '10.40' : '8.00');
-    expect(text(r)).toContain('drinks Hardwood Tonic (+30% Armor for 5 actions)');
+      expect(x.armor, `after ${x.actions} actions`).toBe(x.actions < 8 ? '11.20' : '8.00');
+    expect(text(r)).toContain(
+      'drinks Hardwood Tonic (+40% Armor and −15% damage taken for 8 actions)',
+    );
   });
 
-  it('Mending Draught: once, below 30% Health, heals 40% of max Health', () => {
-    // A frail Zora against a hard hitter, so she falls below 30% with the draught unused.
+  it('Mending Draught: once, below 50% Health, heals 45% of max Health', () => {
+    // A frail Zora against a hard hitter, so she falls below 50% with the draught unused.
     const zora = snap('zora', { base: { health: 100, might: 1, armor: 0, speed: 16 } });
     const r = fight(
       [zora],
@@ -170,15 +172,15 @@ describe('potions (GDD §5.7)', () => {
     const drinks = r.log.filter((l) => l.kind === 'prep' && l.text.includes('Mending Draught'));
     expect(drinks).toHaveLength(1);
     const d = drinks[0];
-    expect(d?.amount).toBe(40);
+    expect(d?.amount).toBe(45);
     expect(d?.targetHealth ?? 0).toBeGreaterThan(0);
-    // It fired right after the hit that took her under 30 of 100.
+    // It fired right after the hit that took her under 50 of 100.
     const before = r.log.filter(
       (l) => l.tick <= (d?.tick ?? 0) && l.target === 'zora' && l.kind === 'hit',
     );
     const last = before[before.length - 1];
-    expect(last?.targetHealth ?? 99).toBeLessThan(30);
-    expect((d?.targetHealth ?? 0) - 40).toBe(last?.targetHealth);
+    expect(last?.targetHealth ?? 99).toBeLessThan(50);
+    expect((d?.targetHealth ?? 0) - 45).toBe(last?.targetHealth);
   });
 
   it('Mending Draught never fires above the threshold, and never twice', () => {
@@ -190,7 +192,7 @@ describe('potions (GDD §5.7)', () => {
     expect(kinds(healthy, 'prep')).toHaveLength(0);
   });
 
-  it('Herbwise makes potions 25% stronger: Vesna’s draught heals 50%, her tonic gives +37.5% Armor, her tincture +25% Speed', () => {
+  it('Herbwise makes potions 25% stronger: Vesna’s draught heals 56, her tonic gives +50% Armor, her tincture +18.8% Speed', () => {
     const base = { health: 100, might: 1, armor: 0, speed: 11 };
     const vesna = snap('vesna', { base, traits: ['herbwise'] });
     const heal = fight(
@@ -198,19 +200,19 @@ describe('potions (GDD §5.7)', () => {
       { monster: 'bies', tier: 4 },
       prep({ potions: { vesna: 'mending-draught' } }),
     );
-    expect(heal.log.find((l) => l.kind === 'prep' && l.text.includes('Mending'))?.amount).toBe(50);
+    expect(heal.log.find((l) => l.kind === 'prep' && l.text.includes('Mending'))?.amount).toBe(56);
     const tonic = fight(
       [vesna],
       { monster: 'wolf', tier: 1 },
       prep({ potions: { vesna: 'hardwood-tonic' } }),
     );
-    expect(text(tonic)).toContain('+37.5% Armor');
+    expect(text(tonic)).toContain('+50% Armor');
     const speed = fight(
       [vesna],
       { monster: 'wolf', tier: 1 },
       prep({ potions: { vesna: 'quickfoot-tincture' } }),
     );
-    expect(text(speed)).toContain('+25% Speed');
+    expect(text(speed)).toContain('+18.8% Speed');
     // Without Herbwise the same potions are the plain strength.
     const plain = snap('vesna', { base, traits: [] });
     const plainHeal = fight(
@@ -219,7 +221,7 @@ describe('potions (GDD §5.7)', () => {
       prep({ potions: { vesna: 'mending-draught' } }),
     );
     expect(plainHeal.log.find((l) => l.kind === 'prep' && l.text.includes('Mending'))?.amount).toBe(
-      40,
+      45,
     );
   });
 
@@ -390,7 +392,7 @@ describe('Saltburst (GDD §5.7)', () => {
     const r = fight(party(), { monster: 'nix', tier: 3 }, salt, cyclic([0.5]), 'river');
     expect(text(bare)).toContain('carries');
     expect(text(r)).not.toContain('carries');
-    expect(text(r)).toMatch(/Saltburst goes off: the Nix's Riverhorse is cancelled/);
+    expect(text(r)).toMatch(/Saltburst goes off.*the Nix's Riverhorse is cancelled/);
     expect(r.saltburstCancelled).toBe(true);
     expect(bare.saltburstCancelled).toBe(false);
   });

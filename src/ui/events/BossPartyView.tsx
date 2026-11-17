@@ -112,9 +112,14 @@ export const BossPartyView = () => {
       </div>
       {note && <p class={`${styles.small} ${styles.dim}`}>{note}</p>}
       <PartyList rows={rows} party={party} onToggle={toggle} />
-      <p class={`${styles.small} ${styles.dim}`}>
-        {boss.name}: weak to {creatureLines(boss).weak}.
-      </p>
+      {(() => {
+        const lines = creatureLines(boss);
+        return (
+          <p class={`${styles.small} ${styles.dim}`}>
+            {boss.name}: {lines.attack ? `deals ${lines.attack}; ` : ''}weak to {lines.weak}.
+          </p>
+        );
+      })()}
       <PreparationPicker
         state={s}
         party={chosen}

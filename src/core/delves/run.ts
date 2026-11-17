@@ -10,6 +10,7 @@ import { activeEffects } from '../combat/delve';
 import type { DelveFightOptions } from '../combat/types';
 import { ok, refuse, type ApplyResult } from '../commands/types';
 import { stream } from '../rng';
+import { RULES_VERSION } from '../rules-version';
 import type { GameState } from '../state/game-state';
 import type { DelveFloorRecord, DelveRun, DelveStage } from '../state/delve-state';
 import { snapshotOf } from '../systems/hunters';
@@ -201,6 +202,7 @@ export const floorFightInput = (
       rolls,
       log,
       delve,
+      ...(rec.rulesVersion !== undefined ? { rulesVersion: rec.rulesVersion } : {}),
     };
   }
   const g = guardianOf(run.seed);
@@ -220,6 +222,7 @@ export const floorFightInput = (
     rolls,
     log,
     delve,
+    ...(rec.rulesVersion !== undefined ? { rulesVersion: rec.rulesVersion } : {}),
   };
 };
 
@@ -233,11 +236,21 @@ export const currentFloorRecord = (run: DelveRun): DelveFloorRecord => ({
   result: 'win',
 });
 
-/** The log of the last floor fought, from its seed (GDD §9.15 Log). Null if none yet. */
-export const replayLastFloor = (state: GameState, log = true) => {
+/** Pure FightInput reconstructed for `replayLastFloor`, defaulting missing rulesVersion to 7. */
+export const lastFloorReplayInput = (state: GameState, log = true): FightInput | null => {
   const run = state.delve.run;
   if (!run?.lastFloor) return null;
-  return runFight(floorFightInput(state, run, run.lastFloor, log));
+  const rec: DelveFloorRecord = {
+    ...run.lastFloor,
+    rulesVersion: run.lastFloor.rulesVersion ?? 7,
+  };
+  return floorFightInput(state, run, rec, log);
+};
+
+/** The log of the last floor fought, from its seed (GDD §9.15 Log). Null if none yet. */
+export const replayLastFloor = (state: GameState, log = true) => {
+  const input = lastFloorReplayInput(state, log);
+  return input ? runFight(input) : null;
 };
 
 /** Recovery before the next floor (D253, D255, D261): standing hunters get a share of max Health back. */
@@ -328,7 +341,7 @@ export const fightFloor = (state: GameState): ApplyResult => {
   run.kills = r.delve?.kills ?? run.kills;
   run.vigilUsed = r.delve?.vigilUsed ?? run.vigilUsed;
   run.earned.kills = run.kills;
-  run.lastFloor = { ...rec, result: r.result };
+  run.lastFloor = { ...rec, result: r.result, rulesVersion: RULES_VERSION };
   // Kills in Delves per family, recorded for v0.8 (D278); the contract bestiary doesn't learn from them (D262).
   const group = guardian ? [] : floorSpecies(run.seed, floor, run.baseTier);
   r.monsters.forEach((m, i) => {

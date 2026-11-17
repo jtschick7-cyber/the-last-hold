@@ -128,7 +128,7 @@ describe('consumables (GDD §5.7)', () => {
     }
     expect(consumables['grave-oil'].recipe?.ingredients).toEqual({ 'grave-dust': 2, juniper: 1 });
     expect(consumables.saltburst.recipe).toEqual({
-      ingredients: { 'rime-salt': 2 },
+      ingredients: { 'rime-salt': 1 },
       resources: { silver: 1 },
     });
     expect(consumables['fire-pot'].recipe?.resources).toEqual({ wood: 1 });
@@ -155,17 +155,18 @@ describe('consumables (GDD §5.7)', () => {
   it('the effect numbers are the GDD ones', () => {
     expect(consumables['mending-draught'].effect).toEqual({
       kind: 'heal',
-      belowHealth: 0.3,
-      healFraction: 0.4,
+      belowHealth: 0.5,
+      healFraction: 0.45,
     });
     expect(consumables['hardwood-tonic'].effect).toEqual({
       kind: 'armorUntilAction',
-      armorBonus: 0.3,
-      untilAction: 5,
+      armorBonus: 0.4,
+      takenCut: 0.15,
+      untilAction: 8,
     });
     expect(consumables['quickfoot-tincture'].effect).toEqual({
       kind: 'speedWholeFight',
-      speedBonus: 0.2,
+      speedBonus: 0.15,
     });
     expect(consumables['fire-pot'].effect).toMatchObject({
       initial: 40,
@@ -177,7 +178,12 @@ describe('consumables (GDD §5.7)', () => {
       speedCut: 0.3,
       actions: 3,
     });
-    expect(consumables.saltburst.effect).toEqual({ kind: 'saltburst', blockActions: 3 });
+    expect(consumables.saltburst.effect).toEqual({
+      kind: 'saltburst',
+      damage: 25,
+      damageType: 'rune',
+      blockActions: 3,
+    });
     expect(num('oil.familyBonus')).toBe(0.35);
   });
 

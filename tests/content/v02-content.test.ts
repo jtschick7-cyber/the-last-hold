@@ -239,7 +239,7 @@ describe('gear (GDD §5.3.6)', () => {
     expect(gear.mail).toMatchObject({ armor: 5, cost: { iron: 300 } });
     expect(gear['emberwright-plate']).toMatchObject({
       armor: 8,
-      fireTakenReduction: 0.1,
+      fireTakenReduction: 0.25,
       requires: { level: 6 },
     });
   });

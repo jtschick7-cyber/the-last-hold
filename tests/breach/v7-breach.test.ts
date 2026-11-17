@@ -29,7 +29,7 @@ const bastionState = (seed = 'v7-breach-seed'): GameState => {
 
 describe('v7 Breach rules (rulesVersion 7)', () => {
   it('bumps RULES_VERSION to 7 and wires v7 breach tunables', () => {
-    expect(RULES_VERSION).toBe(7);
+    expect(RULES_VERSION).toBe(8);
     expect(balance.breach.frontRows.value).toBe(5);
     expect(balance.breach.rampartBonus.value).toBe(0.15);
     expect(balance.breach.screenedBonus.value).toBe(0.25);
@@ -253,7 +253,7 @@ describe('v7 Breach rules (rulesVersion 7)', () => {
     expect(res.ok).toBe(true);
     const rec = s.cycles[0]?.stand;
     if (!rec) throw new Error('expected frozen Bastion stand record');
-    expect(rec.rulesVersion).toBe(7);
+    expect(rec.rulesVersion).toBe(8);
     expect(rec.lanes?.rampartCols).toBeDefined();
     expect(rec.lanes?.screened).toBeDefined();
     expect(rec.lanes?.sectorCols).toBeDefined();
@@ -346,7 +346,7 @@ describe('v7 Breach rules (rulesVersion 7)', () => {
     expect(arrRes.ok).toBe(true);
     const arrRec = arr.cycles[0]?.stand;
     if (!arrRec) throw new Error('expected frozen Arrival stand record');
-    expect(arrRec.rulesVersion).toBe(7);
+    expect(arrRec.rulesVersion).toBe(8);
     expect(arrRec.lanes).toBeUndefined();
     const arrReplay = replayStand(arrRec);
     const arrAsV5 = runStand({

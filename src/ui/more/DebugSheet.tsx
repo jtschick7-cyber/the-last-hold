@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { bosses } from '../../content/great-beasts';
 import { ORDER_IDS, ORDER_NAMES, type OrderId } from '../../content/orders';
 import { RESOURCE_IDS } from '../../content/resources';
 import type { Command } from '../../core/commands';
@@ -213,6 +214,19 @@ export const DebugSheet = () => {
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.endRests' })}>
           End all event rests
         </button>
+        {(['thorn-stag', 'beacon-bane'] as const).map((boss) => (
+          <button
+            type="button"
+            key={boss}
+            class={styles.btn}
+            onClick={() => {
+              const r = dispatch({ type: 'debug.setBoss', boss });
+              setNote(r.ok ? `${bosses[boss].name} is now the Great Beast.` : r.reason);
+            }}
+          >
+            Set Great Beast: {bosses[boss].name.replace(/^The /, '')}
+          </button>
+        ))}
         <button type="button" class={styles.btn} onClick={() => run({ type: 'debug.grantLoot' })}>
           Grant loot
         </button>

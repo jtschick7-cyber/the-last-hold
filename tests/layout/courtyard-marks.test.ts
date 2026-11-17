@@ -35,21 +35,25 @@ const bastionEventsReady = (seed: string): GameState => {
   return s;
 };
 
-describe('Event Courtyard Marks & Hold Look toggles (T18.5)', () => {
-  it('defines the 6 Courtyard Marks mapped 1:1 to Great Beasts & Legendary Hunts', () => {
+describe('Event Courtyard Marks & Hold Look toggles (T18.5, T19.5)', () => {
+  it('defines the 8 Courtyard Marks mapped 1:1 to Great Beasts & Legendary Hunts', () => {
     expect(COURTYARD_MARK_IDS).toEqual([
       'fjord-bone-standard',
       'barrow-brazier',
       'river-reed-basin',
+      'thorn-antler-rack',
+      'beacon-iron-urn',
       'stoneback-cairn',
       'kettle-barrow-wreath',
       'watch-fire-sconce',
     ]);
-    expect(COURTYARD_MARKS).toHaveLength(6);
+    expect(COURTYARD_MARKS).toHaveLength(8);
     expect(COURTYARD_MARKS.map((m) => m.name)).toEqual([
       'Fjord-Bone Standard',
       'Barrow Brazier',
       'River-Reed Basin',
+      'Thorn-Antler Rack',
+      'Beacon-Iron Urn',
       'Stoneback Cairn',
       'Kettle-Barrow Wreath',
       'Watch-Fire Sconce',
@@ -69,11 +73,13 @@ describe('Event Courtyard Marks & Hold Look toggles (T18.5)', () => {
       expect(s.cosmetics.marks).toEqual({});
     }
 
-    // Finish each of the 3 Great Beasts in turn.
+    // Finish each of the 5 Great Beasts in turn.
     const expectedOrder: CourtyardMarkId[] = [
       'fjord-bone-standard',
       'barrow-brazier',
       'river-reed-basin',
+      'thorn-antler-rack',
+      'beacon-iron-urn',
     ];
     for (let i = 0; i < expectedOrder.length; i++) {
       while (s.events.boss.visit <= i) {
@@ -293,7 +299,7 @@ describe('Event Courtyard Marks & Hold Look toggles (T18.5)', () => {
     expect(visibleShopCosmetics(s)).toContain('wall-lanterns');
   });
 
-  it('keeps state.cosmetics save growth within 0.3 KB (307 B) when all 6 marks & 4 cosmetics are tracked', () => {
+  it('keeps state.cosmetics save growth within 0.3 KB (307 B) when all 8 marks & 4 cosmetics are tracked', () => {
     const s = createNewGame('cosmetic-size', NOW);
     for (const id of COURTYARD_MARK_IDS) s.cosmetics.marks[id] = false;
     s.cosmetics.hidden = [...COSMETIC_IDS];

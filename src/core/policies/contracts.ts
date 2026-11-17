@@ -14,7 +14,9 @@ import { contractIdentity } from '../investigation/view';
 import { investigationSlots } from '../investigation/lodge';
 import {
   brewMoves,
+  chooseBombs,
   experimentMoves,
+  fillPartyPotions,
   investigateMoves,
   labBuildings,
   labFirstSetBuilt,
@@ -22,7 +24,9 @@ import {
 } from './lab';
 import { ageIndex } from '../systems/ages';
 import { hunters } from '../../content/hunters';
+import { monsters } from '../../content/monsters';
 import { traits } from '../../content/traits';
+import { num } from '../balance-access';
 
 /** GDD §6.1 (D114): "within 5 points of the best odds". */
 const TRACKER_SLACK = 0.05;
@@ -44,10 +48,10 @@ const MIN_ODDS = 0.35;
 type Act = (cmd: Command) => boolean;
 
 /** The odds the launch panel would show for this party, or null if it can't go (no food, nobody). */
-const oddsFor = (
+export const oddsFor = (
   s: GameState,
   c: ContractInstance,
-  party: HunterId[],
+  party: readonly HunterId[],
   prep: Preparation,
 ): number | null => {
   if (party.length === 0) return null;
@@ -67,6 +71,45 @@ const oddsFor = (
 
 /** D95: an unidentified contract this close to a sure win is sent at once; a closer one waits for its clues. */
 const SURE_ENOUGH = 0.9;
+/** Above this win chance the base kit is already comfortable; no extra potions/bombs needed. */
+const SAFE_ODDS = 0.85;
+
+/** Evaluates base `prepFor` and upgrades bombs/potions when identified and below `SAFE_ODDS`. */
+export const bestContractPrep = (
+  s: GameState,
+  c: ContractInstance,
+  party: readonly HunterId[],
+): { prep: Preparation; odds: number | null } => {
+  const basePrep = prepFor(s, c, party);
+  const baseOdds = oddsFor(s, c, party, basePrep);
+  if (baseOdds === null || baseOdds >= SAFE_ODDS) return { prep: basePrep, odds: baseOdds };
+  const v = contractIdentity(s, c);
+  if (v.identified && v.monster) {
+    const def = monsters[v.monster];
+    const upgraded: Preparation = {
+      oils: { ...basePrep.oils },
+      bombs: chooseBombs(s, def, true),
+      potions: fillPartyPotions(s, party, def, {}),
+    };
+    const potionsChanged =
+      Object.keys(upgraded.potions).length !== Object.keys(basePrep.potions).length ||
+      party.some((h) => upgraded.potions[h] !== basePrep.potions[h]);
+    if (upgraded.bombs.join(',') !== basePrep.bombs.join(',') || potionsChanged) {
+      const upOdds = oddsFor(s, c, party, upgraded);
+      if (upOdds !== null && upOdds >= baseOdds) return { prep: upgraded, odds: upOdds };
+    }
+  } else if (
+    !v.identified &&
+    baseOdds < MIN_ODDS &&
+    basePrep.bombs.length < num('prep.bombSlots') &&
+    s.stores['poppy-smoke'] > (basePrep.bombs.includes('poppy-smoke') ? 1 : 0)
+  ) {
+    const smoked: Preparation = { ...basePrep, bombs: [...basePrep.bombs, 'poppy-smoke'] };
+    const smokeOdds = oddsFor(s, c, party, smoked);
+    if (smokeOdds !== null && smokeOdds > baseOdds) return { prep: smoked, odds: smokeOdds };
+  }
+  return { prep: basePrep, odds: baseOdds };
+};
 
 /** Hires every candidate it can afford, cheapest first, leaving the next Rank-up's silver untouched. */
 const recruit = (s: GameState, act: Act, hold: number): number => {
@@ -172,15 +215,13 @@ export const contractMoves = (
     if (free.length === 0) break;
     // The strongest party the roster can field; dropping weak members never helps odds.
     let party = free.slice(0, maxPartySize(c.tier, s.cycle.age));
-    let prep = prepFor(s, c, party);
-    let odds = oddsFor(s, c, party, prep);
+    let { prep, odds } = bestContractPrep(s, c, party);
     // v0.4 (GDD §6.1, D114): a Tracker stays home, speeding a busy Lodge slot, when a party
     // without her is within 5 points of the best odds.
     const tracker = party.find((h) => trackerOf(h));
     if (tracker && odds !== null && s.queues.investigation.length > 0) {
       const alt = free.filter((h) => h !== tracker).slice(0, maxPartySize(c.tier, s.cycle.age));
-      const altPrep = prepFor(s, c, alt);
-      const altOdds = oddsFor(s, c, alt, altPrep);
+      const { prep: altPrep, odds: altOdds } = bestContractPrep(s, c, alt);
       if (altOdds !== null && altOdds >= odds - TRACKER_SLACK) {
         party = alt;
         prep = altPrep;

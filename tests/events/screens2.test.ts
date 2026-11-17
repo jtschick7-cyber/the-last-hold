@@ -79,6 +79,7 @@ describe('playback', () => {
       rolls: seeded(ref.seed),
       prep: ref.prep,
       alchemy: ref.alchemy,
+      rulesVersion: ref.rulesVersion,
     });
     expect(pb?.log.length).toBe(again.log.length);
   });
@@ -278,11 +279,11 @@ describe('the Hunters tab', () => {
 });
 
 describe('the Great Beasts shelf', () => {
-  it('reads "Nothing met yet" with nothing fought, and shows six silhouettes', () => {
+  it('reads "Nothing met yet" with nothing fought, and shows eight silhouettes', () => {
     const s = owner();
     const v = greatBeastsShelf(s);
     expect(v.emptyLine).toBe('Nothing met yet. The Great Beasts are on the Events card.');
-    expect(v.entries).toHaveLength(6);
+    expect(v.entries).toHaveLength(8);
     expect(v.entries.every((e) => !e.identified)).toBe(true);
   });
 

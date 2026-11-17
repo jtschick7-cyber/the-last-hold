@@ -257,7 +257,7 @@ describe('attack resolution (GDD §5.5, §5.0)', () => {
       'poludnitsa',
     )[0];
     expect(a?.amount).toBe(30); // 3% of 1000, Armor ignored
-    expect(b?.amount).toBe(27); // −10% Fire taken
+    expect(b?.amount).toBe(23); // −25% Fire taken (v1.9 / rulesVersion 8)
   });
 
   it('Silvered Blade adds a separate Silver sub-hit that ignores Armor and is its own line', () => {

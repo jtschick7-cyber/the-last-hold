@@ -172,6 +172,23 @@ export const isV18Asset = (id: string): boolean => DEPLOYED_V18_GRID_IDS.has(id)
 /** Brand-new v1.8 manifest rows added outside v1.0/v1.1/v1.4 sequences so existing sheet numbers stay fixed. */
 export const isV18AddedAsset = (id: string): boolean => id.startsWith('courtyard-mark.');
 
+/** v1.9 Great Beasts #4-#5 & Courtyard Marks #7-#8 assets approved at T19.6 (D635). */
+export const DEPLOYED_V19_IDS: ReadonlySet<string> = new Set<string>([
+  'courtyard-mark.beacon-iron-urn',
+  'courtyard-mark.thorn-antler-rack',
+  'portrait.creature.beacon-bane',
+  'portrait.creature.thorn-stag',
+  'sprite.creature.beacon-bane',
+  'sprite.creature.thorn-stag',
+]);
+
+export const isV19Asset = (id: string): boolean => DEPLOYED_V19_IDS.has(id);
+
+export const isV19GridFile = (filename: string): boolean => {
+  const m = /^courtyard-mark-(.+)\.png$/.exec(filename);
+  return m !== null && isV19Asset(`courtyard-mark.${m[1]}`);
+};
+
 /** The v1.4 sheet's own sequence 1..5, in the order the owner marks them (portrait, battle sprite, banners). */
 export const v14Numbered: readonly NumberedAsset[] = [
   'portrait.monster.unlit',
@@ -189,7 +206,11 @@ export const v14Numbered: readonly NumberedAsset[] = [
 export const numberedAssets: readonly NumberedAsset[] = assets
   .filter(
     (a): a is GeneratedAsset =>
-      a.source === 'generated' && !isV11Asset(a.id) && !isV14Asset(a.id) && !isV18AddedAsset(a.id),
+      a.source === 'generated' &&
+      !isV11Asset(a.id) &&
+      !isV14Asset(a.id) &&
+      !isV18AddedAsset(a.id) &&
+      !isV19Asset(a.id),
   )
   .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
   .map((asset, i) => ({ n: i + 1, asset }));

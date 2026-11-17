@@ -60,8 +60,10 @@ describe('a save on load opens exactly the Orders it is past', () => {
       'v15-owner.json', // D624 (a): the owner's real v15 save joins the list
       'v15-played.json', // D593 (b): four stands from Bastion, made in TB.10
       'v15.json', // D593 (b): that save after the v15 migration
+      'v16-owner.json', // D636 (a): the owner's real v16 save joins the list
       'v16-played.json', // D624 (a): played 8x12 / frontRows=5 Bastion stand, made in T18.2
       'v16.json', // D624 (a): the owner's v15 save after the v16 migration
+      'v17.json', // D636 (a): v16.json after the v17 migration
     ]);
   });
 

@@ -151,6 +151,8 @@ export interface FightInput {
   readonly stand?: StandWaveOptions;
   /** The warden's Alchemy level, frozen at launch (GDD §5.8.6, D206): brews are 3% stronger per level. Absent means 0. */
   readonly alchemy?: number;
+  /** Rules version in force for this fight; defaults to current RULES_VERSION (D632). */
+  readonly rulesVersion?: number;
 }
 
 /** A potion a hunter carries (GDD §5.7). `used` is true once it has fired or been ruined. */
@@ -166,7 +168,7 @@ export interface HunterPotion {
   >;
   /** 0.25 more power with Herbwise (potionPower). */
   readonly power: number;
-  /** A Mending Draught fires below this share of Health: its own 30%, or 40% with the Herbs talent (v0.8). */
+  /** A Mending Draught fires below this share of Health: its own 50%, or 65% with Herbs tier 3 (v1.9; 30%/40% in v0.8–v1.8). */
   readonly below: number;
   used: boolean;
 }
@@ -214,6 +216,7 @@ export interface Combatant {
   /** Actions still to lose (held, charmed, enthralled). */
   lostActions: number;
   hamstringLeft: number;
+  hamstringCut: number;
   /** Drag Under: the next hit taken counts this many times. */
   nextHitTakenMult: number;
   /** Riverhorse: monster actions left before this hunter returns; 0 = present. */
@@ -233,17 +236,31 @@ export interface Combatant {
   burnAmount: number;
   /** Frost Pot: −Speed% for the monster's next actions. */
   chillLeft: number;
+  chillCut: number;
   /** Chill (Deep guardian): healing received is cut by `healCut` for this many of the holder's own actions. */
   healCutLeft: number;
   healCut: number;
   /** Saltburst: the monster's next actions in which abilities do nothing. */
   abilitiesBlocked: number;
-  /** Owl-Eye Drops (v0.6): added to the hunter's hit chance for the whole fight. */
+  /** Owl-Eye Drops (v0.6): added to the hunter's hit and crit chances for the whole fight. */
   hitBonus: number;
-  /** Coldwater Draught (v0.6): taken% against Fire for the whole fight. */
+  critBonus: number;
+  /** Coldwater Draught (v0.6 / v1.9): taken% against Fire and Frost for the whole fight. */
   fireTakenPotion: number;
-  /** Steadfast Draught (v0.6): ability-caused lost actions still to be kept. */
+  frostTakenPotion: number;
+  /** Hardwood Tonic (v1.9): taken% against all damage while active. */
+  tonicTaken: number;
+  /** Steadfast Draught (v0.6 / v1.9): ability-caused lost actions still to be kept. */
   steadfastLeft: number;
+  /** Poppy Smoke (v1.9): monster is Shrouded for its next actions; hunters gain hit/crit/dmg bonuses against it. */
+  shroudedLeft: number;
+  shroudHitBonus: number;
+  shroudCritBonus: number;
+  shroudDealtBonus: number;
+  /** The Forgotten's Nameless Might multiplier (applied dynamically under v8 so Saltburst suppresses it). */
+  namelessMightMult: number;
+  /** True under rulesVersion >= 8 when monster passives can be suppressed by Saltburst. */
+  passivesBlockable: boolean;
   /** Last Stand taken% (Walls, Iron Shutter); 0 in every contract fight. */
   extraTaken: number;
   // ---- Delve blessings and relics (v0.7, GDD §8.8); all neutral outside a Delve ----

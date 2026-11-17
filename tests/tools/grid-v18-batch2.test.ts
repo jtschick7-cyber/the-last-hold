@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 import { palette } from '../../src/content/palette';
+import { isV19GridFile } from '../../tools/contact-sheet-data';
 import { BATCH2_CONTACT_PATHS, BATCH2_SUBJECTS, STAGING_DIR } from '../../tools/contact-sheet-v18';
 import { drawLevelBuildingV18, LEVEL_BUILDING_FAMILIES } from '../../tools/grid-v18-buildings';
 import { drawPlotV18, BATCH2_PLOT_FAMILIES } from '../../tools/grid-v18-plots';
@@ -216,7 +217,9 @@ describe('v1.8 Grid Art Batch 2 (T18.9, D623, D475)', () => {
     const backupDir = resolve(ROOT, 'art-src', 'previous-v1.8', 'grid');
     const gridDir = resolve(ROOT, 'public', 'assets', 'grid');
     expect(readdirSync(backupDir).filter((f) => f.endsWith('.png'))).toHaveLength(83);
-    expect(readdirSync(gridDir).filter((f) => f.endsWith('.png'))).toHaveLength(89);
+    expect(
+      readdirSync(gridDir).filter((f) => f.endsWith('.png') && !isV19GridFile(f)),
+    ).toHaveLength(89);
     const dirty = execFileSync('git', ['status', '--porcelain', '--', 'public/assets/scenes'], {
       cwd: ROOT,
       encoding: 'utf8',

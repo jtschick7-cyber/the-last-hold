@@ -67,7 +67,7 @@ describe('Ribbonshade: Seal-burn', () => {
     expect(r.result).toBe('loss');
   });
 
-  it('a Saltburst does not cancel it (a passive, like Swell)', () => {
+  it('a Saltburst does not cancel it under legacy v7 (v1–v7 passive rule; v1.9 cancels it)', () => {
     const z = snap('zora', { traits: [], base: { health: 1000, might: 60, armor: 3, speed: 13 } });
     const r = runFight({
       party: [z],
@@ -75,6 +75,7 @@ describe('Ribbonshade: Seal-burn', () => {
       location: 'ruin',
       rolls: cyclic([0.5]),
       prep: { oils: {}, potions: {}, bombs: ['saltburst'] },
+      rulesVersion: 7,
     });
     expect(lines(r, 'ability', 'ribbonshade')[0]?.amount).toBe(6);
   });

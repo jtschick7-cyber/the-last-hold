@@ -9,12 +9,14 @@ import { resolve } from 'node:path';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 import { assetById, courtyardMarkAssetId } from '../../src/content/assets';
-import { COURTYARD_MARK_IDS, courtyardMarkDef } from '../../src/content/courtyard-marks';
+import { courtyardMarkDef } from '../../src/content/courtyard-marks';
+import { V18_COURTYARD_MARK_IDS } from '../../tools/grid-v18-marks';
 import { palette } from '../../src/content/palette';
 import {
   DEPLOYED_V18_GRID_IDS,
   isV18AddedAsset,
   isV18Asset,
+  isV19GridFile,
   numberedAssets,
   redrawIds,
 } from '../../tools/contact-sheet-data';
@@ -89,7 +91,7 @@ describe('v1.8 deployed grid art & Courtyard Marks (T18.11)', () => {
     expect(DEPLOYED_V18_GRID_IDS.size).toBe(89);
 
     const liveFiles = readdirSync(PUBLIC_GRID)
-      .filter((f) => f.endsWith('.png'))
+      .filter((f) => f.endsWith('.png') && !isV19GridFile(f))
       .sort();
     const stagedFiles = readdirSync(STAGING_DIR)
       .filter((f) => f.endsWith('.png'))
@@ -135,7 +137,7 @@ describe('v1.8 deployed grid art & Courtyard Marks (T18.11)', () => {
   });
 
   it('registers all 6 Courtyard Marks in assets.ts without shifting v1.0 contact sheet numbers', () => {
-    for (const id of COURTYARD_MARK_IDS) {
+    for (const id of V18_COURTYARD_MARK_IDS) {
       const assetId = courtyardMarkAssetId(id);
       expect(assetId).toBe(`courtyard-mark.${id}`);
       expect(isV18Asset(assetId)).toBe(true);
