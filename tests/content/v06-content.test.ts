@@ -111,10 +111,30 @@ describe('the six new brews (GDD §5.8.5, D201)', () => {
     expect(v06Brews['hidebane-oil'].effect).toEqual({ kind: 'oil', family: 'beasts-and-wilds' });
     expect(v06Brews['wrights-oil'].effect).toEqual({ kind: 'oil', family: 'cursed' });
     expect(families['beasts-and-wilds'].name).toBe('Beasts & Wilds');
-    expect(v06Brews['coldwater-draught'].effect).toEqual({ kind: 'fireTaken', takenCut: 0.4 });
-    expect(v06Brews['owl-eye-drops'].effect).toEqual({ kind: 'hitChance', hitChance: 0.1 });
-    expect(v06Brews['steadfast-draught'].effect).toEqual({ kind: 'steadfast', uses: 1 });
-    expect(v06Brews['poppy-smoke'].effect).toEqual({ kind: 'smoke', lostActions: 1 });
+    expect(v06Brews['coldwater-draught'].effect).toEqual({
+      kind: 'fireTaken',
+      takenCut: 0.5,
+      frostCut: 0.3,
+      mightBonus: 0.1,
+    });
+    expect(v06Brews['owl-eye-drops'].effect).toEqual({
+      kind: 'hitChance',
+      hitChance: 0.1,
+      critChance: 0.1,
+    });
+    expect(v06Brews['steadfast-draught'].effect).toEqual({
+      kind: 'steadfast',
+      uses: 2,
+      mightBonus: 0.1,
+    });
+    expect(v06Brews['poppy-smoke'].effect).toEqual({
+      kind: 'smoke',
+      lostActions: 1,
+      shroudActions: 2,
+      hitBonus: 0.15,
+      critBonus: 0.1,
+      dealtBonus: 0.15,
+    });
   });
 
   it('join the saved-state id list after the nine v0.3 items, with no recipe to start (T6.3)', () => {
@@ -133,7 +153,7 @@ describe('the v0.6 balance keys (GDD §7.7, §7.8, D194, D195, D217)', () => {
     expect(balance.skill.maxLevel).toMatchObject({ value: 10, locked: true });
     expect(balance.skill.xpBase.value).toBe(20);
     expect(balance.skill.xpGrowth.value).toBe(1.6);
-    expect(balance.skill.xp.alchemy.value).toEqual({ brew: 1, experiment: 3, property: 10 });
+    expect(balance.skill.xp.alchemy.value).toEqual({ brew: 12, experiment: 5, property: 10 });
     expect(balance.skill.xp.smithing.value).toEqual({ gearPerTier: 2, smithyLevel: 2 });
     expect(balance.skill.xp.lore.value).toEqual({ clue: 1, knowledgeLevel: 5, document: 5 });
     expect(balance.skill.xp.command.value).toEqual({ contractPerTier: 2, wave: 1, delveFloor: 1 });

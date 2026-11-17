@@ -1,6 +1,7 @@
 // Plan T7.12 (GDD §9.12, D265): the v0.7 art is exactly what its generators draw today, in the
 // palette, at the manifest's sizes; every battle sprite has all five frames and they differ.
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 import { AGE_IDS } from '../../src/content/ages';
@@ -27,7 +28,7 @@ import { DELVE_RELIC_IDS } from '../../src/content/delves/relics';
 import { COSMETIC_IDS } from '../../src/content/delves/shop';
 import { HUNTER_IDS } from '../../src/content/hunters';
 import { EVENT_CREATURE_IDS } from '../../src/content/hunts';
-import { drawCreatureSprite } from '../../tools/draw-creatures';
+import { drawCreatureSprite, V17_EVENT_CREATURE_IDS } from '../../tools/draw-creatures';
 import { MONSTER_IDS } from '../../src/content/monsters';
 import { drawCosmetic, SCENE_H } from '../../tools/draw-cosmetics';
 import {
@@ -39,10 +40,11 @@ import {
   drawTokenIcon,
 } from '../../tools/draw-icons16';
 import { PALETTE_HEX } from '../../tools/pixel';
-import { isV17Asset } from '../../tools/contact-sheet-data';
+import { isV17Asset, isV19Asset } from '../../tools/contact-sheet-data';
 import { framesOf, stripPng } from '../../tools/sprite-frames';
 import { drawHunterSprite } from '../../tools/sprite-hunters';
 import { drawMonsterSprite } from '../../tools/sprite-monsters';
+import { V19_SPRITE_IDS } from '../../tools/sprites-v19';
 
 const file = (name: string): Buffer =>
   readFileSync(new URL(`../../public/assets/${name}`, import.meta.url));
@@ -52,7 +54,7 @@ const cases = [
     row: hunterSpriteId(h),
     drawn: () => stripPng(framesOf(drawHunterSprite(h), 'right')),
   })),
-  ...EVENT_CREATURE_IDS.map((c) => ({
+  ...V17_EVENT_CREATURE_IDS.map((c) => ({
     row: eventCreatureSpriteId(c),
     drawn: () => stripPng(framesOf(drawCreatureSprite(c), 'left')),
   })),
@@ -163,6 +165,24 @@ describe('battle sprites (D265)', () => {
       if (s.facing === 'left') expect(Math.min(...xs), s.id).toBeLessThan(Math.min(...bx));
       else expect(Math.max(...xs), s.id).toBeGreaterThan(Math.max(...bx));
       expect(xs.length, s.id).toBe(bx.length);
+    }
+  });
+
+  it('covers all 8 event creatures including deployed v1.9 strips matching frozen hashes', () => {
+    const v19Hashes = JSON.parse(
+      readFileSync(new URL('../../art-src/v1.9-hashes.json', import.meta.url), 'utf8'),
+    ) as Record<string, string>;
+    expect(EVENT_CREATURE_IDS).toHaveLength(8);
+    for (const c of EVENT_CREATURE_IDS) {
+      expect(assetById.get(eventCreatureSpriteId(c))?.source, c).toBe('generated');
+    }
+    for (const id of V19_SPRITE_IDS) {
+      const assetId = eventCreatureSpriteId(id);
+      expect(isV19Asset(assetId)).toBe(true);
+      const raw = file(`sprites/creature-${id}.png`);
+      expect(createHash('sha256').update(raw).digest('hex')).toBe(v19Hashes[assetId]);
+      const png = PNG.sync.read(raw);
+      expect([png.width, png.height]).toEqual([160, 32]);
     }
   });
 });

@@ -466,7 +466,7 @@ export const greatBeastsShelf = (state: GameState): GreatBeastsShelf => {
         `Might ${e.def.might}`,
         `Armor ${e.def.armor}`,
         `Speed ${e.def.speed}`,
-        `${e.def.attacks} ${e.def.attacks === 1 ? 'attack' : 'attacks'} an action`,
+        `${e.def.attacks} ${lines.attack ? `${lines.attack} ` : ''}${e.def.attacks === 1 ? 'attack' : 'attacks'} an action`,
       ],
       weak: lines.weak,
       resists: lines.resists,

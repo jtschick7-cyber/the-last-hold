@@ -28,6 +28,7 @@ import type {
   UnlitInstance,
 } from '../combat/types';
 import { seeded } from '../rng';
+import { RULES_VERSION } from '../rules-version';
 import type { DescentMonsterId, DescentStageSummary, PrepSnapshot } from '../state/descent-state';
 import type { Preparation } from '../state/game-state';
 
@@ -64,6 +65,8 @@ export interface DescentInput {
   readonly alchemy: number;
   /** Default true. Previews pass false: same fights, no log text. */
   readonly log?: boolean;
+  /** Rules version in force for this Descent; defaults to current RULES_VERSION (D632). */
+  readonly rulesVersion?: number;
 }
 
 export interface DescentStageRun {
@@ -209,6 +212,7 @@ export const runDescent = (input: DescentInput): DescentRun => {
   const potionsUsed = new Set<HunterId>(); // a potion fires once across the three stages (as in the Last Stand)
   const stock: Partial<Record<ConsumableId, number>> = { ...input.bombs };
   const bombsUsed: Partial<Record<ConsumableId, number>> = {};
+  const rulesVersion = input.rulesVersion ?? RULES_VERSION;
   const potency = alchemyPotency(input.alchemy);
   const stages: DescentStageRun[] = [];
 
@@ -217,7 +221,7 @@ export const runDescent = (input: DescentInput): DescentRun => {
       Object.entries(input.prep.potions).filter(([id]) => !potionsUsed.has(id as HunterId)),
     );
     const prep: Preparation = { oils: input.prep.oils, potions, bombs: [] };
-    const c = buildHunter(snap, slot + 1, prep, boostOf(snap));
+    const c = buildHunter(snap, slot + 1, prep, boostOf(snap), rulesVersion);
     const kept = carry.get(snap.id);
     if (kept) {
       c.health = Math.min(c.maxHealth, kept.health);
@@ -267,8 +271,8 @@ export const runDescent = (input: DescentInput): DescentRun => {
     const instances = stageMonsters(input, n);
     const monsterList = instances.map((m, slot) => {
       const def = speciesOf(m);
-      if (instances.length === 1) return buildMonster(m);
-      return buildMonster(m, 1, { slot, id: def.id, name: def.name });
+      if (instances.length === 1) return buildMonster(m, 1, undefined, 0, rulesVersion);
+      return buildMonster(m, 1, { slot, id: def.id, name: def.name }, 0, rulesVersion);
     });
     const firstDef = speciesOf(instances[0] as FightMonster);
     const first = instances[0] as FightMonster;
@@ -312,6 +316,7 @@ export const runDescent = (input: DescentInput): DescentRun => {
       potency,
       smokeHolder: null,
       torchHolder: null,
+      rulesVersion: input.rulesVersion ?? RULES_VERSION,
     };
     f.tick = 1;
     for (const c of hunters) enter(f, c);

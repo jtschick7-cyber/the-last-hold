@@ -5,6 +5,8 @@ export const COURTYARD_MARK_IDS = [
   'fjord-bone-standard',
   'barrow-brazier',
   'river-reed-basin',
+  'thorn-antler-rack',
+  'beacon-iron-urn',
   'stoneback-cairn',
   'kettle-barrow-wreath',
   'watch-fire-sconce',
@@ -38,6 +40,16 @@ export const COURTYARD_MARKS: readonly CourtyardMarkDef[] = [
     source: { kind: 'boss', bossId: 'mother-of-the-river' },
   },
   {
+    id: 'thorn-antler-rack',
+    name: 'Thorn-Antler Rack',
+    source: { kind: 'boss', bossId: 'thorn-stag' },
+  },
+  {
+    id: 'beacon-iron-urn',
+    name: 'Beacon-Iron Urn',
+    source: { kind: 'boss', bossId: 'beacon-bane' },
+  },
+  {
     id: 'stoneback-cairn',
     name: 'Stoneback Cairn',
     source: { kind: 'hunt', huntId: 'stoneback' },
@@ -63,6 +75,8 @@ const BY_BOSS: Record<BossId, CourtyardMarkId> = {
   'lindworm-of-velk-fjord': 'fjord-bone-standard',
   'barrow-king': 'barrow-brazier',
   'mother-of-the-river': 'river-reed-basin',
+  'thorn-stag': 'thorn-antler-rack',
+  'beacon-bane': 'beacon-iron-urn',
 };
 
 const BY_HUNT: Record<HuntId, CourtyardMarkId> = {

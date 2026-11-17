@@ -174,6 +174,7 @@ describe('the v9 → v10 migration on the owner’s real save', () => {
         rolls: seeded(ref.seed),
         prep: ref.prep,
         alchemy: ref.alchemy,
+        rulesVersion: ref.rulesVersion,
       });
       expect(fightReplayDiffers(ref, replay), ref.contractId).toBe(false);
     }

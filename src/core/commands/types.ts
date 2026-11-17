@@ -1,5 +1,6 @@
 import type { AgeId } from '../../content/ages';
 import type { BuildingId } from '../../content/buildings';
+import type { BossId } from '../../content/great-beasts';
 import type { GearSlot } from '../../content/gear';
 import type { PatronId } from '../../content/delves/patrons';
 import type { CosmeticId } from '../../content/delves/shop';
@@ -203,6 +204,7 @@ export type Command =
   | { type: 'debug.addToken' }
   | { type: 'debug.fillBank' }
   | { type: 'debug.endRests' }
+  | { type: 'debug.setBoss'; boss: BossId }
   | { type: 'debug.unlockAge'; age: AgeId }
   /** Plan TL.4: layout debug tools (set debugUsed). */
   | { type: 'debug.layoutAutoArrange' }

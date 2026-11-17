@@ -1,6 +1,6 @@
 {
   "milestone": "v1.5",
-  "rulesVersion": 7,
+  "rulesVersion": 8,
   "groups": {
     "opening/mon": {
       "first-cottage": 0,
@@ -87,9 +87,9 @@
       "first-identified": 30.46,
       "first-studied": 72.5,
       "citadel": 53.5,
-      "bastion": 101.5,
-      "best-last-stand": 101.5,
-      "first-long-night": 120,
+      "bastion": 110,
+      "best-last-stand": 110,
+      "first-long-night": 125.5,
       "first-ruin": 64
     },
     "light/sat": {
@@ -105,7 +105,7 @@
       "first-identified": 28.46,
       "first-studied": 60.5,
       "citadel": 51.5,
-      "bastion": 94,
+      "bastion": 99.5,
       "best-last-stand": 108,
       "first-long-night": 123.5,
       "first-ruin": 72
@@ -123,9 +123,9 @@
       "first-identified": 12.48,
       "first-studied": 16.5,
       "citadel": 48,
-      "bastion": 76,
-      "best-last-stand": 76,
-      "first-long-night": 80,
+      "bastion": 72,
+      "best-last-stand": 74,
+      "first-long-night": 76,
       "first-ruin": 15
     },
     "heavy/sat": {
@@ -178,7 +178,7 @@
       "first-studied": 30,
       "citadel": 48,
       "bastion": 96,
-      "best-last-stand": 99,
+      "best-last-stand": 96,
       "first-long-night": 101.5,
       "first-ruin": 28
     },
@@ -196,8 +196,8 @@
       "first-studied": 30,
       "citadel": 48,
       "bastion": 96,
-      "best-last-stand": 99,
-      "first-long-night": 105,
+      "best-last-stand": 96,
+      "first-long-night": 101.5,
       "first-ruin": 28
     },
     "vigilant/mon": {

@@ -13,6 +13,7 @@
 // exactly as before, so every golden fight and every recorded fight replays unchanged. Version 6
 // (owner-approved, D584, Q62; D620): the Breach. A Last Stand whose record holds a lane table
 // fights under version 6 (or version 7 with Extended Breach geometry & Sector Support when its
-// `rulesVersion >= 7`); a record without one replays under version 5, bit for bit. Every other
-// fight's maths is the same across 5, 6 and 7, and replay accepts them all.
-export const RULES_VERSION = 7;
+// `rulesVersion >= 7`); a record without one replays under version 5, bit for bit. Version 8
+// (owner-approved, D632, v1.9): propagates `rulesVersion` through all fight, Delve floor, and
+// Descent inputs so pre-v1.9 records replay bit-for-bit under `<= 7`.
+export const RULES_VERSION = 8;

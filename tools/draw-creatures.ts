@@ -6,11 +6,21 @@ import { C, Canvas, seedRolls } from './pixel';
 import { SPRITE_SIZE } from './sprite-frames';
 import { biped, shaded, wisp, type Ramp } from './sprite-parts';
 
+export const V17_EVENT_CREATURE_IDS = [
+  'lindworm-of-velk-fjord',
+  'barrow-king',
+  'mother-of-the-river',
+  'stoneback-fell-troll',
+  'mara-of-kettle-barrow',
+  'likho-one-eyed',
+] as const satisfies readonly EventCreatureId[];
+export type V17EventCreatureId = (typeof V17_EVENT_CREATURE_IDS)[number];
+
 const CX = 32;
 
 type Backdrop = readonly [dark: string, mid: string, light: string];
 
-const BACKDROP: Record<EventCreatureId, Backdrop> = {
+const BACKDROP: Record<V17EventCreatureId, Backdrop> = {
   'lindworm-of-velk-fjord': [C.night, C.blue, C.cyan],
   'barrow-king': [C.plum, C.night, C.slate],
   'mother-of-the-river': [C.night, C.blue, C.ice],
@@ -323,7 +333,7 @@ const likho = (c: Canvas): void => {
   c.rect(24, 57, 17, 1, C.brown);
 };
 
-const PORTRAIT: Record<EventCreatureId, (c: Canvas) => void> = {
+const PORTRAIT: Record<V17EventCreatureId, (c: Canvas) => void> = {
   'lindworm-of-velk-fjord': lindworm,
   'barrow-king': barrowKing,
   'mother-of-the-river': mother,
@@ -333,7 +343,7 @@ const PORTRAIT: Record<EventCreatureId, (c: Canvas) => void> = {
 };
 
 /** The 64 px portrait, in the monsters' style: a family-colored backdrop, the creature, an outline. */
-export const drawCreaturePortrait = (id: EventCreatureId): Canvas => {
+export const drawCreaturePortrait = (id: V17EventCreatureId): Canvas => {
   const [dark, mid, light] = BACKDROP[id];
   const c = new Canvas();
   c.fill(dark);
@@ -476,7 +486,7 @@ const likhoSprite = (c: Canvas): void => {
   c.set(15, 7, C.frost);
 };
 
-const SPRITE: Record<EventCreatureId, (c: Canvas) => void> = {
+const SPRITE: Record<V17EventCreatureId, (c: Canvas) => void> = {
   'lindworm-of-velk-fjord': lindwormSprite,
   'barrow-king': barrowKingSprite,
   'mother-of-the-river': motherSprite,
@@ -486,7 +496,7 @@ const SPRITE: Record<EventCreatureId, (c: Canvas) => void> = {
 };
 
 /** A creature facing left, outlined, at the sprite size; `framesOf(…, 'left')` makes the strip. */
-export const drawCreatureSprite = (id: EventCreatureId): Canvas => {
+export const drawCreatureSprite = (id: V17EventCreatureId): Canvas => {
   const c = new Canvas(SPRITE_SIZE);
   SPRITE[id](c);
   c.outline(C.ink);

@@ -50,7 +50,7 @@ describe('the v8 → v9 migration on the owner’s real save', () => {
     expect(before.legendaries).toEqual([{ id: 'wolf-tooth-string', cycle: 19 }]);
     expect(before.cycles[18]?.stand).toBeNull();
     expect(after.meta.schemaVersion).toBe(SCHEMA_VERSION);
-    expect(RULES_VERSION).toBe(7); // events change no combat rule (D308)
+    expect(RULES_VERSION).toBe(8); // events change no combat rule (D308)
   });
 
   it('keeps everything the save had: hunters, items, Legendaries, documents, Embers, stands', () => {
@@ -139,6 +139,7 @@ describe('the v8 → v9 migration on the owner’s real save', () => {
         rolls: seeded(ref.seed),
         prep: ref.prep,
         alchemy: ref.alchemy,
+        rulesVersion: ref.rulesVersion,
       });
       expect(fightReplayDiffers(ref, replay), ref.contractId).toBe(false);
     }

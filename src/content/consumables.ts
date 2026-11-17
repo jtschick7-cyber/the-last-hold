@@ -35,8 +35,13 @@ export type ConsumableEffect =
   | { readonly kind: 'oil'; readonly family: FamilyId }
   /** Once, when the holder falls below `belowHealth`: heal `healFraction` of max Health. */
   | { readonly kind: 'heal'; readonly belowHealth: number; readonly healFraction: number }
-  /** +`armorBonus` Armor (stat%) until the holder's `untilAction`-th action. */
-  | { readonly kind: 'armorUntilAction'; readonly armorBonus: number; readonly untilAction: number }
+  /** +`armorBonus` Armor (stat%) and −`takenCut` all damage taken (taken%) until the holder's `untilAction`-th action. */
+  | {
+      readonly kind: 'armorUntilAction';
+      readonly armorBonus: number;
+      readonly takenCut: number;
+      readonly untilAction: number;
+    }
   /** +`speedBonus` Speed (stat%) for the whole fight. */
   | { readonly kind: 'speedWholeFight'; readonly speedBonus: number }
   /** At tick 1: `initial` damage, then `perAction` on each of the monster's next `actions`. */
@@ -55,22 +60,38 @@ export type ConsumableEffect =
       readonly speedCut: number;
       readonly actions: number;
     }
-  /** Triggers on the monster's first ability: cancels it, blocks abilities for `blockActions`. */
-  | { readonly kind: 'saltburst'; readonly blockActions: number }
-  /** v0.6: the holder takes −`takenCut` Fire damage for the whole fight (taken%, inside the cap). */
-  | { readonly kind: 'fireTaken'; readonly takenCut: number }
-  /** v0.6: the holder's hit chance +`hitChance` (a share, 0.10 = 10 points) for the whole fight. */
-  | { readonly kind: 'hitChance'; readonly hitChance: number }
-  /** v0.6: the first time an ability would cost the holder an action, it doesn't (other effects stay). */
-  | { readonly kind: 'steadfast'; readonly uses: number }
-  /** v0.6: at tick 1 the monster loses its next `lostActions` actions. */
-  | { readonly kind: 'smoke'; readonly lostActions: number };
+  /** Triggers on the monster's first ability: `damage` (`damageType`), cancels it, and blocks abilities for `blockActions`. */
+  | {
+      readonly kind: 'saltburst';
+      readonly damage: number;
+      readonly damageType: DamageType;
+      readonly blockActions: number;
+    }
+  /** v0.6 / v1.9: the holder takes −`takenCut` Fire and −`frostCut` Frost damage and +`mightBonus` Might for the whole fight. */
+  | {
+      readonly kind: 'fireTaken';
+      readonly takenCut: number;
+      readonly frostCut: number;
+      readonly mightBonus: number;
+    }
+  /** v0.6 / v1.9: the holder's hit chance +`hitChance` and crit chance +`critChance` (shares) for the whole fight. */
+  | { readonly kind: 'hitChance'; readonly hitChance: number; readonly critChance: number }
+  /** v0.6 / v1.9: prevents `uses` ability-lost actions and grants +`mightBonus` Might for the whole fight. */
+  | { readonly kind: 'steadfast'; readonly uses: number; readonly mightBonus: number }
+  /** v0.6 / v1.9: at tick 1 the monster loses `lostActions` actions and becomes Shrouded for `shroudActions` actions. */
+  | {
+      readonly kind: 'smoke';
+      readonly lostActions: number;
+      readonly shroudActions: number;
+      readonly hitBonus: number;
+      readonly critBonus: number;
+      readonly dealtBonus: number;
+    };
 
 /**
- * How a brew's recipe is built from carriers of its property (GDD §5.8.2, D198):
+ * How a brew's recipe is built from carriers of its property (GDD §5.8.2, D198, D633):
  * an oil or potion is 3 units from two different carriers, 2 of one and 1 of the other;
- * a single bomb is 1 unit of a carrier plus a resource; Saltburst is 2 units of carriers
- * (any mix) plus a resource.
+ * a bomb (including Saltburst from v1.9) is 1 unit of a carrier plus a resource.
  */
 export type RecipeShape =
   | { readonly kind: 'split'; readonly major: number; readonly minor: number }
@@ -131,8 +152,8 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     id: 'mending-draught',
     name: 'Mending Draught',
     kind: 'potion',
-    effect: { kind: 'heal', belowHealth: 0.3, healFraction: 0.4 },
-    summary: 'Once, below 30% Health: heal 40% of max Health.',
+    effect: { kind: 'heal', belowHealth: 0.5, healFraction: 0.45 },
+    summary: 'Once, below 50% Health: heal 45% of max Health.',
     recipe: { ingredients: { yarrow: 2, honeycomb: 1 }, resources: {} },
     shape: SPLIT,
   },
@@ -142,8 +163,8 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     id: 'hardwood-tonic',
     name: 'Hardwood Tonic',
     kind: 'potion',
-    effect: { kind: 'armorUntilAction', armorBonus: 0.3, untilAction: 5 },
-    summary: "+30% Armor until the holder's 5th action.",
+    effect: { kind: 'armorUntilAction', armorBonus: 0.4, takenCut: 0.15, untilAction: 8 },
+    summary: "+40% Armor and −15% all damage taken until the holder's 8th action.",
     recipe: { ingredients: { thornwood: 1, juniper: 2 }, resources: {} },
     shape: SPLIT,
   },
@@ -151,8 +172,8 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     id: 'quickfoot-tincture',
     name: 'Quickfoot Tincture',
     kind: 'potion',
-    effect: { kind: 'speedWholeFight', speedBonus: 0.2 },
-    summary: '+20% Speed for the whole fight.',
+    effect: { kind: 'speedWholeFight', speedBonus: 0.15 },
+    summary: '+15% Speed for the whole fight.',
     recipe: { ingredients: { mugwort: 2, 'hares-foot': 1 }, resources: {} },
     shape: SPLIT,
   },
@@ -178,11 +199,11 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     id: 'saltburst',
     name: 'Saltburst',
     kind: 'bomb',
-    effect: { kind: 'saltburst', blockActions: 3 },
+    effect: { kind: 'saltburst', damage: 25, damageType: 'rune', blockActions: 3 },
     summary:
-      "Triggers on the monster's first ability: cancels it and blocks abilities for the monster's next 3 actions.",
-    recipe: { ingredients: { 'rime-salt': 2 }, resources: { silver: 1 } },
-    shape: { kind: 'double', units: 2, resources: { silver: 1 } },
+      "Triggers on the monster's first ability: 25 Rune damage, cancels it, and blocks abilities for the monster's next 3 actions.",
+    recipe: { ingredients: { 'rime-salt': 1 }, resources: { silver: 1 } },
+    shape: { kind: 'single', units: 1, resources: { silver: 1 } },
   },
   // ---- v0.6 (GDD §5.8.5, D201) ----
   'hidebane-oil': {
@@ -207,8 +228,9 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     id: 'coldwater-draught',
     name: 'Coldwater Draught',
     kind: 'potion',
-    effect: { kind: 'fireTaken', takenCut: 0.4 },
-    summary: 'The holder takes −40% Fire damage for the whole fight.',
+    effect: { kind: 'fireTaken', takenCut: 0.5, frostCut: 0.3, mightBonus: 0.1 },
+    summary:
+      'The holder takes −50% Fire and −30% Frost damage and gains +10% Might for the whole fight.',
     recipe: null,
     shape: SPLIT,
   },
@@ -216,8 +238,9 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     id: 'owl-eye-drops',
     name: 'Owl-Eye Drops',
     kind: 'potion',
-    effect: { kind: 'hitChance', hitChance: 0.1 },
-    summary: "+10 points to the holder's hit chance for the whole fight.",
+    effect: { kind: 'hitChance', hitChance: 0.1, critChance: 0.1 },
+    summary:
+      "+10 points to the holder's hit chance and +10 points to crit chance for the whole fight.",
     recipe: null,
     shape: SPLIT,
   },
@@ -225,9 +248,9 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     id: 'steadfast-draught',
     name: 'Steadfast Draught',
     kind: 'potion',
-    effect: { kind: 'steadfast', uses: 1 },
+    effect: { kind: 'steadfast', uses: 2, mightBonus: 0.1 },
     summary:
-      "The first time a monster's ability would cost the holder an action, it doesn't; its other effects still apply.",
+      'Prevents the next 2 ability-caused lost actions and grants +10% Might for the whole fight.',
     recipe: null,
     shape: SPLIT,
   },
@@ -235,8 +258,16 @@ export const consumables: Readonly<Record<ConsumableId, ConsumableDef>> = {
     id: 'poppy-smoke',
     name: 'Poppy Smoke',
     kind: 'bomb',
-    effect: { kind: 'smoke', lostActions: 1 },
-    summary: 'At tick 1: the monster loses its next action.',
+    effect: {
+      kind: 'smoke',
+      lostActions: 1,
+      shroudActions: 2,
+      hitBonus: 0.15,
+      critBonus: 0.1,
+      dealtBonus: 0.15,
+    },
+    summary:
+      'At tick 1: the monster loses its next action and is Shrouded for 2 actions (party attacks gain +15 hit, +10 crit, +15% damage).',
     recipe: null,
     shape: withWood,
   },

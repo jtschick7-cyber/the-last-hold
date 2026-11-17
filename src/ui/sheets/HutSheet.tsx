@@ -104,7 +104,7 @@ const BrewRow = ({ s, id }: { s: GameState; id: ConsumableId }) => {
   );
 };
 
-const BrewSection = ({ s }: { s: GameState }) => {
+export const BrewSection = ({ s }: { s: GameState }) => {
   const have = CONSUMABLE_IDS.filter((c) => s.stores[c] > 0);
   const reagents = INGREDIENT_IDS.filter((i) => s.stores[i] > 0);
   const known = CONSUMABLE_IDS.filter((id) => knownRecipes(s, id).length > 0);

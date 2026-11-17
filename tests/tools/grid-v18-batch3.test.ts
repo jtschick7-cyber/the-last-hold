@@ -3,8 +3,8 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
-import { COURTYARD_MARK_IDS } from '../../src/content/courtyard-marks';
 import { palette } from '../../src/content/palette';
+import { isV19GridFile } from '../../tools/contact-sheet-data';
 import {
   BATCH1_SUBJECTS,
   BATCH2_SUBJECTS,
@@ -12,7 +12,7 @@ import {
   BATCH3_SUBJECTS,
   STAGING_DIR,
 } from '../../tools/contact-sheet-v18';
-import { drawCourtyardMarkV18 } from '../../tools/grid-v18-marks';
+import { drawCourtyardMarkV18, V18_COURTYARD_MARK_IDS } from '../../tools/grid-v18-marks';
 import { drawPlotV18 } from '../../tools/grid-v18-plots';
 import {
   BATCH3_PLOT_FAMILIES,
@@ -118,7 +118,7 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
     expect(BATCH3_SUBJECTS.map((s) => s.id)).toEqual([
       'grid.herb-garden',
       'grid.silver-seam',
-      ...COURTYARD_MARK_IDS.map((id) => `courtyard-mark.${id}`),
+      ...V18_COURTYARD_MARK_IDS.map((id) => `courtyard-mark.${id}`),
     ]);
     const files = BATCH3_SUBJECTS.flatMap((s) => s.stagedFiles.map((f) => f.name));
     expect(files).toHaveLength(11);
@@ -127,7 +127,7 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
     expect(files).toContain('herb-garden-3.png');
     expect(files).toContain('silver-seam-1.png');
     expect(files).toContain('silver-seam-2.png');
-    for (const id of COURTYARD_MARK_IDS) {
+    for (const id of V18_COURTYARD_MARK_IDS) {
       expect(files).toContain(`courtyard-mark-${id}.png`);
     }
   });
@@ -191,7 +191,7 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
 
   it('draws all 6 Event Courtyard Marks (16x16, Q83(a)) crisply in Zughy-32 and pairwise distinct', () => {
     const rendered: { id: string; png: PNG; opaqueCount: number }[] = [];
-    for (const id of COURTYARD_MARK_IDS) {
+    for (const id of V18_COURTYARD_MARK_IDS) {
       const buf = drawCourtyardMarkV18(id).toPng(16);
       const again = drawCourtyardMarkV18(id).toPng(16);
       expect(buf.equals(again)).toBe(true);
@@ -291,7 +291,9 @@ describe('v1.8 Grid Art Batch 3 (T18.10, Q83-Q85, D623, D475)', () => {
     const backupDir = resolve(ROOT, 'art-src', 'previous-v1.8', 'grid');
     const gridDir = resolve(ROOT, 'public', 'assets', 'grid');
     expect(readdirSync(backupDir).filter((f) => f.endsWith('.png'))).toHaveLength(83);
-    expect(readdirSync(gridDir).filter((f) => f.endsWith('.png'))).toHaveLength(89);
+    expect(
+      readdirSync(gridDir).filter((f) => f.endsWith('.png') && !isV19GridFile(f)),
+    ).toHaveLength(89);
     const dirty = execFileSync('git', ['status', '--porcelain', '--', 'public/assets/scenes'], {
       cwd: ROOT,
       encoding: 'utf8',

@@ -305,6 +305,7 @@ describe('well prepared (GDD §5.7, §5.4.3)', () => {
       location: ref.location,
       rolls: seeded(ref.seed),
       prep: ref.prep,
+      rulesVersion: ref.rulesVersion,
     });
     expect(again.result).toBe(ref.result);
     expect(ref.seed).toBe(fightSeed(s.meta.gameSeed, 'k1', [...winParty], prepIds(p)));

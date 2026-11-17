@@ -37,14 +37,26 @@ const kettleDuration = (
 ): Explained => {
   const baseSec = num(baseKey);
   const cut = brewCut(state);
+  const hutLevel = state.buildings['alchemists-hut'];
+  const hutStep = num('hut.timeCutPerLevel');
+  const hutCut = Math.round(Math.max(0, hutLevel - 1) * hutStep * 10_000) / 10_000;
   const factor = tacticalBrewFactor(state);
-  const value = baseSec * (1 - cut.value) * (factor ? factor.value : 1);
+  const value = baseSec * (1 - cut.value) * (1 - hutCut) * (factor ? factor.value : 1);
   const children: Breakdown[] = [{ label: V18_TEXT.baseTime, value: baseSec, key: baseKey }];
   if (cut.value > 0) children.push(cut.breakdown);
+  if (hutCut > 0) {
+    children.push({
+      label: `Alchemist's Hut Lv ${hutLevel}`,
+      value: hutCut,
+      formula: `max(0, ${hutLevel} − 1) × ${hutStep}`,
+      key: 'hut.timeCutPerLevel',
+    });
+  }
   if (factor) children.push(factor.breakdown);
   const formula = [
     `${baseSec}`,
     ...(cut.value > 0 ? [`× (1 − ${cut.value})`] : []),
+    ...(hutCut > 0 ? [`× (1 − ${hutCut})`] : []),
     ...(factor ? [`× ${factor.value}`] : []),
   ].join(' ');
   return { value, breakdown: { label, value, formula, children } };

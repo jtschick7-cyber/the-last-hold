@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
 import type { Locator, Page } from '@playwright/test';
+import { COURTYARD_MARK_IDS } from '../../src/content/courtyard-marks';
+import { COSMETIC_IDS } from '../../src/content/delves/shop';
 import { begin, tab } from './helpers';
 
 // Plan TV.3a (GDD §9.20): the screen list that the tap sweep, and later the Text size, contrast and
@@ -47,6 +49,35 @@ export const loadFixture = async (
     st.remembering.nearSeen = true;
     st.remembering.endings.push({ ending: 'remember', at: 1, cycle: 1 });
     st.cycles[1].stand.vigilLevel = 2;
+  }
+  // v1.9 (D631–D636): v16-owner:v19 prepares a migrated v17 Bastion save with all 8 Courtyard Marks,
+  // The Beacon-Bane active/identified, Lv 3 Alchemist's Hut, Emberwright Plate worn, and v1.9 brews.
+  if (variant === 'v19') {
+    save.schemaVersion = 17;
+    save.rulesVersion = 8;
+    const st = save.state;
+    st.running = [];
+    st.results = [];
+    st.events.rest = {};
+    st.events.tokens = { count: 6, at: null };
+    st.events.boss = { visit: 4, tier: 5, pool: 15000, paid: 1, attempts: 1 };
+    st.cosmetics = {
+      marks: Object.fromEntries(COURTYARD_MARK_IDS.map((id) => [id, true])),
+      hidden: [],
+    };
+    st.delve.shop.cosmetics = [...COSMETIC_IDS];
+    Object.assign(st.stores, {
+      'grave-oil': 4,
+      'wrights-oil': 4,
+      'thornbane-oil': 4,
+      saltburst: 4,
+      'poppy-smoke': 4,
+      'coldwater-draught': 4,
+      'owl-eye-drops': 4,
+      'hardwood-tonic': 4,
+      'steadfast-draught': 4,
+      'mending-draught': 4,
+    });
   }
   await page.goto('./?debug');
   await begin(page, 'Mira');
@@ -836,6 +867,133 @@ export const FLOWS: readonly Flow[] = [
         /Log/,
       ]);
       await top(page).getByRole('button', { name: 'Done' }).click();
+    },
+  },
+  // Plan T19.10 (D631–D636): v1.9 Kettle & Fang screens sharing one read-only v16-owner:v19 fixture load.
+  plain(
+    'hold-grid-v19-marks',
+    'Hold (Grid, Bastion with all 8 Courtyard Marks)',
+    'fixture v16-owner:v19, nothing',
+    [/Fell Breach/, /Stanholm/],
+    async () => {},
+    'v16-owner:v19',
+  ),
+  plain(
+    'hold-look-v19-marks',
+    'Hold Look (all 8 Courtyard Marks earned)',
+    'fixture v16-owner:v19, Hold Look ▸',
+    [/Thorn-Antler Rack/, /Beacon-Iron Urn/, /Earned · The Thorn-Stag/, /Earned · The Beacon-Bane/],
+    (p) => p.locator('[data-hold-look-button="hold"]').click(),
+    'v16-owner:v19',
+  ),
+  plain(
+    'events-beacon-bane-sheet',
+    'Events (The Beacon-Bane boss sheet)',
+    'fixture v16-owner:v19, Hold, The Great Beast',
+    [/The Beacon-Bane/i, /attacks: Fire/, /Pitch-Flare/, /Curse-Brand/],
+    (p) => btn(p, /^The Great Beast/).click(),
+    'v16-owner:v19',
+  ),
+  {
+    id: 'events-beacon-bane-party',
+    fixture: 'v16-owner:v19',
+    how: 'fixture v16-owner:v19, Hold, The Great Beast, Send a party (Coldwater + Poppy Smoke)',
+    run: async (page, visit) => {
+      await btn(page, /^The Great Beast/).click();
+      await top(page).getByRole('button', { name: 'Send a party' }).click();
+      const party = top(page);
+      await party.getByRole('checkbox').first().check();
+      await party.getByLabel('Potion').first().selectOption('coldwater-draught');
+      await party.getByLabel('Bomb 1').selectOption('poppy-smoke');
+      await party
+        .getByText(/^Expected damage:/)
+        .waitFor({ timeout: 20_000 })
+        .catch(() => {});
+      await visit('events-beacon-bane-party', 'Events (The Beacon-Bane party picker)', [
+        /The Beacon-Bane: deals Fire/,
+        /Shrouded for 2 actions/,
+      ]);
+    },
+  },
+  {
+    id: 'hut-brew-v19',
+    fixture: 'v16-owner:v19',
+    how: "fixture v16-owner:v19, Hold, Alchemist's Hut Open & Brew time breakdown",
+    run: async (page, visit) => {
+      await page.getByRole('button', { name: 'Open' }).first().click();
+      await visit('hut-brew-v19', "Alchemist's Hut (Lv 3 brew speed & Poppy Smoke)", [
+        /Level 3/,
+        /Shrouded for 2 actions/,
+      ]);
+      await page.getByTestId('brew-time-line').getByLabel('Show breakdown').click();
+      await visit('hut-brew-breakdown-v19', "Alchemist's Hut (brew speed breakdown)", [
+        /Brew time/,
+        /Alchemist's Hut Lv 3/,
+        /hut\.timeCutPerLevel/,
+      ]);
+    },
+  },
+  {
+    id: 'launch-prep-v19',
+    fixture: 'v16-owner:v19',
+    how: 'fixture v16-owner:v19, Contracts, Prepare (Saltburst Well-Prepared & Poppy Smoke Shrouded)',
+    run: async (page, visit) => {
+      await tabTo(page, 'Contracts');
+      await page
+        .getByRole('listitem')
+        .filter({ hasText: /Draugr \(/ })
+        .first()
+        .getByRole('button', { name: 'Prepare' })
+        .click();
+      const sheet = top(page);
+      await sheet.getByLabel('Oil').first().selectOption('grave-oil');
+      await sheet.getByLabel('Bomb 1').selectOption('saltburst');
+      await sheet.getByLabel('Bomb 2').selectOption('poppy-smoke');
+      await sheet
+        .getByText(/^ODDS \d+%/)
+        .waitFor({ timeout: 15_000 })
+        .catch(() => {});
+      await visit('launch-prep-v19', 'Contracts (Saltburst Well-Prepared & Poppy Smoke)', [
+        /Saltburst: cancels the monster’s first ability/,
+        /Well prepared:/,
+        /Shrouded for 2 actions/,
+      ]);
+    },
+  },
+  {
+    id: 'hunter-emberwright',
+    fixture: 'v16-owner:v19',
+    how: 'fixture v16-owner:v19, Hunters, Arvid (Emberwright Plate) & Armor Change',
+    run: async (page, visit) => {
+      await tabTo(page, 'Hunters');
+      await btn(page, /^Arvid/).click();
+      await visit('hunter-emberwright', 'Hunter sheet (Emberwright Plate −25% Fire taken)', [
+        /Emberwright Plate/,
+        /−25% Fire taken/,
+      ]);
+      await top(page).getByRole('button', { name: 'Change' }).nth(1).click();
+      await visit('slot-picker-emberwright', 'Slot picker (Emberwright Plate −25% Fire taken)', [
+        /Emberwright Plate/,
+        /−25% Fire taken/,
+      ]);
+    },
+  },
+  {
+    id: 'bestiary-v19-beasts',
+    fixture: 'v16-owner:v19',
+    how: 'fixture v16-owner:v19, Archive, Bestiary (Great Beasts shelf & Beacon-Bane entry)',
+    run: async (page, visit) => {
+      await archive(page, 'Bestiary');
+      await visit(
+        'bestiary-v19-beasts',
+        'Bestiary (Great Beasts shelf with Thorn-Stag & Beacon-Bane)',
+        [/The Thorn-Stag/, /The Beacon-Bane/],
+      );
+      await page.getByRole('button', { name: 'The Beacon-Bane' }).click();
+      await visit('bestiary-beacon-bane', 'Bestiary (The Beacon-Bane entry)', [
+        /2 Fire attacks an action/,
+        /Pitch-Flare/,
+      ]);
     },
   },
 ];

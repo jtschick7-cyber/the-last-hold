@@ -36,11 +36,16 @@ export const brewSummary = (level: number, id: ConsumableId): BrewSummary => {
     }
     case 'heal':
       base = e.healFraction;
-      text = swap(percent(e.healFraction), percent(e.healFraction * p));
+      text = swap(`heal ${percent(e.healFraction)}`, `heal ${percent(e.healFraction * p)}`);
       break;
     case 'armorUntilAction':
       base = e.armorBonus;
-      text = swap(percent(e.armorBonus), percent(e.armorBonus * p));
+      text = def.summary
+        .replace(`+${percent(e.armorBonus)} Armor`, `+${percent(e.armorBonus * p)} Armor`)
+        .replace(
+          `−${percent(e.takenCut)} all damage taken`,
+          `−${percent(e.takenCut * p)} all damage taken`,
+        );
       break;
     case 'speedWholeFight':
       base = e.speedBonus;
@@ -48,11 +53,31 @@ export const brewSummary = (level: number, id: ConsumableId): BrewSummary => {
       break;
     case 'fireTaken':
       base = e.takenCut;
-      text = swap(percent(e.takenCut), percent(e.takenCut * p));
+      text = def.summary
+        .replace(`−${percent(e.takenCut)} Fire`, `−${percent(e.takenCut * p)} Fire`)
+        .replace(`−${percent(e.frostCut)} Frost`, `−${percent(e.frostCut * p)} Frost`)
+        .replace(`+${percent(e.mightBonus)} Might`, `+${percent(e.mightBonus * p)} Might`);
       break;
     case 'hitChance':
       base = e.hitChance;
-      text = swap(points(e.hitChance), points(e.hitChance * p));
+      text = def.summary
+        .replace(
+          `+${points(e.hitChance)} points to the holder's hit chance`,
+          `+${points(e.hitChance * p)} points to the holder's hit chance`,
+        )
+        .replace(
+          `+${points(e.critChance)} points to crit chance`,
+          `+${points(e.critChance * p)} points to crit chance`,
+        );
+      break;
+    case 'steadfast':
+      base = e.mightBonus;
+      text = def.summary
+        .replace(
+          `next ${e.uses} ability-caused`,
+          `next ${Math.floor(e.uses * p + 0.5)} ability-caused`,
+        )
+        .replace(`+${percent(e.mightBonus)} Might`, `+${percent(e.mightBonus * p)} Might`);
       break;
     case 'burn':
       base = e.initial;
@@ -63,6 +88,17 @@ export const brewSummary = (level: number, id: ConsumableId): BrewSummary => {
     case 'chill':
       base = e.initial;
       text = swap(`${e.initial} Frost damage`, `${amount(e.initial * p)} Frost damage`);
+      break;
+    case 'saltburst':
+      base = e.damage;
+      text = swap(`${e.damage} Rune damage`, `${amount(e.damage * p)} Rune damage`);
+      break;
+    case 'smoke':
+      base = e.dealtBonus;
+      text = def.summary
+        .replace(`+${points(e.hitBonus)} hit`, `+${points(e.hitBonus * p)} hit`)
+        .replace(`+${points(e.critBonus)} crit`, `+${points(e.critBonus * p)} crit`)
+        .replace(`+${percent(e.dealtBonus)} damage`, `+${percent(e.dealtBonus * p)} damage`);
       break;
     default:
       break;

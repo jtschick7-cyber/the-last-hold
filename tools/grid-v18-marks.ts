@@ -205,7 +205,17 @@ function drawWatchFireSconce(c: Canvas): void {
   c.set(9, 2, C.frost);
 }
 
-const MARK_DRAWERS: Readonly<Record<CourtyardMarkId, (c: Canvas) => void>> = {
+export const V18_COURTYARD_MARK_IDS = [
+  'fjord-bone-standard',
+  'barrow-brazier',
+  'river-reed-basin',
+  'stoneback-cairn',
+  'kettle-barrow-wreath',
+  'watch-fire-sconce',
+] as const satisfies readonly CourtyardMarkId[];
+export type V18CourtyardMarkId = (typeof V18_COURTYARD_MARK_IDS)[number];
+
+const MARK_DRAWERS: Readonly<Record<V18CourtyardMarkId, (c: Canvas) => void>> = {
   'fjord-bone-standard': drawFjordBoneStandard,
   'barrow-brazier': drawBarrowBrazier,
   'river-reed-basin': drawRiverReedBasin,
@@ -217,7 +227,7 @@ const MARK_DRAWERS: Readonly<Record<CourtyardMarkId, (c: Canvas) => void>> = {
 /**
  * Draws a crisp 16x16 Zughy-32 pixel Courtyard Mark sprite (Q83(a)/Q84(a)) with C.wine outline.
  */
-export function drawCourtyardMarkV18(id: CourtyardMarkId): Canvas {
+export function drawCourtyardMarkV18(id: V18CourtyardMarkId): Canvas {
   const c = new Canvas(16);
   MARK_DRAWERS[id](c);
   applyWineOutline(c);

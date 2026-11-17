@@ -12,7 +12,7 @@ import {
   debugOrdersSetLevel,
 } from './debug-orders';
 import { debugLayoutAutoArrange, debugLayoutClear, debugLayoutFillBastion } from './debug-layout';
-import { debugAddToken, debugEndRests, debugFillBank } from './debug-events';
+import { debugAddToken, debugEndRests, debugFillBank, debugSetBoss } from './debug-events';
 import { bossAttempt, seeEventsScene } from './boss';
 import { addStar, rankUp } from './hunter-depth';
 import { craftItem, equipFromStores, reworkItem, salvageItem, unequipItem } from './items';
@@ -263,6 +263,8 @@ export const apply = (state: GameState, cmd: Command, now: number): ApplyResult 
       return debugFillBank(state, now);
     case 'debug.endRests':
       return debugEndRests(state);
+    case 'debug.setBoss':
+      return debugSetBoss(state, cmd.boss, now);
     case 'debug.grantLoot':
       return debugGrantLoot(state);
     case 'debug.readyRanks':

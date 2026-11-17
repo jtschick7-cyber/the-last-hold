@@ -55,14 +55,14 @@ describe('the curve (GDD §5.8.6)', () => {
 });
 
 describe('Alchemy XP: brews, experiments, properties', () => {
-  it('a finished brew gives 1, an experiment 3 and 10 per property revealed', () => {
+  it('a finished brew gives 12, an experiment 5 and 10 per property revealed', () => {
     const s = hut();
     run(s, { type: 'brew.queue', item: 'grave-oil' });
     advance(s, s.time + 10 * MIN);
-    expect(s.skills.alchemy).toBe(1);
+    expect(s.skills.alchemy).toBe(12);
     run(s, { type: 'experiment.queue', a: 'wolf-fang', b: 'hares-foot' }); // shows 4 properties
     advance(s, s.time + 10 * MIN);
-    expect(s.skills.alchemy).toBe(1 + 3 + 10 * 4);
+    expect(s.skills.alchemy).toBe(12 + 5 + 10 * 4);
   });
 });
 

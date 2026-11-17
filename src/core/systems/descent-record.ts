@@ -101,7 +101,8 @@ export const descentInputFor = (
   return { record, input: inputOf(record, false) };
 };
 
-const inputOf = (record: DescentRecord, log: boolean): DescentInput => ({
+/** Reconstructs the DescentInput for a saved DescentRecord, forwarding its recorded rulesVersion. */
+export const inputOf = (record: DescentRecord, log: boolean): DescentInput => ({
   seed: record.seed,
   order: record.order,
   prep: record.prep,
@@ -112,6 +113,7 @@ const inputOf = (record: DescentRecord, log: boolean): DescentInput => ({
   stageTiers: record.stageTiers,
   unlitBaseHealth: record.unlitBaseHealth,
   alchemy: record.alchemy,
+  rulesVersion: record.rulesVersion,
   log,
 });
 

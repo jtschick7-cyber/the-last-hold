@@ -8,6 +8,7 @@ import { arrangeHold } from '../src/core/systems/breach';
 import { createNewGame } from '../src/core/state/new-game';
 import { laneTableFor, tacticianCommands } from '../src/core/systems/breach';
 import {
+  evaluateHoldTactics,
   tacticalBrewFactor,
   tacticalProductionFactor,
   tacticalThreatFactor,
@@ -25,7 +26,8 @@ const full = buildSpecs({
   starts: ['mon', 'sat'],
   fast: false,
 });
-const spec = specsOfShard(full, 'breach')[0];
+// sim-2..sim-5 own a Watchtower before Stand #1 under D637; sim-1 holds 88 silver (< 100) then.
+const spec = specsOfShard(full, 'breach')[1];
 
 describe('the breach shard', () => {
   it("holds the Tactician's five Monday runs, each to play 3 cycles, and nobody else", () => {
@@ -103,6 +105,16 @@ describe('the Tactician and the probe', () => {
     expect(table.screened?.some(Boolean)).toBe(true);
     expect(table.rampartCols?.filter(Boolean).length).toBeGreaterThanOrEqual(4);
     expect(table.sectorCols?.filter((n) => n > 0).length).toBeGreaterThanOrEqual(5);
+
+    // Fortress auto-arrange screens Watchtowers deterministically on a Bastion hold.
+    const fortressBastion = structuredClone(s);
+    expect(
+      apply(fortressBastion, { type: 'layout.autoArrange', mode: 'fortress' }, fortressBastion.time)
+        .ok,
+    ).toBe(true);
+    const fortressTactics = evaluateHoldTactics(fortressBastion);
+    expect(fortressTactics.screenedTowers.size).toBeGreaterThanOrEqual(1);
+    expect(fortressTactics.connectedWalls.size).toBeGreaterThanOrEqual(4);
 
     // Careless layout on the same full Bastion hold drops every scalar tactical modifier back to 1.0x.
     const careless = structuredClone(s);

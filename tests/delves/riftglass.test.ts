@@ -198,13 +198,13 @@ describe('alternate traits (D260)', () => {
     expect(recoveryFactor(party, 2)).toBe(recoveryFactor([party[2] ?? []], 0));
   });
 
-  it('Thrifty cuts provisions 15% for contracts the holder joins', () => {
+  it('Thrifty cuts provisions 40% for contracts the holder joins', () => {
     const s = fresh();
     s.delve.shop.traitsBought.push('toma');
     const plain = provisions(s, 3, 2, ['halvar', 'zora', 'toma']).value;
     s.delve.shop.traitsActive.push('toma');
     const thrifty = provisions(s, 3, 2, ['halvar', 'zora', 'toma']).value;
-    expect(thrifty).toBeCloseTo(plain * 0.85, 6);
+    expect(thrifty).toBeCloseTo(plain * 0.6, 6);
     expect(provisions(s, 3, 2, ['halvar', 'zora', 'ostap']).value).toBeCloseTo(plain, 6);
   });
 

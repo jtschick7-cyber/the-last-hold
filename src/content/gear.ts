@@ -123,7 +123,7 @@ export const gear: Readonly<Record<GearId, GearDef>> = {
     armor: 8,
     silverSubHit: false,
     runeSubHit: false,
-    fireTakenReduction: 0.1,
+    fireTakenReduction: 0.25,
     cost: { iron: 600, silver: 150 },
     requires: smithy(6),
   },

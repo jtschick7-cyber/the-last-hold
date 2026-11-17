@@ -6,7 +6,7 @@ import {
 import { bosses, type BossId } from '../../content/great-beasts';
 import { hunters, type HunterId } from '../../content/hunters';
 import { quarries, type QuarryId } from '../../content/hunts';
-import { runFight } from '../combat';
+import { runFight, type FightInput } from '../combat';
 import { playbackSteps, type FloorCombatant, type FloorPlayback } from '../delves/view';
 import { seeded } from '../rng';
 import type { FightRef, GameState } from '../state/game-state';
@@ -18,18 +18,22 @@ import { poolAtTier } from './boss';
 
 const isBoss = (id: string): id is BossId => id in bosses;
 
+/** Pure FightInput reconstructed from a saved event FightRef, preserving its rulesVersion (D632). */
+export const eventFightInput = (ref: FightRef): FightInput => ({
+  party: ref.party,
+  monster: ref.monster,
+  location: null,
+  rolls: seeded(ref.seed),
+  prep: ref.prep,
+  alchemy: ref.alchemy,
+  rulesVersion: ref.rulesVersion,
+});
+
 /** The fight a kept event reference stands for, as a playback. */
 export const eventPlayback = (ref: FightRef): FloorPlayback => {
   if (!('event' in ref.monster)) throw new Error('Not an event fight.');
   const creature = ref.monster.event;
-  const r = runFight({
-    party: ref.party,
-    monster: ref.monster,
-    location: null,
-    rolls: seeded(ref.seed),
-    prep: ref.prep,
-    alchemy: ref.alchemy,
-  });
+  const r = runFight(eventFightInput(ref));
   // A boss's bar is its share of the whole pool the visit began with, so a hurt boss shows hurt.
   const boss = isBoss(creature);
   const poolStart = boss ? poolAtTier(ref.monster.tier) : 0;

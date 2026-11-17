@@ -94,6 +94,10 @@ test('Hold Look opens from HoldScreen & ArrangeHold and shows locked badges clea
     COURTYARD_MARK_IDS.length + COSMETIC_IDS.length,
   );
   await expect(sheet).toContainText('Locked · The Lindworm of Velk Fjord');
+  await expect(sheet).toContainText('Thorn-Antler Rack');
+  await expect(sheet).toContainText('Locked · The Thorn-Stag');
+  await expect(sheet).toContainText('Beacon-Iron Urn');
+  await expect(sheet).toContainText('Locked · The Beacon-Bane');
   await expect(sheet).toContainText('Buy in the Riftglass shop (Rank ▸)');
   await sheet.getByRole('button', { name: 'Close' }).click();
 
@@ -146,28 +150,39 @@ test('Courtyard Marks and Shop Cosmetics toggle individually across HoldGrid, Ho
   }
   await expect(grid).toHaveAttribute('data-banners', 'true');
 
-  // Toggle one mark & one shop cosmetic Hidden in Hold Look.
+  // Toggle two marks (incl. #7 Thorn-Antler Rack) & one shop cosmetic Hidden in Hold Look, keeping #8 Beacon-Iron Urn Shown.
   await page.locator('[data-hold-look-button="hold"]').click();
   const look = page.getByRole('dialog', { name: 'Hold Look' });
+  await expect(look).toContainText('Earned · The Thorn-Stag');
+  await expect(look).toContainText('Earned · The Beacon-Bane');
   const markBtn = look.locator('[data-cosmetic-toggle="fjord-bone-standard"]');
+  const stagMarkBtn = look.locator('[data-cosmetic-toggle="thorn-antler-rack"]');
+  const urnMarkBtn = look.locator('[data-cosmetic-toggle="beacon-iron-urn"]');
   const bannerBtn = look.locator('[data-cosmetic-toggle="gatehouse-banners"]');
   await expect(markBtn).toHaveAttribute('aria-pressed', 'true');
   await expect(markBtn).toHaveText('Shown');
+  await expect(stagMarkBtn).toHaveAttribute('aria-pressed', 'true');
+  await expect(urnMarkBtn).toHaveAttribute('aria-pressed', 'true');
   const markBox = await markBtn.boundingBox();
   expect(markBox?.width ?? 0).toBeGreaterThanOrEqual(44);
   expect(markBox?.height ?? 0).toBeGreaterThanOrEqual(44);
 
   await markBtn.click();
+  await stagMarkBtn.click();
   await bannerBtn.click();
   await expect(markBtn).toHaveAttribute('aria-pressed', 'false');
   await expect(markBtn).toHaveText('Hidden');
+  await expect(stagMarkBtn).toHaveAttribute('aria-pressed', 'false');
+  await expect(stagMarkBtn).toHaveText('Hidden');
   await expect(bannerBtn).toHaveAttribute('aria-pressed', 'false');
   await expect(bannerBtn).toHaveText('Hidden');
   await look.getByRole('button', { name: 'Close' }).click();
 
   // Verify live reflection on HoldGrid.
   await expect(grid.locator('[data-courtyard-mark="fjord-bone-standard"]')).toHaveCount(0);
-  await expect(grid.locator('[data-courtyard-mark]')).toHaveCount(COURTYARD_MARK_IDS.length - 1);
+  await expect(grid.locator('[data-courtyard-mark="thorn-antler-rack"]')).toHaveCount(0);
+  await expect(grid.locator('[data-courtyard-mark="beacon-iron-urn"]')).toHaveCount(1);
+  await expect(grid.locator('[data-courtyard-mark]')).toHaveCount(COURTYARD_MARK_IDS.length - 2);
   await expect(grid).toHaveAttribute('data-banners', 'false');
 
   // Switch to Classic scene and verify mirrored visibility on HoldScene.
@@ -180,12 +195,14 @@ test('Courtyard Marks and Shop Cosmetics toggle individually across HoldGrid, Ho
   const scene = page.locator('[data-hold-scene]');
   await expect(scene).toBeVisible();
   await expect(scene.locator('[data-courtyard-mark="fjord-bone-standard"]')).toHaveCount(0);
+  await expect(scene.locator('[data-courtyard-mark="thorn-antler-rack"]')).toHaveCount(0);
   await expect(scene.locator('[data-courtyard-mark="barrow-brazier"]')).toHaveCount(1);
-  await expect(scene.locator('[data-courtyard-mark]')).toHaveCount(COURTYARD_MARK_IDS.length - 1);
+  await expect(scene.locator('[data-courtyard-mark="beacon-iron-urn"]')).toHaveCount(1);
+  await expect(scene.locator('[data-courtyard-mark]')).toHaveCount(COURTYARD_MARK_IDS.length - 2);
   await expect(scene.locator('[data-cosmetic="gatehouse-banners"]')).toHaveCount(0);
   await expect(scene.locator('[data-cosmetic]')).toHaveCount(COSMETIC_IDS.length - 1);
 
-  // Toggle Fjord-Bone Standard back Shown and reload -> persists on HoldScene.
+  // Toggle Fjord-Bone Standard and Thorn-Antler Rack back Shown and reload -> both #7 and #8 persist on HoldScene.
   await page.locator('[data-hold-look-button="hold"]').click();
   await page
     .getByRole('dialog', { name: 'Hold Look' })
@@ -193,26 +210,34 @@ test('Courtyard Marks and Shop Cosmetics toggle individually across HoldGrid, Ho
     .click();
   await page
     .getByRole('dialog', { name: 'Hold Look' })
+    .locator('[data-cosmetic-toggle="thorn-antler-rack"]')
+    .click();
+  await page
+    .getByRole('dialog', { name: 'Hold Look' })
     .getByRole('button', { name: 'Close' })
     .click();
   await expect(scene.locator('[data-courtyard-mark="fjord-bone-standard"]')).toHaveCount(1);
+  await expect(scene.locator('[data-courtyard-mark="thorn-antler-rack"]')).toHaveCount(1);
 
   await page.waitForTimeout(1500);
   await page.reload();
   await clearScenes(page);
   await expect(scene.locator('[data-courtyard-mark="fjord-bone-standard"]')).toHaveCount(1);
-  await expect(scene.locator('[data-courtyard-mark="fjord-bone-standard"] img')).toHaveCount(1);
-  expect(
-    await scene
-      .locator('[data-courtyard-mark="fjord-bone-standard"] img')
-      .evaluate(
-        (el: HTMLImageElement) =>
-          el.complete &&
-          el.naturalWidth === 16 &&
-          el.naturalHeight === 16 &&
-          el.src.includes('courtyard-mark-fjord-bone-standard.png'),
-      ),
-  ).toBe(true);
+  for (const id of ['fjord-bone-standard', 'thorn-antler-rack', 'beacon-iron-urn'] as const) {
+    await expect(scene.locator(`[data-courtyard-mark="${id}"] img`)).toHaveCount(1);
+    expect(
+      await scene
+        .locator(`[data-courtyard-mark="${id}"] img`)
+        .evaluate(
+          (el: HTMLImageElement, expectedId: string) =>
+            el.complete &&
+            el.naturalWidth === 16 &&
+            el.naturalHeight === 16 &&
+            el.src.includes(`courtyard-mark-${expectedId}.png`),
+          id,
+        ),
+    ).toBe(true);
+  }
   await expect(scene.locator('[data-cosmetic="gatehouse-banners"]')).toHaveCount(0);
 });
 
@@ -265,6 +290,8 @@ test('Rates, Threat, Hut, StandSheet LanesStrip, and v7 WaveLog expose tactical 
   await hut.getByTestId('brew-time-line').getByLabel('Show breakdown').click();
   const brewBd = page.getByRole('dialog').last();
   await expect(brewBd).toContainText('Brew time');
+  await expect(brewBd).toContainText("Alchemist's Hut Lv 2");
+  await expect(brewBd).toContainText('hut.timeCutPerLevel');
   await expect(brewBd).toContainText('Hold tactics');
   await expect(brewBd).toContainText('Alchemist links (1)');
   await brewBd.getByRole('button', { name: 'Close' }).click();
@@ -274,6 +301,8 @@ test('Rates, Threat, Hut, StandSheet LanesStrip, and v7 WaveLog expose tactical 
   await hut.getByTestId('experiment-time-line').getByLabel('Show breakdown').click();
   const expBd = page.getByRole('dialog').last();
   await expect(expBd).toContainText('Experiment time');
+  await expect(expBd).toContainText("Alchemist's Hut Lv 2");
+  await expect(expBd).toContainText('hut.timeCutPerLevel');
   await expect(expBd).toContainText('Hold tactics');
   await expect(expBd).toContainText('Alchemist links (1)');
   await expBd.getByRole('button', { name: 'Close' }).click();

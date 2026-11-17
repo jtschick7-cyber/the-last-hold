@@ -5,6 +5,7 @@ import {
   type ConsumableKind,
 } from '../../content/consumables';
 import { hunters, type HunterId } from '../../content/hunters';
+import { monsters } from '../../content/monsters';
 import { num } from '../../core/balance-access';
 import type { DamageType, FamilyId } from '../../content/damage';
 import { families } from '../../content/damage';
@@ -117,9 +118,13 @@ export const PreparationPicker = ({
   }
   const oils = Object.values(prep.oils);
   const bombSlots = num('prep.bombSlots');
+  const saltburstCancels =
+    identity && identity.identified && identity.monster
+      ? prep.bombs.includes('saltburst') && monsters[identity.monster].abilities.length > 0
+      : false;
   const wellPrepared =
     identity && identity.identified && identity.monster
-      ? isWellPrepared(identity.monster, prep, prep.bombs.includes('saltburst'))
+      ? isWellPrepared(identity.monster, prep, saltburstCancels)
       : false;
   return (
     <div>
@@ -170,9 +175,14 @@ export const PreparationPicker = ({
         const e = consumables[b].effect;
         const note =
           e.kind === 'saltburst'
-            ? 'cancels the monster’s first ability'
+            ? identity &&
+              identity.identified &&
+              identity.monster &&
+              monsters[identity.monster].abilities.length === 0
+              ? 'monster has no abilities to cancel'
+              : 'cancels the monster’s first ability'
             : e.kind === 'smoke'
-              ? 'the monster loses its next action'
+              ? brewSummary(skillLevel(state, 'alchemy'), b).text.replace(/^At tick 1:\s*/, '')
               : creature
                 ? bombWeakAgainst(b, creature.resist)
                   ? 'weak to it ✔'

@@ -1,16 +1,20 @@
 import type { BuildingId } from '../../content/buildings';
 import { consumables, type ConsumableId } from '../../content/consumables';
+import type { DamageType, FamilyId } from '../../content/damage';
 import { hunters, type HunterId } from '../../content/hunters';
 import { INGREDIENT_IDS, ingredients, type IngredientSource } from '../../content/ingredients';
-import { monsters, type MonsterId } from '../../content/monsters';
+import { monsters } from '../../content/monsters';
 import type { Command } from '../commands';
-import { bombIsWeak, oilMatches } from '../contracts/prep';
+import { buildHunter } from '../combat/build';
+import { armorEff, mightEff, speedEff } from '../combat/stats';
+import { bombIsWeak, bombWeakAgainst, oilFitsFamily, oilMatches } from '../contracts/prep';
 import { contractIdentity } from '../investigation/view';
 import { investigationSlots } from '../investigation/lodge';
 import { experimentProblem, hiddenIndexes } from '../alchemy/book';
 import { brewSlots } from '../alchemy/brewing';
 import { num } from '../balance-access';
 import type { ContractInstance, GameState, Preparation } from '../state/game-state';
+import { snapshotOf } from '../systems/hunters';
 import { affordable, type Bundle } from './goals';
 import { ageIndex } from '../systems/ages';
 
@@ -48,15 +52,16 @@ const WANT: readonly [ConsumableId, number][] = [
   ['fire-pot', 2],
   ['frost-pot', 2],
   ['mending-draught', 2],
-  ['saltburst', 1],
+  ['hardwood-tonic', 2],
+  ['saltburst', 2],
   ['quickfoot-tincture', 1],
-  // v0.6 (D215): the new brews, once the book knows them (a refused brew just moves on).
+  // v0.6 / v1.9: discovered brews and expanded stock for rebalanced counters and bombs.
   ['hidebane-oil', 3],
   ['wrights-oil', 3],
-  ['coldwater-draught', 1],
-  ['owl-eye-drops', 1],
-  ['steadfast-draught', 1],
-  ['poppy-smoke', 1],
+  ['coldwater-draught', 2],
+  ['owl-eye-drops', 2],
+  ['steadfast-draught', 2],
+  ['poppy-smoke', 2],
 ];
 
 const SOURCE_RANK: Record<IngredientSource, number> = {
@@ -65,14 +70,201 @@ const SOURCE_RANK: Record<IngredientSource, number> = {
   'monster-drop': 2,
 };
 
-/** The v0.6 potion that answers a species, or null (GDD §5.8.5 "Answers"). */
-const counterPotion = (monster: MonsterId): ConsumableId | null => {
-  const kinds = new Set(monsters[monster].abilities.map((a) => a.kind));
-  if (kinds.has('noonHeat') || kinds.has('sealBurn')) return 'coldwater-draught';
-  if (kinds.has('lightless')) return 'owl-eye-drops';
-  for (const k of ['barrowGrip', 'drowningSong', 'enthrall', 'leadAstray', 'dragUnder'])
-    if (kinds.has(k as never)) return 'steadfast-draught';
+export interface CreatureSpec {
+  readonly family: FamilyId;
+  readonly resist: Readonly<Record<DamageType, number>>;
+  readonly abilities: readonly { readonly kind: string }[];
+  readonly damage?: DamageType;
+}
+
+const COLDWATER_KINDS = new Set(['noonHeat', 'sealBurn', 'pitchFlare', 'graveChill']);
+const CRIT_CUT_KINDS = new Set(['lightless', 'illLuck']);
+const HOLD_KINDS = new Set([
+  'barrowGrip',
+  'drowningSong',
+  'enthrall',
+  'leadAstray',
+  'dragUnder',
+  'coil',
+  'thornSnare',
+  'nightWeight',
+  'misfortune',
+]);
+const PHYSICAL_BURST_KINDS = new Set([
+  'hamstring',
+  'bloodfeast',
+  'malice',
+  'boulderToss',
+  'brambleSweep',
+  'reForge',
+]);
+const SALT_CANCEL_KINDS = new Set([
+  'lightless',
+  'sealBurn',
+  'swell',
+  'secondSoul',
+  'bloodfeast',
+  'rootWall',
+  'riverhorse',
+  'pitchFlare',
+  'mossMend',
+  'quickDark',
+]);
+
+/** The primary counter-potion for a species or Great Beast / quarry (GDD §5.8.5, v1.9). */
+export const counterPotionFor = (c: CreatureSpec): ConsumableId | null => {
+  if (c.damage === 'fire' || c.abilities.some((a) => COLDWATER_KINDS.has(a.kind))) {
+    return 'coldwater-draught';
+  }
+  if (c.abilities.some((a) => CRIT_CUT_KINDS.has(a.kind))) return 'owl-eye-drops';
+  if (c.abilities.some((a) => HOLD_KINDS.has(a.kind))) return 'steadfast-draught';
+  if (c.abilities.some((a) => PHYSICAL_BURST_KINDS.has(a.kind))) return 'hardwood-tonic';
   return null;
+};
+
+/** Coats as many party members as stores allow with the family's matching oil. */
+export const chooseOils = (
+  s: GameState,
+  party: readonly HunterId[],
+  family: FamilyId,
+): Partial<Record<HunterId, ConsumableId>> => {
+  const oil = (Object.keys(consumables) as ConsumableId[]).find(
+    (id) => consumables[id].kind === 'oil' && oilFitsFamily(id, family),
+  );
+  const oils: Partial<Record<HunterId, ConsumableId>> = {};
+  if (!oil) return oils;
+  let used = 0;
+  for (const h of party) {
+    if (s.stores[oil] - used <= 0) break;
+    oils[h] = oil;
+    used += 1;
+  }
+  return oils;
+};
+
+/** Chooses smart bombs against `c`: weak elemental pots first, then Saltburst or Poppy Smoke. */
+export const chooseBombs = (
+  s: GameState,
+  c: CreatureSpec,
+  preferSaltburst = false,
+): ConsumableId[] => {
+  const bombs: ConsumableId[] = [];
+  const slots = num('prep.bombSlots');
+  const has = (id: ConsumableId): boolean => s.stores[id] > (bombs.includes(id) ? 1 : 0);
+  for (const bomb of ['fire-pot', 'frost-pot'] as const) {
+    if (bombs.length < slots && has(bomb) && bombWeakAgainst(bomb, c.resist)) bombs.push(bomb);
+  }
+  const wantSaltFirst =
+    bombs.length === 0 ||
+    (preferSaltburst && c.abilities.some((a) => SALT_CANCEL_KINDS.has(a.kind)));
+  const followOrder: readonly ConsumableId[] = wantSaltFirst
+    ? ['saltburst', 'poppy-smoke']
+    : ['poppy-smoke', 'saltburst'];
+  for (const bomb of followOrder) {
+    if (bombs.length < slots && has(bomb)) bombs.push(bomb);
+  }
+  return bombs;
+};
+
+const ROLE_POTION_ORDER: Readonly<
+  Record<'vanguard' | 'striker' | 'mender', readonly ConsumableId[]>
+> = {
+  vanguard: [
+    'hardwood-tonic',
+    'coldwater-draught',
+    'mending-draught',
+    'steadfast-draught',
+    'owl-eye-drops',
+    'quickfoot-tincture',
+  ],
+  striker: [
+    'owl-eye-drops',
+    'quickfoot-tincture',
+    'steadfast-draught',
+    'coldwater-draught',
+    'hardwood-tonic',
+    'mending-draught',
+  ],
+  mender: [
+    'mending-draught',
+    'quickfoot-tincture',
+    'owl-eye-drops',
+    'coldwater-draught',
+    'steadfast-draught',
+    'hardwood-tonic',
+  ],
+};
+
+/** Fills unassigned party potion slots using threat-specific counters and role synergies. */
+export const fillPartyPotions = (
+  s: GameState,
+  party: readonly HunterId[],
+  c: CreatureSpec,
+  seedPotions: Partial<Record<HunterId, ConsumableId>>,
+): Partial<Record<HunterId, ConsumableId>> => {
+  const potions: Partial<Record<HunterId, ConsumableId>> = { ...seedPotions };
+  const used = new Map<ConsumableId, number>();
+  for (const p of Object.values(potions)) if (p) used.set(p, (used.get(p) ?? 0) + 1);
+  const avail = (id: ConsumableId): boolean => s.stores[id] - (used.get(id) ?? 0) > 0;
+  const assign = (h: HunterId | undefined, id: ConsumableId): boolean => {
+    if (!h || potions[h] || !avail(id)) return false;
+    potions[h] = id;
+    used.set(id, (used.get(id) ?? 0) + 1);
+    return true;
+  };
+  const stats = party.map((id) => {
+    if (s.hunters[id]) {
+      const cStat = buildHunter(snapshotOf(s, id), 1, undefined, undefined, undefined);
+      return { id, speed: speedEff(cStat), armor: armorEff(cStat), might: mightEff(cStat) };
+    }
+    const base = hunters[id].stats;
+    return { id, speed: base.speed, armor: base.armor, might: base.might };
+  });
+  const kinds = new Set(c.abilities.map((a) => a.kind));
+  const vanguard = party.find((h) => hunters[h].role === 'vanguard') ?? party[0];
+  const mender = party.find((h) => hunters[h].role === 'mender');
+  const bySpeed = [...stats].sort((a, b) => b.speed - a.speed);
+  const byArmorAsc = [...stats].sort((a, b) => a.armor - b.armor);
+  const byMightDesc = [...stats].sort((a, b) => b.might - a.might);
+
+  if (c.damage === 'fire' || kinds.has('pitchFlare')) {
+    assign(vanguard, 'coldwater-draught');
+    for (const h of byMightDesc) assign(h.id, 'coldwater-draught');
+  } else if (c.abilities.some((a) => COLDWATER_KINDS.has(a.kind))) {
+    assign(vanguard, 'coldwater-draught');
+  }
+  if (kinds.has('coil') || kinds.has('thornSnare')) {
+    for (const h of bySpeed) if (assign(h.id, 'steadfast-draught')) break;
+  }
+  if (kinds.has('drowningSong')) {
+    for (const h of byArmorAsc) if (assign(h.id, 'steadfast-draught')) break;
+  }
+  if (kinds.has('nightWeight')) {
+    for (const h of byMightDesc) if (assign(h.id, 'steadfast-draught')) break;
+  }
+  if (c.abilities.some((a) => CRIT_CUT_KINDS.has(a.kind))) {
+    for (const h of party) {
+      if (hunters[h].role === 'striker' && assign(h, 'owl-eye-drops')) break;
+    }
+  }
+  if (
+    kinds.has('barrowGrip') ||
+    kinds.has('misfortune') ||
+    kinds.has('leadAstray') ||
+    kinds.has('enthrall') ||
+    kinds.has('dragUnder')
+  ) {
+    for (const h of byMightDesc) if (assign(h.id, 'steadfast-draught')) break;
+  }
+  if (vanguard && !potions[vanguard]) {
+    if (!assign(vanguard, 'hardwood-tonic')) assign(vanguard, 'mending-draught');
+  }
+  if (mender && !potions[mender]) assign(mender, 'mending-draught');
+  for (const h of party) {
+    if (potions[h]) continue;
+    for (const id of ROLE_POTION_ORDER[hunters[h].role]) if (assign(h, id)) break;
+  }
+  return potions;
 };
 
 /** The next step of BUILD_ORDER the hold hasn't reached yet, or null when it has them all. */
@@ -201,7 +393,7 @@ export const prepFor = (
   }
   // The counter-potion for the species goes on the Vanguard; the Mending Draught on the
   // next hunter, or the first when there is no counter-potion (GDD §6.1, D215).
-  const counter = v.identified && v.monster ? counterPotion(v.monster) : null;
+  const counter = v.identified && v.monster ? counterPotionFor(monsters[v.monster]) : null;
   if (counter && left(counter)) {
     const vanguard = party.find((h) => hunters[h as HunterId]?.role === 'vanguard') ?? party[0];
     if (vanguard) prep.potions[vanguard as keyof Preparation['potions']] = counter;

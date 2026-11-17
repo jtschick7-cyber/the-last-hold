@@ -24,6 +24,7 @@ const replay = (ref: FightRef) =>
     rolls: seeded(ref.seed),
     prep: ref.prep,
     alchemy: ref.alchemy,
+    rulesVersion: ref.rulesVersion,
   });
 
 const fixtures = readdirSync(DIR).filter((f) => f.endsWith('.json'));

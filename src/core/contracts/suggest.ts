@@ -139,5 +139,6 @@ const oddsInput = (input: SuggestInput, party: HunterSnapshot[]): OddsInput => (
   monster: input.monster,
   location: input.location,
   rank: input.rank,
+  prep: input.prep,
   alchemy: input.alchemy,
 });

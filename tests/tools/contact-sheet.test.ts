@@ -12,6 +12,7 @@ import {
   isV17Asset,
   isV18AddedAsset,
   isV18Asset,
+  isV19Asset,
   numberedAssets,
   redrawIds,
   sheetPlan,
@@ -22,8 +23,12 @@ const read = (p: string): string => readFileSync(new URL(p, import.meta.url), 'u
 describe('numbered contact sheets', () => {
   const generated = assets.filter(
     (a) =>
-      a.source === 'generated' && !isV11Asset(a.id) && !isV14Asset(a.id) && !isV18AddedAsset(a.id),
-  ); // D507 (4), D566 (6), D623
+      a.source === 'generated' &&
+      !isV11Asset(a.id) &&
+      !isV14Asset(a.id) &&
+      !isV18AddedAsset(a.id) &&
+      !isV19Asset(a.id),
+  ); // D507 (4), D566 (6), D623, D635
 
   it('number every generated row once, in id order', () => {
     expect(numberedAssets.length).toBe(generated.length);
@@ -55,9 +60,10 @@ describe('Keep pictures are byte-identical to v0.11', () => {
         a.source !== 'placeholder' &&
         !isV11Asset(a.id) &&
         !isV14Asset(a.id) &&
-        !isV18AddedAsset(a.id)
+        !isV18AddedAsset(a.id) &&
+        !isV19Asset(a.id)
       )
-        expect(recorded[a.id], a.id).toBeDefined(); // D507 (4), D566 (6), D623
+        expect(recorded[a.id], a.id).toBeDefined(); // D507 (4), D566 (6), D623, D635
   });
 
   it('matches the recorded hash for every picture not marked Redraw', () => {
@@ -67,7 +73,8 @@ describe('Keep pictures are byte-identical to v0.11', () => {
         id.startsWith('app-icon:') ||
         isV16Asset(id) ||
         isV17Asset(id) ||
-        isV18Asset(id)
+        isV18Asset(id) ||
+        isV19Asset(id)
       )
         continue;
       expect(now[id], id).toBe(hash);

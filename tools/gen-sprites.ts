@@ -17,8 +17,7 @@ import { COSMETIC_IDS } from '../src/content/delves/shop';
 import { RARITIES } from '../src/content/delves/blessing-types';
 import { MONSTER_IDS } from '../src/content/monsters';
 import { HUNTER_IDS } from '../src/content/hunters';
-import { EVENT_CREATURE_IDS } from '../src/content/hunts';
-import { drawCreaturePortrait, drawCreatureSprite } from './draw-creatures';
+import { drawCreaturePortrait, drawCreatureSprite, V17_EVENT_CREATURE_IDS } from './draw-creatures';
 import { drawCosmetic, SCENE_H } from './draw-cosmetics';
 import { drawFrost, drawLamp } from './draw-hold-look';
 import {
@@ -54,7 +53,7 @@ for (const g of GUARDIAN_IDS)
   if (!isV17Asset(guardianSpriteId(g)))
     write(`sprites/guardian-${g}.png`, stripPng(framesOf(drawMonsterSprite(g), 'left')));
 for (const p of PATRON_IDS) write(`icons/sigil-${p}.png`, drawSigil(p).toPng());
-for (const c of EVENT_CREATURE_IDS) {
+for (const c of V17_EVENT_CREATURE_IDS) {
   if (!isV17Asset(eventCreatureSpriteId(c)))
     write(`sprites/creature-${c}.png`, stripPng(framesOf(drawCreatureSprite(c), 'left')));
   write(`portraits/creature-${c}.png`, drawCreaturePortrait(c).toPng());

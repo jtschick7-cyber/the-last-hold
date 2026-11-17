@@ -1,4 +1,5 @@
 import { K } from './constants';
+import { RULES_VERSION } from '../rules-version';
 import { speciesOf } from './species';
 import { buildHunter, buildMonster, roundHalfUp } from './build';
 import { endOfMonsterAction, heal, startOfMonsterAction } from './abilities';
@@ -15,6 +16,7 @@ import {
   replaceAction,
   rootTick,
   skillOf,
+  syncSlowStatus,
 } from './skills';
 import { activeEffects, boostFor, monsterBoostFrom, NO_RULES, rulesFrom } from './delve';
 import {
@@ -44,10 +46,46 @@ const actsBefore = (a: Combatant, b: Combatant): number =>
   a.slot - b.slot;
 
 /** A status that counts the holder's own actions ends here (Hamstring). */
-export const endOwnAction = (c: Combatant): void => {
+export const endOwnAction = (c: Combatant, rulesVersion = RULES_VERSION): void => {
   if (c.tonicLeft > 0) {
     c.tonicLeft -= 1;
-    if (c.tonicLeft === 0) c.statusPct.armor = 0;
+    if (c.tonicLeft === 0) {
+      c.statusPct.armor = 0;
+      c.tonicTaken = 0;
+    }
+  }
+  if (rulesVersion >= 8) {
+    let slowChanged = false;
+    if (c.chillLeft > 0) {
+      c.chillLeft -= 1;
+      if (c.chillLeft === 0) {
+        c.chillCut = 0;
+        slowChanged = true;
+      }
+    }
+    endRime(c, rulesVersion);
+    if (c.abilitiesBlocked > 0) c.abilitiesBlocked -= 1;
+    if (c.healCutLeft > 0) {
+      c.healCutLeft -= 1;
+      if (c.healCutLeft === 0) c.healCut = 0;
+    }
+    if (c.hamstringLeft > 0) {
+      c.hamstringLeft -= 1;
+      if (c.hamstringLeft === 0) {
+        c.hamstringCut = 0;
+        slowChanged = true;
+      }
+    }
+    if (slowChanged) syncSlowStatus(c);
+    if (c.shroudedLeft > 0) {
+      c.shroudedLeft -= 1;
+      if (c.shroudedLeft === 0) {
+        c.shroudHitBonus = 0;
+        c.shroudCritBonus = 0;
+        c.shroudDealtBonus = 0;
+      }
+    }
+    return;
   }
   if (c.chillLeft > 0) {
     c.chillLeft -= 1;
@@ -56,7 +94,7 @@ export const endOwnAction = (c: Combatant): void => {
       c.speed = speedEff(c);
     }
   }
-  endRime(c);
+  endRime(c, rulesVersion);
   if (c.abilitiesBlocked > 0) c.abilitiesBlocked -= 1;
   if (c.healCutLeft > 0) {
     c.healCutLeft -= 1;
@@ -241,7 +279,7 @@ const hunterAct = (f: Fight, c: Combatant, extra = false): void => {
       });
       if (armed?.effect.kind === 'clearAbilityEffects') {
         // Shepherd's Crook (GDD §8.5b): the healed hunter is freed of what monsters' abilities did.
-        const cleared = clearAbilityEffects(patient);
+        const cleared = clearAbilityEffects(patient, f.rulesVersion);
         if (cleared.length > 0)
           emit(f, {
             actor: c.id,
@@ -357,50 +395,64 @@ const monsterAct = (f: Fight, m: Combatant): void => {
     f.monsterActing = false;
     return;
   }
+  if (f.rulesVersion >= 8 && m.namelessMightMult > 1) {
+    cancelsAbility(f, m, 'Nameless');
+    resolveEnds(f);
+    if (f.over || !standing(m)) {
+      f.monsterActing = false;
+      return;
+    }
+  }
   const skipAttack = startOfMonsterAction(f, m);
   resolveEnds(f);
-  const settling = m.abilities.find(
-    (a) => a.kind === 'settling' || a.kind === 'boulderToss' || a.kind === 'heavyDark',
+  const sweep = m.abilities.find(
+    (a) =>
+      a.kind === 'settling' ||
+      a.kind === 'boulderToss' ||
+      a.kind === 'heavyDark' ||
+      a.kind === 'brambleSweep',
   );
   if (
+    !f.over &&
+    standing(m) &&
     !skipAttack &&
-    settling &&
-    m.actions % settling.every === 0 &&
-    !cancelsAbility(f, m, settling.name)
+    sweep &&
+    m.actions % sweep.every === 0 &&
+    !cancelsAbility(f, m, sweep.name)
   ) {
-    // The Dross-Tide (Deep) and Stoneback's Boulder Toss (v0.9): every `every`th action its attack
-    // reaches every standing hunter, each hit rolled and resolved as a direct attack (Armor
-    // applies); no target roll is drawn.
+    // Dross-Tide Settling, Stoneback's Boulder Toss, Thorn-Stag's Bramble-Sweep, Unlit's Heavy Dark:
+    // every `every`th action hits every standing hunter directly (Armor applies; no target roll).
+    const sweepText: Record<typeof sweep.kind, () => string> = {
+      settling: () => `${cap(m.name)} settles over the whole party`,
+      heavyDark: () => `${cap(m.name)}'s Heavy Dark falls on the whole party`,
+      brambleSweep: () => `${cap(m.name)}'s Bramble-Sweep lashes the whole party`,
+      boulderToss: () => `${cap(m.name)} hurls a boulder at the whole party`,
+    };
     emit(f, {
       actor: m.id,
       kind: 'ability',
-      text: () =>
-        settling.kind === 'settling'
-          ? `${cap(m.name)} settles over the whole party`
-          : settling.kind === 'heavyDark'
-            ? `${cap(m.name)}'s Heavy Dark falls on the whole party`
-            : `${cap(m.name)} hurls a boulder at the whole party`,
+      text: sweepText[sweep.kind],
       rolls: [],
     });
     for (const h of f.hunters.filter(present)) {
       if (f.over || !present(h)) continue;
       const hit = directAttack(f, m, h);
-      if (hit && settling.kind === 'heavyDark' && present(h)) {
+      if (hit && sweep.kind === 'heavyDark' && present(h)) {
         // Heavy Dark (GDD §8.3): a hunter it hits is chilled, as by Unlit's Breath (healing cut, refreshes).
-        h.healCutLeft = settling.chill.actions;
-        h.healCut = settling.chill.healingLoss;
+        h.healCutLeft = sweep.chill.actions;
+        h.healCut = sweep.chill.healingLoss;
         emit(f, {
           actor: m.id,
           kind: 'ability',
           target: h.id,
           text: () =>
-            `${h.name} is chilled (healing −${Math.round(settling.chill.healingLoss * 100)}% for ${settling.chill.actions} actions)`,
+            `${h.name} is chilled (healing −${Math.round(sweep.chill.healingLoss * 100)}% for ${sweep.chill.actions} actions)`,
           rolls: [],
         });
       }
       resolveEnds(f);
     }
-  } else if (!skipAttack) {
+  } else if (!f.over && standing(m) && !skipAttack) {
     for (let i = 0; i < m.attacks && !f.over; i++) {
       const picked = pickTarget(f, f.hunters.filter(present));
       if (!picked) break;
@@ -449,19 +501,26 @@ export const runTicks = (f: Fight, everyone: Combatant[], afterAct?: (f: Fight) 
         c.skillArmed = false;
         partyActed(f, c);
       } else monsterAct(f, c);
-      endOwnAction(c);
+      endOwnAction(c, f.rulesVersion);
       afterAct?.(f);
     }
   }
 };
 
 export const runFight = (input: FightInput): FightResult => {
+  const rulesVersion = input.rulesVersion ?? RULES_VERSION;
   // A Delve floor (GDD §5.10): the run's blessings and relics through the buckets and the ★ rules.
   const delve = input.delve;
   const active = delve ? activeEffects(delve.blessings, delve.relics) : null;
   const rules = active ? rulesFrom(active) : NO_RULES;
   const hunters = input.party.map((h, i) =>
-    buildHunter(h, i + 1, input.prep, active ? boostFor(h, input.party, active) : undefined),
+    buildHunter(
+      h,
+      i + 1,
+      input.prep,
+      active ? boostFor(h, input.party, active) : undefined,
+      rulesVersion,
+    ),
   );
   const stand = input.stand;
   if (stand) {
@@ -482,7 +541,13 @@ export const runFight = (input: FightInput): FightResult => {
     const n = (seen[key(m)] = (seen[key(m)] ?? 0) + 1);
     const def = speciesOf(m);
     if (instances.length === 1)
-      return buildMonster(m, stand?.monsterStrength ?? 1, undefined, input.nameless ?? 0);
+      return buildMonster(
+        m,
+        stand?.monsterStrength ?? 1,
+        undefined,
+        input.nameless ?? 0,
+        rulesVersion,
+      );
     return buildMonster(
       m,
       stand?.monsterStrength ?? 1,
@@ -492,6 +557,7 @@ export const runFight = (input: FightInput): FightResult => {
         name: (total[key(m)] ?? 1) > 1 ? `${ORDINALS[n - 1] ?? `#${n}`} ${def.name}` : def.name,
       },
       input.nameless ?? 0,
+      rulesVersion,
     );
   });
   const monster = monsterList[0] as Combatant;
@@ -567,6 +633,7 @@ export const runFight = (input: FightInput): FightResult => {
     potency,
     smokeHolder: null,
     torchHolder: null,
+    rulesVersion: input.rulesVersion ?? RULES_VERSION,
   };
   // Potions that work from the start, then the bombs, before anyone acts (GDD §5.7).
   startOfFight(f);

@@ -1,4 +1,4 @@
-import { consumables, type ConsumableId } from '../../content/consumables';
+import { gear } from '../../content/gear';
 import { bosses } from '../../content/great-beasts';
 import { HUNTER_IDS, hunters, type HunterId } from '../../content/hunters';
 import { HUNT_IDS, hunts, quarries, type TrackDef, type TrackId } from '../../content/hunts';
@@ -9,6 +9,8 @@ import type { GameState, Preparation } from '../state/game-state';
 import { bossOfVisit } from '../systems/boss';
 import { eligibleHunters, eventsUnlocked, tokenBank } from '../systems/events';
 import { legalHunters } from '../systems/hunt';
+import { snapshotOf } from '../systems/hunters';
+import { chooseBombs, chooseOils, fillPartyPotions } from './lab';
 
 // GDD §6.1 (v0.9, D367, D386): what the Eventer does with its tokens at a check-in. Its contract and
 // building decisions are Standard's (decideCheckIn); this adds only the event moves. Every choice is
@@ -48,15 +50,42 @@ export interface EventerCheckIn {
 
 const roleOf = (id: HunterId) => hunters[id].role;
 
+const targetScore = (s: GameState, id: HunterId, target?: EventCreature): number => {
+  if (!target) return 0;
+  let score = 0;
+  const weakAt = num('prep.weakAt');
+  const dmgResist = target.resist[hunters[id].damage];
+  if (dmgResist >= weakAt) score += 2;
+  else if (dmgResist === 0) score -= 4;
+  else if (dmgResist < 1) score -= 1;
+  const fireOrFrost =
+    target.damage === 'fire' ||
+    target.abilities.some((a) => a.kind === 'pitchFlare' || a.kind === 'graveChill');
+  if (fireOrFrost && s.hunters[id]) {
+    const snap = snapshotOf(s, id);
+    if (snap.armorGear && gear[snap.armorGear].fireTakenReduction > 0) score += 2;
+    if (snap.traits.includes('fire-touched')) score += 1;
+  }
+  return score;
+};
+
 /**
- * The `size` fresh hunters with the highest levels (ties in the roster's list order), with at least
- * one Vanguard and one Mender when the pool has them: a missing role takes the place of the weakest
- * member who is not the only holder of a required role.
+ * The `size` fresh hunters with the highest levels (ties prefer target counters, then roster order),
+ * with at least one Vanguard and one Mender when the pool has them: a missing role takes the place
+ * of the weakest member who is not the only holder of a required role.
  */
-export const pickParty = (s: GameState, pool: readonly HunterId[], size: number): HunterId[] => {
+export const pickParty = (
+  s: GameState,
+  pool: readonly HunterId[],
+  size: number,
+  target?: EventCreature,
+): HunterId[] => {
   const level = (id: HunterId): number => s.hunters[id]?.level ?? 0;
   const sorted = [...pool].sort(
-    (a, b) => level(b) - level(a) || HUNTER_IDS.indexOf(a) - HUNTER_IDS.indexOf(b),
+    (a, b) =>
+      level(b) - level(a) ||
+      targetScore(s, b, target) - targetScore(s, a, target) ||
+      HUNTER_IDS.indexOf(a) - HUNTER_IDS.indexOf(b),
   );
   const party = sorted.slice(0, size);
   for (const role of ['vanguard', 'mender'] as const) {
@@ -76,45 +105,19 @@ export const pickParty = (s: GameState, pool: readonly HunterId[], size: number)
 };
 
 /**
- * The usual kit against a creature's family (GDD §6.1): the matching oil on as many as the stores
- * cover, the bombs it is weak to, else a Saltburst, and a Mending Draught on a Mender.
+ * Threat-aware preparation against a Great Beast or quarry (GDD §6.1, v1.9): family oil across
+ * the party, weak elemental pots paired with Saltburst (on cancelable/Rune targets) or Poppy Smoke,
+ * and counter/role potions filling all four hunters' slots.
  */
 export const eventPrep = (
   s: GameState,
   party: readonly HunterId[],
   c: EventCreature,
-): Preparation => {
-  const prep: Preparation = { oils: {}, potions: {}, bombs: [] };
-  const left = (id: ConsumableId, used = 0): boolean => s.stores[id] - used > 0;
-  const ids = Object.keys(consumables) as ConsumableId[];
-  const oil = ids.find((id) => {
-    const e = consumables[id].effect;
-    return e.kind === 'oil' && e.family === c.family;
-  });
-  if (oil) {
-    let used = 0;
-    for (const h of party) {
-      if (!left(oil, used)) break;
-      prep.oils[h] = oil;
-      used += 1;
-    }
-  }
-  const slots = num('prep.bombSlots');
-  for (const bomb of ['fire-pot', 'frost-pot'] as const) {
-    const e = consumables[bomb].effect;
-    if (
-      prep.bombs.length < slots &&
-      left(bomb) &&
-      (e.kind === 'burn' || e.kind === 'chill') &&
-      c.resist[e.damageType] >= num('prep.weakAt')
-    )
-      prep.bombs.push(bomb);
-  }
-  if (prep.bombs.length === 0 && left('saltburst')) prep.bombs.push('saltburst');
-  const mender = party.find((h) => roleOf(h) === 'mender') ?? party[0];
-  if (mender && left('mending-draught')) prep.potions[mender] = 'mending-draught';
-  return prep;
-};
+): Preparation => ({
+  oils: chooseOils(s, party, c.family),
+  bombs: chooseBombs(s, c, true),
+  potions: fillPartyPotions(s, party, c, {}),
+});
 
 /** Every track of a hunt, best-paying (highest number) first. */
 const tracksBestFirst = (hunt: (typeof hunts)[keyof typeof hunts]): TrackDef[] =>
@@ -134,10 +137,12 @@ const nextHunt = (
     .map((id, i) => ({ id, i }))
     .sort((x, y) => s.events.hunts[y.id].points - s.events.hunts[x.id].points || x.i - y.i);
   for (const { id } of open) {
+    const quarry = quarries[hunts[id].quarry];
     const best = tracksBestFirst(hunts[id])
       .map((track) => ({ track, pool: legalHunters(s, track, now) }))
       .find((x) => x.pool.length >= PARTY());
-    if (best) return { track: best.track, party: pickParty(s, best.pool, PARTY()), hunt: id };
+    if (best)
+      return { track: best.track, party: pickParty(s, best.pool, PARTY(), quarry), hunt: id };
   }
   return null;
 };
@@ -180,8 +185,8 @@ export const eventerMoves = (s: GameState, now: number, act: Act): EventerCheckI
       });
       continue;
     }
-    const party = pickParty(s, pool, PARTY());
     const boss = bosses[bossOfVisit(s.events.boss.visit)];
+    const party = pickParty(s, pool, PARTY(), boss);
     if (!act({ type: 'boss.attempt', party, prep: eventPrep(s, party, boss) })) break;
     const b = s.events.last?.boss;
     if (!b) break;

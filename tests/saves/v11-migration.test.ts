@@ -37,7 +37,7 @@ const EMPTY = { nearSeen: false, readyNoted: false, endings: [] };
 describe('the v10 → v11 migration', () => {
   it('is schema 11 or later, and rules version is 6 from v1.5', () => {
     expect(SCHEMA_VERSION).toBeGreaterThanOrEqual(11);
-    expect(RULES_VERSION).toBe(7);
+    expect(RULES_VERSION).toBe(8);
     for (const f of ['v10.json', 'v10-played.json']) {
       expect(readFixture(f).schemaVersion, f).toBe(10);
       expect(readFixture(f).rulesVersion, f).toBe(5);
@@ -104,6 +104,7 @@ describe('the v10 → v11 migration', () => {
           rolls: seeded(ref.seed),
           prep: ref.prep,
           alchemy: ref.alchemy,
+          rulesVersion: ref.rulesVersion,
         });
         expect(fightReplayDiffers(ref, replay), `${f} ${ref.contractId}`).toBe(false);
       }

@@ -78,6 +78,7 @@ describe('boss.attempt', () => {
       rolls: seeded(ref.seed),
       prep: ref.prep,
       alchemy: ref.alchemy,
+      rulesVersion: ref.rulesVersion,
     });
     expect(again.monsterHealth).toBe(s.events.boss.pool);
   });
@@ -115,12 +116,18 @@ describe('boss.attempt', () => {
     expect(s.events.boss.tier).toBe(4);
   });
 
-  it('a Bastion visit starts at tier 5, and the second pass one tier higher', () => {
+  it('a Bastion visit starts at tier 5, includes bosses 4 & 5, and the second pass starts one tier higher at visit 5', () => {
     const { s } = ready();
     s.cycle.age = 'bastion';
     expect(visitTier(s)).toBe(5);
-    s.events.boss.visit = 3; // the first boss again, one pass done
-    expect(bossOfVisit(3)).toBe('lindworm-of-velk-fjord');
+    s.events.boss.visit = 3;
+    expect(bossOfVisit(3)).toBe('thorn-stag');
+    expect(visitTier(s)).toBe(5);
+    s.events.boss.visit = 4;
+    expect(bossOfVisit(4)).toBe('beacon-bane');
+    expect(visitTier(s)).toBe(5);
+    s.events.boss.visit = 5; // the first boss again, one pass done
+    expect(bossOfVisit(5)).toBe('lindworm-of-velk-fjord');
     expect(visitTier(s)).toBe(6);
     s.cycle.age = 'citadel';
     expect(visitTier(s)).toBe(5);

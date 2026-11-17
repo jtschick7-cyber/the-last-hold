@@ -41,8 +41,8 @@ const OLD = ['v15.json', 'v15-owner.json', 'v15-played.json'];
 
 describe('the v15 → v16 migration', () => {
   it('is schema 16, keeps rules version 6, and syncs frontRows with lane table max', () => {
-    expect(SCHEMA_VERSION).toBe(16);
-    expect(RULES_VERSION).toBe(7);
+    expect(SCHEMA_VERSION).toBe(17); // D636 (a): was 16 before v1.9
+    expect(RULES_VERSION).toBe(8);
     expect(balance.breach.frontRows.value).toBe(5);
     expect(balance.breach.frontRows.locked).toBe(true);
     expect(MAX_PIECES_PER_COLUMN).toBe(5);
@@ -56,7 +56,7 @@ describe('the v15 → v16 migration', () => {
     (f) => {
       const loaded = loadFull(readFixture(f));
       expect(loaded.warnings).toEqual([]);
-      expect(loaded.state.meta.schemaVersion).toBe(16);
+      expect(loaded.state.meta.schemaVersion).toBe(17); // D636 (a): was 16 before v1.9
       expect(roundTrip(loaded.state)).toEqual(loaded.state);
     },
   );
@@ -157,8 +157,8 @@ describe('the v15 → v16 migration', () => {
     }
   });
 
-  it('refuses saves from schema version 17 with NEWER_VERSION', () => {
-    const env = { ...readFixture('v16.json'), schemaVersion: 17 };
+  it('refuses saves from schema version 18 with NEWER_VERSION', () => {
+    const env = { ...readFixture('v16.json'), schemaVersion: 18 };
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 });

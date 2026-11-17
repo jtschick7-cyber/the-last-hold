@@ -104,7 +104,7 @@ export const balance = {
     growth: tunable(2.2),
     // Q9 (D81): from the Keep, each hunter's provisions are at least this many minutes
     // of the hold's food capacity (Q11). Hamlet 0: the first contracts stay at the flat base.
-    incomeMinutes: tunable({ hamlet: 0, keep: 1, citadel: 4.4, bastion: 2.5 }), // D106, D189
+    incomeMinutes: tunable({ hamlet: 0, keep: 1.1, citadel: 4.12, bastion: 2.5 }), // D106, D189, calibrated v1.9
   },
   monster: {
     statGrowth: tunable(1.35),
@@ -159,7 +159,7 @@ export const balance = {
     tokenMax: locked(6),
     hunterRest: locked(24 * HOUR, 'seconds'), // 24 h
     openAge: locked('citadel'),
-    order: locked(['lindworm', 'barrow-king', 'mother-of-the-river']),
+    order: locked(['lindworm', 'barrow-king', 'mother-of-the-river', 'thorn-stag', 'beacon-bane']),
     poolBase: locked(21000), // measured in T9.13 and approved by the owner (D400); was a 24,000 sketch (D372)
     baseTier: locked({ citadel: 4, bastion: 5 }),
     passTierStep: locked(1),
@@ -271,7 +271,7 @@ export const balance = {
   lodge: { maxLevel: tunable(3) },
   oil: { familyBonus: tunable(0.35) },
   brew: { time: tunable(10 * MIN, 'seconds') }, // 10 min
-  hut: { maxLevel: tunable(5) },
+  hut: { maxLevel: tunable(5), timeCutPerLevel: tunable(0.08) },
 
   // ---- GDD §7.6 The Long Night (v0.4, D106–D114) ----
   threat: {
@@ -330,7 +330,7 @@ export const balance = {
     xpBase: tunable(20),
     xpGrowth: tunable(1.6),
     xp: {
-      alchemy: tunable({ brew: 1, experiment: 3, property: 10 }),
+      alchemy: tunable({ brew: 12, experiment: 5, property: 10 }),
       smithing: tunable({ gearPerTier: 2, smithyLevel: 2 }),
       lore: tunable({ clue: 1, knowledgeLevel: 5, document: 5 }),
       command: tunable({ contractPerTier: 2, wave: 1, delveFloor: 1 }), // delveFloor: GDD §7.10, D316, Q26 (a)

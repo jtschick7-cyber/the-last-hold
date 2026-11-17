@@ -41,8 +41,8 @@ const withLayout = (layout: unknown): Env => {
 
 describe('the v11 → v12 migration', () => {
   it('is schema 12, and rules version is 6 from v1.5', () => {
-    expect(SCHEMA_VERSION).toBe(16); // D624 (a): was 15 before v1.8
-    expect(RULES_VERSION).toBe(7);
+    expect(SCHEMA_VERSION).toBe(17); // D636 (a): was 16 before v1.9
+    expect(RULES_VERSION).toBe(8);
     expect(readFixture('v11-owner.json').schemaVersion).toBe(11);
     expect(readFixture('v12.json').schemaVersion).toBe(12);
   });
@@ -52,7 +52,7 @@ describe('the v11 → v12 migration', () => {
     (f) => {
       const loaded = loadFull(readFixture(f));
       expect(loaded.warnings).toEqual([]);
-      expect(loaded.state.meta.schemaVersion).toBe(16); // D624 (a): was 15 before v1.8
+      expect(loaded.state.meta.schemaVersion).toBe(17); // D636 (a): was 16 before v1.9
       expect(Object.keys(loaded.state.layout.placed)).toHaveLength(40);
       expect(roundTrip(loaded.state)).toEqual(loaded.state);
     },
@@ -101,6 +101,7 @@ describe('the v11 → v12 migration', () => {
           rolls: seeded(ref.seed),
           prep: ref.prep,
           alchemy: ref.alchemy,
+          rulesVersion: ref.rulesVersion,
         });
         expect(fightReplayDiffers(ref, replay), `${f} ${ref.contractId}`).toBe(false);
       }
@@ -110,8 +111,8 @@ describe('the v11 → v12 migration', () => {
     }
   });
 
-  it('a save from a newer version (17) is refused with the usual message', () => {
-    const env = { ...readFixture('v12.json'), schemaVersion: 17 }; // D624 (a): was 16 before v1.8
+  it('a save from a newer version (18) is refused with the usual message', () => {
+    const env = { ...readFixture('v12.json'), schemaVersion: 18 }; // D636 (a): was 17 before v1.9
     expect(loadEnvelope(env)).toEqual({ ok: false, error: NEWER_VERSION });
   });
 

@@ -2,6 +2,7 @@ import { roundHalfUp } from './build';
 import { cancelsAbility, checkPotion, spoilHit } from './prep';
 import { abilityTaken, finalDamage, heal, hurt } from './formula';
 import { cap, emit, knockBack, type Fight } from './fight-state';
+import { syncSlowStatus } from './skills';
 import { armorEff, mightEff, present, speedEff, standing, takenReduction } from './stats';
 import type { Combatant } from './types';
 
@@ -30,7 +31,7 @@ const lowestBy = (
  * monster's ability would cost the holder an action, it doesn't; the ability's other
  * effects still apply). True when the action is lost.
  */
-const lose = (c: Combatant): boolean => {
+const lose = (f: Fight, c: Combatant): boolean => {
   // The Barley Knot (GDD §8.12) works by Steadfast's rule; being free, it goes before a Draught.
   if (c.knotLeft > 0) {
     c.knotLeft = 0;
@@ -38,7 +39,7 @@ const lose = (c: Combatant): boolean => {
     return false;
   }
   const p = c.potion;
-  if (c.steadfastLeft > 0 && p && !p.used) {
+  if (c.steadfastLeft > 0 && p && (f.rulesVersion >= 8 || !p.used)) {
     c.steadfastLeft -= 1;
     if (c.steadfastLeft === 0) p.used = true;
     c.keptBy = p.name;
@@ -71,8 +72,13 @@ export const afterOwnHit = (
         );
         if (hamstrung < a.chance && !cancelsAbility(f, attacker, 'Hamstring')) {
           target.hamstringLeft = a.actions;
-          target.statusPct.speed = -a.speedCut;
-          target.speed = speedEff(target);
+          if (f.rulesVersion >= 8) {
+            target.hamstringCut = a.speedCut;
+            syncSlowStatus(target);
+          } else {
+            target.statusPct.speed = -a.speedCut;
+            target.speed = speedEff(target);
+          }
           notes.push(
             `${target.name} is hamstrung (Speed −${Math.round(a.speedCut * 100)}% for ${a.actions} actions)`,
           );
@@ -107,7 +113,7 @@ export const afterOwnHit = (
       case 'barrowGrip':
         if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Barrow-Grip')) {
           notes.push(
-            lose(target)
+            lose(f, target)
               ? `${target.name} is held (loses their next action)`
               : `${target.name} is held, but ${keeps(target)}`,
           );
@@ -122,7 +128,7 @@ export const afterOwnHit = (
         ) {
           attacker.coilAction = attacker.actions; // one target held per action, however many attacks it has
           notes.push(
-            lose(target)
+            lose(f, target)
               ? `${target.name} is coiled (loses their next action)`
               : `${target.name} is coiled, but ${keeps(target)}`,
           );
@@ -143,7 +149,7 @@ export const afterOwnHit = (
       }
       case 'dragUnder':
         if (attacker.actions % a.every === 0 && !cancelsAbility(f, attacker, 'Drag Under')) {
-          const lost = lose(target);
+          const lost = lose(f, target);
           target.nextHitTakenMult = a.nextHitMult;
           notes.push(
             lost
@@ -155,6 +161,7 @@ export const afterOwnHit = (
       default:
         break;
     }
+    if (!standing(attacker)) break;
   }
   return notes;
 };
@@ -224,7 +231,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
           const victim = standingHunters[idx];
           if (f.logging) notes.push(`Pick ${pick.toFixed(3)} → ${victim?.name ?? 'nobody'}`);
           if (victim) {
-            const lost = lose(victim);
+            const lost = lose(f, victim);
             emit(f, {
               actor: m.id,
               kind: 'ability',
@@ -252,7 +259,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Drowning Song')) {
           const victim = lowestBy(standingHunters, armorEff, false);
           if (victim) {
-            const lost = lose(victim);
+            const lost = lose(f, victim);
             skipAttack = true;
             emit(f, {
               actor: m.id,
@@ -308,7 +315,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Night-Weight')) {
           const victim = lowestBy(standingHunters, mightEff, true);
           if (victim) {
-            const lost = lose(victim);
+            const lost = lose(f, victim);
             emit(f, {
               actor: m.id,
               kind: 'ability',
@@ -317,6 +324,41 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
                 lost
                   ? `${cap(m.name)} settles on ${victim.name} (loses their next action)`
                   : `${cap(m.name)} settles on ${victim.name}, but ${keeps(victim)}`,
+              rolls: [],
+            });
+          }
+        }
+        break;
+      case 'thornSnare':
+        if (m.actions % a.every === 0 && !cancelsAbility(f, m, 'Thorn-Snare')) {
+          const victim = lowestBy(standingHunters, speedEff, true);
+          if (victim) {
+            const lost = lose(f, victim);
+            emit(f, {
+              actor: m.id,
+              kind: 'ability',
+              target: victim.id,
+              text: () =>
+                lost
+                  ? `${cap(m.name)}'s Thorn-Snare holds ${victim.name} (loses their next action)`
+                  : `${cap(m.name)}'s Thorn-Snare tangles ${victim.name}, but ${keeps(victim)}`,
+              rolls: [],
+            });
+          }
+        }
+        break;
+      case 'curseBrand':
+        if (m.actions % a.every === 0 && !cancelsAbility(f, m, 'Curse-Brand')) {
+          const victim = lowestBy(standingHunters, mightEff, true);
+          if (victim) {
+            victim.healCutLeft = a.actions;
+            victim.healCut = a.healCut;
+            emit(f, {
+              actor: m.id,
+              kind: 'ability',
+              target: victim.id,
+              text: () =>
+                `${cap(m.name)}'s Curse-Brand marks ${victim.name} (healing −${Math.round(a.healCut * 100)}% for ${a.actions} actions)`,
               rolls: [],
             });
           }
@@ -342,7 +384,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
             ];
           if (f.logging) notes.push(`Pick ${pick.toFixed(3)} → ${victim?.name ?? 'nobody'}`);
           if (victim) {
-            const lost = lose(victim);
+            const lost = lose(f, victim);
             emit(f, {
               actor: m.id,
               kind: 'ability',
@@ -370,7 +412,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
         if (everyNth(m.actions, a.every) && !cancelsAbility(f, m, 'Enthrall')) {
           const victim = lowestBy(standingHunters, mightEff, true);
           if (victim) {
-            const lost = lose(victim);
+            const lost = lose(f, victim);
             const healed = heal(m, roundHalfUp(m.maxHealth * a.healFraction));
             emit(f, {
               actor: m.id,
@@ -419,6 +461,7 @@ export const startOfMonsterAction = (f: Fight, m: Combatant): boolean => {
       default:
         break;
     }
+    if (!standing(m)) break;
   }
   return skipAttack;
 };
@@ -428,85 +471,88 @@ const riverhorseLoss = (m: Combatant): number => {
   return 0;
 };
 
-/** End-of-action effects: Noon Heat, then Malice stacking. */
+/** Shared percent-of-max-Health ability burn/chill across all standing hunters. */
+const tickPercentAbility = (
+  f: Fight,
+  m: Combatant,
+  damageType: 'fire' | 'frost',
+  fraction: number,
+  knockBackAmt: number,
+  describe: (h: Combatant, raw: number, amount: number) => string,
+): void => {
+  for (const h of f.hunters) {
+    if (!standing(h)) continue;
+    // Armor is ignored unless Forge-Welded; taken% (Fire-touched, Plate, Coldwater) applies (B4, D631).
+    const raw = h.maxHealth * fraction;
+    const amount = abilityTaken(
+      h,
+      finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, damageType, f.hunters), 1),
+    );
+    hurt(h, amount);
+    if (knockBackAmt > 0) knockBack(h, knockBackAmt);
+    emit(f, {
+      actor: m.id,
+      kind: 'ability',
+      target: h.id,
+      text: () => `${describe(h, raw, amount)} · ${h.name} ${h.health}/${h.maxHealth}`,
+      rolls: [],
+      amount,
+      targetHealth: h.health,
+    });
+    checkPotion(f, h);
+  }
+};
+
+/** End-of-action effects: Noon Heat, Pitch-Flare, Frost chills/drains, then Malice stacking. */
 export const endOfMonsterAction = (f: Fight, m: Combatant): void => {
   for (const a of m.abilities) {
+    if (!standing(m)) break;
     if (a.kind === 'noonHeat') {
       if (m.noonHeatSuppressed > 0) {
         m.noonHeatSuppressed -= 1;
         continue;
       }
       if (cancelsAbility(f, m, 'Noon Heat')) continue;
-      for (const h of f.hunters) {
-        if (!standing(h)) continue;
-        // Fire ignores Armor, but taken% (Fire-touched, Plate) still applies (B4).
-        const raw = h.maxHealth * a.maxHealthFraction;
-        const amount = abilityTaken(
-          h,
-          finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, 'fire', f.hunters), 1),
-        );
-        hurt(h, amount);
-        emit(f, {
-          actor: m.id,
-          kind: 'ability',
-          target: h.id,
-          text: () =>
-            `Noon Heat burns ${h.name}: Fire ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
-          rolls: [],
-          amount,
-          targetHealth: h.health,
-        });
-        checkPotion(f, h);
-      }
+      tickPercentAbility(
+        f,
+        m,
+        'fire',
+        a.maxHealthFraction,
+        0,
+        (h, raw, amount) => `Noon Heat burns ${h.name}: Fire ${raw.toFixed(2)} = ${amount}`,
+      );
+    } else if (a.kind === 'pitchFlare') {
+      if (cancelsAbility(f, m, 'Pitch-Flare')) continue;
+      tickPercentAbility(
+        f,
+        m,
+        'fire',
+        a.maxHealthFraction,
+        0,
+        (h, raw, amount) => `Pitch-Flare scorches ${h.name}: Fire ${raw.toFixed(2)} = ${amount}`,
+      );
     } else if (a.kind === 'firstCold') {
-      // The Unlit's First Cold (GDD §8.3): Frost on every standing hunter as Drain does (ignores Armor,
-      // taken% applies, Smoke-Lunged halves it), and each loses turn meter.
       if (cancelsAbility(f, m, 'First Cold')) continue;
-      for (const h of f.hunters) {
-        if (!standing(h)) continue;
-        const raw = h.maxHealth * a.maxHealthFraction;
-        const amount = abilityTaken(
-          h,
-          finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, 'frost', f.hunters), 1),
-        );
-        hurt(h, amount);
-        knockBack(h, a.meterKnockBack);
-        emit(f, {
-          actor: m.id,
-          kind: 'ability',
-          target: h.id,
-          text: () =>
-            `The first cold reaches ${h.name}: Frost ${raw.toFixed(2)} = ${amount}, turn ${a.meterKnockBack} later · ${h.name} ${h.health}/${h.maxHealth}`,
-          rolls: [],
-          amount,
-          targetHealth: h.health,
-        });
-        checkPotion(f, h);
-      }
+      tickPercentAbility(
+        f,
+        m,
+        'frost',
+        a.maxHealthFraction,
+        a.meterKnockBack,
+        (h, raw, amount) =>
+          `The first cold reaches ${h.name}: Frost ${raw.toFixed(2)} = ${amount}, turn ${a.meterKnockBack} later`,
+      );
     } else if (a.kind === 'drain' || a.kind === 'graveChill') {
-      // Unlit's Breath (Deep) and the Barrow-King's Grave Chill (v0.9): Frost on every standing
-      // hunter, ignoring Armor; taken% still applies.
       if (cancelsAbility(f, m, a.kind === 'drain' ? 'Drain' : 'Grave Chill')) continue;
-      for (const h of f.hunters) {
-        if (!standing(h)) continue;
-        const raw = h.maxHealth * a.maxHealthFraction;
-        const amount = abilityTaken(
-          h,
-          finalDamage(raw, h, 1, h.forgeWelded, takenReduction(h, 'frost', f.hunters), 1),
-        );
-        hurt(h, amount);
-        emit(f, {
-          actor: m.id,
-          kind: 'ability',
-          target: h.id,
-          text: () =>
-            `${a.kind === 'drain' ? 'The cold drains' : 'The grave chill reaches'} ${h.name}: Frost ${raw.toFixed(2)} = ${amount} · ${h.name} ${h.health}/${h.maxHealth}`,
-          rolls: [],
-          amount,
-          targetHealth: h.health,
-        });
-        checkPotion(f, h);
-      }
+      const prefix = a.kind === 'drain' ? 'The cold drains' : 'The grave chill reaches';
+      tickPercentAbility(
+        f,
+        m,
+        'frost',
+        a.maxHealthFraction,
+        0,
+        (h, raw, amount) => `${prefix} ${h.name}: Frost ${raw.toFixed(2)} = ${amount}`,
+      );
     } else if (a.kind === 'malice') {
       if (cancelsAbility(f, m, 'Malice')) continue;
       m.statusPct.might += a.mightPerAction;

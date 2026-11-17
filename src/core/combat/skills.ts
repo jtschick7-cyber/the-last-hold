@@ -1,4 +1,5 @@
 import { useSkills, type UseSkillDef } from '../../content/use-skills';
+import { RULES_VERSION } from '../rules-version';
 import { finalDamage, hurt } from './formula';
 import { emit, knockBack, type Fight } from './fight-state';
 import { mightEff, present, speedEff, standing } from './stats';
@@ -82,8 +83,29 @@ export const clearSmoke = (f: Fight): void => {
   f.smokeHolder = null;
 };
 
+/** Recompute Speed status% from all active slows (Frost Pot, Rime-Dipped, Hamstring) in v1.9+. */
+export const syncSlowStatus = (c: Combatant): void => {
+  const chill = c.chillLeft > 0 ? (c.chillCut ?? 0) : 0;
+  const rime = c.rimeLeft > 0 ? (c.rimeCut ?? 0) : 0;
+  const hamstring = c.hamstringLeft > 0 ? (c.hamstringCut ?? 0) : 0;
+  const sum = chill + rime + hamstring;
+  c.statusPct.speed = sum === 0 ? 0 : -sum;
+  c.speed = speedEff(c);
+};
+
 /** Rime-Dipped: the target is slowed for its next actions; a fresh hit refreshes it (GDD §5.0). */
-export const rimeSlow = (target: Combatant, cut: number, actions: number): void => {
+export const rimeSlow = (
+  target: Combatant,
+  cut: number,
+  actions: number,
+  rulesVersion = RULES_VERSION,
+): void => {
+  if (rulesVersion >= 8) {
+    target.rimeLeft = actions;
+    target.rimeCut = cut;
+    syncSlowStatus(target);
+    return;
+  }
   if (target.rimeLeft === 0) target.statusPct.speed -= cut;
   target.rimeLeft = actions;
   target.rimeCut = cut;
@@ -91,10 +113,15 @@ export const rimeSlow = (target: Combatant, cut: number, actions: number): void 
 };
 
 /** The monster's own action ends: Rime-Dipped counts down and gives the Speed back. */
-export const endRime = (c: Combatant): void => {
+export const endRime = (c: Combatant, rulesVersion = RULES_VERSION): void => {
   if (c.rimeLeft === 0) return;
   c.rimeLeft -= 1;
   if (c.rimeLeft === 0) {
+    if (rulesVersion >= 8) {
+      c.rimeCut = 0;
+      syncSlowStatus(c);
+      return;
+    }
     c.statusPct.speed += c.rimeCut;
     c.rimeCut = 0;
     c.speed = speedEff(c);
@@ -138,12 +165,17 @@ export const rootTick = (f: Fight, m: Combatant): void => {
 };
 
 /** Shepherd's Crook: the healed hunter is freed of slowed (Hamstring), held, charmed and Chill. */
-export const clearAbilityEffects = (c: Combatant): string[] => {
+export const clearAbilityEffects = (c: Combatant, rulesVersion = RULES_VERSION): string[] => {
   const cleared: string[] = [];
   if (c.hamstringLeft > 0) {
     c.hamstringLeft = 0;
-    c.statusPct.speed = 0;
-    c.speed = speedEff(c);
+    if (rulesVersion >= 8) {
+      c.hamstringCut = 0;
+      syncSlowStatus(c);
+    } else {
+      c.statusPct.speed = 0;
+      c.speed = speedEff(c);
+    }
     cleared.push('slowed');
   }
   if (c.lostActions > 0) {

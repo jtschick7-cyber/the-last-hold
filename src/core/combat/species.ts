@@ -22,6 +22,7 @@ export interface SpeciesDef {
   readonly armor: number;
   readonly speed: number;
   readonly attacks: number;
+  readonly damage?: DamageType;
   readonly resist: Readonly<Record<DamageType, number>>;
   readonly abilities: readonly FightAbility[];
 }
@@ -50,6 +51,7 @@ export const speciesOf = (m: FightMonster): SpeciesDef => {
       armor: c.armor,
       speed: c.speed,
       attacks: c.attacks,
+      ...('damage' in c && c.damage ? { damage: c.damage } : {}),
       resist: c.resist,
       abilities: c.abilities,
     };

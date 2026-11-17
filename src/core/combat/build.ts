@@ -3,6 +3,7 @@ import { gear } from '../../content/gear';
 import { traits, type TraitEffect } from '../../content/traits';
 import { num } from '../balance-access';
 import { intPow } from '../math';
+import { RULES_VERSION } from '../rules-version';
 import { hunterKit } from './prep';
 import { keepsakeDef, talentTotals } from './talents';
 import type { Preparation } from '../state/game-state';
@@ -23,13 +24,24 @@ const kit = {
   burnLeft: 0,
   burnAmount: 0,
   chillLeft: 0,
+  chillCut: 0,
+  hamstringCut: 0,
   healCutLeft: 0,
   healCut: 0,
   abilitiesBlocked: 0,
   hitBonus: 0,
+  critBonus: 0,
   fireTakenPotion: 0,
+  frostTakenPotion: 0,
+  tonicTaken: 0,
   steadfastLeft: 0,
   tonicLeft: 0,
+  shroudedLeft: 0,
+  shroudHitBonus: 0,
+  shroudCritBonus: 0,
+  shroudDealtBonus: 0,
+  namelessMightMult: 1,
+  passivesBlockable: false,
   extraTaken: 0,
   dealtBonus: 0,
   baneVs: {},
@@ -73,8 +85,9 @@ export const buildHunter = (
   slot: number,
   prep?: Preparation,
   boost?: HunterBoost,
+  rulesVersion = RULES_VERSION,
 ): Combatant => {
-  const { oilFamily, potion } = hunterKit(h, prep);
+  const { oilFamily, potion } = hunterKit(h, prep, rulesVersion);
   // GDD §5.3.2, §5.11.3: growth per level is 10% plus 1 point per star.
   const scale =
     1 +
@@ -161,7 +174,10 @@ export const buildHunter = (
     critMult: boost && boost.critMult > critMult ? boost.critMult : critMult,
     speed: h.base.speed + speedFlat + (boost?.speedFlat ?? 0),
     traits: effects,
-    fireTakenReduction: armor?.fireTakenReduction ?? 0,
+    fireTakenReduction:
+      armor?.id === 'emberwright-plate' && rulesVersion <= 7
+        ? 0.1
+        : (armor?.fireTakenReduction ?? 0),
     silverSubHit: weapon?.silverSubHit ?? false,
     runeSubHit: weapon?.runeSubHit ?? false,
     abilities: [],
@@ -232,7 +248,9 @@ export const buildMonster = (
   strength = 1,
   member?: MemberOptions,
   nameless = 0,
+  rulesVersion = RULES_VERSION,
 ): Combatant => {
+  const isV8 = rulesVersion >= 8;
   const def = speciesOf(m);
   const steps = m.tier - def.baseTier;
   const tierScale = intPow(num('monster.statGrowth'), steps);
@@ -256,7 +274,7 @@ export const buildMonster = (
       : roundHalfUp(namelessHealth === 1 ? healthBase : healthBase * namelessHealth);
   const mightBase =
     m.mightMult === undefined ? def.might * statScale : def.might * statScale * m.mightMult;
-  const might = namelessMight === 1 ? mightBase : mightBase * namelessMight;
+  const might = isV8 || namelessMight === 1 ? mightBase : mightBase * namelessMight;
   return {
     side: 'monster',
     id: member?.id ?? def.id,
@@ -272,7 +290,7 @@ export const buildMonster = (
     flat: { ...zero },
     statPct: { ...zero },
     statusPct: { ...zero },
-    damage: 'steel',
+    damage: isV8 && def.damage ? def.damage : 'steel',
     resist: def.resist,
     varianceLo: num('combat.varianceLo'),
     varianceHi: num('combat.varianceHi'),
@@ -295,6 +313,8 @@ export const buildMonster = (
     oilFamily: null,
     potion: null,
     ...kit,
+    namelessMightMult: isV8 ? namelessMight : 1,
+    passivesBlockable: isV8,
     knowledgeLevel: m.knowledge ?? 0,
   };
 };

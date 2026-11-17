@@ -7,7 +7,7 @@ import {
 import { hunters, type HunterId } from '../../content/hunters';
 import { monsters } from '../../content/monsters';
 import { runFight } from '../combat';
-import type { FightResult } from '../combat/types';
+import type { FightInput, FightResult } from '../combat/types';
 import { playbackSteps, type FloorCombatant, type FloorPlayback } from '../delves/view';
 import { fightReplayDiffers, OLDER_RULES_NOTE } from '../replay-check';
 import { seeded } from '../rng';
@@ -26,16 +26,19 @@ export interface ContractPlayback extends FloorPlayback {
 export const findFight = (state: GameState, contractId: string): FightRef | undefined =>
   state.log.recentFights.find((f) => f.contractId === contractId);
 
+/** Pure FightInput reconstructed from a saved FightRef, preserving its rulesVersion (D632). */
+export const fightInputOf = (ref: FightRef): FightInput => ({
+  party: ref.party,
+  monster: ref.monster,
+  location: ref.location,
+  rolls: seeded(ref.seed),
+  prep: ref.prep,
+  alchemy: ref.alchemy,
+  rulesVersion: ref.rulesVersion,
+});
+
 /** Replays a saved FightRef deterministically from its frozen seed and party snapshots. */
-export const replayFight = (ref: FightRef): FightResult =>
-  runFight({
-    party: ref.party,
-    monster: ref.monster,
-    location: ref.location,
-    rolls: seeded(ref.seed),
-    prep: ref.prep,
-    alchemy: ref.alchemy,
-  });
+export const replayFight = (ref: FightRef): FightResult => runFight(fightInputOf(ref));
 
 /** Builds the Arena playback view (`{Monster} · T{tier}`) for a settled contract fight. */
 export const contractPlayback = (_state: GameState, ref: FightRef): ContractPlayback => {

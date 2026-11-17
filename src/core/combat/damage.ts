@@ -4,7 +4,7 @@ import { cap as capName, emit, fmt2, type Fight } from './fight-state';
 import { afterOwnHit } from './abilities';
 import { rimeSlow, skillOf, stairHolder, vigilHolder } from './skills';
 import { knockBack } from './fight-state';
-import { checkPotion } from './prep';
+import { cancelsAbility, checkPotion } from './prep';
 import {
   armorEff,
   groupLightlessCut,
@@ -61,11 +61,39 @@ export const directAttack = (
   };
   const who = (): string => `${capName(attacker.name)}${roleTag(attacker)}`;
   const party = f.hunters;
-  // A group's Lightless is the largest cut among the swarms standing (D251); a single monster's is constant.
-  const chance =
-    f.monsters.length === 1
-      ? hitChance(attacker, party, f.ctx)
-      : hitChance(attacker, party, f.ctx, groupLightlessCut(f.monsters));
+  let chance: number;
+  let critCut = f.ctx.critCut;
+  if (f.rulesVersion >= 8 && attacker.side === 'hunter') {
+    let hitCut = 0;
+    let passiveCritCut = 0;
+    for (const m of f.monsters) {
+      if (!standing(m)) continue;
+      for (const a of m.abilities) {
+        if (a.kind === 'lightless' && !cancelsAbility(f, m, 'Lightless')) {
+          if (a.hitChanceCut > hitCut) hitCut = a.hitChanceCut;
+        } else if (a.kind === 'illLuck' && !cancelsAbility(f, m, 'Ill Luck')) {
+          const c = a.critCut / 100;
+          if (c > passiveCritCut) passiveCritCut = c;
+        }
+      }
+    }
+    if (target.side === 'monster' && standing(target)) {
+      for (const a of target.abilities) {
+        if (a.kind === 'swell' && target.health < target.maxHealth * a.belowHealth) {
+          cancelsAbility(f, target, 'Swell');
+        }
+      }
+    }
+    if (!standing(target)) return false;
+    critCut = passiveCritCut > 0 ? passiveCritCut : undefined;
+    chance = hitChance(attacker, party, f.ctx, hitCut, target);
+  } else {
+    // A group's Lightless is the largest cut among the swarms standing (D251); a single monster's is constant.
+    chance =
+      f.monsters.length === 1
+        ? hitChance(attacker, party, f.ctx)
+        : hitChance(attacker, party, f.ctx, groupLightlessCut(f.monsters));
+  }
   const hitRoll = draw((r) =>
     r < chance ? `Hit ${fmt3(r)} < ${pct(chance)} → hit` : `Hit ${fmt3(r)} ≥ ${pct(chance)} → miss`,
   );
@@ -88,11 +116,22 @@ export const directAttack = (
   });
   const variance = attacker.varianceLo + (attacker.varianceHi - attacker.varianceLo) * spread;
   // Ill Luck (v0.9, GDD §8.14): while Likho stands every hunter's crit chance is lower. The roll is still drawn.
-  const critCut = f.ctx.critCut;
+  const shroudCrit =
+    f.rulesVersion >= 8 && attacker.side === 'hunter' && target.shroudedLeft > 0
+      ? target.shroudCritBonus
+      : 0;
   const critChance =
-    critCut !== undefined && attacker.side === 'hunter'
-      ? Math.max(0, attacker.critChance - critCut)
-      : attacker.critChance;
+    f.rulesVersion >= 8
+      ? Math.max(
+          0,
+          attacker.critChance +
+            attacker.critBonus +
+            shroudCrit -
+            (critCut !== undefined && attacker.side === 'hunter' ? critCut : 0),
+        )
+      : critCut !== undefined && attacker.side === 'hunter'
+        ? Math.max(0, attacker.critChance - critCut)
+        : attacker.critChance;
   const rolledCrit =
     draw((r) =>
       r < critChance
@@ -108,7 +147,13 @@ export const directAttack = (
   const raw = mightEff(attacker) * mult * variance;
   const resistance = target.resist ? target.resist[attacker.damage] : 1;
   const typed = raw * resistance;
-  const outgoing = outgoingPct(attacker, attacker.damage, f.ctx, target.family ?? f.ctx.family);
+  const outgoing = outgoingPct(
+    attacker,
+    attacker.damage,
+    f.ctx,
+    target.family ?? f.ctx.family,
+    target,
+  );
   // knowledge% (GDD §5.0): only the hunters' damage, and 0 unless the species is Studied or better.
   // Each group member has its own level (the Unremembering switch turns the bonus off, D257).
   const knowledgeLevel = attacker.side === 'hunter' ? target.knowledgeLevel : 0;
@@ -170,10 +215,13 @@ export const directAttack = (
       );
     }
   }
-  if (armed && attacker.side === 'hunter') hitSkill(armed.effect, target, notes);
+  if (armed && attacker.side === 'hunter') hitSkill(armed.effect, target, notes, f.rulesVersion);
   if (attacker.side === 'hunter') delveHitRules(f, attacker, target, crit, notes);
   if (attacker.damage === 'fire') {
-    const cracked = unthaw(target);
+    const cracked = unthaw(
+      target,
+      () => f.rulesVersion >= 8 && cancelsAbility(f, target, 'Unthawed'),
+    );
     if (cracked) notes.push(cracked);
   }
   const floored = resistance > 0 && amount === 1 && dealt - armor < 1;
@@ -222,13 +270,14 @@ const hitSkill = (
   effect: NonNullable<ReturnType<typeof skillOf>>['effect'],
   target: Combatant,
   notes: string[],
+  rulesVersion: number,
 ): void => {
   if (target.side !== 'monster') return;
   if (effect.kind === 'knockBackOnHit') {
     knockBack(target, effect.amount);
     notes.push(`Boathook: ${target.name}'s turn comes ${effect.amount} later`);
   } else if (effect.kind === 'slowOnHit') {
-    rimeSlow(target, effect.amount, effect.actions);
+    rimeSlow(target, effect.amount, effect.actions, rulesVersion);
     notes.push(
       `Rime-Dipped: ${target.name} is slowed (Speed −${Math.round(effect.amount * 100)}% for ${effect.actions} actions)`,
     );
@@ -309,6 +358,7 @@ const subHit = (
 const sealBurn = (f: Fight, attacker: Combatant, target: Combatant, dealt: number): void => {
   for (const a of target.abilities) {
     if (a.kind !== 'sealBurn' || dealt <= 0) continue;
+    if (f.rulesVersion >= 8 && cancelsAbility(f, target, 'Seal-burn')) continue;
     const raw = dealt * a.reflectFraction;
     const amount = abilityTaken(
       attacker,

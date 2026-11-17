@@ -75,7 +75,7 @@ describe('Coldwater Draught', () => {
       .filter((l) => l.kind === 'ability' && l.target === who && l.text.startsWith('Noon Heat'))
       .map((l) => l.amount ?? 0);
 
-  it('cuts the holder’s Fire damage taken by 40% for the whole fight', () => {
+  it('cuts the holder’s Fire damage taken by 50% (and Frost 30%, +10% Might) for the whole fight', () => {
     const party = [tank('halvar'), tank('zora')];
     const m = { monster: 'poludnitsa', tier: 2 } as const;
     const bare = noonHeat(fight(party, m, undefined), 'halvar').slice(0, 20);
@@ -83,9 +83,9 @@ describe('Coldwater Draught', () => {
     const cut = noonHeat(drunk, 'halvar').slice(0, 20);
     expect(bare).toHaveLength(20);
     expect(cut).toHaveLength(20);
-    cut.forEach((x, i) => expect(x).toBe(Math.floor((bare[i] ?? 0) * 0.6 + 0.5)));
+    cut.forEach((x, i) => expect(x).toBe(Math.floor((bare[i] ?? 0) * 0.5 + 0.5)));
     expect(text(drunk)).toContain(
-      'drinks Coldwater Draught (−40% Fire damage taken for the fight)',
+      'drinks Coldwater Draught (−50% Fire and −30% Frost damage taken, +10% Might for the fight)',
     );
     // Only the holder: the other hunter takes full damage.
     expect(noonHeat(drunk, 'zora').slice(0, 20)).toEqual(
@@ -104,13 +104,14 @@ describe('Coldwater Draught', () => {
     );
     expect(bare.length).toBeGreaterThan(0);
     expect(bare[0]).toBeGreaterThan(10);
-    expect(cold[0]).toBe(Math.floor((bare[0] ?? 0) * 0.6 + 0.5));
+    // Coldwater gives +10% Might (300 -> 330 dealt - 2 armor = 328 -> 32.8 raw) and −50% Fire -> 16.4 -> 16.
+    expect(cold[0]).toBe(16);
   });
 
   it('adds to Fire gear inside the 75% cap', () => {
     const heat = (r: FightResult) => r.log.find((l) => l.text.startsWith('Noon Heat'))?.amount ?? 0;
     const m = { monster: 'poludnitsa', tier: 2 } as const;
-    // Herbwise (−50%) + Fire-touched (−20%) + Emberwright Plate (−10%) would be −80%: the cap holds it at −75%.
+    // Herbwise (−62.5%) + Fire-touched (−20%) + Emberwright Plate (−25%) would be −107.5%: the cap holds it at −75%.
     const plate = tank('vesna', {
       armorGear: 'emberwright-plate',
       traits: ['herbwise', 'fire-touched'],
@@ -120,15 +121,15 @@ describe('Coldwater Draught', () => {
     expect(capped).toBe(Math.floor(plain * 0.25 + 0.5));
   });
 
-  it('Herbwise makes it −50%', () => {
+  it('Herbwise makes it −62.5%', () => {
     const party = [tank('vesna')];
     const m = { monster: 'poludnitsa', tier: 2 } as const;
     const first = (r: FightResult) =>
       r.log.find((l) => l.text.startsWith('Noon Heat'))?.amount ?? 0;
     const bare = first(fight(party, m, undefined));
     const drunk = fight(party, m, prep({ potions: { vesna: 'coldwater-draught' } }));
-    expect(first(drunk)).toBe(Math.floor(bare * 0.5 + 0.5));
-    expect(text(drunk)).toContain('−50% Fire damage');
+    expect(first(drunk)).toBe(Math.floor(bare * 0.375 + 0.5));
+    expect(text(drunk)).toContain('−62.5% Fire');
   });
 });
 
@@ -151,7 +152,9 @@ describe('Owl-Eye Drops', () => {
     expect(firstOutcome(drunk, 'halvar')).not.toBe('miss');
     // Only the holder.
     expect(firstOutcome(drunk, 'zora')).toBe('miss');
-    expect(text(drunk)).toContain('uses Owl-Eye Drops (+10 points to hit for the fight)');
+    expect(text(drunk)).toContain(
+      'uses Owl-Eye Drops (+10 points to hit and +10 points to crit for the fight)',
+    );
   });
 
   it('Herbwise makes it +12.5 points, and Lightless is still cut from it', () => {
@@ -189,20 +192,24 @@ describe('Steadfast Draught', () => {
   const skips = (r: FightResult, who: string) =>
     r.log.filter((l) => l.kind === 'skip' && l.actor === who).length;
 
-  it('keeps the first action an ability would cost, and only the first', () => {
+  it('keeps the first 2 actions an ability would cost, and only those', () => {
     const party = [sponge('halvar')];
     const m = { monster: 'draugr', tier: 3 } as const;
     const bare = fight(party, m, undefined);
     const steady = fight(party, m, prep({ potions: { halvar: 'steadfast-draught' } }));
     const held = (r: FightResult) => r.log.filter((l) => l.text.includes('is held'));
     expect(held(bare).length).toBeGreaterThan(2);
-    expect(held(steady)[0]?.text).toContain('but their Steadfast Draught keeps their action');
     expect(
       held(steady)
-        .slice(1)
+        .slice(0, 2)
+        .every((l) => l.text.includes('but their Steadfast Draught keeps their action')),
+    ).toBe(true);
+    expect(
+      held(steady)
+        .slice(2)
         .every((l) => l.text.includes('(loses their next action)')),
     ).toBe(true);
-    expect(skips(steady, 'halvar')).toBe(skips(bare, 'halvar') - 1);
+    expect(skips(steady, 'halvar')).toBe(skips(bare, 'halvar') - 2);
     expect(steady.potionsUsed).toContain('halvar');
   });
 
@@ -243,25 +250,25 @@ describe('Steadfast Draught', () => {
     ).toBeGreaterThan(sung?.tick ?? 0);
   });
 
-  it('a fight without an action-costing ability leaves it unspent', () => {
+  it('is drunk at the start (+10% Might) even without an action-costing ability', () => {
     const r = fight(
       [sponge('halvar')],
       { monster: 'wolf', tier: 1 },
       prep({ potions: { halvar: 'steadfast-draught' } }),
     );
-    expect(r.potionsUsed).toEqual([]);
+    expect(r.potionsUsed).toEqual(['halvar']);
   });
 
-  it('Spoil ruins it before it fires; Herbwise does nothing for it', () => {
-    const ruined = fight(
+  it('Spoil does not ruin it (drunk at start); Herbwise raises keeps from 2 to 3', () => {
+    const notRuined = fight(
       [sponge('halvar')],
       { monster: 'kikimora', tier: 1 },
       prep({ potions: { halvar: 'steadfast-draught' } }),
     );
-    expect(text(ruined)).toContain("Spoil ruins Halvar Two-Smokes's Steadfast Draught");
-    expect(ruined.potionsUsed).toContain('halvar');
+    expect(text(notRuined)).not.toContain('Spoil ruins');
+    expect(notRuined.potionsUsed).toContain('halvar');
     const herb = fight(
-      [sponge('vesna')],
+      [sponge('vesna', { traits: ['herbwise'] })],
       { monster: 'draugr', tier: 3 },
       prep({ potions: { vesna: 'steadfast-draught' } }),
     );
@@ -270,9 +277,8 @@ describe('Steadfast Draught', () => {
       { monster: 'draugr', tier: 3 },
       prep({ potions: { halvar: 'steadfast-draught' } }),
     );
-    expect(herb.log.filter((l) => l.text.includes('keeps')).length).toBe(
-      plain.log.filter((l) => l.text.includes('keeps')).length,
-    );
+    expect(herb.log.filter((l) => l.text.includes('keeps their action')).length).toBe(3);
+    expect(plain.log.filter((l) => l.text.includes('keeps their action')).length).toBe(2);
   });
 });
 

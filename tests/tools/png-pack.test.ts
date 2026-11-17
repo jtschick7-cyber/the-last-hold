@@ -105,7 +105,7 @@ describe('every picture the game ships', () => {
       if (out) expect(pixels(out).equals(pixels(src)), f).toBe(true);
     }
     expect(after).toBeLessThan(before);
-    expect(after).toBeLessThan(142_000); // v1.8 T18.11 (D615, D623, D624): measured 138,688 B after 89 pre-packed grid/Courtyard Mark PNGs; D615 ceiling retained without relaxation
+    expect(after).toBeLessThan(150_000); // v1.9 T19.6 (D615, D635, D636(d)): measured 142,837 B after deploying 6 packed v1.9 PNGs (+4,149 B over v1.8's 138,688 B)
   });
 });
 
