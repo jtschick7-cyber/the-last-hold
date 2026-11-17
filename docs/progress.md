@@ -4,10 +4,10 @@ Newest entry at the bottom. One entry per Claude Code session (CLAUDE.md, "Sessi
 
 ## Current state (update every session)
 
-- **Branch:** `milestone/v1.9` (branched from `v1.8.0` `20d298b`).
-- **Milestone:** v1.9 "Kettle & Fang" (`D630`–`D637` `Decided`), **in progress** (`T19.1`–`T19.10` complete; awaiting owner iPhone playtest approval on `/preview/`).
-- **Last task:** `T19.10` + playtest debug helper (`debug.setBoss` buttons `Set Great Beast: Thorn-Stag` and `Set Great Beast: Beacon-Bane` in `DebugSheet.tsx`, `debug-events.ts`, `types.ts`, `apply.ts`) — unit tests (`47 / 47` across `timers.test.ts`, `debug.test.ts`, `debug-commands.test.ts`), targeted `v19-kettle-fang.spec.ts` (`5 / 5` passed, `24.8 s`), rebuilt `dist/` (`545,822 B` gzip-9 `≤ 614,400 B`) & `dist-preview/` (`332` SW entries, `0` mismatches), and `npm run check` confirmed green (`≤ 90 s`).
-- **Next:** Owner iPhone playtest on `/preview/` (awaiting `"playtest passed"` before merging & tagging `v1.9.0`).
+- **Branch:** `main` (post-`v1.9.0`, merged from `milestone/v1.9`).
+- **Milestone:** v1.9 "Kettle & Fang" (`D630`–`D638` `Decided`), **complete**.
+- **Last task:** `v1.9` milestone end — `milestone/v1.9` merged to `main` and tagged `v1.9.0`.
+- **Next:** Next milestone direction or flesh-out session from the owner (`docs/implementation-plan.md` §0.4).
 - **Open questions:** None.
 
 Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/progress-2026-10-31-to-11-09.md) (v1.6 atmosphere polish through v1.7 VB.5), [`docs/archive/progress-2026-10-28-to-31.md`](archive/progress-2026-10-28-to-31.md) (v1.4 TD.11 to v1.6 portraits), [`docs/archive/progress-2026-10-24-to-28.md`](archive/progress-2026-10-24-to-28.md) (v1.3 KV.11 to v1.4 TD.10), [`docs/archive/progress-2026-10-11-to-15.md`](archive/progress-2026-10-11-to-15.md) (to T8.15), [`docs/archive/progress-2026-10-15-to-21.md`](archive/progress-2026-10-15-to-21.md) (T8.16 to T11.15) and [`docs/archive/progress-2026-10-21-to-24.md`](archive/progress-2026-10-21-to-24.md) (v0.11 session 17 to v1.3 KV.10). Read only the last entry at session start.
@@ -318,3 +318,7 @@ Earlier entries are in [`docs/archive/progress-2026-10-31-to-11-09.md`](archive/
 ## 2026-11-17 — v1.9 Playtest Helper: Debug buttons for *The Thorn-Stag* & *The Beacon-Bane*
 - **Debug boss switcher (`src/core/commands/types.ts`, `debug-events.ts`, `apply.ts`, `src/ui/more/DebugSheet.tsx`):** Added `{ type: 'debug.setBoss'; boss: BossId }` (`debugSetBoss`) plus two Debug panel buttons (**Set Great Beast: Thorn-Stag**, **Set Great Beast: Beacon-Bane**). Preserves active pass (`passOfVisit`), resets `tier: null`, `pool: null`, `paid: 0`, `attempts: 0`, opens events automatically if Citadel/Bastion was reached via Debug, refuses pre-Citadel or invalid boss IDs cleanly, and sets `meta.debugUsed = true`.
 - **Tests, builds & verification (`tests/events/timers.test.ts`, `tests/e2e/v19-kettle-fang.spec.ts`):** Added unit tests (`47 / 47` across `timers.test.ts`, `debug.test.ts`, `debug-commands.test.ts`) and an E2E test (`5 / 5` passed in `tests/e2e/v19-kettle-fang.spec.ts`, `24.8 s`); rebuilt `dist/` (`545,822 B` gzip-9, `68,578 B` below `614,400 B`, `0` SW mismatches across `330` entries) and `dist-preview/` (`332` SW entries, `0` mismatches); formatted with `prettier --write` and confirmed `npm run check` green (`≤ 90 s`). Next: owner **iPhone playtest on `/preview/?debug`**.
+
+## 2026-11-17 — v1.9 milestone end (merged to main & tagged v1.9.0)
+- **Owner sign-off (`D638`):** Owner confirmed **Playtest passed** on iPhone after pushing `ef88acb`. Logged `D638` (`Decided`) in `docs/decisions.md` and marked `v1.9` `Status: complete` (`13` actual entries in `§0.7` of `docs/implementation-plan.md`).
+- **Release wrap-up:** Verified `sim/baseline.json` (`rulesVersion: 8`, `63 / 63` simulator checks passing per `D637`) and save schema `17`, ran final `npm run check` (`≤ 90 s`), merged `milestone/v1.9` to `main`, pushed `main`, and pushed release tag `v1.9.0`.

@@ -2,7 +2,7 @@
 
 **Status:** Revised after the plan review (D34–D36). Awaiting owner approval.
 **Reads with:** `CLAUDE.md` (the workflow, definition of done, and owner gates live there, not here), `gdd.md` (what), `technical-design.md` (how), `decisions.md` (why).
-**Depth:** v0.0–v1.8 are in full detail (v1.0 completed 2026-10-22, D472–D497; v1.1 completed 2026-10-23, D498–D518; v1.2 completed 2026-10-23, D519–D537; v1.3 completed 2026-10-24, D538–D556; v1.4 completed 2026-10-28, D557–D578; v1.5 completed 2026-10-29, D579–D599; v1.6 completed 2026-11-04, D600–D603; v1.7 completed 2026-11-13, D604–D616; v1.8 completed 2026-11-15, D617–D629, in full detail below).
+**Depth:** v0.0–v1.9 are in full detail (v1.0 completed 2026-10-22, D472–D497; v1.1 completed 2026-10-23, D498–D518; v1.2 completed 2026-10-23, D519–D537; v1.3 completed 2026-10-24, D538–D556; v1.4 completed 2026-10-28, D557–D578; v1.5 completed 2026-10-29, D579–D599; v1.6 completed 2026-11-04, D600–D603; v1.7 completed 2026-11-13, D604–D616; v1.8 completed 2026-11-15, D617–D629; v1.9 completed 2026-11-17, D630–D638, in full detail below).
 **Markers:** **[JC]** = judgment call. **👤** = owner task. **[?]** = task blocked on an owner question (see `docs/questions.md`).
 
 ---
@@ -114,6 +114,7 @@ Also locked: **`sim/targets.ts`**, the **golden fixtures**, and the **coverage r
 *Actual (v1.7, complete):* 13 progress entries (`VB.1` docs commit, `VB.2`–`VB.11`, playtest cache/wrapping fix, and milestone end), inside the 11–13 estimate.
 *Actual (v1.8, complete):* 24 progress entries (`T18.1` docs commit through `T18.14` hand-off and milestone end across 14 tasks `T18.1`–`T18.14`, including `[?]` question stops and art contact-sheet review passes).
 *Sizing note (v1.9 flesh-out):* 10 focused tasks (`T19.1`–`T19.10`), touching dual `rulesVersion` (`7 → 8`), schema `16 → 17`, consumable/Hut/trait/gear math, 2 Great Beasts + Courtyard Marks, 1 single 6-subject art contact-sheet stop (`T19.6`), full simulator policy/calibration (`T19.9`), and iPhone playtest wrap-up (`T19.10`), estimated at 12–14 sessions including owner art & calibration checkpoints.
+*Actual (v1.9, complete):* 13 progress entries (`T19.1` docs commit through `T19.10` hand-off, playtest boss-switcher helper, and milestone end across 10 tasks `T19.1`–`T19.10`, inside the 12–14 estimate).
 
 *Actuals (added at SF.12):* v1.1 22 progress entries (against 12–16 estimated; entries overcount sessions); v1.2 13 entries (the docs commit and SF.1–SF.12, one task each, against 8–11 estimated). **Final v1.2 count, at the v1.3 wrap-up:** 16 entries (the docs commit, SF.1–SF.12, the silent-switch fix, the milestone end, and the merge with the e2e split), against 8–11 estimated.
 *Actual (v1.4, at the v1.5 docs commit):* 18 progress entries (the docs commit, TD.2 to TD.11 with TD.4a–c, TD.7a–c and TD.8a–b, the Q60 docs entry, the TD.6 draft and its close, and the milestone end), against 14–17 estimated.
@@ -1425,7 +1426,7 @@ Existing simulator checks are evaluated cleanly alongside new `v1.8` rows coveri
 
 ### v1.9 — Kettle & Fang
 
-**Status:** in progress *(fleshed out 2026-11-17; decisions D630–D636; summary in `docs/flesh-out/v1.9/v1.9-summary.md`)*
+**Status:** complete *(merged 2026-11-17, tagged `v1.9.0`; decisions D630–D638; summary in `docs/flesh-out/v1.9/v1.9-summary.md`)*
 
 **Scope:** Completes all five monster families in **Events** by adding two new **Great Beasts** (*The Thorn-Stag* for Field & Forest Spirits and *The Beacon-Bane* for the Cursed — the first boss dealing direct Fire damage) plus `2` permanent **Courtyard Marks** (*Thorn-Antler Rack*, *Beacon-Iron Urn*), paired with a comprehensive **Alchemist's Hut & General Balance Pass**: rebalancing all `4` bombs (*Fire Pot*, *Frost Pot* slow-stacking fix, *Saltburst* passive+active disruption & halved reagent cost, *Poppy Smoke* stun + *Shrouded*), bringing all `6` potions (*Quickfoot*, *Owl-Eye*, *Hardwood*, *Mending*, *Coldwater*, *Steadfast*) to parity with full *Herbwise* + Alchemy scaling, adding kettle speed scaling (`−8%` per level above `1`) to `Alchemist's Hut`, raising `skill.xp.alchemy` brew/experiment XP so Alchemy paces past level `4–5`, fixing `"Why?"` / `Suggest` / Prep UI honesty gaps, strengthening weak Riftglass alternate traits and *Emberwright Plate*, calibrating tight simulator margins (`vigil`, `descent`, `provisions`, `silver-with-boss`), and preserving historical fights/stands via dual `rulesVersion` (`7 → 8`) and `schema` (`16 → 17`) migration (`D630`–`D636`).
 
